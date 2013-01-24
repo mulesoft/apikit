@@ -6,7 +6,7 @@
         <artifactId>mule-modules</artifactId>
         <version>3.4-M4-SNAPSHOT</version>
     </parent>
-    <artifactId>mule-module-api</artifactId>
+    <artifactId>mule-module-wsapi</artifactId>
     <packaging>jar</packaging>
     <name>API Module</name>
     <description>Module for creating API's using REST/SOAP Web Services</description>
