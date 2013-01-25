@@ -10,12 +10,11 @@
 
 package org.mule.webservice.api;
 
-import org.mule.api.processor.MessageRouter;
+import org.mule.api.processor.MessageProcessor;
 
-
-public interface ServiceOperationRouter extends ServiceOperation, MessageRouter
+public interface WebServiceAction extends WebServiceOperation
 {
 
+    MessageProcessor getFlowRef();
+
 }
-
-

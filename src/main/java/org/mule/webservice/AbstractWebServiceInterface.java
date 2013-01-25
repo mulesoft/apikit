@@ -1,7 +1,7 @@
 
 package org.mule.webservice;
 
-import org.mule.webservice.api.ServiceOperation;
+import org.mule.webservice.api.WebServiceOperation;
 import org.mule.webservice.api.WebServiceInterface;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 public abstract class AbstractWebServiceInterface implements WebServiceInterface
 {
     private String name;
-    private List<ServiceOperation> operations;
+    private List<WebServiceOperation> operations;
 
     public AbstractWebServiceInterface(String name)
     {
@@ -17,7 +17,7 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
     }
 
     @Override
-    public List<ServiceOperation> getOperations()
+    public List<WebServiceOperation> getOperations()
     {
         return operations;
     }

@@ -13,7 +13,7 @@ package org.mule.webservice.api;
 import org.mule.api.NamedObject;
 import org.mule.api.processor.MessageProcessor;
 
-public interface ServiceOperation extends MessageProcessor, NamedObject
+public interface WebServiceOperation extends MessageProcessor, NamedObject
 {
 
 }

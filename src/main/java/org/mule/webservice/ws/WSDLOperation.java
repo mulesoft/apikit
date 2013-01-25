@@ -8,24 +8,37 @@
  * LICENSE.txt file.
  */
 
-package org.mule.webservice.rest;
+package org.mule.webservice.ws;
 
+import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.webservice.AbstractWebServiceInterface;
+import org.mule.webservice.api.WebServiceAction;
 
-public class ReSTWebServiceInterface extends AbstractWebServiceInterface
+public class WSDLOperation implements WebServiceAction
 {
 
-    public ReSTWebServiceInterface(String name)
+    @Override
+    public MuleEvent process(MuleEvent event) throws MuleException
     {
-        super(name);
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
-    public MessageProcessor getOperationRouter()
+    public String getName()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public MessageProcessor getFlowRef()
     {
         // TODO Auto-generated method stub
         return null;
     }
 
 }
+
+

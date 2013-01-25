@@ -55,7 +55,7 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
     protected void configureMessageProcessors(MessageProcessorChainBuilder builder) throws MuleException
     {
         builder.chain(getInterfaceRepresentationFilter());
-        builder.chain(webServiceInterface.getServiceOperationRouter());
+        builder.chain(webServiceInterface.getOperationRouter());
     }
 
     @Override
