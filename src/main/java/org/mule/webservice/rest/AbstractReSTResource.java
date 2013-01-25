@@ -1,11 +1,9 @@
 
 package org.mule.webservice.rest;
 
-import org.mule.webservice.api.WebServiceOperation;
-
 import java.util.List;
 
-public abstract class AbstractReSTResource implements WebServiceOperation
+public abstract class AbstractReSTResource implements ReSTResource
 {
 
     protected String name;
