@@ -22,7 +22,7 @@ import org.mule.webservice.api.WebServiceInterface;
 
 import java.util.List;
 
-public abstract class AbstractWebService<T extends WebServiceInterface<?>> extends AbstractPipeline
+public abstract class AbstractWebService<T extends WebServiceInterface> extends AbstractPipeline
     implements WebService
 {
 
@@ -39,6 +39,11 @@ public abstract class AbstractWebService<T extends WebServiceInterface<?>> exten
     {
         return webServiceInterface;
     }
+    
+    public void setInterface(T webServiveInterface)
+    {
+        this.webServiceInterface = webServiveInterface;
+    }
 
     @Override
     public String getConstructType()
@@ -50,7 +55,7 @@ public abstract class AbstractWebService<T extends WebServiceInterface<?>> exten
     protected void configureMessageProcessors(MessageProcessorChainBuilder builder) throws MuleException
     {
         builder.chain(getInterfaceRepresentationFilter());
-        builder.chain(webServiceInterface);
+        builder.chain(webServiceInterface.getServiceOperationRouter());
     }
 
     @Override

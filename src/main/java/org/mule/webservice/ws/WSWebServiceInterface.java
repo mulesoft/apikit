@@ -8,15 +8,15 @@
  * LICENSE.txt file.
  */
 
-package org.mule.webservice.rest;
+package org.mule.webservice.ws;
 
 import org.mule.webservice.AbstractWebServiceInterface;
 import org.mule.webservice.api.ServiceOperationRouter;
 
-public class ReSTWebServiceInterface extends AbstractWebServiceInterface
+public class WSWebServiceInterface extends AbstractWebServiceInterface
 {
 
-    public ReSTWebServiceInterface(String name)
+    public WSWebServiceInterface(String name)
     {
         super(name);
     }

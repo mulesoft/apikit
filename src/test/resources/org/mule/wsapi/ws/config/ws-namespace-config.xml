@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule-api xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+    xmlns:ws="http://www.mulesoft.org/schema/mule/api-ws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:rss="http://www.mulesoft.org/schema/mule/api"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
+       http://www.mulesoft.org/schema/mule/api-ws http://www.mulesoft.org/schema/mule/api-ws/current/mule-api-ws.xsd
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <ws:interface name="myInterface" />
+
+    <ws:service name="myService" interface-ref="myInterface" />
+
+
+</mule-api>

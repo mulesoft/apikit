@@ -1,16 +1,15 @@
 
 package org.mule.webservice;
 
-import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
+import org.mule.webservice.api.ServiceOperation;
 import org.mule.webservice.api.WebServiceInterface;
 
 import java.util.List;
 
-public class AbstractWebServiceInterface<T> implements WebServiceInterface
+public abstract class AbstractWebServiceInterface implements WebServiceInterface
 {
     private String name;
-    private List<T> operations;
+    private List<ServiceOperation> operations;
 
     public AbstractWebServiceInterface(String name)
     {
@@ -18,7 +17,7 @@ public class AbstractWebServiceInterface<T> implements WebServiceInterface
     }
 
     @Override
-    public List<T> getOperations()
+    public List<ServiceOperation> getOperations()
     {
         return operations;
     }
@@ -27,13 +26,6 @@ public class AbstractWebServiceInterface<T> implements WebServiceInterface
     public String getName()
     {
         return name;
-    }
-
-    @Override
-    public MuleEvent process(MuleEvent event) throws MuleException
-    {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

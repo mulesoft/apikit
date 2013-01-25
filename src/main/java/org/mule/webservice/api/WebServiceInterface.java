@@ -2,15 +2,14 @@
 package org.mule.webservice.api;
 
 import org.mule.api.NamedObject;
-import org.mule.api.processor.MessageProcessor;
 
 import java.util.List;
 
-public interface WebServiceInterface<T extends Operation> extends NamedObject, MessageProcessor
+public interface WebServiceInterface extends NamedObject
 {
 
-    List<T> getOperations();
-    
-    // Strategy to choose operation
+    List<ServiceOperation> getOperations();
+
+    ServiceOperationRouter getServiceOperationRouter();
 
 }

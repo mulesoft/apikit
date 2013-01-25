@@ -1,9 +1,9 @@
 
 package org.mule.webservice.rest;
 
-import org.mule.webservice.api.LeafOperation;
+import org.mule.webservice.api.ServiceOperation;
 
-public interface ReSTAction extends LeafOperation
+public interface ReSTAction extends ServiceOperation
 {
 
 }

@@ -1,7 +1,8 @@
 
 package org.mule.webservice.rest;
 
-import org.mule.webservice.api.Operation;
+import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 
 import java.util.List;
 
@@ -10,16 +11,11 @@ public class ReSTDcoumentResource extends AbstractReSTResource
     public static List<ResourceOperationType> supportedActions;
 
     @Override
-    public String getRoles()
+    public MuleEvent process(MuleEvent event) throws MuleException
     {
         // TODO Auto-generated method stub
         return null;
     }
 
-    @Override
-    public String getName()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
 }

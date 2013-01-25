@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:schemadoc="http://www.mulesoft.org/schema/mule/schemadoc"
+    xmlns:beans="http://www.springframework.org/schema/beans" targetNamespace="http://www.mulesoft.org/schema/mule/api"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/core" schemaLocation="http://www.mulesoft.org/schema/mule/core/3.3/mule.xsd" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/schemadoc" schemaLocation="http://www.mulesoft.org/schema/mule/schemadoc/3.3/mule-schemadoc.xsd" />
+
+    <xsd:annotation>
+        <xsd:documentation>
+            RSS is a popular syndication format used by many websites to provide a feed of data
+            such
+            as news or updates.
+        </xsd:documentation>
+
+        <xsd:appinfo>
+            <schemadoc:short-name>WSAPI</schemadoc:short-name>
+            <schemadoc:page-title>Web Service API Module</schemadoc:page-title>
+        </xsd:appinfo>
+    </xsd:annotation>
+
+    <xsd:element name="mule-api">
+        <xsd:annotation>
+            <xsd:documentation>
+                Root element.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element ref="abstract-web-service-interface" minOccurs="0"/>
+                <xsd:element ref="abstract-web-service" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    
+    <xsd:element name="abstract-web-service-interface" abstract="true" type="abstractWebServiceInterfaceType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A placeholder for web service elements.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="abstract-web-service" abstract="true" type="abstractWebServiceType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A placeholder for web service elements.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="abstractWebServiceInterfaceType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:annotatedType">
+                <xsd:sequence>
+                    <xsd:element name="description" type="mule:descriptionType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                This can hold any kind of documentation related to the flow construct. It is intended to be "human readable" only and is not used by the system.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="mule:nonBlankString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The name used to identify this flow construct.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+           </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="abstractWebServiceType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:annotatedType">
+                <xsd:sequence>
+                    <xsd:element name="description" type="mule:descriptionType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                This can hold any kind of documentation related to the flow construct. It is intended to be "human readable" only and is not used by the system.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:group ref="mule:messageSourceOrInboundEndpoint" minOccurs="0"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="mule:nonBlankString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The name used to identify this flow construct.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="interface-ref" type="mule:nonBlankString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The name used to identify this flow construct.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="initialState" default="started">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The initial state of the flow. Usually a flow is started automatically ("started"), but this attribute can be used to disable initial startup ("stopped").
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:simpleType>
+                        <xsd:restriction base="xsd:NMTOKEN">
+                            <xsd:enumeration value="started"/>
+                            <xsd:enumeration value="stopped"/>
+                        </xsd:restriction>
+                    </xsd:simpleType>
+                </xsd:attribute>                
+           </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+
+</xsd:schema>

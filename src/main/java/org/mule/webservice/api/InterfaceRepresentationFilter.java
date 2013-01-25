@@ -21,8 +21,7 @@ public class InterfaceRepresentationFilter extends AbstractInterceptingMessagePr
 
     private String representionPattern;
 
-    public InterfaceRepresentationFilter(String representionPattern,
-                                         WebServiceInterface<?> webServiceInterface)
+    public InterfaceRepresentationFilter(String representionPattern, WebServiceInterface webServiceInterface)
     {
         this.representionPattern = representionPattern;
     }

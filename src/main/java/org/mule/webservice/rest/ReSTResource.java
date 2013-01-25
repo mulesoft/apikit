@@ -1,9 +1,9 @@
 
 package org.mule.webservice.rest;
 
-import org.mule.webservice.api.Operation;
+import org.mule.webservice.api.ServiceOperationRouter;
 
-public interface ReSTResource extends Operation
+public interface ReSTResource extends ServiceOperationRouter
 {
 
 }

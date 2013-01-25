@@ -8,7 +8,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.webservice.rest;
+package org.mule.webservice.ws;
 
 import org.mule.api.MuleContext;
 import org.mule.webservice.AbstractWebService;
@@ -16,10 +16,10 @@ import org.mule.webservice.api.InterfaceRepresentationFilter;
 import org.mule.webservice.api.WebService;
 import org.mule.webservice.api.WebServiceInterface;
 
-public class ReSTWebService extends AbstractWebService implements WebService
+public class WSWebService extends AbstractWebService implements WebService
 {
 
-    public ReSTWebService(String name, WebServiceInterface webServiceInterface, MuleContext muleContext)
+    public WSWebService(String name, WebServiceInterface webServiceInterface, MuleContext muleContext)
     {
         super(name, webServiceInterface, muleContext);
     }
