@@ -13,9 +13,9 @@ package org.mule.webservice.ws;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.webservice.api.WebServiceAction;
+import org.mule.webservice.api.WebServiceOperation;
 
-public class WSDLOperation implements WebServiceAction
+public class WSDLOperation implements WebServiceOperation
 {
 
     @Override

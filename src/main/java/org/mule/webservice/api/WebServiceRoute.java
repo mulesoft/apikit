@@ -10,11 +10,10 @@
 
 package org.mule.webservice.api;
 
+import org.mule.api.NamedObject;
 import org.mule.api.processor.MessageProcessor;
 
-public interface WebServiceAction extends WebServiceOperation
+public interface WebServiceRoute extends MessageProcessor, NamedObject
 {
-
-    MessageProcessor getFlowRef();
 
 }

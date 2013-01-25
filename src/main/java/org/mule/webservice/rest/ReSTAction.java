@@ -1,9 +1,9 @@
 
 package org.mule.webservice.rest;
 
-import org.mule.webservice.api.WebServiceAction;
+import org.mule.webservice.api.WebServiceOperation;
 
-public interface ReSTAction extends WebServiceAction
+public interface ReSTAction extends WebServiceOperation
 {
 
 }
