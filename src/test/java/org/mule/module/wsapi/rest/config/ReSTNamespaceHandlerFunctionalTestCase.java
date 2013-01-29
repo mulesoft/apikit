@@ -26,7 +26,7 @@ public class ReSTNamespaceHandlerFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/wsapi/rest/config/rest-namespace-config.xml";
+        return "org/mule/wsapi/rest/config/rest-namespace-config.xml, org/mule/wsapi/rest/config/rest-namespace-flow-config.xml";
     }
 
     @Test

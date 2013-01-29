@@ -33,7 +33,7 @@ public class WSDLOperation implements WebServiceOperation
     }
 
     @Override
-    public MessageProcessor getFlowRef()
+    public MessageProcessor getFlow()
     {
         // TODO Auto-generated method stub
         return null;

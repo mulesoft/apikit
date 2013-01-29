@@ -10,8 +10,11 @@
 
 package org.mule.module.wsapi.rest.config;
 
+import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceInterfaceDefinitionParser;
+import org.mule.webservice.rest.ReSTCreateAction;
+import org.mule.webservice.rest.ReSTDcoumentResource;
 import org.mule.webservice.rest.ReSTWebService;
 import org.mule.webservice.rest.ReSTWebServiceInterface;
 
@@ -23,6 +26,8 @@ public class ReSTAPINamespaceHandler extends NamespaceHandlerSupport
     {
         registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(ReSTWebServiceInterface.class));
         registerBeanDefinitionParser("service", new WebServiceDefinitionParser(ReSTWebService.class));
+        registerBeanDefinitionParser("document-resource", new ChildDefinitionParser("route", ReSTDcoumentResource.class));
+        registerBeanDefinitionParser("create", new ChildDefinitionParser("action", ReSTCreateAction.class));
     }
 
 }

@@ -15,6 +15,6 @@ import org.mule.api.processor.MessageProcessor;
 public interface WebServiceOperation extends WebServiceRoute
 {
 
-    MessageProcessor getFlowRef();
+    MessageProcessor getFlow();
 
 }

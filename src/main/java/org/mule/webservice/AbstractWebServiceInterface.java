@@ -9,6 +9,7 @@ import java.util.List;
 public abstract class AbstractWebServiceInterface implements WebServiceInterface
 {
     private String name;
+
     private List<WebServiceRoute> routes;
 
     public AbstractWebServiceInterface(String name)
@@ -20,6 +21,11 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
     public List<WebServiceRoute> getRoutes()
     {
         return routes;
+    }
+
+    public void setRoutes(List<WebServiceRoute> routes)
+    {
+        this.routes = routes;
     }
 
     @Override
