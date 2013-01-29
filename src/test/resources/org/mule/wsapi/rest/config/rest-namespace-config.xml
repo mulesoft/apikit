@@ -7,9 +7,12 @@
        http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <rest:interface name="myInterface" />
+    <rest:interface name="myInterface">
+        <rest:document-resource name="league">
+            <rest:create flow-ref="createLeague"/>
+        </rest:document-resource>
+    </rest:interface>
 
     <rest:service name="myService" interface-ref="myInterface" />
-
 
 </mule-api>

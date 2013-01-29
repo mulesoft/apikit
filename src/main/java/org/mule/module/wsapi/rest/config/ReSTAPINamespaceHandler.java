@@ -21,8 +21,7 @@ public class ReSTAPINamespaceHandler extends NamespaceHandlerSupport
 {
     public void init()
     {
-        registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(
-            ReSTWebServiceInterface.class));
+        registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(ReSTWebServiceInterface.class));
         registerBeanDefinitionParser("service", new WebServiceDefinitionParser(ReSTWebService.class));
     }
 

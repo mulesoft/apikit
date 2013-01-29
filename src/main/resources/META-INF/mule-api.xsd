@@ -52,6 +52,22 @@
         </xsd:annotation>
     </xsd:element>
 
+    <xsd:element name="abstract-web-service-route" abstract="true" type="abstractWebServiceRoute">
+        <xsd:annotation>
+            <xsd:documentation>
+                A placeholder for web service routes.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:element name="abstract-web-service-operation" abstract="true" type="abstractWebServiceOperation">
+        <xsd:annotation>
+            <xsd:documentation>
+                A placeholder for web service operations.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
     <xsd:complexType name="abstractWebServiceInterfaceType">
         <xsd:complexContent>
             <xsd:extension base="mule:annotatedType">
@@ -118,6 +134,25 @@
            </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
-    
+
+    <xsd:complexType name="abstractWebServiceRoute">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractMessageProcessorType"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="abstractWebServiceOperation">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractMessageProcessorType">
+                <xsd:attribute name="flow-ref" type="mule:nonBlankString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            References either a flow or a subflow that will be called when the operation is invoked.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
 
 </xsd:schema>

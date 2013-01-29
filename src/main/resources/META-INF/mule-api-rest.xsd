@@ -15,7 +15,16 @@
     <xsd:element name="interface" substitutionGroup="api:abstract-web-service-interface">
         <xsd:complexType>
             <xsd:complexContent>
-                <xsd:extension base="api:abstractWebServiceInterfaceType" />
+                <xsd:extension base="api:abstractWebServiceInterfaceType">
+                    <xsd:sequence>
+                        <xsd:element name="document-resource" type="documentResourceType" minOccurs="0" maxOccurs="1"/>
+                        <!--
+                        <xsd:element name="collection-resource" type="collectionResourceType" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="controller-resource" type="controllerResourceType" minOccurs="0" maxOccurs="1"/>
+                        <xsd:element name="store-resource" type="storeResourceType" minOccurs="0" maxOccurs="1"/>
+                        -->
+                    </xsd:sequence>
+                </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
@@ -27,5 +36,47 @@
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
+
+    <xsd:complexType name="abstractResourceType">
+        <xsd:complexContent>
+            <xsd:extension base="api:abstractWebServiceRoute">
+                <xsd:sequence>
+                    <xsd:element name="create" type="createType" minOccurs="0" maxOccurs="1"/>
+                    <!--
+                    <xsd:element name="retrieve" type="retrieveType" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="update" type="updateType" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="delete" type="deleteType" minOccurs="0" maxOccurs="1"/>
+                    <xsd:element name="exists" type="existsType" minOccurs="0" maxOccurs="1"/>
+                    -->
+                </xsd:sequence>
+                <xsd:attribute name="name" type="mule:nonBlankString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The name used to identify this flow construct.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="documentResourceType">
+        <xsd:complexContent>
+            <xsd:extension base="abstractResourceType"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="abstractActionType">
+        <xsd:complexContent>
+            <xsd:extension base="api:abstractWebServiceOperation"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="createType">
+        <xsd:complexContent>
+            <xsd:extension base="abstractActionType"/>
+        </xsd:complexContent>
+    </xsd:complexType>
+
 
 </xsd:schema>
