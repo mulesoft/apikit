@@ -16,12 +16,12 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
 
-public class InterfaceRepresentationFilter extends AbstractInterceptingMessageProcessor
+public class QueryParamInterfaceDefinitionFilter extends AbstractInterceptingMessageProcessor
 {
 
     private String representionPattern;
 
-    public InterfaceRepresentationFilter(String representionPattern, WebServiceInterface webServiceInterface)
+    public QueryParamInterfaceDefinitionFilter(String representionPattern, WebServiceInterface webServiceInterface)
     {
         this.representionPattern = representionPattern;
     }

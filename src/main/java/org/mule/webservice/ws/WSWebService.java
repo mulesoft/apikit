@@ -12,7 +12,7 @@ package org.mule.webservice.ws;
 
 import org.mule.api.MuleContext;
 import org.mule.webservice.AbstractWebService;
-import org.mule.webservice.api.InterfaceRepresentationFilter;
+import org.mule.webservice.api.QueryParamInterfaceDefinitionFilter;
 import org.mule.webservice.api.WebService;
 import org.mule.webservice.api.WebServiceInterface;
 
@@ -25,9 +25,9 @@ public class WSWebService extends AbstractWebService implements WebService
     }
 
     @Override
-    protected InterfaceRepresentationFilter getInterfaceRepresentationFilter()
+    protected QueryParamInterfaceDefinitionFilter getInterfaceRepresentationFilter()
     {
-        return new InterfaceRepresentationFilter("?wsdl", webServiceInterface);
+        return new QueryParamInterfaceDefinitionFilter("?wsdl", webServiceInterface);
     }
 
 }

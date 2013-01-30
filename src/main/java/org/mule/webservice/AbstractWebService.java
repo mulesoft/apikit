@@ -16,7 +16,7 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.api.processor.MessageProcessorChainBuilder;
 import org.mule.api.processor.ProcessingStrategy;
 import org.mule.construct.AbstractPipeline;
-import org.mule.webservice.api.InterfaceRepresentationFilter;
+import org.mule.webservice.api.QueryParamInterfaceDefinitionFilter;
 import org.mule.webservice.api.WebService;
 import org.mule.webservice.api.WebServiceInterface;
 
@@ -70,6 +70,6 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
         throw new UnsupportedOperationException();
     }
     
-    protected abstract InterfaceRepresentationFilter getInterfaceRepresentationFilter();
+    protected abstract QueryParamInterfaceDefinitionFilter getInterfaceRepresentationFilter();
 
 }

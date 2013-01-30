@@ -12,7 +12,7 @@ package org.mule.webservice.rest;
 
 import org.mule.api.MuleContext;
 import org.mule.webservice.AbstractWebService;
-import org.mule.webservice.api.InterfaceRepresentationFilter;
+import org.mule.webservice.api.QueryParamInterfaceDefinitionFilter;
 import org.mule.webservice.api.WebService;
 import org.mule.webservice.api.WebServiceInterface;
 
@@ -25,7 +25,7 @@ public class ReSTWebService extends AbstractWebService implements WebService
     }
 
     @Override
-    protected InterfaceRepresentationFilter getInterfaceRepresentationFilter()
+    protected QueryParamInterfaceDefinitionFilter getInterfaceRepresentationFilter()
     {
         return null;
     }

@@ -10,21 +10,9 @@
 
 package org.mule.webservice.ws;
 
-import org.mule.api.processor.MessageProcessor;
-import org.mule.webservice.AbstractWebServiceOperation;
-
-public class WSDLOperation extends AbstractWebServiceOperation
+public enum WSOperationResolutionMode
 {
-
-    public WSDLOperation(String name, MessageProcessor handler)
-    {
-        super(name, handler);
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
+    SOAP_ACTION, PATH, MESSAGE_TYPE
 }
+
+

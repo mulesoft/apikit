@@ -16,6 +16,8 @@ import org.mule.webservice.AbstractWebServiceInterface;
 public class WSWebServiceInterface extends AbstractWebServiceInterface
 {
 
+    protected WSOperationResolutionMode operationResolutionMode = WSOperationResolutionMode.SOAP_ACTION;
+
     public WSWebServiceInterface(String name)
     {
         super(name);
@@ -24,16 +26,17 @@ public class WSWebServiceInterface extends AbstractWebServiceInterface
     @Override
     public MessageProcessor getOperationRouter()
     {
-        // if (true) // resolveUsingSOAPAction
-        // {
-        return new SOAPActionOperationRouter(this);
-        // }
-        // else if(false) // resolveUsingURLPath
-        // {
-        // //
-        // }
-        // else(){
-        //
-        // }
+        if (operationResolutionMode == WSOperationResolutionMode.SOAP_ACTION)
+        {
+            return new SOAPActionOperationRouter(this);
+        }
+        else if (operationResolutionMode == WSOperationResolutionMode.PATH)
+        {
+            return null;
+        }
+        else
+        {
+            return null;
+        }
     }
 }
