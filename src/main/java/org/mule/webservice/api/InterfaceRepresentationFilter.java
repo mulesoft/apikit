@@ -32,7 +32,7 @@ public class InterfaceRepresentationFilter extends AbstractInterceptingMessagePr
         String requestUri = event.getMessage().getInboundProperty("http.request");
         if (requestUri.endsWith(representionPattern))
         {
-            return new DefaultMuleEvent(new DefaultMuleMessage("<swagger>", muleContext), event);
+            return new DefaultMuleEvent(new DefaultMuleMessage("<wsdl>", muleContext), event);
         }
         else
         {

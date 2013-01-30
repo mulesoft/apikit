@@ -13,21 +13,35 @@ package org.mule.module.wsapi.ws;
 import org.mule.api.MuleException;
 import org.mule.tck.junit4.FunctionalTestCase;
 
+import java.util.Collections;
+
 import org.junit.Test;
 
 public class WSFunctionalTestCase extends FunctionalTestCase
 {
 
+    private static String EMPTY_SOAP_ENVELOPE = "<?xml version='1.0' encoding='utf-8'?><soap:velope xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/' "
+                                                + "xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema'>"
+                                                + "<soap:Body><echo/></soap:Body></soap:velope>";
+
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/wsapi/ws/config/ws-namespace-config.xml, org/mule/wsapi/echo-config.xml";
+        return "org/mule/wsapi/ws/ws-functional-test-config.xml, org/mule/wsapi/echo-config.xml";
     }
 
     @Test
-    public void testEcho() throws MuleException
+    public void testWSDL() throws Exception
     {
-        System.out.println(muleContext.getClient().send("http://localhost:8080", "anyone there?", null));
+        System.out.println(muleContext.getClient().send("http://localhost:8080/ws/?wsdl", EMPTY_SOAP_ENVELOPE,
+            Collections.singletonMap("SOAPAction", (Object) "hello")).getPayloadAsString());
+    }
+
+    @Test
+    public void testHelloWorldOperation() throws Exception
+    {
+        System.out.println(muleContext.getClient().send("http://localhost:8080/ws/", EMPTY_SOAP_ENVELOPE,
+            Collections.singletonMap("SOAPAction", (Object) "hello")).getPayloadAsString());
     }
 
 }

@@ -24,8 +24,7 @@ public class WSDLOperation extends AbstractWebServiceOperation
     @Override
     public String getName()
     {
-        // TODO Auto-generated method stub
-        return null;
+        return name;
     }
 
     @Override

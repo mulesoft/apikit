@@ -16,4 +16,7 @@ import org.mule.api.processor.MessageProcessor;
 public interface WebServiceRoute extends MessageProcessor, NamedObject
 {
 
+    
+    
+    
 }

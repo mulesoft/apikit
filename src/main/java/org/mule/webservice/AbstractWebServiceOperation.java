@@ -18,8 +18,8 @@ import org.mule.webservice.api.WebServiceOperation;
 public class AbstractWebServiceOperation implements WebServiceOperation
 {
 
-    private String name;
-    private MessageProcessor handler;
+    protected String name;
+    protected MessageProcessor handler;
 
     public AbstractWebServiceOperation(String name, MessageProcessor handler)
     {

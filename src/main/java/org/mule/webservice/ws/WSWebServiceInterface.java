@@ -10,8 +10,10 @@
 
 package org.mule.webservice.ws;
 
-import org.mule.api.processor.MessageRouter;
+import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.webservice.AbstractWebServiceInterface;
+import org.mule.webservice.api.WebServiceOperationRouter;
 
 public class WSWebServiceInterface extends AbstractWebServiceInterface
 {
@@ -22,9 +24,9 @@ public class WSWebServiceInterface extends AbstractWebServiceInterface
     }
 
     @Override
-    public MessageRouter getOperationRouter()
+    public WebServiceOperationRouter getOperationRouter()
     {
-        return null;
+        return new SOAPActionOperationRouter();
     }
 
 }

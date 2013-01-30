@@ -10,44 +10,35 @@
 
 package org.mule.webservice.ws;
 
+import org.mule.DefaultMuleEvent;
+import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.api.processor.MessageProcessor;
-import org.mule.api.processor.MessageRouter;
+import org.mule.webservice.AsbtarctWebServiceOperationRouter;
+import org.mule.webservice.api.WebServiceInterface;
 import org.mule.webservice.api.WebServiceRoute;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class SOAPActionOperationRouter implements MessageProcessor
+public class SOAPActionOperationRouter extends AsbtarctWebServiceOperationRouter
 {
 
-    protected Map<String, WebServiceRoute> routes = new HashMap<String, WebServiceRoute>();
-    
+    public SOAPActionOperationRouter(WebServiceInterface webServiceInterface)
+    {
+        super(webServiceInterface);
+    }
+
     @Override
     public MuleEvent process(MuleEvent event) throws MuleException
     {
         String soapAction = event.getMessage().getInboundProperty("SOAPAction");
-        if(routes.containsKey(soapAction)){
-            return routes.get(soapAction).process(event);
+        for (WebServiceRoute route : webServiceInterface.getRoutes())
+        {
+            if (route.getName().equals(soapAction))
+            {
+                return route.process(event);
+            }
         }
-        else{
-            return null;
-        }
+        return new DefaultMuleEvent(new DefaultMuleMessage("NO OPERATION FOUND", event.getMuleContext()),
+            event);
     }
-    
-    void addRoute(String name, WebServiceRoute route) throws MuleException
-    {
-        routes.put(name, route);
-    }
-
-    void removeRoute(WebServiceRoute route) throws MuleException
-    {
-        routes.remove(route);
-    }
-
 
 }
-
-

@@ -10,8 +10,8 @@
 
 package org.mule.webservice.rest;
 
-import org.mule.api.processor.MessageRouter;
 import org.mule.webservice.AbstractWebServiceInterface;
+import org.mule.webservice.api.WebServiceOperationRouter;
 
 public class ReSTWebServiceInterface extends AbstractWebServiceInterface
 {
@@ -22,7 +22,7 @@ public class ReSTWebServiceInterface extends AbstractWebServiceInterface
     }
 
     @Override
-    public MessageRouter getOperationRouter()
+    public WebServiceOperationRouter getOperationRouter()
     {
         // TODO Auto-generated method stub
         return null;

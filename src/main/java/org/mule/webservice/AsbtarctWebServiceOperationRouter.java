@@ -10,20 +10,16 @@
 
 package org.mule.webservice;
 
-import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
+import org.mule.webservice.api.WebServiceInterface;
 import org.mule.webservice.api.WebServiceOperationRouter;
 
-public class AsbtarctWebServiceOperationRouter implements WebServiceOperationRouter
+public abstract class AsbtarctWebServiceOperationRouter implements WebServiceOperationRouter
 {
+    protected WebServiceInterface webServiceInterface;
 
-    @Override
-    public MuleEvent process(MuleEvent event) throws MuleException
+    public AsbtarctWebServiceOperationRouter(WebServiceInterface webServiceInterface)
     {
-        // TODO Auto-generated method stub
-        return null;
+        this.webServiceInterface = webServiceInterface;
     }
 
 }
-
-

@@ -8,9 +8,9 @@ import java.util.List;
 
 public abstract class AbstractWebServiceInterface implements WebServiceInterface
 {
-    private String name;
+    protected String name;
 
-    private List<WebServiceRoute> routes;
+    protected List<WebServiceRoute> routes;
 
     public AbstractWebServiceInterface(String name)
     {
