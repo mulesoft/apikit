@@ -10,10 +10,10 @@
 
 package org.mule.webservice;
 
+import org.mule.api.processor.MessageProcessor;
 import org.mule.webservice.api.WebServiceInterface;
-import org.mule.webservice.api.WebServiceOperationRouter;
 
-public abstract class AsbtarctWebServiceOperationRouter implements WebServiceOperationRouter
+public abstract class AsbtarctWebServiceOperationRouter implements MessageProcessor
 {
     protected WebServiceInterface webServiceInterface;
 
