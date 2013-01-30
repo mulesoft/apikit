@@ -28,11 +28,6 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
         this.routes = routes;
     }
 
-    public void setRoutes(List<WebServiceRoute> routes)
-    {
-        this.operations = routes;
-    }
-
     @Override
     public String getName()
     {

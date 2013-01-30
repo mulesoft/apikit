@@ -18,7 +18,7 @@ public abstract class ReSTAbstractAction implements ReSTAction
     }
 
     @Override
-    public MessageProcessor getFlow()
+    public MessageProcessor getHandler()
     {
         return flow;
     }

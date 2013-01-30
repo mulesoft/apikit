@@ -17,7 +17,7 @@
             <xsd:complexContent>
                 <xsd:extension base="api:abstractWebServiceInterfaceType">
                     <xsd:sequence>
-                        <xsd:element ref="operation"/>
+                        <xsd:element ref="operation" />
                     </xsd:sequence>
                 </xsd:extension>
             </xsd:complexContent>
@@ -27,7 +27,16 @@
     <xsd:element name="operation" substitutionGroup="api:abstract-web-service-operation">
         <xsd:complexType>
             <xsd:complexContent>
-                <xsd:extension base="api:abstractWebServiceOperationType"/>
+                <xsd:extension base="api:abstractWebServiceOperationType">
+                    <xsd:attribute name="name" type="mule:nonBlankString" use="required">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                The name used to identify this flow construct.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+
+                </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>

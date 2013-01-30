@@ -15,10 +15,5 @@ import org.mule.api.processor.MessageProcessor;
 public interface WebServiceOperation extends WebServiceRoute
 {
 
-<<<<<<< HEAD
-    MessageProcessor getFlow();
-=======
     MessageProcessor getHandler();
->>>>>>> WIP Simple WS Service
-
 }

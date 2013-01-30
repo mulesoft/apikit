@@ -33,7 +33,7 @@ public class SOAPActionOperationRouter implements MessageProcessor
             return routes.get(soapAction).process(event);
         }
         else{
-            
+            return null;
         }
     }
     

@@ -68,7 +68,7 @@
 
     <xsd:complexType name="abstractActionType">
         <xsd:complexContent>
-            <xsd:extension base="api:abstractWebServiceOperation"/>
+            <xsd:extension base="api:abstractWebServiceOperationType"/>
         </xsd:complexContent>
     </xsd:complexType>
 

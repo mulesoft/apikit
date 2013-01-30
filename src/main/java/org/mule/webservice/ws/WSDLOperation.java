@@ -19,8 +19,8 @@ public class WSDLOperation extends AbstractWebServiceOperation
     public WSDLOperation(String name, MessageProcessor handler)
     {
         super(name, handler);
+    }
 
-<<<<<<< HEAD
     @Override
     public String getName()
     {
@@ -29,12 +29,10 @@ public class WSDLOperation extends AbstractWebServiceOperation
     }
 
     @Override
-    public MessageProcessor getFlow()
+    public MessageProcessor getHandler()
     {
         // TODO Auto-generated method stub
         return null;
-=======
->>>>>>> WIP Simple WS Service
     }
 
 }
