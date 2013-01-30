@@ -52,14 +52,22 @@
         </xsd:annotation>
     </xsd:element>
 
+<<<<<<< HEAD
     <xsd:element name="abstract-web-service-route" abstract="true" type="abstractWebServiceRoute">
         <xsd:annotation>
             <xsd:documentation>
                 A placeholder for web service routes.
+=======
+   <xsd:element name="abstract-web-service-operation" abstract="true" type="abstractWebServiceOperationType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A placeholder for web service elements.
+>>>>>>> WIP Simple WS Service
             </xsd:documentation>
         </xsd:annotation>
     </xsd:element>
 
+<<<<<<< HEAD
     <xsd:element name="abstract-web-service-operation" abstract="true" type="abstractWebServiceOperation">
         <xsd:annotation>
             <xsd:documentation>
@@ -67,6 +75,8 @@
             </xsd:documentation>
         </xsd:annotation>
     </xsd:element>
+=======
+>>>>>>> WIP Simple WS Service
 
     <xsd:complexType name="abstractWebServiceInterfaceType">
         <xsd:complexContent>
@@ -134,6 +144,7 @@
            </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+<<<<<<< HEAD
 
     <xsd:complexType name="abstractWebServiceRoute">
         <xsd:complexContent>
@@ -152,6 +163,37 @@
                     </xsd:annotation>
                 </xsd:attribute>
             </xsd:extension>
+=======
+    
+    <xsd:complexType name="abstractWebServiceOperationType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:annotatedType">
+                <xsd:sequence>
+                    <xsd:element name="description" type="mule:descriptionType" minOccurs="0">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                This can hold any kind of documentation related to the flow construct. It is intended to be "human readable" only and is not used by the system.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+                    <xsd:group ref="mule:messageSourceOrInboundEndpoint" minOccurs="0"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="mule:nonBlankString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The name used to identify this flow construct.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="flow-ref" type="mule:nonBlankString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Flow that is to handler operation.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+           </xsd:extension>
+>>>>>>> WIP Simple WS Service
         </xsd:complexContent>
     </xsd:complexType>
 

@@ -27,7 +27,7 @@ public class WSWebService extends AbstractWebService implements WebService
     @Override
     protected InterfaceRepresentationFilter getInterfaceRepresentationFilter()
     {
-        return null;
+        return new InterfaceRepresentationFilter("", webServiceInterface);
     }
 
 }

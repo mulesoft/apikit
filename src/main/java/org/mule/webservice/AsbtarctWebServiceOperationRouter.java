@@ -8,23 +8,22 @@
  * LICENSE.txt file.
  */
 
-package org.mule.webservice.ws;
+package org.mule.webservice;
 
-import org.mule.api.processor.MessageRouter;
-import org.mule.webservice.AbstractWebServiceInterface;
+import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
+import org.mule.webservice.api.WebServiceOperationRouter;
 
-public class WSWebServiceInterface extends AbstractWebServiceInterface
+public class AsbtarctWebServiceOperationRouter implements WebServiceOperationRouter
 {
 
-    public WSWebServiceInterface(String name)
-    {
-        super(name);
-    }
-
     @Override
-    public MessageRouter getOperationRouter()
+    public MuleEvent process(MuleEvent event) throws MuleException
     {
+        // TODO Auto-generated method stub
         return null;
     }
 
 }
+
+

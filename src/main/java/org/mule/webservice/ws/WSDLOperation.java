@@ -10,21 +10,17 @@
 
 package org.mule.webservice.ws;
 
-import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.webservice.api.WebServiceOperation;
+import org.mule.webservice.AbstractWebServiceOperation;
 
-public class WSDLOperation implements WebServiceOperation
+public class WSDLOperation extends AbstractWebServiceOperation
 {
 
-    @Override
-    public MuleEvent process(MuleEvent event) throws MuleException
+    public WSDLOperation(String name, MessageProcessor handler)
     {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        super(name, handler);
 
+<<<<<<< HEAD
     @Override
     public String getName()
     {
@@ -37,8 +33,8 @@ public class WSDLOperation implements WebServiceOperation
     {
         // TODO Auto-generated method stub
         return null;
+=======
+>>>>>>> WIP Simple WS Service
     }
 
 }
-
-

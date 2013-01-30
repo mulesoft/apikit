@@ -10,24 +10,29 @@
 
 package org.mule.module.wsapi.config;
 
-import org.mule.config.spring.parsers.generic.OrphanDefinitionParser;
+import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-public class WebServiceInterfaceDefinitionParser extends OrphanDefinitionParser
+public class WebServiceOperationDefinitionParser extends ChildDefinitionParser
 {
-    public WebServiceInterfaceDefinitionParser(Class clazz)
+
+    public static final String ATTRIBUTE_FLOW_REF = "flow-ref";
+
+    public WebServiceOperationDefinitionParser(String setterMethod, Class<?> clazz)
     {
-        super(clazz, true);
+        super(setterMethod, clazz);
         addIgnored(ATTRIBUTE_NAME);
+        addIgnored(ATTRIBUTE_FLOW_REF);
     }
 
-    @java.lang.Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
+    @Override
+    protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
         builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_NAME));
-        super.doParse(element, parserContext, builder);
+        builder.addConstructorArgReference(element.getAttribute(ATTRIBUTE_FLOW_REF));
+        super.parseChild(element, parserContext, builder);
     }
 }

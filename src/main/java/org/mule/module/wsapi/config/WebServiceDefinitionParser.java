@@ -25,7 +25,7 @@ public class WebServiceDefinitionParser extends OrphanDefinitionParser
     public WebServiceDefinitionParser(Class<? extends WebService> clazz)
     {
         super(clazz, true);
-        addIgnored("name");
+        addIgnored(ATTRIBUTE_NAME);
     }
 
     @java.lang.Override

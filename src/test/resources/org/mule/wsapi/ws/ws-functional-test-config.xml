@@ -11,8 +11,8 @@
         <ws:operation name="1" flow-ref="echo"/>
     </ws:interface>
 
-    <ws:service name="myService" interface-ref="myInterface">
-        <mule:inbound-endpoint address="http://localhost:8080/"/>
+    <ws:service name="myService" interface-ref="myInterface" >
+        <mule:inbound-endpoint address="http://localhost:8080" />
     </ws:service>
     
 </mule-api>

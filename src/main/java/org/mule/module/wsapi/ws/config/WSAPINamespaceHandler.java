@@ -10,20 +10,22 @@
 
 package org.mule.module.wsapi.ws.config;
 
+import org.mule.config.spring.handlers.AbstractMuleNamespaceHandler;
 import org.mule.module.wsapi.config.WebServiceDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceInterfaceDefinitionParser;
+import org.mule.module.wsapi.config.WebServiceOperationDefinitionParser;
+import org.mule.webservice.ws.WSDLOperation;
 import org.mule.webservice.ws.WSWebService;
 import org.mule.webservice.ws.WSWebServiceInterface;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
-
-public class WSAPINamespaceHandler extends NamespaceHandlerSupport
+public class WSAPINamespaceHandler extends AbstractMuleNamespaceHandler
 {
     public void init()
     {
         registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(
             WSWebServiceInterface.class));
         registerBeanDefinitionParser("service", new WebServiceDefinitionParser(WSWebService.class));
+        registerBeanDefinitionParser("operation", new WebServiceOperationDefinitionParser("route", WSDLOperation.class));
     }
 
 }

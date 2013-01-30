@@ -1,8 +1,8 @@
 
 package org.mule.webservice;
 
-import org.mule.webservice.api.WebServiceRoute;
 import org.mule.webservice.api.WebServiceInterface;
+import org.mule.webservice.api.WebServiceRoute;
 
 import java.util.List;
 
@@ -26,6 +26,11 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
     public void setRoutes(List<WebServiceRoute> routes)
     {
         this.routes = routes;
+    }
+
+    public void setRoutes(List<WebServiceRoute> routes)
+    {
+        this.operations = routes;
     }
 
     @Override

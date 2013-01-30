@@ -26,7 +26,7 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
     implements WebService
 {
 
-    private T webServiceInterface;
+    protected T webServiceInterface;
 
     public AbstractWebService(String name, T webServiceInterface, MuleContext muleContext)
     {
