@@ -10,12 +10,24 @@
 
 package org.mule.module.wsapi.ws;
 
+import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleException;
+import org.mule.api.MuleMessage;
 import org.mule.tck.junit4.FunctionalTestCase;
+import org.mule.webservice.api.WebServiceRoute;
+import org.mule.webservice.ws.WSDLOperation;
 
 import java.util.Collections;
 
+import javax.wsdl.Definition;
+import javax.wsdl.Operation;
+import javax.wsdl.PortType;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLWriter;
+import javax.xml.namespace.QName;
+
 import org.junit.Test;
+import org.w3c.dom.Document;
 
 public class WSFunctionalTestCase extends FunctionalTestCase
 {
@@ -33,15 +45,32 @@ public class WSFunctionalTestCase extends FunctionalTestCase
     @Test
     public void testWSDL() throws Exception
     {
-        System.out.println(muleContext.getClient().send("http://localhost:8080/ws/?wsdl", EMPTY_SOAP_ENVELOPE,
-            Collections.singletonMap("SOAPAction", (Object) "hello")).getPayloadAsString());
-    }
+        WSDLFactory wsdlFactory = javax.wsdl.factory.WSDLFactory.newInstance();
+        Definition wsdl =  wsdlFactory.newDefinition();
+        PortType portType = wsdl.createPortType();
+        portType.setQName(new QName("op1"));
+        wsdl.addPortType(portType);
 
-    @Test
-    public void testHelloWorldOperation() throws Exception
-    {
-        System.out.println(muleContext.getClient().send("http://localhost:8080/ws/", EMPTY_SOAP_ENVELOPE,
-            Collections.singletonMap("SOAPAction", (Object) "hello")).getPayloadAsString());
+            Operation operation = wsdl.createOperation();
+            operation.setName("op1");
+            portType.addOperation(operation);
+        WSDLWriter wsdlWriter = wsdlFactory.newWSDLWriter();
+        Document wsdlDocument = wsdlWriter.getDocument(wsdl);
+        MuleMessage message = new DefaultMuleMessage(wsdlDocument, muleContext);
+        System.out.println(message.getPayloadAsString());
+
+        
+        
+        
+//        System.out.println(muleContext.getClient().send("http://localhost:8080/ws/?wsdl", EMPTY_SOAP_ENVELOPE,
+//            Collections.singletonMap("SOAPAction", (Object) "hello")).getPayloadAsString());
+//    }
+//
+//    @Test
+//    public void testHelloWorldOperation() throws Exception
+//    {
+//        System.out.println(muleContext.getClient().send("http://localhost:8080/ws/", EMPTY_SOAP_ENVELOPE,
+//            Collections.singletonMap("SOAPAction", (Object) "hello")).getPayloadAsString());
     }
 
 }

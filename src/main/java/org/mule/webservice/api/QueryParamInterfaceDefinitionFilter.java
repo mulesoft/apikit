@@ -14,16 +14,30 @@ import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.MuleMessage;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
+import org.mule.webservice.ws.WSDLOperation;
+
+import javax.wsdl.Definition;
+import javax.wsdl.Operation;
+import javax.wsdl.PortType;
+import javax.wsdl.WSDLException;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLWriter;
+import javax.xml.namespace.QName;
+
+import org.w3c.dom.Document;
 
 public class QueryParamInterfaceDefinitionFilter extends AbstractInterceptingMessageProcessor
 {
 
     private String representionPattern;
+    private WebServiceInterface webServiceInterface;
 
     public QueryParamInterfaceDefinitionFilter(String representionPattern, WebServiceInterface webServiceInterface)
     {
         this.representionPattern = representionPattern;
+        this.webServiceInterface = webServiceInterface;
     }
 
     @Override
@@ -32,12 +46,49 @@ public class QueryParamInterfaceDefinitionFilter extends AbstractInterceptingMes
         String requestUri = event.getMessage().getInboundProperty("http.request");
         if (requestUri.endsWith(representionPattern))
         {
-            return new DefaultMuleEvent(new DefaultMuleMessage("<wsdl>", muleContext), event);
+            try
+            {
+                WSDLFactory wsdlFactory = javax.wsdl.factory.WSDLFactory.newInstance();
+                Definition wsdl =  wsdlFactory.newDefinition();
+                PortType portType = wsdl.createPortType();
+                portType.setQName(new QName(webServiceInterface.getName()));
+                wsdl.addPortType(portType);
+
+                for (WebServiceRoute route : webServiceInterface.getRoutes())
+                {
+                    WSDLOperation wsdlOperation = (WSDLOperation) route;
+                    Operation operation = wsdl.createOperation();
+                    operation.setName(wsdlOperation.getName());
+                    portType.addOperation(operation);
+                }
+                
+                WSDLWriter wsdlWriter = wsdlFactory.newWSDLWriter();
+                Document wsdlDocument = wsdlWriter.getDocument(wsdl);
+                MuleMessage message = new DefaultMuleMessage(wsdlDocument, muleContext);
+                System.out.println(message.getPayloadAsString());
+                
+                return new DefaultMuleEvent(message, event);
+            }
+            catch (WSDLException e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                return null;
+            }   
+            catch (Exception e)
+            {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+            
+            
         }
         else
-        {
+        {   
             return processNext(event);
         }
+        return event;
     }
 
 }
