@@ -13,21 +13,27 @@ package org.mule.module.wsapi.rest.config;
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceInterfaceDefinitionParser;
-import org.mule.webservice.rest.ReSTCreateAction;
-import org.mule.webservice.rest.ReSTDcoumentResource;
-import org.mule.webservice.rest.ReSTWebService;
-import org.mule.webservice.rest.ReSTWebServiceInterface;
+import org.mule.webservice.rest.RestWebService;
+import org.mule.webservice.rest.RestWebServiceInterface;
+import org.mule.webservice.rest.action.RestCreateAction;
+import org.mule.webservice.rest.action.RestRetrieveAction;
+import org.mule.webservice.rest.resource.RestCollectionResource;
+import org.mule.webservice.rest.resource.RestDocumentResource;
 
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
-public class ReSTAPINamespaceHandler extends NamespaceHandlerSupport
+public class RestAPINamespaceHandler extends NamespaceHandlerSupport
 {
     public void init()
     {
-        registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(ReSTWebServiceInterface.class));
-        registerBeanDefinitionParser("service", new WebServiceDefinitionParser(ReSTWebService.class));
-        registerBeanDefinitionParser("document-resource", new ChildDefinitionParser("route", ReSTDcoumentResource.class));
-        registerBeanDefinitionParser("create", new ChildDefinitionParser("action", ReSTCreateAction.class));
+        registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(RestWebServiceInterface.class));
+        registerBeanDefinitionParser("service", new WebServiceDefinitionParser(RestWebService.class));
+
+        registerBeanDefinitionParser("document-resource", new ChildDefinitionParser("route", RestDocumentResource.class));
+        registerBeanDefinitionParser("collection-resource", new ChildDefinitionParser("route", RestCollectionResource.class));
+
+        registerBeanDefinitionParser("create", new ChildDefinitionParser("action", RestCreateAction.class));
+        registerBeanDefinitionParser("retrieve", new ChildDefinitionParser("action", RestRetrieveAction.class));
     }
 
 }

@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule-api xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
     xmlns:rest="http://www.mulesoft.org/schema/mule/api-rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:rss="http://www.mulesoft.org/schema/mule/api"
+    xmlns:http="http://www.mulesoft.org/schema/mule/http"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
        http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
-       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <rest:interface name="myInterface">
-
         <rest:collection-resource name="leagues">
             <rest:retrieve flow-ref="retrieveLeagues"/>
-            <!--<rest:document-resource name="league">-->
-                <!--<rest:create flow-ref="createLeague"/>-->
-                <!--<rest:retrieve flow-ref="retrieveLeague"/>-->
-            <!--</rest:document-resource>-->
         </rest:collection-resource>
     </rest:interface>
 
-    <rest:service name="myService" interface-ref="myInterface" />
+    <rest:service name="myService" interface-ref="myInterface">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
+            <mule:object-to-string-transformer/>
+        </http:inbound-endpoint>
+    </rest:service>
 
 </mule-api>

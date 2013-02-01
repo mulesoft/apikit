@@ -11,7 +11,7 @@ public interface WebServiceInterface extends NamedObject
 
     // API Definition
     
-    List<WebServiceRoute> getRoutes();
+    List<? extends WebServiceRoute> getRoutes();
 
     
     // Runtime

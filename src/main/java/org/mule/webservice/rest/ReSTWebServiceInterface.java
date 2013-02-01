@@ -13,10 +13,9 @@ package org.mule.webservice.rest;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.webservice.AbstractWebServiceInterface;
 
-public class ReSTWebServiceInterface extends AbstractWebServiceInterface
+public class RestWebServiceInterface extends AbstractWebServiceInterface
 {
-
-    public ReSTWebServiceInterface(String name)
+    public RestWebServiceInterface(String name)
     {
         super(name);
     }
@@ -24,9 +23,15 @@ public class ReSTWebServiceInterface extends AbstractWebServiceInterface
     @Override
     public MessageProcessor getOperationRouter()
     {
-        // TODO Auto-generated method stub
-        return null;
+        if (getRoutes().size() != 1)
+        {
+            throw new IllegalStateException("One and only one rest resource can be the root");
+        }
+        return new RestMessageProcessor(this);
     }
 
-
+    public boolean isUseRelativePath()
+    {
+        return false;  //To change body of created methods use File | Settings | File Templates.
+    }
 }

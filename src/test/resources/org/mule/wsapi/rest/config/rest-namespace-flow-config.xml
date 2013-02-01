@@ -8,4 +8,12 @@
         <logger/>
     </flow>
 
+    <flow name="retrieveLeague">
+        <logger/>
+    </flow>
+
+    <flow name="retrieveLeagues">
+        <logger/>
+    </flow>
+
 </mule>

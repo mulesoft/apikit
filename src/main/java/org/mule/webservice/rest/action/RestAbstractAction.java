@@ -1,14 +1,14 @@
-package org.mule.webservice.rest;
+package org.mule.webservice.rest.action;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 
-public abstract class ReSTAbstractAction implements ReSTAction
+public abstract class RestAbstractAction implements RestAction
 {
 
     protected String name;
-
+    protected ResourceOperationType type;
     protected MessageProcessor flow;
 
     @Override
@@ -29,8 +29,14 @@ public abstract class ReSTAbstractAction implements ReSTAction
     }
 
     @Override
+    public ResourceOperationType getType()
+    {
+        return type;
+    }
+
+    @Override
     public MuleEvent process(MuleEvent muleEvent) throws MuleException
     {
-        return null;
+        return getHandler().process(muleEvent);
     }
 }

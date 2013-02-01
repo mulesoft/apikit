@@ -8,12 +8,14 @@
  * LICENSE.txt file.
  */
 
-package org.mule.webservice.rest;
+package org.mule.webservice.rest.protocol;
+
+import org.mule.webservice.rest.action.ResourceOperationType;
 
 import java.net.URI;
 import java.util.Map;
 
-public interface ReSTProtocolAdaptor
+public interface RestProtocolAdapter
 {
 
     ResourceOperationType getActionType();

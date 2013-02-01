@@ -15,12 +15,12 @@ import static org.junit.Assert.assertNotNull;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.webservice.api.WebService;
-import org.mule.webservice.rest.ReSTWebService;
-import org.mule.webservice.rest.ReSTWebServiceInterface;
+import org.mule.webservice.rest.RestWebService;
+import org.mule.webservice.rest.RestWebServiceInterface;
 
 import org.junit.Test;
 
-public class ReSTNamespaceHandlerFunctionalTestCase extends FunctionalTestCase
+public class RestNamespaceHandlerFunctionalTestCase extends FunctionalTestCase
 {
 
     @Override
@@ -33,7 +33,7 @@ public class ReSTNamespaceHandlerFunctionalTestCase extends FunctionalTestCase
     public void testInterfaceCreation() throws Exception
     {
         assertNotNull(muleContext.getRegistry().lookupObject("myInterface"));
-        assertEquals(ReSTWebServiceInterface.class, muleContext.getRegistry()
+        assertEquals(RestWebServiceInterface.class, muleContext.getRegistry()
             .lookupObject("myInterface")
             .getClass());
     }
@@ -42,7 +42,7 @@ public class ReSTNamespaceHandlerFunctionalTestCase extends FunctionalTestCase
     public void testServiceCreation() throws Exception
     {
         assertNotNull(muleContext.getRegistry().lookupObject("myService"));
-        assertEquals(ReSTWebService.class, muleContext.getRegistry().lookupObject("myService").getClass());
+        assertEquals(RestWebService.class, muleContext.getRegistry().lookupObject("myService").getClass());
     }
 
     @Test

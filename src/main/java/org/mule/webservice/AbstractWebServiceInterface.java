@@ -18,7 +18,7 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
     }
 
     @Override
-    public List<WebServiceRoute> getRoutes()
+    public List<? extends WebServiceRoute> getRoutes()
     {
         return routes;
     }

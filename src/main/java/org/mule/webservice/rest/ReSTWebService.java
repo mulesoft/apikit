@@ -16,10 +16,10 @@ import org.mule.webservice.api.QueryParamInterfaceDefinitionFilter;
 import org.mule.webservice.api.WebService;
 import org.mule.webservice.api.WebServiceInterface;
 
-public class ReSTWebService extends AbstractWebService implements WebService
+public class RestWebService extends AbstractWebService implements WebService
 {
 
-    public ReSTWebService(String name, WebServiceInterface webServiceInterface, MuleContext muleContext)
+    public RestWebService(String name, WebServiceInterface webServiceInterface, MuleContext muleContext)
     {
         super(name, webServiceInterface, muleContext);
     }
