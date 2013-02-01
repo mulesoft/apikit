@@ -34,11 +34,16 @@ public class SOAPActionOperationRouter extends AsbtarctWebServiceOperationRouter
         {
             if (route.getName().equals(soapAction))
             {
-                return route.process(event);
+                return new DefaultMuleEvent(new DefaultMuleMessage("<soap:Envelope><soap:Body>"
+                                                                   + route.process(event)
+                                                                       .getMessageAsString()
+                                                                   + "</soap:Body></soap:Envelope>",
+                    event.getMuleContext()), event);
             }
         }
-        return new DefaultMuleEvent(new DefaultMuleMessage("<soap:Envelope><soap:Fault>NO OPERATION FOUND</soap:Fault></soap:Envelope>", event.getMuleContext()),
-            event);
+        return new DefaultMuleEvent(new DefaultMuleMessage(
+            "<soap:Envelope><soap:Fault>NO OPERATION FOUND</soap:Fault></soap:Envelope>",
+            event.getMuleContext()), event);
     }
 
 }

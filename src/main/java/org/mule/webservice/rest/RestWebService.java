@@ -11,6 +11,8 @@
 package org.mule.webservice.rest;
 
 import org.mule.api.MuleContext;
+import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.webservice.AbstractWebService;
 import org.mule.webservice.api.QueryParamInterfaceDefinitionFilter;
 import org.mule.webservice.api.WebService;
@@ -27,7 +29,14 @@ public class RestWebService extends AbstractWebService implements WebService
     @Override
     protected QueryParamInterfaceDefinitionFilter getInterfaceRepresentationFilter()
     {
-        return null;
+        return new QueryParamInterfaceDefinitionFilter(initialState, this)
+        {
+            @Override
+            public MuleEvent process(MuleEvent event) throws MuleException
+            {
+                return processNext(event);
+            }
+        };
     }
 
 }

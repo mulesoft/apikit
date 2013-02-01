@@ -32,12 +32,12 @@ public class QueryParamInterfaceDefinitionFilter extends AbstractInterceptingMes
 {
 
     private String representionPattern;
-    private WebServiceInterface webServiceInterface;
+    private WebService webService;
 
-    public QueryParamInterfaceDefinitionFilter(String representionPattern, WebServiceInterface webServiceInterface)
+    public QueryParamInterfaceDefinitionFilter(String representionPattern, WebService webService)
     {
         this.representionPattern = representionPattern;
-        this.webServiceInterface = webServiceInterface;
+        this.webService = webService;
     }
 
     @Override
@@ -49,46 +49,39 @@ public class QueryParamInterfaceDefinitionFilter extends AbstractInterceptingMes
             try
             {
                 WSDLFactory wsdlFactory = javax.wsdl.factory.WSDLFactory.newInstance();
-                Definition wsdl =  wsdlFactory.newDefinition();
+                Definition wsdl = wsdlFactory.newDefinition();
                 PortType portType = wsdl.createPortType();
-                portType.setQName(new QName(webServiceInterface.getName()));
+                portType.setQName(new QName(webService.getInterface().getName()));
                 wsdl.addPortType(portType);
 
-                for (WebServiceRoute route : webServiceInterface.getRoutes())
+                for (WebServiceRoute route : webService.getInterface().getRoutes())
                 {
                     WSDLOperation wsdlOperation = (WSDLOperation) route;
                     Operation operation = wsdl.createOperation();
                     operation.setName(wsdlOperation.getName());
+                    operation.setUndefined(false);
                     portType.addOperation(operation);
+                    portType.setUndefined(false);
                 }
-                
+
                 WSDLWriter wsdlWriter = wsdlFactory.newWSDLWriter();
                 Document wsdlDocument = wsdlWriter.getDocument(wsdl);
                 MuleMessage message = new DefaultMuleMessage(wsdlDocument, muleContext);
-                System.out.println(message.getPayloadAsString());
-                
                 return new DefaultMuleEvent(message, event);
             }
             catch (WSDLException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
                 return null;
-            }   
+            }
             catch (Exception e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                return null;
             }
-            
-            
-            
         }
         else
-        {   
+        {
             return processNext(event);
         }
-        return event;
     }
 
 }
