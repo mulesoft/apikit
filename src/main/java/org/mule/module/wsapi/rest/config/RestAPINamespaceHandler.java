@@ -13,12 +13,12 @@ package org.mule.module.wsapi.rest.config;
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceInterfaceDefinitionParser;
-import org.mule.webservice.rest.RestWebService;
-import org.mule.webservice.rest.RestWebServiceInterface;
-import org.mule.webservice.rest.action.RestCreateAction;
-import org.mule.webservice.rest.action.RestRetrieveAction;
-import org.mule.webservice.rest.resource.RestCollectionResource;
-import org.mule.webservice.rest.resource.RestDocumentResource;
+import org.mule.module.wsapi.rest.RestWebService;
+import org.mule.module.wsapi.rest.RestWebServiceInterface;
+import org.mule.module.wsapi.rest.action.RestCreateAction;
+import org.mule.module.wsapi.rest.action.RestRetrieveAction;
+import org.mule.module.wsapi.rest.resource.RestCollectionResource;
+import org.mule.module.wsapi.rest.resource.RestDocumentResource;
 
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 

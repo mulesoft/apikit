@@ -12,7 +12,7 @@ package org.mule.module.wsapi.config;
 
 import org.mule.api.config.MuleProperties;
 import org.mule.config.spring.parsers.generic.OrphanDefinitionParser;
-import org.mule.webservice.api.WebService;
+import org.mule.module.wsapi.api.WebService;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;

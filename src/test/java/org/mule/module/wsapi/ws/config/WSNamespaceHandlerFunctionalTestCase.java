@@ -13,10 +13,10 @@ package org.mule.module.wsapi.ws.config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.mule.module.wsapi.api.WebService;
+import org.mule.module.wsapi.ws.WSWebService;
+import org.mule.module.wsapi.ws.WSWebServiceInterface;
 import org.mule.tck.junit4.FunctionalTestCase;
-import org.mule.webservice.api.WebService;
-import org.mule.webservice.ws.WSWebService;
-import org.mule.webservice.ws.WSWebServiceInterface;
 
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class WSNamespaceHandlerFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/wsapi/ws/config/ws-namespace-config.xml, org/mule/wsapi/echo-config.xml";
+        return "org/mule/module/wsapi/ws/config/ws-namespace-config.xml, org/mule/module/wsapi/echo-config.xml";
     }
 
     @Test

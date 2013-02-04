@@ -16,14 +16,14 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="api:abstractWebServiceInterfaceType">
-                    <xsd:sequence>
-                        <xsd:element name="collection-resource" type="collectionResourceType" minOccurs="0" maxOccurs="1"/>
-                        <xsd:element name="document-resource" type="documentResourceType" minOccurs="0" maxOccurs="1"/>
+                    <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                        <xsd:element name="collection-resource" type="collectionResourceType"/>
+                        <xsd:element name="document-resource" type="documentResourceType"/>
                         <!--
                         <xsd:element name="controller-resource" type="controllerResourceType" minOccurs="0" maxOccurs="1"/>
                         <xsd:element name="store-resource" type="storeResourceType" minOccurs="0" maxOccurs="1"/>
                         -->
-                    </xsd:sequence>
+                    </xsd:choice>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

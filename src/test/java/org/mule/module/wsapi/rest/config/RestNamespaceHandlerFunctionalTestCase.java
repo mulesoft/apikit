@@ -13,10 +13,10 @@ package org.mule.module.wsapi.rest.config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.mule.module.wsapi.api.WebService;
+import org.mule.module.wsapi.rest.RestWebService;
+import org.mule.module.wsapi.rest.RestWebServiceInterface;
 import org.mule.tck.junit4.FunctionalTestCase;
-import org.mule.webservice.api.WebService;
-import org.mule.webservice.rest.RestWebService;
-import org.mule.webservice.rest.RestWebServiceInterface;
 
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class RestNamespaceHandlerFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/wsapi/rest/config/rest-namespace-config.xml, org/mule/wsapi/rest/config/rest-namespace-flow-config.xml";
+        return "org/mule/module/wsapi/rest/config/rest-namespace-config.xml, org/mule/module/wsapi/rest/config/rest-namespace-flow-config.xml";
     }
 
     @Test
