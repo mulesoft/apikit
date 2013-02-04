@@ -18,9 +18,12 @@ import org.mule.api.MuleMessage;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
 import org.mule.webservice.ws.WSDLOperation;
 
+import javax.wsdl.Binding;
 import javax.wsdl.Definition;
 import javax.wsdl.Operation;
+import javax.wsdl.Port;
 import javax.wsdl.PortType;
+import javax.wsdl.Service;
 import javax.wsdl.WSDLException;
 import javax.wsdl.factory.WSDLFactory;
 import javax.wsdl.xml.WSDLWriter;
@@ -63,6 +66,16 @@ public class QueryParamInterfaceDefinitionFilter extends AbstractInterceptingMes
                     portType.addOperation(operation);
                     portType.setUndefined(false);
                 }
+                
+                Service service = wsdl.createService();
+                service.setQName(new QName(webService.getInterface().getName()));
+                Binding binding = wsdl.createBinding();
+                binding.setUndefined(false);
+                service.setQName(new QName(webService.getInterface().getName()));
+                service.
+                Port port = wsdl.createPort();
+                service.addPort(port);
+                wsdl.addService(service);
 
                 WSDLWriter wsdlWriter = wsdlFactory.newWSDLWriter();
                 Document wsdlDocument = wsdlWriter.getDocument(wsdl);
