@@ -33,6 +33,12 @@ public class RestFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void resourceNotFound() throws Exception
+    {
+        expect().response().statusCode(404).when().head("/api");
+    }
+
+    @Test
     public void noHeadOnCollection() throws Exception
     {
         expect().response().statusCode(405).when().head("/api/leagues");

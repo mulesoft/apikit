@@ -1,6 +1,8 @@
 package org.mule.module.wsapi.rest;
 
+import org.mule.VoidMuleEvent;
 import org.mule.api.DefaultMuleException;
+import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
@@ -8,6 +10,7 @@ import org.mule.module.wsapi.rest.action.RestActionNotAllowedException;
 import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
 import org.mule.module.wsapi.rest.protocol.RestProtocolAdapterFactory;
 import org.mule.module.wsapi.rest.resource.RestResource;
+import org.mule.module.wsapi.rest.resource.RestResourceNotFoundException;
 import org.mule.module.wsapi.rest.uri.ResolvedVariables;
 import org.mule.module.wsapi.rest.uri.URIPattern;
 import org.mule.module.wsapi.rest.uri.URIResolver;
@@ -119,9 +122,10 @@ public class RestMessageProcessor implements MessageProcessor
         {
             uriPattern = resolveVariables(muleEvent, path);
         }
-        catch (ExecutionException e)
+        catch (Exception e)
         {
-            throw new DefaultMuleException(e);
+            muleEvent.getMessage().setOutboundProperty("http.status", 404);
+            throw new RestResourceNotFoundException("Resource not found: " + path, muleEvent);
         }
 
         try
