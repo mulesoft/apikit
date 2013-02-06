@@ -30,8 +30,4 @@ public class RestWebServiceInterface extends AbstractWebServiceInterface
         return new RestMessageProcessor(this);
     }
 
-    public boolean isUseRelativePath()
-    {
-        return false;  //To change body of created methods use File | Settings | File Templates.
-    }
 }

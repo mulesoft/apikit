@@ -1,8 +1,5 @@
 package org.mule.module.wsapi.rest;
 
-import org.mule.VoidMuleEvent;
-import org.mule.api.DefaultMuleException;
-import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
@@ -124,7 +121,7 @@ public class RestMessageProcessor implements MessageProcessor
         }
         catch (Exception e)
         {
-            muleEvent.getMessage().setOutboundProperty("http.status", 404);
+            protocolAdapter.statusResourceNotFound(muleEvent);
             throw new RestResourceNotFoundException("Resource not found: " + path, muleEvent);
         }
 
@@ -134,7 +131,7 @@ public class RestMessageProcessor implements MessageProcessor
             resource.getAction(protocolAdapter.getActionType(), muleEvent).process(muleEvent);
         }
         catch (RestActionNotAllowedException rana) {
-            muleEvent.getMessage().setOutboundProperty("http.status", 405);
+            protocolAdapter.statusActionNotAllowed(muleEvent);
         }
 
         return muleEvent;
@@ -142,7 +139,7 @@ public class RestMessageProcessor implements MessageProcessor
 
     protected RestProtocolAdapter getProtocolAdapter(MuleEvent muleEvent)
     {
-        return RestProtocolAdapterFactory.getInstance().getAdapterForEvent(muleEvent, restInterface.isUseRelativePath());
+        return RestProtocolAdapterFactory.getInstance().getAdapterForEvent(muleEvent);
     }
 
     protected URIPattern resolveVariables(MuleEvent muleEvent, String path) throws ExecutionException

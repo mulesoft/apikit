@@ -31,13 +31,13 @@ public final class RestProtocolAdapterFactory
         return INSTANCE;
     }
 
-    public RestProtocolAdapter getAdapterForEvent(MuleEvent event, boolean useRelativePath)
+    public RestProtocolAdapter getAdapterForEvent(MuleEvent event)
     {
         String scheme = event.getMessageSourceURI().getScheme();
         if (scheme.equals("http") || scheme.equals("https") ||
             scheme.equals("niohttp") || scheme.equals("niohttps"))
         {
-            return new HttpRestProtocolAdapter(event, useRelativePath);
+            return new HttpRestProtocolAdapter(event);
         }
         else
         {

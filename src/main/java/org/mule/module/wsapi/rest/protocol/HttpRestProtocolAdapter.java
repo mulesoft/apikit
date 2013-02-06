@@ -25,7 +25,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     private String contentType;
     private Map<String, Object> queryParams;
     
-    public HttpRestProtocolAdapter(MuleEvent event, boolean useRelativePath)
+    public HttpRestProtocolAdapter(MuleEvent event)
     {
         URI baseUri = event.getMessageSourceURI();
         if( event.getMessage().getInboundProperty("Host") != null )
@@ -38,14 +38,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
                 try
                 {
                     String requestPath;
-                    if( !useRelativePath )
-                    {
-                       requestPath = (String)event.getMessage().getInboundProperty("http.request.path");
-                    }
-                    else
-                    {
-                       requestPath = "/" + event.getMessage().getInboundProperty("http.relative.path");
-                    }
+                    requestPath = (String)event.getMessage().getInboundProperty("http.request.path");
                     this.resourceURI = new URI("http", null, host, port, requestPath, null, null);
                 }
                 catch (URISyntaxException e)
@@ -58,14 +51,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
                 try
                 {
                     String requestPath;
-                    if( !useRelativePath )
-                    {
-                        requestPath = (String)event.getMessage().getInboundProperty("http.request.path");
-                    }
-                    else
-                    {
-                        requestPath = "/" + event.getMessage().getInboundProperty("http.relative.path");
-                    }
+                    requestPath = (String)event.getMessage().getInboundProperty("http.request.path");
                     this.resourceURI = new URI("http", null, (String)event.getMessage().getInboundProperty("Host"), 80, requestPath, null, null);
                 }
                 catch (URISyntaxException e)
@@ -126,6 +112,18 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     public Map<String, Object> getQueryParameters()
     {
         return queryParams;
+    }
+
+    @Override
+    public void statusResourceNotFound(MuleEvent muleEvent)
+    {
+        muleEvent.getMessage().setOutboundProperty("http.status", 404);
+    }
+
+    @Override
+    public void statusActionNotAllowed(MuleEvent muleEvent)
+    {
+        muleEvent.getMessage().setOutboundProperty("http.status", 405);
     }
 
 }
