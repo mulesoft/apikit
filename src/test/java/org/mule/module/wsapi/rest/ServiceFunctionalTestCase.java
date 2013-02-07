@@ -30,10 +30,60 @@ public class ServiceFunctionalTestCase extends FunctionalTestCase
         return "org/mule/module/wsapi/rest/service-config.xml, org/mule/module/wsapi/test-flows-config.xml";
     }
 
+    // Base URI
+
     @Test
-    public void getBookmarkURIJSON() throws Exception
+    public void baseUriPutNotAllowed() throws Exception
+    {
+        given().expect().response().statusCode(405).when().put("/api");
+        // TODO Update once "GET" is supported to assert existence of "Allow" header
+        // given().expect().response().statusCode(405).header("Allow", "GET").when().put("/api");
+    }
+
+    @Test
+    public void baseUriPostNotAllowed() throws Exception
+    {
+        given().expect().response().statusCode(405).when().post("/api");
+        // TODO Update once "GET" is supported to assert existence of "Allow" header
+        // given().expect().response().statusCode(405).header("Allow", "GET").when().post("/api");
+    }
+
+    @Test
+    public void baseUriDeleteNotAllowed() throws Exception
+    {
+        given().expect().response().statusCode(405).when().delete("/api");
+        // TODO Update once "GET" is supported to assert existence of "Allow" header
+        // given().expect().response().statusCode(405).header("Allow", "GET").when().delete("/api");
+    }
+
+    @Test
+    public void baseUriHead() throws Exception
     {
         given().contentType(ContentType.JSON).expect().response().statusCode(404).when().get("/api");
+        given().contentType(ContentType.XML).expect().response().statusCode(404).when().get("/api");
+        given().contentType(ContentType.TEXT).expect().response().statusCode(404).when().get("/api");
+        given().contentType(ContentType.HTML).expect().response().statusCode(404).when().get("/api");
+    }
+
+    @Test
+    public void baseUriGet() throws Exception
+    {
+        // No support for 'index' representation currently for any request representation.
+        given().contentType(ContentType.JSON).expect().response().statusCode(404).when().get("/api");
+        given().contentType(ContentType.XML).expect().response().statusCode(404).when().get("/api");
+        given().contentType(ContentType.TEXT).expect().response().statusCode(404).when().get("/api");
+        given().contentType(ContentType.HTML).expect().response().statusCode(404).when().get("/api");
+    }
+
+    @Test
+    public void baseUriGetSwagger() throws Exception
+    {
+        given().contentType("application/swagger+json")
+            .expect()
+            .response()
+            .statusCode(404)
+            .when()
+            .get("/api");
     }
 
 }
