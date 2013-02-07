@@ -10,7 +10,6 @@ import org.mule.module.wsapi.rest.action.RestAction;
 import org.mule.module.wsapi.rest.action.RestActionNotAllowedException;
 import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
 
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,17 +107,15 @@ public abstract class AbstractRestResource implements RestResource
     @Override
     public MuleEvent processPath(MuleEvent muleEvent, RestProtocolAdapter protocolAdapter) throws MuleException
     {
-        String pathElement = protocolAdapter.getNextPathElement();
-        RestResource resource = routingTable.get(pathElement);
         if (protocolAdapter.hasMorePathElements())
         {
-            resource.processPath(muleEvent, protocolAdapter);
+            routingTable.get(protocolAdapter.getNextPathElement()).processPath(muleEvent, protocolAdapter);
         }
         else
         {
             try
             {
-                resource.getAction(protocolAdapter.getActionType(), muleEvent).process(muleEvent);
+                this.getAction(protocolAdapter.getActionType(), muleEvent).process(muleEvent);
             }
             catch (RestActionNotAllowedException rana)
             {

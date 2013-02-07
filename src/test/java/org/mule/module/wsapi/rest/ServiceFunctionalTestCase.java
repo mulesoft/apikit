@@ -59,20 +59,20 @@ public class ServiceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void baseUriHead() throws Exception
     {
-        given().contentType(ContentType.JSON).expect().response().statusCode(404).when().get("/api");
-        given().contentType(ContentType.XML).expect().response().statusCode(404).when().get("/api");
-        given().contentType(ContentType.TEXT).expect().response().statusCode(404).when().get("/api");
-        given().contentType(ContentType.HTML).expect().response().statusCode(404).when().get("/api");
+        given().contentType(ContentType.JSON).expect().response().statusCode(405).when().get("/api");
+        given().contentType(ContentType.XML).expect().response().statusCode(405).when().get("/api");
+        given().contentType(ContentType.TEXT).expect().response().statusCode(405).when().get("/api");
+        given().contentType(ContentType.HTML).expect().response().statusCode(405).when().get("/api");
     }
 
     @Test
     public void baseUriGet() throws Exception
     {
         // No support for 'index' representation currently for any request representation.
-        given().contentType(ContentType.JSON).expect().response().statusCode(404).when().get("/api");
-        given().contentType(ContentType.XML).expect().response().statusCode(404).when().get("/api");
-        given().contentType(ContentType.TEXT).expect().response().statusCode(404).when().get("/api");
-        given().contentType(ContentType.HTML).expect().response().statusCode(404).when().get("/api");
+        given().contentType(ContentType.JSON).expect().response().statusCode(405).when().get("/api");
+        given().contentType(ContentType.XML).expect().response().statusCode(405).when().get("/api");
+        given().contentType(ContentType.TEXT).expect().response().statusCode(405).when().get("/api");
+        given().contentType(ContentType.HTML).expect().response().statusCode(405).when().get("/api");
     }
 
     @Test
@@ -81,7 +81,7 @@ public class ServiceFunctionalTestCase extends FunctionalTestCase
         given().contentType("application/swagger+json")
             .expect()
             .response()
-            .statusCode(404)
+            .statusCode(405)
             .when()
             .get("/api");
     }
