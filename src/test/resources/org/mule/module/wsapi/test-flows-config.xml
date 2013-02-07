@@ -19,11 +19,15 @@
     </flow>
 
     <flow name="retrieveLeague">
-        <logger />
+        <set-payload value="Liga BBVA"/>
     </flow>
 
     <flow name="retrieveLeagues">
-        <set-payload value="Liga BBVA"/>
+        <set-payload value="Liga BBVA, Premier League"/>
+    </flow>
+
+    <flow name="retrieveLeagueAssociation">
+        <set-payload value="Royal Spanish Football Association"/>
     </flow>
 
 </mule>

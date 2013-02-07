@@ -2,19 +2,31 @@
 package org.mule.module.wsapi.rest.resource;
 
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.module.wsapi.api.WebServiceRoute;
 import org.mule.module.wsapi.rest.action.ActionType;
 import org.mule.module.wsapi.rest.action.RestAction;
 import org.mule.module.wsapi.rest.action.RestActionNotAllowedException;
+import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
 
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractRestResource implements RestResource
 {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     protected String name;
-    protected List<RestResource> resources;
+    protected List<? extends WebServiceRoute> routes;
     protected String templateUri;
     protected List<RestAction> actions;
+    protected Map<String, RestResource> routingTable;
 
     @Override
     public String getName()
@@ -32,15 +44,9 @@ public abstract class AbstractRestResource implements RestResource
     {
         if (this.templateUri != null)
         {
-            return getParentTemplateUri() + "/" + this.templateUri;
+            return this.templateUri;
         }
-        return getParentTemplateUri() + "/" + getName();
-        //return getParent().getTemplateUri() + "/{" + pathParameter.getName() + "}";
-    }
-
-    private String getParentTemplateUri()
-    {
-        return "/api";  //TODO
+        return getName();
     }
 
     public void setTemplateUri(String templateUri)
@@ -51,7 +57,7 @@ public abstract class AbstractRestResource implements RestResource
     @Override
     public List<RestResource> getResources()
     {
-        return resources;
+        return (List<RestResource>) getRoutes();
     }
 
     public List<RestAction> getActions()
@@ -98,4 +104,56 @@ public abstract class AbstractRestResource implements RestResource
     {
         return getSupportedActions().contains(actionType);
     }
+
+    @Override
+    public MuleEvent processPath(MuleEvent muleEvent, RestProtocolAdapter protocolAdapter) throws MuleException
+    {
+        String pathElement = protocolAdapter.getNextPathElement();
+        RestResource resource = routingTable.get(pathElement);
+        if (protocolAdapter.hasMorePathElements())
+        {
+            resource.processPath(muleEvent, protocolAdapter);
+        }
+        else
+        {
+            try
+            {
+                resource.getAction(protocolAdapter.getActionType(), muleEvent).process(muleEvent);
+            }
+            catch (RestActionNotAllowedException rana)
+            {
+                protocolAdapter.statusActionNotAllowed(muleEvent);
+            }
+        }
+        return muleEvent;
+    }
+
+    @Override
+    public void buildRoutingTable()
+    {
+        routingTable = new HashMap<String, RestResource>();
+        if (getResources() == null)
+        {
+            return;
+        }
+        for (RestResource resource : getResources())
+        {
+            String uriPattern = resource.getTemplateUri();
+            logger.debug("Adding URI to the routing table: " + uriPattern);
+            routingTable.put(uriPattern, resource);
+            resource.buildRoutingTable();
+        }
+    }
+
+    @Override
+    public List<? extends WebServiceRoute> getRoutes()
+    {
+        return routes;
+    }
+
+    public void setRoutes(List<? extends WebServiceRoute> routes)
+    {
+        this.routes = routes;
+    }
+
 }

@@ -15,19 +15,24 @@ import org.mule.module.wsapi.rest.action.ActionType;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.Deque;
 import java.util.Map;
 
 public class HttpRestProtocolAdapter implements RestProtocolAdapter
 {
+    private URI baseURI;
     private ActionType actionType;
     private URI resourceURI;
     private String acceptHeader;
     private String contentType;
     private Map<String, Object> queryParams;
+    private Deque<String> pathStack;
     
     public HttpRestProtocolAdapter(MuleEvent event)
     {
-        URI baseUri = event.getMessageSourceURI();
+        this.baseURI = event.getMessageSourceURI();
         if( event.getMessage().getInboundProperty("Host") != null )
         {
             String hostHeader = event.getMessage().getInboundProperty("Host");
@@ -64,7 +69,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         {
             try
             {
-                this.resourceURI = new URI("http", null, baseUri.getHost(), baseUri.getPort(), (String)event.getMessage().getInboundProperty("http.request.path"), null, null);
+                this.resourceURI = new URI("http", null, baseURI.getHost(), baseURI.getPort(), (String)event.getMessage().getInboundProperty("http.request.path"), null, null);
             }
             catch (URISyntaxException e)
             {
@@ -82,6 +87,21 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         }
 
         this.queryParams = event.getMessage().getInboundProperty("http.query.params");
+        initPathStack();
+    }
+
+    private void initPathStack()
+    {
+        Deque<String> pathStack = new ArrayDeque<String>(Arrays.asList(resourceURI.getPath().split("/")));
+        //TODO: does not work with base paths with more than one element e.g: /a/b
+        String baseURIPath = baseURI.getPath().substring(1);
+
+        String pathElement = pathStack.removeFirst();
+        while (!pathElement.equals(baseURIPath))
+        {
+            pathElement = pathStack.removeFirst();
+        }
+        this.pathStack = pathStack;
     }
 
     @Override
@@ -124,6 +144,22 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     public void statusActionNotAllowed(MuleEvent muleEvent)
     {
         muleEvent.getMessage().setOutboundProperty("http.status", 405);
+    }
+
+    @Override
+    public String getNextPathElement()
+    {
+        if (pathStack.isEmpty())
+        {
+            throw new IllegalStateException("No more path elements!");
+        }
+        return pathStack.removeFirst();
+    }
+
+    @Override
+    public boolean hasMorePathElements()
+    {
+        return !pathStack.isEmpty();
     }
 
 }

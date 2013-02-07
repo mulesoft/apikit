@@ -9,9 +9,12 @@
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <rest:interface name="myInterface">
-        <rest:collection-resource name="leagues">
-            <rest:retrieve flow-ref="retrieveLeagues"/>
-        </rest:collection-resource>
+        <rest:document-resource name="league">
+            <rest:retrieve flow-ref="retrieveLeague"/>
+            <rest:document-resource name="association">
+                <rest:retrieve flow-ref="retrieveLeagueAssociation"/>
+            </rest:document-resource>
+        </rest:document-resource>
     </rest:interface>
 
     <rest:service name="myService" interface-ref="myInterface">

@@ -32,4 +32,8 @@ public interface RestProtocolAdapter
     void statusResourceNotFound(MuleEvent muleEvent);
 
     void statusActionNotAllowed(MuleEvent muleEvent);
+
+    String getNextPathElement();
+
+    boolean hasMorePathElements();
 }
