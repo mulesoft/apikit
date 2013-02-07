@@ -12,7 +12,7 @@ import com.jayway.restassured.http.ContentType;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class BookmarkURITestCase extends FunctionalTestCase
+public class ServiceFunctionalTestCase extends FunctionalTestCase
 {
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
@@ -27,7 +27,7 @@ public class BookmarkURITestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/wsapi/rest/bookmark-uri-config.xml,  org/mule/module/wsapi/rest/flow-config.xml";
+        return "org/mule/module/wsapi/rest/service-config.xml, org/mule/module/wsapi/test-flows-config.xml";
     }
 
     @Test

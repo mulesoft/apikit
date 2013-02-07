@@ -1,6 +1,7 @@
 
 package org.mule.module.wsapi;
 
+import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.api.WebServiceInterface;
 import org.mule.module.wsapi.api.WebServiceRoute;
 
@@ -9,6 +10,7 @@ import java.util.List;
 public abstract class AbstractWebServiceInterface implements WebServiceInterface
 {
     protected String name;
+    protected String description;
 
     protected List<WebServiceRoute> routes;
 
@@ -33,5 +35,18 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
     {
         return name;
     }
+
+    @Override
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+    
+    public abstract MessageProcessor getOperationRouter();
 
 }

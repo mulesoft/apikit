@@ -7,5 +7,7 @@ public interface WebService extends FlowConstruct
 {
 
     WebServiceInterface getInterface();
+    
+    String getDescription();
 
 }

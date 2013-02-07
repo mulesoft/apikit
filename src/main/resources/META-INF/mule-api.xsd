@@ -72,13 +72,7 @@
         <xsd:complexContent>
             <xsd:extension base="mule:annotatedType">
                 <xsd:sequence>
-                    <xsd:element name="description" type="mule:descriptionType" minOccurs="0">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                This can hold any kind of documentation related to the flow construct. It is intended to be "human readable" only and is not used by the system.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:element>
+                    <xsd:element name="description" type="type" minOccurs="0"/>
                 </xsd:sequence>
                 <xsd:attribute name="name" type="mule:nonBlankString" use="required">
                     <xsd:annotation>
@@ -87,7 +81,7 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
-           </xsd:extension>
+            </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
     
@@ -95,14 +89,8 @@
         <xsd:complexContent>
             <xsd:extension base="mule:annotatedType">
                 <xsd:sequence>
-                    <xsd:element name="description" type="mule:descriptionType" minOccurs="0">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                This can hold any kind of documentation related to the flow construct. It is intended to be "human readable" only and is not used by the system.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:element>
-                    <xsd:group ref="mule:messageSourceOrInboundEndpoint" minOccurs="0"/>
+                    <xsd:element name="description" type="type" minOccurs="0"/>
+                    <xsd:group ref="mule:messageSourceOrInboundEndpoint"/>
                 </xsd:sequence>
                 <xsd:attribute name="name" type="mule:nonBlankString" use="required">
                     <xsd:annotation>
@@ -145,13 +133,6 @@
         <xsd:complexContent>
             <xsd:extension base="mule:annotatedType">
                 <xsd:sequence>
-                    <xsd:element name="description" type="mule:descriptionType" minOccurs="0">
-                        <xsd:annotation>
-                            <xsd:documentation>
-                                References either a flow or a subflow that will be called when the operation is invoked.
-                            </xsd:documentation>
-                        </xsd:annotation>
-                    </xsd:element>
                     <xsd:group ref="mule:messageSourceOrInboundEndpoint" minOccurs="0"/>
                 </xsd:sequence>
                 <xsd:attribute name="flow-ref" type="mule:nonBlankString" use="required">
@@ -162,6 +143,12 @@
                     </xsd:annotation>
                 </xsd:attribute>
            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+    
+    <xsd:complexType name="type">
+         <xsd:complexContent>
+            <xsd:extension base="mule:descriptionType"/>
         </xsd:complexContent>
     </xsd:complexType>
 

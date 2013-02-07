@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule-api xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
     xmlns:rest="http://www.mulesoft.org/schema/mule/api-rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:http="http://www.mulesoft.org/schema/mule/http"
+    xmlns:rss="http://www.mulesoft.org/schema/mule/api"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
        http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
-       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <rest:interface name="myInterface">
-        <rest:document-resource name="dummy">
-            <rest:retrieve flow-ref="echo"/>
+        <description>This is an interface</description>
+        <rest:document-resource name="a">
+            <rest:retrieve flow-ref="aFlow"/>
+        </rest:document-resource>
+        <rest:document-resource name="b">
+            <rest:retrieve flow-ref="bFlow"/>
         </rest:document-resource>
     </rest:interface>
 
-    <rest:service name="myService" interface-ref="myInterface">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
-            <mule:object-to-string-transformer/>
-        </http:inbound-endpoint>
+    <rest:service name="myService" interface-ref="myInterface" >
+        <description>This is a service</description> 
+        <mule:inbound-endpoint address="http://locahost:8080"/>
     </rest:service>
 
 </mule-api>

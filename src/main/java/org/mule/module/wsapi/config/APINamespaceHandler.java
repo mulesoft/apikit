@@ -10,8 +10,7 @@
 
 package org.mule.module.wsapi.config;
 
-import org.mule.config.spring.parsers.generic.OrphanDefinitionParser;
-import org.mule.transformer.simple.StringAppendTransformer;
+import org.mule.config.spring.parsers.generic.TextDefinitionParser;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.xml.BeanDefinitionParser;
@@ -24,7 +23,8 @@ public class APINamespaceHandler extends NamespaceHandlerSupport
     public void init()
     {
         registerBeanDefinitionParser("mule-api", new IgnoredDefinitionParser());
-        registerBeanDefinitionParser("test", new OrphanDefinitionParser(StringAppendTransformer.class, true));
+        registerBeanDefinitionParser("description", new TextDefinitionParser("description"));
+
     }
 
     private static class IgnoredDefinitionParser implements BeanDefinitionParser

@@ -27,6 +27,7 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
 {
 
     protected T webServiceInterface;
+    protected String description;
 
     public AbstractWebService(String name, T webServiceInterface, MuleContext muleContext)
     {
@@ -39,7 +40,7 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
     {
         return webServiceInterface;
     }
-    
+
     public void setInterface(T webServiveInterface)
     {
         this.webServiceInterface = webServiveInterface;
@@ -49,7 +50,7 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
     protected void configureMessageProcessors(MessageProcessorChainBuilder builder) throws MuleException
     {
         builder.chain(getInterfaceRepresentationFilter());
-        builder.chain(webServiceInterface.getOperationRouter());
+        builder.chain(((AbstractWebServiceInterface) webServiceInterface).getOperationRouter());
     }
 
     @Override
@@ -63,7 +64,17 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
     {
         throw new UnsupportedOperationException();
     }
-    
+
     protected abstract QueryParamInterfaceDefinitionFilter getInterfaceRepresentationFilter();
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
 
 }
