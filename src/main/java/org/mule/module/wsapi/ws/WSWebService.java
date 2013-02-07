@@ -13,12 +13,11 @@ package org.mule.module.wsapi.ws;
 import org.mule.api.MuleContext;
 import org.mule.module.wsapi.AbstractWebService;
 import org.mule.module.wsapi.api.QueryParamInterfaceDefinitionFilter;
-import org.mule.module.wsapi.api.WebServiceInterface;
 
 public class WSWebService extends AbstractWebService
 {
 
-    public WSWebService(String name, WebServiceInterface webServiceInterface, MuleContext muleContext)
+    public WSWebService(String name, WSWebServiceInterface webServiceInterface, MuleContext muleContext)
     {
         super(name, webServiceInterface, muleContext);
     }

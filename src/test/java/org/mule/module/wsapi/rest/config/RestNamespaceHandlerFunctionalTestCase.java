@@ -26,30 +26,33 @@ public class RestNamespaceHandlerFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/wsapi/rest/config/rest-namespace-config.xml, org/mule/module/wsapi/rest/config/rest-namespace-flow-config.xml";
+        return "org/mule/module/wsapi/rest/config/rest-namespace-config.xml, org/mule/module/wsapi/rest/flow-config.xml";
     }
 
     @Test
     public void testInterfaceCreation() throws Exception
     {
-        assertNotNull(muleContext.getRegistry().lookupObject("myInterface"));
-        assertEquals(RestWebServiceInterface.class, muleContext.getRegistry()
-            .lookupObject("myInterface")
-            .getClass());
+        RestWebServiceInterface wsInterface = muleContext.getRegistry().lookupObject("myInterface");
+        assertNotNull(wsInterface);
+        assertEquals(RestWebServiceInterface.class, wsInterface.getClass());
+        assertEquals(2, wsInterface.getRoutes().size());
     }
 
     @Test
     public void testServiceCreation() throws Exception
     {
         assertNotNull(muleContext.getRegistry().lookupObject("myService"));
-        assertEquals(RestWebService.class, muleContext.getRegistry().lookupObject("myService").getClass());
+        assertEquals(RestWebService.class, muleContext.getRegistry()
+            .lookupFlowConstruct("myService")
+            .getClass());
+        assertEquals("myService", muleContext.getRegistry().lookupFlowConstruct("myService").getName());
     }
 
     @Test
     public void testServiceInterfaceReference() throws Exception
     {
         assertEquals(muleContext.getRegistry().lookupObject("myInterface"),
-            ((WebService) muleContext.getRegistry().lookupObject("myService")).getInterface());
+            ((WebService) muleContext.getRegistry().lookupFlowConstruct("myService")).getInterface());
     }
 
 }

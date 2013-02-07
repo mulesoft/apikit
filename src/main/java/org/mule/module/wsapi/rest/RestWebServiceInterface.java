@@ -23,10 +23,6 @@ public class RestWebServiceInterface extends AbstractWebServiceInterface
     @Override
     public MessageProcessor getOperationRouter()
     {
-        if (getRoutes().size() != 1)
-        {
-            throw new IllegalStateException("One and only one rest resource can be the root");
-        }
         return new RestMessageProcessor(this);
     }
 

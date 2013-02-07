@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <flow name="echo">
-        <echo-component/>
+        <echo-component />
+    </flow>
+
+    <flow name="aFlow">
+        <echo-component />
+    </flow>
+
+    <flow name="bFlow">
+        <echo-component />
+    </flow>
+
+    <flow name="createLeague">
+        <logger />
+    </flow>
+
+    <flow name="retrieveLeague">
+        <logger />
+    </flow>
+
+    <flow name="retrieveLeagues">
+        <set-payload value="Liga BBVA"/>
     </flow>
 
 </mule>

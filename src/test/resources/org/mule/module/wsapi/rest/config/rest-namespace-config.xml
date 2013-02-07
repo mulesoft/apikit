@@ -8,14 +8,12 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <rest:interface name="myInterface">
-
-        <rest:collection-resource name="leagues">
-            <rest:retrieve flow-ref="retrieveLeagues"/>
-            <!--<rest:document-resource name="league">-->
-                <!--<rest:create flow-ref="createLeague"/>-->
-                <!--<rest:retrieve flow-ref="retrieveLeague"/>-->
-            <!--</rest:document-resource>-->
-        </rest:collection-resource>
+        <rest:document-resource name="a">
+            <rest:retrieve flow-ref="aFlow"/>
+        </rest:document-resource>
+        <rest:document-resource name="b">
+            <rest:retrieve flow-ref="bFlow"/>
+        </rest:document-resource>
     </rest:interface>
 
     <rest:service name="myService" interface-ref="myInterface" />

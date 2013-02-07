@@ -15,12 +15,11 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.module.wsapi.AbstractWebService;
 import org.mule.module.wsapi.api.QueryParamInterfaceDefinitionFilter;
-import org.mule.module.wsapi.api.WebServiceInterface;
 
-public class RestWebService extends AbstractWebService
+public class RestWebService extends AbstractWebService<RestWebServiceInterface>
 {
 
-    public RestWebService(String name, WebServiceInterface webServiceInterface, MuleContext muleContext)
+    public RestWebService(String name, RestWebServiceInterface webServiceInterface, MuleContext muleContext)
     {
         super(name, webServiceInterface, muleContext);
     }

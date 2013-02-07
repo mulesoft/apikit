@@ -29,7 +29,7 @@ public class RestFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/wsapi/rest/rest-functional-config.xml, org/mule/module/wsapi/rest/rest-functional-flow-config.xml";
+        return "org/mule/module/wsapi/rest/rest-functional-config.xml, org/mule/module/wsapi/rest/flow-config.xml";
     }
 
     @Test
