@@ -7,11 +7,13 @@
         <version>3.4-M4-SNAPSHOT</version>
     </parent>
     <artifactId>mule-module-wsapi</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>API Module</name>
     <description>Module for creating API's using REST/SOAP Web Services</description>
 
     <properties>
+        <mule.version>3.4-M4-SNAPSHOT</mule.version>
         <rest.assured.version>1.6.2</rest.assured.version>
         <guava.version>13.0.1</guava.version>
     </properties>
@@ -20,7 +22,7 @@
         <dependency>
             <groupId>org.mule</groupId>
             <artifactId>mule-core</artifactId>
-            <version>${project.version}</version>
+            <version>${mule.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>
@@ -31,12 +33,12 @@
         <dependency>
             <groupId>org.mule.transports</groupId>
             <artifactId>mule-transport-http</artifactId>
-            <version>${project.version}</version>
+            <version>${mule.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-spring-config</artifactId>
-            <version>${project.version}</version>
+            <version>${mule.version}</version>
         </dependency>
         <dependency>
             <groupId>wsdl4j</groupId>
@@ -46,26 +48,21 @@
 
         <!--test deps -->
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-client</artifactId>
-            <version>${project.version}</version>
+            <version>${mule.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.transports</groupId>
             <artifactId>mule-transport-vm</artifactId>
-            <version>${project.version}</version>
+            <version>${mule.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mule</groupId>
             <artifactId>mule-core</artifactId>
-            <version>${project.version}</version>
+            <version>${mule.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
             <exclusions>
@@ -78,7 +75,7 @@
         <dependency>
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-functional</artifactId>
-            <version>${project.version}</version>
+            <version>${mule.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -97,7 +94,7 @@
         <dependency>
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-functional</artifactId>
-            <version>${project.version}</version>
+            <version>${mule.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -118,6 +115,21 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
     </dependencies>
+
+    <scm>
+        <connection>scm:git:git://github.com:mulesoft/mule-module-wsapi.git</connection>
+        <developerConnection>scm:git:git@github.com:mulesoft/mule-module-wsapi.git</developerConnection>
+        <url>http://github.com/mulesoft/mule-module-wsapi</url>
+    </scm>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>mule-ee-snapshots</id>
+            <name>Mule Snapshot Repository</name>
+            <url>http://dev.ee.mulesource.com/repository/content/repositories/snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
