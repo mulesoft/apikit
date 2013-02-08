@@ -2,6 +2,7 @@
 package org.mule.module.wsapi.rest.config.resource;
 
 import static com.jayway.restassured.RestAssured.expect;
+import static com.jayway.restassured.RestAssured.given;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
 import org.mule.tck.junit4.FunctionalTestCase;
@@ -31,9 +32,15 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void documentNotFound() throws Exception
+    {
+        expect().response().log().everything().statusCode(404).when().head("/api/league1");
+    }
+
+    @Test
     public void noCreateOnDocument() throws Exception
     {
-        expect().response().statusCode(405).when().head("/api/league");
+        expect().response().log().everything().statusCode(405).when().head("/api/league");
     }
 
     @Test
@@ -49,4 +56,17 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
         expect().log().everything().response().statusCode(200)
             .body(containsString("Royal")).when().get("/api/league/association");
     }
+
+    @Test
+    public void updateOnDocument() throws Exception
+    {
+        given().body("Premier League").expect().response().statusCode(200).when().put("/api/league");
+    }
+
+    @Test
+    public void noDeleteOnDocument() throws Exception
+    {
+        expect().log().everything().response().statusCode(405).when().head("/api/league");
+    }
+
 }

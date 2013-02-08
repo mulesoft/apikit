@@ -17,6 +17,7 @@ import org.mule.module.wsapi.rest.RestWebService;
 import org.mule.module.wsapi.rest.RestWebServiceInterface;
 import org.mule.module.wsapi.rest.action.RestCreateAction;
 import org.mule.module.wsapi.rest.action.RestRetrieveAction;
+import org.mule.module.wsapi.rest.action.RestUpdateAction;
 import org.mule.module.wsapi.rest.resource.RestCollectionResource;
 import org.mule.module.wsapi.rest.resource.RestDocumentResource;
 
@@ -34,6 +35,7 @@ public class RestAPINamespaceHandler extends NamespaceHandlerSupport
 
         registerBeanDefinitionParser("create", new ChildDefinitionParser("action", RestCreateAction.class));
         registerBeanDefinitionParser("retrieve", new ChildDefinitionParser("action", RestRetrieveAction.class));
+        registerBeanDefinitionParser("update", new ChildDefinitionParser("action", RestUpdateAction.class));
     }
 
 }

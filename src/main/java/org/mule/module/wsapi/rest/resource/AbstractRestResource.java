@@ -109,7 +109,15 @@ public abstract class AbstractRestResource implements RestResource
     {
         if (protocolAdapter.hasMorePathElements())
         {
-            routingTable.get(protocolAdapter.getNextPathElement()).processPath(muleEvent, protocolAdapter);
+            RestResource resource = routingTable.get(protocolAdapter.getNextPathElement());
+            if (resource != null)
+            {
+                resource.processPath(muleEvent, protocolAdapter);
+            }
+            else
+            {
+                protocolAdapter.statusResourceNotFound(muleEvent);
+            }
         }
         else
         {

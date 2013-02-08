@@ -11,6 +11,7 @@
     <rest:interface name="myInterface">
         <rest:document-resource name="league">
             <rest:retrieve flow-ref="retrieveLeague"/>
+            <rest:update flow-ref="updateLeague"/>
             <rest:document-resource name="association">
                 <rest:retrieve flow-ref="retrieveLeagueAssociation"/>
             </rest:document-resource>

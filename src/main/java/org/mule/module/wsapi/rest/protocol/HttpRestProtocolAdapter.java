@@ -12,6 +12,7 @@ package org.mule.module.wsapi.rest.protocol;
 
 import org.mule.api.MuleEvent;
 import org.mule.module.wsapi.rest.action.ActionType;
+import org.mule.transport.NullPayload;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -138,12 +139,14 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     public void statusResourceNotFound(MuleEvent muleEvent)
     {
         muleEvent.getMessage().setOutboundProperty("http.status", 404);
+        muleEvent.getMessage().setPayload(NullPayload.getInstance());
     }
 
     @Override
     public void statusActionNotAllowed(MuleEvent muleEvent)
     {
         muleEvent.getMessage().setOutboundProperty("http.status", 405);
+        muleEvent.getMessage().setPayload(NullPayload.getInstance());
     }
 
     @Override

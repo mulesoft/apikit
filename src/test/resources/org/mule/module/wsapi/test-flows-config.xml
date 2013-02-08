@@ -22,6 +22,10 @@
         <set-payload value="Liga BBVA"/>
     </flow>
 
+    <flow name="updateLeague">
+        <logger />
+    </flow>
+
     <flow name="retrieveLeagues">
         <set-payload value="Liga BBVA, Premier League"/>
     </flow>
