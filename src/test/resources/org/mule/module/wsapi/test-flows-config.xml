@@ -26,12 +26,20 @@
         <logger />
     </flow>
 
+    <flow name="existsLeague">
+        <logger />
+    </flow>
+
     <flow name="retrieveLeagues">
         <set-payload value="Liga BBVA, Premier League"/>
     </flow>
 
     <flow name="retrieveLeagueAssociation">
         <set-payload value="Royal Spanish Football Association"/>
+    </flow>
+
+    <flow name="updateLeagueAssociation">
+        <logger/>
     </flow>
 
 </mule>

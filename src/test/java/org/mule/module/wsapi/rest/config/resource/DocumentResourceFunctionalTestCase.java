@@ -34,27 +34,25 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void documentNotFound() throws Exception
     {
-        expect().response().log().everything().statusCode(404).when().head("/api/league1");
+        expect().response().statusCode(404).header("Content-Length", "0").when().head("/api/league1");
     }
 
     @Test
     public void noCreateOnDocument() throws Exception
     {
-        expect().response().log().everything().statusCode(405).when().head("/api/league");
+        expect().response().statusCode(405).header("Content-Length", "0").when().post("/api/league");
     }
 
     @Test
     public void retrieveOnDocument() throws Exception
     {
-        expect().log().everything().response().statusCode(200)
-            .body(containsString("Liga BBVA")).when().get("/api/league");
+        expect().response().statusCode(200).body(containsString("Liga BBVA")).when().get("/api/league");
     }
 
     @Test
     public void retrieveOnNestedDocument() throws Exception
     {
-        expect().log().everything().response().statusCode(200)
-            .body(containsString("Royal")).when().get("/api/league/association");
+        expect().response().statusCode(200).body(containsString("Royal")).when().get("/api/league/association");
     }
 
     @Test
@@ -64,9 +62,21 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void updateOnNestedDocument() throws Exception
+    {
+        given().body("AFA").expect().response().statusCode(200).when().put("/api/league/association");
+    }
+
+    @Test
     public void noDeleteOnDocument() throws Exception
     {
-        expect().log().everything().response().statusCode(405).when().head("/api/league");
+        expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/league");
+    }
+
+    @Test
+    public void existsOnDocument() throws Exception
+    {
+        expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/league");
     }
 
 }

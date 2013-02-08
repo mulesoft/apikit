@@ -1,6 +1,9 @@
 
 package org.mule.module.wsapi.rest.resource;
 
+import static org.mule.module.wsapi.rest.action.ActionType.EXISTS;
+import static org.mule.module.wsapi.rest.action.ActionType.RETRIEVE;
+
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
@@ -9,6 +12,7 @@ import org.mule.module.wsapi.rest.action.ActionType;
 import org.mule.module.wsapi.rest.action.RestAction;
 import org.mule.module.wsapi.rest.action.RestActionNotAllowedException;
 import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
+import org.mule.transport.NullPayload;
 
 import java.util.HashMap;
 import java.util.List;
@@ -91,6 +95,10 @@ public abstract class AbstractRestResource implements RestResource
             throw new RestActionNotAllowedException(String.format("Action %s not supported by resource %s of type %s", actionType, getTemplateUri(), getClass().getSimpleName()), muleEvent);
         }
         RestAction action = getAction(actionType);
+        if (action == null && EXISTS == actionType)
+        {
+            action = getAction(RETRIEVE);
+        }
         if (action == null)
         {
             throw new RestActionNotAllowedException(String.format("Action %s supported but not defined by resource %s of type %s", actionType, getTemplateUri(), getClass().getSimpleName()), muleEvent);
@@ -124,6 +132,10 @@ public abstract class AbstractRestResource implements RestResource
             try
             {
                 this.getAction(protocolAdapter.getActionType(), muleEvent).process(muleEvent);
+                if (ActionType.EXISTS == protocolAdapter.getActionType())
+                {
+                    muleEvent.getMessage().setPayload(NullPayload.getInstance());
+                }
             }
             catch (RestActionNotAllowedException rana)
             {
