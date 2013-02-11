@@ -10,7 +10,6 @@
 
 package org.mule.module.wsapi.ws;
 
-import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.AbstractWebServiceInterface;
 
 public class WSWebServiceInterface extends AbstractWebServiceInterface
@@ -23,20 +22,13 @@ public class WSWebServiceInterface extends AbstractWebServiceInterface
         super(name);
     }
 
-    @Override
-    public MessageProcessor getOperationRouter()
+    public WSOperationResolutionMode getOperationResolutionMode()
     {
-        if (operationResolutionMode == WSOperationResolutionMode.SOAP_ACTION)
-        {
-            return new SOAPActionOperationRouter(this);
-        }
-        else if (operationResolutionMode == WSOperationResolutionMode.PATH)
-        {
-            return null;
-        }
-        else
-        {
-            return null;
-        }
+        return operationResolutionMode;
+    }
+
+    public void setOperationResolutionMode(WSOperationResolutionMode operationResolutionMode)
+    {
+        this.operationResolutionMode = operationResolutionMode;
     }
 }

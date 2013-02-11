@@ -8,11 +8,18 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.wsapi.api;
+package org.mule.module.wsapi.rest;
 
-import org.mule.api.NamedObject;
+import org.mule.api.MuleEvent;
+import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
 
-public interface WebServiceRoute extends NamedObject
+public interface RestRequest
 {
 
+    MuleEvent getMuleEvent();
+    
+    RestProtocolAdapter getProtocolAdaptor();
+    
 }
+
+

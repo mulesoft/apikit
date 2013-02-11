@@ -11,10 +11,13 @@
 package org.mule.module.wsapi.ws;
 
 import org.mule.api.MuleContext;
+import org.mule.api.MuleException;
+import org.mule.api.processor.MessageProcessor;
+import org.mule.api.processor.MessageProcessorChainBuilder;
 import org.mule.module.wsapi.AbstractWebService;
 import org.mule.module.wsapi.api.QueryParamInterfaceDefinitionFilter;
 
-public class WSWebService extends AbstractWebService
+public class WSWebService extends AbstractWebService<WSWebServiceInterface>
 {
 
     public WSWebService(String name, WSWebServiceInterface webServiceInterface, MuleContext muleContext)
@@ -29,9 +32,27 @@ public class WSWebService extends AbstractWebService
     }
 
     @Override
-    protected QueryParamInterfaceDefinitionFilter getInterfaceRepresentationFilter()
+    protected void configurePreProcessors(MessageProcessorChainBuilder builder) throws MuleException
     {
-        return new QueryParamInterfaceDefinitionFilter("?wsdl", this);
+        super.configurePreProcessors(builder);
+        builder.chain(new QueryParamInterfaceDefinitionFilter("?wsdl", this));
+    }
+
+    @Override
+    public MessageProcessor getRequestRouter()
+    {
+        if (getInterface().getOperationResolutionMode() == WSOperationResolutionMode.SOAP_ACTION)
+        {
+            return new SOAPActionOperationRouter(getInterface());
+        }
+        else if (getInterface().getOperationResolutionMode() == WSOperationResolutionMode.PATH)
+        {
+            return null;
+        }
+        else
+        {
+            return null;
+        }
     }
 
 }

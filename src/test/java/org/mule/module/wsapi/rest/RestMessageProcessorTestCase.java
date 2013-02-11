@@ -8,11 +8,23 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.wsapi.api;
+package org.mule.module.wsapi.rest;
 
-import org.mule.api.NamedObject;
+import static org.junit.Assert.*;
 
-public interface WebServiceRoute extends NamedObject
+import org.mule.tck.junit4.AbstractMuleTestCase;
+
+import org.junit.Test;
+
+public class RestMessageProcessorTestCase extends AbstractMuleTestCase
 {
 
+    @Test
+    public void test()
+    {
+        fail("Not yet implemented");
+    }
+
 }
+
+

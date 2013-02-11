@@ -4,7 +4,7 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 
-public abstract class RestAbstractAction implements RestAction
+public abstract class AbstractRestAction implements RestAction
 {
 
     protected String name;

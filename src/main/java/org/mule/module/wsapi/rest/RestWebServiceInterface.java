@@ -10,20 +10,17 @@
 
 package org.mule.module.wsapi.rest;
 
-import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.AbstractWebServiceInterface;
+import org.mule.module.wsapi.rest.swagger.json.RestWebServiceInterfaceSerializer;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonSerialize(using = RestWebServiceInterfaceSerializer.class)
 public class RestWebServiceInterface extends AbstractWebServiceInterface
 {
     public RestWebServiceInterface(String name)
     {
         super(name);
-    }
-
-    @Override
-    public MessageProcessor getOperationRouter()
-    {
-        return new RestMessageProcessor(this);
     }
 
 }

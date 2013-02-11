@@ -35,7 +35,7 @@ public class SOAPActionOperationRouter extends AsbtarctWebServiceOperationRouter
             if (route.getName().equals(soapAction))
             {
                 return new DefaultMuleEvent(new DefaultMuleMessage("<soap:Envelope><soap:Body>"
-                                                                   + route.process(event)
+                                                                   + ((WSDLOperation) route).process(event)
                                                                        .getMessageAsString()
                                                                    + "</soap:Body></soap:Envelope>",
                     event.getMuleContext()), event);

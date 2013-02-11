@@ -16,7 +16,6 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.api.processor.MessageProcessorChainBuilder;
 import org.mule.api.processor.ProcessingStrategy;
 import org.mule.construct.AbstractPipeline;
-import org.mule.module.wsapi.api.QueryParamInterfaceDefinitionFilter;
 import org.mule.module.wsapi.api.WebService;
 import org.mule.module.wsapi.api.WebServiceInterface;
 
@@ -49,9 +48,10 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
     @Override
     protected void configureMessageProcessors(MessageProcessorChainBuilder builder) throws MuleException
     {
-        builder.chain(getInterfaceRepresentationFilter());
-        builder.chain(((AbstractWebServiceInterface) webServiceInterface).getOperationRouter());
+        builder.chain(getRequestRouter());
     }
+
+    protected abstract MessageProcessor getRequestRouter();
 
     @Override
     public void setProcessingStrategy(ProcessingStrategy processingStrategy)
@@ -64,8 +64,6 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
     {
         throw new UnsupportedOperationException();
     }
-
-    protected abstract QueryParamInterfaceDefinitionFilter getInterfaceRepresentationFilter();
 
     public String getDescription()
     {

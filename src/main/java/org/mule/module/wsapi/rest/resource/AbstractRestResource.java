@@ -8,10 +8,13 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.api.WebServiceRoute;
+import org.mule.module.wsapi.rest.RestRequest;
+import org.mule.module.wsapi.rest.RestWebServiceInterface;
 import org.mule.module.wsapi.rest.action.ActionType;
 import org.mule.module.wsapi.rest.action.RestAction;
 import org.mule.module.wsapi.rest.action.RestActionNotAllowedException;
 import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
+import org.mule.module.wsapi.rest.protocol.RestProtocolAdapterFactory;
 import org.mule.transport.NullPayload;
 
 import java.util.HashMap;
@@ -25,6 +28,7 @@ public abstract class AbstractRestResource implements RestResource
 {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+    protected RestWebServiceInterface restInterface;
     protected String name;
     protected List<? extends WebServiceRoute> routes;
     protected String templateUri;
@@ -88,11 +92,14 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public MessageProcessor getAction(ActionType actionType, MuleEvent muleEvent) throws RestActionNotAllowedException
+    public MessageProcessor getAction(ActionType actionType, MuleEvent muleEvent)
+        throws RestActionNotAllowedException
     {
         if (!isActionSupported(actionType))
         {
-            throw new RestActionNotAllowedException(String.format("Action %s not supported by resource %s of type %s", actionType, getTemplateUri(), getClass().getSimpleName()), muleEvent);
+            throw new RestActionNotAllowedException(String.format(
+                "Action %s not supported by resource %s of type %s", actionType, getTemplateUri(),
+                getClass().getSimpleName()), muleEvent);
         }
         RestAction action = getAction(actionType);
         if (action == null && EXISTS == actionType)
@@ -101,7 +108,9 @@ public abstract class AbstractRestResource implements RestResource
         }
         if (action == null)
         {
-            throw new RestActionNotAllowedException(String.format("Action %s supported but not defined by resource %s of type %s", actionType, getTemplateUri(), getClass().getSimpleName()), muleEvent);
+            throw new RestActionNotAllowedException(String.format(
+                "Action %s supported but not defined by resource %s of type %s", actionType,
+                getTemplateUri(), getClass().getSimpleName()), muleEvent);
         }
         return action;
     }
@@ -110,39 +119,6 @@ public abstract class AbstractRestResource implements RestResource
     public boolean isActionSupported(ActionType actionType)
     {
         return getSupportedActions().contains(actionType);
-    }
-
-    @Override
-    public MuleEvent processPath(MuleEvent muleEvent, RestProtocolAdapter protocolAdapter) throws MuleException
-    {
-        if (protocolAdapter.hasMorePathElements())
-        {
-            RestResource resource = routingTable.get(protocolAdapter.getNextPathElement());
-            if (resource != null)
-            {
-                resource.processPath(muleEvent, protocolAdapter);
-            }
-            else
-            {
-                protocolAdapter.statusResourceNotFound(muleEvent);
-            }
-        }
-        else
-        {
-            try
-            {
-                this.getAction(protocolAdapter.getActionType(), muleEvent).process(muleEvent);
-                if (ActionType.EXISTS == protocolAdapter.getActionType())
-                {
-                    muleEvent.getMessage().setPayload(NullPayload.getInstance());
-                }
-            }
-            catch (RestActionNotAllowedException rana)
-            {
-                protocolAdapter.statusActionNotAllowed(muleEvent);
-            }
-        }
-        return muleEvent;
     }
 
     @Override
@@ -171,6 +147,46 @@ public abstract class AbstractRestResource implements RestResource
     public void setRoutes(List<? extends WebServiceRoute> routes)
     {
         this.routes = routes;
+    }
+    
+    @Override
+    public MuleEvent process(RestRequest restCall) throws MuleException
+    {
+        RestProtocolAdapter protocolAdapter = restCall.getProtocolAdaptor();
+        if (protocolAdapter.hasMorePathElements())
+        {
+            RestResource resource = routingTable.get(protocolAdapter.getNextPathElement());
+            if (resource != null)
+            {
+                resource.process(restCall);
+            }
+            else
+            {
+                protocolAdapter.statusResourceNotFound(restCall.getMuleEvent());
+            }
+        }
+        else
+        {
+            try
+            {
+                this.getAction(protocolAdapter.getActionType(), restCall.getMuleEvent()).process(restCall.getMuleEvent());
+                if (ActionType.EXISTS == protocolAdapter.getActionType())
+                {
+                    restCall.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
+                }
+            }
+            catch (RestActionNotAllowedException rana)
+            {
+                protocolAdapter.statusActionNotAllowed(restCall.getMuleEvent());
+            }
+        }
+        return restCall.getMuleEvent();
+
+    }
+
+    protected RestProtocolAdapter getProtocolAdapter(MuleEvent muleEvent)
+    {
+        return RestProtocolAdapterFactory.getInstance().getAdapterForEvent(muleEvent);
     }
 
 }

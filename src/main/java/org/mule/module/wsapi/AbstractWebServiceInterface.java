@@ -1,7 +1,6 @@
 
 package org.mule.module.wsapi;
 
-import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.api.WebServiceInterface;
 import org.mule.module.wsapi.api.WebServiceRoute;
 
@@ -46,7 +45,5 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
     {
         this.description = description;
     }
-    
-    public abstract MessageProcessor getOperationRouter();
 
 }

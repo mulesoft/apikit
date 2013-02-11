@@ -150,11 +150,17 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     }
 
     @Override
+    public void statusNotAcceptable(MuleEvent muleEvent)
+    {
+        muleEvent.getMessage().setOutboundProperty("http.status", 406);
+    }
+    
+    @Override
     public String getNextPathElement()
     {
         if (pathStack.isEmpty())
         {
-            throw new IllegalStateException("No more path elements!");
+            return null;
         }
         return pathStack.removeFirst();
     }

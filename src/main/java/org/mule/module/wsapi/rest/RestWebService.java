@@ -13,8 +13,11 @@ package org.mule.module.wsapi.rest;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.AbstractWebService;
-import org.mule.module.wsapi.api.QueryParamInterfaceDefinitionFilter;
+import org.mule.module.wsapi.rest.protocol.HttpRestProtocolAdapter;
+import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
+import org.mule.module.wsapi.rest.resource.RestBaseResource;
 
 public class RestWebService extends AbstractWebService<RestWebServiceInterface>
 {
@@ -31,14 +34,30 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
     }
 
     @Override
-    protected QueryParamInterfaceDefinitionFilter getInterfaceRepresentationFilter()
+    protected MessageProcessor getRequestRouter()
     {
-        return new QueryParamInterfaceDefinitionFilter(initialState, this)
+        return new MessageProcessor()
         {
             @Override
-            public MuleEvent process(MuleEvent event) throws MuleException
+            public MuleEvent process(final MuleEvent event) throws MuleException
             {
-                return processNext(event);
+                final RestProtocolAdapter protocolAdapter = new HttpRestProtocolAdapter(event);
+
+                return new RestBaseResource(webServiceInterface).process(new RestRequest()
+                {
+
+                    @Override
+                    public RestProtocolAdapter getProtocolAdaptor()
+                    {
+                        return protocolAdapter;
+                    }
+
+                    @Override
+                    public MuleEvent getMuleEvent()
+                    {
+                        return event;
+                    }
+                });
             }
         };
     }
