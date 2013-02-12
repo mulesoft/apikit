@@ -12,7 +12,7 @@ package org.mule.module.wsapi.api;
 
 import org.mule.api.processor.MessageProcessor;
 
-public interface WebServiceOperation extends WebServiceRoute
+public interface WebServiceOperation
 {
 
     MessageProcessor getHandler();

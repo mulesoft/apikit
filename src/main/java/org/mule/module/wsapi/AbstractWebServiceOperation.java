@@ -26,12 +26,6 @@ public class AbstractWebServiceOperation implements WebServiceOperation
     }
 
     @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    @Override
     public MessageProcessor getHandler()
     {
         return handler;

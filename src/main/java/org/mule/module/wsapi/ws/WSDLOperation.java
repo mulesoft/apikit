@@ -14,8 +14,9 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.AbstractWebServiceOperation;
+import org.mule.module.wsapi.api.WebServiceRoute;
 
-public class WSDLOperation extends AbstractWebServiceOperation implements MessageProcessor
+public class WSDLOperation extends AbstractWebServiceOperation implements MessageProcessor, WebServiceRoute
 {
 
     public WSDLOperation(String name, MessageProcessor handler)
@@ -23,7 +24,6 @@ public class WSDLOperation extends AbstractWebServiceOperation implements Messag
         super(name, handler);
     }
 
-    @Override
     public String getName()
     {
         return name;

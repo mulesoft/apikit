@@ -11,9 +11,12 @@
 package org.mule.module.wsapi.rest;
 
 import org.mule.module.wsapi.AbstractWebServiceInterface;
+import org.mule.module.wsapi.api.WebServiceRoute;
 import org.mule.module.wsapi.rest.swagger.json.RestWebServiceInterfaceSerializer;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import java.util.List;
 
 @JsonSerialize(using = RestWebServiceInterfaceSerializer.class)
 public class RestWebServiceInterface extends AbstractWebServiceInterface
@@ -21,6 +24,11 @@ public class RestWebServiceInterface extends AbstractWebServiceInterface
     public RestWebServiceInterface(String name)
     {
         super(name);
+    }
+
+    public void setResources(List<WebServiceRoute> resources)
+    {
+        setRoutes(resources);
     }
 
 }

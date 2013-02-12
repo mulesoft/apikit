@@ -6,32 +6,25 @@ import static org.mule.module.wsapi.rest.action.ActionType.RETRIEVE;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.module.wsapi.api.WebServiceRoute;
 import org.mule.module.wsapi.rest.RestRequest;
-import org.mule.module.wsapi.rest.RestWebServiceInterface;
+import org.mule.module.wsapi.rest.RestResourceRouter;
 import org.mule.module.wsapi.rest.action.ActionType;
 import org.mule.module.wsapi.rest.action.RestAction;
 import org.mule.module.wsapi.rest.action.RestActionNotAllowedException;
-import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
 import org.mule.transport.NullPayload;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractRestResource implements RestResource
+public abstract class AbstractRestResource extends RestResourceRouter implements RestResource
 {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected RestWebServiceInterface restInterface;
     protected String name;
-    protected List<? extends WebServiceRoute> routes;
     protected String templateUri;
     protected List<RestAction> actions;
-    protected Map<String, RestResource> routingTable;
 
     @Override
     public String getName()
@@ -57,12 +50,6 @@ public abstract class AbstractRestResource implements RestResource
     public void setTemplateUri(String templateUri)
     {
         this.templateUri = templateUri;
-    }
-
-    @Override
-    public List<RestResource> getResources()
-    {
-        return (List<RestResource>) getRoutes();
     }
 
     public List<RestAction> getActions()
@@ -120,67 +107,34 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public void buildRoutingTable()
+    public final MuleEvent handle(RestRequest restCall) throws MuleException
     {
-        routingTable = new HashMap<String, RestResource>();
-        if (getResources() == null)
-        {
-            return;
-        }
-        for (RestResource resource : getResources())
-        {
-            String uriPattern = resource.getTemplateUri();
-            logger.debug("Adding URI to the routing table: " + uriPattern);
-            routingTable.put(uriPattern, resource);
-            resource.buildRoutingTable();
-        }
-    }
-
-    @Override
-    public List<? extends WebServiceRoute> getRoutes()
-    {
-        return routes;
-    }
-
-    public void setRoutes(List<? extends WebServiceRoute> routes)
-    {
-        this.routes = routes;
-    }
-
-    @Override
-    public MuleEvent process(RestRequest restCall) throws MuleException
-    {
-        RestProtocolAdapter protocolAdapter = restCall.getProtocolAdaptor();
         if (restCall.hasMorePathElements())
         {
-            RestResource resource = routingTable.get(restCall.getNextPathElement());
-            if (resource != null)
-            {
-                resource.process(restCall);
-            }
-            else
-            {
-                protocolAdapter.statusResourceNotFound(restCall.getMuleEvent());
-            }
+            return super.handle(restCall);
         }
         else
         {
-            try
+            return processResource(restCall);
+        }
+    }
+
+    protected MuleEvent processResource(RestRequest restCall) throws MuleException
+    {
+        try
+        {
+            this.getAction(restCall.getProtocolAdaptor().getActionType(), restCall.getMuleEvent()).handle(
+                restCall);
+            if (ActionType.EXISTS == restCall.getProtocolAdaptor().getActionType())
             {
-                this.getAction(protocolAdapter.getActionType(), restCall.getMuleEvent()).process(
-                    restCall);
-                if (ActionType.EXISTS == protocolAdapter.getActionType())
-                {
-                    restCall.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
-                }
-            }
-            catch (RestActionNotAllowedException rana)
-            {
-                protocolAdapter.statusActionNotAllowed(restCall.getMuleEvent());
+                restCall.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
             }
         }
+        catch (RestActionNotAllowedException rana)
+        {
+            restCall.getProtocolAdaptor().statusActionNotAllowed(restCall.getMuleEvent());
+        }
         return restCall.getMuleEvent();
-
     }
 
 }

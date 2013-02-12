@@ -13,7 +13,6 @@ package org.mule.module.wsapi.rest.action;
 import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.rest.RestRequest;
 import org.mule.module.wsapi.rest.RestWebService;
 import org.mule.transformer.types.MimeTypes;
@@ -49,13 +48,7 @@ public class BaseUriRetrieveAction implements RestAction
     }
 
     @Override
-    public MessageProcessor getHandler()
-    {
-        return null;
-    }
-
-    @Override
-    public MuleEvent process(RestRequest restRequest) throws MuleException
+    public MuleEvent handle(RestRequest restRequest) throws MuleException
     {
         String path = restRequest.getMuleEvent()
             .getMessage()
@@ -222,12 +215,6 @@ public class BaseUriRetrieveAction implements RestAction
             restRequest.getProtocolAdaptor().statusNotAcceptable(restRequest.getMuleEvent());
             return restRequest.getMuleEvent();
         }
-    }
-
-    @Override
-    public String getName()
-    {
-        return null;
     }
 
     @Override

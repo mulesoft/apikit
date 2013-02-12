@@ -59,7 +59,7 @@ public class DefaultRestRequest implements RestRequest
     {
         if (pathStack.isEmpty())
         {
-            return null;
+            return "";
         }
         return pathStack.removeFirst();
     }

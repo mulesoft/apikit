@@ -25,6 +25,4 @@ public interface RestResource extends RestRequestHandler, WebServiceRoute
     Set<ActionType> getSupportedActions();
 
     void buildRoutingTable();
-
-    List<? extends WebServiceRoute> getRoutes();
 }

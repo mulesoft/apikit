@@ -15,6 +15,10 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.AbstractWebService;
+import org.mule.module.wsapi.rest.resource.BaseResource;
+import org.mule.module.wsapi.rest.resource.RestResource;
+
+import java.util.List;
 
 public class RestWebService extends AbstractWebService<RestWebServiceInterface>
 {
@@ -33,14 +37,16 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
     @Override
     protected MessageProcessor getRequestRouter()
     {
+        final RestResourceRouter handler = new RestResourceRouter();
+        handler.getResources().addAll((List<RestResource>) webServiceInterface.getRoutes());
+        handler.getResources().add(new BaseResource(this));
+
         return new MessageProcessor()
         {
-
             @Override
             public MuleEvent process(MuleEvent event) throws MuleException
             {
-                // TODO Auto-generated method stub
-                return null;
+                return handler.handle(new DefaultRestRequest(event));
             }
         };
 
