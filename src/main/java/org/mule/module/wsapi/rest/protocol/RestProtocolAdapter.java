@@ -35,7 +35,6 @@ public interface RestProtocolAdapter
 
     void statusNotAcceptable(MuleEvent muleEvent);
 
-    String getNextPathElement();
+    URI getBaseURI();
 
-    boolean hasMorePathElements();
 }

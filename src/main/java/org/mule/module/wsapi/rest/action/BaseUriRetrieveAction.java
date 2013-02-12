@@ -14,9 +14,8 @@ import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.module.wsapi.rest.RestRequest;
 import org.mule.module.wsapi.rest.RestWebService;
-import org.mule.module.wsapi.rest.protocol.HttpRestProtocolAdapter;
-import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
@@ -56,34 +55,44 @@ public class BaseUriRetrieveAction implements RestAction
     }
 
     @Override
-    public MuleEvent process(MuleEvent event) throws MuleException
+    public MuleEvent process(RestRequest restRequest) throws MuleException
     {
-        RestProtocolAdapter protocolAdapter = new HttpRestProtocolAdapter(event);
-
-        String path = event.getMessage().getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
-        if (protocolAdapter.getAcceptedContentTypes().equalsIgnoreCase("application/swagger+json")
-            || protocolAdapter.getAcceptedContentTypes().equalsIgnoreCase("*/*"))
+        String path = restRequest.getMuleEvent()
+            .getMessage()
+            .getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
+        if (restRequest.getProtocolAdaptor()
+            .getAcceptedContentTypes()
+            .equalsIgnoreCase("application/swagger+json")
+            || restRequest.getProtocolAdaptor().getAcceptedContentTypes().equalsIgnoreCase("*/*"))
         {
             try
             {
                 ObjectMapper mapper = new ObjectMapper();
                 String json = mapper.writeValueAsString(restWebService.getInterface());
-                json = json.replace("{baseSwaggerUri}", event.getMessageSourceURI().toString());
+                json = json.replace("{baseSwaggerUri}", restRequest.getMuleEvent()
+                    .getMessageSourceURI()
+                    .toString());
 
-                event.getMessage().setPayload(json);
-                event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
-                    String.valueOf(HttpConstants.SC_OK));
-                event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, MimeTypes.JSON);
-                event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, json.length());
-                return event;
+                restRequest.getMuleEvent().getMessage().setPayload(json);
+                restRequest.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
+                        String.valueOf(HttpConstants.SC_OK));
+                restRequest.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, MimeTypes.JSON);
+                restRequest.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, json.length());
+                return restRequest.getMuleEvent();
 
             }
             catch (JsonProcessingException e)
             {
-                throw new MessagingException(event, e);
+                throw new MessagingException(restRequest.getMuleEvent(), e);
             }
         }
-        else if (protocolAdapter.getAcceptedContentTypes().contains("text/html"))
+        else if (restRequest.getProtocolAdaptor().getAcceptedContentTypes().contains("text/html"))
         {
             InputStream in = null;
             try
@@ -91,7 +100,8 @@ public class BaseUriRetrieveAction implements RestAction
                 in = getClass().getResourceAsStream(RESOURCE_BASE_PATH + "index.html");
                 if (in == null)
                 {
-                    throw new ResourceNotFoundException(HttpMessages.fileNotFound("index.html"), event);
+                    throw new ResourceNotFoundException(HttpMessages.fileNotFound("index.html"),
+                        restRequest.getMuleEvent());
                 }
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -99,7 +109,9 @@ public class BaseUriRetrieveAction implements RestAction
 
                 String buffer = new String(baos.toByteArray());
 
-                buffer = buffer.replace("${swaggerUrl}", event.getMessageSourceURI().toString());
+                buffer = buffer.replace("${swaggerUrl}", restRequest.getMuleEvent()
+                    .getMessageSourceURI()
+                    .toString());
 
                 // urlBuilder.append("/resources.json");
                 //
@@ -107,20 +119,26 @@ public class BaseUriRetrieveAction implements RestAction
 
                 buffer = buffer.replace("${pageTitle}", restWebService.getInterface().getName() + " UI");
 
-                event.getMessage().setPayload(buffer);
-                event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
-                    String.valueOf(HttpConstants.SC_OK));
-                event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, MimeTypes.HTML);
-                event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length());
-                return event;
+                restRequest.getMuleEvent().getMessage().setPayload(buffer);
+                restRequest.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
+                        String.valueOf(HttpConstants.SC_OK));
+                restRequest.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, MimeTypes.HTML);
+                restRequest.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length());
+                return restRequest.getMuleEvent();
             }
             catch (JsonProcessingException e)
             {
-                throw new MessagingException(event, e);
+                throw new MessagingException(restRequest.getMuleEvent(), e);
             }
             catch (IOException e)
             {
-                throw new MessagingException(event, e);
+                throw new MessagingException(restRequest.getMuleEvent(), e);
             }
         }
         else if (path.endsWith(".png") || path.endsWith(".js") || path.endsWith(".css")
@@ -132,8 +150,9 @@ public class BaseUriRetrieveAction implements RestAction
                 in = getClass().getResourceAsStream(RESOURCE_BASE_PATH + path);
                 if (in == null)
                 {
-                    event.getMessage().setOutboundProperty("http.status", 404);
-                    throw new ResourceNotFoundException(HttpMessages.fileNotFound(path), event);
+                    restRequest.getMuleEvent().getMessage().setOutboundProperty("http.status", 404);
+                    throw new ResourceNotFoundException(HttpMessages.fileNotFound(path),
+                        restRequest.getMuleEvent());
                 }
 
                 String mimeType = DEFAULT_MIME_TYPE;
@@ -163,15 +182,22 @@ public class BaseUriRetrieveAction implements RestAction
 
                 byte[] buffer = baos.toByteArray();
 
-                event.getMessage().setPayload(buffer);
-                event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
-                    String.valueOf(HttpConstants.SC_OK));
-                event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, mimeType);
-                event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length);
+                restRequest.getMuleEvent().getMessage().setPayload(buffer);
+                restRequest.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
+                        String.valueOf(HttpConstants.SC_OK));
+                restRequest.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, mimeType);
+                restRequest.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length);
             }
             catch (IOException e)
             {
-                throw new ResourceNotFoundException(HttpMessages.fileNotFound(path), event);
+                throw new ResourceNotFoundException(HttpMessages.fileNotFound(path),
+                    restRequest.getMuleEvent());
             }
             finally
             {
@@ -183,18 +209,18 @@ public class BaseUriRetrieveAction implements RestAction
                     }
                     catch (IOException e)
                     {
-                        throw new MessagingException(event, e);
+                        throw new MessagingException(restRequest.getMuleEvent(), e);
                     }
                 }
             }
 
-            return event;
+            return restRequest.getMuleEvent();
 
         }
         else
         {
-            protocolAdapter.statusNotAcceptable(event);
-            return event;
+            restRequest.getProtocolAdaptor().statusNotAcceptable(restRequest.getMuleEvent());
+            return restRequest.getMuleEvent();
         }
     }
 

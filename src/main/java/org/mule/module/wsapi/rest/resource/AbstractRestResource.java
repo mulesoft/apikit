@@ -6,7 +6,6 @@ import static org.mule.module.wsapi.rest.action.ActionType.RETRIEVE;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.api.WebServiceRoute;
 import org.mule.module.wsapi.rest.RestRequest;
 import org.mule.module.wsapi.rest.RestWebServiceInterface;
@@ -14,7 +13,6 @@ import org.mule.module.wsapi.rest.action.ActionType;
 import org.mule.module.wsapi.rest.action.RestAction;
 import org.mule.module.wsapi.rest.action.RestActionNotAllowedException;
 import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
-import org.mule.module.wsapi.rest.protocol.RestProtocolAdapterFactory;
 import org.mule.transport.NullPayload;
 
 import java.util.HashMap;
@@ -92,7 +90,7 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public MessageProcessor getAction(ActionType actionType, MuleEvent muleEvent)
+    public RestAction getAction(ActionType actionType, MuleEvent muleEvent)
         throws RestActionNotAllowedException
     {
         if (!isActionSupported(actionType))
@@ -148,14 +146,14 @@ public abstract class AbstractRestResource implements RestResource
     {
         this.routes = routes;
     }
-    
+
     @Override
     public MuleEvent process(RestRequest restCall) throws MuleException
     {
         RestProtocolAdapter protocolAdapter = restCall.getProtocolAdaptor();
-        if (protocolAdapter.hasMorePathElements())
+        if (restCall.hasMorePathElements())
         {
-            RestResource resource = routingTable.get(protocolAdapter.getNextPathElement());
+            RestResource resource = routingTable.get(restCall.getNextPathElement());
             if (resource != null)
             {
                 resource.process(restCall);
@@ -169,7 +167,8 @@ public abstract class AbstractRestResource implements RestResource
         {
             try
             {
-                this.getAction(protocolAdapter.getActionType(), restCall.getMuleEvent()).process(restCall.getMuleEvent());
+                this.getAction(protocolAdapter.getActionType(), restCall.getMuleEvent()).process(
+                    restCall);
                 if (ActionType.EXISTS == protocolAdapter.getActionType())
                 {
                     restCall.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
@@ -182,11 +181,6 @@ public abstract class AbstractRestResource implements RestResource
         }
         return restCall.getMuleEvent();
 
-    }
-
-    protected RestProtocolAdapter getProtocolAdapter(MuleEvent muleEvent)
-    {
-        return RestProtocolAdapterFactory.getInstance().getAdapterForEvent(muleEvent);
     }
 
 }

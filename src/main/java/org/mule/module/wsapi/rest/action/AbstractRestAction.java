@@ -3,6 +3,7 @@ package org.mule.module.wsapi.rest.action;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.module.wsapi.rest.RestRequest;
 
 public abstract class AbstractRestAction implements RestAction
 {
@@ -35,8 +36,8 @@ public abstract class AbstractRestAction implements RestAction
     }
 
     @Override
-    public MuleEvent process(MuleEvent muleEvent) throws MuleException
+    public MuleEvent process(RestRequest request) throws MuleException
     {
-        return getHandler().process(muleEvent);
+        return getHandler().process(request.getMuleEvent());
     }
 }

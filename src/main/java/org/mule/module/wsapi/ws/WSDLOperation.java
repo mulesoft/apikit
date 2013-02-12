@@ -10,10 +10,12 @@
 
 package org.mule.module.wsapi.ws;
 
+import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.AbstractWebServiceOperation;
 
-public class WSDLOperation extends AbstractWebServiceOperation
+public class WSDLOperation extends AbstractWebServiceOperation implements MessageProcessor
 {
 
     public WSDLOperation(String name, MessageProcessor handler)
@@ -25,6 +27,12 @@ public class WSDLOperation extends AbstractWebServiceOperation
     public String getName()
     {
         return name;
+    }
+
+    @Override
+    public MuleEvent process(MuleEvent event) throws MuleException
+    {
+        return getHandler().process(event);
     }
 
 }

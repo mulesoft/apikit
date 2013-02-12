@@ -2,10 +2,10 @@
 package org.mule.module.wsapi.rest.resource;
 
 import org.mule.api.MuleEvent;
-import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.api.WebServiceRoute;
 import org.mule.module.wsapi.rest.RestRequestHandler;
 import org.mule.module.wsapi.rest.action.ActionType;
+import org.mule.module.wsapi.rest.action.RestAction;
 import org.mule.module.wsapi.rest.action.RestActionNotAllowedException;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public interface RestResource extends RestRequestHandler, WebServiceRoute
 
     List<RestResource> getResources();
 
-    MessageProcessor getAction(ActionType actionType, MuleEvent muleEvent)
+    RestAction getAction(ActionType actionType, MuleEvent muleEvent)
         throws RestActionNotAllowedException;
 
     boolean isActionSupported(ActionType actionType);

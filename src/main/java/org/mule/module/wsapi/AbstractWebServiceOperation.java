@@ -10,8 +10,6 @@
 
 package org.mule.module.wsapi;
 
-import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.api.WebServiceOperation;
 
@@ -25,12 +23,6 @@ public class AbstractWebServiceOperation implements WebServiceOperation
     {
         this.name = name;
         this.handler = handler;
-    }
-
-    @Override
-    public MuleEvent process(MuleEvent event) throws MuleException
-    {
-        return handler.process(event);
     }
 
     @Override

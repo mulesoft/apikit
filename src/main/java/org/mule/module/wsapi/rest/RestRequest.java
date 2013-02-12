@@ -18,7 +18,12 @@ public interface RestRequest
 
     MuleEvent getMuleEvent();
     
+    String getNextPathElement();
+
+    boolean hasMorePathElements();
+    
     RestProtocolAdapter getProtocolAdaptor();
+    
     
 }
 
