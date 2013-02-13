@@ -10,19 +10,16 @@
 
 package org.mule.module.wsapi.rest.action;
 
-import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
 import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.RestRequest;
 import org.mule.module.wsapi.rest.RestWebService;
 import org.mule.module.wsapi.rest.UnexceptedErrorException;
 import org.mule.module.wsapi.rest.protocol.MediaTypeNotAcceptable;
+import org.mule.module.wsapi.rest.resource.ResourceNotFoundException;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
-import org.mule.transport.http.components.ResourceNotFoundException;
-import org.mule.transport.http.i18n.HttpMessages;
 import org.mule.util.FilenameUtils;
 import org.mule.util.IOUtils;
 
@@ -85,7 +82,7 @@ public class BaseUriRetrieveAction implements RestAction
             }
             catch (JsonProcessingException e)
             {
-                throw new MessagingException(restRequest.getMuleEvent(), e);
+                throw new UnexceptedErrorException(e);
             }
         }
         else if (restRequest.getProtocolAdaptor().getAcceptedContentTypes().contains("text/html"))
@@ -96,8 +93,7 @@ public class BaseUriRetrieveAction implements RestAction
                 in = getClass().getResourceAsStream(RESOURCE_BASE_PATH + "index.html");
                 if (in == null)
                 {
-                    throw new ResourceNotFoundException(HttpMessages.fileNotFound("index.html"),
-                        restRequest.getMuleEvent());
+                    throw new ResourceNotFoundException("index.html");
                 }
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -130,11 +126,11 @@ public class BaseUriRetrieveAction implements RestAction
             }
             catch (JsonProcessingException e)
             {
-                throw new UnexceptedErrorException(restRequest.getMuleEvent(), e);
+                throw new UnexceptedErrorException(e);
             }
             catch (IOException e)
             {
-                throw new MessagingException(restRequest.getMuleEvent(), e);
+                throw new UnexceptedErrorException(e);
             }
         }
         else if (path.endsWith(".png") || path.endsWith(".js") || path.endsWith(".css")
@@ -147,8 +143,7 @@ public class BaseUriRetrieveAction implements RestAction
                 if (in == null)
                 {
                     restRequest.getMuleEvent().getMessage().setOutboundProperty("http.status", 404);
-                    throw new ResourceNotFoundException(HttpMessages.fileNotFound(path),
-                        restRequest.getMuleEvent());
+                    throw new ResourceNotFoundException(path);
                 }
 
                 String mimeType = DEFAULT_MIME_TYPE;
@@ -192,8 +187,7 @@ public class BaseUriRetrieveAction implements RestAction
             }
             catch (IOException e)
             {
-                throw new ResourceNotFoundException(HttpMessages.fileNotFound(path),
-                    restRequest.getMuleEvent());
+                throw new ResourceNotFoundException(path);
             }
             finally
             {
@@ -205,7 +199,7 @@ public class BaseUriRetrieveAction implements RestAction
                     }
                     catch (IOException e)
                     {
-                        throw new MessagingException(restRequest.getMuleEvent(), e);
+                        throw new UnexceptedErrorException(e);
                     }
                 }
             }
@@ -216,7 +210,6 @@ public class BaseUriRetrieveAction implements RestAction
         else
         {
             throw new MediaTypeNotAcceptable();
-            return restRequest.getMuleEvent();
         }
     }
 

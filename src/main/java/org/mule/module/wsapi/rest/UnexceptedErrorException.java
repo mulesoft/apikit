@@ -13,8 +13,11 @@ package org.mule.module.wsapi.rest;
 public class UnexceptedErrorException extends RestException
 {
 
+    public UnexceptedErrorException(Exception e)
+    {
+        super(e);
+    }
+
     private static final long serialVersionUID = -5503686639923633242L;
 
 }
-
-

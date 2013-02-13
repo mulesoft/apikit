@@ -15,6 +15,14 @@ public class RestException extends Exception
 
     private static final long serialVersionUID = -8161118644314571187L;
 
+    public RestException()
+    {
+        super();
+    }
+
+    public RestException(Exception cause)
+    {
+        super(cause);
+    }
+
 }
-
-
