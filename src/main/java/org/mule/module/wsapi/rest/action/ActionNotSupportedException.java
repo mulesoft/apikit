@@ -18,4 +18,9 @@ public class ActionNotSupportedException extends RestException
         this.actionType = actionType;
     }
 
+    public RestResource getResource()
+    {
+        return resource;
+    }
+
 }

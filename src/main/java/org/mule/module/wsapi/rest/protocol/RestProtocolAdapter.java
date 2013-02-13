@@ -10,6 +10,7 @@
 
 package org.mule.module.wsapi.rest.protocol;
 
+import org.mule.api.MuleEvent;
 import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.action.ActionType;
 
@@ -31,6 +32,6 @@ public interface RestProtocolAdapter
 
     Map<String, Object> getQueryParameters();
 
-    void handleException(RestException re);
+    void handleException(RestException re, MuleEvent event);
 
 }

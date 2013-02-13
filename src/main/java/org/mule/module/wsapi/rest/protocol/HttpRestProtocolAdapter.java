@@ -29,11 +29,9 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     private String acceptHeader;
     private String contentType;
     private Map<String, Object> queryParams;
-    protected MuleEvent event;
 
     public HttpRestProtocolAdapter(MuleEvent event)
     {
-        this.event = event;
         this.baseURI = event.getMessageSourceURI();
         if (event.getMessage().getInboundProperty("Host") != null)
         {
@@ -130,11 +128,13 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     }
 
     @Override
-    public void handleException(RestException re)
+    public void handleException(RestException re, MuleEvent event)
     {
         if (re instanceof ActionNotSupportedException)
         {
+            ActionNotSupportedException anse = (ActionNotSupportedException) re;
             event.getMessage().setOutboundProperty("http.status", 405);
+            event.getMessage().setOutboundProperty("Allow", anse.getResource().getSupportedActions().iterator().next().toHttpMethod());
             event.getMessage().setPayload(NullPayload.getInstance());
 
         }

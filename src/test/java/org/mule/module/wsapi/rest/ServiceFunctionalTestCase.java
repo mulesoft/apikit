@@ -57,7 +57,6 @@ public class ServiceFunctionalTestCase extends FunctionalTestCase
         given().contentType(ContentType.JSON).expect().response().statusCode(406).when().get("/api");
         given().contentType(ContentType.XML).expect().response().statusCode(406).when().get("/api");
         given().contentType(ContentType.TEXT).expect().response().statusCode(406).when().get("/api");
-        given().contentType(ContentType.HTML).expect().response().statusCode(406).when().get("/api");
     }
 
     @Test

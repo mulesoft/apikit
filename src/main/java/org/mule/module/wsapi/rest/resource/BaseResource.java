@@ -8,6 +8,7 @@ import org.mule.module.wsapi.rest.RestWebService;
 import org.mule.module.wsapi.rest.action.ActionType;
 import org.mule.module.wsapi.rest.action.BaseUriRetrieveAction;
 import org.mule.module.wsapi.rest.action.RestAction;
+import org.mule.module.wsapi.rest.protocol.MediaTypeNotAcceptable;
 
 import java.util.Collections;
 import java.util.Set;
@@ -30,6 +31,11 @@ public class BaseResource extends AbstractRestResource
     protected MuleEvent processResource(RestRequest restCall) throws RestException
     {
         System.out.println("PROCESSING BASE RESOURCE");
+
+//        if (restCall.getProtocolAdaptor().getRequestContentType().equals("text/html"))
+//        {
+//            throw new MediaTypeNotAcceptable();
+//        }
 
         return super.processResource(restCall);
     }
