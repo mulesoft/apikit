@@ -13,8 +13,11 @@ package org.mule.module.wsapi.rest.action;
 import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.RestRequest;
 import org.mule.module.wsapi.rest.RestWebService;
+import org.mule.module.wsapi.rest.UnexceptedErrorException;
+import org.mule.module.wsapi.rest.protocol.MediaTypeNotAcceptable;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
@@ -48,7 +51,7 @@ public class BaseUriRetrieveAction implements RestAction
     }
 
     @Override
-    public MuleEvent handle(RestRequest restRequest) throws MuleException
+    public MuleEvent handle(RestRequest restRequest) throws RestException
     {
         String path = restRequest.getMuleEvent()
             .getMessage()
@@ -127,7 +130,7 @@ public class BaseUriRetrieveAction implements RestAction
             }
             catch (JsonProcessingException e)
             {
-                throw new MessagingException(restRequest.getMuleEvent(), e);
+                throw new UnexceptedErrorException(restRequest.getMuleEvent(), e);
             }
             catch (IOException e)
             {
@@ -212,7 +215,7 @@ public class BaseUriRetrieveAction implements RestAction
         }
         else
         {
-            restRequest.getProtocolAdaptor().statusNotAcceptable(restRequest.getMuleEvent());
+            throw new MediaTypeNotAcceptable();
             return restRequest.getMuleEvent();
         }
     }

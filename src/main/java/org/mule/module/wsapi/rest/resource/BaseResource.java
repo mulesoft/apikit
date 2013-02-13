@@ -2,7 +2,7 @@
 package org.mule.module.wsapi.rest.resource;
 
 import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
+import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.RestRequest;
 import org.mule.module.wsapi.rest.RestWebService;
 import org.mule.module.wsapi.rest.action.ActionType;
@@ -27,7 +27,7 @@ public class BaseResource extends AbstractRestResource
     }
 
     @Override
-    protected MuleEvent processResource(RestRequest restCall) throws MuleException
+    protected MuleEvent processResource(RestRequest restCall) throws RestException
     {
         System.out.println("PROCESSING BASE RESOURCE");
 

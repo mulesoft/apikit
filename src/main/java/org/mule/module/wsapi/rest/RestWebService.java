@@ -10,9 +10,9 @@
 
 package org.mule.module.wsapi.rest;
 
+import org.mule.api.MessagingException;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.AbstractWebService;
 import org.mule.module.wsapi.rest.resource.BaseResource;
@@ -44,9 +44,16 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
         return new MessageProcessor()
         {
             @Override
-            public MuleEvent process(MuleEvent event) throws MuleException
+            public MuleEvent process(MuleEvent event) throws MessagingException
             {
-                return handler.handle(new DefaultRestRequest(event));
+                try
+                {
+                    return handler.handle(new DefaultRestRequest(event));
+                }
+                catch (RestException e)
+                {
+                    throw new MessagingException(event, e);
+                }
             }
         };
 

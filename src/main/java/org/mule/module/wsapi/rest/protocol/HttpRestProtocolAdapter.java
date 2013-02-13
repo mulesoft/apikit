@@ -11,7 +11,10 @@
 package org.mule.module.wsapi.rest.protocol;
 
 import org.mule.api.MuleEvent;
+import org.mule.module.wsapi.rest.RestException;
+import org.mule.module.wsapi.rest.action.ActionNotSupportedException;
 import org.mule.module.wsapi.rest.action.ActionType;
+import org.mule.module.wsapi.rest.resource.ResourceNotFoundException;
 import org.mule.transport.NullPayload;
 
 import java.net.URI;
@@ -26,9 +29,11 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     private String acceptHeader;
     private String contentType;
     private Map<String, Object> queryParams;
+    protected MuleEvent event;
 
     public HttpRestProtocolAdapter(MuleEvent event)
     {
+        this.event = event;
         this.baseURI = event.getMessageSourceURI();
         if (event.getMessage().getInboundProperty("Host") != null)
         {
@@ -105,7 +110,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     {
         return baseURI;
     }
-    
+
     @Override
     public String getAcceptedContentTypes()
     {
@@ -125,23 +130,29 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     }
 
     @Override
-    public void statusResourceNotFound(MuleEvent muleEvent)
+    public void handleException(RestException re)
     {
-        muleEvent.getMessage().setOutboundProperty("http.status", 404);
-        muleEvent.getMessage().setPayload(NullPayload.getInstance());
-    }
+        if (re instanceof ActionNotSupportedException)
+        {
+            event.getMessage().setOutboundProperty("http.status", 405);
+            event.getMessage().setPayload(NullPayload.getInstance());
 
-    @Override
-    public void statusActionNotAllowed(MuleEvent muleEvent)
-    {
-        muleEvent.getMessage().setOutboundProperty("http.status", 405);
-        muleEvent.getMessage().setPayload(NullPayload.getInstance());
-    }
+        }
+        else if (re instanceof ResourceNotFoundException)
+        {
+            event.getMessage().setOutboundProperty("http.status", 404);
+            event.getMessage().setPayload(NullPayload.getInstance());
+        }
+        else if (re instanceof MediaTypeNotAcceptable)
+        {
+            event.getMessage().setOutboundProperty("http.status", 406);
 
-    @Override
-    public void statusNotAcceptable(MuleEvent muleEvent)
-    {
-        muleEvent.getMessage().setOutboundProperty("http.status", 406);
+        }
+        else
+        {
+
+        }
+
     }
 
 }

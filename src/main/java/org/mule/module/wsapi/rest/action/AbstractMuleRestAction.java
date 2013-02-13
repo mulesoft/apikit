@@ -4,6 +4,7 @@ package org.mule.module.wsapi.rest.action;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.RestRequest;
 
 public abstract class AbstractMuleRestAction implements MuleRestAction
@@ -31,8 +32,15 @@ public abstract class AbstractMuleRestAction implements MuleRestAction
     }
 
     @Override
-    public MuleEvent handle(RestRequest request) throws MuleException
+    public MuleEvent handle(RestRequest request) throws RestException
     {
-        return getHandler().process(request.getMuleEvent());
+        try
+        {
+            return getHandler().process(request.getMuleEvent());
+        }
+        catch (MuleException e)
+        {
+            throw new RestException();
+        }
     }
 }

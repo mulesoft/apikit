@@ -10,11 +10,11 @@
 
 package org.mule.module.wsapi.rest;
 
-import org.mule.api.MuleEvent;
-
-public interface RestRequestHandler
+public class RestException extends Exception
 {
 
-    MuleEvent handle(RestRequest restCall) throws RestException;
+    private static final long serialVersionUID = -8161118644314571187L;
 
 }
+
+

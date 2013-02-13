@@ -8,13 +8,13 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.wsapi.rest;
+package org.mule.module.wsapi.rest.protocol;
 
-import org.mule.api.MuleEvent;
+import org.mule.module.wsapi.rest.RestException;
 
-public interface RestRequestHandler
+public class MediaTypeNotAcceptable extends RestException
 {
 
-    MuleEvent handle(RestRequest restCall) throws RestException;
+    private static final long serialVersionUID = 4984121123689709327L;
 
 }

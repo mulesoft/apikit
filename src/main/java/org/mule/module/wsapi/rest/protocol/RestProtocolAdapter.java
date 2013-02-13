@@ -10,7 +10,7 @@
 
 package org.mule.module.wsapi.rest.protocol;
 
-import org.mule.api.MuleEvent;
+import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.action.ActionType;
 
 import java.net.URI;
@@ -19,9 +19,11 @@ import java.util.Map;
 public interface RestProtocolAdapter
 {
 
-    ActionType getActionType();
-
     URI getURI();
+
+    URI getBaseURI();
+
+    ActionType getActionType();
 
     String getAcceptedContentTypes();
 
@@ -29,12 +31,6 @@ public interface RestProtocolAdapter
 
     Map<String, Object> getQueryParameters();
 
-    void statusResourceNotFound(MuleEvent muleEvent);
-
-    void statusActionNotAllowed(MuleEvent muleEvent);
-
-    void statusNotAcceptable(MuleEvent muleEvent);
-
-    URI getBaseURI();
+    void handleException(RestException re);
 
 }

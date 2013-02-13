@@ -1,23 +1,23 @@
+
 package org.mule.module.wsapi.rest.resource;
 
-import org.mule.api.MessagingException;
-import org.mule.api.MuleEvent;
-import org.mule.config.i18n.CoreMessages;
+import org.mule.module.wsapi.rest.RestException;
 
-public class ResourceNotFoundException extends MessagingException
+public class ResourceNotFoundException extends RestException
 {
-    public ResourceNotFoundException(String message, MuleEvent event, Throwable cause)
+
+    private static final long serialVersionUID = -2274813685894863042L;
+    protected RestResource parentResource;
+    protected String resourcePath;
+
+    public ResourceNotFoundException(String path)
     {
-        super(CoreMessages.createStaticMessage(message), event, cause);
+        this(path, null);
     }
 
-    public ResourceNotFoundException(String message, MuleEvent event)
+    public ResourceNotFoundException(String path, RestResource restResource)
     {
-        super(CoreMessages.createStaticMessage(message), event);
-    }
-
-    public ResourceNotFoundException(Throwable throwable, MuleEvent event)
-    {
-        super(CoreMessages.createStaticMessage(throwable.getMessage()), event, throwable);
+        this.parentResource = restResource;
+        this.resourcePath = path;
     }
 }

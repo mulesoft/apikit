@@ -2,7 +2,7 @@
 package org.mule.module.wsapi.rest;
 
 import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
+import org.mule.module.wsapi.rest.resource.ResourceNotFoundException;
 import org.mule.module.wsapi.rest.resource.RestResource;
 
 import java.util.ArrayList;
@@ -21,20 +21,28 @@ public class RestResourceRouter implements RestRequestHandler
     protected Map<String, RestResource> routingTable;
 
     @Override
-    public MuleEvent handle(RestRequest restCall) throws MuleException
+    public MuleEvent handle(RestRequest restCall) throws RestException
     {
         if (routingTable == null)
         {
             buildRoutingTable();
         }
-        RestResource resource = routingTable.get(restCall.getNextPathElement());
-        if (resource != null)
+        String path = restCall.getNextPathElement();
+        RestResource resource = routingTable.get(path);
+        try
         {
-            return resource.handle(restCall);
+            if (resource != null)
+            {
+                return resource.handle(restCall);
+            }
+            else
+            {
+                throw new ResourceNotFoundException(path);
+            }
         }
-        else
+        catch (RestException re)
         {
-            restCall.getProtocolAdaptor().statusResourceNotFound(restCall.getMuleEvent());
+            restCall.getProtocolAdaptor().handleException(re);
             return restCall.getMuleEvent();
         }
     }
