@@ -28,14 +28,18 @@ public class RestAPINamespaceHandler extends NamespaceHandlerSupport
 {
     public void init()
     {
-        registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(RestWebServiceInterface.class));
+        registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(
+            RestWebServiceInterface.class));
         registerBeanDefinitionParser("service", new WebServiceDefinitionParser(RestWebService.class));
 
-        registerBeanDefinitionParser("document-resource", new ChildDefinitionParser("resource", DocumentResource.class));
-        registerBeanDefinitionParser("collection-resource", new ChildDefinitionParser("resource", CollectionResource.class));
+        registerBeanDefinitionParser("document-resource", new RestResourceDefinitionParser(
+            DocumentResource.class));
+        registerBeanDefinitionParser("collection-resource", new RestResourceDefinitionParser(
+            CollectionResource.class));
 
         registerBeanDefinitionParser("create", new ChildDefinitionParser("action", RestCreateAction.class));
-        registerBeanDefinitionParser("retrieve", new ChildDefinitionParser("action", RestRetrieveAction.class));
+        registerBeanDefinitionParser("retrieve",
+            new ChildDefinitionParser("action", RestRetrieveAction.class));
         registerBeanDefinitionParser("update", new ChildDefinitionParser("action", RestUpdateAction.class));
         registerBeanDefinitionParser("exists", new ChildDefinitionParser("action", RestExistsAction.class));
     }

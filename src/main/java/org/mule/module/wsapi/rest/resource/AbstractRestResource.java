@@ -7,7 +7,6 @@ import static org.mule.module.wsapi.rest.action.ActionType.RETRIEVE;
 import org.mule.api.MuleEvent;
 import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.RestRequest;
-import org.mule.module.wsapi.rest.RestResourceRouter;
 import org.mule.module.wsapi.rest.action.ActionNotSupportedException;
 import org.mule.module.wsapi.rest.action.ActionType;
 import org.mule.module.wsapi.rest.action.RestAction;
@@ -18,38 +17,22 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractRestResource extends RestResourceRouter implements RestResource
+public abstract class AbstractRestResource implements RestResource
 {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected String name;
-    protected String templateUri;
     protected List<RestAction> actions;
 
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
+    public AbstractRestResource(String name)
     {
         this.name = name;
     }
 
     @Override
-    public String getTemplateUri()
+    public String getName()
     {
-        if (this.templateUri != null)
-        {
-            return this.templateUri;
-        }
-        return getName();
-    }
-
-    public void setTemplateUri(String templateUri)
-    {
-        this.templateUri = templateUri;
+        return name;
     }
 
     public List<RestAction> getActions()
@@ -76,8 +59,7 @@ public abstract class AbstractRestResource extends RestResourceRouter implements
         return action;
     }
 
-    @Override
-    public RestAction getAction(ActionType actionType, MuleEvent muleEvent)
+    protected RestAction getAction(ActionType actionType, MuleEvent muleEvent)
         throws ActionNotSupportedException
     {
         if (!isActionSupported(actionType))
@@ -103,16 +85,9 @@ public abstract class AbstractRestResource extends RestResourceRouter implements
     }
 
     @Override
-    public final MuleEvent handle(RestRequest restCall) throws RestException
+    public MuleEvent handle(RestRequest restCall) throws RestException
     {
-        if (restCall.hasMorePathElements())
-        {
-            return super.handle(restCall);
-        }
-        else
-        {
-            return processResource(restCall);
-        }
+        return processResource(restCall);
     }
 
     protected MuleEvent processResource(RestRequest restCall) throws RestException
@@ -128,7 +103,7 @@ public abstract class AbstractRestResource extends RestResourceRouter implements
         }
         catch (RestException rana)
         {
-            restCall.getProtocolAdaptor().handleException(rana);
+            restCall.getProtocolAdaptor().handleException(rana, restCall.getMuleEvent());
         }
         return restCall.getMuleEvent();
     }

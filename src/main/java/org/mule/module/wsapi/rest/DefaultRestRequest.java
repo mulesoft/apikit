@@ -24,11 +24,13 @@ public class DefaultRestRequest implements RestRequest
     protected MuleEvent muleEvent;
     protected RestProtocolAdapter protocolAdapter;
     protected Deque<String> pathStack;
+    protected RestWebServiceInterface restWebServiceInterface;
 
-    public DefaultRestRequest(MuleEvent event)
+    public DefaultRestRequest(MuleEvent event, RestWebServiceInterface restWebServiceInterface)
     {
         this.muleEvent = event;
         this.protocolAdapter = RestProtocolAdapterFactory.getInstance().getAdapterForEvent(event);
+        this.restWebServiceInterface = restWebServiceInterface;
         initPathStack();
     }
 
@@ -74,6 +76,11 @@ public class DefaultRestRequest implements RestRequest
     public RestProtocolAdapter getProtocolAdaptor()
     {
         return protocolAdapter;
+    }
+
+    public RestWebServiceInterface getInterface()
+    {
+        return restWebServiceInterface;
     }
 
 }

@@ -20,7 +20,6 @@ import org.mule.module.wsapi.rest.resource.ResourceNotFoundException;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
-import org.mule.util.FilenameUtils;
 import org.mule.util.IOUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,19 +29,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class BaseUriRetrieveAction implements RestAction
+public class BaseResourceRetrieveAction implements RestAction
 {
 
     public static final String RESOURCE_BASE_PATH = "/org/mule/modules/rest/swagger/";
-    public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
-    public static final String MIME_TYPE_JAVASCRIPT = "application/x-javascript";
-    public static final String MIME_TYPE_PNG = "image/png";
-    public static final String MIME_TYPE_GIF = "image/gif";
-    public static final String MIME_TYPE_CSS = "text/css";
 
     protected RestWebService restWebService;
 
-    public BaseUriRetrieveAction(RestWebService restWebService)
+    public BaseResourceRetrieveAction(RestWebService restWebService)
     {
         this.restWebService = restWebService;
     }
@@ -53,15 +47,39 @@ public class BaseUriRetrieveAction implements RestAction
         String path = restRequest.getMuleEvent()
             .getMessage()
             .getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
-        if (restRequest.getProtocolAdaptor()
-            .getAcceptedContentTypes()
-            .equalsIgnoreCase("application/swagger+json")
-            || restRequest.getProtocolAdaptor().getAcceptedContentTypes().equalsIgnoreCase("*/*"))
+
+        String acceptContentTypes = restRequest.getProtocolAdaptor().getAcceptedContentTypes();
+
+        if (acceptContentTypes.equalsIgnoreCase("application/swagger+json")
+            || acceptContentTypes.equalsIgnoreCase("*/*"))
+        {
+            return swaggerJsonAction.handle(restRequest);
+        }
+        else if (acceptContentTypes.contains("text/html"))
+        {
+            return swaggerHtmlAction.handle(restRequest);
+        }
+        else
+        {
+            throw new MediaTypeNotAcceptable();
+        }
+    }
+
+    @Override
+    public ActionType getType()
+    {
+        return ActionType.RETRIEVE;
+    }
+
+    static final RestAction swaggerJsonAction = new RestAction()
+    {
+        @Override
+        public MuleEvent handle(RestRequest restRequest) throws RestException
         {
             try
             {
                 ObjectMapper mapper = new ObjectMapper();
-                String json = mapper.writeValueAsString(restWebService.getInterface());
+                String json = mapper.writeValueAsString(restRequest.getInterface());
                 json = json.replace("{baseSwaggerUri}", restRequest.getMuleEvent()
                     .getMessageSourceURI()
                     .toString());
@@ -85,7 +103,18 @@ public class BaseUriRetrieveAction implements RestAction
                 throw new UnexceptedErrorException(e);
             }
         }
-        else if (restRequest.getProtocolAdaptor().getAcceptedContentTypes().contains("text/html"))
+
+        @Override
+        public ActionType getType()
+        {
+            return ActionType.RETRIEVE;
+        }
+    };
+
+    static final RestAction swaggerHtmlAction = new RestAction()
+    {
+        @Override
+        public MuleEvent handle(RestRequest restRequest) throws RestException
         {
             InputStream in = null;
             try
@@ -109,7 +138,7 @@ public class BaseUriRetrieveAction implements RestAction
                 //
                 // buffer = buffer.replace("${resourcesJson}", urlBuilder.toString());
 
-                buffer = buffer.replace("${pageTitle}", restWebService.getInterface().getName() + " UI");
+                buffer = buffer.replace("${pageTitle}", restRequest.getInterface().getName() + " UI");
 
                 restRequest.getMuleEvent().getMessage().setPayload(buffer);
                 restRequest.getMuleEvent()
@@ -132,90 +161,14 @@ public class BaseUriRetrieveAction implements RestAction
             {
                 throw new UnexceptedErrorException(e);
             }
+
         }
-        else if (path.endsWith(".png") || path.endsWith(".js") || path.endsWith(".css")
-                 || path.endsWith(".html") || path.endsWith(".gif"))
+
+        @Override
+        public ActionType getType()
         {
-            InputStream in = null;
-            try
-            {
-                in = getClass().getResourceAsStream(RESOURCE_BASE_PATH + path);
-                if (in == null)
-                {
-                    restRequest.getMuleEvent().getMessage().setOutboundProperty("http.status", 404);
-                    throw new ResourceNotFoundException(path);
-                }
-
-                String mimeType = DEFAULT_MIME_TYPE;
-                if (FilenameUtils.getExtension(path).equals("html"))
-                {
-                    mimeType = MimeTypes.HTML;
-                }
-                else if (FilenameUtils.getExtension(path).equals("js"))
-                {
-                    mimeType = MIME_TYPE_JAVASCRIPT;
-                }
-                else if (FilenameUtils.getExtension(path).equals("png"))
-                {
-                    mimeType = MIME_TYPE_PNG;
-                }
-                else if (FilenameUtils.getExtension(path).equals("gif"))
-                {
-                    mimeType = MIME_TYPE_GIF;
-                }
-                else if (FilenameUtils.getExtension(path).equals("css"))
-                {
-                    mimeType = MIME_TYPE_CSS;
-                }
-
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                IOUtils.copyLarge(in, baos);
-
-                byte[] buffer = baos.toByteArray();
-
-                restRequest.getMuleEvent().getMessage().setPayload(buffer);
-                restRequest.getMuleEvent()
-                    .getMessage()
-                    .setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
-                        String.valueOf(HttpConstants.SC_OK));
-                restRequest.getMuleEvent()
-                    .getMessage()
-                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, mimeType);
-                restRequest.getMuleEvent()
-                    .getMessage()
-                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length);
-            }
-            catch (IOException e)
-            {
-                throw new ResourceNotFoundException(path);
-            }
-            finally
-            {
-                if (in != null)
-                {
-                    try
-                    {
-                        in.close();
-                    }
-                    catch (IOException e)
-                    {
-                        throw new UnexceptedErrorException(e);
-                    }
-                }
-            }
-
-            return restRequest.getMuleEvent();
-
+            return ActionType.RETRIEVE;
         }
-        else
-        {
-            throw new MediaTypeNotAcceptable();
-        }
-    }
+    };
 
-    @Override
-    public ActionType getType()
-    {
-        return ActionType.RETRIEVE;
-    }
 }

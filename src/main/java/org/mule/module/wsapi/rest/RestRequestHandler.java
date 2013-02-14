@@ -15,6 +15,6 @@ import org.mule.api.MuleEvent;
 public interface RestRequestHandler
 {
 
-    MuleEvent handle(RestRequest restCall) throws RestException;
+    MuleEvent handle(RestRequest restRequest) throws RestException;
 
 }

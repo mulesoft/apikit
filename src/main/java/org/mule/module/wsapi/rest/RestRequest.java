@@ -24,6 +24,8 @@ public interface RestRequest
     
     RestProtocolAdapter getProtocolAdaptor();
     
+    RestWebServiceInterface getInterface();
+    
     
 }
 

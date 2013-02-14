@@ -8,8 +8,13 @@ import org.mule.module.wsapi.rest.action.ActionType;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class CollectionResource extends AbstractRestResource
+public class CollectionResource extends AbstractHierarchicalRestResource
 {
+
+    public CollectionResource(String name)
+    {
+        super(name);
+    }
 
     public static final Set<ActionType> supportedActions = EnumSet.of(RETRIEVE);
 

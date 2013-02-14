@@ -1,50 +1,60 @@
 
-package org.mule.module.wsapi.rest;
+package org.mule.module.wsapi.rest.resource;
 
 import org.mule.api.MuleEvent;
-import org.mule.module.wsapi.rest.resource.ResourceNotFoundException;
-import org.mule.module.wsapi.rest.resource.RestResource;
+import org.mule.module.wsapi.rest.RestException;
+import org.mule.module.wsapi.rest.RestRequest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class RestResourceRouter implements RestRequestHandler
+public abstract class AbstractHierarchicalRestResource extends AbstractRestResource
+    implements HierarchicalRestResource
 {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-
     protected List<RestResource> resources = new ArrayList<RestResource>();
     protected Map<String, RestResource> routingTable;
 
+    public AbstractHierarchicalRestResource(String name)
+    {
+        super(name);
+    }
+
     @Override
-    public MuleEvent handle(RestRequest restCall) throws RestException
+    public MuleEvent handle(RestRequest restRequest) throws RestException
     {
         if (routingTable == null)
         {
             buildRoutingTable();
         }
-        String path = restCall.getNextPathElement();
-        RestResource resource = routingTable.get(path);
+
         try
         {
-            if (resource != null)
+            if (restRequest.hasMorePathElements())
             {
-                return resource.handle(restCall);
+                String path = restRequest.getNextPathElement();
+                RestResource resource = routingTable.get(path);
+                if (resource != null)
+                {
+                    resource.handle(restRequest);
+                }
+                else
+                {
+                    throw new ResourceNotFoundException(path);
+                }
             }
             else
             {
-                throw new ResourceNotFoundException(path);
+                processResource(restRequest);
             }
         }
         catch (RestException re)
         {
-            restCall.getProtocolAdaptor().handleException(re);
-            return restCall.getMuleEvent();
+            restRequest.getProtocolAdaptor().handleException(re, restRequest.getMuleEvent());
+
         }
+        return restRequest.getMuleEvent();
     }
 
     public void buildRoutingTable()
@@ -56,10 +66,9 @@ public class RestResourceRouter implements RestRequestHandler
         }
         for (RestResource resource : getResources())
         {
-            String uriPattern = resource.getTemplateUri();
+            String uriPattern = resource.getName();
             logger.debug("Adding URI to the routing table: " + uriPattern);
             routingTable.put(uriPattern, resource);
-            resource.buildRoutingTable();
         }
     }
 

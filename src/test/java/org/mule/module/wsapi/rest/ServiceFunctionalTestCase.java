@@ -5,11 +5,16 @@ import static com.jayway.restassured.RestAssured.given;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
+import org.mule.util.IOUtils;
 
 import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.hamcrest.Description;
 import org.hamcrest.Matchers;
+import org.hamcrest.TypeSafeMatcher;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -34,29 +39,43 @@ public class ServiceFunctionalTestCase extends FunctionalTestCase
     // Base URI
 
     @Test
-    public void baseUriPutNotAllowed() throws Exception
+    public void baseUriPutNotSupported() throws Exception
     {
-        given().expect().response().statusCode(405).header("Allow", "GET").when().put("/api");
+        given().expect()
+            .response()
+            .statusCode(405)
+            .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .when()
+            .put("/api");
     }
 
     @Test
-    public void baseUriPostNotAllowed() throws Exception
+    public void baseUriPostNotSupported() throws Exception
     {
-        given().expect().response().statusCode(405).header("Allow", "GET").when().post("/api");
+        given().expect()
+            .response()
+            .statusCode(405)
+            .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .when()
+            .post("/api");
     }
 
     @Test
-    public void baseUriDeleteNotAllowed() throws Exception
+    public void baseUriDeleteNotSupported() throws Exception
     {
-        given().expect().response().statusCode(405).header("Allow", "GET").when().delete("/api");
+        given().expect()
+            .response()
+            .statusCode(405)
+            .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .when()
+            .delete("/api");
     }
 
     @Test
-    public void baseUriGet() throws Exception
+    public void baseUriGetUnsupportedContentTypes() throws Exception
     {
-        given().contentType(ContentType.JSON).expect().response().statusCode(406).when().get("/api");
-        given().contentType(ContentType.XML).expect().response().statusCode(406).when().get("/api");
-        given().contentType(ContentType.TEXT).expect().response().statusCode(406).when().get("/api");
+        given().header("Accept", "application/json").expect().response().statusCode(406).when().get("/api");
+        given().header("Accept", "text/pain").expect().response().statusCode(406).when().get("/api");
     }
 
     @Test
@@ -64,6 +83,35 @@ public class ServiceFunctionalTestCase extends FunctionalTestCase
     {
         given().expect().response().statusCode(200).when().get("/api");
         given().header("Accept", "text/html").expect().response().statusCode(200).when().get("/api");
+    }
+
+    @Test
+    public void baseUriGetHtmlResources() throws Exception
+    {
+        given().expect().response().statusCode(200).body(new TypeSafeMatcher<InputStream>()
+        {
+
+            @Override
+            public void describeTo(Description description)
+            {
+            }
+
+            @Override
+            protected boolean matchesSafely(InputStream item)
+            {
+                try
+                {
+                    return IOUtils.contentEquals(item,
+                        getClass().getResourceAsStream("org/mule/modules/rest/swagger/lib/swagger.js"));
+                }
+                catch (IOException e)
+                {
+                    return false;
+                }
+            }
+        })
+            .when()
+            .get("/api/_swagger/lib/swagger.js");
     }
 
     @Test
@@ -80,4 +128,19 @@ public class ServiceFunctionalTestCase extends FunctionalTestCase
             .when()
             .get("/api");
     }
+
+    @Test
+    public void baseUriGetSwaggerJsonResourcesDotJson() throws Exception
+    {
+        given().expect()
+            .response()
+            .statusCode(200)
+            .body(
+                Matchers.equalTo("{\"apiVersion\":\"1.0\",\"swaggerVersion\":\"1.0\",\"basePath\":\"http://localhost:"
+                                 + serverPort.getNumber()
+                                 + "/api\",\"apis\":[{\"path\":\"/leagues\",\"description\"}]}"))
+            .when()
+            .get("/api/resources.json");
+    }
+
 }

@@ -17,6 +17,7 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.module.wsapi.AbstractWebService;
 import org.mule.module.wsapi.rest.resource.BaseResource;
 import org.mule.module.wsapi.rest.resource.RestResource;
+import org.mule.module.wsapi.rest.resource.StaticResourceCollection;
 
 import java.util.List;
 
@@ -37,9 +38,10 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
     @Override
     protected MessageProcessor getRequestRouter()
     {
-        final RestResourceRouter handler = new RestResourceRouter();
+        final BaseResource handler = new BaseResource(this);
         handler.getResources().addAll((List<RestResource>) webServiceInterface.getRoutes());
-        handler.getResources().add(new BaseResource(this));
+        handler.getResources()
+            .add(new StaticResourceCollection("_swagger", "/org/mule/modules/rest/swagger"));
 
         return new MessageProcessor()
         {
@@ -48,7 +50,7 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
             {
                 try
                 {
-                    return handler.handle(new DefaultRestRequest(event));
+                    return handler.handle(new DefaultRestRequest(event, getInterface()));
                 }
                 catch (RestException e)
                 {
