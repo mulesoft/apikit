@@ -83,6 +83,10 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         this.acceptHeader = event.getMessage().getInboundProperty("Accept");
 
         this.contentType = event.getMessage().getInboundProperty("Content-Type");
+        if (this.contentType == null)
+        {
+            this.contentType = event.getMessage().getOutboundProperty("Content-Type");
+        }
         if (this.contentType != null && this.contentType.indexOf(";") != -1)
         {
             this.contentType = this.contentType.substring(0, this.contentType.indexOf(";"));

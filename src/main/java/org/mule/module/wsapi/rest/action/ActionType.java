@@ -12,11 +12,11 @@ package org.mule.module.wsapi.rest.action;
 
 public enum ActionType
 {
-    CREATE("post"),
-    RETRIEVE("get"),
-    UPDATE("put"),
-    DELETE("delete"),
-    EXISTS("head");
+    CREATE("POST"),
+    RETRIEVE("GET"),
+    UPDATE("PUT"),
+    DELETE("DELETE"),
+    EXISTS("HEAD");
 
     private String httpMethod;
 

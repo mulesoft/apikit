@@ -94,8 +94,7 @@ public abstract class AbstractRestResource implements RestResource
     {
         try
         {
-            this.getAction(restCall.getProtocolAdaptor().getActionType(), restCall.getMuleEvent()).handle(
-                restCall);
+            this.getAction(restCall.getProtocolAdaptor().getActionType(), restCall.getMuleEvent()).handle(restCall);
             if (ActionType.EXISTS == restCall.getProtocolAdaptor().getActionType())
             {
                 restCall.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
