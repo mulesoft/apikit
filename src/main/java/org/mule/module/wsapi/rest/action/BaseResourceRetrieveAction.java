@@ -44,14 +44,9 @@ public class BaseResourceRetrieveAction implements RestAction
     @Override
     public MuleEvent handle(RestRequest restRequest) throws RestException
     {
-        String path = restRequest.getMuleEvent()
-            .getMessage()
-            .getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
-
         String acceptContentTypes = restRequest.getProtocolAdaptor().getAcceptedContentTypes();
 
-        if (acceptContentTypes.equalsIgnoreCase("application/swagger+json")
-            || acceptContentTypes.equalsIgnoreCase("*/*"))
+        if (acceptContentTypes.toLowerCase().contains("application/swagger+json"))
         {
             return swaggerJsonAction.handle(restRequest);
         }
@@ -132,11 +127,16 @@ public class BaseResourceRetrieveAction implements RestAction
 
                 buffer = buffer.replace("${swaggerUrl}", restRequest.getMuleEvent()
                     .getMessageSourceURI()
+                    .toString()
+                                                         + "/_swagger/");
+
+                buffer = buffer.replace("${baseUrl}", restRequest.getMuleEvent()
+                    .getMessageSourceURI()
                     .toString());
 
-                // urlBuilder.append("/resources.json");
-                //
-                // buffer = buffer.replace("${resourcesJson}", urlBuilder.toString());
+                buffer = buffer.replace("${resourcesJson}", restRequest.getMuleEvent()
+                    .getMessageSourceURI()
+                    .toString());
 
                 buffer = buffer.replace("${pageTitle}", restRequest.getInterface().getName() + " UI");
 

@@ -6,6 +6,7 @@ import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.RestRequest;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
 public abstract class AbstractHierarchicalRestResource extends AbstractRestResource
     implements HierarchicalRestResource
 {
-    protected List<RestResource> resources = new ArrayList<RestResource>();
+    protected List<RestResource> resources = Collections.unmodifiableList(new ArrayList<RestResource>());
     protected Map<String, RestResource> routingTable;
 
     public AbstractHierarchicalRestResource(String name)
@@ -24,11 +25,6 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
     @Override
     public MuleEvent handle(RestRequest restRequest) throws RestException
     {
-        if (routingTable == null)
-        {
-            buildRoutingTable();
-        }
-
         try
         {
             if (restRequest.hasMorePathElements())
@@ -79,7 +75,8 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
 
     public void setResources(List<RestResource> resources)
     {
-        this.resources = resources;
+        this.resources = Collections.unmodifiableList(resources);
+        buildRoutingTable();
     }
 
 }

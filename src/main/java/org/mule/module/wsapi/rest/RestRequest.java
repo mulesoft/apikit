@@ -26,6 +26,10 @@ public interface RestRequest
     
     RestWebServiceInterface getInterface();
     
+    String getRelativeURI();
+    
+    void popFirstPathElement();
+    
     
 }
 

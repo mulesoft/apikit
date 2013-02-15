@@ -59,16 +59,8 @@ public class StaticResourceCollection extends AbstractRestResource
         return EnumSet.of(ActionType.RETRIEVE);
     }
 
-    @Override
-    public final MuleEvent handle(RestRequest restCall) throws RestException
-    {
-
-        return processResource(restCall);
-    }
-
     class StaticResourceCollectionRetreiveAction implements RestAction
     {
-
         @Override
         public MuleEvent handle(RestRequest restRequest) throws RestException
         {

@@ -56,6 +56,7 @@ public class RestWebServiceInterfaceSerializer extends JsonSerializer<RestWebSer
             jsonGenerator.writeString("/" + resource.getName());
             jsonGenerator.writeFieldName("description");
             // jsonGenerator.writeString(resource.getDescription().trim());
+            jsonGenerator.writeString("");
             jsonGenerator.writeEndObject();
         }
     }

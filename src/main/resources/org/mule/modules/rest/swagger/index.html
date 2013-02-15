@@ -2,18 +2,18 @@
 <head>
     <title>${pageTitle}</title>
     <link href='http://fonts.googleapis.com/css?family=Ubuntu:300' rel='stylesheet' type='text/css'/>
-    <link href='css/hightlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
-    <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
-    <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
-    <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
-    <script src='lib/jquery.wiggle.min.js' type='text/javascript'></script>
-    <script src='lib/jquery.ba-bbq.min.js' type='text/javascript'></script>
-    <script src='lib/handlebars-1.0.rc.1.js' type='text/javascript'></script>
-    <script src='lib/underscore-min.js' type='text/javascript'></script>
-    <script src='lib/backbone-min.js' type='text/javascript'></script>
-    <script src='lib/swagger.js' type='text/javascript'></script>
-    <script src='swagger-ui.js' type='text/javascript'></script>
-    <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
+    <link href='${swaggerUrl}css/hightlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
+    <link href='${swaggerUrl}css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
+    <script src='${swaggerUrl}lib/jquery-1.8.0.min.js' type='text/javascript'></script>
+    <script src='${swaggerUrl}lib/jquery.slideto.min.js' type='text/javascript'></script>
+    <script src='${swaggerUrl}lib/jquery.wiggle.min.js' type='text/javascript'></script>
+    <script src='${swaggerUrl}lib/jquery.ba-bbq.min.js' type='text/javascript'></script>
+    <script src='${swaggerUrl}lib/handlebars-1.0.rc.1.js' type='text/javascript'></script>
+    <script src='${swaggerUrl}lib/underscore-min.js' type='text/javascript'></script>
+    <script src='${swaggerUrl}lib/backbone-min.js' type='text/javascript'></script>
+    <script src='${swaggerUrl}lib/swagger.js' type='text/javascript'></script>
+    <script src='${swaggerUrl}swagger-ui.js' type='text/javascript'></script>
+    <script src='${swaggerUrl}lib/highlight.7.3.pack.js' type='text/javascript'></script>
 
     <style type="text/css">
         .swagger-ui-wrap {
@@ -45,7 +45,7 @@
         $(function () {
             window.swaggerUi = new SwaggerUi({
                 discoveryUrl:"${resourcesJson}",
-                apiKey:"special-key",
+                apiKey:"",
                 dom_id:"swagger-ui-container",
                 supportHeaderParams: false,
                 supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
@@ -75,7 +75,7 @@
 <body>
 <div id='header'>
     <div class="swagger-ui-wrap">
-        <a id="logo" href="${swaggerUrl}">${pageTitle}</a>
+        <a id="logo" href="${baseUrl}">${pageTitle}</a>
 
 
         <form id='api_selector'>

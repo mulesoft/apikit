@@ -13,6 +13,7 @@ package org.mule.module.wsapi.rest;
 import org.mule.api.MuleEvent;
 import org.mule.module.wsapi.rest.protocol.RestProtocolAdapter;
 import org.mule.module.wsapi.rest.protocol.RestProtocolAdapterFactory;
+import org.mule.util.StringUtils;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -25,12 +26,15 @@ public class DefaultRestRequest implements RestRequest
     protected RestProtocolAdapter protocolAdapter;
     protected Deque<String> pathStack;
     protected RestWebServiceInterface restWebServiceInterface;
+    protected String relativeURI;
 
     public DefaultRestRequest(MuleEvent event, RestWebServiceInterface restWebServiceInterface)
     {
         this.muleEvent = event;
         this.protocolAdapter = RestProtocolAdapterFactory.getInstance().getAdapterForEvent(event);
         this.restWebServiceInterface = restWebServiceInterface;
+        relativeURI = StringUtils.difference(protocolAdapter.getBaseURI().toString(),
+            protocolAdapter.getURI().toString());
         initPathStack();
     }
 
@@ -81,6 +85,22 @@ public class DefaultRestRequest implements RestRequest
     public RestWebServiceInterface getInterface()
     {
         return restWebServiceInterface;
+    }
+
+    public String getRelativeURI()
+    {
+        return relativeURI;
+    }
+
+    public void setRelativeURI(String relativeURI)
+    {
+        this.relativeURI = relativeURI;
+    }
+
+    public void popFirstPathElement()
+    {
+        // TODO Auto-generated method stub
+
     }
 
 }
