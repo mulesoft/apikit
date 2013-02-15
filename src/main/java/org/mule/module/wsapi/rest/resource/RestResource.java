@@ -16,12 +16,12 @@ import java.util.Set;
 @JsonSerialize(using = RestResourceSerializer.class)
 public interface RestResource extends RestRequestHandler, WebServiceRoute, NamedObject
 {
-    boolean isActionSupported(ActionType actionType);
+    boolean isActionTypeAllowed(ActionType actionType);
+    
+    Set<ActionType> getAllowedActionTypes();
 
-    Set<ActionType> getSupportedActions();
-    
     void setActions(List<RestAction> actions);
-    
+
     List<RestAction> getActions();
 
 }

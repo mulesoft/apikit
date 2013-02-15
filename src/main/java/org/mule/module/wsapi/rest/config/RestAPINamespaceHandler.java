@@ -11,9 +11,7 @@
 package org.mule.module.wsapi.rest.config;
 
 import org.mule.config.spring.handlers.MuleNamespaceHandler;
-import org.mule.module.wsapi.config.WebServiceDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceInterfaceDefinitionParser;
-import org.mule.module.wsapi.rest.RestWebService;
 import org.mule.module.wsapi.rest.RestWebServiceInterface;
 import org.mule.module.wsapi.rest.action.RestCreateAction;
 import org.mule.module.wsapi.rest.action.RestExistsAction;
@@ -28,8 +26,7 @@ public class RestAPINamespaceHandler extends MuleNamespaceHandler
     {
         registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(
             RestWebServiceInterface.class));
-        registerBeanDefinitionParser("service", new WebServiceDefinitionParser(RestWebService.class));
-
+        registerBeanDefinitionParser("service", new RestWebServiceDefinitionParser());
         registerBeanDefinitionParser("document-resource", new RestResourceDefinitionParser(
             DocumentResource.class));
         registerBeanDefinitionParser("collection-resource", new RestResourceDefinitionParser(

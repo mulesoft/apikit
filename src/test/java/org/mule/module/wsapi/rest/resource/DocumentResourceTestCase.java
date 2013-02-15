@@ -49,6 +49,14 @@ public class DocumentResourceTestCase extends AbstractMuleTestCase
     }
 
     @Test
+    public void suportedActionTypes(){
+        
+        System.out.println(doc.getSupportedActionTypes());
+        
+    }
+
+    
+    @Test
     public void handleHttpResourceFound() throws RestException
     {
         RestAction action = mock(RestRetrieveAction.class);

@@ -12,14 +12,17 @@ package org.mule.module.wsapi.rest.protocol;
 
 import org.mule.api.MuleEvent;
 import org.mule.module.wsapi.rest.RestException;
-import org.mule.module.wsapi.rest.action.ActionNotSupportedException;
 import org.mule.module.wsapi.rest.action.ActionType;
+import org.mule.module.wsapi.rest.action.ActionTypeNotAllowedException;
 import org.mule.module.wsapi.rest.resource.ResourceNotFoundException;
 import org.mule.transport.NullPayload;
+import org.mule.util.StringUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class HttpRestProtocolAdapter implements RestProtocolAdapter
 {
@@ -131,14 +134,25 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         return queryParams;
     }
 
+    private Set<String> actionTypesToHttpMethods(Set<ActionType> actionTypes)
+    {
+        Set<String> set = new HashSet<String>();
+        for (ActionType type : actionTypes)
+        {
+            set.add(type.toHttpMethod());
+        }
+        return set;
+    }
+
     @Override
     public void handleException(RestException re, MuleEvent event)
     {
-        if (re instanceof ActionNotSupportedException)
+        if (re instanceof ActionTypeNotAllowedException)
         {
-            ActionNotSupportedException anse = (ActionNotSupportedException) re;
+            ActionTypeNotAllowedException anse = (ActionTypeNotAllowedException) re;
             event.getMessage().setOutboundProperty("http.status", 405);
-            event.getMessage().setOutboundProperty("Allow", anse.getResource().getSupportedActions().iterator().next().toHttpMethod());
+            event.getMessage().setOutboundProperty("Allow",
+                StringUtils.join(actionTypesToHttpMethods(anse.getResource().getAllowedActionTypes()), " ,"));
             event.getMessage().setPayload(NullPayload.getInstance());
 
         }
@@ -147,7 +161,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
             event.getMessage().setOutboundProperty("http.status", 404);
             event.getMessage().setPayload(NullPayload.getInstance());
         }
-        else if (re instanceof MediaTypeNotAcceptable)
+        else if (re instanceof MediaTypeNotAcceptableException)
         {
             event.getMessage().setOutboundProperty("http.status", 406);
 

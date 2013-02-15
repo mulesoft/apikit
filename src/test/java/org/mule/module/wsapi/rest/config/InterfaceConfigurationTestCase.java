@@ -13,8 +13,6 @@ package org.mule.module.wsapi.rest.config;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.mule.endpoint.DefaultInboundEndpoint;
-import org.mule.module.wsapi.rest.RestWebService;
 import org.mule.module.wsapi.rest.RestWebServiceInterface;
 import org.mule.module.wsapi.rest.action.ActionType;
 import org.mule.module.wsapi.rest.action.MuleRestAction;
@@ -24,25 +22,13 @@ import org.mule.tck.junit4.FunctionalTestCase;
 
 import org.junit.Test;
 
-public class NamespaceHandlerFunctionalTestCase extends FunctionalTestCase
+public class InterfaceConfigurationTestCase extends FunctionalTestCase
 {
 
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/wsapi/rest/config/namespace-handler-config.xml, org/mule/module/wsapi/test-flows-config.xml";
-    }
-
-    @Test
-    public void testService() throws Exception
-    {
-        RestWebService webService = muleContext.getRegistry().lookupObject("myService");
-
-        assertNotNull(webService);
-        assertEquals(RestWebService.class, webService.getClass());
-        assertEquals("myService", webService.getName());
-        assertEquals("service description", webService.getDescription());
-        assertEquals(DefaultInboundEndpoint.class, webService.getMessageSource().getClass());
+        return "org/mule/module/wsapi/rest/config/configuration-config.xml, org/mule/module/wsapi/test-flows-config.xml";
     }
 
     @Test
@@ -117,15 +103,6 @@ public class NamespaceHandlerFunctionalTestCase extends FunctionalTestCase
         assertEquals("#[true]", action4.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action4.getHandler());
 
-    }
-
-    @Test
-    public void testServiceInterfaceReference() throws Exception
-    {
-        RestWebService webService = muleContext.getRegistry().lookupObject("myService");
-        RestWebServiceInterface wsInterface = muleContext.getRegistry().lookupObject("myInterface");
-
-        assertEquals(wsInterface, webService.getInterface());
     }
 
 }

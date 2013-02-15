@@ -8,8 +8,8 @@ import org.mule.api.MuleEvent;
 import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.RestRequest;
 import org.mule.module.wsapi.rest.UnexceptedErrorException;
-import org.mule.module.wsapi.rest.action.ActionNotSupportedException;
 import org.mule.module.wsapi.rest.action.ActionType;
+import org.mule.module.wsapi.rest.action.ActionTypeNotAllowedException;
 import org.mule.module.wsapi.rest.action.RestAction;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.NullPayload;
@@ -19,7 +19,11 @@ import org.mule.transport.http.HttpConstants;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +34,7 @@ public abstract class AbstractRestResource implements RestResource
 
     protected String name;
     protected String description = "";
-    protected List<RestAction> actions;
+    protected List<RestAction> actions = new ArrayList<RestAction>();
     protected String accessExpression;
 
     public AbstractRestResource(String name)
@@ -68,11 +72,11 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     protected RestAction getAction(ActionType actionType, MuleEvent muleEvent)
-        throws ActionNotSupportedException
+        throws ActionTypeNotAllowedException
     {
-        if (!isActionSupported(actionType))
+        if (!isActionTypeAllowed(actionType))
         {
-            throw new ActionNotSupportedException(this, actionType);
+            throw new ActionTypeNotAllowedException(this, actionType);
         }
         RestAction action = getAction(actionType);
         if (action == null && EXISTS == actionType)
@@ -81,15 +85,33 @@ public abstract class AbstractRestResource implements RestResource
         }
         if (action == null)
         {
-            throw new ActionNotSupportedException(this, actionType);
+            throw new ActionTypeNotAllowedException(this, actionType);
         }
         return action;
     }
 
     @Override
-    public boolean isActionSupported(ActionType actionType)
+    public boolean isActionTypeAllowed(ActionType actionType)
     {
-        return getSupportedActions().contains(actionType);
+        for (RestAction action : actions)
+        {
+            if (action.getType().equals(actionType))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public Set<ActionType> getAllowedActionTypes()
+    {
+        Set<ActionType> allowedTypes = new HashSet<ActionType>();
+        for (RestAction action : actions)
+        {
+            allowedTypes.add(action.getType());
+        }
+        return allowedTypes;
     }
 
     @Override
@@ -102,23 +124,23 @@ public abstract class AbstractRestResource implements RestResource
     {
         try
         {
-//            if (restRequest.getProtocolAdaptor().getActionType().equals(ActionType.RETRIEVE)
-//                && restRequest.getProtocolAdaptor().getAcceptedContentTypes() != null
-//                && restRequest.getProtocolAdaptor()
-//                    .getAcceptedContentTypes()
-//                    .contains("application/swagger+json"))
-//            {
-//                new SwaggerResourceAction(this, restRequest).handle(restRequest);
-//            }
-//            else
-//            {
+            // if (restRequest.getProtocolAdaptor().getActionType().equals(ActionType.RETRIEVE)
+            // && restRequest.getProtocolAdaptor().getAcceptedContentTypes() != null
+            // && restRequest.getProtocolAdaptor()
+            // .getAcceptedContentTypes()
+            // .contains("application/swagger+json"))
+            // {
+            // new SwaggerResourceAction(this, restRequest).handle(restRequest);
+            // }
+            // else
+            // {
 
-                this.getAction(restRequest.getProtocolAdaptor().getActionType(), restRequest.getMuleEvent())
-                    .handle(restRequest);
-                if (ActionType.EXISTS == restRequest.getProtocolAdaptor().getActionType())
-                {
-                    restRequest.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
-                }
+            this.getAction(restRequest.getProtocolAdaptor().getActionType(), restRequest.getMuleEvent())
+                .handle(restRequest);
+            if (ActionType.EXISTS == restRequest.getProtocolAdaptor().getActionType())
+            {
+                restRequest.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
+            }
             // }
         }
         catch (RestException rana)
@@ -199,5 +221,10 @@ public abstract class AbstractRestResource implements RestResource
     {
         this.description = description;
     }
+
+    protected Set<ActionType> getSupportedActionTypes()
+    {
+        return EnumSet.of(ActionType.RETRIEVE, ActionType.EXISTS, ActionType.UPDATE);
+    };
 
 }

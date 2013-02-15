@@ -26,8 +26,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.EnumSet;
-import java.util.Set;
 
 public class StaticResourceCollection extends AbstractRestResource
 {
@@ -51,12 +49,6 @@ public class StaticResourceCollection extends AbstractRestResource
     public String getName()
     {
         return name;
-    }
-
-    @Override
-    public Set<ActionType> getSupportedActions()
-    {
-        return EnumSet.of(ActionType.RETRIEVE);
     }
 
     class StaticResourceCollectionRetreiveAction implements RestAction

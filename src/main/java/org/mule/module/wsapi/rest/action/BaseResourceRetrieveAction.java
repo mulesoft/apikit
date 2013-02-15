@@ -15,7 +15,7 @@ import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.RestRequest;
 import org.mule.module.wsapi.rest.RestWebService;
 import org.mule.module.wsapi.rest.UnexceptedErrorException;
-import org.mule.module.wsapi.rest.protocol.MediaTypeNotAcceptable;
+import org.mule.module.wsapi.rest.protocol.MediaTypeNotAcceptableException;
 import org.mule.module.wsapi.rest.resource.ResourceNotFoundException;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
@@ -56,7 +56,7 @@ public class BaseResourceRetrieveAction implements RestAction
         }
         else
         {
-            throw new MediaTypeNotAcceptable();
+            throw new MediaTypeNotAcceptableException();
         }
     }
 

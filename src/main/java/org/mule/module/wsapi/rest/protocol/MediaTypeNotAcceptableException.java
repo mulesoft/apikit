@@ -12,7 +12,7 @@ package org.mule.module.wsapi.rest.protocol;
 
 import org.mule.module.wsapi.rest.RestException;
 
-public class MediaTypeNotAcceptable extends RestException
+public class MediaTypeNotAcceptableException extends RestException
 {
 
     private static final long serialVersionUID = 4984121123689709327L;

@@ -34,7 +34,9 @@
     <xsd:element name="service" substitutionGroup="api:abstract-web-service">
         <xsd:complexType>
             <xsd:complexContent>
-                <xsd:extension base="api:abstractWebServiceType"/>
+                <xsd:extension base="api:abstractWebServiceType">
+                    <xsd:attribute name="enableSwagger" type="mule:substitutableBoolean" default="true"/>
+                </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
