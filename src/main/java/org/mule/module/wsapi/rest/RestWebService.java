@@ -42,7 +42,7 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
         final BaseResource handler = new BaseResource(this);
         List<RestResource> resources = new ArrayList<RestResource>();
         resources.addAll((List<RestResource>) webServiceInterface.getRoutes());
-        resources.add(new StaticResourceCollection("_swagger", "/org/mule/modules/rest/swagger"));
+        resources.add(new StaticResourceCollection("_swagger", "/org/mule/module/wsapi/rest/swagger"));
         handler.setResources(resources);
 
         return new MessageProcessor()

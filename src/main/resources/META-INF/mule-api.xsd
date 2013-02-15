@@ -71,9 +71,6 @@
     <xsd:complexType name="abstractWebServiceInterfaceType">
         <xsd:complexContent>
             <xsd:extension base="mule:annotatedType">
-                <xsd:sequence>
-                    <xsd:element name="description" type="type" minOccurs="0"/>
-                </xsd:sequence>
                 <xsd:attribute name="name" type="mule:nonBlankString" use="required">
                     <xsd:annotation>
                         <xsd:documentation>
@@ -89,7 +86,6 @@
         <xsd:complexContent>
             <xsd:extension base="mule:annotatedType">
                 <xsd:sequence>
-                    <xsd:element name="description" type="type" minOccurs="0"/>
                     <xsd:group ref="mule:messageSourceOrInboundEndpoint"/>
                 </xsd:sequence>
                 <xsd:attribute name="name" type="mule:nonBlankString" use="required">
@@ -125,16 +121,15 @@
 
     <xsd:complexType name="abstractWebServiceRoute">
         <xsd:complexContent>
-            <xsd:extension base="mule:abstractMessageProcessorType"/>
+            <xsd:extension base="mule:annotatedType">
+                <xsd:attribute name="access" type="xsd:string" use="optional"/>
+            </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="abstractWebServiceOperationType">
         <xsd:complexContent>
-            <xsd:extension base="mule:annotatedType">
-                <xsd:sequence>
-                    <xsd:group ref="mule:messageSourceOrInboundEndpoint" minOccurs="0"/>
-                </xsd:sequence>
+            <xsd:extension base="abstractWebServiceRoute">
                 <xsd:attribute name="flow-ref" type="mule:nonBlankString" use="required">
                     <xsd:annotation>
                         <xsd:documentation>
@@ -143,12 +138,6 @@
                     </xsd:annotation>
                 </xsd:attribute>
            </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-    
-    <xsd:complexType name="type">
-         <xsd:complexContent>
-            <xsd:extension base="mule:descriptionType"/>
         </xsd:complexContent>
     </xsd:complexType>
 

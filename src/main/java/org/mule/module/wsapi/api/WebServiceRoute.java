@@ -10,9 +10,12 @@
 
 package org.mule.module.wsapi.api;
 
-import org.mule.api.NamedObject;
 
-public interface WebServiceRoute extends NamedObject
+
+public interface WebServiceRoute
 {
 
+    String getAccessExpression();
+    
+    String getDescription();
 }

@@ -5,12 +5,8 @@ import org.mule.api.NamedObject;
 
 import java.util.List;
 
-public interface WebServiceInterface extends NamedObject
+public interface WebServiceInterface extends WebServiceRoute, NamedObject
 {
-
-    // API Definition
-
-    String getDescription();
 
     List<? extends WebServiceRoute> getRoutes();
 

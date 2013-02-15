@@ -32,7 +32,7 @@ import java.io.InputStream;
 public class BaseResourceRetrieveAction implements RestAction
 {
 
-    public static final String RESOURCE_BASE_PATH = "/org/mule/modules/rest/swagger/";
+    public static final String RESOURCE_BASE_PATH = "/org/mule/module/wsapi/rest/swagger/";
 
     protected RestWebService restWebService;
 

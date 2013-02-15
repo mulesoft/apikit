@@ -15,7 +15,7 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
     implements HierarchicalRestResource
 {
     protected List<RestResource> resources = Collections.unmodifiableList(new ArrayList<RestResource>());
-    protected Map<String, RestResource> routingTable;
+    protected Map<String, RestResource> routingTable = new HashMap<String, RestResource>();
 
     public AbstractHierarchicalRestResource(String name)
     {

@@ -16,19 +16,42 @@ import org.mule.module.wsapi.api.WebServiceOperation;
 public class AbstractWebServiceOperation implements WebServiceOperation
 {
 
-    protected String name;
     protected MessageProcessor handler;
-
-    public AbstractWebServiceOperation(String name, MessageProcessor handler)
-    {
-        this.name = name;
-        this.handler = handler;
-    }
+    protected String accessExpression;
+    protected String description;
 
     @Override
     public MessageProcessor getHandler()
     {
         return handler;
     }
+
+    public void setHandler(MessageProcessor handler)
+    {
+        this.handler = handler;
+    }
+
+    @Override
+    public String getAccessExpression()
+    {
+        return accessExpression;
+    }
+
+    public void setAccessExpression(String accessExpression)
+    {
+        this.accessExpression = accessExpression;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
+    }
+
 
 }

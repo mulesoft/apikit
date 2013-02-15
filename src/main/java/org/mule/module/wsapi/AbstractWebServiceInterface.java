@@ -10,6 +10,7 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
 {
     protected String name;
     protected String description;
+    protected String accessExpression;
 
     protected List<WebServiceRoute> routes;
 
@@ -44,6 +45,17 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+    @Override
+    public String getAccessExpression()
+    {
+        return accessExpression;
+    }
+
+    public void setAccessExpression(String accessExpression)
+    {
+        this.accessExpression = accessExpression;
     }
 
 }

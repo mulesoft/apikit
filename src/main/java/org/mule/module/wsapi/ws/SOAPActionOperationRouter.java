@@ -16,7 +16,8 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.module.wsapi.AsbtarctWebServiceOperationRouter;
 import org.mule.module.wsapi.api.WebServiceInterface;
-import org.mule.module.wsapi.api.WebServiceRoute;
+
+import java.util.List;
 
 public class SOAPActionOperationRouter extends AsbtarctWebServiceOperationRouter
 {
@@ -30,7 +31,7 @@ public class SOAPActionOperationRouter extends AsbtarctWebServiceOperationRouter
     public MuleEvent process(MuleEvent event) throws MuleException
     {
         String soapAction = event.getMessage().getInboundProperty("SOAPAction");
-        for (WebServiceRoute route : webServiceInterface.getRoutes())
+        for (WSDLOperation route : ((List<WSDLOperation>) webServiceInterface.getRoutes()))
         {
             if (route.getName().equals(soapAction))
             {

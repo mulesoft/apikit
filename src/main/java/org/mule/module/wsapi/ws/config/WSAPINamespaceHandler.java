@@ -13,7 +13,6 @@ package org.mule.module.wsapi.ws.config;
 import org.mule.config.spring.handlers.AbstractMuleNamespaceHandler;
 import org.mule.module.wsapi.config.WebServiceDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceInterfaceDefinitionParser;
-import org.mule.module.wsapi.config.WebServiceOperationDefinitionParser;
 import org.mule.module.wsapi.ws.WSDLOperation;
 import org.mule.module.wsapi.ws.WSWebService;
 import org.mule.module.wsapi.ws.WSWebServiceInterface;

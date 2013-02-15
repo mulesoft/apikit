@@ -1,5 +1,5 @@
 
-package org.mule.module.wsapi.rest.config.resource;
+package org.mule.module.wsapi.rest.resource;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.junit.matchers.JUnitMatchers.containsString;

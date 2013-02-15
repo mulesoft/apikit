@@ -8,27 +8,27 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.wsapi.config;
+package org.mule.module.wsapi.rest.config;
 
-import org.mule.config.spring.parsers.generic.OrphanDefinitionParser;
+import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-public class WebServiceInterfaceDefinitionParser extends OrphanDefinitionParser
+public class RestActionDefinitionParser extends ChildDefinitionParser
 {
-    public WebServiceInterfaceDefinitionParser(Class<?> clazz)
+    public RestActionDefinitionParser(Class<?> clazz)
     {
-        super(clazz, true);
-        addIgnored(ATTRIBUTE_NAME);
+        super("action", clazz);
+        addAlias("access", "accessExpression");
+        addAlias("flow", "handler");
     }
 
-    @java.lang.Override
-    protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
+    @Override
+    protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
-        builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_NAME));
         builder.addPropertyValue("description", element.getAttribute("doc:description"));
-        super.doParse(element, parserContext, builder);
+        super.parseChild(element, parserContext, builder);
     }
 }

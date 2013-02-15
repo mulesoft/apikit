@@ -8,7 +8,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.wsapi.config;
+package org.mule.module.wsapi.ws.config;
 
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 
@@ -19,20 +19,18 @@ import org.w3c.dom.Element;
 public class WebServiceOperationDefinitionParser extends ChildDefinitionParser
 {
 
-    public static final String ATTRIBUTE_FLOW_REF = "flow-ref";
-
     public WebServiceOperationDefinitionParser(String setterMethod, Class<?> clazz)
     {
         super(setterMethod, clazz);
         addIgnored(ATTRIBUTE_NAME);
-        addIgnored(ATTRIBUTE_FLOW_REF);
+        addAlias("flow", "handler");
     }
 
     @Override
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
         builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_NAME));
-        builder.addConstructorArgReference(element.getAttribute(ATTRIBUTE_FLOW_REF));
+        builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
     }
 }

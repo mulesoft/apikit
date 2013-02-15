@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule-api xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
     xmlns:rest="http://www.mulesoft.org/schema/mule/api-rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:rss="http://www.mulesoft.org/schema/mule/api"
+    xmlns:rss="http://www.mulesoft.org/schema/mule/api" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
        http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <rest:interface name="myInterface">
-        <description>This is an interface</description>
-        <rest:document-resource name="a">
-            <rest:retrieve flow-ref="aFlow"/>
+    <rest:interface name="myInterface" doc:description="interface description">
+        <rest:document-resource name="a" access="#[true]" doc:description="resource a description">
+            <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description"/>
         </rest:document-resource>
-        <rest:document-resource name="b">
-            <rest:retrieve flow-ref="bFlow"/>
+        <rest:document-resource name="b" access="#[true]" doc:description="resource b description">
+            <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description"/>
+            <rest:update flow-ref="echo" access="#[true]" doc:description="resource b update description"/>
+            <rest:document-resource name="c" access="#[true]" doc:description="resource c description">
+                <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource c retrieve description"/>
+                <rest:update flow-ref="echo" access="#[true]" doc:description="resource c update description"/>
+            </rest:document-resource>
         </rest:document-resource>
     </rest:interface>
 
-    <rest:service name="myService" interface-ref="myInterface" >
-        <description>This is a service</description> 
-        <mule:inbound-endpoint address="http://locahost:8080"/>
+    <rest:service name="myService" interface-ref="myInterface" doc:description="service description">
+        <mule:inbound-endpoint address="http://localhost:8080" />
     </rest:service>
 
 </mule-api>

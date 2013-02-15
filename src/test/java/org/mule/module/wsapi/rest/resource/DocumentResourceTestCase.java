@@ -1,4 +1,4 @@
-package org.mule.module.wsapi.rest.config.resource;
+package org.mule.module.wsapi.rest.resource;
 
 import static java.lang.Boolean.TRUE;
 import static org.mockito.Matchers.any;

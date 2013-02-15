@@ -3,27 +3,14 @@ package org.mule.module.wsapi.rest.action;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.api.processor.MessageProcessor;
+import org.mule.module.wsapi.AbstractWebServiceOperation;
 import org.mule.module.wsapi.rest.RestException;
 import org.mule.module.wsapi.rest.RestRequest;
 
-public abstract class AbstractMuleRestAction implements MuleRestAction
+public abstract class AbstractMuleRestAction extends AbstractWebServiceOperation implements MuleRestAction
 {
 
-    protected String name;
     protected ActionType type;
-    protected MessageProcessor flow;
-
-    @Override
-    public MessageProcessor getHandler()
-    {
-        return flow;
-    }
-
-    public void setFlow(MessageProcessor flow)
-    {
-        this.flow = flow;
-    }
 
     @Override
     public ActionType getType()
@@ -43,4 +30,5 @@ public abstract class AbstractMuleRestAction implements MuleRestAction
             throw new RestException();
         }
     }
+
 }

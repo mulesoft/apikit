@@ -19,9 +19,11 @@ import org.mule.module.wsapi.api.WebServiceRoute;
 public class WSDLOperation extends AbstractWebServiceOperation implements MessageProcessor, WebServiceRoute
 {
 
-    public WSDLOperation(String name, MessageProcessor handler)
+    protected String name;
+
+    public WSDLOperation(String name)
     {
-        super(name, handler);
+        this.name = name;
     }
 
     public String getName()

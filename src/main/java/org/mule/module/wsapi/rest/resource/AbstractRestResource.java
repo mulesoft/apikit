@@ -29,14 +29,15 @@ public abstract class AbstractRestResource implements RestResource
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected String name;
+    protected String description = "";
     protected List<RestAction> actions;
+    protected String accessExpression;
 
     public AbstractRestResource(String name)
     {
         this.name = name;
     }
 
-    @Override
     public String getName()
     {
         return name;
@@ -101,15 +102,16 @@ public abstract class AbstractRestResource implements RestResource
     {
         try
         {
-            if (restRequest.getProtocolAdaptor().getActionType().equals(ActionType.RETRIEVE)
-                && restRequest.getProtocolAdaptor()
-                    .getAcceptedContentTypes()
-                    .contains("application/swagger+json"))
-            {
-                new SwaggerResourceAction(this, restRequest).handle(restRequest);
-            }
-            else
-            {
+//            if (restRequest.getProtocolAdaptor().getActionType().equals(ActionType.RETRIEVE)
+//                && restRequest.getProtocolAdaptor().getAcceptedContentTypes() != null
+//                && restRequest.getProtocolAdaptor()
+//                    .getAcceptedContentTypes()
+//                    .contains("application/swagger+json"))
+//            {
+//                new SwaggerResourceAction(this, restRequest).handle(restRequest);
+//            }
+//            else
+//            {
 
                 this.getAction(restRequest.getProtocolAdaptor().getActionType(), restRequest.getMuleEvent())
                     .handle(restRequest);
@@ -117,7 +119,7 @@ public abstract class AbstractRestResource implements RestResource
                 {
                     restRequest.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
                 }
-            }
+            // }
         }
         catch (RestException rana)
         {
@@ -174,6 +176,28 @@ public abstract class AbstractRestResource implements RestResource
         {
             return ActionType.RETRIEVE;
         }
+    }
+
+    @Override
+    public String getAccessExpression()
+    {
+        return accessExpression;
+    }
+
+    public void setAccessExpression(String accessExpression)
+    {
+        this.accessExpression = accessExpression;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
 
 }

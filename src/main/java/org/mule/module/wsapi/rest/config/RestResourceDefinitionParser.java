@@ -19,19 +19,18 @@ import org.w3c.dom.Element;
 public class RestResourceDefinitionParser extends ChildDefinitionParser
 {
 
-    public static final String ATTRIBUTE_FLOW_REF = "flow-ref";
-
     public RestResourceDefinitionParser(Class<?> clazz)
     {
         super("resource", clazz);
         addIgnored(ATTRIBUTE_NAME);
-        addIgnored(ATTRIBUTE_FLOW_REF);
+        addAlias("access", "accessExpression");
     }
 
     @Override
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
         builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_NAME));
+        builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
     }
 }

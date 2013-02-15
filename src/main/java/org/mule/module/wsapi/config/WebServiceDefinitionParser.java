@@ -34,6 +34,7 @@ public class WebServiceDefinitionParser extends OrphanDefinitionParser
         builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_NAME));
         builder.addConstructorArgReference(element.getAttribute(ATTRIBUTE_INTERFACE_REF));
         builder.addConstructorArgReference(MuleProperties.OBJECT_MULE_CONTEXT);
+        builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.doParse(element, parserContext, builder);
     }
 }

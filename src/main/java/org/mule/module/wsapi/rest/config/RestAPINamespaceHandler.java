@@ -10,7 +10,7 @@
 
 package org.mule.module.wsapi.rest.config;
 
-import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
+import org.mule.config.spring.handlers.MuleNamespaceHandler;
 import org.mule.module.wsapi.config.WebServiceDefinitionParser;
 import org.mule.module.wsapi.config.WebServiceInterfaceDefinitionParser;
 import org.mule.module.wsapi.rest.RestWebService;
@@ -22,9 +22,7 @@ import org.mule.module.wsapi.rest.action.RestUpdateAction;
 import org.mule.module.wsapi.rest.resource.CollectionResource;
 import org.mule.module.wsapi.rest.resource.DocumentResource;
 
-import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
-
-public class RestAPINamespaceHandler extends NamespaceHandlerSupport
+public class RestAPINamespaceHandler extends MuleNamespaceHandler
 {
     public void init()
     {
@@ -37,11 +35,10 @@ public class RestAPINamespaceHandler extends NamespaceHandlerSupport
         registerBeanDefinitionParser("collection-resource", new RestResourceDefinitionParser(
             CollectionResource.class));
 
-        registerBeanDefinitionParser("create", new ChildDefinitionParser("action", RestCreateAction.class));
-        registerBeanDefinitionParser("retrieve",
-            new ChildDefinitionParser("action", RestRetrieveAction.class));
-        registerBeanDefinitionParser("update", new ChildDefinitionParser("action", RestUpdateAction.class));
-        registerBeanDefinitionParser("exists", new ChildDefinitionParser("action", RestExistsAction.class));
+        registerMuleBeanDefinitionParser("create", new RestActionDefinitionParser(RestCreateAction.class));
+        registerMuleBeanDefinitionParser("update", new RestActionDefinitionParser(RestUpdateAction.class));
+        registerMuleBeanDefinitionParser("retrieve", new RestActionDefinitionParser(RestRetrieveAction.class));
+        registerMuleBeanDefinitionParser("exists", new RestActionDefinitionParser(RestExistsAction.class));
     }
 
 }
