@@ -27,7 +27,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/wsapi/rest/resource/collection-resource-config.xml, org/mule/module/wsapi/test-flows-config.xml";
+        return "org/mule/module/apikit/rest/resource/collection-resource-config.xml, org/mule/module/apikit/test-flows-config.xml";
     }
 
     @Test

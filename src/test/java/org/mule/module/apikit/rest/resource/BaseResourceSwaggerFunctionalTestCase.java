@@ -29,7 +29,7 @@ public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/wsapi/rest/service-config.xml, org/mule/module/wsapi/test-flows-config.xml";
+        return "org/mule/module/apikit/rest/service-config.xml, org/mule/module/apikit/test-flows-config.xml";
     }
 
     @Test
@@ -47,7 +47,7 @@ public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
             .statusCode(200)
             .body(
                 Matchers.equalTo(IOUtils.getResourceAsString(
-                    "org/mule/module/wsapi/rest/swagger/lib/swagger.js", this.getClass())))
+                    "org/mule/module/apikit/rest/swagger/lib/swagger.js", this.getClass())))
             .when()
             .get("/api/_swagger/lib/swagger.js");
     }

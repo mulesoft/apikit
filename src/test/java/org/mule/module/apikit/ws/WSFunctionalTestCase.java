@@ -26,7 +26,7 @@ public class WSFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/wsapi/ws/service-config.xml, org/mule/module/wsapi/test-flows-config.xml";
+        return "org/mule/module/apikit/ws/service-config.xml, org/mule/module/apikit/test-flows-config.xml";
     }
 
     @Test

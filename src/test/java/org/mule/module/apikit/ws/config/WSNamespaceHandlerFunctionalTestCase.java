@@ -26,7 +26,7 @@ public class WSNamespaceHandlerFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/wsapi/ws/config/namespace-handler-config.xml, org/mule/module/wsapi/test-flows-config.xml";
+        return "org/mule/module/apikit/ws/config/namespace-handler-config.xml, org/mule/module/apikit/test-flows-config.xml";
     }
 
     @Test
