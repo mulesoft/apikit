@@ -35,6 +35,7 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     public void documentNotFound() throws Exception
     {
         expect().response().statusCode(404).header("Content-Length", "0").when().head("/api/league1");
+        expect().response().statusCode(404).header("Content-Length", "0").when().head("/api/league1/");
     }
 
     @Test
@@ -50,22 +51,11 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void retrieveOnNestedDocument() throws Exception
-    {
-        expect().response().statusCode(200).body(containsString("Royal")).when().get("/api/league/association");
-    }
-
-    @Test
     public void updateOnDocument() throws Exception
     {
         given().body("Premier League").expect().response().statusCode(200).when().put("/api/league");
     }
 
-    @Test
-    public void updateOnNestedDocument() throws Exception
-    {
-        given().body("AFA").expect().response().statusCode(200).when().put("/api/league/association");
-    }
 
     @Test
     public void noDeleteOnDocument() throws Exception
@@ -77,6 +67,50 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     public void existsOnDocument() throws Exception
     {
         expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/league");
+    }
+
+    // Nested
+ 
+    @Test
+    public void nestedDocumentNotFound() throws Exception
+    {
+        expect().response().statusCode(404).header("Content-Length", "0").when().get("/api/league/bla");
+        expect().response().statusCode(404).header("Content-Length", "0").when().get("/api/league/bla/");
+    }
+    
+    @Test
+    public void createNotAllowedOnNestedDocument() throws Exception
+    {
+        expect().response().statusCode(405).body(containsString("Royal")).when().post("/api/league/association");
+        expect().response().statusCode(405).body(containsString("Royal")).when().post("/api/league/association/");
+    }
+    
+    @Test
+    public void retrieveOnNestedDocument() throws Exception
+    {
+        expect().response().statusCode(200).body(containsString("Royal")).when().get("/api/league/association");
+        expect().response().statusCode(200).body(containsString("Royal")).when().get("/api/league/association/");
+    }
+
+    @Test
+    public void existsOnNestedDocument() throws Exception
+    {
+        expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/league/association");
+        expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/league/association/");
+    }
+
+    @Test
+    public void updateOnNestedDocument() throws Exception
+    {
+        given().body("AFA").expect().response().statusCode(200).when().put("/api/league/association");
+        given().body("AFA").expect().response().statusCode(200).when().put("/api/league/association/");
+    }
+
+    @Test
+    public void deleteNotAllowedOnNestedDocument() throws Exception
+    {
+        expect().response().statusCode(405).header("Content-Length", "0").body(containsString("Royal")).when().delete("/api/league/association");
+        expect().response().statusCode(405).header("Content-Length", "0").body(containsString("Royal")).when().delete("/api/league/association/");
     }
 
 }
