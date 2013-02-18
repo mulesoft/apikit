@@ -30,8 +30,10 @@ import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -46,12 +48,12 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
 {
 
-    @Mock MuleEvent event;
-    @Mock MuleMessage message;
-    @Mock RestRequest request;
-    @Mock HttpRestProtocolAdapter httpAdapter;
-    @Mock RestAction action;
-    DummyHierarchicalRestResource resource;
+    @Mock protected MuleEvent event;
+    @Mock protected MuleMessage message;
+    @Mock protected RestRequest request;
+    @Mock protected HttpRestProtocolAdapter httpAdapter;
+    @Mock protected RestAction action;
+    protected DummyHierarchicalRestResource resource;
 
     @Before
     public void setup()
@@ -92,6 +94,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     public void resourceNotFound() throws RestException, MuleException, URISyntaxException
     {
         when(request.hasMorePathElements()).thenReturn(Boolean.TRUE);
+        when(request.getNextPathElement()).thenReturn("1");
         when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
         when(action.getType()).thenReturn(ActionType.RETRIEVE);
 
@@ -106,19 +109,20 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     {
         when(request.hasMorePathElements()).thenReturn(Boolean.TRUE).thenReturn(Boolean.FALSE);
         when(request.getNextPathElement()).thenReturn("1");
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
 
-        RestResource nestedResource = new DummyHierarchicalRestResource("1");
-
-        RestAction nestedResourceAction = Mockito.mock(RestAction.class);
-        when(nestedResourceAction.getType()).thenReturn(ActionType.RETRIEVE);
-        nestedResource.setActions(Collections.singletonList(nestedResourceAction));
-        resource.setResources(Collections.singletonList(nestedResource));
+        RestResource nestedResource1 = Mockito.mock(RestResource.class);
+        when(nestedResource1.getName()).thenReturn("1");
+        RestResource nestedResource2 = Mockito.mock(RestResource.class);
+        when(nestedResource2.getName()).thenReturn("2");
+        List<RestResource> nestedResources = new ArrayList<RestResource>();
+        nestedResources.add(nestedResource1);
+        nestedResources.add(nestedResource2);
+        resource.setResources(nestedResources);
 
         resource.handle(request);
 
-        verify(nestedResourceAction).handle(request);
+        verify(nestedResource1).handle(request);
+        verify(nestedResource2, never()).handle(any(RestRequest.class));
         verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
     }
 
@@ -126,20 +130,50 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     public void nestedResourceNotFound() throws RestException, MuleException, URISyntaxException
     {
         when(request.hasMorePathElements()).thenReturn(Boolean.TRUE).thenReturn(Boolean.FALSE);
-        when(request.getNextPathElement()).thenReturn("2");
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
-        RestResource nestedResource = Mockito.mock(RestResource.class);
-        when(nestedResource.getName()).thenReturn("1");
-        RestAction nestedResourceAction = Mockito.mock(RestAction.class);
-        when(nestedResourceAction.getType()).thenReturn(ActionType.RETRIEVE);
-        when(nestedResource.getActions()).thenReturn(Collections.singletonList(nestedResourceAction));
-        resource.setResources(Collections.singletonList(nestedResource));
+        when(request.getNextPathElement()).thenReturn("3");
+
+        RestResource nestedResource1 = new DummyHierarchicalRestResource("1");
+        RestResource nestedResource2 = new DummyHierarchicalRestResource("2");
+        List<RestResource> nestedResources = new ArrayList<RestResource>();
+        nestedResources.add(nestedResource1);
+        nestedResources.add(nestedResource2);
+        resource.setResources(nestedResources);
 
         resource.handle(request);
 
         verify(httpAdapter, times(1)).handleException(any(ResourceNotFoundException.class),
             any(MuleEvent.class));
+    }
+
+    @Test
+    public void nestedResourceTwoLevels() throws RestException, MuleException, URISyntaxException
+    {
+        when(request.hasMorePathElements()).thenReturn(Boolean.TRUE)
+            .thenReturn(Boolean.TRUE)
+            .thenReturn(Boolean.FALSE);
+        when(request.getNextPathElement()).thenReturn("1").thenReturn("3");
+
+        DummyHierarchicalRestResource nestedResource1 = new DummyHierarchicalRestResource("1");
+        RestResource nestedResource2 = new DummyHierarchicalRestResource("2");
+        List<RestResource> nestedResources = new ArrayList<RestResource>();
+        nestedResources.add(nestedResource1);
+        nestedResources.add(nestedResource2);
+        resource.setResources(nestedResources);
+        RestResource nestedResource3 = Mockito.mock(RestResource.class);
+        when(nestedResource3.getName()).thenReturn("3");
+        RestResource nestedResource4 = Mockito.mock(RestResource.class);
+        when(nestedResource4.getName()).thenReturn("4");
+        List<RestResource> nestedResources2 = new ArrayList<RestResource>();
+        nestedResources2.add(nestedResource3);
+        nestedResources2.add(nestedResource4);
+        nestedResource1.setResources(nestedResources2);
+
+        resource.handle(request);
+
+        verify(nestedResource3).handle(request);
+        verify(nestedResource4, never()).handle(any(RestRequest.class));
+
+        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
     }
 
     @Test
@@ -157,6 +191,8 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         resource.setResources(Collections.singletonList(nestedResource));
 
         resource.handle(request);
+
+        verify(nestedResource, never()).handle(any(RestRequest.class));
 
         verify(httpAdapter, times(1)).handleException(any(ActionTypeNotAllowedException.class),
             any(MuleEvent.class));
