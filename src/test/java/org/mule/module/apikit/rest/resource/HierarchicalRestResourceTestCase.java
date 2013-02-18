@@ -88,6 +88,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
 
         verify(httpAdapter, times(1)).handleException(any(ActionTypeNotAllowedException.class),
             any(MuleEvent.class));
+        verify(message).setOutboundProperty("http.status", 405);
     }
 
     @Test
@@ -102,6 +103,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
 
         verify(httpAdapter, times(1)).handleException(any(ResourceNotFoundException.class),
             any(MuleEvent.class));
+        verify(message).setOutboundProperty("http.status", 404);
     }
 
     @Test
@@ -143,6 +145,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
 
         verify(httpAdapter, times(1)).handleException(any(ResourceNotFoundException.class),
             any(MuleEvent.class));
+        verify(message).setOutboundProperty("http.status", 404);
     }
 
     @Test
@@ -180,22 +183,20 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     public void nestedResourceActionTypeNotAllowed() throws RestException, MuleException, URISyntaxException
     {
         when(request.hasMorePathElements()).thenReturn(Boolean.TRUE).thenReturn(Boolean.FALSE);
-        when(request.getNextPathElement()).thenReturn("2");
+        when(request.getNextPathElement()).thenReturn("1");
         when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
         when(action.getType()).thenReturn(ActionType.RETRIEVE);
-        RestResource nestedResource = Mockito.mock(RestResource.class);
-        when(nestedResource.getName()).thenReturn("1");
+        RestResource nestedResource = new DummyHierarchicalRestResource("1");
         RestAction nestedResourceAction = Mockito.mock(RestAction.class);
         when(nestedResourceAction.getType()).thenReturn(ActionType.UPDATE);
-        when(nestedResource.getActions()).thenReturn(Collections.singletonList(nestedResourceAction));
+        nestedResource.setActions(Collections.singletonList(nestedResourceAction));
         resource.setResources(Collections.singletonList(nestedResource));
 
         resource.handle(request);
 
-        verify(nestedResource, never()).handle(any(RestRequest.class));
-
         verify(httpAdapter, times(1)).handleException(any(ActionTypeNotAllowedException.class),
             any(MuleEvent.class));
+        verify(message).setOutboundProperty("http.status", 405);
     }
 
     static class DummyHierarchicalRestResource extends AbstractHierarchicalRestResource
