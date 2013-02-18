@@ -16,7 +16,6 @@ import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.action.RestAction;
 import org.mule.module.apikit.rest.action.RestRetrieveAction;
 import org.mule.module.apikit.rest.protocol.HttpRestProtocolAdapter;
-import org.mule.module.apikit.rest.resource.DocumentResource;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -48,14 +47,6 @@ public class DocumentResourceTestCase extends AbstractMuleTestCase
         doc = new DocumentResource("doc");
     }
 
-    @Test
-    public void suportedActionTypes(){
-        
-        System.out.println(doc.getSupportedActionTypes());
-        
-    }
-
-    
     @Test
     public void handleHttpResourceFound() throws RestException
     {
