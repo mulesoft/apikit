@@ -13,7 +13,10 @@ package org.mule.module.apikit.rest;
 import org.mule.api.MessagingException;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
+import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.config.i18n.CoreMessages;
 import org.mule.module.apikit.AbstractWebService;
 import org.mule.module.apikit.rest.action.BaseResourceRetrieveAction;
 import org.mule.module.apikit.rest.action.RestAction;
@@ -36,6 +39,18 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
     {
         super(name, webServiceInterface, muleContext);
         this.enableSwagger = enableSwagger;
+    }
+
+    @Override
+    protected void doInitialise() throws MuleException
+    {
+        super.doInitialise();
+        if (webServiceInterface.getRoutes().size() <= 1)
+        {
+            throw new InitialisationException(
+                CoreMessages.createStaticMessage("ReST Web Service interface must have at least one resource defined."),
+                this);
+        }
     }
 
     @Override
