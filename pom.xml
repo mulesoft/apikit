@@ -6,10 +6,10 @@
         <artifactId>mule-modules</artifactId>
         <version>3.4-M4-SNAPSHOT</version>
     </parent>
-    <artifactId>mule-module-wsapi</artifactId>
+    <artifactId>mule-module-apikit</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>API Module</name>
+    <name>APIkit Module</name>
     <description>Module for creating API's using REST/SOAP Web Services</description>
 
     <properties>
