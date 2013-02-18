@@ -13,6 +13,8 @@ package org.mule.module.apikit.rest;
 import org.mule.api.MessagingException;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
+import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.AbstractWebService;
 import org.mule.module.apikit.rest.action.BaseResourceRetrieveAction;
@@ -55,7 +57,7 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
     }
 
     @Override
-    protected MessageProcessor getRequestRouter()
+    protected MessageProcessor getRequestRouter() throws InitialisationException
     {
         final BaseUriResource handler = new BaseUriResource();
         List<RestResource> resources = new ArrayList<RestResource>();
@@ -66,6 +68,7 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
             handler.setActions(Collections.<RestAction> singletonList(new BaseResourceRetrieveAction(this)));
         }
         handler.setResources(resources);
+        handler.initialise();
 
         return new MessageProcessor()
         {

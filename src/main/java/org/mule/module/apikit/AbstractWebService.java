@@ -12,6 +12,7 @@ package org.mule.module.apikit;
 
 import org.mule.api.MuleContext;
 import org.mule.api.MuleException;
+import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.processor.MessageProcessorChainBuilder;
 import org.mule.api.processor.ProcessingStrategy;
@@ -51,7 +52,7 @@ public abstract class AbstractWebService<T extends WebServiceInterface> extends 
         builder.chain(getRequestRouter());
     }
 
-    protected abstract MessageProcessor getRequestRouter();
+    protected abstract MessageProcessor getRequestRouter() throws InitialisationException;
 
     @Override
     public void setProcessingStrategy(ProcessingStrategy processingStrategy)

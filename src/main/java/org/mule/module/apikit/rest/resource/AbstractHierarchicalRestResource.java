@@ -2,6 +2,8 @@
 package org.mule.module.apikit.rest.resource;
 
 import org.mule.api.MuleEvent;
+import org.mule.api.lifecycle.InitialisationException;
+import org.mule.config.i18n.MessageFactory;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 
@@ -53,7 +55,7 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
         return restRequest.getMuleEvent();
     }
 
-    public void buildRoutingTable()
+    public void buildRoutingTable() throws InitialisationException
     {
         routingTable = new HashMap<String, RestResource>();
         if (getResources() == null)
@@ -63,6 +65,10 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
         for (RestResource resource : getResources())
         {
             String uriPattern = resource.getName();
+            if (routingTable.containsKey(uriPattern))
+            {
+                throw new InitialisationException(MessageFactory.createStaticMessage("Duplicate resource name: " + uriPattern), this);
+            }
             logger.debug("Adding URI to the routing table: " + uriPattern);
             routingTable.put(uriPattern, resource);
         }
@@ -76,7 +82,11 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
     public void setResources(List<RestResource> resources)
     {
         this.resources = Collections.unmodifiableList(resources);
-        buildRoutingTable();
     }
 
+    @Override
+    public void initialise() throws InitialisationException
+    {
+        buildRoutingTable();
+    }
 }

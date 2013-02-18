@@ -7,13 +7,14 @@ import static org.mockito.Mockito.when;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
+import org.mule.api.lifecycle.InitialisationException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.protocol.HttpRestProtocolAdapter;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
-
+import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,6 +54,15 @@ public class DocumentResourceTestCase extends AbstractMuleTestCase
         Assert.assertFalse(doc.getSupportedActionTypes().contains(ActionType.CREATE));
         Assert.assertTrue(doc.getSupportedActionTypes().contains(ActionType.UPDATE));
         Assert.assertFalse(doc.getSupportedActionTypes().contains(ActionType.DELETE));
+    }
+
+    @Test(expected = InitialisationException.class)
+    public void errorOnDuplicageChildResourceNames() throws Exception
+    {
+        DocumentResource childDoc1 = new DocumentResource("child");
+        DocumentResource childDoc2 = new DocumentResource("child");
+        doc.setResources(Arrays.asList(new RestResource[] {childDoc1, childDoc2}));
+        doc.buildRoutingTable();
     }
 
 }

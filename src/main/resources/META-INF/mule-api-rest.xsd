@@ -17,7 +17,7 @@
             <xsd:complexContent>
                 <xsd:extension base="api:abstractWebServiceInterfaceType">
                     <xsd:sequence>
-                            <xsd:choice minOccurs="1" maxOccurs="unbounded">
+                        <xsd:choice minOccurs="1" maxOccurs="unbounded">
                             <xsd:element name="collection-resource" type="collectionResourceType"/>
                             <xsd:element name="document-resource" type="documentResourceType"/>
                             <!--
