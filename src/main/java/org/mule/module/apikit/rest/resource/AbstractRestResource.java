@@ -7,17 +7,10 @@ import static org.mule.module.apikit.rest.action.ActionType.RETRIEVE;
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.UnexceptedErrorException;
 import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.action.ActionTypeNotAllowedException;
 import org.mule.module.apikit.rest.action.RestAction;
-import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.NullPayload;
-import org.mule.transport.http.HttpConnector;
-import org.mule.transport.http.HttpConstants;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -124,80 +117,18 @@ public abstract class AbstractRestResource implements RestResource
     {
         try
         {
-            // if (restRequest.getProtocolAdaptor().getActionType().equals(ActionType.RETRIEVE)
-            // && restRequest.getProtocolAdaptor().getAcceptedContentTypes() != null
-            // && restRequest.getProtocolAdaptor()
-            // .getAcceptedContentTypes()
-            // .contains("application/swagger+json"))
-            // {
-            // new SwaggerResourceAction(this, restRequest).handle(restRequest);
-            // }
-            // else
-            // {
-
             this.getAction(restRequest.getProtocolAdaptor().getActionType(), restRequest.getMuleEvent())
                 .handle(restRequest);
             if (ActionType.EXISTS == restRequest.getProtocolAdaptor().getActionType())
             {
                 restRequest.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
             }
-            // }
         }
         catch (RestException rana)
         {
             restRequest.getProtocolAdaptor().handleException(rana, restRequest.getMuleEvent());
         }
         return restRequest.getMuleEvent();
-    }
-
-    class SwaggerResourceAction implements RestAction
-    {
-
-        RestResource resource;
-        RestRequest request;
-
-        public SwaggerResourceAction(RestResource resource, RestRequest request)
-        {
-            this.resource = resource;
-            this.request = request;
-        }
-
-        @Override
-        public MuleEvent handle(RestRequest restRequest) throws RestException
-        {
-            try
-            {
-                ObjectMapper mapper = new ObjectMapper();
-                String json = mapper.writeValueAsString(restRequest.getInterface());
-                json = json.replace("{baseSwaggerUri}", restRequest.getMuleEvent()
-                    .getMessageSourceURI()
-                    .toString());
-
-                restRequest.getMuleEvent().getMessage().setPayload(json);
-                restRequest.getMuleEvent()
-                    .getMessage()
-                    .setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
-                        String.valueOf(HttpConstants.SC_OK));
-                restRequest.getMuleEvent()
-                    .getMessage()
-                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, MimeTypes.JSON);
-                restRequest.getMuleEvent()
-                    .getMessage()
-                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, json.length());
-                return restRequest.getMuleEvent();
-
-            }
-            catch (JsonProcessingException e)
-            {
-                throw new UnexceptedErrorException(e);
-            }
-        }
-
-        @Override
-        public ActionType getType()
-        {
-            return ActionType.RETRIEVE;
-        }
     }
 
     @Override
