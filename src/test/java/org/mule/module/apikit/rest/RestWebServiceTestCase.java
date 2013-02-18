@@ -65,12 +65,4 @@ public class RestWebServiceTestCase extends AbstractMuleTestCase
         restWebService.initialise();
     }
 
-    public void test() throws MuleException
-    {
-        restWebService.start();
-
-        Mockito.when(event.getMuleContext()).thenReturn(muleContext);
-        trigger.trigger(event);
-
-    }
 }

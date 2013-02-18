@@ -12,14 +12,8 @@ import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class BaseResourceFunctionalTestCase extends FunctionalTestCase
+public class BaseUriResourceFunctionalTestCase extends FunctionalTestCase
 {
-
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 600;
-    }
 
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");

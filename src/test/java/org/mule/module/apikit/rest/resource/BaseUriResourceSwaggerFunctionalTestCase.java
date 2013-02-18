@@ -13,7 +13,7 @@ import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
+public class BaseUriResourceSwaggerFunctionalTestCase extends FunctionalTestCase
 {
 
     @Rule

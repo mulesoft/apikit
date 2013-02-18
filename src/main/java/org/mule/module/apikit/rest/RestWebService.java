@@ -20,7 +20,7 @@ import org.mule.config.i18n.CoreMessages;
 import org.mule.module.apikit.AbstractWebService;
 import org.mule.module.apikit.rest.action.BaseResourceRetrieveAction;
 import org.mule.module.apikit.rest.action.RestAction;
-import org.mule.module.apikit.rest.resource.BaseResource;
+import org.mule.module.apikit.rest.resource.BaseUriResource;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.resource.StaticResourceCollection;
 
@@ -72,7 +72,7 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
     @Override
     protected MessageProcessor getRequestRouter()
     {
-        final BaseResource handler = new BaseResource();
+        final BaseUriResource handler = new BaseUriResource();
         List<RestResource> resources = new ArrayList<RestResource>();
         resources.addAll((List<RestResource>) webServiceInterface.getRoutes());
         if (enableSwagger)
