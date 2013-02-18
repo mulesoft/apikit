@@ -48,6 +48,12 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
             .header("Allow", Matchers.equalToIgnoringCase("GET"))
             .when()
             .put("/api");
+        given().expect()
+            .response()
+            .statusCode(405)
+            .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .when()
+            .put("/api/");
     }
 
     @Test
@@ -59,6 +65,12 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
             .header("Allow", Matchers.equalToIgnoringCase("GET"))
             .when()
             .post("/api");
+        given().expect()
+            .response()
+            .statusCode(405)
+            .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .when()
+            .post("/api/");
     }
 
     @Test
@@ -70,6 +82,29 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
             .header("Allow", Matchers.equalToIgnoringCase("GET"))
             .when()
             .delete("/api");
+        given().expect()
+            .response()
+            .statusCode(405)
+            .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .when()
+            .delete("/api/");
+    }
+
+    @Test
+    public void headSupported() throws Exception
+    {
+        given().expect()
+            .response()
+            .statusCode(200)
+            .body(Matchers.equalToIgnoringCase(""))
+            .when()
+            .head("/api");
+        given().expect()
+            .response()
+            .statusCode(200)
+            .body(Matchers.equalToIgnoringCase(""))
+            .when()
+            .head("/api/");
     }
 
     @Test

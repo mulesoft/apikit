@@ -17,7 +17,7 @@ public class BaseResource extends AbstractHierarchicalRestResource
     @Override
     protected Set<ActionType> getSupportedActionTypes()
     {
-        return EnumSet.of(ActionType.RETRIEVE);
+        return EnumSet.of(ActionType.RETRIEVE, ActionType.EXISTS);
     }
 
 }

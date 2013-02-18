@@ -1,19 +1,19 @@
 <html>
 <head>
-    <title>myInterface API</title>
+    <title>myInterface UI</title>
     <link href='http://fonts.googleapis.com/css?family=Ubuntu:300' rel='stylesheet' type='text/css'/>
-    <link href='css/hightlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
-    <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
-    <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
-    <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
-    <script src='lib/jquery.wiggle.min.js' type='text/javascript'></script>
-    <script src='lib/jquery.ba-bbq.min.js' type='text/javascript'></script>
-    <script src='lib/handlebars-1.0.rc.1.js' type='text/javascript'></script>
-    <script src='lib/underscore-min.js' type='text/javascript'></script>
-    <script src='lib/backbone-min.js' type='text/javascript'></script>
-    <script src='lib/swagger.js' type='text/javascript'></script>
-    <script src='swagger-ui.js' type='text/javascript'></script>
-    <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
+    <link href='http://localhost:5824/api/_swagger/css/hightlight.default.css' media='screen' rel='stylesheet' type='text/css'/>
+    <link href='http://localhost:5824/api/_swagger/css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
+    <script src='http://localhost:5824/api/_swagger/lib/jquery-1.8.0.min.js' type='text/javascript'></script>
+    <script src='http://localhost:5824/api/_swagger/lib/jquery.slideto.min.js' type='text/javascript'></script>
+    <script src='http://localhost:5824/api/_swagger/lib/jquery.wiggle.min.js' type='text/javascript'></script>
+    <script src='http://localhost:5824/api/_swagger/lib/jquery.ba-bbq.min.js' type='text/javascript'></script>
+    <script src='http://localhost:5824/api/_swagger/lib/handlebars-1.0.rc.1.js' type='text/javascript'></script>
+    <script src='http://localhost:5824/api/_swagger/lib/underscore-min.js' type='text/javascript'></script>
+    <script src='http://localhost:5824/api/_swagger/lib/backbone-min.js' type='text/javascript'></script>
+    <script src='http://localhost:5824/api/_swagger/lib/swagger.js' type='text/javascript'></script>
+    <script src='http://localhost:5824/api/_swagger/swagger-ui.js' type='text/javascript'></script>
+    <script src='http://localhost:5824/api/_swagger/lib/highlight.7.3.pack.js' type='text/javascript'></script>
 
     <style type="text/css">
         .swagger-ui-wrap {
@@ -44,8 +44,8 @@
     <script type="text/javascript">
         $(function () {
             window.swaggerUi = new SwaggerUi({
-                discoveryUrl:"${resourcesJson}",
-                apiKey:"special-key",
+                discoveryUrl:"http://localhost:5824/api",
+                apiKey:"",
                 dom_id:"swagger-ui-container",
                 supportHeaderParams: false,
                 supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
@@ -75,7 +75,7 @@
 <body>
 <div id='header'>
     <div class="swagger-ui-wrap">
-        <a id="logo" href="${swaggerUrl}">myInterface API</a>
+        <a id="logo" href="http://localhost:5824/api">myInterface UI</a>
 
 
         <form id='api_selector'>
