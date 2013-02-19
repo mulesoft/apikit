@@ -29,14 +29,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class BaseResourceRetrieveAction implements RestAction
+public class BaseUriRetrieveAction implements RestAction
 {
 
     public static final String RESOURCE_BASE_PATH = "/org/mule/module/apikit/rest/swagger/";
 
     protected RestWebService restWebService;
 
-    public BaseResourceRetrieveAction(RestWebService restWebService)
+    public BaseUriRetrieveAction(RestWebService restWebService)
     {
         this.restWebService = restWebService;
     }
