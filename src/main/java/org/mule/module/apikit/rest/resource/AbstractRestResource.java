@@ -13,7 +13,6 @@ import org.mule.module.apikit.rest.action.RestAction;
 import org.mule.transport.NullPayload;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -153,9 +152,6 @@ public abstract class AbstractRestResource implements RestResource
         this.description = description;
     }
 
-    protected Set<ActionType> getSupportedActionTypes()
-    {
-        return EnumSet.of(ActionType.RETRIEVE, ActionType.EXISTS, ActionType.UPDATE);
-    };
+    protected abstract Set<ActionType> getSupportedActionTypes();
 
 }

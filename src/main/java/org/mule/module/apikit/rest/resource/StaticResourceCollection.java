@@ -26,6 +26,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Set;
 
 public class StaticResourceCollection extends AbstractRestResource
 {
@@ -139,6 +141,12 @@ public class StaticResourceCollection extends AbstractRestResource
         {
             return ActionType.RETRIEVE;
         }
+    }
+
+    @Override
+    protected Set<ActionType> getSupportedActionTypes()
+    {
+        return EnumSet.of(ActionType.RETRIEVE);
     }
 
 }

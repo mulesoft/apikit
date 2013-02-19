@@ -16,9 +16,8 @@ public class CollectionResource extends AbstractHierarchicalRestResource
     @Override
     protected Set<ActionType> getSupportedActionTypes()
     {
-        EnumSet<ActionType> set = EnumSet.copyOf(super.getSupportedActionTypes());
-        set.add(ActionType.CREATE);
-        return set;
+        return EnumSet.of(ActionType.RETRIEVE, ActionType.EXISTS, ActionType.CREATE);
+
     }
 
 }
