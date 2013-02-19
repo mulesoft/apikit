@@ -12,6 +12,7 @@ package org.mule.module.apikit.rest.action;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.module.apikit.api.Representation;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
@@ -126,6 +127,13 @@ public class BaseUriRetrieveAction implements RestAction
             // TODO Auto-generated method stub
             return null;
         }
+
+        @Override
+        public Representation getRepresentation()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
     };
 
     static final RestAction swaggerHtmlAction = new RestAction()
@@ -212,6 +220,13 @@ public class BaseUriRetrieveAction implements RestAction
             // TODO Auto-generated method stub
             return null;
         }
+
+        @Override
+        public Representation getRepresentation()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
     };
 
     @Override
@@ -230,6 +245,13 @@ public class BaseUriRetrieveAction implements RestAction
 
     @Override
     public String getDescription()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Representation getRepresentation()
     {
         // TODO Auto-generated method stub
         return null;

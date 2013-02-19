@@ -4,7 +4,7 @@ package org.mule.module.apikit.rest.action;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.module.apikit.AbstractWebServiceOperation;
-import org.mule.module.apikit.rest.Representation;
+import org.mule.module.apikit.api.Representation;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.protocol.MediaTypeNotAcceptableException;
@@ -17,7 +17,6 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
 {
 
     protected ActionType type;
-    protected Representation representation;
 
     @Override
     public ActionType getType()
@@ -45,11 +44,6 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
         {
             throw new RestException();
         }
-    }
-
-    public Representation getRepresentation()
-    {
-        return representation;
     }
 
 }
