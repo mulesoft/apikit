@@ -31,9 +31,9 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void noHeadOnCollection() throws Exception
+    public void existsOnCollection() throws Exception
     {
-        expect().response().statusCode(405).when().head("/api/leagues");
+        expect().response().statusCode(200).when().head("/api/leagues");
     }
 
     @Test
