@@ -15,6 +15,13 @@ import org.junit.Test;
 public class BaseUriResourceFunctionalTestCase extends FunctionalTestCase
 {
 
+    @Override
+    public int getTestTimeoutSecs()
+    {
+        return 6000;
+    }
+    
+    
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
 

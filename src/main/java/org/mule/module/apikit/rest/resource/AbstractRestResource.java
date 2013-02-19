@@ -5,6 +5,8 @@ import static org.mule.module.apikit.rest.action.ActionType.EXISTS;
 import static org.mule.module.apikit.rest.action.ActionType.RETRIEVE;
 
 import org.mule.api.MuleEvent;
+import org.mule.api.expression.ExpressionManager;
+import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.action.ActionType;
@@ -112,22 +114,29 @@ public abstract class AbstractRestResource implements RestResource
         return processResource(restCall);
     }
 
-    protected MuleEvent processResource(RestRequest restRequest) throws RestException
+    protected MuleEvent processResource(RestRequest request) throws RestException
     {
         try
         {
-            this.getAction(restRequest.getProtocolAdaptor().getActionType(), restRequest.getMuleEvent())
-                .handle(restRequest);
-            if (ActionType.EXISTS == restRequest.getProtocolAdaptor().getActionType())
+            ExpressionManager expManager = request.getMuleEvent().getMuleContext().getExpressionManager();
+
+            if (accessExpression != null
+                && !expManager.evaluateBoolean(accessExpression, request.getMuleEvent()))
             {
-                restRequest.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
+                throw new UnauthorizedException(this);
+            }
+            this.getAction(request.getProtocolAdaptor().getActionType(), request.getMuleEvent()).handle(
+                request);
+            if (ActionType.EXISTS == request.getProtocolAdaptor().getActionType())
+            {
+                request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
             }
         }
         catch (RestException rana)
         {
-            restRequest.getProtocolAdaptor().handleException(rana, restRequest.getMuleEvent());
+            request.getProtocolAdaptor().handleException(rana, request.getMuleEvent());
         }
-        return restRequest.getMuleEvent();
+        return request.getMuleEvent();
     }
 
     @Override

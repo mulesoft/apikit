@@ -3,7 +3,9 @@ package org.mule.module.apikit.rest.action;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.expression.ExpressionManager;
 import org.mule.module.apikit.AbstractWebServiceOperation;
+import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.api.Representation;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
@@ -33,6 +35,12 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
     @Override
     public MuleEvent handle(RestRequest request) throws RestException
     {
+        ExpressionManager expManager = request.getMuleEvent().getMuleContext().getExpressionManager();
+
+        if (accessExpression != null && !expManager.evaluateBoolean(accessExpression, request.getMuleEvent()))
+        {
+            throw new UnauthorizedException(this);
+        }
         if (getRepresentation() != null)
         {
             validateSupportedRequestMediaType(request);

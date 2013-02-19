@@ -12,10 +12,8 @@ package org.mule.module.apikit.rest;
 
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.MuleSession;
-import org.mule.api.lifecycle.InitialisationException;
 import org.mule.config.DefaultMuleConfiguration;
 import org.mule.context.notification.ServerNotificationManager;
 import org.mule.management.stats.AllStatistics;
@@ -24,10 +22,8 @@ import org.mule.tck.junit4.AbstractMuleTestCase;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.mockito.Mockito;
 
 public class RestWebServiceTestCase extends AbstractMuleTestCase
@@ -55,14 +51,6 @@ public class RestWebServiceTestCase extends AbstractMuleTestCase
         Mockito.when(muleMessage.getInboundProperty("http.method")).thenReturn("GET");
         restWebService = new RestWebService("name", interface1, false, muleContext);
         restWebService.setMessageSource(trigger);
-    }
-
-    @Test(expected = InitialisationException.class)
-    public void atLeastOneResource() throws MuleException
-    {
-        Mockito.when(interface1.getRoutes()).thenReturn(new ArrayList());
-
-        restWebService.initialise();
     }
 
 }

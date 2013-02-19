@@ -10,13 +10,22 @@
 
 package org.mule.module.apikit.rest.action;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
+import org.mule.api.expression.ExpressionManager;
+import org.mule.api.processor.MessageProcessor;
+import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.api.Representation;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
@@ -44,6 +53,13 @@ public class RestActionTestCase extends AbstractMuleTestCase
     protected RestRequest request;
     @Mock
     protected HttpRestProtocolAdapter httpAdapter;
+    @Mock
+    protected MuleContext muleContext;
+    @Mock
+    protected ExpressionManager expressionManager;
+    @Mock
+    protected MessageProcessor handler;
+
     AbstractRestAction action = new DummyRestAction();
 
     @Before
@@ -53,6 +69,44 @@ public class RestActionTestCase extends AbstractMuleTestCase
         doCallRealMethod().when(httpAdapter).handleException(any(RestException.class), any(MuleEvent.class));
         when(request.getProtocolAdaptor()).thenReturn(httpAdapter);
         when(request.getMuleEvent()).thenReturn(event);
+        when(event.getMuleContext()).thenReturn(muleContext);
+        when(muleContext.getExpressionManager()).thenReturn(expressionManager);
+        action.setHandler(handler);
+
+    }
+
+    @Test
+    public void actionAuthorized() throws RestException, MuleException
+    {
+        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
+
+        action.setAccessExpression("#[true]");
+        when(expressionManager.evaluateBoolean("#[true]", event)).thenReturn(Boolean.TRUE);
+
+        action.handle(request);
+
+        verify(handler).process(event);
+        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
+        verify(message, never());
+    }
+
+    @Test
+    public void actionNotAuthorized() throws RestException, MuleException
+    {
+        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
+
+        action.setAccessExpression("#[false]");
+        when(expressionManager.evaluateBoolean("#[false]", event)).thenReturn(Boolean.FALSE);
+
+        try
+        {
+            action.handle(request);
+        }
+        catch (RestException re)
+        {
+            assertEquals(UnauthorizedException.class, re.getClass());
+            verify(handler, never()).process(event);
+        }
     }
 
     // Response representation mediaTypes (as defined in the "Accept" request header)
