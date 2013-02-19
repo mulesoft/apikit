@@ -90,6 +90,30 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
             any(MuleEvent.class));
         verify(message).setOutboundProperty("http.status", 405);
     }
+    
+    @Test
+    public void actionAuthorized() throws RestException, MuleException
+    {
+        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
+        when(action.getType()).thenReturn(ActionType.RETRIEVE);
+
+        resource.handle(request);
+
+        verify(action).handle(request);
+        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
+    }
+
+    @Test
+    public void actionNotAuthorized() throws RestException, MuleException
+    {
+        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
+        when(action.getType()).thenReturn(ActionType.RETRIEVE);
+
+        resource.handle(request);
+
+        verify(action).handle(request);
+        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
+    }
 
     @Test
     public void resourceNotFound() throws RestException, MuleException, URISyntaxException

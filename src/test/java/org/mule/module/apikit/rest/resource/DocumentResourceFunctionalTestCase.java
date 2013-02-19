@@ -39,32 +39,32 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void noCreateOnDocument() throws Exception
+    public void createNotAllowed() throws Exception
     {
         expect().response().statusCode(405).header("Content-Length", "0").when().post("/api/league");
     }
 
     @Test
-    public void retrieveOnDocument() throws Exception
+    public void retrieve() throws Exception
     {
         expect().response().statusCode(200).body(containsString("Liga BBVA")).when().get("/api/league");
     }
 
     @Test
-    public void updateOnDocument() throws Exception
+    public void update() throws Exception
     {
         given().body("Premier League").expect().response().statusCode(200).when().put("/api/league");
     }
 
 
     @Test
-    public void noDeleteOnDocument() throws Exception
+    public void deleteNotAllowed() throws Exception
     {
         expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/league");
     }
 
     @Test
-    public void existsOnDocument() throws Exception
+    public void exists() throws Exception
     {
         expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/league");
     }
@@ -81,8 +81,8 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void createNotAllowedOnNestedDocument() throws Exception
     {
-        expect().response().statusCode(405).body(containsString("Royal")).when().post("/api/league/association");
-        expect().response().statusCode(405).body(containsString("Royal")).when().post("/api/league/association/");
+        expect().response().statusCode(405).header("Content-Length", "0").when().post("/api/league/association");
+        expect().response().statusCode(405).header("Content-Length", "0").when().post("/api/league/association/");
     }
     
     @Test
@@ -109,8 +109,8 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void deleteNotAllowedOnNestedDocument() throws Exception
     {
-        expect().response().statusCode(405).header("Content-Length", "0").body(containsString("Royal")).when().delete("/api/league/association");
-        expect().response().statusCode(405).header("Content-Length", "0").body(containsString("Royal")).when().delete("/api/league/association/");
+        expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/league/association");
+        expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/league/association/");
     }
 
 }
