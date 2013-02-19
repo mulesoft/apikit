@@ -12,6 +12,7 @@
 package org.mule.module.apikit.rest.protocol;
 
 import org.mule.api.MuleEvent;
+import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 
 public final class RestProtocolAdapterFactory
 {

@@ -8,12 +8,15 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest.protocol;
+package org.mule.module.apikit.rest.protocol.http;
 
 import org.mule.api.MuleEvent;
+import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
+import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.action.ActionTypeNotAllowedException;
+import org.mule.module.apikit.rest.protocol.RestProtocolAdapter;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.transport.NullPayload;
 import org.mule.util.StringUtils;
@@ -150,7 +153,8 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         if (re instanceof ActionTypeNotAllowedException)
         {
             ActionTypeNotAllowedException anse = (ActionTypeNotAllowedException) re;
-            event.getMessage().setOutboundProperty("http.status", 405);
+            event.getMessage().setOutboundProperty("http.status",
+                HttpStatusCode.CLIENT_ERROR_METHOD_NOT_ALLOWED);
             event.getMessage().setOutboundProperty("Allow",
                 StringUtils.join(actionTypesToHttpMethods(anse.getResource().getAllowedActionTypes()), " ,"));
             event.getMessage().setPayload(NullPayload.getInstance());
@@ -158,19 +162,20 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         }
         else if (re instanceof ResourceNotFoundException)
         {
-            event.getMessage().setOutboundProperty("http.status", 404);
+            event.getMessage().setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_NOT_FOUND);
             event.getMessage().setPayload(NullPayload.getInstance());
         }
         else if (re instanceof MediaTypeNotAcceptableException)
         {
-            event.getMessage().setOutboundProperty("http.status", 406);
-
+            event.getMessage().setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_NOT_ACCEPTABLE);
+            event.getMessage().setPayload(NullPayload.getInstance());
         }
-        else
+        else if (re instanceof UnsupportedMediaTypeException)
         {
-
+            event.getMessage().setOutboundProperty("http.status",
+                HttpStatusCode.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE);
+            event.getMessage().setPayload(NullPayload.getInstance());
         }
-
     }
 
 }

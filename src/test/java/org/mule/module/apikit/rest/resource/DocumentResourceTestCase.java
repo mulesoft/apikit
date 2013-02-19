@@ -11,7 +11,7 @@ import org.mule.api.lifecycle.InitialisationException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.action.ActionType;
-import org.mule.module.apikit.rest.protocol.HttpRestProtocolAdapter;
+import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 import java.util.Arrays;

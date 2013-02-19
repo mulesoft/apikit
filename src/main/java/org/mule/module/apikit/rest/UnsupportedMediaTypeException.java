@@ -8,11 +8,10 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest.protocol;
+package org.mule.module.apikit.rest;
 
-import org.mule.module.apikit.rest.RestException;
 
-public class MediaTypeNotAcceptableException extends RestException
+public class UnsupportedMediaTypeException extends RestException
 {
 
     private static final long serialVersionUID = 4984121123689709327L;

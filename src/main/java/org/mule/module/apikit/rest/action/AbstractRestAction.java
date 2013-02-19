@@ -5,9 +5,10 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.module.apikit.AbstractWebServiceOperation;
 import org.mule.module.apikit.api.Representation;
+import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.protocol.MediaTypeNotAcceptableException;
+import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
 
 import java.util.Collection;
@@ -24,17 +25,18 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
         return type;
     }
 
+    public void setRepresentation(Representation representation)
+    {
+        this.representation = representation;
+    }
+
     @Override
     public MuleEvent handle(RestRequest request) throws RestException
     {
         if (getRepresentation() != null)
         {
-            Collection<Representation> representations = Collections.singletonList(getRepresentation());
-            String bestMatch = RestContentTypeParser.bestMatch(representations, request.getProtocolAdaptor().getAcceptedContentTypes());
-            if (bestMatch == null)
-            {
-                throw new MediaTypeNotAcceptableException();
-            }
+            validateSupportedRequestMediaType(request);
+            validateAcceptableResponeMediaType(request);
         }
         try
         {
@@ -43,6 +45,29 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
         catch (MuleException e)
         {
             throw new RestException();
+        }
+    }
+
+    protected void validateSupportedRequestMediaType(RestRequest request)
+        throws UnsupportedMediaTypeException
+    {
+        Collection<Representation> representations = Collections.singletonList(getRepresentation());
+
+        if (!representations.contains(request.getProtocolAdaptor().getRequestContentType()))
+        {
+            throw new UnsupportedMediaTypeException();
+        }
+    }
+
+    protected void validateAcceptableResponeMediaType(RestRequest request)
+        throws MediaTypeNotAcceptableException
+    {
+        Collection<Representation> representations = Collections.singletonList(getRepresentation());
+        String bestMatch = RestContentTypeParser.bestMatch(representations, request.getProtocolAdaptor()
+            .getAcceptedContentTypes());
+        if (bestMatch == null)
+        {
+            throw new MediaTypeNotAcceptableException();
         }
     }
 
