@@ -96,7 +96,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
     }
 
     @Test
-    public void singleNotAcceptableResponseMediaTypeSingleMediaTypeSupported()
+    public void singleNotAcceptableResponseMediaTypeSingleMediaTypeSupported() throws RestException
     {
         when(httpAdapter.getAcceptedContentTypes()).thenReturn("text/html");
         when(httpAdapter.getRequestContentType()).thenReturn("text/plain");
