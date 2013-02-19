@@ -113,4 +113,10 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
         expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/league/association/");
     }
 
+    @Test
+    public void existsOnNestedDocument() throws Exception
+    {
+        expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/league/association");
+    }
+
 }

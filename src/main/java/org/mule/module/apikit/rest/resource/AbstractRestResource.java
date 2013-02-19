@@ -66,7 +66,7 @@ public abstract class AbstractRestResource implements RestResource
     protected RestAction getAction(ActionType actionType, MuleEvent muleEvent)
         throws ActionTypeNotAllowedException
     {
-        if (!isActionTypeAllowed(actionType))
+        if (!getSupportedActionTypes().contains(actionType))
         {
             throw new ActionTypeNotAllowedException(this, actionType);
         }
