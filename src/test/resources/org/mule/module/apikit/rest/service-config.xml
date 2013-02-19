@@ -9,13 +9,27 @@
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <rest:interface name="myInterface">
-        <rest:collection-resource name="leagues">
+        <rest:document-resource name="leagues">
             <rest:retrieve flow-ref="retrieveLeagues"/>
-        </rest:collection-resource>
+            <rest:update flow-ref="retrieveLeagues" access="#[false]"/>
+        </rest:document-resource>
+    </rest:interface>
+
+    <rest:interface name="protectedInterface" access="#[false]">
+        <rest:document-resource name="leagues2">
+            <rest:retrieve flow-ref="retrieveLeagues"/>
+            <rest:update flow-ref="retrieveLeagues" access="#[false]"/>
+        </rest:document-resource>
     </rest:interface>
 
     <rest:service name="myService" interface-ref="myInterface">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
+            <mule:object-to-string-transformer/>
+        </http:inbound-endpoint>
+    </rest:service>
+    
+    <rest:service name="myService2" interface-ref="protectedInterface">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="protectedapi">
             <mule:object-to-string-transformer/>
         </http:inbound-endpoint>
     </rest:service>

@@ -22,6 +22,7 @@ public class WebServiceInterfaceDefinitionParser extends OrphanDefinitionParser
     {
         super(clazz, true);
         addIgnored(ATTRIBUTE_NAME);
+        addAlias("access", "accessExpression");
     }
 
     @java.lang.Override

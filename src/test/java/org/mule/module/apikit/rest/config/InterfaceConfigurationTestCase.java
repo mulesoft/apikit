@@ -102,7 +102,17 @@ public class InterfaceConfigurationTestCase extends FunctionalTestCase
         assertEquals("resource c update description", action4.getDescription());
         assertEquals("#[true]", action4.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action4.getHandler());
-
     }
 
+    @Test
+    public void testInterface2() throws Exception
+    {
+        RestWebServiceInterface wsInterface = muleContext.getRegistry().lookupObject("myInterface2");
+
+        assertNotNull(wsInterface);
+        assertEquals(RestWebServiceInterface.class, wsInterface.getClass());
+        assertEquals("myInterface2", wsInterface.getName());
+        assertEquals("interface description", wsInterface.getDescription());
+        assertEquals(2, wsInterface.getRoutes().size());
+    }
 }

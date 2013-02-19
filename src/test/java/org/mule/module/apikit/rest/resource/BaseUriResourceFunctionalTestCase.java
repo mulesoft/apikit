@@ -20,8 +20,7 @@ public class BaseUriResourceFunctionalTestCase extends FunctionalTestCase
     {
         return 6000;
     }
-    
-    
+
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
 
@@ -38,10 +37,8 @@ public class BaseUriResourceFunctionalTestCase extends FunctionalTestCase
         return "org/mule/module/apikit/rest/service-config.xml, org/mule/module/apikit/test-flows-config.xml";
     }
 
-    // Base URI
-
     @Test
-    public void putNotSupported() throws Exception
+    public void updateNotSupported() throws Exception
     {
         given().expect()
             .response()
@@ -58,7 +55,7 @@ public class BaseUriResourceFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void postNotSupported() throws Exception
+    public void createNotSupported() throws Exception
     {
         given().expect()
             .response()
@@ -92,24 +89,40 @@ public class BaseUriResourceFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void headSupported() throws Exception
+    public void retrieve() throws Exception
     {
-        given().expect()
-            .response()
-            .statusCode(200)
-            .body(Matchers.equalToIgnoringCase(""))
-            .when()
-            .head("/api");
-        given().expect()
-            .response()
-            .statusCode(200)
-            .body(Matchers.equalToIgnoringCase(""))
-            .when()
-            .head("/api/");
+        given().header("Accept", "text/html").expect().response().statusCode(200).when().get("/api");
+        given().header("Accept", "text/html").expect().response().statusCode(200).when().get("/api/");
     }
 
     @Test
-    public void getUnsupportedContentTypes() throws Exception
+    public void retrieveUnauthorized() throws Exception
+    {
+        given().header("Accept", "text/html")
+            .expect()
+            .response()
+            .header("Content-Length", "0")
+            .statusCode(401)
+            .when()
+            .get("/protectedapi");
+        given().header("Accept", "text/html")
+            .expect()
+            .response()
+            .header("Content-Length", "0")
+            .statusCode(401)
+            .when()
+            .get("/protectedapi/");
+    }
+
+    @Test
+    public void exists() throws Exception
+    {
+        given().expect().response().statusCode(200).header("Content-Length", "0").when().head("/api");
+        given().expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/");
+    }
+
+    @Test
+    public void retreiveUnsupportedContentTypes() throws Exception
     {
         given().header("Accept", "application/json").expect().response().statusCode(406).when().get("/api");
         given().header("Accept", "text/pain").expect().response().statusCode(406).when().get("/api");

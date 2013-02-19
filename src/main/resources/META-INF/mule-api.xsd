@@ -30,8 +30,8 @@
         </xsd:annotation>
         <xsd:complexType>
             <xsd:sequence>
-                <xsd:element ref="abstract-web-service-interface" minOccurs="0"/>
-                <xsd:element ref="abstract-web-service" minOccurs="0"/>
+                <xsd:element ref="abstract-web-service-interface" minOccurs="0" maxOccurs="unbounded"/>
+                <xsd:element ref="abstract-web-service" minOccurs="0" maxOccurs="unbounded"/>
             </xsd:sequence>
         </xsd:complexType>
     </xsd:element>
@@ -75,6 +75,12 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             The name used to identify this flow construct.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="access" type="mule:nonBlankString" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>

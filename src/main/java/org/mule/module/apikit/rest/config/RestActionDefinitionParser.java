@@ -20,7 +20,7 @@ public class RestActionDefinitionParser extends ChildDefinitionParser
 {
     public RestActionDefinitionParser(Class<?> clazz)
     {
-        super("action", clazz);
+        super("action", clazz, false);
         addAlias("access", "accessExpression");
         addAlias("flow", "handler");
     }
