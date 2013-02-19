@@ -11,6 +11,7 @@
 package org.mule.module.apikit.rest.action;
 
 import org.mule.api.MuleEvent;
+import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
@@ -86,7 +87,7 @@ public class BaseUriRetrieveAction implements RestAction
                         String.valueOf(HttpConstants.SC_OK));
                 restRequest.getMuleEvent()
                     .getMessage()
-                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, MimeTypes.JSON);
+                    .setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, "application/swagger+json");
                 restRequest.getMuleEvent()
                     .getMessage()
                     .setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, json.length());
@@ -103,6 +104,27 @@ public class BaseUriRetrieveAction implements RestAction
         public ActionType getType()
         {
             return ActionType.RETRIEVE;
+        }
+
+        @Override
+        public MessageProcessor getHandler()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getAccessExpression()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getDescription()
+        {
+            // TODO Auto-generated method stub
+            return null;
         }
     };
 
@@ -169,6 +191,48 @@ public class BaseUriRetrieveAction implements RestAction
         {
             return ActionType.RETRIEVE;
         }
+
+        @Override
+        public MessageProcessor getHandler()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getAccessExpression()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getDescription()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
     };
+
+    @Override
+    public MessageProcessor getHandler()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getAccessExpression()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

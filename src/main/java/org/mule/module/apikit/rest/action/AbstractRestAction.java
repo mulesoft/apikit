@@ -13,7 +13,7 @@ import org.mule.module.apikit.rest.util.RestContentTypeParser;
 import java.util.Collection;
 import java.util.Collections;
 
-public abstract class AbstractMuleRestAction extends AbstractWebServiceOperation implements MuleRestAction
+public abstract class AbstractRestAction extends AbstractWebServiceOperation implements RestAction
 {
 
     protected ActionType type;

@@ -11,6 +11,7 @@
 package org.mule.module.apikit.rest.resource;
 
 import org.mule.api.MuleEvent;
+import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnexceptedErrorException;
@@ -140,6 +141,27 @@ public class StaticResourceCollection extends AbstractRestResource
         public ActionType getType()
         {
             return ActionType.RETRIEVE;
+        }
+
+        @Override
+        public MessageProcessor getHandler()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getAccessExpression()
+        {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getDescription()
+        {
+            // TODO Auto-generated method stub
+            return null;
         }
     }
 

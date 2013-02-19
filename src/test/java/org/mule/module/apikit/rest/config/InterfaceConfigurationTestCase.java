@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.mule.module.apikit.rest.RestWebServiceInterface;
 import org.mule.module.apikit.rest.action.ActionType;
-import org.mule.module.apikit.rest.action.MuleRestAction;
+import org.mule.module.apikit.rest.action.RestAction;
 import org.mule.module.apikit.rest.resource.DocumentResource;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.tck.junit4.FunctionalTestCase;
@@ -56,7 +56,7 @@ public class InterfaceConfigurationTestCase extends FunctionalTestCase
 
         assertEquals(1, resourceA.getActions().size());
 
-        MuleRestAction action1 = (MuleRestAction) resourceA.getActions().get(0);
+        RestAction action1 = (RestAction) resourceA.getActions().get(0);
         assertEquals(ActionType.RETRIEVE, action1.getType());
         assertEquals("resource a retrieve description", action1.getDescription());
         assertEquals("#[true]", action1.getAccessExpression());
@@ -73,13 +73,13 @@ public class InterfaceConfigurationTestCase extends FunctionalTestCase
         assertEquals("b", resourceB.getName());
         assertEquals("resource b description", resourceB.getDescription());
 
-        MuleRestAction action1 = (MuleRestAction) resourceB.getActions().get(0);
+        RestAction action1 = (RestAction) resourceB.getActions().get(0);
         assertEquals(ActionType.RETRIEVE, action1.getType());
         assertEquals("resource b retrieve description", action1.getDescription());
         assertEquals("#[true]", action1.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action1.getHandler());
 
-        MuleRestAction action2 = (MuleRestAction) resourceB.getActions().get(1);
+        RestAction action2 = (RestAction) resourceB.getActions().get(1);
         assertEquals(ActionType.UPDATE, action2.getType());
         assertEquals("resource b update description", action2.getDescription());
         assertEquals("#[true]", action2.getAccessExpression());
@@ -91,13 +91,13 @@ public class InterfaceConfigurationTestCase extends FunctionalTestCase
         assertEquals("c", nestedResource.getName());
         assertEquals("resource c description", nestedResource.getDescription());
 
-        MuleRestAction action3 = (MuleRestAction) nestedResource.getActions().get(0);
+        RestAction action3 = (RestAction) nestedResource.getActions().get(0);
         assertEquals(ActionType.RETRIEVE, action3.getType());
         assertEquals("resource c retrieve description", action3.getDescription());
         assertEquals("#[true]", action3.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action3.getHandler());
 
-        MuleRestAction action4 = (MuleRestAction) nestedResource.getActions().get(1);
+        RestAction action4 = (RestAction) nestedResource.getActions().get(1);
         assertEquals(ActionType.UPDATE, action4.getType());
         assertEquals("resource c update description", action4.getDescription());
         assertEquals("#[true]", action4.getAccessExpression());
