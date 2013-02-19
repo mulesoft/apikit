@@ -7,6 +7,7 @@ import static org.mule.module.apikit.rest.action.ActionType.RETRIEVE;
 import org.mule.api.MuleEvent;
 import org.mule.api.expression.ExpressionManager;
 import org.mule.module.apikit.UnauthorizedException;
+import org.mule.module.apikit.api.WebServiceRoute;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.action.ActionType;
@@ -118,13 +119,7 @@ public abstract class AbstractRestResource implements RestResource
     {
         try
         {
-            ExpressionManager expManager = request.getMuleEvent().getMuleContext().getExpressionManager();
-
-            if (accessExpression != null
-                && !expManager.evaluateBoolean(accessExpression, request.getMuleEvent()))
-            {
-                throw new UnauthorizedException(this);
-            }
+            authorize(request);
             this.getAction(request.getProtocolAdaptor().getActionType(), request.getMuleEvent()).handle(
                 request);
             if (ActionType.EXISTS == request.getProtocolAdaptor().getActionType())
@@ -159,6 +154,40 @@ public abstract class AbstractRestResource implements RestResource
     public void setDescription(String description)
     {
         this.description = description;
+    }
+
+    @Override
+    public List<RestAction> getAuthorizedActions(RestRequest request)
+    {
+        List<RestAction> result = new ArrayList<RestAction>();
+        for (RestAction action : getActions())
+        {
+            if (isAuthorized(action, request))
+            {
+                result.add(action);
+            }
+        }
+        return result;
+    }
+
+    protected void authorize(RestRequest request) throws UnauthorizedException
+    {
+        if (!isAuthorized(this, request))
+        {
+            throw new UnauthorizedException(this);
+        }
+    }
+
+    protected boolean isAuthorized(WebServiceRoute route, RestRequest request)
+    {
+        ExpressionManager expManager = request.getMuleEvent().getMuleContext().getExpressionManager();
+
+        if (route.getAccessExpression() == null
+            || expManager.evaluateBoolean(route.getAccessExpression(), request.getMuleEvent()))
+        {
+            return true;
+        }
+        return false;
     }
 
     protected abstract Set<ActionType> getSupportedActionTypes();

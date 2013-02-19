@@ -10,7 +10,7 @@
 
 package org.mule.module.apikit.rest.resource;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.never;
@@ -50,7 +50,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 @SmallTest
 public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
 {
-
     @Mock
     protected MuleEvent event;
     @Mock
@@ -64,8 +63,14 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     @Mock
     protected MuleContext muleContext;
     @Mock
-    protected ExpressionManager expressionManager;;
-    protected DummyHierarchicalRestResource resource;
+    protected ExpressionManager expressionManager;
+    protected AbstractHierarchicalRestResource resource;
+    
+    @Override
+    public int getTestTimeoutSecs()
+    {
+        return 6000;
+    }
 
     @Before
     public void setup()
@@ -78,95 +83,34 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         when(muleContext.getExpressionManager()).thenReturn(expressionManager);
         resource = new DummyHierarchicalRestResource("doc");
         resource.setActions(Collections.singletonList(action));
-    }
-
-    @Test
-    public void actionTypeAllowed() throws RestException, MuleException
-    {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
-
-        resource.handle(request);
-
-        verify(action).handle(request);
-        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
-        verify(message, never());
-    }
-
-    @Test
-    public void actionTypeNotAllowed() throws RestException, MuleException
-    {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.UPDATE);
-
-        resource.handle(request);
-
-        verify(httpAdapter, times(1)).handleException(any(ActionTypeNotAllowedException.class),
-            any(MuleEvent.class));
-        verify(message).setOutboundProperty("http.status", 405);
-    }
-
-    @Test
-    public void resourceAuthorized() throws RestException, MuleException
-    {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
-
-        resource.setAccessExpression("#[true]");
-        when(expressionManager.evaluateBoolean("#[true]", event)).thenReturn(Boolean.TRUE);
-
-        resource.handle(request);
-
-        verify(action).handle(request);
-        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
-        verify(message, never());
-    }
-
-    @Test
-    public void resourceNotAuthorized() throws RestException, MuleException
-    {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
-
-        resource.setAccessExpression("#[false]");
-        when(expressionManager.evaluateBoolean("#[false]", event)).thenReturn(Boolean.FALSE);
-
-        resource.handle(request);
-
-        verify(action, never()).handle(request);
-        verify(httpAdapter, times(1)).handleException(any(RestException.class), any(MuleEvent.class));
-        verify(message).setOutboundProperty("http.status", 401);
+        when(expressionManager.evaluateBoolean(Mockito.eq("#[true]"), any(MuleEvent.class))).thenReturn(Boolean.TRUE);
+        when(expressionManager.evaluateBoolean(Mockito.eq("#[false]"), any(MuleEvent.class))).thenReturn(Boolean.FALSE);
     }
 
     @Test
     public void getAuthorizedNestedResources() throws RestException, MuleException
     {
-        fail("implement");
+        RestResource nestedResource1 = Mockito.mock(RestResource.class);
+        when(nestedResource1.getName()).thenReturn("1");
+        when(nestedResource1.getAccessExpression()).thenReturn("#[true]");
+        RestResource nestedResource2 = Mockito.mock(RestResource.class);
+        when(nestedResource2.getName()).thenReturn("2");
+        when(nestedResource2.getAccessExpression()).thenReturn("#[false]");
+
+        List<RestResource> nestedResources = new ArrayList<RestResource>();
+        nestedResources.add(nestedResource1);
+        nestedResources.add(nestedResource2);
+        resource.setResources(nestedResources);
+        resource.initialise();
+
+        List<RestResource> authorizedResources = resource.getAuthorizedResources(request);
+
+        assertEquals(1, authorizedResources.size());
+        assertEquals(nestedResource1, authorizedResources.get(0));
     }
 
     @Test
-    public void getAuthorizedActions() throws RestException, MuleException
-    {
-        fail("implement");
-    }
-
-    @Test
-    public void resourceNotFound() throws RestException, MuleException, URISyntaxException
-    {
-        when(request.hasMorePathElements()).thenReturn(Boolean.TRUE);
-        when(request.getNextPathElement()).thenReturn("1");
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
-
-        resource.handle(request);
-
-        verify(httpAdapter, times(1)).handleException(any(ResourceNotFoundException.class),
-            any(MuleEvent.class));
-        verify(message).setOutboundProperty("http.status", 404);
-    }
-
-    @Test
-    public void nestedResource() throws RestException, MuleException, URISyntaxException
+    public void nestedResourceRouting() throws RestException, MuleException, URISyntaxException
     {
         when(request.hasMorePathElements()).thenReturn(Boolean.TRUE).thenReturn(Boolean.FALSE);
         when(request.getNextPathElement()).thenReturn("1");

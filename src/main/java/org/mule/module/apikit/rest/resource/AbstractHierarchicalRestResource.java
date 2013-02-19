@@ -67,7 +67,8 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
             String uriPattern = resource.getName();
             if (routingTable.containsKey(uriPattern))
             {
-                throw new InitialisationException(MessageFactory.createStaticMessage("Duplicate resource name: " + uriPattern), this);
+                throw new InitialisationException(
+                    MessageFactory.createStaticMessage("Duplicate resource name: " + uriPattern), this);
             }
             logger.debug("Adding URI to the routing table: " + uriPattern);
             routingTable.put(uriPattern, resource);
@@ -77,6 +78,20 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
     public List<RestResource> getResources()
     {
         return resources;
+    }
+
+    @Override
+    public List<RestResource> getAuthorizedResources(RestRequest request)
+    {
+        List<RestResource> result = new ArrayList<RestResource>();
+        for (RestResource resource : getResources())
+        {
+            if (isAuthorized(resource, request))
+            {
+                result.add(resource);
+            }
+        }
+        return result;
     }
 
     public void setResources(List<RestResource> resources)

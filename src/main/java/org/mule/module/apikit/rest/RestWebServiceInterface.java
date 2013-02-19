@@ -11,6 +11,7 @@
 package org.mule.module.apikit.rest;
 
 import org.mule.module.apikit.AbstractWebServiceInterface;
+import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.api.WebServiceRoute;
 import org.mule.module.apikit.rest.swagger.json.RestWebServiceInterfaceSerializer;
 
