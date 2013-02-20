@@ -22,13 +22,13 @@
     </rest:interface>
 
     <rest:interface name="myInterface2" doc:description="interface description">
-        <rest:document-resource name="x" access="#[true]" doc:description="resource a description">
+        <rest:document-resource name="a" access="#[true]" doc:description="resource a description">
             <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description"/>
         </rest:document-resource>
-        <rest:document-resource name="y" access="#[true]" doc:description="resource b description">
+        <rest:document-resource name="b" access="#[true]" doc:description="resource b description">
             <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description"/>
             <rest:update flow-ref="echo" access="#[true]" doc:description="resource b update description"/>
-            <rest:document-resource name="z" access="#[true]" doc:description="resource c description">
+            <rest:document-resource name="c" access="#[true]" doc:description="resource c description">
                 <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource c retrieve description"/>
                 <rest:update flow-ref="echo" access="#[true]" doc:description="resource c update description"/>
             </rest:document-resource>
