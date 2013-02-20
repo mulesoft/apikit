@@ -10,8 +10,10 @@
 
 package org.mule.module.apikit.rest.protocol;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -22,10 +24,13 @@ import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
+import org.mule.transport.NullPayload;
 import org.mule.transport.http.HttpConnector;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -147,14 +152,12 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     @Test
     public void queryParameters()
     {
-        when(message.getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY)).thenReturn(
-            "/orders/1/address?key=value&key2=value2&");
+        Map<String, String> queryParams = new HashMap<String, String>();
+
+        when(message.getInboundProperty(HttpConnector.HTTP_QUERY_PARAMS)).thenReturn(queryParams);
 
         adapter = new HttpRestProtocolAdapter(event);
-        assertEquals(2, adapter.getQueryParameters().size());
-        assertArrayEquals(new String[]{"key", "key2"}, adapter.getQueryParameters().keySet().toArray());
-        assertEquals("value", adapter.getQueryParameters().get("key"));
-        assertEquals("value2", adapter.getQueryParameters().get("key2"));
+        assertEquals(queryParams, adapter.getQueryParameters());
     }
 
     @Test
@@ -163,5 +166,6 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
         adapter = new HttpRestProtocolAdapter(event);
         adapter.handleException(new ResourceNotFoundException("1"), event);
         verify(message).setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, 404);
+        verify(message).setPayload(any(NullPayload.class));
     }
 }
