@@ -11,7 +11,6 @@
 package org.mule.module.apikit;
 
 import org.mule.api.processor.MessageProcessor;
-import org.mule.module.apikit.api.Representation;
 import org.mule.module.apikit.api.WebServiceOperation;
 
 public class AbstractWebServiceOperation implements WebServiceOperation
@@ -20,7 +19,6 @@ public class AbstractWebServiceOperation implements WebServiceOperation
     protected MessageProcessor handler;
     protected String accessExpression;
     protected String description;
-    protected Representation representation;
 
 
     @Override
@@ -54,11 +52,6 @@ public class AbstractWebServiceOperation implements WebServiceOperation
     public void setDescription(String description)
     {
         this.description = description;
-    }
-
-    public Representation getRepresentation()
-    {
-        return representation;
     }
 
 }

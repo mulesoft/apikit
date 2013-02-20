@@ -12,12 +12,12 @@ package org.mule.module.apikit.rest.resource;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.module.apikit.api.Representation;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnexceptedErrorException;
 import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.action.RestAction;
+import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
@@ -27,6 +27,7 @@ import org.mule.util.IOUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
@@ -166,11 +167,12 @@ public class StaticResourceCollection extends AbstractRestResource
         }
 
         @Override
-        public Representation getRepresentation()
+        public Collection<Representation> getRepresentations()
         {
             // TODO Auto-generated method stub
             return null;
         }
+
     }
 
     @Override

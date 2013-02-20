@@ -6,20 +6,21 @@ import org.mule.api.MuleException;
 import org.mule.api.expression.ExpressionManager;
 import org.mule.module.apikit.AbstractWebServiceOperation;
 import org.mule.module.apikit.UnauthorizedException;
-import org.mule.module.apikit.api.Representation;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
+import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
 
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashSet;
 
 public abstract class AbstractRestAction extends AbstractWebServiceOperation implements RestAction
 {
 
     protected ActionType type;
+    protected Collection<Representation> representations = new HashSet<Representation>();
 
     @Override
     public ActionType getType()
@@ -27,9 +28,9 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
         return type;
     }
 
-    public void setRepresentation(Representation representation)
+    public void setRepresentations(Collection<Representation> representations)
     {
-        this.representation = representation;
+        this.representations = representations;
     }
 
     @Override
@@ -41,7 +42,7 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
         {
             throw new UnauthorizedException(this);
         }
-        if (getRepresentation() != null)
+        if (!getRepresentations().isEmpty())
         {
             validateSupportedRequestMediaType(request);
             validateAcceptableResponeMediaType(request);
@@ -56,12 +57,20 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
         }
     }
 
-    protected void validateSupportedRequestMediaType(RestRequest request)
-        throws UnsupportedMediaTypeException
+    protected void validateSupportedRequestMediaType(RestRequest request) throws UnsupportedMediaTypeException
     {
-        Collection<Representation> representations = Collections.singletonList(getRepresentation());
+        boolean valid = false;
+        for (Representation representation : representations)
+        {
+            //TODO maybe a smarter comparison is required
+            if (representation.getMediaType().equals(request.getProtocolAdaptor().getRequestContentType()))
+            {
+                valid = true;
+                break;
+            }
 
-        if (!representations.contains(request.getProtocolAdaptor().getRequestContentType()))
+        }
+        if (!valid)
         {
             throw new UnsupportedMediaTypeException();
         }
@@ -70,13 +79,16 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
     protected void validateAcceptableResponeMediaType(RestRequest request)
         throws MediaTypeNotAcceptableException
     {
-        Collection<Representation> representations = Collections.singletonList(getRepresentation());
-        String bestMatch = RestContentTypeParser.bestMatch(representations, request.getProtocolAdaptor()
-            .getAcceptedContentTypes());
+        String bestMatch = RestContentTypeParser.bestMatch(representations, request.getProtocolAdaptor().getAcceptedContentTypes());
         if (bestMatch == null)
         {
             throw new MediaTypeNotAcceptableException();
         }
     }
 
+    @Override
+    public Collection<Representation> getRepresentations()
+    {
+        return representations;
+    }
 }

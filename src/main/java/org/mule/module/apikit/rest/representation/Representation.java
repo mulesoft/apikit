@@ -1,4 +1,4 @@
-package org.mule.module.apikit.api;
+package org.mule.module.apikit.rest.representation;
 
 import java.math.BigDecimal;
 

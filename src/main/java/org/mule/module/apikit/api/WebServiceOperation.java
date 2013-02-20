@@ -17,5 +17,4 @@ public interface WebServiceOperation extends WebServiceRoute
 
     MessageProcessor getHandler();
     
-    Representation getRepresentation();
 }

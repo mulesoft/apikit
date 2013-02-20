@@ -15,7 +15,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,14 +25,16 @@ import org.mule.api.MuleMessage;
 import org.mule.api.expression.ExpressionManager;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.UnauthorizedException;
-import org.mule.module.apikit.api.Representation;
+import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
+import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -116,7 +117,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
     {
         when(httpAdapter.getAcceptedContentTypes()).thenReturn("text/plain");
         when(httpAdapter.getRequestContentType()).thenReturn("text/plain");
-        action.setRepresentation(new Representation()
+        action.setRepresentations(Arrays.asList(new Representation[]{ new Representation()
         {
 
             @Override
@@ -145,7 +146,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
             {
                 return "text/plain";
             }
-        });
+        }}));
         action.handle(request);
     }
 
@@ -154,7 +155,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
     {
         when(httpAdapter.getAcceptedContentTypes()).thenReturn("text/html");
         when(httpAdapter.getRequestContentType()).thenReturn("text/plain");
-        action.setRepresentation(new Representation()
+        action.setRepresentations(Arrays.asList(new Representation[]{ new Representation()
         {
 
             @Override
@@ -183,7 +184,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
             {
                 return "text/plain";
             }
-        });
+        }}));
         action.handle(request);
     }
 
@@ -243,6 +244,12 @@ public class RestActionTestCase extends AbstractMuleTestCase
 
     static class DummyRestAction extends AbstractRestAction
     {
+
+        @Override
+        protected void validateAcceptableResponeMediaType(RestRequest request) throws MediaTypeNotAcceptableException
+        {
+            //no response representation needed
+        }
     }
 
 }

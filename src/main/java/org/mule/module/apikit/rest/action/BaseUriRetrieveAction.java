@@ -12,12 +12,12 @@ package org.mule.module.apikit.rest.action;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.module.apikit.api.Representation;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
 import org.mule.module.apikit.rest.UnexceptedErrorException;
+import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.swagger.RestSwaggerConstants;
@@ -34,6 +34,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Collection;
 
 public class BaseUriRetrieveAction implements RestAction
 {
@@ -162,7 +163,7 @@ public class BaseUriRetrieveAction implements RestAction
         }
 
         @Override
-        public Representation getRepresentation()
+        public Collection<Representation> getRepresentations()
         {
             // TODO Auto-generated method stub
             return null;
@@ -255,7 +256,7 @@ public class BaseUriRetrieveAction implements RestAction
         }
 
         @Override
-        public Representation getRepresentation()
+        public Collection<Representation> getRepresentations()
         {
             // TODO Auto-generated method stub
             return null;
@@ -284,7 +285,7 @@ public class BaseUriRetrieveAction implements RestAction
     }
 
     @Override
-    public Representation getRepresentation()
+    public Collection<Representation> getRepresentations()
     {
         // TODO Auto-generated method stub
         return null;

@@ -11,7 +11,7 @@
 
 package org.mule.module.apikit.rest.util;
 
-import org.mule.module.apikit.api.Representation;
+import org.mule.module.apikit.rest.representation.Representation;
 
 import java.util.Collection;
 import java.util.Collections;
