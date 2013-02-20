@@ -40,9 +40,9 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     public HttpRestProtocolAdapter(MuleEvent event)
     {
         this.baseURI = event.getMessageSourceURI();
-        if (event.getMessage().getInboundProperty("Host") != null)
+        if (event.getMessage().getInboundProperty("host") != null)
         {
-            String hostHeader = event.getMessage().getInboundProperty("Host");
+            String hostHeader = event.getMessage().getInboundProperty("host");
             if (hostHeader.indexOf(':') != -1)
             {
                 String host = hostHeader.substring(0, hostHeader.indexOf(':'));
@@ -87,12 +87,12 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         }
         String method = event.getMessage().getInboundProperty("http.method");
         actionType = ActionType.fromHttpMethod(method);
-        this.acceptHeader = event.getMessage().getInboundProperty("Accept");
+        this.acceptHeader = event.getMessage().getInboundProperty("accept");
 
-        this.contentType = event.getMessage().getInboundProperty("Content-Type");
+        this.contentType = event.getMessage().getInboundProperty("content-type");
         if (this.contentType == null)
         {
-            this.contentType = event.getMessage().getOutboundProperty("Content-Type");
+            this.contentType = event.getMessage().getOutboundProperty("content-type");
         }
         if (this.contentType != null && this.contentType.indexOf(";") != -1)
         {

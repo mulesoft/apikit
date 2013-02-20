@@ -10,15 +10,19 @@
 
 package org.mule.module.apikit.rest.protocol;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
 import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
+import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
+import org.mule.transport.http.HttpConnector;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -43,13 +47,14 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     public void setup() throws URISyntaxException
     {
         when(event.getMessageSourceURI()).thenReturn(new URI("http://localhost:8080/api"));
-        when(message.getInboundProperty("http.method")).thenReturn("get");
         when(event.getMessage()).thenReturn(message);
+        when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
     }
 
     @Test
     public void baseUri()
     {
+        when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
         adapter = new HttpRestProtocolAdapter(event);
 
         assertEquals("http://localhost:8080/api", adapter.getBaseURI().toString());
@@ -58,22 +63,25 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     @Test
     public void resourceUri()
     {
-        when(message.getInboundProperty("http.request.path")).thenReturn("/orders/1/address");
+        when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
+        when(message.getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY)).thenReturn(
+            "/orders/1/address");
         adapter = new HttpRestProtocolAdapter(event);
 
         assertEquals("http://localhost:8080/api/orders/1/address", adapter.getURI().toString());
     }
-    
+
     @Test
     public void resourceUriHostHeader()
     {
-        when(message.getInboundProperty("http.request.path")).thenReturn("/orders/1/address");
+        when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
+        when(message.getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY)).thenReturn(
+            "/orders/1/address");
         adapter = new HttpRestProtocolAdapter(event);
 
         assertEquals("http://otherhost:8080/api/orders/1/address", adapter.getURI().toString());
     }
 
-    
     @Test
     public void retrieveActionType()
     {
@@ -85,7 +93,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     @Test
     public void createActionType()
     {
-        when(message.getInboundProperty("http.method")).thenReturn("post");
+        when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("post");
         adapter = new HttpRestProtocolAdapter(event);
 
         assertEquals(ActionType.CREATE, adapter.getActionType());
@@ -94,7 +102,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     @Test
     public void updateActionType()
     {
-        when(message.getInboundProperty("http.method")).thenReturn("put");
+        when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("put");
         adapter = new HttpRestProtocolAdapter(event);
 
         assertEquals(ActionType.UPDATE, adapter.getActionType());
@@ -103,7 +111,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     @Test
     public void existsActionType()
     {
-        when(message.getInboundProperty("http.method")).thenReturn("head");
+        when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("head");
         adapter = new HttpRestProtocolAdapter(event);
 
         assertEquals(ActionType.EXISTS, adapter.getActionType());
@@ -112,10 +120,48 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     @Test
     public void deleteActionType()
     {
-        when(message.getInboundProperty("http.method")).thenReturn("delete");
+        when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("delete");
 
         adapter = new HttpRestProtocolAdapter(event);
         assertEquals(ActionType.DELETE, adapter.getActionType());
     }
 
+    @Test
+    public void acceptedContentTypes()
+    {
+        when(message.getInboundProperty("accept")).thenReturn("text/html");
+
+        adapter = new HttpRestProtocolAdapter(event);
+        assertEquals("text/html", adapter.getAcceptedContentTypes());
+    }
+
+    @Test
+    public void requestContentType()
+    {
+        when(message.getInboundProperty("content-type")).thenReturn("text/html");
+
+        adapter = new HttpRestProtocolAdapter(event);
+        assertEquals("text/html", adapter.getRequestContentType());
+    }
+
+    @Test
+    public void queryParameters()
+    {
+        when(message.getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY)).thenReturn(
+            "/orders/1/address?key=value&key2=value2&");
+
+        adapter = new HttpRestProtocolAdapter(event);
+        assertEquals(2, adapter.getQueryParameters().size());
+        assertArrayEquals(new String[]{"key", "key2"}, adapter.getQueryParameters().keySet().toArray());
+        assertEquals("value", adapter.getQueryParameters().get("key"));
+        assertEquals("value2", adapter.getQueryParameters().get("key2"));
+    }
+
+    @Test
+    public void handleResourceNotFoundException()
+    {
+        adapter = new HttpRestProtocolAdapter(event);
+        adapter.handleException(new ResourceNotFoundException("1"), event);
+        verify(message).setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, 404);
+    }
 }
