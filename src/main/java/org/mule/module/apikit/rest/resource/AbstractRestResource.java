@@ -13,6 +13,7 @@ import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.action.ActionTypeNotAllowedException;
 import org.mule.module.apikit.rest.action.RestAction;
+import org.mule.module.apikit.rest.action.RestExistsByRetrieveAction;
 import org.mule.transport.NullPayload;
 
 import java.util.ArrayList;
@@ -76,13 +77,23 @@ public abstract class AbstractRestResource implements RestResource
         RestAction action = getAction(actionType);
         if (action == null && EXISTS == actionType)
         {
-            action = getAction(RETRIEVE);
+            action = useRetrieveAsExists();
         }
         if (action == null)
         {
             throw new ActionTypeNotAllowedException(this, actionType);
         }
         return action;
+    }
+
+    private RestAction useRetrieveAsExists()
+    {
+        RestAction retrieve = getAction(RETRIEVE);
+        if (retrieve == null)
+        {
+            return null;
+        }
+        return new RestExistsByRetrieveAction(retrieve);
     }
 
     @Override
