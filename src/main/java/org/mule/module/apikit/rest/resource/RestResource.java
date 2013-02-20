@@ -7,14 +7,10 @@ import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestRequestHandler;
 import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.action.RestAction;
-import org.mule.module.apikit.rest.swagger.json.RestResourceSerializer;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.List;
 import java.util.Set;
 
-@JsonSerialize(using = RestResourceSerializer.class)
 public interface RestResource extends RestRequestHandler, WebServiceRoute, NamedObject
 {
     boolean isActionTypeAllowed(ActionType actionType);

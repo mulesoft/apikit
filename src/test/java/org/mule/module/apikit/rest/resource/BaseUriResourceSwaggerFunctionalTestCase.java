@@ -95,4 +95,21 @@ public class BaseUriResourceSwaggerFunctionalTestCase extends FunctionalTestCase
             .get("/api/");
     }
 
+    @Test
+    public void getSwaggerJsonProtectedInterface() throws Exception
+    {
+        given().header("Accept", "application/swagger+json")
+            .expect()
+            .response()
+            .statusCode(401)
+            .when()
+            .get("/protectedapi");
+        given().header("Accept", "application/swagger+json")
+            .expect()
+            .response()
+            .statusCode(401)
+            .when()
+            .get("/protectedapi/");
+    }
+
 }

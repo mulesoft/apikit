@@ -13,6 +13,9 @@
             <rest:retrieve flow-ref="retrieveLeagues"/>
             <rest:update flow-ref="retrieveLeagues" access="#[false]"/>
         </rest:document-resource>
+        <rest:document-resource name="teams" access="#[false]">
+            <rest:retrieve flow-ref="retrieveLeagues"/>
+        </rest:document-resource>
     </rest:interface>
 
     <rest:interface name="protectedInterface" access="#[false]">

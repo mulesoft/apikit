@@ -19,17 +19,21 @@ import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
 import org.mule.module.apikit.rest.UnexceptedErrorException;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
+import org.mule.module.apikit.rest.resource.RestResource;
+import org.mule.module.apikit.rest.swagger.RestSwaggerConstants;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
 import org.mule.util.IOUtils;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 
 public class BaseUriRetrieveAction implements RestAction
 {
@@ -68,15 +72,44 @@ public class BaseUriRetrieveAction implements RestAction
         return ActionType.RETRIEVE;
     }
 
-    static final RestAction swaggerJsonAction = new RestAction()
+    final RestAction swaggerJsonAction = new RestAction()
     {
         @Override
         public MuleEvent handle(RestRequest restRequest) throws RestException
         {
             try
             {
-                ObjectMapper mapper = new ObjectMapper();
-                String json = mapper.writeValueAsString(restRequest.getInterface());
+                StringWriter writer = new StringWriter();
+                JsonFactory jsonFactory = new JsonFactory();
+                JsonGenerator jsonGenerator = jsonFactory.createGenerator(writer);
+
+                jsonGenerator.writeStartObject();
+                jsonGenerator.writeFieldName("apiVersion");
+                jsonGenerator.writeString("1.0");
+                jsonGenerator.writeFieldName("swaggerVersion");
+                jsonGenerator.writeString(RestSwaggerConstants.SWAGGER_VERSION);
+                jsonGenerator.writeFieldName("basePath");
+                jsonGenerator.writeString("{baseSwaggerUri}");
+                jsonGenerator.writeFieldName("apis");
+                jsonGenerator.writeStartArray();
+                for (RestResource resource : restWebService.getBaseResource().getAuthorizedResources(
+                    restRequest))
+                {
+                    if (resource.getName() != "_swagger")
+                    {
+                        jsonGenerator.writeStartObject();
+                        jsonGenerator.writeFieldName("path");
+                        jsonGenerator.writeString("/" + ((RestResource) resource).getName());
+                        jsonGenerator.writeFieldName("description");
+                        jsonGenerator.writeString(resource.getDescription().trim());
+                        jsonGenerator.writeEndObject();
+                    }
+                }
+                jsonGenerator.writeEndArray();
+                jsonGenerator.writeEndObject();
+                jsonGenerator.flush();
+
+                String json = writer.toString();
                 json = json.replace("{baseSwaggerUri}", restRequest.getMuleEvent()
                     .getMessageSourceURI()
                     .toString());
@@ -95,7 +128,7 @@ public class BaseUriRetrieveAction implements RestAction
                 return restRequest.getMuleEvent();
 
             }
-            catch (JsonProcessingException e)
+            catch (Exception e)
             {
                 throw new UnexceptedErrorException(e);
             }
