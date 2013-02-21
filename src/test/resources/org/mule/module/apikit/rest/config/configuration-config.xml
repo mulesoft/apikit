@@ -9,7 +9,10 @@
 
     <rest:interface name="myInterface" doc:description="interface description">
         <rest:document-resource name="a" access="#[true]" doc:description="resource a description">
-            <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description"/>
+            <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description">
+                <rest:representation mediaType="text/html" quality="1.0" schemaType="?" schemaLocation="?"/>
+                <rest:representation mediaType="text/plain" quality="1.0" schemaType="?" schemaLocation="?"/>
+            </rest:retrieve>
         </rest:document-resource>
         <rest:document-resource name="b" access="#[true]" doc:description="resource b description">
             <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description"/>

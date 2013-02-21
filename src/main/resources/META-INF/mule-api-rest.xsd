@@ -18,12 +18,10 @@
                 <xsd:extension base="api:abstractWebServiceInterfaceType">
                     <xsd:sequence>
                         <xsd:choice minOccurs="1" maxOccurs="unbounded">
-                            <xsd:element name="collection-resource" type="collectionResourceType"/>
-                            <xsd:element name="document-resource" type="documentResourceType"/>
-                            <!--
-                            <xsd:element name="controller-resource" type="controllerResourceType" minOccurs="0" maxOccurs="1"/>
-                            <xsd:element name="store-resource" type="storeResourceType" minOccurs="0" maxOccurs="1"/>
-                            -->
+                            <xsd:element name="collection-resource" type="collectionResourceType" />
+                            <xsd:element name="document-resource" type="documentResourceType" />
+                            <!-- <xsd:element name="controller-resource" type="controllerResourceType" minOccurs="0" 
+                                maxOccurs="1"/> <xsd:element name="store-resource" type="storeResourceType" minOccurs="0" maxOccurs="1"/> -->
                         </xsd:choice>
                     </xsd:sequence>
                 </xsd:extension>
@@ -35,7 +33,8 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="api:abstractWebServiceType">
-                    <xsd:attribute name="enableSwagger" type="mule:substitutableBoolean" default="true"/>
+                    <xsd:attribute name="enableSwagger" type="mule:substitutableBoolean"
+                        default="true" />
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
@@ -44,6 +43,12 @@
     <xsd:complexType name="abstractResourceType">
         <xsd:complexContent>
             <xsd:extension base="api:abstractWebServiceRoute">
+                <xsd:sequence>
+                    <xsd:element name="request-representation" type="representationType" minOccurs="0"
+                        maxOccurs="unbounded" />
+                    <xsd:element name="response-representation" type="representationType" minOccurs="0"
+                        maxOccurs="unbounded" />
+                </xsd:sequence>
                 <xsd:attribute name="name" type="mule:nonBlankString" use="required">
                     <xsd:annotation>
                         <xsd:documentation>
@@ -59,14 +64,13 @@
         <xsd:complexContent>
             <xsd:extension base="abstractResourceType">
                 <xsd:sequence>
-                    <xsd:element name="create" type="createType" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="retrieve" type="retrieveType" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="update" type="updateType" minOccurs="0" maxOccurs="1"/>
-                    <!--
-                    <xsd:element name="delete" type="deleteType" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="exists" type="existsType" minOccurs="0" maxOccurs="1"/>
-                    -->
-                    <xsd:element name="document-resource" type="documentResourceType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="create" type="createType" minOccurs="0" maxOccurs="1" />
+                    <xsd:element name="retrieve" type="retrieveType" minOccurs="0" maxOccurs="1" />
+                    <xsd:element name="update" type="updateType" minOccurs="0" maxOccurs="1" />
+                    <!-- <xsd:element name="delete" type="deleteType" minOccurs="0" maxOccurs="1"/> <xsd:element 
+                        name="exists" type="existsType" minOccurs="0" maxOccurs="1"/> -->
+                    <xsd:element name="document-resource" type="documentResourceType" minOccurs="0"
+                        maxOccurs="unbounded" />
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
@@ -76,10 +80,11 @@
         <xsd:complexContent>
             <xsd:extension base="abstractResourceType">
                 <xsd:sequence>
-                    <xsd:element name="retrieve" type="retrieveType" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="update" type="updateType" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="exists" type="existsType" minOccurs="0" maxOccurs="1"/>
-                    <xsd:element name="document-resource" type="documentResourceType" minOccurs="0" maxOccurs="unbounded"/>
+                    <xsd:element name="retrieve" type="retrieveType" minOccurs="0" maxOccurs="1" />
+                    <xsd:element name="update" type="updateType" minOccurs="0" maxOccurs="1" />
+                    <xsd:element name="exists" type="existsType" minOccurs="0" maxOccurs="1" />
+                    <xsd:element name="document-resource" type="documentResourceType" minOccurs="0"
+                        maxOccurs="unbounded" />
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
@@ -87,42 +92,69 @@
 
     <xsd:complexType name="abstractRestOperationType">
         <xsd:complexContent>
-            <xsd:extension base="api:abstractWebServiceOperationType"/>
+            <xsd:extension base="api:abstractWebServiceOperationType">
+                <xsd:sequence>
+                    <xsd:element name="representation" type="representationType" minOccurs="0"
+                        maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="createType">
         <xsd:complexContent>
-            <xsd:extension base="abstractRestOperationType"/>
+            <xsd:extension base="abstractRestOperationType" />
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="retrieveType">
         <xsd:complexContent>
-            <xsd:extension base="abstractRestOperationType"/>
+            <xsd:extension base="abstractRestOperationType" />
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="updateType">
         <xsd:complexContent>
-            <xsd:extension base="abstractRestOperationType"/>
+            <xsd:extension base="abstractRestOperationType" />
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="deleteType">
         <xsd:complexContent>
-            <xsd:extension base="abstractRestOperationType"/>
+            <xsd:extension base="abstractRestOperationType" />
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="existsType">
         <xsd:complexContent>
-            <xsd:extension base="abstractRestOperationType"/>
+            <xsd:extension base="abstractRestOperationType" />
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="representationType">
-        <xsd:attribute name="mediaType" type="xsd:string"/>
+        <xsd:attribute name="mediaType" type="xsd:string" />
+        <xsd:attribute name="quality" type="qualitySimpleType" />
+        <xsd:attribute name="schemaType" type="xsd:string" />
+        <xsd:attribute name="schemaLocation" type="xsd:string" />
     </xsd:complexType>
+
+    <xsd:simpleType name="qualitySimpleType">
+        <xsd:annotation>
+            <xsd:documentation>
+                A custom xsd:long type that also allows for Ant-style property placeholders.
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:union>
+            <xsd:simpleType>
+                <xsd:restriction base="mule:propertyPlaceholderType" />
+            </xsd:simpleType>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:decimal">
+                    <xsd:minInclusive value="0" />
+                    <xsd:maxInclusive value="1" />
+                </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:union>
+    </xsd:simpleType>
 
 </xsd:schema>

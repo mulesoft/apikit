@@ -10,36 +10,32 @@
 
 package org.mule.module.apikit.rest.config;
 
-import org.mule.config.spring.parsers.generic.AutoIdUtils;
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
+import org.mule.module.apikit.rest.representation.DefaultRepresentation;
+
+import com.google.common.net.MediaType;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-public class RestActionDefinitionParser extends ChildDefinitionParser
+public class RepresentationDefinitionParser extends ChildDefinitionParser
 {
-    public RestActionDefinitionParser(Class<?> clazz)
+
+    public RepresentationDefinitionParser(String setter)
     {
-        super("action", clazz, false);
+        super(setter, DefaultRepresentation.class, false);
+        addIgnored(ATTRIBUTE_NAME);
+        addIgnored("mediaType");
+        addIgnored("quality");
         addAlias("access", "accessExpression");
-        addAlias("flow", "handler");
     }
 
     @Override
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
-        builder.addPropertyValue("description", element.getAttribute("doc:description"));
+        builder.addPropertyValue("mediaType",
+            MediaType.parse(element.getAttribute("mediaType") + ";q=" + element.getAttribute("quality")));
         super.parseChild(element, parserContext, builder);
     }
-
-    @Override
-    public String getBeanName(Element element)
-    {
-        return AutoIdUtils.uniqueValue(element.getParentNode()
-            .getAttributes()
-            .getNamedItem(ATTRIBUTE_NAME)
-            .getNodeValue() + "." + element.getAttribute(ATTRIBUTE_NAME));
-    }
-
 }

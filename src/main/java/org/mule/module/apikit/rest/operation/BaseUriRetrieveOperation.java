@@ -10,7 +10,10 @@
 
 package org.mule.module.apikit.rest.operation;
 
+import org.mule.DefaultMuleEvent;
+import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
@@ -22,6 +25,7 @@ import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.swagger.RestSwaggerConstants;
 import org.mule.transformer.types.MimeTypes;
+import org.mule.transport.NullPayload;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
 import org.mule.util.IOUtils;
@@ -38,14 +42,14 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
 
-public class BaseUriRetrieveAction implements RestOperation
+public class BaseUriRetrieveOperation extends AbstractRestOperation
 {
 
     public static final String RESOURCE_BASE_PATH = "/org/mule/module/apikit/rest/swagger/";
 
     protected RestWebService restWebService;
 
-    public BaseUriRetrieveAction(RestWebService restWebService)
+    public BaseUriRetrieveOperation(RestWebService restWebService)
     {
         this.restWebService = restWebService;
     }
@@ -68,6 +72,20 @@ public class BaseUriRetrieveAction implements RestOperation
         {
             throw new MediaTypeNotAcceptableException();
         }
+    }
+
+    @Override
+    public MessageProcessor getHandler()
+    {
+        return new MessageProcessor()
+        {
+            @Override
+            public MuleEvent process(MuleEvent event) throws MuleException
+            {
+                return new DefaultMuleEvent(new DefaultMuleMessage(NullPayload.getInstance(),
+                    event.getMuleContext()), event);
+            }
+        };
     }
 
     @Override
@@ -265,33 +283,5 @@ public class BaseUriRetrieveAction implements RestOperation
             return null;
         }
     };
-
-    @Override
-    public MessageProcessor getHandler()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getAccessExpression()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String getDescription()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Collection<Representation> getRepresentations()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
 }

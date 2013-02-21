@@ -17,7 +17,7 @@ import org.mule.api.MuleException;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.AbstractWebService;
-import org.mule.module.apikit.rest.operation.BaseUriRetrieveAction;
+import org.mule.module.apikit.rest.operation.BaseUriRetrieveOperation;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.resource.BaseUriResource;
 import org.mule.module.apikit.rest.resource.HierarchicalRestResource;
@@ -52,7 +52,7 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
         if (enableSwagger)
         {
             resources.add(new StaticResourceCollection("_swagger", "/org/mule/module/apikit/rest/swagger"));
-            resource.setActions(Collections.<RestOperation> singletonList(new BaseUriRetrieveAction(this)));
+            resource.setActions(Collections.<RestOperation> singletonList(new BaseUriRetrieveOperation(this)));
         }
         resource.setAccessExpression(webServiceInterface.getAccessExpression());
         resource.setResources(resources);
