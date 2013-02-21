@@ -11,7 +11,7 @@
 
 package org.mule.module.apikit.rest.protocol.http;
 
-public enum HttpStatusCode
+enum HttpStatusCode
 {
     /**
      * This interim response (the client has to wait for the final response) is used to inform the client that

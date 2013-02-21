@@ -85,7 +85,7 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:complexType name="abstractActionType">
+    <xsd:complexType name="abstractRestOperationType">
         <xsd:complexContent>
             <xsd:extension base="api:abstractWebServiceOperationType"/>
         </xsd:complexContent>
@@ -93,32 +93,36 @@
 
     <xsd:complexType name="createType">
         <xsd:complexContent>
-            <xsd:extension base="abstractActionType"/>
+            <xsd:extension base="abstractRestOperationType"/>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="retrieveType">
         <xsd:complexContent>
-            <xsd:extension base="abstractActionType"/>
+            <xsd:extension base="abstractRestOperationType"/>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="updateType">
         <xsd:complexContent>
-            <xsd:extension base="abstractActionType"/>
+            <xsd:extension base="abstractRestOperationType"/>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="deleteType">
         <xsd:complexContent>
-            <xsd:extension base="abstractActionType"/>
+            <xsd:extension base="abstractRestOperationType"/>
         </xsd:complexContent>
     </xsd:complexType>
 
     <xsd:complexType name="existsType">
         <xsd:complexContent>
-            <xsd:extension base="abstractActionType"/>
+            <xsd:extension base="abstractRestOperationType"/>
         </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="representationType">
+        <xsd:attribute name="mediaType" type="xsd:string"/>
     </xsd:complexType>
 
 </xsd:schema>
