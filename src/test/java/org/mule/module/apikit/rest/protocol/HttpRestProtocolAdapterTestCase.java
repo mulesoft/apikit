@@ -11,14 +11,14 @@
 package org.mule.module.apikit.rest.protocol;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
+import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
@@ -26,6 +26,8 @@ import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 import org.mule.transport.NullPayload;
 import org.mule.transport.http.HttpConnector;
+
+import com.google.common.net.MediaType;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -43,6 +45,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
 {
     @Mock
+    RestRequest request;
+    @Mock
     MuleEvent event;
     @Mock
     MuleMessage message;;
@@ -51,6 +55,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     @Before
     public void setup() throws URISyntaxException
     {
+        when(request.getMuleEvent()).thenReturn(event);
         when(event.getMessageSourceURI()).thenReturn(new URI("http://localhost:8080/api"));
         when(event.getMessage()).thenReturn(message);
         when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
@@ -70,7 +75,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     {
         when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
         when(message.getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY)).thenReturn(
-            "/orders/1/address");
+            "/api/orders/1/address");
         adapter = new HttpRestProtocolAdapter(event);
 
         assertEquals("http://localhost:8080/api/orders/1/address", adapter.getURI().toString());
@@ -79,9 +84,22 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     @Test
     public void resourceUriHostHeader()
     {
+        when(message.getInboundProperty("host")).thenReturn("otherhost");
         when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
         when(message.getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY)).thenReturn(
-            "/orders/1/address");
+            "/api/orders/1/address");
+        adapter = new HttpRestProtocolAdapter(event);
+
+        assertEquals("http://otherhost:80/api/orders/1/address", adapter.getURI().toString());
+    }
+
+    @Test
+    public void resourceUriHostHeaderWithPort()
+    {
+        when(message.getInboundProperty("host")).thenReturn("otherhost:8080");
+        when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
+        when(message.getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY)).thenReturn(
+            "/api/orders/1/address");
         adapter = new HttpRestProtocolAdapter(event);
 
         assertEquals("http://otherhost:8080/api/orders/1/address", adapter.getURI().toString());
@@ -137,7 +155,8 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
         when(message.getInboundProperty("accept")).thenReturn("text/html");
 
         adapter = new HttpRestProtocolAdapter(event);
-        assertEquals("text/html", adapter.getAcceptedContentTypes());
+        assertEquals(1, adapter.getAcceptableResponseMediaTypes().size());
+        assertTrue(MediaType.HTML_UTF_8.is(adapter.getAcceptableResponseMediaTypes().get(0)));
     }
 
     @Test
@@ -146,7 +165,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
         when(message.getInboundProperty("content-type")).thenReturn("text/html");
 
         adapter = new HttpRestProtocolAdapter(event);
-        assertEquals("text/html", adapter.getRequestContentType());
+        assertTrue(MediaType.HTML_UTF_8.is(adapter.getRequestMediaType()));
     }
 
     @Test
@@ -164,7 +183,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     public void handleResourceNotFoundException()
     {
         adapter = new HttpRestProtocolAdapter(event);
-        adapter.handleException(new ResourceNotFoundException("1"), event);
+        adapter.handleException(new ResourceNotFoundException("1"), request);
         verify(message).setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, 404);
         verify(message).setPayload(any(NullPayload.class));
     }

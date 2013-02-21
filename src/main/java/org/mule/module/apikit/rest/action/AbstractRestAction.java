@@ -13,6 +13,8 @@ import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
 
+import com.google.common.net.MediaType;
+
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -57,18 +59,17 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
         }
     }
 
-    protected void validateSupportedRequestMediaType(RestRequest request) throws UnsupportedMediaTypeException
+    protected void validateSupportedRequestMediaType(RestRequest request)
+        throws UnsupportedMediaTypeException
     {
         boolean valid = false;
         for (Representation representation : representations)
         {
-            //TODO maybe a smarter comparison is required
-            if (representation.getMediaType().equals(request.getProtocolAdaptor().getRequestContentType()))
+            if (representation.getMediaType().is(request.getProtocolAdaptor().getRequestMediaType()))
             {
                 valid = true;
                 break;
             }
-
         }
         if (!valid)
         {
@@ -79,7 +80,8 @@ public abstract class AbstractRestAction extends AbstractWebServiceOperation imp
     protected void validateAcceptableResponeMediaType(RestRequest request)
         throws MediaTypeNotAcceptableException
     {
-        String bestMatch = RestContentTypeParser.bestMatch(representations, request.getProtocolAdaptor().getAcceptedContentTypes());
+        MediaType bestMatch = RestContentTypeParser.bestMatch(representations, request.getProtocolAdaptor()
+            .getAcceptableResponseMediaTypes());
         if (bestMatch == null)
         {
             throw new MediaTypeNotAcceptableException();

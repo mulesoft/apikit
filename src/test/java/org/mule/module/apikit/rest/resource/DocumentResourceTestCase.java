@@ -14,7 +14,9 @@ import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
+
 import java.util.Arrays;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +42,7 @@ public class DocumentResourceTestCase extends AbstractMuleTestCase
     public void setup()
     {
         when(event.getMessage()).thenReturn(message);
-        doCallRealMethod().when(httpAdapter).handleException(any(RestException.class), any(MuleEvent.class));
+        doCallRealMethod().when(httpAdapter).handleException(any(RestException.class), any(RestRequest.class));
         when(request.getProtocolAdaptor()).thenReturn(httpAdapter);
         when(request.getMuleEvent()).thenReturn(event);
         doc = new DocumentResource("doc");

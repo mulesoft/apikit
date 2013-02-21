@@ -11,9 +11,11 @@
 package org.mule.module.apikit.rest.protocol.http;
 
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleMessage;
 import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
+import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.action.ActionType;
 import org.mule.module.apikit.rest.action.ActionTypeNotAllowedException;
@@ -22,27 +24,33 @@ import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.transport.NullPayload;
 import org.mule.util.StringUtils;
 
+import com.google.common.net.MediaType;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class HttpRestProtocolAdapter implements RestProtocolAdapter
 {
     private URI baseURI;
-    private ActionType actionType;
     private URI resourceURI;
-    private String acceptHeader;
-    private String contentType;
+    private ActionType actionType;
+    private List<MediaType> acceptableResponseMediaTypes = Collections.emptyList();;
+    private MediaType requestMediaType;
     private Map<String, Object> queryParams;
 
     public HttpRestProtocolAdapter(MuleEvent event)
     {
+        MuleMessage message = event.getMessage();
         this.baseURI = event.getMessageSourceURI();
-        if (event.getMessage().getInboundProperty("host") != null)
+        if (message.getInboundProperty("host") != null)
         {
-            String hostHeader = event.getMessage().getInboundProperty("host");
+            String hostHeader = message.getInboundProperty("host");
             if (hostHeader.indexOf(':') != -1)
             {
                 String host = hostHeader.substring(0, hostHeader.indexOf(':'));
@@ -50,7 +58,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
                 try
                 {
                     String requestPath;
-                    requestPath = (String) event.getMessage().getInboundProperty("http.request.path");
+                    requestPath = (String) message.getInboundProperty("http.request.path");
                     this.resourceURI = new URI("http", null, host, port, requestPath, null, null);
                 }
                 catch (URISyntaxException e)
@@ -63,9 +71,9 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
                 try
                 {
                     String requestPath;
-                    requestPath = (String) event.getMessage().getInboundProperty("http.request.path");
-                    this.resourceURI = new URI("http", null, (String) event.getMessage().getInboundProperty(
-                        "Host"), 80, requestPath, null, null);
+                    requestPath = (String) message.getInboundProperty("http.request.path");
+                    this.resourceURI = new URI("http", null, (String) message.getInboundProperty("host"), 80,
+                        requestPath, null, null);
                 }
                 catch (URISyntaxException e)
                 {
@@ -78,28 +86,32 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
             try
             {
                 this.resourceURI = new URI("http", null, baseURI.getHost(), baseURI.getPort(),
-                    (String) event.getMessage().getInboundProperty("http.request.path"), null, null);
+                    (String) message.getInboundProperty("http.request.path"), null, null);
             }
             catch (URISyntaxException e)
             {
                 throw new IllegalArgumentException("Cannot parse URI", e);
             }
         }
-        String method = event.getMessage().getInboundProperty("http.method");
+        String method = message.getInboundProperty("http.method");
         actionType = ActionType.fromHttpMethod(method);
-        this.acceptHeader = event.getMessage().getInboundProperty("accept");
 
-        this.contentType = event.getMessage().getInboundProperty("content-type");
-        if (this.contentType == null)
+        if (!StringUtils.isBlank((String) message.getInboundProperty("accept")))
         {
-            this.contentType = event.getMessage().getOutboundProperty("content-type");
-        }
-        if (this.contentType != null && this.contentType.indexOf(";") != -1)
-        {
-            this.contentType = this.contentType.substring(0, this.contentType.indexOf(";"));
+            this.acceptableResponseMediaTypes = parseAcceptHeader((String) message.getInboundProperty("accept"));
         }
 
-        this.queryParams = event.getMessage().getInboundProperty("http.query.params");
+        if (!StringUtils.isBlank((String) message.getInboundProperty("content-type")))
+        {
+            this.requestMediaType = MediaType.parse((String) message.getInboundProperty("content-type"));
+        }
+        if (this.requestMediaType == null
+            && !StringUtils.isBlank((String) message.getOutboundProperty("content-type")))
+        {
+            this.requestMediaType = MediaType.parse((String) message.getOutboundProperty("content-type"));
+        }
+
+        this.queryParams = message.getInboundProperty("http.query.params");
     }
 
     @Override
@@ -121,18 +133,6 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     }
 
     @Override
-    public String getAcceptedContentTypes()
-    {
-        return acceptHeader;
-    }
-
-    @Override
-    public String getRequestContentType()
-    {
-        return contentType;
-    }
-
-    @Override
     public Map<String, Object> getQueryParameters()
     {
         return queryParams;
@@ -149,42 +149,66 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     }
 
     @Override
-    public void handleException(RestException re, MuleEvent event)
+    public void handleException(RestException re, RestRequest request)
     {
+        MuleMessage message = request.getMuleEvent().getMessage();
         if (re instanceof ActionTypeNotAllowedException)
         {
             ActionTypeNotAllowedException anse = (ActionTypeNotAllowedException) re;
-            event.getMessage().setOutboundProperty("http.status",
+            message.setOutboundProperty("http.status",
                 HttpStatusCode.CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode());
-            event.getMessage().setOutboundProperty("Allow",
+            message.setOutboundProperty("Allow",
                 StringUtils.join(actionTypesToHttpMethods(anse.getResource().getAllowedActionTypes()), " ,"));
-            event.getMessage().setPayload(NullPayload.getInstance());
+            message.setPayload(NullPayload.getInstance());
 
         }
         else if (re instanceof ResourceNotFoundException)
         {
-            event.getMessage().setOutboundProperty("http.status",
-                HttpStatusCode.CLIENT_ERROR_NOT_FOUND.getCode());
-            event.getMessage().setPayload(NullPayload.getInstance());
+            message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_NOT_FOUND.getCode());
+            message.setPayload(NullPayload.getInstance());
         }
         else if (re instanceof MediaTypeNotAcceptableException)
         {
-            event.getMessage().setOutboundProperty("http.status",
-                HttpStatusCode.CLIENT_ERROR_NOT_ACCEPTABLE.getCode());
-            event.getMessage().setPayload(NullPayload.getInstance());
+            message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_NOT_ACCEPTABLE.getCode());
+            message.setPayload(NullPayload.getInstance());
         }
         else if (re instanceof UnsupportedMediaTypeException)
         {
-            event.getMessage().setOutboundProperty("http.status",
+            message.setOutboundProperty("http.status",
                 HttpStatusCode.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE.getCode());
-            event.getMessage().setPayload(NullPayload.getInstance());
+            message.setPayload(NullPayload.getInstance());
         }
         else if (re instanceof UnauthorizedException)
         {
-            event.getMessage().setOutboundProperty("http.status",
-                HttpStatusCode.CLIENT_ERROR_UNAUTHORIZED.getCode());
-            event.getMessage().setPayload(NullPayload.getInstance());
+            message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_UNAUTHORIZED.getCode());
+            message.setPayload(NullPayload.getInstance());
         }
+    }
+
+    @Override
+    public List<MediaType> getAcceptableResponseMediaTypes()
+    {
+        return acceptableResponseMediaTypes;
+    }
+
+    @Override
+    public MediaType getRequestMediaType()
+    {
+        return requestMediaType;
+    }
+
+    private List<MediaType> parseAcceptHeader(String acceptHeader)
+    {
+        List<MediaType> mediaTypes = new LinkedList<MediaType>();
+        String[] types = StringUtils.split(acceptHeader, ',');
+        if (types != null)
+        {
+            for (String mediaType : types)
+            {
+                mediaTypes.add(MediaType.parse(mediaType));
+            }
+        }
+        return mediaTypes;
     }
 
 }

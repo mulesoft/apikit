@@ -10,11 +10,14 @@
 
 package org.mule.module.apikit.rest.protocol;
 
-import org.mule.api.MuleEvent;
 import org.mule.module.apikit.rest.RestException;
+import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.action.ActionType;
 
+import com.google.common.net.MediaType;
+
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 public interface RestProtocolAdapter
@@ -26,12 +29,12 @@ public interface RestProtocolAdapter
 
     ActionType getActionType();
 
-    String getAcceptedContentTypes();
+    List<MediaType> getAcceptableResponseMediaTypes();
 
-    String getRequestContentType();
+    MediaType getRequestMediaType();
 
     Map<String, Object> getQueryParameters();
 
-    void handleException(RestException re, MuleEvent event);
+    void handleException(RestException re, RestRequest request);
 
 }

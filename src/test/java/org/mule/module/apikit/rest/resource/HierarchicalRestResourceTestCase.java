@@ -65,7 +65,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     @Mock
     protected ExpressionManager expressionManager;
     protected AbstractHierarchicalRestResource resource;
-    
+
     @Override
     public int getTestTimeoutSecs()
     {
@@ -76,15 +76,18 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     public void setup()
     {
         when(event.getMessage()).thenReturn(message);
-        doCallRealMethod().when(httpAdapter).handleException(any(RestException.class), any(MuleEvent.class));
+        doCallRealMethod().when(httpAdapter)
+            .handleException(any(RestException.class), any(RestRequest.class));
         when(request.getProtocolAdaptor()).thenReturn(httpAdapter);
         when(request.getMuleEvent()).thenReturn(event);
         when(event.getMuleContext()).thenReturn(muleContext);
         when(muleContext.getExpressionManager()).thenReturn(expressionManager);
         resource = new DummyHierarchicalRestResource("doc");
         resource.setActions(Collections.singletonList(action));
-        when(expressionManager.evaluateBoolean(Mockito.eq("#[true]"), any(MuleEvent.class))).thenReturn(Boolean.TRUE);
-        when(expressionManager.evaluateBoolean(Mockito.eq("#[false]"), any(MuleEvent.class))).thenReturn(Boolean.FALSE);
+        when(expressionManager.evaluateBoolean(Mockito.eq("#[true]"), any(MuleEvent.class))).thenReturn(
+            Boolean.TRUE);
+        when(expressionManager.evaluateBoolean(Mockito.eq("#[false]"), any(MuleEvent.class))).thenReturn(
+            Boolean.FALSE);
     }
 
     @Test
@@ -129,7 +132,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
 
         verify(nestedResource1).handle(request);
         verify(nestedResource2, never()).handle(any(RestRequest.class));
-        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
+        verify(httpAdapter, never()).handleException(any(RestException.class), any(RestRequest.class));
         verify(message, never());
     }
 
@@ -150,7 +153,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         resource.handle(request);
 
         verify(httpAdapter, times(1)).handleException(any(ResourceNotFoundException.class),
-            any(MuleEvent.class));
+            any(RestRequest.class));
         verify(message).setOutboundProperty("http.status", 404);
     }
 
@@ -185,7 +188,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         verify(nestedResource3).handle(request);
         verify(nestedResource4, never()).handle(any(RestRequest.class));
 
-        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
+        verify(httpAdapter, never()).handleException(any(RestException.class), any(RestRequest.class));
         verify(message, never());
     }
 
@@ -206,7 +209,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         resource.handle(request);
 
         verify(httpAdapter, times(1)).handleException(any(ActionTypeNotAllowedException.class),
-            any(MuleEvent.class));
+            any(RestRequest.class));
         verify(message).setOutboundProperty("http.status", 405);
     }
 

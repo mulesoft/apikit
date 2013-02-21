@@ -140,7 +140,7 @@ public abstract class AbstractRestResource implements RestResource
         }
         catch (RestException rana)
         {
-            request.getProtocolAdaptor().handleException(rana, request.getMuleEvent());
+            request.getProtocolAdaptor().handleException(rana, request);
         }
         return request.getMuleEvent();
     }

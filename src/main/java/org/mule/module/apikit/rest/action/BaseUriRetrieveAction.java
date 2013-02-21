@@ -29,12 +29,14 @@ import org.mule.util.IOUtils;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.net.MediaType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.Collection;
+import java.util.List;
 
 public class BaseUriRetrieveAction implements RestAction
 {
@@ -51,13 +53,14 @@ public class BaseUriRetrieveAction implements RestAction
     @Override
     public MuleEvent handle(RestRequest restRequest) throws RestException
     {
-        String acceptContentTypes = restRequest.getProtocolAdaptor().getAcceptedContentTypes();
+        List<MediaType> acceptContentTypes = restRequest.getProtocolAdaptor()
+            .getAcceptableResponseMediaTypes();
 
-        if (acceptContentTypes.toLowerCase().contains("application/swagger+json"))
+        if (acceptContentTypes.contains(MediaType.parse("application/swagger+json")))
         {
             return swaggerJsonAction.handle(restRequest);
         }
-        else if (acceptContentTypes.contains("text/html"))
+        else if (acceptContentTypes.contains(MediaType.parse("text/html")))
         {
             return swaggerHtmlAction.handle(restRequest);
         }

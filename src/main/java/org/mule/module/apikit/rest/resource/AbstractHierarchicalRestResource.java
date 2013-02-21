@@ -49,7 +49,7 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
         }
         catch (RestException re)
         {
-            restRequest.getProtocolAdaptor().handleException(re, restRequest.getMuleEvent());
+            restRequest.getProtocolAdaptor().handleException(re, restRequest);
 
         }
         return restRequest.getMuleEvent();

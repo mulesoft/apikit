@@ -71,7 +71,8 @@ public class RestResourceTestCase extends AbstractMuleTestCase
     public void setup()
     {
         when(event.getMessage()).thenReturn(message);
-        doCallRealMethod().when(httpAdapter).handleException(any(RestException.class), any(MuleEvent.class));
+        doCallRealMethod().when(httpAdapter)
+            .handleException(any(RestException.class), any(RestRequest.class));
         when(request.getProtocolAdaptor()).thenReturn(httpAdapter);
         when(request.getMuleEvent()).thenReturn(event);
         when(event.getMuleContext()).thenReturn(muleContext);
@@ -93,7 +94,7 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         resource.handle(request);
 
         verify(action).handle(request);
-        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
+        verify(httpAdapter, never()).handleException(any(RestException.class), any(RestRequest.class));
         verify(message, never());
     }
 
@@ -106,7 +107,7 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         resource.handle(request);
 
         verify(httpAdapter, times(1)).handleException(any(ActionTypeNotAllowedException.class),
-            any(MuleEvent.class));
+            any(RestRequest.class));
         verify(message).setOutboundProperty("http.status", 405);
     }
 
@@ -121,7 +122,7 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         resource.handle(request);
 
         verify(action).handle(request);
-        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
+        verify(httpAdapter, never()).handleException(any(RestException.class), any(RestRequest.class));
         verify(message, never());
     }
 
@@ -136,7 +137,7 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         resource.handle(request);
 
         verify(action, never()).handle(request);
-        verify(httpAdapter, times(1)).handleException(any(RestException.class), any(MuleEvent.class));
+        verify(httpAdapter, times(1)).handleException(any(RestException.class), any(RestRequest.class));
         verify(message).setOutboundProperty("http.status", 401);
     }
 

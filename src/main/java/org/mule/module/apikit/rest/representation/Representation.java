@@ -1,13 +1,12 @@
 package org.mule.module.apikit.rest.representation;
 
-import java.math.BigDecimal;
+import com.google.common.net.MediaType;
 
 public interface Representation
 {
 
-    String getMediaType();
+    MediaType getMediaType();
     String getSchemaType();
     String getSchemaLocation();
-    BigDecimal getQuality();
 
 }

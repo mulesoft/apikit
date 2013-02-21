@@ -33,8 +33,10 @@ import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
-import java.math.BigDecimal;
+import com.google.common.net.MediaType;
+
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -67,7 +69,8 @@ public class RestActionTestCase extends AbstractMuleTestCase
     public void setup()
     {
         when(event.getMessage()).thenReturn(message);
-        doCallRealMethod().when(httpAdapter).handleException(any(RestException.class), any(MuleEvent.class));
+        doCallRealMethod().when(httpAdapter)
+            .handleException(any(RestException.class), any(RestRequest.class));
         when(request.getProtocolAdaptor()).thenReturn(httpAdapter);
         when(request.getMuleEvent()).thenReturn(event);
         when(event.getMuleContext()).thenReturn(muleContext);
@@ -87,7 +90,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
         action.handle(request);
 
         verify(handler).process(event);
-        verify(httpAdapter, never()).handleException(any(RestException.class), any(MuleEvent.class));
+        verify(httpAdapter, never()).handleException(any(RestException.class), any(RestRequest.class));
         verify(message, never());
     }
 
@@ -115,9 +118,10 @@ public class RestActionTestCase extends AbstractMuleTestCase
     @Test
     public void singleAcceptableResponseMediaTypeSingleMediaTypeSupported() throws RestException
     {
-        when(httpAdapter.getAcceptedContentTypes()).thenReturn("text/plain");
-        when(httpAdapter.getRequestContentType()).thenReturn("text/plain");
-        action.setRepresentations(Arrays.asList(new Representation[]{ new Representation()
+        when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(
+            Collections.singletonList(MediaType.PLAIN_TEXT_UTF_8));
+        when(httpAdapter.getRequestMediaType()).thenReturn(MediaType.PLAIN_TEXT_UTF_8);
+        action.setRepresentations(Arrays.asList(new Representation[]{new Representation()
         {
 
             @Override
@@ -135,16 +139,9 @@ public class RestActionTestCase extends AbstractMuleTestCase
             }
 
             @Override
-            public BigDecimal getQuality()
+            public MediaType getMediaType()
             {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public String getMediaType()
-            {
-                return "text/plain";
+                return MediaType.PLAIN_TEXT_UTF_8;
             }
         }}));
         action.handle(request);
@@ -153,9 +150,10 @@ public class RestActionTestCase extends AbstractMuleTestCase
     @Test
     public void singleNotAcceptableResponseMediaTypeSingleMediaTypeSupported() throws RestException
     {
-        when(httpAdapter.getAcceptedContentTypes()).thenReturn("text/html");
-        when(httpAdapter.getRequestContentType()).thenReturn("text/plain");
-        action.setRepresentations(Arrays.asList(new Representation[]{ new Representation()
+        when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(
+            Collections.singletonList(MediaType.PLAIN_TEXT_UTF_8));
+        when(httpAdapter.getRequestMediaType()).thenReturn(MediaType.PLAIN_TEXT_UTF_8);
+        action.setRepresentations(Arrays.asList(new Representation[]{new Representation()
         {
 
             @Override
@@ -173,16 +171,9 @@ public class RestActionTestCase extends AbstractMuleTestCase
             }
 
             @Override
-            public BigDecimal getQuality()
+            public MediaType getMediaType()
             {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public String getMediaType()
-            {
-                return "text/plain";
+                return MediaType.PLAIN_TEXT_UTF_8;
             }
         }}));
         action.handle(request);
@@ -246,9 +237,10 @@ public class RestActionTestCase extends AbstractMuleTestCase
     {
 
         @Override
-        protected void validateAcceptableResponeMediaType(RestRequest request) throws MediaTypeNotAcceptableException
+        protected void validateAcceptableResponeMediaType(RestRequest request)
+            throws MediaTypeNotAcceptableException
         {
-            //no response representation needed
+            // no response representation needed
         }
     }
 
