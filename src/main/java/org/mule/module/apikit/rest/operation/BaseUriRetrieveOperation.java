@@ -15,12 +15,12 @@ import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.module.apikit.api.WebServiceRoute;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
 import org.mule.module.apikit.rest.UnexceptedErrorException;
-import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.swagger.RestSwaggerConstants;
@@ -39,7 +39,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Collection;
 import java.util.List;
 
 public class BaseUriRetrieveOperation extends AbstractRestOperation
@@ -94,7 +93,7 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
         return RestOperationType.RETRIEVE;
     }
 
-    final RestOperation swaggerJsonAction = new RestOperation()
+    final RestOperation swaggerJsonAction = new AbstractRestOperation()
     {
         @Override
         public MuleEvent handle(RestRequest restRequest) throws RestException
@@ -114,18 +113,14 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
                 jsonGenerator.writeString("{baseSwaggerUri}");
                 jsonGenerator.writeFieldName("apis");
                 jsonGenerator.writeStartArray();
-                for (RestResource resource : restWebService.getBaseResource().getAuthorizedResources(
-                    restRequest))
+                for (WebServiceRoute resource : restWebService.getInterface().getRoutes())
                 {
-                    if (resource.getName() != "_swagger")
-                    {
-                        jsonGenerator.writeStartObject();
-                        jsonGenerator.writeFieldName("path");
-                        jsonGenerator.writeString("/" + ((RestResource) resource).getName());
-                        jsonGenerator.writeFieldName("description");
-                        jsonGenerator.writeString(resource.getDescription().trim());
-                        jsonGenerator.writeEndObject();
-                    }
+                    jsonGenerator.writeStartObject();
+                    jsonGenerator.writeFieldName("path");
+                    jsonGenerator.writeString("/" + ((RestResource) resource).getName());
+                    jsonGenerator.writeFieldName("description");
+                    jsonGenerator.writeString(resource.getDescription().trim());
+                    jsonGenerator.writeEndObject();
                 }
                 jsonGenerator.writeEndArray();
                 jsonGenerator.writeEndObject();
@@ -161,37 +156,9 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
         {
             return RestOperationType.RETRIEVE;
         }
-
-        @Override
-        public MessageProcessor getHandler()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getAccessExpression()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getDescription()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Collection<Representation> getRepresentations()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
     };
 
-    static final RestOperation swaggerHtmlAction = new RestOperation()
+    static final RestOperation swaggerHtmlAction = new AbstractRestOperation()
     {
         @Override
         public MuleEvent handle(RestRequest restRequest) throws RestException
@@ -255,33 +222,6 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
             return RestOperationType.RETRIEVE;
         }
 
-        @Override
-        public MessageProcessor getHandler()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getAccessExpression()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getDescription()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Collection<Representation> getRepresentations()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
     };
 
 }

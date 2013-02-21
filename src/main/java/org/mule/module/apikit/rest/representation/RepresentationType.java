@@ -2,7 +2,7 @@ package org.mule.module.apikit.rest.representation;
 
 import com.google.common.net.MediaType;
 
-public interface Representation
+public interface RepresentationType
 {
 
     MediaType getMediaType();

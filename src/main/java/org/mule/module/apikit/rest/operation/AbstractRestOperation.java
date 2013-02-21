@@ -10,7 +10,8 @@ import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
-import org.mule.module.apikit.rest.representation.Representation;
+import org.mule.module.apikit.rest.representation.RepresentationFactory;
+import org.mule.module.apikit.rest.representation.RepresentationType;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
 
 import com.google.common.net.MediaType;
@@ -22,7 +23,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
 {
 
     protected RestOperationType type;
-    protected Collection<Representation> representations = new HashSet<Representation>();
+    protected Collection<RepresentationType> representations = new HashSet<RepresentationType>();
 
     @Override
     public RestOperationType getType()
@@ -30,7 +31,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         return type;
     }
 
-    public void setRepresentations(Collection<Representation> representations)
+    public void setRepresentations(Collection<RepresentationType> representations)
     {
         this.representations = representations;
     }
@@ -63,7 +64,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         throws UnsupportedMediaTypeException
     {
         boolean valid = false;
-        for (Representation representation : representations)
+        for (RepresentationType representation : representations)
         {
             if (representation.getMediaType().is(request.getProtocolAdaptor().getRequestMediaType()))
             {
@@ -89,8 +90,15 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     }
 
     @Override
-    public Collection<Representation> getRepresentations()
+    public Collection<RepresentationType> getRepresentations()
     {
         return representations;
+    }
+    
+    @Override
+    public RepresentationFactory getResponseRepresentationFactory()
+    {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

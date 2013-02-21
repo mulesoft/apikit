@@ -31,7 +31,7 @@ import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
-import org.mule.module.apikit.rest.representation.Representation;
+import org.mule.module.apikit.rest.representation.RepresentationType;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -123,7 +123,7 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(
             Collections.singletonList(MediaType.PLAIN_TEXT_UTF_8));
         when(httpAdapter.getRequestMediaType()).thenReturn(MediaType.PLAIN_TEXT_UTF_8);
-        action.setRepresentations(Arrays.asList(new Representation[]{new Representation()
+        action.setRepresentations(Arrays.asList(new RepresentationType[]{new RepresentationType()
         {
 
             @Override
@@ -155,7 +155,7 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(
             Collections.singletonList(MediaType.PLAIN_TEXT_UTF_8));
         when(httpAdapter.getRequestMediaType()).thenReturn(MediaType.PLAIN_TEXT_UTF_8);
-        action.setRepresentations(Arrays.asList(new Representation[]{new Representation()
+        action.setRepresentations(Arrays.asList(new RepresentationType[]{new RepresentationType()
         {
 
             @Override

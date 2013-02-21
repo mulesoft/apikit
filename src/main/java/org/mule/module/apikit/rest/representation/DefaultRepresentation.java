@@ -3,7 +3,7 @@ package org.mule.module.apikit.rest.representation;
 
 import com.google.common.net.MediaType;
 
-public class DefaultRepresentation implements Representation
+public class DefaultRepresentation implements RepresentationType
 {
 
     protected MediaType mediaType;

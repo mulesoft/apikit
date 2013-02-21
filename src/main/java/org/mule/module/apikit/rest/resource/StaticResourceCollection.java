@@ -11,13 +11,12 @@
 package org.mule.module.apikit.rest.resource;
 
 import org.mule.api.MuleEvent;
-import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnexceptedErrorException;
+import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
-import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
@@ -27,7 +26,6 @@ import org.mule.util.IOUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
@@ -56,7 +54,7 @@ public class StaticResourceCollection extends AbstractRestResource
         return name;
     }
 
-    class StaticResourceCollectionRetreiveAction implements RestOperation
+    class StaticResourceCollectionRetreiveAction extends AbstractRestOperation
     {
         @Override
         public MuleEvent handle(RestRequest restRequest) throws RestException
@@ -143,34 +141,6 @@ public class StaticResourceCollection extends AbstractRestResource
         public RestOperationType getType()
         {
             return RestOperationType.RETRIEVE;
-        }
-
-        @Override
-        public MessageProcessor getHandler()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getAccessExpression()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public String getDescription()
-        {
-            // TODO Auto-generated method stub
-            return null;
-        }
-
-        @Override
-        public Collection<Representation> getRepresentations()
-        {
-            // TODO Auto-generated method stub
-            return null;
         }
 
     }
