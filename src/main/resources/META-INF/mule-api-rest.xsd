@@ -43,12 +43,6 @@
     <xsd:complexType name="abstractResourceType">
         <xsd:complexContent>
             <xsd:extension base="api:abstractWebServiceRoute">
-                <xsd:sequence>
-                    <xsd:element name="request-representation" type="representationType" minOccurs="0"
-                        maxOccurs="unbounded" />
-                    <xsd:element name="response-representation" type="representationType" minOccurs="0"
-                        maxOccurs="unbounded" />
-                </xsd:sequence>
                 <xsd:attribute name="name" type="mule:nonBlankString" use="required">
                     <xsd:annotation>
                         <xsd:documentation>
