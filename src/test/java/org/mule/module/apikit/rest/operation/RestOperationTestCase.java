@@ -8,7 +8,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest.action;
+package org.mule.module.apikit.rest.operation;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -48,7 +48,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 @SmallTest
-public class RestActionTestCase extends AbstractMuleTestCase
+public class RestOperationTestCase extends AbstractMuleTestCase
 {
     @Mock
     protected MuleEvent event;
