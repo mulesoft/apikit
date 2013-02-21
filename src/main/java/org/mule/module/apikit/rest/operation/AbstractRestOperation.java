@@ -1,5 +1,5 @@
 
-package org.mule.module.apikit.rest.action;
+package org.mule.module.apikit.rest.operation;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -18,14 +18,14 @@ import com.google.common.net.MediaType;
 import java.util.Collection;
 import java.util.HashSet;
 
-public abstract class AbstractRestAction extends AbstractWebServiceOperation implements RestAction
+public abstract class AbstractRestOperation extends AbstractWebServiceOperation implements RestOperation
 {
 
-    protected ActionType type;
+    protected RestOperationType type;
     protected Collection<Representation> representations = new HashSet<Representation>();
 
     @Override
-    public ActionType getType()
+    public RestOperationType getType()
     {
         return type;
     }

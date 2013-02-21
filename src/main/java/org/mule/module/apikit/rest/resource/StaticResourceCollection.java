@@ -15,8 +15,8 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnexceptedErrorException;
-import org.mule.module.apikit.rest.action.ActionType;
-import org.mule.module.apikit.rest.action.RestAction;
+import org.mule.module.apikit.rest.operation.RestOperation;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
@@ -47,7 +47,7 @@ public class StaticResourceCollection extends AbstractRestResource
     {
         super(name);
         this.directory = directory;
-        actions = Collections.<RestAction> singletonList(new StaticResourceCollectionRetreiveAction());
+        actions = Collections.<RestOperation> singletonList(new StaticResourceCollectionRetreiveAction());
     }
 
     @Override
@@ -56,7 +56,7 @@ public class StaticResourceCollection extends AbstractRestResource
         return name;
     }
 
-    class StaticResourceCollectionRetreiveAction implements RestAction
+    class StaticResourceCollectionRetreiveAction implements RestOperation
     {
         @Override
         public MuleEvent handle(RestRequest restRequest) throws RestException
@@ -140,9 +140,9 @@ public class StaticResourceCollection extends AbstractRestResource
         }
 
         @Override
-        public ActionType getType()
+        public RestOperationType getType()
         {
-            return ActionType.RETRIEVE;
+            return RestOperationType.RETRIEVE;
         }
 
         @Override
@@ -176,9 +176,9 @@ public class StaticResourceCollection extends AbstractRestResource
     }
 
     @Override
-    protected Set<ActionType> getSupportedActionTypes()
+    protected Set<RestOperationType> getSupportedActionTypes()
     {
-        return EnumSet.of(ActionType.RETRIEVE);
+        return EnumSet.of(RestOperationType.RETRIEVE);
     }
 
 }

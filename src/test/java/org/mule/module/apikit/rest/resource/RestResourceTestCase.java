@@ -26,9 +26,9 @@ import org.mule.api.MuleMessage;
 import org.mule.api.expression.ExpressionManager;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.action.ActionType;
-import org.mule.module.apikit.rest.action.ActionTypeNotAllowedException;
-import org.mule.module.apikit.rest.action.RestAction;
+import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
+import org.mule.module.apikit.rest.operation.RestOperation;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
@@ -60,7 +60,7 @@ public class RestResourceTestCase extends AbstractMuleTestCase
     @Mock
     protected HttpRestProtocolAdapter httpAdapter;
     @Mock
-    protected RestAction action;
+    protected RestOperation action;
     @Mock
     protected MuleContext muleContext;
     @Mock
@@ -88,8 +88,8 @@ public class RestResourceTestCase extends AbstractMuleTestCase
     @Test
     public void actionTypeAllowed() throws RestException, MuleException
     {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
+        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
+        when(action.getType()).thenReturn(RestOperationType.RETRIEVE);
 
         resource.handle(request);
 
@@ -101,12 +101,12 @@ public class RestResourceTestCase extends AbstractMuleTestCase
     @Test
     public void actionTypeNotAllowed() throws RestException, MuleException
     {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.UPDATE);
+        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
+        when(action.getType()).thenReturn(RestOperationType.UPDATE);
 
         resource.handle(request);
 
-        verify(httpAdapter, times(1)).handleException(any(ActionTypeNotAllowedException.class),
+        verify(httpAdapter, times(1)).handleException(any(OperationNotAllowedException.class),
             any(RestRequest.class));
         verify(message).setOutboundProperty("http.status", 405);
     }
@@ -114,8 +114,8 @@ public class RestResourceTestCase extends AbstractMuleTestCase
     @Test
     public void resourceAuthorized() throws RestException, MuleException
     {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
+        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
+        when(action.getType()).thenReturn(RestOperationType.RETRIEVE);
 
         resource.setAccessExpression("#[true]");
 
@@ -129,8 +129,8 @@ public class RestResourceTestCase extends AbstractMuleTestCase
     @Test
     public void resourceNotAuthorized() throws RestException, MuleException
     {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
+        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
+        when(action.getType()).thenReturn(RestOperationType.RETRIEVE);
 
         resource.setAccessExpression("#[false]");
 
@@ -144,17 +144,17 @@ public class RestResourceTestCase extends AbstractMuleTestCase
     @Test
     public void getAuthorizedActions() throws RestException, MuleException
     {
-        RestAction action1 = mock(RestAction.class);
+        RestOperation action1 = mock(RestOperation.class);
         when(action1.getAccessExpression()).thenReturn("#[true]");
-        RestAction action2 = mock(RestAction.class);
+        RestOperation action2 = mock(RestOperation.class);
         when(action2.getAccessExpression()).thenReturn("#[false]");
 
-        List<RestAction> actions = new ArrayList<RestAction>();
+        List<RestOperation> actions = new ArrayList<RestOperation>();
         actions.add(action1);
         actions.add(action2);
         resource.setActions(actions);
 
-        List<RestAction> authorizedActions = resource.getAuthorizedActions(request);
+        List<RestOperation> authorizedActions = resource.getAuthorizedActions(request);
         assertEquals(1, authorizedActions.size());
         assertEquals(action1, authorizedActions.get(0));
     }
@@ -167,9 +167,9 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         }
 
         @Override
-        protected Set<ActionType> getSupportedActionTypes()
+        protected Set<RestOperationType> getSupportedActionTypes()
         {
-            return EnumSet.of(ActionType.RETRIEVE);
+            return EnumSet.of(RestOperationType.RETRIEVE);
         }
     }
 

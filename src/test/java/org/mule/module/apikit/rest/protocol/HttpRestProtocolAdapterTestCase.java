@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.action.ActionType;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.tck.junit4.AbstractMuleTestCase;
@@ -110,7 +110,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     {
         adapter = new HttpRestProtocolAdapter(event);
 
-        assertEquals(ActionType.RETRIEVE, adapter.getActionType());
+        assertEquals(RestOperationType.RETRIEVE, adapter.getOperationType());
     }
 
     @Test
@@ -119,7 +119,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
         when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("post");
         adapter = new HttpRestProtocolAdapter(event);
 
-        assertEquals(ActionType.CREATE, adapter.getActionType());
+        assertEquals(RestOperationType.CREATE, adapter.getOperationType());
     }
 
     @Test
@@ -128,7 +128,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
         when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("put");
         adapter = new HttpRestProtocolAdapter(event);
 
-        assertEquals(ActionType.UPDATE, adapter.getActionType());
+        assertEquals(RestOperationType.UPDATE, adapter.getOperationType());
     }
 
     @Test
@@ -137,7 +137,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
         when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("head");
         adapter = new HttpRestProtocolAdapter(event);
 
-        assertEquals(ActionType.EXISTS, adapter.getActionType());
+        assertEquals(RestOperationType.EXISTS, adapter.getOperationType());
     }
 
     @Test
@@ -146,7 +146,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
         when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("delete");
 
         adapter = new HttpRestProtocolAdapter(event);
-        assertEquals(ActionType.DELETE, adapter.getActionType());
+        assertEquals(RestOperationType.DELETE, adapter.getOperationType());
     }
 
     @Test

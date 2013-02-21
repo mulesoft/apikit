@@ -1,16 +1,16 @@
 
-package org.mule.module.apikit.rest.action;
+package org.mule.module.apikit.rest.operation;
 
-import static org.mule.module.apikit.rest.action.ActionType.EXISTS;
+import static org.mule.module.apikit.rest.operation.RestOperationType.EXISTS;
 
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 
-public class RestExistsAction extends AbstractRestAction
+public class ExistsOperation extends AbstractRestOperation
 {
 
-    public RestExistsAction()
+    public ExistsOperation()
     {
         this.type = EXISTS;
     }

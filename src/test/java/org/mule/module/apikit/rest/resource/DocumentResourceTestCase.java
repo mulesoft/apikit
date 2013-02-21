@@ -10,7 +10,7 @@ import org.mule.api.MuleMessage;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.action.ActionType;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
@@ -51,11 +51,11 @@ public class DocumentResourceTestCase extends AbstractMuleTestCase
     @Test
     public void supportedActions()
     {
-        Assert.assertTrue(doc.getSupportedActionTypes().contains(ActionType.RETRIEVE));
-        Assert.assertTrue(doc.getSupportedActionTypes().contains(ActionType.EXISTS));
-        Assert.assertFalse(doc.getSupportedActionTypes().contains(ActionType.CREATE));
-        Assert.assertTrue(doc.getSupportedActionTypes().contains(ActionType.UPDATE));
-        Assert.assertFalse(doc.getSupportedActionTypes().contains(ActionType.DELETE));
+        Assert.assertTrue(doc.getSupportedActionTypes().contains(RestOperationType.RETRIEVE));
+        Assert.assertTrue(doc.getSupportedActionTypes().contains(RestOperationType.EXISTS));
+        Assert.assertFalse(doc.getSupportedActionTypes().contains(RestOperationType.CREATE));
+        Assert.assertTrue(doc.getSupportedActionTypes().contains(RestOperationType.UPDATE));
+        Assert.assertFalse(doc.getSupportedActionTypes().contains(RestOperationType.DELETE));
     }
 
     @Test(expected = InitialisationException.class)

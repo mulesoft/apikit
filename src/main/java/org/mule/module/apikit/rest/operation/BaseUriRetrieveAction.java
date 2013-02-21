@@ -8,7 +8,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest.action;
+package org.mule.module.apikit.rest.operation;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.processor.MessageProcessor;
@@ -38,7 +38,7 @@ import java.io.StringWriter;
 import java.util.Collection;
 import java.util.List;
 
-public class BaseUriRetrieveAction implements RestAction
+public class BaseUriRetrieveAction implements RestOperation
 {
 
     public static final String RESOURCE_BASE_PATH = "/org/mule/module/apikit/rest/swagger/";
@@ -71,12 +71,12 @@ public class BaseUriRetrieveAction implements RestAction
     }
 
     @Override
-    public ActionType getType()
+    public RestOperationType getType()
     {
-        return ActionType.RETRIEVE;
+        return RestOperationType.RETRIEVE;
     }
 
-    final RestAction swaggerJsonAction = new RestAction()
+    final RestOperation swaggerJsonAction = new RestOperation()
     {
         @Override
         public MuleEvent handle(RestRequest restRequest) throws RestException
@@ -139,9 +139,9 @@ public class BaseUriRetrieveAction implements RestAction
         }
 
         @Override
-        public ActionType getType()
+        public RestOperationType getType()
         {
-            return ActionType.RETRIEVE;
+            return RestOperationType.RETRIEVE;
         }
 
         @Override
@@ -173,7 +173,7 @@ public class BaseUriRetrieveAction implements RestAction
         }
     };
 
-    static final RestAction swaggerHtmlAction = new RestAction()
+    static final RestOperation swaggerHtmlAction = new RestOperation()
     {
         @Override
         public MuleEvent handle(RestRequest restRequest) throws RestException
@@ -232,9 +232,9 @@ public class BaseUriRetrieveAction implements RestAction
         }
 
         @Override
-        public ActionType getType()
+        public RestOperationType getType()
         {
-            return ActionType.RETRIEVE;
+            return RestOperationType.RETRIEVE;
         }
 
         @Override

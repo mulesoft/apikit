@@ -1,5 +1,5 @@
 
-package org.mule.module.apikit.rest.action;
+package org.mule.module.apikit.rest.operation;
 
 import org.mule.module.apikit.api.WebServiceOperation;
 import org.mule.module.apikit.rest.RestRequestHandler;
@@ -7,10 +7,10 @@ import org.mule.module.apikit.rest.representation.Representation;
 
 import java.util.Collection;
 
-public interface RestAction extends RestRequestHandler, WebServiceOperation
+public interface RestOperation extends RestRequestHandler, WebServiceOperation
 {
 
-    ActionType getType();
+    RestOperationType getType();
 
     Collection<Representation> getRepresentations();
 

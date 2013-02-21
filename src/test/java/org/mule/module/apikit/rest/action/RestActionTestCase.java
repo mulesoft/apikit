@@ -28,6 +28,8 @@ import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
+import org.mule.module.apikit.rest.operation.AbstractRestOperation;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.representation.Representation;
 import org.mule.tck.junit4.AbstractMuleTestCase;
@@ -63,7 +65,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
     @Mock
     protected MessageProcessor handler;
 
-    AbstractRestAction action = new DummyRestAction();
+    AbstractRestOperation action = new DummyRestAction();
 
     @Before
     public void setup()
@@ -82,7 +84,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
     @Test
     public void actionAuthorized() throws RestException, MuleException
     {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
+        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
 
         action.setAccessExpression("#[true]");
         when(expressionManager.evaluateBoolean("#[true]", event)).thenReturn(Boolean.TRUE);
@@ -97,7 +99,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
     @Test
     public void actionNotAuthorized() throws RestException, MuleException
     {
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
+        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
 
         action.setAccessExpression("#[false]");
         when(expressionManager.evaluateBoolean("#[false]", event)).thenReturn(Boolean.FALSE);
@@ -233,7 +235,7 @@ public class RestActionTestCase extends AbstractMuleTestCase
         fail("Not yet implemented");
     }
 
-    static class DummyRestAction extends AbstractRestAction
+    static class DummyRestAction extends AbstractRestOperation
     {
 
         @Override

@@ -12,7 +12,7 @@ package org.mule.module.apikit.rest.protocol;
 
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.action.ActionType;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 
 import com.google.common.net.MediaType;
 
@@ -27,7 +27,7 @@ public interface RestProtocolAdapter
 
     URI getBaseURI();
 
-    ActionType getActionType();
+    RestOperationType getOperationType();
 
     List<MediaType> getAcceptableResponseMediaTypes();
 

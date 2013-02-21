@@ -1,19 +1,20 @@
 
 package org.mule.module.apikit.rest.resource;
 
-import static org.mule.module.apikit.rest.action.ActionType.EXISTS;
-import static org.mule.module.apikit.rest.action.ActionType.RETRIEVE;
+import static org.mule.module.apikit.rest.operation.RestOperationType.EXISTS;
+import static org.mule.module.apikit.rest.operation.RestOperationType.RETRIEVE;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.expression.ExpressionManager;
+import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.api.WebServiceRoute;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.action.ActionType;
-import org.mule.module.apikit.rest.action.ActionTypeNotAllowedException;
-import org.mule.module.apikit.rest.action.RestAction;
-import org.mule.module.apikit.rest.action.RestExistsByRetrieveAction;
+import org.mule.module.apikit.rest.operation.ExistsOperation;
+import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
+import org.mule.module.apikit.rest.operation.RestOperation;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.transport.NullPayload;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public abstract class AbstractRestResource implements RestResource
 
     protected String name;
     protected String description = "";
-    protected List<RestAction> actions = new ArrayList<RestAction>();
+    protected List<RestOperation> actions = new ArrayList<RestOperation>();
     protected String accessExpression;
 
     public AbstractRestResource(String name)
@@ -43,20 +44,20 @@ public abstract class AbstractRestResource implements RestResource
         return name;
     }
 
-    public List<RestAction> getActions()
+    public List<RestOperation> getActions()
     {
         return actions;
     }
 
-    public void setActions(List<RestAction> actions)
+    public void setActions(List<RestOperation> actions)
     {
         this.actions = actions;
     }
 
-    private RestAction getAction(ActionType actionType)
+    private RestOperation getAction(RestOperationType actionType)
     {
-        RestAction action = null;
-        for (RestAction a : getActions())
+        RestOperation action = null;
+        for (RestOperation a : getActions())
         {
             if (a.getType() == actionType)
             {
@@ -67,39 +68,39 @@ public abstract class AbstractRestResource implements RestResource
         return action;
     }
 
-    protected RestAction getAction(ActionType actionType, MuleEvent muleEvent)
-        throws ActionTypeNotAllowedException
+    protected RestOperation getAction(RestOperationType actionType, MuleEvent muleEvent)
+        throws OperationNotAllowedException
     {
         if (!getSupportedActionTypes().contains(actionType))
         {
-            throw new ActionTypeNotAllowedException(this, actionType);
+            throw new OperationNotAllowedException(this, actionType);
         }
-        RestAction action = getAction(actionType);
+        RestOperation action = getAction(actionType);
         if (action == null && EXISTS == actionType)
         {
             action = useRetrieveAsExists();
         }
         if (action == null)
         {
-            throw new ActionTypeNotAllowedException(this, actionType);
+            throw new OperationNotAllowedException(this, actionType);
         }
         return action;
     }
 
-    private RestAction useRetrieveAsExists()
+    private RestOperation useRetrieveAsExists()
     {
-        RestAction retrieve = getAction(RETRIEVE);
+        RestOperation retrieve = getAction(RETRIEVE);
         if (retrieve == null)
         {
             return null;
         }
-        return new RestExistsByRetrieveAction(retrieve);
+        return new ExistsByRetrieveOperation(retrieve);
     }
 
     @Override
-    public boolean isActionTypeAllowed(ActionType actionType)
+    public boolean isActionTypeAllowed(RestOperationType actionType)
     {
-        for (RestAction action : actions)
+        for (RestOperation action : actions)
         {
             if (action.getType().equals(actionType))
             {
@@ -110,10 +111,10 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public Set<ActionType> getAllowedActionTypes()
+    public Set<RestOperationType> getAllowedActionTypes()
     {
-        Set<ActionType> allowedTypes = new HashSet<ActionType>();
-        for (RestAction action : actions)
+        Set<RestOperationType> allowedTypes = new HashSet<RestOperationType>();
+        for (RestOperation action : actions)
         {
             allowedTypes.add(action.getType());
         }
@@ -131,9 +132,9 @@ public abstract class AbstractRestResource implements RestResource
         try
         {
             authorize(request);
-            this.getAction(request.getProtocolAdaptor().getActionType(), request.getMuleEvent()).handle(
+            this.getAction(request.getProtocolAdaptor().getOperationType(), request.getMuleEvent()).handle(
                 request);
-            if (ActionType.EXISTS == request.getProtocolAdaptor().getActionType())
+            if (RestOperationType.EXISTS == request.getProtocolAdaptor().getOperationType())
             {
                 request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
             }
@@ -168,10 +169,10 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public List<RestAction> getAuthorizedActions(RestRequest request)
+    public List<RestOperation> getAuthorizedActions(RestRequest request)
     {
-        List<RestAction> result = new ArrayList<RestAction>();
-        for (RestAction action : getActions())
+        List<RestOperation> result = new ArrayList<RestOperation>();
+        for (RestOperation action : getActions())
         {
             if (isAuthorized(action, request))
             {
@@ -201,6 +202,23 @@ public abstract class AbstractRestResource implements RestResource
         return false;
     }
 
-    protected abstract Set<ActionType> getSupportedActionTypes();
+    protected abstract Set<RestOperationType> getSupportedActionTypes();
 
+    static class ExistsByRetrieveOperation extends ExistsOperation
+    {
+
+        private RestOperation retrieve;
+
+        public ExistsByRetrieveOperation(RestOperation retrieve)
+        {
+            this.retrieve = retrieve;
+        }
+
+        @Override
+        public MessageProcessor getHandler()
+        {
+            return retrieve.getHandler();
+        }
+
+    }
 }

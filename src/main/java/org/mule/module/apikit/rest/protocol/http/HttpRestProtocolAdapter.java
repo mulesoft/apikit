@@ -17,8 +17,8 @@ import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
-import org.mule.module.apikit.rest.action.ActionType;
-import org.mule.module.apikit.rest.action.ActionTypeNotAllowedException;
+import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.RestProtocolAdapter;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.transport.NullPayload;
@@ -39,7 +39,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
 {
     private URI baseURI;
     private URI resourceURI;
-    private ActionType actionType;
+    private RestOperationType operationType;
     private List<MediaType> acceptableResponseMediaTypes = Collections.emptyList();;
     private MediaType requestMediaType;
     private Map<String, Object> queryParams;
@@ -94,7 +94,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
             }
         }
         String method = message.getInboundProperty("http.method");
-        actionType = ActionType.fromHttpMethod(method);
+        operationType = HttpMethod.fromHttpMethodString(method).toRestOperationType();
 
         if (!StringUtils.isBlank((String) message.getInboundProperty("accept")))
         {
@@ -115,9 +115,9 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     }
 
     @Override
-    public ActionType getActionType()
+    public RestOperationType getOperationType()
     {
-        return actionType;
+        return operationType;
     }
 
     @Override
@@ -138,12 +138,12 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         return queryParams;
     }
 
-    private Set<String> actionTypesToHttpMethods(Set<ActionType> actionTypes)
+    private Set<String> actionTypesToHttpMethods(Set<RestOperationType> actionTypes)
     {
         Set<String> set = new HashSet<String>();
-        for (ActionType type : actionTypes)
+        for (RestOperationType type : actionTypes)
         {
-            set.add(type.toHttpMethod());
+            set.add(HttpMethod.fromRestOperationType(type).toString());
         }
         return set;
     }
@@ -152,9 +152,9 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     public void handleException(RestException re, RestRequest request)
     {
         MuleMessage message = request.getMuleEvent().getMessage();
-        if (re instanceof ActionTypeNotAllowedException)
+        if (re instanceof OperationNotAllowedException)
         {
-            ActionTypeNotAllowedException anse = (ActionTypeNotAllowedException) re;
+            OperationNotAllowedException anse = (OperationNotAllowedException) re;
             message.setOutboundProperty("http.status",
                 HttpStatusCode.CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode());
             message.setOutboundProperty("Allow",

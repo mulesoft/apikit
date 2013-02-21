@@ -1,7 +1,7 @@
 
 package org.mule.module.apikit.rest.resource;
 
-import org.mule.module.apikit.rest.action.ActionType;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -15,9 +15,9 @@ public class BaseUriResource extends AbstractHierarchicalRestResource
     }
 
     @Override
-    protected Set<ActionType> getSupportedActionTypes()
+    protected Set<RestOperationType> getSupportedActionTypes()
     {
-        return EnumSet.of(ActionType.RETRIEVE, ActionType.EXISTS);
+        return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS);
     }
 
 }

@@ -1,18 +1,18 @@
 
-package org.mule.module.apikit.rest.action;
+package org.mule.module.apikit.rest.operation;
 
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.resource.RestResource;
 
-public class ActionTypeNotAllowedException extends RestException
+public class OperationNotAllowedException extends RestException
 {
 
     private static final long serialVersionUID = 7820998020825499825L;
 
     protected RestResource resource;
-    protected ActionType actionType;
+    protected RestOperationType actionType;
 
-    public ActionTypeNotAllowedException(RestResource resource, ActionType actionType)
+    public OperationNotAllowedException(RestResource resource, RestOperationType actionType)
     {
         this.resource = resource;
         this.actionType = actionType;

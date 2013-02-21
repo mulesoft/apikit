@@ -25,9 +25,9 @@ import org.mule.api.MuleMessage;
 import org.mule.api.expression.ExpressionManager;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.action.ActionType;
-import org.mule.module.apikit.rest.action.ActionTypeNotAllowedException;
-import org.mule.module.apikit.rest.action.RestAction;
+import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
+import org.mule.module.apikit.rest.operation.RestOperation;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
@@ -59,7 +59,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     @Mock
     protected HttpRestProtocolAdapter httpAdapter;
     @Mock
-    protected RestAction action;
+    protected RestOperation action;
     @Mock
     protected MuleContext muleContext;
     @Mock
@@ -197,18 +197,18 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     {
         when(request.hasMorePathElements()).thenReturn(Boolean.TRUE).thenReturn(Boolean.FALSE);
         when(request.getNextPathElement()).thenReturn("1");
-        when(httpAdapter.getActionType()).thenReturn(ActionType.RETRIEVE);
-        when(action.getType()).thenReturn(ActionType.RETRIEVE);
+        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
+        when(action.getType()).thenReturn(RestOperationType.RETRIEVE);
         RestResource nestedResource = new DummyHierarchicalRestResource("1");
-        RestAction nestedResourceAction = Mockito.mock(RestAction.class);
-        when(nestedResourceAction.getType()).thenReturn(ActionType.UPDATE);
+        RestOperation nestedResourceAction = Mockito.mock(RestOperation.class);
+        when(nestedResourceAction.getType()).thenReturn(RestOperationType.UPDATE);
         nestedResource.setActions(Collections.singletonList(nestedResourceAction));
         resource.setResources(Collections.singletonList(nestedResource));
         resource.initialise();
 
         resource.handle(request);
 
-        verify(httpAdapter, times(1)).handleException(any(ActionTypeNotAllowedException.class),
+        verify(httpAdapter, times(1)).handleException(any(OperationNotAllowedException.class),
             any(RestRequest.class));
         verify(message).setOutboundProperty("http.status", 405);
     }
@@ -221,9 +221,9 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         }
 
         @Override
-        protected Set<ActionType> getSupportedActionTypes()
+        protected Set<RestOperationType> getSupportedActionTypes()
         {
-            return EnumSet.of(ActionType.RETRIEVE);
+            return EnumSet.of(RestOperationType.RETRIEVE);
         }
     }
 
