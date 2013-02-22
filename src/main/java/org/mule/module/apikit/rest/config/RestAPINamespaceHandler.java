@@ -29,8 +29,8 @@ public class RestAPINamespaceHandler extends MuleNamespaceHandler
             CollectionResource.class));
 
         registerBeanDefinitionParser("create", new RestCreateOperationDefinitionParser());
-        registerBeanDefinitionParser("update", new RestUpdateOperationDefinitionParser());
         registerBeanDefinitionParser("retrieve", new RestRetrieveOperationDefinitionParser());
+        registerBeanDefinitionParser("update", new RestUpdateOperationDefinitionParser());
         registerBeanDefinitionParser("exists", new RestExistsOperationDefinitionParser());
 
         registerBeanDefinitionParser("representation", new RepresentationDefinitionParser("representation"));

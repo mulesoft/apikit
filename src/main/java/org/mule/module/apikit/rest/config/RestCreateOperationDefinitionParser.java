@@ -10,13 +10,14 @@
 
 package org.mule.module.apikit.rest.config;
 
+import org.mule.config.spring.parsers.delegate.ParentContextDefinitionParser;
 import org.mule.module.apikit.rest.resource.document.RetrieveDocumentOperation;
 
-public class RestCreateOperationDefinitionParser extends AbstractRestOperationDefinitionParser
+public class RestCreateOperationDefinitionParser extends ParentContextDefinitionParser
 {
     public RestCreateOperationDefinitionParser()
     {
-        super(RetrieveDocumentOperation.class);
+        super("collection-resource", new RestOperationDefinitionParser(RetrieveDocumentOperation.class));
     }
 
 }

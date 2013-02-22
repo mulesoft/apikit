@@ -10,13 +10,16 @@
 
 package org.mule.module.apikit.rest.config;
 
+import org.mule.config.spring.parsers.delegate.ParentContextDefinitionParser;
 import org.mule.module.apikit.rest.resource.document.ExistsDocumentOperation;
 
-public class RestExistsOperationDefinitionParser extends AbstractRestOperationDefinitionParser
+public class RestExistsOperationDefinitionParser extends ParentContextDefinitionParser
 {
     public RestExistsOperationDefinitionParser()
     {
-        super(ExistsDocumentOperation.class);
+        super("document-resource", new RestOperationDefinitionParser(ExistsDocumentOperation.class));
+        and("collection-resource", new RestOperationDefinitionParser(ExistsDocumentOperation.class));
+
     }
 
 }
