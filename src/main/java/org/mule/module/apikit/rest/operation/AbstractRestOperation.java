@@ -1,17 +1,20 @@
 
 package org.mule.module.apikit.rest.operation;
 
+import org.mule.DefaultMuleEvent;
+import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.expression.ExpressionManager;
 import org.mule.module.apikit.AbstractWebServiceOperation;
 import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
+import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
+import org.mule.transport.NullPayload;
 
 import com.google.common.net.MediaType;
 
@@ -53,6 +56,12 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         try
         {
             MuleEvent muleEvent = getHandler().process(request.getMuleEvent());
+            // If handler returns null then use NullPayload response 
+            if (muleEvent == null)
+            {
+                muleEvent = new DefaultMuleEvent(new DefaultMuleMessage(NullPayload.getInstance(),
+                    request.getService().getMuleContext()), request.getMuleEvent());
+            }
             if (responseRepresentation != null)
             {
                 Object payload = responseRepresentation.toRepresentation(muleEvent, request);
