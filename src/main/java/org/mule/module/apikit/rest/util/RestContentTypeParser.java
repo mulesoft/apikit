@@ -11,7 +11,7 @@
 
 package org.mule.module.apikit.rest.util;
 
-import org.mule.module.apikit.rest.representation.RepresentationType;
+import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 
 import com.google.common.net.MediaType;
 
@@ -137,9 +137,9 @@ public final class RestContentTypeParser
      * @param header
      * @return
      */
-    public static MediaType bestMatch(Collection<RepresentationType> supportedRepresentations, List<MediaType> header) {
+    public static MediaType bestMatch(Collection<RepresentationMetaData> supportedRepresentations, List<MediaType> header) {
         List<FitnessAndQuality> weightedMatches = new LinkedList<FitnessAndQuality>();
-        for (RepresentationType representation : supportedRepresentations) {
+        for (RepresentationMetaData representation : supportedRepresentations) {
             FitnessAndQuality fitnessAndQuality = fitnessAndQualityParsed(representation.getMediaType(), header);
             fitnessAndQuality.mimeType = representation.getMediaType().toString();
             weightedMatches.add(fitnessAndQuality);

@@ -10,8 +10,7 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
-import org.mule.module.apikit.rest.representation.RepresentationFactory;
-import org.mule.module.apikit.rest.representation.RepresentationType;
+import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
 
 import com.google.common.net.MediaType;
@@ -23,7 +22,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
 {
 
     protected RestOperationType type;
-    protected Collection<RepresentationType> representations = new HashSet<RepresentationType>();
+    protected Collection<RepresentationMetaData> representations = new HashSet<RepresentationMetaData>();
 
     @Override
     public RestOperationType getType()
@@ -31,7 +30,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         return type;
     }
 
-    public void setRepresentations(Collection<RepresentationType> representations)
+    public void setRepresentations(Collection<RepresentationMetaData> representations)
     {
         this.representations = representations;
     }
@@ -45,14 +44,21 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         {
             throw new UnauthorizedException(this);
         }
+        RepresentationMetaData responseRepresentation = null;
         if (!getRepresentations().isEmpty())
         {
             validateSupportedRequestMediaType(request);
-            validateAcceptableResponeMediaType(request);
+            responseRepresentation = validateAcceptableResponeMediaType(request);
         }
         try
         {
-            return getHandler().process(request.getMuleEvent());
+            MuleEvent muleEvent = getHandler().process(request.getMuleEvent());
+            if (responseRepresentation != null)
+            {
+                Object payload = responseRepresentation.toRepresentation(muleEvent, request);
+                muleEvent.getMessage().setPayload(payload);
+            }
+            return muleEvent;
         }
         catch (Exception e)
         {
@@ -64,7 +70,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         throws UnsupportedMediaTypeException
     {
         boolean valid = false;
-        for (RepresentationType representation : representations)
+        for (RepresentationMetaData representation : representations)
         {
             if (representation.getMediaType().is(request.getProtocolAdaptor().getRequestMediaType()))
             {
@@ -78,7 +84,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         }
     }
 
-    protected void validateAcceptableResponeMediaType(RestRequest request)
+    protected RepresentationMetaData validateAcceptableResponeMediaType(RestRequest request)
         throws MediaTypeNotAcceptableException
     {
         MediaType bestMatch = RestContentTypeParser.bestMatch(representations, request.getProtocolAdaptor()
@@ -87,18 +93,20 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         {
             throw new MediaTypeNotAcceptableException();
         }
+        for (RepresentationMetaData representation : representations)
+        {
+            if (representation.getMediaType().equals(bestMatch))
+            {
+                return representation;
+            }
+        }
+        throw new MediaTypeNotAcceptableException();
     }
 
     @Override
-    public Collection<RepresentationType> getRepresentations()
+    public Collection<RepresentationMetaData> getRepresentations()
     {
         return representations;
     }
 
-    @Override
-    public RepresentationFactory getResponseRepresentationFactory()
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
 }

@@ -11,7 +11,7 @@
 package org.mule.module.apikit.rest.config;
 
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
-import org.mule.module.apikit.rest.representation.DefaultRepresentation;
+import org.mule.module.apikit.rest.representation.DefaultRepresentationMetaData;
 
 import com.google.common.net.MediaType;
 
@@ -24,7 +24,7 @@ public class RepresentationDefinitionParser extends ChildDefinitionParser
 
     public RepresentationDefinitionParser(String setter)
     {
-        super(setter, DefaultRepresentation.class, false);
+        super(setter, DefaultRepresentationMetaData.class, false);
         addIgnored(ATTRIBUTE_NAME);
         addIgnored("mediaType");
         addIgnored("quality");

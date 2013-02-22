@@ -1,14 +1,26 @@
 
 package org.mule.module.apikit.rest.representation;
 
+import org.mule.api.MuleEvent;
+import org.mule.module.apikit.rest.RestRequest;
+
 import com.google.common.net.MediaType;
 
-public class DefaultRepresentation implements RepresentationType
+public class DefaultRepresentationMetaData implements RepresentationMetaData
 {
 
     protected MediaType mediaType;
     protected String schemaType;
     protected String schemaLocation;
+
+    public DefaultRepresentationMetaData()
+    {
+    }
+
+    public DefaultRepresentationMetaData(MediaType mediaType)
+    {
+        this.mediaType = mediaType;
+    }
 
     @Override
     public MediaType getMediaType()
@@ -42,5 +54,17 @@ public class DefaultRepresentation implements RepresentationType
     {
         this.schemaLocation = schemaLocation;
     };
+
+    @Override
+    public Object fromRepresentation(Object payload)
+    {
+        return null;
+    }
+
+    @Override
+    public Object toRepresentation(MuleEvent event, RestRequest request)
+    {
+        return null;
+    }
 
 }

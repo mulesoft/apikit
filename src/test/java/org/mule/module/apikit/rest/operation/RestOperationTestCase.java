@@ -30,7 +30,8 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
-import org.mule.module.apikit.rest.representation.RepresentationType;
+import org.mule.module.apikit.rest.representation.DefaultRepresentationMetaData;
+import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
@@ -122,71 +123,29 @@ public class RestOperationTestCase extends AbstractMuleTestCase
     @Test
     public void singleAcceptableResponseMediaTypeSingleMediaTypeSupported() throws RestException
     {
-        when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(
-            Collections.singletonList(MediaType.PLAIN_TEXT_UTF_8));
+        when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(Collections.singletonList(MediaType.PLAIN_TEXT_UTF_8));
         when(httpAdapter.getRequestMediaType()).thenReturn(MediaType.PLAIN_TEXT_UTF_8);
-        action.setRepresentations(Arrays.asList(new RepresentationType[]{new RepresentationType()
-        {
-
-            @Override
-            public String getSchemaType()
-            {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public String getSchemaLocation()
-            {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public MediaType getMediaType()
-            {
-                return MediaType.PLAIN_TEXT_UTF_8;
-            }
-        }}));
+        action.setRepresentations(Collections.<RepresentationMetaData>singletonList(new DefaultRepresentationMetaData(MediaType.PLAIN_TEXT_UTF_8)));
         action.handle(request);
     }
 
     @Test
     public void singleNotAcceptableResponseMediaTypeSingleMediaTypeSupported() throws RestException
     {
-        when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(
-            Collections.singletonList(MediaType.PLAIN_TEXT_UTF_8));
+        when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(Collections.singletonList(MediaType.PLAIN_TEXT_UTF_8));
         when(httpAdapter.getRequestMediaType()).thenReturn(MediaType.PLAIN_TEXT_UTF_8);
-        action.setRepresentations(Arrays.asList(new RepresentationType[]{new RepresentationType()
-        {
-
-            @Override
-            public String getSchemaType()
-            {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public String getSchemaLocation()
-            {
-                // TODO Auto-generated method stub
-                return null;
-            }
-
-            @Override
-            public MediaType getMediaType()
-            {
-                return MediaType.PLAIN_TEXT_UTF_8;
-            }
-        }}));
+        action.setRepresentations(Collections.<RepresentationMetaData>singletonList(new DefaultRepresentationMetaData(MediaType.PLAIN_TEXT_UTF_8)));
         action.handle(request);
     }
 
     @Test
-    public void multipleAcceptableResponseMediaTypeSingleMediaTypeSupported()
+    public void multipleAcceptableResponseMediaTypeSingleMediaTypeSupported() throws RestException
     {
-        fail("Not yet implemented");
+        when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(
+                Arrays.asList(MediaType.PLAIN_TEXT_UTF_8, MediaType.HTML_UTF_8));
+        when(httpAdapter.getRequestMediaType()).thenReturn(MediaType.PLAIN_TEXT_UTF_8);
+        action.setRepresentations(Collections.<RepresentationMetaData>singletonList(new DefaultRepresentationMetaData(MediaType.PLAIN_TEXT_UTF_8)));
+        action.handle(request);
     }
 
     @Test
@@ -241,10 +200,11 @@ public class RestOperationTestCase extends AbstractMuleTestCase
     {
 
         @Override
-        protected void validateAcceptableResponeMediaType(RestRequest request)
+        protected RepresentationMetaData validateAcceptableResponeMediaType(RestRequest request)
             throws MediaTypeNotAcceptableException
         {
             // no response representation needed
+            return null;
         }
     }
 
