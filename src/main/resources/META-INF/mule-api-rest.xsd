@@ -76,7 +76,6 @@
                 <xsd:sequence>
                     <xsd:element name="retrieve" type="retrieveType" minOccurs="0" maxOccurs="1" />
                     <xsd:element name="update" type="updateType" minOccurs="0" maxOccurs="1" />
-                    <xsd:element name="exists" type="existsType" minOccurs="0" maxOccurs="1" />
                     <xsd:element name="document-resource" type="documentResourceType" minOccurs="0"
                         maxOccurs="unbounded" />
                 </xsd:sequence>

@@ -10,10 +10,10 @@
 
 package org.mule.module.apikit.rest;
 
-public class UnexceptedErrorException extends RestException
+public class OperationHandlerException extends RestException
 {
 
-    public UnexceptedErrorException(Exception e)
+    public OperationHandlerException(Exception e)
     {
         super(e);
     }

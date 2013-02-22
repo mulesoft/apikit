@@ -20,7 +20,7 @@ import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
-import org.mule.module.apikit.rest.UnexceptedErrorException;
+import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
@@ -150,7 +150,7 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
             }
             catch (Exception e)
             {
-                throw new UnexceptedErrorException(e);
+                throw new OperationHandlerException(e);
             }
         }
 
@@ -211,11 +211,11 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
             }
             catch (JsonProcessingException e)
             {
-                throw new UnexceptedErrorException(e);
+                throw new OperationHandlerException(e);
             }
             catch (IOException e)
             {
-                throw new UnexceptedErrorException(e);
+                throw new OperationHandlerException(e);
             }
 
         }

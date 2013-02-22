@@ -28,8 +28,7 @@ import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.operation.AbstractRestOperation;
-import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.RestWebService;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.representation.RepresentationType;
 import org.mule.tck.junit4.AbstractMuleTestCase;
@@ -64,6 +63,8 @@ public class RestOperationTestCase extends AbstractMuleTestCase
     protected ExpressionManager expressionManager;
     @Mock
     protected MessageProcessor handler;
+    @Mock
+    RestWebService service;
 
     AbstractRestOperation action = new DummyRestAction();
 
@@ -75,7 +76,8 @@ public class RestOperationTestCase extends AbstractMuleTestCase
             .handleException(any(RestException.class), any(RestRequest.class));
         when(request.getProtocolAdaptor()).thenReturn(httpAdapter);
         when(request.getMuleEvent()).thenReturn(event);
-        when(event.getMuleContext()).thenReturn(muleContext);
+        when(request.getService()).thenReturn(service);
+        when(service.getMuleContext()).thenReturn(muleContext);
         when(muleContext.getExpressionManager()).thenReturn(expressionManager);
         action.setHandler(handler);
 

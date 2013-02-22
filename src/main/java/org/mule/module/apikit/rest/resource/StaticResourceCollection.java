@@ -13,7 +13,7 @@ package org.mule.module.apikit.rest.resource;
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.UnexceptedErrorException;
+import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
@@ -128,7 +128,7 @@ public class StaticResourceCollection extends AbstractRestResource
                     }
                     catch (IOException e)
                     {
-                        throw new UnexceptedErrorException(e);
+                        throw new OperationHandlerException(e);
                     }
                 }
             }
