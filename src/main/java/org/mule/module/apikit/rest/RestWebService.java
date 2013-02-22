@@ -17,12 +17,12 @@ import org.mule.api.MuleException;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.AbstractWebService;
-import org.mule.module.apikit.rest.operation.BaseUriRetrieveOperation;
 import org.mule.module.apikit.rest.operation.RestOperation;
-import org.mule.module.apikit.rest.resource.BaseUriResource;
 import org.mule.module.apikit.rest.resource.HierarchicalRestResource;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.resource.StaticResourceCollection;
+import org.mule.module.apikit.rest.resource.base.BaseUriResource;
+import org.mule.module.apikit.rest.resource.base.BaseUriRetrieveOperation;
 
 import java.util.ArrayList;
 import java.util.Collections;

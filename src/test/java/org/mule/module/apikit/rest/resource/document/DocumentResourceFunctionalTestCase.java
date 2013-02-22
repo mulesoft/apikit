@@ -1,5 +1,5 @@
 
-package org.mule.module.apikit.rest.resource;
+package org.mule.module.apikit.rest.resource.document;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;

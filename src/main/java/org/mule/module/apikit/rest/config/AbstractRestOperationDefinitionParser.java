@@ -17,9 +17,9 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-public class RestOperationDefinitionParser extends ChildDefinitionParser
+public abstract class AbstractRestOperationDefinitionParser extends ChildDefinitionParser
 {
-    public RestOperationDefinitionParser(Class<?> clazz)
+    public AbstractRestOperationDefinitionParser(Class<?> clazz)
     {
         super("action", clazz, false);
         addAlias("access", "accessExpression");
@@ -39,7 +39,8 @@ public class RestOperationDefinitionParser extends ChildDefinitionParser
         return AutoIdUtils.uniqueValue(element.getParentNode()
             .getAttributes()
             .getNamedItem(ATTRIBUTE_NAME)
-            .getNodeValue() + "." + element.getAttribute(ATTRIBUTE_NAME));
+            .getNodeValue()
+                                       + "." + element.getAttribute(ATTRIBUTE_NAME));
     }
 
 }

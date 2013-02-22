@@ -8,7 +8,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest.operation;
+package org.mule.module.apikit.rest.resource.base;
 
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
@@ -21,6 +21,9 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
 import org.mule.module.apikit.rest.UnexceptedErrorException;
+import org.mule.module.apikit.rest.operation.AbstractRestOperation;
+import org.mule.module.apikit.rest.operation.RestOperation;
+import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.swagger.RestSwaggerConstants;

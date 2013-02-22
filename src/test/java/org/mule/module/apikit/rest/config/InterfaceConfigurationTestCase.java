@@ -16,8 +16,8 @@ import static org.junit.Assert.assertNotNull;
 import org.mule.module.apikit.rest.RestWebServiceInterface;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
-import org.mule.module.apikit.rest.resource.DocumentResource;
 import org.mule.module.apikit.rest.resource.RestResource;
+import org.mule.module.apikit.rest.resource.document.DocumentResource;
 import org.mule.tck.junit4.FunctionalTestCase;
 
 import org.junit.Test;

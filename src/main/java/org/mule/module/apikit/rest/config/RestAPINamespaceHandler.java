@@ -13,12 +13,8 @@ package org.mule.module.apikit.rest.config;
 import org.mule.config.spring.handlers.MuleNamespaceHandler;
 import org.mule.module.apikit.config.WebServiceInterfaceDefinitionParser;
 import org.mule.module.apikit.rest.RestWebServiceInterface;
-import org.mule.module.apikit.rest.operation.CreateOperation;
-import org.mule.module.apikit.rest.operation.ExistsOperation;
-import org.mule.module.apikit.rest.operation.RetrieveOperation;
-import org.mule.module.apikit.rest.operation.UpdateOperation;
-import org.mule.module.apikit.rest.resource.CollectionResource;
-import org.mule.module.apikit.rest.resource.DocumentResource;
+import org.mule.module.apikit.rest.resource.collection.CollectionResource;
+import org.mule.module.apikit.rest.resource.document.DocumentResource;
 
 public class RestAPINamespaceHandler extends MuleNamespaceHandler
 {
@@ -32,10 +28,10 @@ public class RestAPINamespaceHandler extends MuleNamespaceHandler
         registerBeanDefinitionParser("collection-resource", new RestResourceDefinitionParser(
             CollectionResource.class));
 
-        registerBeanDefinitionParser("create", new RestOperationDefinitionParser(CreateOperation.class));
-        registerBeanDefinitionParser("update", new RestOperationDefinitionParser(UpdateOperation.class));
-        registerBeanDefinitionParser("retrieve", new RestOperationDefinitionParser(RetrieveOperation.class));
-        registerBeanDefinitionParser("exists", new RestOperationDefinitionParser(ExistsOperation.class));
+        registerBeanDefinitionParser("create", new RestCreateOperationDefinitionParser());
+        registerBeanDefinitionParser("update", new RestUpdateOperationDefinitionParser());
+        registerBeanDefinitionParser("retrieve", new RestRetrieveOperationDefinitionParser());
+        registerBeanDefinitionParser("exists", new RestExistsOperationDefinitionParser());
 
         registerBeanDefinitionParser("representation", new RepresentationDefinitionParser("representation"));
     }

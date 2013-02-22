@@ -11,10 +11,10 @@ import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.api.WebServiceRoute;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
-import org.mule.module.apikit.rest.operation.ExistsOperation;
 import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.resource.document.ExistsDocumentOperation;
 import org.mule.transport.NullPayload;
 
 import java.util.ArrayList;
@@ -204,7 +204,7 @@ public abstract class AbstractRestResource implements RestResource
 
     protected abstract Set<RestOperationType> getSupportedActionTypes();
 
-    static class ExistsByRetrieveOperation extends ExistsOperation
+    static class ExistsByRetrieveOperation extends ExistsDocumentOperation
     {
 
         private RestOperation retrieve;

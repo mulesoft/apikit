@@ -1,4 +1,4 @@
-package org.mule.module.apikit.rest.resource;
+package org.mule.module.apikit.rest.collection;
 
 import static junit.framework.Assert.assertTrue;
 

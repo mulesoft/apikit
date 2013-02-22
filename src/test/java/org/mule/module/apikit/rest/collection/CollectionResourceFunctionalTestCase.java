@@ -1,5 +1,5 @@
 
-package org.mule.module.apikit.rest.resource;
+package org.mule.module.apikit.rest.collection;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static org.junit.matchers.JUnitMatchers.containsString;

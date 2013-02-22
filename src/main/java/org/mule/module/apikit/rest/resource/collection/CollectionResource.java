@@ -1,7 +1,8 @@
 
-package org.mule.module.apikit.rest.resource;
+package org.mule.module.apikit.rest.resource.collection;
 
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.resource.AbstractHierarchicalRestResource;
 
 import java.util.EnumSet;
 import java.util.Set;

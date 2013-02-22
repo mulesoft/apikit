@@ -1,5 +1,5 @@
 
-package org.mule.module.apikit.rest.resource;
+package org.mule.module.apikit.rest.resource.document;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -12,6 +12,8 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
+import org.mule.module.apikit.rest.resource.RestResource;
+import org.mule.module.apikit.rest.resource.document.DocumentResource;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
