@@ -17,20 +17,13 @@ public interface RestRequest
 {
 
     MuleEvent getMuleEvent();
-    
+
     String getNextPathElement();
 
     boolean hasMorePathElements();
-    
+
     RestProtocolAdapter getProtocolAdaptor();
-    
-    RestWebServiceInterface getInterface();
-    
-    String getRelativeURI();
-    
-    void popFirstPathElement();
-    
-    
+
+    RestWebService getService();
+
 }
-
-

@@ -91,7 +91,7 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
             {
                 try
                 {
-                    return baseResource.handle(new DefaultRestRequest(event, getInterface()));
+                    return baseResource.handle(new DefaultRestRequest(event, RestWebService.this));
                 }
                 catch (RestException e)
                 {

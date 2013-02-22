@@ -193,7 +193,8 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
                     .getMessageSourceURI()
                     .toString());
 
-                buffer = buffer.replace("${pageTitle}", restRequest.getInterface().getName() + " UI");
+                buffer = buffer.replace("${pageTitle}", restRequest.getService().getInterface().getName()
+                                                        + " UI");
 
                 restRequest.getMuleEvent().getMessage().setPayload(buffer);
                 restRequest.getMuleEvent()

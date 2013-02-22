@@ -25,14 +25,14 @@ public class DefaultRestRequest implements RestRequest
     protected MuleEvent muleEvent;
     protected RestProtocolAdapter protocolAdapter;
     protected Deque<String> pathStack;
-    protected RestWebServiceInterface restWebServiceInterface;
+    protected RestWebService restWebService;
     protected String relativeURI;
 
-    public DefaultRestRequest(MuleEvent event, RestWebServiceInterface restWebServiceInterface)
+    public DefaultRestRequest(MuleEvent event, RestWebService restWebService)
     {
         this.muleEvent = event;
         this.protocolAdapter = RestProtocolAdapterFactory.getInstance().getAdapterForEvent(event);
-        this.restWebServiceInterface = restWebServiceInterface;
+        this.restWebService = restWebService;
         relativeURI = StringUtils.difference(protocolAdapter.getBaseURI().toString(),
             protocolAdapter.getURI().toString());
         initPathStack();
@@ -82,25 +82,9 @@ public class DefaultRestRequest implements RestRequest
         return protocolAdapter;
     }
 
-    public RestWebServiceInterface getInterface()
+    public RestWebService getService()
     {
-        return restWebServiceInterface;
-    }
-
-    public String getRelativeURI()
-    {
-        return relativeURI;
-    }
-
-    public void setRelativeURI(String relativeURI)
-    {
-        this.relativeURI = relativeURI;
-    }
-
-    public void popFirstPathElement()
-    {
-        // TODO Auto-generated method stub
-
+        return restWebService;
     }
 
 }
