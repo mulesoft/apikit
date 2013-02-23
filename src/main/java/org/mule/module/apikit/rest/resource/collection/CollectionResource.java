@@ -9,6 +9,9 @@ import java.util.Set;
 
 public class CollectionResource extends AbstractHierarchicalRestResource
 {
+
+    protected CollectionMemberResource memberResource;
+
     public CollectionResource(String name)
     {
         super(name);
@@ -19,6 +22,16 @@ public class CollectionResource extends AbstractHierarchicalRestResource
     {
         return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS, RestOperationType.CREATE);
 
+    }
+
+    public void setMemberResource(CollectionMemberResource memberResource)
+    {
+        this.memberResource = memberResource;
+    }
+
+    public CollectionMemberResource getMemberResource()
+    {
+        return memberResource;
     }
 
 }

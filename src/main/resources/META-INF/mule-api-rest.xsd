@@ -58,13 +58,25 @@
         <xsd:complexContent>
             <xsd:extension base="abstractResourceType">
                 <xsd:sequence>
+                    <xsd:element name="retrieve" type="retrieveType" minOccurs="0" maxOccurs="1" />
+                    <xsd:element name="member" type="collectionResourceMemberType"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="collectionResourceMemberType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:annotatedType">
+                <xsd:sequence>
                     <xsd:element name="create" type="createType" minOccurs="0" maxOccurs="1" />
                     <xsd:element name="retrieve" type="retrieveType" minOccurs="0" maxOccurs="1" />
                     <xsd:element name="update" type="updateType" minOccurs="0" maxOccurs="1" />
-                    <!-- <xsd:element name="delete" type="deleteType" minOccurs="0" maxOccurs="1"/> <xsd:element 
-                        name="exists" type="existsType" minOccurs="0" maxOccurs="1"/> -->
-                    <xsd:element name="document-resource" type="documentResourceType" minOccurs="0"
-                        maxOccurs="unbounded" />
+                    <xsd:element name="delete" type="deleteType" minOccurs="0" maxOccurs="1" />
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="document-resource" type="documentResourceType"  />
+                        <xsd:element name="collection-resource" type="collectionResourceType" />
+                    </xsd:choice>
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>

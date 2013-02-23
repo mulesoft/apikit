@@ -17,9 +17,9 @@ public interface RestResource extends RestRequestHandler, WebServiceRoute, Named
 
     Set<RestOperationType> getAllowedActionTypes();
 
-    void setActions(List<RestOperation> actions);
+    void setOperations(List<RestOperation> actions);
 
-    List<RestOperation> getActions();
+    List<RestOperation> getOperations();
 
     List<RestOperation> getAuthorizedActions(RestRequest request);
 

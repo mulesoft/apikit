@@ -27,10 +27,12 @@ public class RestAPINamespaceHandler extends MuleNamespaceHandler
             DocumentResource.class));
         registerBeanDefinitionParser("collection-resource", new RestResourceDefinitionParser(
             CollectionResource.class));
+        registerBeanDefinitionParser("member", new CollectionMemberResourceDefinitionParser());
 
         registerBeanDefinitionParser("create", new RestCreateOperationDefinitionParser());
         registerBeanDefinitionParser("retrieve", new RestRetrieveOperationDefinitionParser());
         registerBeanDefinitionParser("update", new RestUpdateOperationDefinitionParser());
+        registerBeanDefinitionParser("delete", new RestDeleteOperationDefinitionParser());
 
         registerBeanDefinitionParser("representation", new RepresentationDefinitionParser("representation"));
     }

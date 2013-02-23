@@ -78,7 +78,7 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         when(event.getMuleContext()).thenReturn(muleContext);
         when(muleContext.getExpressionManager()).thenReturn(expressionManager);
         resource = new DummyRestResource("doc");
-        resource.setActions(Collections.singletonList(action));
+        resource.setOperations(Collections.singletonList(action));
         when(expressionManager.evaluateBoolean(Mockito.eq("#[true]"), any(MuleEvent.class))).thenReturn(
             Boolean.TRUE);
         when(expressionManager.evaluateBoolean(Mockito.eq("#[false]"), any(MuleEvent.class))).thenReturn(
@@ -152,7 +152,7 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         List<RestOperation> actions = new ArrayList<RestOperation>();
         actions.add(action1);
         actions.add(action2);
-        resource.setActions(actions);
+        resource.setOperations(actions);
 
         List<RestOperation> authorizedActions = resource.getAuthorizedActions(request);
         assertEquals(1, authorizedActions.size());

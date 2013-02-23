@@ -83,7 +83,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         when(event.getMuleContext()).thenReturn(muleContext);
         when(muleContext.getExpressionManager()).thenReturn(expressionManager);
         resource = new DummyHierarchicalRestResource("doc");
-        resource.setActions(Collections.singletonList(action));
+        resource.setOperations(Collections.singletonList(action));
         when(expressionManager.evaluateBoolean(Mockito.eq("#[true]"), any(MuleEvent.class))).thenReturn(
             Boolean.TRUE);
         when(expressionManager.evaluateBoolean(Mockito.eq("#[false]"), any(MuleEvent.class))).thenReturn(
@@ -202,7 +202,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         RestResource nestedResource = new DummyHierarchicalRestResource("1");
         RestOperation nestedResourceAction = Mockito.mock(RestOperation.class);
         when(nestedResourceAction.getType()).thenReturn(RestOperationType.UPDATE);
-        nestedResource.setActions(Collections.singletonList(nestedResourceAction));
+        nestedResource.setOperations(Collections.singletonList(nestedResourceAction));
         resource.setResources(Collections.singletonList(nestedResource));
         resource.initialise();
 

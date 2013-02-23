@@ -11,15 +11,13 @@
 package org.mule.module.apikit.rest.config;
 
 import org.mule.config.spring.parsers.delegate.ParentContextDefinitionParser;
-import org.mule.module.apikit.rest.resource.collection.UpdateCollectionMemberOperation;
-import org.mule.module.apikit.rest.resource.document.UpdateDocumentOperation;
+import org.mule.module.apikit.rest.resource.collection.DeleteCollectionMemberOperation;
 
-public class RestUpdateOperationDefinitionParser extends ParentContextDefinitionParser
+public class RestDeleteOperationDefinitionParser extends ParentContextDefinitionParser
 {
-    public RestUpdateOperationDefinitionParser()
+    public RestDeleteOperationDefinitionParser()
     {
-        super("document-resource", new RestOperationDefinitionParser(UpdateDocumentOperation.class));
-        and("member", new RestOperationDefinitionParser(UpdateCollectionMemberOperation.class));
+        super("member", new RestOperationDefinitionParser(DeleteCollectionMemberOperation.class));
     }
 
 }

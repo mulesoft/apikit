@@ -10,20 +10,19 @@
 
 package org.mule.module.apikit.rest.config;
 
-import org.mule.config.spring.parsers.generic.AutoIdUtils;
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
+import org.mule.module.apikit.rest.resource.collection.CollectionMemberResource;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
 
-public class RestOperationDefinitionParser extends ChildDefinitionParser
+public class CollectionMemberResourceDefinitionParser extends ChildDefinitionParser
 {
-    public RestOperationDefinitionParser(Class<?> clazz)
+
+    public CollectionMemberResourceDefinitionParser()
     {
-        super("operation", clazz, false);
-        addAlias("access", "accessExpression");
-        addAlias("flow", "handler");
+        super("memberResource", CollectionMemberResource.class, false);
     }
 
     @Override
@@ -31,15 +30,6 @@ public class RestOperationDefinitionParser extends ChildDefinitionParser
     {
         builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
-    }
-
-    @Override
-    public String getBeanName(Element element)
-    {
-        return AutoIdUtils.uniqueValue(element.getParentNode()
-            .getAttributes()
-            .getNamedItem(ATTRIBUTE_NAME)
-            .getNodeValue() + "." + element.getAttribute(ATTRIBUTE_NAME));
     }
 
 }

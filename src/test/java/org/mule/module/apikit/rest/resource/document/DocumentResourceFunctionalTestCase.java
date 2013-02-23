@@ -28,7 +28,7 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/rest/resource/document-resource-config.xml, org/mule/module/apikit/test-flows-config.xml";
+        return "org/mule/module/apikit/rest/resource/document/document-functional-config.xml, org/mule/module/apikit/test-flows-config.xml";
     }
 
     @Test

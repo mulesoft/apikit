@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule-api xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+    xmlns:rest="http://www.mulesoft.org/schema/mule/api-rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:rss="http://www.mulesoft.org/schema/mule/api" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+    xmlns:http="http://www.mulesoft.org/schema/mule/http"
+    xsi:schemaLocation="
+       http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
+       http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <rest:interface name="myInterface" doc:description="interface description">
+        <rest:collection-resource name="a" access="#[true]" doc:description="resource a description">
+            <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description">
+                <rest:representation mediaType="text/html" quality="1.0" schemaType="?" schemaLocation="?"/>
+                <rest:representation mediaType="text/plain" quality="1.0" schemaType="?" schemaLocation="?"/>
+            </rest:retrieve>
+            <rest:member doc:description="collection member description">
+                <rest:create flow-ref="echo" access="#[true]" doc:description="collection a member create description">
+                    <rest:representation mediaType="text/html" quality="1.0" schemaType="?" schemaLocation="?"/>
+                    <rest:representation mediaType="text/plain" quality="1.0" schemaType="?" schemaLocation="?"/>
+                </rest:create>
+                <rest:retrieve flow-ref="echo" access="#[true]" doc:description="collection a member retrieve description"/>
+                <rest:update flow-ref="echo" access="#[true]" doc:description="collection a member update description"/>
+                <rest:delete flow-ref="echo" access="#[true]" doc:description="collection a member delete description"/>
+                <rest:document-resource name="c" access="#[true]" doc:description="resource c description">
+                    <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource c retrieve description"/>
+                    <rest:update flow-ref="echo" access="#[true]" doc:description="resource c update description">
+                        <rest:representation mediaType="text/html" quality="1.0" schemaType="?" schemaLocation="?"/>
+                        <rest:representation mediaType="text/plain" quality="1.0" schemaType="?" schemaLocation="?"/>
+                    </rest:update>
+                </rest:document-resource>
+            </rest:member>
+        </rest:collection-resource>
+    </rest:interface>
+
+
+    <rest:service name="myService" interface-ref="myInterface" doc:description="service description">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+    </rest:service>
+
+</mule-api>

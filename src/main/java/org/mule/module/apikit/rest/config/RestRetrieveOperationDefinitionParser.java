@@ -11,6 +11,8 @@
 package org.mule.module.apikit.rest.config;
 
 import org.mule.config.spring.parsers.delegate.ParentContextDefinitionParser;
+import org.mule.module.apikit.rest.resource.collection.RetrieveCollectionMemberOperation;
+import org.mule.module.apikit.rest.resource.collection.RetrieveCollectionOperation;
 import org.mule.module.apikit.rest.resource.document.RetrieveDocumentOperation;
 
 public class RestRetrieveOperationDefinitionParser extends ParentContextDefinitionParser
@@ -18,8 +20,9 @@ public class RestRetrieveOperationDefinitionParser extends ParentContextDefiniti
     public RestRetrieveOperationDefinitionParser()
     {
         super("document-resource", new RestOperationDefinitionParser(RetrieveDocumentOperation.class));
-        and("collection-resource", new RestOperationDefinitionParser(RetrieveDocumentOperation.class));
-        
+        and("collection-resource", new RestOperationDefinitionParser(RetrieveCollectionOperation.class));
+        and("member", new RestOperationDefinitionParser(RetrieveCollectionMemberOperation.class));
+
     }
 
 }

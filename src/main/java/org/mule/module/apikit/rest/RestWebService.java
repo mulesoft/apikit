@@ -52,7 +52,7 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
         if (enableSwagger)
         {
             resources.add(new StaticResourceCollection("_swagger", "/org/mule/module/apikit/rest/swagger"));
-            resource.setActions(Collections.<RestOperation> singletonList(new BaseUriRetrieveOperation(this)));
+            resource.setOperations(Collections.<RestOperation> singletonList(new BaseUriRetrieveOperation(this)));
         }
         resource.setAccessExpression(webServiceInterface.getAccessExpression());
         resource.setResources(resources);

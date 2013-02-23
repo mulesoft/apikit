@@ -31,7 +31,7 @@ public abstract class AbstractRestResource implements RestResource
 
     protected String name;
     protected String description = "";
-    protected List<RestOperation> actions = new ArrayList<RestOperation>();
+    protected List<RestOperation> operations = new ArrayList<RestOperation>();
     protected String accessExpression;
 
     public AbstractRestResource(String name)
@@ -44,22 +44,22 @@ public abstract class AbstractRestResource implements RestResource
         return name;
     }
 
-    public List<RestOperation> getActions()
+    public List<RestOperation> getOperations()
     {
-        return actions;
+        return operations;
     }
 
-    public void setActions(List<RestOperation> actions)
+    public void setOperations(List<RestOperation> operations)
     {
-        this.actions = actions;
+        this.operations = operations;
     }
 
-    private RestOperation getAction(RestOperationType actionType)
+    private RestOperation getOperation(RestOperationType operationType)
     {
         RestOperation action = null;
-        for (RestOperation a : getActions())
+        for (RestOperation a : getOperations())
         {
-            if (a.getType() == actionType)
+            if (a.getType() == operationType)
             {
                 action = a;
                 break;
@@ -75,7 +75,7 @@ public abstract class AbstractRestResource implements RestResource
         {
             throw new OperationNotAllowedException(this, actionType);
         }
-        RestOperation action = getAction(actionType);
+        RestOperation action = getOperation(actionType);
         if (action == null && EXISTS == actionType)
         {
             action = useRetrieveAsExists();
@@ -89,7 +89,7 @@ public abstract class AbstractRestResource implements RestResource
 
     private RestOperation useRetrieveAsExists()
     {
-        RestOperation retrieve = getAction(RETRIEVE);
+        RestOperation retrieve = getOperation(RETRIEVE);
         if (retrieve == null)
         {
             return null;
@@ -100,9 +100,9 @@ public abstract class AbstractRestResource implements RestResource
     @Override
     public boolean isActionTypeAllowed(RestOperationType actionType)
     {
-        for (RestOperation action : actions)
+        for (RestOperation operation : operations)
         {
-            if (action.getType().equals(actionType))
+            if (operation.getType().equals(actionType))
             {
                 return true;
             }
@@ -114,9 +114,9 @@ public abstract class AbstractRestResource implements RestResource
     public Set<RestOperationType> getAllowedActionTypes()
     {
         Set<RestOperationType> allowedTypes = new HashSet<RestOperationType>();
-        for (RestOperation action : actions)
+        for (RestOperation operation : operations)
         {
-            allowedTypes.add(action.getType());
+            allowedTypes.add(operation.getType());
         }
         return allowedTypes;
     }
@@ -172,7 +172,7 @@ public abstract class AbstractRestResource implements RestResource
     public List<RestOperation> getAuthorizedActions(RestRequest request)
     {
         List<RestOperation> result = new ArrayList<RestOperation>();
-        for (RestOperation action : getActions())
+        for (RestOperation action : getOperations())
         {
             if (isAuthorized(action, request))
             {
