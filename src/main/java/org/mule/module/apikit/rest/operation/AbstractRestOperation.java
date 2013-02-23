@@ -21,8 +21,13 @@ import com.google.common.net.MediaType;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public abstract class AbstractRestOperation extends AbstractWebServiceOperation implements RestOperation
 {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected RestOperationType type;
     protected Collection<RepresentationMetaData> representations = new HashSet<RepresentationMetaData>();
@@ -81,7 +86,13 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         boolean valid = false;
         for (RepresentationMetaData representation : representations)
         {
-            if (representation.getMediaType().is(request.getProtocolAdaptor().getRequestMediaType()))
+            if (logger.isDebugEnabled())
+            {
+                logger.debug(String.format("comparing media type %s with %s\n",
+                                           representation.getMediaType(), request.getProtocolAdaptor().getRequestMediaType()));
+            }
+            if (representation.getMediaType().withoutParameters().is(
+                    request.getProtocolAdaptor().getRequestMediaType().withoutParameters()))
             {
                 valid = true;
                 break;

@@ -73,7 +73,7 @@ public final class RestContentTypeParser
      * the best match, or (-1, 0) if no match was found. Just as for
      * quality_parsed(), 'parsed_ranges' must be a list of parsed media ranges.
      *
-     * @param mimeType
+     * @param target
      * @param parsedRanges
      */
     protected static FitnessAndQuality fitnessAndQualityParsed(MediaType target,
@@ -147,7 +147,7 @@ public final class RestContentTypeParser
         Collections.sort(weightedMatches);
 
         FitnessAndQuality lastOne = weightedMatches.get(weightedMatches.size() - 1);
-        return MediaType.parse(NumberUtils.compare(lastOne.quality, 0) != 0 ? lastOne.mimeType : "");
+        return NumberUtils.compare(lastOne.quality, 0) != 0 ?  MediaType.parse(lastOne.mimeType) : null;
     }
 
     // hidden

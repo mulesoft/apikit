@@ -24,6 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mockito;
 
 public class RestWebServiceTestCase extends AbstractMuleTestCase
@@ -53,4 +54,8 @@ public class RestWebServiceTestCase extends AbstractMuleTestCase
         restWebService.setMessageSource(trigger);
     }
 
+    @Test
+    public void fake()
+    {
+    }
 }
