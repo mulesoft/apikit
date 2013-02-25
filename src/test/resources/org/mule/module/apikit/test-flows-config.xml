@@ -16,6 +16,7 @@
 
     <flow name="createLeague">
         <logger />
+        <set-variable variableName="leaguesMemberId" value="1"/>
     </flow>
 
     <flow name="retrieveLeague">
@@ -30,6 +31,10 @@
         <logger />
     </flow>
 
+    <flow name="deleteLeague">
+        <logger />
+    </flow>
+    
     <flow name="retrieveLeagues">
         <set-payload value="Liga BBVA, Premier League"/>
     </flow>

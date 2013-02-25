@@ -1,13 +1,16 @@
 
 package org.mule.module.apikit.rest.resource.collection;
 
+import org.mule.api.MuleEvent;
+import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
+import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
-import org.mule.module.apikit.rest.resource.AbstractHierarchicalRestResource;
+import org.mule.module.apikit.rest.resource.AbstractRestResource;
 
 import java.util.EnumSet;
 import java.util.Set;
 
-public class CollectionResource extends AbstractHierarchicalRestResource
+public class CollectionResource extends AbstractRestResource
 {
 
     protected CollectionMemberResource memberResource;
@@ -32,6 +35,20 @@ public class CollectionResource extends AbstractHierarchicalRestResource
     public CollectionMemberResource getMemberResource()
     {
         return memberResource;
+    }
+
+    @Override
+    protected RestOperation getAction(RestOperationType actionType, MuleEvent muleEvent)
+        throws OperationNotAllowedException
+    {
+        if (actionType == RestOperationType.CREATE)
+        {
+            return memberResource.getOperations().get(0);
+        }
+        else
+        {
+            return super.getAction(actionType, muleEvent);
+        }
     }
 
 }

@@ -37,4 +37,7 @@ public interface RestProtocolAdapter
 
     void handleException(RestException re, RestRequest request);
 
+    void handleCreated(URI location, RestRequest request);
+
+    
 }

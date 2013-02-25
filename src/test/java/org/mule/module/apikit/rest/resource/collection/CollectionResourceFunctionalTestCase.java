@@ -14,6 +14,13 @@ import org.junit.Test;
 
 public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
 {
+
+    @Override
+    public int getTestTimeoutSecs()
+    {
+        return 6000;
+    }
+
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
 
@@ -51,7 +58,14 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void createMember() throws Exception
     {
-
+        expect().log()
+            .everything()
+            .response()
+            .statusCode(201)
+            .header("Content-Length", "0")
+            .header("location", "http://localhost:" + serverPort.getNumber() + "/api/leagues/1")
+            .when()
+            .post("/api/leagues");
     }
 
     @Test

@@ -22,6 +22,7 @@ import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.RestProtocolAdapter;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.transport.NullPayload;
+import org.mule.transport.http.HttpConnector;
 import org.mule.util.StringUtils;
 
 import com.google.common.net.MediaType;
@@ -209,6 +210,16 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
             }
         }
         return mediaTypes;
+    }
+
+    @Override
+    public void handleCreated(URI location, RestRequest request)
+    {
+        request.getMuleEvent()
+            .getMessage()
+            .setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, HttpStatusCode.SUCCESS_CREATED.getCode());
+        request.getMuleEvent().getMessage().setOutboundProperty("location", location.toString());
+
     }
 
 }

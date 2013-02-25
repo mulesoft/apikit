@@ -52,7 +52,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         {
             throw new UnauthorizedException(this);
         }
-        RepresentationMetaData responseRepresentation = null;
+        RepresentationMetaData responseRepresentation = null;   
         if (!getRepresentations().isEmpty())
         {
             validateSupportedRequestMediaType(request);

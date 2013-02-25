@@ -12,7 +12,10 @@
         <rest:collection-resource name="leagues">
             <rest:retrieve flow-ref="retrieveLeagues"/>
             <rest:member>
-                <rest:retrieve flow-ref="retrieveLeagues"/>
+                <rest:create flow-ref="createLeague"/>
+                <rest:retrieve flow-ref="retrieveLeague"/>
+                <rest:update flow-ref="updateLeague"/>
+                <rest:delete flow-ref="deleteLeague"/>
             </rest:member>    
         </rest:collection-resource>
     </rest:interface>
