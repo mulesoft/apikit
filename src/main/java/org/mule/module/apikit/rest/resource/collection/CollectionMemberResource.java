@@ -6,17 +6,18 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.AbstractHierarchicalRestResource;
-import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
-import org.mule.module.apikit.rest.resource.RestResource;
 
 import java.util.EnumSet;
 import java.util.Set;
 
 public class CollectionMemberResource extends AbstractHierarchicalRestResource
 {
+
+    protected CollectionResource collectionResource;
+
     public CollectionMemberResource()
     {
-        super(null);
+        super("");
     }
 
     @Override
@@ -29,33 +30,19 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
     @Override
     public MuleEvent handle(RestRequest restRequest) throws RestException
     {
-        try
-        {
-            restRequest.getMuleEvent().setFlowVariable("resourceId", restRequest.getNextPathElement());
-            if (restRequest.hasMorePathElements())
-            {
-                String path = restRequest.getNextPathElement();
-                RestResource resource = routingTable.get(path);
-                if (resource != null)
-                {
-                    resource.handle(restRequest);
-                }
-                else
-                {
-                    throw new ResourceNotFoundException(path);
-                }
-            }
-            else
-            {
-                processResource(restRequest);
-            }
-        }
-        catch (RestException re)
-        {
-            restRequest.getProtocolAdaptor().handleException(re, restRequest);
+        restRequest.getMuleEvent().setFlowVariable(collectionResource.getMemberIdFlowVarName(),
+            restRequest.getNextPathElement());
+        return super.handle(restRequest);
+    }
 
-        }
-        return restRequest.getMuleEvent();
+    public void setCollectionResource(CollectionResource collectionResource)
+    {
+        this.collectionResource = collectionResource;
+    }
+    
+    public CollectionResource getCollectionResource()
+    {
+        return collectionResource;
     }
 
 }

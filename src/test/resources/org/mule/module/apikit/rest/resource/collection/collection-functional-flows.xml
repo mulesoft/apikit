@@ -10,33 +10,29 @@
 
     <flow name="createLeague">
         <test:assert expression="#[payload==&quot;{&apos;id&apos;:1,&apos;name&apos;=&apos;one&apos;}&quot;]" />
-        <set-variable variableName="resourceId" value="1" />
+        <set-variable variableName="leaguesMemberId" value="1" />
     </flow>
 
     <flow name="retrieveLeague">
-        <test:assert expression="#[resourceId==1||resourceId==2]" />
+        <test:assert expression="#[leaguesMemberId==1||leaguesMemberId==2]" />
         <expression-component>
-            if(resourceId==1){payload="{'id':1,'name'='one'}";}
+            if(leaguesMemberId==1){payload="{'id':1,'name'='one'}";}
             else
-            if(resourceId==2){payload="{'id':2,'name'='two'}";}
+            if(leaguesMemberId==2){payload="{'id':2,'name'='two'}";}
             else
-            if(resourceId==3){payload="{'id':3,'name'='three'}";}
+            if(leaguesMemberId==3){payload="{'id':3,'name'='three'}";}
             else{payload="error";}
         </expression-component>
     </flow>
 
     <flow name="updateLeague">
-        <test:assert expression="#[resourceId==1]" />
+        <test:assert expression="#[leaguesMemberId==1]" />
         <test:assert expression="#[payload==&quot;{&apos;id&apos;:1,&apos;name&apos;=&apos;ONE&apos;}&quot;]" />
         <set-payload value="{'id':1,'name'='ONE'}" />
     </flow>
 
-    <flow name="existsLeague">
-        <logger />
-    </flow>
-
     <flow name="deleteLeague">
-        <test:assert expression="#[resourceId==1||resourceId==2]" />
+        <test:assert expression="#[leaguesMemberId==1]" />
     </flow>
 
 </mule>

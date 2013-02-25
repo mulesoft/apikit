@@ -32,6 +32,7 @@ public class CollectionResource extends AbstractRestResource
     public void setMemberResource(CollectionMemberResource memberResource)
     {
         this.memberResource = memberResource;
+        memberResource.setCollectionResource(this);
     }
 
     public CollectionMemberResource getMemberResource()
@@ -40,7 +41,7 @@ public class CollectionResource extends AbstractRestResource
     }
 
     @Override
-    protected MuleEvent processResource(RestRequest request) throws RestException
+    public MuleEvent handle(RestRequest request) throws RestException
     {
         if (request.hasMorePathElements())
         {
@@ -48,7 +49,7 @@ public class CollectionResource extends AbstractRestResource
         }
         else
         {
-            return super.processResource(request);
+            return processResource(request);
         }
     }
 
@@ -66,4 +67,8 @@ public class CollectionResource extends AbstractRestResource
         }
     }
 
+    String getMemberIdFlowVarName()
+    {
+        return getName() + "MemberId";
+    }
 }

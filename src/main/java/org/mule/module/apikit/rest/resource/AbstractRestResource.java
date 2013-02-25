@@ -52,6 +52,13 @@ public abstract class AbstractRestResource implements RestResource
     public void setOperations(List<RestOperation> operations)
     {
         this.operations = operations;
+        for (RestOperation operation : operations)
+        {
+            if (operation instanceof AbstractRestOperation)
+            {
+                ((AbstractRestOperation) operation).setResource(this);
+            }
+        }
     }
 
     private RestOperation getOperation(RestOperationType operationType)

@@ -13,6 +13,7 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
+import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
 import org.mule.transport.NullPayload;
 
@@ -30,6 +31,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected RestOperationType type;
+    protected RestResource resource;
     protected Collection<RepresentationMetaData> representations = new HashSet<RepresentationMetaData>();
 
     @Override
@@ -52,7 +54,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         {
             throw new UnauthorizedException(this);
         }
-        RepresentationMetaData responseRepresentation = null;   
+        RepresentationMetaData responseRepresentation = null;
         if (!getRepresentations().isEmpty())
         {
             validateSupportedRequestMediaType(request);
@@ -61,7 +63,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         try
         {
             MuleEvent muleEvent = getHandler().process(request.getMuleEvent());
-            // If handler returns null then use NullPayload response 
+            // If handler returns null then use NullPayload response
             if (muleEvent == null)
             {
                 muleEvent = new DefaultMuleEvent(new DefaultMuleMessage(NullPayload.getInstance(),
@@ -89,10 +91,11 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
             if (logger.isDebugEnabled())
             {
                 logger.debug(String.format("comparing media type %s with %s\n",
-                                           representation.getMediaType(), request.getProtocolAdaptor().getRequestMediaType()));
+                    representation.getMediaType(), request.getProtocolAdaptor().getRequestMediaType()));
             }
-            if (representation.getMediaType().withoutParameters().is(
-                    request.getProtocolAdaptor().getRequestMediaType().withoutParameters()))
+            if (representation.getMediaType()
+                .withoutParameters()
+                .is(request.getProtocolAdaptor().getRequestMediaType().withoutParameters()))
             {
                 valid = true;
                 break;
@@ -127,6 +130,11 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     public Collection<RepresentationMetaData> getRepresentations()
     {
         return representations;
+    }
+    
+    public void setResource(RestResource resource)
+    {
+        this.resource = resource;
     }
 
 }

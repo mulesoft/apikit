@@ -54,7 +54,7 @@ public class CollectionResourceConfigurationTestCase extends FunctionalTestCase
 
         assertNotNull(resourceA.getMemberResource());
         CollectionMemberResource member = resourceA.getMemberResource();
-        assertNull(member.getName());
+        assertEquals("", member.getName());
         assertEquals("collection member description", member.getDescription());
         assertNull(member.getAccessExpression());
         assertEquals(4, member.getOperations().size());

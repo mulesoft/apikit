@@ -48,9 +48,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void retrieve() throws Exception
     {
-        expect().log()
-            .everything()
-            .response()
+        expect().response()
             .statusCode(200)
             .body(
                 Matchers.equalTo("{leagues:[{'id':1,'name'='one'},{'id':2,'name'='two'},{'id':3,'name'='three'}]}"))
@@ -63,8 +61,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     {
         given().body("{'id':1,'name'='one'}")
             .expect()
-            .log()
-            .everything()
+
             .response()
             .statusCode(201)
             .header("Content-Length", "0")
@@ -78,9 +75,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void retrieveMember1() throws Exception
     {
-        expect().log()
-            .everything()
-            .response()
+        expect().response()
             .statusCode(200)
             .body(Matchers.equalTo("{'id':1,'name'='one'}"))
             .when()
@@ -92,9 +87,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void retrieveMember2() throws Exception
     {
-        expect().log()
-            .everything()
-            .response()
+        expect().response()
             .statusCode(200)
             .body(Matchers.equalTo("{'id':2,'name'='two'}"))
             .when()
@@ -108,8 +101,6 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     {
         given().body("{'id':1,'name'='ONE'}")
             .expect()
-            .log()
-            .everything()
             .response()
             .statusCode(200)
             .header("Content-Length", "0")
@@ -122,13 +113,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void deleteMember() throws Exception
     {
-        expect().log()
-            .everything()
-            .response()
-            .statusCode(200)
-            .header("Content-Length", "0")
-            .when()
-            .delete("/api/leagues/1");
+        expect().response().statusCode(200).header("Content-Length", "0").when().delete("/api/leagues/1");
 
         FlowAssert.verify("deleteLeague");
     }

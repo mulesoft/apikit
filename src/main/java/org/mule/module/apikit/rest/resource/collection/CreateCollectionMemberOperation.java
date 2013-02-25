@@ -7,6 +7,7 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.transport.NullPayload;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,8 +22,11 @@ public class CreateCollectionMemberOperation extends AbstractRestOperation
         try
         {
             request.getProtocolAdaptor().handleCreated(
-                new URI(request.getProtocolAdaptor().getURI().toString() + "/"
-                        + request.getMuleEvent().getFlowVariable("resourceId")), request);
+                new URI(request.getProtocolAdaptor().getURI().toString()
+                        + "/"
+                        + request.getMuleEvent().getFlowVariable(
+                            ((CollectionMemberResource) resource).getCollectionResource()
+                                .getMemberIdFlowVarName())), request);
         }
         catch (URISyntaxException e)
         {
