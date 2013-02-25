@@ -32,7 +32,7 @@ public class CreateCollectionMemberOperation extends AbstractRestOperation
         {
             throw new UnexpectedException(e);
         }
-        request.getMuleEvent().getMessage().setPayload("");
+        request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
         return request.getMuleEvent();
     }
 
