@@ -21,12 +21,14 @@ public class CreateCollectionMemberOperation extends AbstractRestOperation
         try
         {
             request.getProtocolAdaptor().handleCreated(
-                new URI(request.getProtocolAdaptor().getURI().toString() + "/1"), request);
+                new URI(request.getProtocolAdaptor().getURI().toString() + "/"
+                        + request.getMuleEvent().getFlowVariable("resourceId")), request);
         }
         catch (URISyntaxException e)
         {
             throw new UnexpectedException(e);
         }
+        request.getMuleEvent().getMessage().setPayload("");
         return request.getMuleEvent();
     }
 

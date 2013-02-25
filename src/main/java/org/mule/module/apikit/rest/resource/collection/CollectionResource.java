@@ -2,6 +2,8 @@
 package org.mule.module.apikit.rest.resource.collection;
 
 import org.mule.api.MuleEvent;
+import org.mule.module.apikit.rest.RestException;
+import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
@@ -35,6 +37,19 @@ public class CollectionResource extends AbstractRestResource
     public CollectionMemberResource getMemberResource()
     {
         return memberResource;
+    }
+
+    @Override
+    protected MuleEvent processResource(RestRequest request) throws RestException
+    {
+        if (request.hasMorePathElements())
+        {
+            return memberResource.handle(request);
+        }
+        else
+        {
+            return super.processResource(request);
+        }
     }
 
     @Override

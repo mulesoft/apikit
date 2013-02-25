@@ -16,15 +16,26 @@
 
     <flow name="createLeague">
         <logger />
-        <set-variable variableName="leaguesMemberId" value="1"/>
+        <set-variable variableName="resourceId" value="1"/>
     </flow>
 
     <flow name="retrieveLeague">
-        <set-payload value="Liga BBVA"/>
+        <logger />
+        <expression-component>
+            if(resourceId==1){payload="{'id':1,'name'='one'}";}
+            else if(resourceId==2){payload="{'id':2,'name'='two'}";}
+            else if(resourceId==3){payload="{'id':3,'name'='three'}";}
+            else{payload="error";}
+        </expression-component>
     </flow>
 
     <flow name="updateLeague">
         <logger />
+        <expression-component>
+            if(resourceId==1){payload="{'id':1,'name'='ONE'}"}
+            else if(resourceId==2){payload="{'id':2,'name'='TWO'}"}
+            else if(resourceId==2){payload="{'id':3,'name'='THREE'}"}
+        </expression-component>
     </flow>
 
     <flow name="existsLeague">
@@ -36,7 +47,7 @@
     </flow>
     
     <flow name="retrieveLeagues">
-        <set-payload value="Liga BBVA, Premier League"/>
+        <set-payload value="{leagues:[{'id':1,'name'='one'},{'id':2,'name'='two'},{'id':3,'name'='three'}]}"/>
     </flow>
 
     <flow name="retrieveLeagueAssociation">
