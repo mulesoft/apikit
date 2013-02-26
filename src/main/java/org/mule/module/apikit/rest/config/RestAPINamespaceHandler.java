@@ -15,6 +15,7 @@ import org.mule.module.apikit.config.WebServiceInterfaceDefinitionParser;
 import org.mule.module.apikit.rest.RestWebServiceInterface;
 import org.mule.module.apikit.rest.resource.collection.CollectionResource;
 import org.mule.module.apikit.rest.resource.document.DocumentResource;
+import org.mule.module.apikit.rest.resource.pojo.POJOResource;
 
 public class RestAPINamespaceHandler extends MuleNamespaceHandler
 {
@@ -27,6 +28,7 @@ public class RestAPINamespaceHandler extends MuleNamespaceHandler
             DocumentResource.class));
         registerBeanDefinitionParser("collection-resource", new RestResourceDefinitionParser(
             CollectionResource.class));
+        registerBeanDefinitionParser("pojo-resource", new RestResourceDefinitionParser(POJOResource.class));
         registerBeanDefinitionParser("member", new CollectionMemberResourceDefinitionParser());
 
         registerBeanDefinitionParser("create", new RestCreateOperationDefinitionParser());
