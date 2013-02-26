@@ -104,7 +104,9 @@ public abstract class AbstractRestResource implements RestResource
         {
             return null;
         }
-        return new ExistsByRetrieveOperation(retrieve);
+        AbstractRestOperation retrieveOperation = new ExistsByRetrieveOperation(retrieve);
+        retrieveOperation.setResource(this);
+        return retrieveOperation;
     }
 
     @Override
@@ -142,8 +144,8 @@ public abstract class AbstractRestResource implements RestResource
         try
         {
             authorize(request);
-            this.getAction(request.getProtocolAdaptor().getOperationType(), request.getMuleEvent())
-                .handle(request);
+            this.getAction(request.getProtocolAdaptor().getOperationType(), request.getMuleEvent()).handle(
+                request);
             if (RestOperationType.EXISTS == request.getProtocolAdaptor().getOperationType())
             {
                 request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
