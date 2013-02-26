@@ -69,7 +69,7 @@ public abstract class AbstractRestResource implements RestResource
         }
     }
 
-    protected RestOperation getOperation(RestOperationType operationType)
+    public RestOperation getOperation(RestOperationType operationType)
     {
         RestOperation action = null;
         for (RestOperation a : getOperations())

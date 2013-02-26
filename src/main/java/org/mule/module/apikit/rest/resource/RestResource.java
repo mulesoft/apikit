@@ -31,7 +31,7 @@ public interface RestResource extends RestRequestHandler, WebServiceRoute, Named
 
     Collection<RepresentationMetaData> getRepresentations();
 
-    // RestOperation getOperation(RestOperationType operationType);
+    RestOperation getOperation(RestOperationType operationType);
 
     void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException;
 
