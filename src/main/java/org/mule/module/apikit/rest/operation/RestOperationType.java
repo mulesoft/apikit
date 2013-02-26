@@ -12,6 +12,40 @@ package org.mule.module.apikit.rest.operation;
 
 public enum RestOperationType
 {
-    CREATE, RETRIEVE, UPDATE, DELETE, EXISTS;
+    CREATE
+    {
+        @Override
+        public boolean isRequestExpected()
+        {
+            return true;
+        }
+    },
+    RETRIEVE
+    {
+        @Override
+        public boolean isResponseExpected()
+        {
+            return true;
+        }
+    },
+    UPDATE
+    {
+        @Override
+        public boolean isRequestExpected()
+        {
+            return true;
+        }
+    },
+    DELETE, EXISTS;
+
+    public boolean isRequestExpected()
+    {
+        return false;
+    }
+
+    public boolean isResponseExpected()
+    {
+        return false;
+    }
 
 }

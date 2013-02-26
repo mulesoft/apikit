@@ -57,8 +57,14 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         RepresentationMetaData responseRepresentation = null;
         if (!getAllRepresentations().isEmpty())
         {
-            validateSupportedRequestMediaType(request);
-            responseRepresentation = validateAcceptableResponeMediaType(request);
+            if (getType().isRequestExpected())
+            {
+                validateSupportedRequestMediaType(request);
+            }
+            if (getType().isResponseExpected())
+            {
+                responseRepresentation = validateAcceptableResponeMediaType(request);
+            }
         }
         try
         {
@@ -101,17 +107,22 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     protected void validateSupportedRequestMediaType(RestRequest request)
         throws UnsupportedMediaTypeException
     {
+        MediaType requestMediaType = request.getProtocolAdaptor().getRequestMediaType();
+        if (requestMediaType == null)
+        {
+            //if request Content-Type is not sent, skip validation
+            return;
+        }
+
         boolean valid = false;
         for (RepresentationMetaData representation : getAllRepresentations())
         {
             if (logger.isDebugEnabled())
             {
                 logger.debug(String.format("comparing media type %s with %s\n",
-                    representation.getMediaType(), request.getProtocolAdaptor().getRequestMediaType()));
+                                           representation.getMediaType(), requestMediaType));
             }
-            if (representation.getMediaType()
-                .withoutParameters()
-                .is(request.getProtocolAdaptor().getRequestMediaType().withoutParameters()))
+            if (representation.getMediaType().withoutParameters().is(requestMediaType.withoutParameters()))
             {
                 valid = true;
                 break;

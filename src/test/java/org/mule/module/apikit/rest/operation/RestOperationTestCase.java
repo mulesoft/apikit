@@ -10,12 +10,12 @@
 
 package org.mule.module.apikit.rest.operation;
 
+import static com.google.common.net.MediaType.ANY_TYPE;
 import static com.google.common.net.MediaType.HTML_UTF_8;
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static com.google.common.net.MediaType.PLAIN_TEXT_UTF_8;
 import static com.google.common.net.MediaType.XML_UTF_8;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.never;
@@ -33,7 +33,6 @@ import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
-import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.representation.DefaultRepresentationMetaData;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
@@ -48,7 +47,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -143,6 +141,15 @@ public class RestOperationTestCase extends AbstractMuleTestCase
     // Response representation mediaTypes (as defined in the "Accept" request header)
 
     @Test
+    public void anyAcceptableResponseMediaType() throws RestException
+    {
+        accept(ANY_TYPE);
+        request(PLAIN_TEXT_UTF_8);
+        produceOperation(PLAIN_TEXT_UTF_8);
+        expect(PLAIN_TEXT_UTF_8);
+    }
+
+    @Test
     public void singleAcceptableResponseMediaTypeSingleMediaTypeSupported() throws RestException
     {
         accept(PLAIN_TEXT_UTF_8.withParameter("q", "1"));
@@ -160,7 +167,7 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         expect(PLAIN_TEXT_UTF_8);
     }
 
-    @Test(expected = UnsupportedMediaTypeException.class)
+    @Test(expected = MediaTypeNotAcceptableException.class)
     public void singleNotAcceptableResponseMediaTypeSingleMediaTypeSupported() throws RestException
     {
         accept(PLAIN_TEXT_UTF_8.withParameter("q", "1"));
@@ -169,7 +176,7 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         expectException();
     }
 
-    @Test(expected = UnsupportedMediaTypeException.class)
+    @Test(expected = MediaTypeNotAcceptableException.class)
     public void singleNotAcceptableResponseMediaTypeSingleMediaTypeSupportedOnResource() throws RestException
     {
         accept(PLAIN_TEXT_UTF_8.withParameter("q", "1"));
@@ -343,7 +350,7 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         expect(JSON_UTF_8);
     }
 
-    @Test(expected = UnsupportedMediaTypeException.class)
+    @Test(expected = MediaTypeNotAcceptableException.class)
     public void multipleNotAcceptableResponseMediaTypeMultipleMediaTypesSupported() throws RestException
     {
         request(PLAIN_TEXT_UTF_8);
@@ -352,7 +359,7 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         expectException();
     }
 
-    @Test(expected = UnsupportedMediaTypeException.class)
+    @Test(expected = MediaTypeNotAcceptableException.class)
     public void multipleNotAcceptableResponseMediaTypeMultipleMediaTypesSupportedOnResource()
         throws RestException
     {
@@ -362,7 +369,7 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         expectException();
     }
 
-    @Test(expected = UnsupportedMediaTypeException.class)
+    @Test(expected = MediaTypeNotAcceptableException.class)
     public void multipleNotAcceptableResponseMediaTypeMultipleMediaTypesSupportedOnBoth()
         throws RestException
     {
@@ -373,43 +380,6 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         expectException();
     }
 
-    // Request representation mediaTypes (as defined in the "Content-Type" request header)
-
-    @Test(expected = UnsupportedMediaTypeException.class)
-    public void unsupportedRequestMediaType() throws RestException
-    {
-        request(JSON_UTF_8);
-        produceOperation(XML_UTF_8);
-        expectException();
-    }
-
-    @Test(expected = UnsupportedMediaTypeException.class)
-    public void unsupportedRequestMediaTypeOnResource() throws RestException
-    {
-        request(JSON_UTF_8);
-        produceResource(XML_UTF_8);
-        expectException();
-    }
-
-    // MediaType inheritance from resource
-
-    @Test
-    @Ignore
-    public void mediaTypeInheritedFromResource()
-    {
-        fail("Not yet implemented");
-    }
-
-    // Defaults
-
-    @Test
-    public void defaultMediaType() throws RestException
-    {
-        accept(XML_UTF_8);
-        request(JSON_UTF_8);
-        action.handle(request);
-    }
-
     private void request(MediaType mediaType)
     {
         when(httpAdapter.getRequestMediaType()).thenReturn(mediaType);
@@ -417,7 +387,14 @@ public class RestOperationTestCase extends AbstractMuleTestCase
 
     private void accept(MediaType... mediaTypes)
     {
-        when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(Arrays.asList(mediaTypes));
+        if (mediaTypes == null)
+        {
+            when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(null);
+        }
+        else
+        {
+            when(httpAdapter.getAcceptableResponseMediaTypes()).thenReturn(Arrays.asList(mediaTypes));
+        }
     }
 
     private void produceOperation(MediaType... mediaTypes)
@@ -474,6 +451,11 @@ public class RestOperationTestCase extends AbstractMuleTestCase
 
     static class DummyRestAction extends AbstractRestOperation
     {
+        @Override
+        public RestOperationType getType()
+        {
+            return RestOperationType.RETRIEVE;
+        }
     }
 
 }

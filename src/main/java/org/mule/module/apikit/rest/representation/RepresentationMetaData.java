@@ -1,6 +1,8 @@
 package org.mule.module.apikit.rest.representation;
 
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
+import org.mule.api.transformer.TransformerException;
 import org.mule.module.apikit.rest.RestRequest;
 
 import com.google.common.net.MediaType;
@@ -13,6 +15,6 @@ public interface RepresentationMetaData
     String getSchemaLocation();
 
     Object fromRepresentation(Object payload);
-    Object toRepresentation(MuleEvent muleEvent, RestRequest request);
+    Object toRepresentation(MuleEvent muleEvent, RestRequest request) throws MuleException;
 
 }

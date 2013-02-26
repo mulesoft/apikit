@@ -10,8 +10,11 @@
 
 package org.mule.module.apikit.rest.config;
 
+import static org.apache.commons.lang.StringUtils.defaultIfEmpty;
+
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 import org.mule.module.apikit.rest.representation.DefaultRepresentationMetaData;
+import org.mule.util.StringUtils;
 
 import com.google.common.net.MediaType;
 
@@ -34,8 +37,8 @@ public class RepresentationDefinitionParser extends ChildDefinitionParser
     @Override
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
-        builder.addPropertyValue("mediaType",
-            MediaType.parse(element.getAttribute("mediaType") + ";q=" + element.getAttribute("quality")));
+        String quality = defaultIfEmpty(element.getAttribute("quality"), "1");
+        builder.addPropertyValue("mediaType", MediaType.parse(element.getAttribute("mediaType") + ";q=" + quality));
         super.parseChild(element, parserContext, builder);
     }
 }

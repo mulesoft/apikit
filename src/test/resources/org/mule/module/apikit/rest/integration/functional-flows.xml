@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:test="http://www.mulesoft.org/schema/mule/test"
+    xmlns:spring="http://www.springframework.org/schema/beans"
+    xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <flow name="retrieveLeagues">
+        <set-payload value="#[registry:list-of-leagues]" returnClass="org.mule.module.apikit.rest.integration.Leagues"/>
+        <logger level="WARN" message="XXXXXXXXXXXXX retrieveLeagues invoked XXXXXXXXXXXX"/>
+    </flow>
+
+    <flow name="createLeague">
+        <test:assert expression="#[payload==&quot;{&apos;id&apos;:1,&apos;name&apos;=&apos;one&apos;}&quot;]" />
+        <set-variable variableName="resourceId" value="1" />
+    </flow>
+
+    <flow name="retrieveLeague">
+        <test:assert expression="#[resourceId==1||resourceId==2]" />
+        <expression-component>
+            if(resourceId==1){payload="{'id':1,'name'='one'}";}
+            else
+            if(resourceId==2){payload="{'id':2,'name'='two'}";}
+            else
+            if(resourceId==3){payload="{'id':3,'name'='three'}";}
+            else{payload="error";}
+        </expression-component>
+    </flow>
+
+    <flow name="updateLeague">
+        <test:assert expression="#[resourceId==1]" />
+        <test:assert expression="#[payload==&quot;{&apos;id&apos;:1,&apos;name&apos;=&apos;ONE&apos;}&quot;]" />
+        <set-payload value="{'id':1,'name'='ONE'}" />
+    </flow>
+
+    <flow name="deleteLeague">
+        <test:assert expression="#[resourceId==1||resourceId==2]" />
+    </flow>
+
+    <flow name="retrieveTeams">
+        <logger/>
+    </flow>
+
+    <flow name="createTeam">
+        <logger/>
+    </flow>
+
+    <flow name="retrieveTeam">
+        <logger/>
+    </flow>
+
+    <flow name="updateTeam">
+        <logger/>
+    </flow>
+
+    <flow name="deleteTeam">
+        <logger/>
+    </flow>
+
+
+    <spring:beans>
+        <spring:bean id="liga-bbva" class="org.mule.module.apikit.rest.integration.League">
+            <spring:property name="id" value="liga-bbva"/>
+            <spring:property name="name" value="Liga BBVA"/>
+        </spring:bean>
+        <spring:bean id="premier-league" class="org.mule.module.apikit.rest.integration.League">
+            <spring:property name="id" value="premier-league"/>
+            <spring:property name="name" value="Premier League"/>
+        </spring:bean>
+        <spring:bean id="list-of-leagues" class="org.mule.module.apikit.rest.integration.Leagues">
+            <spring:property name="leagues">
+                <spring:list>
+                    <spring:ref bean="liga-bbva"/>
+                    <spring:ref bean="premier-league"/>
+                </spring:list>
+            </spring:property>
+        </spring:bean>
+        <spring:bean id="real-madrid" class="org.mule.module.apikit.rest.integration.Team">
+            <spring:property name="id" value="real-madrid"/>
+            <spring:property name="name" value="Real Madrid"/>
+        </spring:bean>
+        <spring:bean id="barcelona" class="org.mule.module.apikit.rest.integration.Team">
+            <spring:property name="id" value="barcelona"/>
+            <spring:property name="name" value="Barcelona"/>
+        </spring:bean>
+        <spring:bean id="valencia" class="org.mule.module.apikit.rest.integration.Team">
+            <spring:property name="id" value="valencia"/>
+            <spring:property name="name" value="Valencia"/>
+        </spring:bean>
+        <spring:bean id="athletic-bilbao" class="org.mule.module.apikit.rest.integration.Team">
+            <spring:property name="id" value="athletic-bilbao"/>
+            <spring:property name="name" value="Athletic Bilbao"/>
+        </spring:bean>
+        <spring:bean id="atletico-madrid" class="org.mule.module.apikit.rest.integration.Team">
+            <spring:property name="id" value="atletico-madrid"/>
+            <spring:property name="name" value="Atletico Madrid"/>
+        </spring:bean>
+        <spring:bean id="list-of-teams-liga-bbva" class="org.mule.module.apikit.rest.integration.Teams">
+            <spring:property name="teams">
+                <spring:list>
+                    <spring:ref bean="real-madrid"/>
+                    <spring:ref bean="barcelona"/>
+                    <spring:ref bean="valencia"/>
+                    <spring:ref bean="athletic-bilbao"/>
+                    <spring:ref bean="atletico-madrid"/>
+                </spring:list>
+            </spring:property>
+        </spring:bean>
+
+    </spring:beans>
+
+</mule>
