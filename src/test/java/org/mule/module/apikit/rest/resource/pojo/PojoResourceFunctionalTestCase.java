@@ -27,7 +27,7 @@ public class PojoResourceFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/rest/resource/pojo/pojo-functional-config.xml";
+        return "org/mule/module/apikit/rest/resource/pojo/pojo-functional-config.xml, org/mule/module/apikit/rest/resource/pojo/pojo-functional-flows.xml";
     }
 
     @Test

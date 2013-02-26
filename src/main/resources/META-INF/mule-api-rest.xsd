@@ -69,7 +69,7 @@
     <xsd:complexType name="pojoResourceType">
         <xsd:complexContent>
             <xsd:extension base="abstractResourceType">
-                <xsd:attribute name="resourceClass" type="xsd:string"/>
+                <xsd:attribute name="resource-ref" type="xsd:string"/>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

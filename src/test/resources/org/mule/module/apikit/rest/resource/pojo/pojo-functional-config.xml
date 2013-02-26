@@ -8,7 +8,7 @@
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <rest:interface name="myInterface">
-        <rest:pojo-resource name="sponsor" resourceClass="org.mule.module.apikit.rest.resource.pojo.SponsorResource"/>
+        <rest:pojo-resource name="sponsor" resource-ref="sponsorResource"/>
     </rest:interface>
 
     <rest:service name="myService" interface-ref="myInterface">

@@ -13,6 +13,10 @@ import org.mule.transport.http.HttpConnector;
 
 import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.core.header.InBoundHeaders;
+import com.sun.jersey.core.spi.component.ComponentContext;
+import com.sun.jersey.core.spi.component.ioc.IoCComponentProvider;
+import com.sun.jersey.core.spi.component.ioc.IoCComponentProviderFactory;
+import com.sun.jersey.core.spi.component.ioc.IoCInstantiatedComponentProvider;
 import com.sun.jersey.spi.container.ContainerRequest;
 import com.sun.jersey.spi.container.ContainerResponse;
 import com.sun.jersey.spi.container.WebApplication;
@@ -26,7 +30,7 @@ import java.util.Set;
 public class POJOResource extends AbstractRestResource implements Initialisable
 {
     protected WebApplication application;
-    protected Class resourceClass;
+    protected Object resource;
 
     public POJOResource(String name)
     {
@@ -37,7 +41,49 @@ public class POJOResource extends AbstractRestResource implements Initialisable
     public void initialise() throws InitialisationException
     {
         application = WebApplicationFactory.createWebApplication();
-        application.initiate(new DefaultResourceConfig(resourceClass));
+        application.initiate(new DefaultResourceConfig(resource.getClass()),
+            new IoCComponentProviderFactory()
+            {
+                @Override
+                public IoCComponentProvider getComponentProvider(ComponentContext cc, Class<?> c)
+                {
+                    return new IoCInstantiatedComponentProvider()
+                    {
+                        @Override
+                        public Object getInstance()
+                        {
+                            return resource;
+                        }
+
+                        @Override
+                        public Object getInjectableInstance(Object o)
+                        {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+                    };
+                }
+
+                @Override
+                public IoCComponentProvider getComponentProvider(Class<?> c)
+                {
+                    return new IoCInstantiatedComponentProvider()
+                    {
+                        @Override
+                        public Object getInstance()
+                        {
+                            return resource;
+                        }
+
+                        @Override
+                        public Object getInjectableInstance(Object o)
+                        {
+                            // TODO Auto-generated method stub
+                            return null;
+                        }
+                    };
+                }
+            });
     }
 
     @Override
@@ -109,8 +155,8 @@ public class POJOResource extends AbstractRestResource implements Initialisable
         }
     }
 
-    public void setResourceClass(Class resourceClass)
+    public void setResource(Object resource)
     {
-        this.resourceClass = resourceClass;
+        this.resource = resource;
     }
 }
