@@ -204,9 +204,14 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         String[] types = StringUtils.split(acceptHeader, ',');
         if (types != null)
         {
-            for (String mediaType : types)
+            for (String type : types)
             {
-                mediaTypes.add(MediaType.parse(mediaType));
+                MediaType mediaType = MediaType.parse(type.trim());
+                if (!mediaType.parameters().containsKey("q"))
+                {
+                    mediaType = mediaType.withParameter("q", "1");
+                }
+                mediaTypes.add(mediaType);
             }
         }
         return mediaTypes;

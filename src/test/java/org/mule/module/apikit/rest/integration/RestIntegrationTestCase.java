@@ -59,19 +59,18 @@ public class RestIntegrationTestCase extends FunctionalTestCase
         given().header("Accept", "text/xml").expect().response().body("leagues.league.name", hasItems("Liga BBVA", "Premier League")).when().get("/api/leagues");
         FlowAssert.verify("apiImplementation");
     }
+*/
 
     @Test
     public void testRetrieveOnCollectionArchetypeWithWrongContentType() throws Exception {
-        given().header("Accept", "application/xml").expect().response().statusCode(415).when().get("/api/leagues");
-        FlowAssert.verify("apiImplementation");
+        given().header("Accept", "application/xml").expect().response().statusCode(406).when().get("/api/leagues");
     }
-
 
     @Test
     public void testRetrieveContentTypeOnCollectionArchetype() throws Exception {
         expect().log().body().response().contentType(ContentType.JSON).when().get("/api/leagues");
-        FlowAssert.verify("apiImplementation");
     }
+/*
 
     @Test
     public void testRetrieveLinkSelfOnCollectionArchetype() throws Exception {
