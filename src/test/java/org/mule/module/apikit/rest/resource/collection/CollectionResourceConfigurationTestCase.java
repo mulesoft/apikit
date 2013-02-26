@@ -44,7 +44,6 @@ public class CollectionResourceConfigurationTestCase extends FunctionalTestCase
         assertEquals("a", resourceA.getName());
         assertEquals("resource a description", resourceA.getDescription());
         assertEquals("#[true]", resourceA.getAccessExpression());
-        assertEquals(1, resourceA.getOperations().size());
 
         RestOperation action1 = (RestOperation) resourceA.getOperations().get(0);
         assertEquals(RestOperationType.RETRIEVE, action1.getType());
@@ -58,6 +57,8 @@ public class CollectionResourceConfigurationTestCase extends FunctionalTestCase
         assertEquals("collection member description", member.getDescription());
         assertNull(member.getAccessExpression());
         assertEquals(4, member.getOperations().size());
+        assertEquals(1, resourceA.getOperations().size());
+        assertEquals(2, member.getRepresentations().size());
 
         RestOperation action2 = (RestOperation) member.getOperations().get(0);
         assertEquals(RestOperationType.CREATE, action2.getType());
@@ -89,6 +90,7 @@ public class CollectionResourceConfigurationTestCase extends FunctionalTestCase
         assertEquals("resource c description", child.getDescription());
         assertEquals("#[true]", child.getAccessExpression());
         assertEquals(2, child.getOperations().size());
+        assertEquals(2, child.getRepresentations().size());
 
     }
 

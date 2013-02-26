@@ -11,6 +11,8 @@
 
     <rest:interface name="myInterface" doc:description="interface description">
         <rest:document-resource name="a" access="#[true]" doc:description="resource a description">
+            <rest:representation mediaType="text/xml" quality="1.0" schemaType="?" schemaLocation="?"/>
+            <rest:representation mediaType="text/other" quality="1.0" schemaType="?" schemaLocation="?"/>
             <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description">
                 <rest:representation mediaType="text/html" quality="1.0" schemaType="?" schemaLocation="?"/>
                 <rest:representation mediaType="text/plain" quality="1.0" schemaType="?" schemaLocation="?"/>

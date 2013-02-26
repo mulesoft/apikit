@@ -16,6 +16,8 @@
                 <rest:representation mediaType="text/plain" quality="1.0" schemaType="?" schemaLocation="?"/>
             </rest:retrieve>
             <rest:member doc:description="collection member description">
+                <rest:representation mediaType="text/xml" quality="1.0" schemaType="?" schemaLocation="?"/>
+                <rest:representation mediaType="text/other" quality="1.0" schemaType="?" schemaLocation="?"/>
                 <rest:create flow-ref="echo" access="#[true]" doc:description="collection a member create description">
                     <rest:representation mediaType="text/html" quality="1.0" schemaType="?" schemaLocation="?"/>
                     <rest:representation mediaType="text/plain" quality="1.0" schemaType="?" schemaLocation="?"/>
@@ -24,6 +26,8 @@
                 <rest:update flow-ref="echo" access="#[true]" doc:description="collection a member update description"/>
                 <rest:delete flow-ref="echo" access="#[true]" doc:description="collection a member delete description"/>
                 <rest:document-resource name="c" access="#[true]" doc:description="resource c description">
+                    <rest:representation mediaType="text/xml" quality="1.0" schemaType="?" schemaLocation="?"/>
+                    <rest:representation mediaType="text/other" quality="1.0" schemaType="?" schemaLocation="?"/>
                     <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource c retrieve description"/>
                     <rest:update flow-ref="echo" access="#[true]" doc:description="resource c update description">
                         <rest:representation mediaType="text/html" quality="1.0" schemaType="?" schemaLocation="?"/>

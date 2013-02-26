@@ -18,6 +18,7 @@ import org.mule.transport.NullPayload;
 
 import com.google.common.net.MediaType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -54,7 +55,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
             throw new UnauthorizedException(this);
         }
         RepresentationMetaData responseRepresentation = null;
-        if (!getRepresentations().isEmpty())
+        if (!getAllRepresentations().isEmpty())
         {
             validateSupportedRequestMediaType(request);
             responseRepresentation = validateAcceptableResponeMediaType(request);
@@ -101,7 +102,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         throws UnsupportedMediaTypeException
     {
         boolean valid = false;
-        for (RepresentationMetaData representation : representations)
+        for (RepresentationMetaData representation : getAllRepresentations())
         {
             if (logger.isDebugEnabled())
             {
@@ -125,13 +126,13 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     protected RepresentationMetaData validateAcceptableResponeMediaType(RestRequest request)
         throws MediaTypeNotAcceptableException
     {
-        MediaType bestMatch = RestContentTypeParser.bestMatch(representations, request.getProtocolAdaptor()
-            .getAcceptableResponseMediaTypes());
+        MediaType bestMatch = RestContentTypeParser.bestMatch(getAllRepresentations(),
+            request.getProtocolAdaptor().getAcceptableResponseMediaTypes());
         if (bestMatch == null)
         {
             throw new MediaTypeNotAcceptableException();
         }
-        for (RepresentationMetaData representation : representations)
+        for (RepresentationMetaData representation : getAllRepresentations())
         {
             if (representation.getMediaType().equals(bestMatch))
             {
@@ -150,6 +151,14 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     public void setResource(RestResource resource)
     {
         this.resource = resource;
+    }
+
+    public Collection<RepresentationMetaData> getAllRepresentations()
+    {
+        Collection<RepresentationMetaData> allRepresentations = new ArrayList<RepresentationMetaData>();
+        allRepresentations.addAll(resource.getRepresentations());
+        allRepresentations.addAll(getRepresentations());
+        return allRepresentations;
     }
 
 }

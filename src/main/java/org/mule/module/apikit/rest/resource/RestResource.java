@@ -7,7 +7,9 @@ import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestRequestHandler;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -22,5 +24,7 @@ public interface RestResource extends RestRequestHandler, WebServiceRoute, Named
     List<RestOperation> getOperations();
 
     List<RestOperation> getAuthorizedActions(RestRequest request);
+    
+    Collection<RepresentationMetaData> getRepresentations();
 
 }

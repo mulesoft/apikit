@@ -44,6 +44,7 @@ public class DocumentResourceConfigurationTestCase extends FunctionalTestCase
         assertEquals("a", resourceA.getName());
         assertEquals("resource a description", resourceA.getDescription());
         assertEquals("#[true]", resourceA.getAccessExpression());
+        assertEquals(2, resourceA.getRepresentations().size());
 
         assertEquals(1, resourceA.getOperations().size());
 

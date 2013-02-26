@@ -15,9 +15,11 @@ import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.transport.NullPayload;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -33,6 +35,7 @@ public abstract class AbstractRestResource implements RestResource
     protected String description = "";
     protected List<RestOperation> operations = new ArrayList<RestOperation>();
     protected String accessExpression;
+    protected Collection<RepresentationMetaData> representations = new HashSet<RepresentationMetaData>();
 
     public AbstractRestResource(String name)
     {
@@ -227,5 +230,15 @@ public abstract class AbstractRestResource implements RestResource
         {
             return retrieve.getHandler();
         }
+    }
+
+    public Collection<RepresentationMetaData> getRepresentations()
+    {
+        return representations;
+    }
+
+    public void setRepresentations(Collection<RepresentationMetaData> representations)
+    {
+        this.representations = representations;
     }
 }
