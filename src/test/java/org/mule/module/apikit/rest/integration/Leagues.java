@@ -43,6 +43,22 @@ public class Leagues {
         this.leagues = leagues;
     }
 
+    public League getLeague(String id)
+    {
+        for (League league : leagues)
+        {
+            if (league.getId().equals(id))
+            {
+                return league;
+            }
+        }
+        return null;
+    }
+
+    public boolean deleteLeague(String id)
+    {
+        return leagues.remove(new League(id));
+    }
 
     @Transformer(resultMimeType = "application/json")
     public String toJson(Leagues leagues) throws IOException {

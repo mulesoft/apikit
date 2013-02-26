@@ -7,6 +7,7 @@ import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.api.transformer.TransformerException;
 import org.mule.config.i18n.MessageFactory;
+import org.mule.config.transformer.AnnotatedTransformerProxy;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transformer.types.SimpleDataType;
@@ -82,7 +83,16 @@ public class DefaultRepresentationMetaData implements RepresentationMetaData
             throw new TransformerException(MessageFactory.createStaticMessage(String.format(
                     "No transformer found for the following types: %s -> %s\n", sourceDataType, resultDataType)));
         }
-        Object payload = transformers.get(0).process(event).getMessage().getPayload();
+        Transformer transformer = transformers.get(0);
+        //TODO fix hack to get best possible transformer
+        for (Transformer tr : transformers)
+        {
+            if (tr instanceof AnnotatedTransformerProxy)
+            {
+                transformer = tr;
+            }
+        }
+        Object payload = transformer.process(event).getMessage().getPayload();
         return payload;
     }
 

@@ -114,7 +114,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void deleteMember() throws Exception
     {
-        expect().response().statusCode(200).header("Content-Length", "0").when().delete("/api/leagues/1");
+        expect().response().statusCode(204).header("Content-Length", "0").when().delete("/api/leagues/1");
 
         FlowAssert.verify("deleteLeague");
     }
@@ -197,7 +197,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     public void deleteMemberNesedCollection() throws Exception
     {
         expect().response()
-            .statusCode(200)
+            .statusCode(204)
             .header("Content-Length", "0")
             .when()
             .delete("/api/leagues/1/teams/3");

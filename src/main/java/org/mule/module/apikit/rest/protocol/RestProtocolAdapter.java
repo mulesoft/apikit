@@ -39,5 +39,7 @@ public interface RestProtocolAdapter
 
     void handleCreated(URI location, RestRequest request);
 
+    void handleNoContent(RestRequest request);
+
     
 }

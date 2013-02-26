@@ -11,40 +11,33 @@
 
     <flow name="retrieveLeagues">
         <set-payload value="#[registry:list-of-leagues]" returnClass="org.mule.module.apikit.rest.integration.Leagues"/>
-        <logger level="WARN" message="XXXXXXXXXXXXX retrieveLeagues invoked XXXXXXXXXXXX"/>
     </flow>
 
     <flow name="createLeague">
-        <logger level="WARN" message="createLeague1: #[payload]"/>
-        <!--<auto-transformer returnClass="org.mule.module.apikit.rest.integration.League"/>-->
         <json:json-to-object-transformer returnClass="org.mule.module.apikit.rest.integration.League"/>
-        <logger level="WARN" message="createLeague2: #[payload]"/>
+        <set-variable variableName="leaguesMemberId" value="#[app.registry['list-of-leagues'].getLeagues().size() + 1]" />
         <expression-component>
-            app.registry['list-of-leagues'].getLeagues().add(payload)
+            payload.id = leaguesMemberId;
+            app.registry['list-of-leagues'].getLeagues().add(payload);
         </expression-component>
-        <set-variable variableName="resourceId" value="1" />
     </flow>
 
     <flow name="retrieveLeague">
-        <test:assert expression="#[resourceId==1||resourceId==2]" />
-        <expression-component>
-            if(resourceId==1){payload="{'id':1,'name'='one'}";}
-            else
-            if(resourceId==2){payload="{'id':2,'name'='two'}";}
-            else
-            if(resourceId==3){payload="{'id':3,'name'='three'}";}
-            else{payload="error";}
-        </expression-component>
-    </flow>
-
-    <flow name="updateLeague">
-        <test:assert expression="#[resourceId==1]" />
-        <test:assert expression="#[payload==&quot;{&apos;id&apos;:1,&apos;name&apos;=&apos;ONE&apos;}&quot;]" />
-        <set-payload value="{'id':1,'name'='ONE'}" />
+        <logger level="WARN" message="leaguesMemberId: #[leaguesMemberId]"/>
+        <choice>
+            <when expression="#[app.registry['list-of-leagues'].getLeague(leaguesMemberId)]">
+                <set-payload value="#[app.registry['list-of-leagues'].getLeague(leaguesMemberId)]" returnClass="org.mule.module.apikit.rest.integration.League"/>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="404" />
+            </otherwise>
+        </choice>
     </flow>
 
     <flow name="deleteLeague">
-        <test:assert expression="#[resourceId==1||resourceId==2]" />
+        <expression-component>
+            app.registry['list-of-leagues'].deleteLeague(leaguesMemberId)
+        </expression-component>
     </flow>
 
     <flow name="retrieveTeams">

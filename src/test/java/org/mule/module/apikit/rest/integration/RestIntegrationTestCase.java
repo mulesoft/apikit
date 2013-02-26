@@ -50,7 +50,6 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     @Test
     public void testRetrieveOnCollectionArchetype() throws Exception {
         expect().log().everything().response().body("leagues.name", hasItems("Liga BBVA", "Premier League")).when().get("/api/leagues");
-        FlowAssert.verify("apiImplementation");
     }
 
 /*
@@ -74,6 +73,7 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     @Test
     public void testCreateOnCollectionArchetype() throws Exception {
         given().body("{ \"name\": \"MLS\" }").contentType("application/json").expect().statusCode(201).post("/api/leagues");
+        expect().log().everything().response().body("leagues.name", hasItems("Liga BBVA", "Premier League", "MLS")).when().get("/api/leagues");
     }
 
     /*
@@ -113,12 +113,6 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     //<!-- DELETE {parentUri}/{leagueName} - Delete a resource -> 204 -->
 
     @Test
-    public void testDeleteOnDocumentArchetype() throws Exception {
-        expect().response().statusCode(204).when().delete("/api/leagues/liga-bbva");
-        FlowAssert.verify("apiImplementation");
-    }
-
-    @Test
     public void testNoPutOnDocumentArchetype() throws Exception {
         expect().response().statusCode(405).when().put("/api/leagues/liga-bbva");
         FlowAssert.verify("apiImplementation");
@@ -141,18 +135,20 @@ public class RestIntegrationTestCase extends FunctionalTestCase
         given().log().all().header("Accept", "text/xml").expect().response().log().all().statusCode(200).contentType("text/xml").body("league.id", is("premier-league")).when().get("/api/leagues/premier-league");
         FlowAssert.verify("apiImplementation");
     }
+*/
 
     @Test
-    public void testRetrieveUsingJsonOnDocumentArchetype() throws Exception {
+    public void testRetrieveOnMemberArchetype() throws Exception {
         given().log().all().header("Accept", "application/json").expect().response().log().all().statusCode(200).contentType("application/json").body("id", is("liga-bbva")).when().get("/api/leagues/liga-bbva");
-        FlowAssert.verify("apiImplementation");
     }
 
     @Test
-    public void testRetrieveLinkSelfUsingJsonOnDocumentArchetype() throws Exception {
-        given().log().all().header("Accept", "application/json").expect().response().log().all().statusCode(200).contentType("application/json").body("links[0].rel", is("self")).when().get("/api/leagues/liga-bbva");
-        FlowAssert.verify("apiImplementation");
+    public void testDeleteOnMemberArchetype() throws Exception {
+        expect().response().statusCode(204).when().delete("/api/leagues/liga-bbva");
     }
+
+
+/*
 
     @Test
     public void testRetrieveUsinJsonOnDocumentArchetype2() throws Exception {
@@ -166,10 +162,5 @@ public class RestIntegrationTestCase extends FunctionalTestCase
         FlowAssert.verify("apiImplementation");
     }
 
-    @Test
-    public void testRetrieveLinkSelfOnChildCollectionArchetype() throws Exception {
-        expect().log().body().response().body("teams[-1].links[0].rel", is("self")).when().get("/api/leagues/liga-bbva/teams");
-        FlowAssert.verify("apiImplementation");
-    }
 */
 }

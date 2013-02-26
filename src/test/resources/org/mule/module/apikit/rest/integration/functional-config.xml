@@ -22,9 +22,6 @@
                 <rest:retrieve flow-ref="retrieveLeague">
                     <rest:representation mediaType="application/json"/>
                 </rest:retrieve>
-                <rest:update flow-ref="updateLeague">
-                    <rest:representation mediaType="application/json"/>
-                </rest:update>
                 <rest:delete flow-ref="deleteLeague"/>
 
                 <rest:collection-resource name="teams">

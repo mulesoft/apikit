@@ -19,6 +19,7 @@ public class DeleteCollectionMemberOperation extends AbstractRestOperation
     public void handle(RestRequest request) throws RestException
     {
         super.handle(request);
+        request.getProtocolAdaptor().handleNoContent(request);
         request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
     }
 }
