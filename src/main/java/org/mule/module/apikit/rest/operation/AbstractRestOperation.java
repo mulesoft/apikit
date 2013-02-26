@@ -65,10 +65,19 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
 
             if (responeEvent != null && responeEvent.getMessage() != null)
             {
-                request.getMuleEvent().setMessage(responeEvent.getMessage());
-                for (String name : responeEvent.getFlowVariableNames())
+                if (responeEvent.getMessage().getExceptionPayload() != null)
                 {
-                    request.getMuleEvent().setFlowVariable(name, responeEvent.getFlowVariable(name));
+                    throw new OperationHandlerException(responeEvent.getMessage()
+                        .getExceptionPayload()
+                        .getException());
+                }
+                else
+                {
+                    request.getMuleEvent().setMessage(responeEvent.getMessage());
+                    for (String name : responeEvent.getFlowVariableNames())
+                    {
+                        request.getMuleEvent().setFlowVariable(name, responeEvent.getFlowVariable(name));
+                    }
                 }
             }
             else

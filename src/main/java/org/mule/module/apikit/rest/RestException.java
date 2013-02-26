@@ -20,7 +20,7 @@ public class RestException extends Exception
         super();
     }
 
-    public RestException(Exception cause)
+    public RestException(Throwable cause)
     {
         super(cause);
     }

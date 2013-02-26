@@ -13,7 +13,7 @@ package org.mule.module.apikit.rest;
 public class OperationHandlerException extends RestException
 {
 
-    public OperationHandlerException(Exception e)
+    public OperationHandlerException(Throwable e)
     {
         super(e);
     }

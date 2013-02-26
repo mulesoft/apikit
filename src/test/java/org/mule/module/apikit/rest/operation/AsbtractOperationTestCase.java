@@ -85,23 +85,24 @@ public abstract class AsbtractOperationTestCase extends AbstractMuleTestCase
         operation.handle(restRequest);
     }
 
-//    @Test(expected = OperationHandlerException.class)
-//    public void handlerReturnsWithExceptionPayload() throws Exception
-//    {
-//        when(handler.process(any(MuleEvent.class))).thenReturn(event);
-//        when(message.getExceptionPayload()).thenReturn(
-//            new DefaultExceptionPayload(new RuntimeException("ERROR!!")));
-//        operation.handle(restRequest);
-//    }
-//
-//    @Test
-//    public void handlerReturnsNull() throws MuleException, RestException
-//    {
-//        when(handler.process(any(MuleEvent.class))).thenReturn(null);
-//        operation.handle(restRequest);
-//        assertNotNull(restRequest.getMuleEvent());
-//        assertEquals(NullPayload.getInstance(), restRequest.getMuleEvent().getMessage().getPayload());
-//    }
+    @Test(expected = OperationHandlerException.class)
+    public void handlerReturnsWithExceptionPayload() throws Exception
+    {
+        when(handler.process(any(MuleEvent.class))).thenReturn(event);
+        when(message.getExceptionPayload()).thenReturn(
+            new DefaultExceptionPayload(new RuntimeException("ERROR!!")));
+        operation.handle(restRequest);
+    }
+
+    //
+    // @Test
+    // public void handlerReturnsNull() throws MuleException, RestException
+    // {
+    // when(handler.process(any(MuleEvent.class))).thenReturn(null);
+    // operation.handle(restRequest);
+    // assertNotNull(restRequest.getMuleEvent());
+    // verify(event).setMessage(Matchers.hasProperty("payload", Matchers.equalTo(NullPayload.getInstance())));
+    // }
 
     @Test
     public void handlerReturnsNullPayload() throws Exception

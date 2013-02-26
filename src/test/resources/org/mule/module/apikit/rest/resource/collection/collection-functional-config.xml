@@ -16,6 +16,18 @@
                 <rest:retrieve flow-ref="retrieveLeague"/>
                 <rest:update flow-ref="updateLeague"/>
                 <rest:delete flow-ref="deleteLeague"/>
+                <rest:collection-resource name="teams">
+                    <rest:retrieve flow-ref="retrieveTeams"/>
+                    <rest:member>
+                        <rest:create flow-ref="createTeam"/>
+                        <rest:retrieve flow-ref="retrieveTeam"/>
+                        <rest:update flow-ref="updateTeam"/>
+                        <rest:delete flow-ref="deleteTeam"/>
+                    </rest:member>    
+                </rest:collection-resource>
+                <rest:document-resource name="sponsor">
+                    <rest:retrieve flow-ref="retrieveSponsor"/>
+                </rest:document-resource>
             </rest:member>    
         </rest:collection-resource>
     </rest:interface>
