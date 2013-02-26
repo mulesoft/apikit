@@ -67,8 +67,4 @@ public class CollectionResource extends AbstractRestResource
         }
     }
 
-    String getMemberIdFlowVarName()
-    {
-        return getName() + "MemberId";
-    }
 }

@@ -23,12 +23,22 @@ public class CollectionMemberResourceDefinitionParser extends ChildDefinitionPar
     public CollectionMemberResourceDefinitionParser()
     {
         super("memberResource", CollectionMemberResource.class, false);
+        addIgnored(ATTRIBUTE_NAME);
     }
 
     @Override
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
+        String parentName = element.getParentNode()
+            .getAttributes()
+            .getNamedItem(ATTRIBUTE_NAME)
+            .getNodeValue();
+        builder.addConstructorArgValue(parentName.substring(parentName.lastIndexOf(".") + 1,
+            parentName.length())
+                                       + "Member");
         builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
+
     }
+
 }

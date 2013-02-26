@@ -14,9 +14,9 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
 
     protected CollectionResource collectionResource;
 
-    public CollectionMemberResource()
+    public CollectionMemberResource(String name)
     {
-        super("");
+        super(name);
     }
 
     @Override
@@ -29,8 +29,7 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
     @Override
     public void handle(RestRequest restRequest) throws RestException
     {
-        restRequest.getMuleEvent().setFlowVariable(collectionResource.getMemberIdFlowVarName(),
-            restRequest.getNextPathElement());
+        restRequest.getMuleEvent().setFlowVariable(getName() + "Id", restRequest.getNextPathElement());
         super.handle(restRequest);
     }
 

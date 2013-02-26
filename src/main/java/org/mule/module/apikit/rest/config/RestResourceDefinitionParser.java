@@ -10,7 +10,6 @@
 
 package org.mule.module.apikit.rest.config;
 
-import org.mule.config.spring.parsers.generic.AutoIdUtils;
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -38,9 +37,7 @@ public class RestResourceDefinitionParser extends ChildDefinitionParser
     @Override
     public String getBeanName(Element element)
     {
-        return AutoIdUtils.uniqueValue(element.getParentNode()
-            .getAttributes()
-            .getNamedItem(ATTRIBUTE_NAME)
-            .getNodeValue()+ "." + element.getAttribute(ATTRIBUTE_NAME));
+        return element.getParentNode().getAttributes().getNamedItem(ATTRIBUTE_NAME).getNodeValue() + "."
+               + element.getAttribute(ATTRIBUTE_NAME);
     }
 }

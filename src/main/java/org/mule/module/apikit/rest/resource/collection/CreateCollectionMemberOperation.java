@@ -21,11 +21,8 @@ public class CreateCollectionMemberOperation extends AbstractRestOperation
         try
         {
             request.getProtocolAdaptor().handleCreated(
-                new URI(request.getProtocolAdaptor().getURI().toString()
-                        + "/"
-                        + request.getMuleEvent().getFlowVariable(
-                            ((CollectionMemberResource) resource).getCollectionResource().getName()
-                                            + "MemberId")), request);
+                new URI(request.getProtocolAdaptor().getURI().toString() + "/"
+                        + request.getMuleEvent().getFlowVariable(resource.getName() + "Id")), request);
         }
         catch (URISyntaxException e)
         {
