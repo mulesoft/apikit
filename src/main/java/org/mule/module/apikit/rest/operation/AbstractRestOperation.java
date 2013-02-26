@@ -110,7 +110,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         MediaType requestMediaType = request.getProtocolAdaptor().getRequestMediaType();
         if (requestMediaType == null)
         {
-            //if request Content-Type is not sent, skip validation
+            // if request Content-Type is not sent, skip validation
             return;
         }
 
@@ -120,13 +120,17 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
             if (logger.isDebugEnabled())
             {
                 logger.debug(String.format("comparing media type %s with %s\n",
-                                           representation.getMediaType(), requestMediaType));
+                    representation.getMediaType(), requestMediaType));
             }
             if (representation.getMediaType().withoutParameters().is(requestMediaType.withoutParameters()))
-            {
-                valid = true;
-                break;
-            }
+                if (request.getProtocolAdaptor().getRequestMediaType() != null
+                    && representation.getMediaType()
+                        .withoutParameters()
+                        .is(request.getProtocolAdaptor().getRequestMediaType().withoutParameters()))
+                {
+                    valid = true;
+                    break;
+                }
         }
         if (!valid)
         {

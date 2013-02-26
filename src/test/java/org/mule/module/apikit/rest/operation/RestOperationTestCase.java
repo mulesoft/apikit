@@ -16,6 +16,7 @@ import static com.google.common.net.MediaType.JSON_UTF_8;
 import static com.google.common.net.MediaType.PLAIN_TEXT_UTF_8;
 import static com.google.common.net.MediaType.XML_UTF_8;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.never;
@@ -33,6 +34,7 @@ import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
+import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.representation.DefaultRepresentationMetaData;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
@@ -47,6 +49,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -378,6 +381,57 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         produceOperation(XML_UTF_8);
         produceResource(JSON_UTF_8);
         expectException();
+    }
+
+    // Request representation mediaTypes (as defined in the "Content-Type" request header)
+
+    @Test(expected = UnsupportedMediaTypeException.class)
+    public void requestMediaTypeMismatch() throws RestException
+    {
+        request(JSON_UTF_8);
+        produceOperation(XML_UTF_8);
+        expectException();
+    }
+
+    @Test(expected = UnsupportedMediaTypeException.class)
+    public void RequestMediaTypeMismatchOnResource() throws RestException
+    {
+        request(JSON_UTF_8);
+        produceResource(XML_UTF_8);
+        expectException();
+    }
+
+    @Test(expected = UnsupportedMediaTypeException.class)
+    public void missingRunsupportedRequestMediaType() throws RestException
+    {
+        produceOperation(XML_UTF_8);
+        expectException();
+    }
+
+    @Test(expected = UnsupportedMediaTypeException.class)
+    public void unsupportedRequestMediaTypeOnResource() throws RestException
+    {
+        produceResource(XML_UTF_8);
+        expectException();
+    }
+
+    // MediaType inheritance from resource
+
+    @Test
+    @Ignore
+    public void mediaTypeInheritedFromResource()
+    {
+        fail("Not yet implemented");
+    }
+
+    // Defaults
+
+    @Test
+    public void defaultMediaType() throws RestException
+    {
+        accept(XML_UTF_8);
+        request(JSON_UTF_8);
+        action.handle(request);
     }
 
     private void request(MediaType mediaType)
