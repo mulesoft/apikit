@@ -9,6 +9,10 @@ import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +28,11 @@ public interface RestResource extends RestRequestHandler, WebServiceRoute, Named
     List<RestOperation> getOperations();
 
     List<RestOperation> getAuthorizedActions(RestRequest request);
-    
+
     Collection<RepresentationMetaData> getRepresentations();
+
+    // RestOperation getOperation(RestOperationType operationType);
+
+    void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException;
 
 }

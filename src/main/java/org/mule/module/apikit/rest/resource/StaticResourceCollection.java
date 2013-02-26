@@ -22,6 +22,9 @@ import org.mule.transport.http.HttpConstants;
 import org.mule.util.FilenameUtils;
 import org.mule.util.IOUtils;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -145,6 +148,12 @@ public class StaticResourceCollection extends AbstractRestResource
     protected Set<RestOperationType> getSupportedActionTypes()
     {
         return EnumSet.of(RestOperationType.RETRIEVE);
+    }
+
+    @Override
+    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
+    {
+        super.appendSwaggerJson(jsonGenerator);
     }
 
 }

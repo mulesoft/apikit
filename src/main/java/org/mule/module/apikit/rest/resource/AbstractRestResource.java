@@ -16,8 +16,13 @@ import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
+import org.mule.module.apikit.rest.swagger.SwaggerConstants;
 import org.mule.transport.NullPayload;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -64,7 +69,7 @@ public abstract class AbstractRestResource implements RestResource
         }
     }
 
-    private RestOperation getOperation(RestOperationType operationType)
+    protected RestOperation getOperation(RestOperationType operationType)
     {
         RestOperation action = null;
         for (RestOperation a : getOperations())
@@ -243,4 +248,24 @@ public abstract class AbstractRestResource implements RestResource
     {
         this.representations = representations;
     }
+
+    @Override
+    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
+    {
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeFieldName(SwaggerConstants.PATH_FIELD_NAME);
+        jsonGenerator.writeString("/" + this.getName());
+        jsonGenerator.writeFieldName(SwaggerConstants.DESCRIPTION_FIELD_NAME);
+        jsonGenerator.writeString(this.getDescription().trim());
+        jsonGenerator.writeFieldName(SwaggerConstants.OPERATIONS_FIELD_NAME);
+        jsonGenerator.writeStartArray();
+
+        for (RestOperation operation : getOperations())
+        {
+            operation.appendSwaggerJson(jsonGenerator);
+        }
+        jsonGenerator.writeEndArray();
+        jsonGenerator.writeEndObject();
+    }
+
 }

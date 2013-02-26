@@ -15,6 +15,7 @@ import org.junit.Test;
 
 public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
 {
+
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
 
@@ -56,7 +57,6 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
         given().body("Premier League").expect().response().statusCode(200).when().put("/api/league");
     }
 
-
     @Test
     public void deleteNotAllowed() throws Exception
     {
@@ -69,34 +69,71 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
         expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/league");
     }
 
+    @Test
+    public void swagger() throws Exception
+    {
+        given().header("Accept", "application/swagger+json")
+            .expect()
+            .log()
+            .everything()
+            .response()
+            .statusCode(200)
+            .when()
+            .get("/api/league");
+    }
+
     // Nested
- 
+
     @Test
     public void nestedDocumentNotFound() throws Exception
     {
         expect().response().statusCode(404).header("Content-Length", "0").when().get("/api/league/bla");
         expect().response().statusCode(404).header("Content-Length", "0").when().get("/api/league/bla/");
     }
-    
+
     @Test
     public void createNotAllowedOnNestedDocument() throws Exception
     {
-        expect().response().statusCode(405).header("Content-Length", "0").when().post("/api/league/association");
-        expect().response().statusCode(405).header("Content-Length", "0").when().post("/api/league/association/");
+        expect().response()
+            .statusCode(405)
+            .header("Content-Length", "0")
+            .when()
+            .post("/api/league/association");
+        expect().response()
+            .statusCode(405)
+            .header("Content-Length", "0")
+            .when()
+            .post("/api/league/association/");
     }
-    
+
     @Test
     public void retrieveOnNestedDocument() throws Exception
     {
-        expect().response().statusCode(200).body(containsString("Royal")).when().get("/api/league/association");
-        expect().response().statusCode(200).body(containsString("Royal")).when().get("/api/league/association/");
+        expect().response()
+            .statusCode(200)
+            .body(containsString("Royal"))
+            .when()
+            .get("/api/league/association");
+        expect().response()
+            .statusCode(200)
+            .body(containsString("Royal"))
+            .when()
+            .get("/api/league/association/");
     }
 
     @Test
     public void existsOnNestedDocument() throws Exception
     {
-        expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/league/association");
-        expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/league/association/");
+        expect().response()
+            .statusCode(200)
+            .header("Content-Length", "0")
+            .when()
+            .head("/api/league/association");
+        expect().response()
+            .statusCode(200)
+            .header("Content-Length", "0")
+            .when()
+            .head("/api/league/association/");
     }
 
     @Test
@@ -109,8 +146,16 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void deleteNotAllowedOnNestedDocument() throws Exception
     {
-        expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/league/association");
-        expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/league/association/");
+        expect().response()
+            .statusCode(405)
+            .header("Content-Length", "0")
+            .when()
+            .delete("/api/league/association");
+        expect().response()
+            .statusCode(405)
+            .header("Content-Length", "0")
+            .when()
+            .delete("/api/league/association/");
     }
 
 }
