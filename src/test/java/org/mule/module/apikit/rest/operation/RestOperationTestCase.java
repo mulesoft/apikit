@@ -34,7 +34,6 @@ import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
-import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.representation.DefaultRepresentationMetaData;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
@@ -385,7 +384,7 @@ public class RestOperationTestCase extends AbstractMuleTestCase
 
     // Request representation mediaTypes (as defined in the "Content-Type" request header)
 
-    @Test(expected = UnsupportedMediaTypeException.class)
+    @Test(expected = MediaTypeNotAcceptableException.class)
     public void requestMediaTypeMismatch() throws RestException
     {
         request(JSON_UTF_8);
@@ -393,23 +392,23 @@ public class RestOperationTestCase extends AbstractMuleTestCase
         expectException();
     }
 
-    @Test(expected = UnsupportedMediaTypeException.class)
-    public void RequestMediaTypeMismatchOnResource() throws RestException
+    @Test(expected = MediaTypeNotAcceptableException.class)
+    public void requestMediaTypeMismatchOnResource() throws RestException
     {
         request(JSON_UTF_8);
         produceResource(XML_UTF_8);
         expectException();
     }
 
-    @Test(expected = UnsupportedMediaTypeException.class)
-    public void missingRunsupportedRequestMediaType() throws RestException
+    @Test(expected = MediaTypeNotAcceptableException.class)
+    public void missingSupportedRequestMediaType() throws RestException
     {
         produceOperation(XML_UTF_8);
         expectException();
     }
 
-    @Test(expected = UnsupportedMediaTypeException.class)
-    public void unsupportedRequestMediaTypeOnResource() throws RestException
+    @Test(expected = MediaTypeNotAcceptableException.class)
+    public void missingSupportedRequestMediaTypeOnResource() throws RestException
     {
         produceResource(XML_UTF_8);
         expectException();

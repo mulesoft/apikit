@@ -122,15 +122,13 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
                 logger.debug(String.format("comparing media type %s with %s\n",
                     representation.getMediaType(), requestMediaType));
             }
-            if (representation.getMediaType().withoutParameters().is(requestMediaType.withoutParameters()))
-                if (request.getProtocolAdaptor().getRequestMediaType() != null
-                    && representation.getMediaType()
-                        .withoutParameters()
-                        .is(request.getProtocolAdaptor().getRequestMediaType().withoutParameters()))
-                {
-                    valid = true;
-                    break;
-                }
+            if (representation.getMediaType()
+                .withoutParameters()
+                .is(request.getProtocolAdaptor().getRequestMediaType().withoutParameters()))
+            {
+                valid = true;
+                break;
+            }
         }
         if (!valid)
         {
