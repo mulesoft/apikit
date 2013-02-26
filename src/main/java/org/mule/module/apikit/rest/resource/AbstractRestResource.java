@@ -129,9 +129,9 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public MuleEvent handle(RestRequest restCall) throws RestException
+    public void handle(RestRequest restCall) throws RestException
     {
-        return processResource(restCall);
+        processResource(restCall);
     }
 
     protected MuleEvent processResource(RestRequest request) throws RestException
@@ -139,8 +139,8 @@ public abstract class AbstractRestResource implements RestResource
         try
         {
             authorize(request);
-            this.getAction(request.getProtocolAdaptor().getOperationType(), request.getMuleEvent()).handle(
-                request);
+            this.getAction(request.getProtocolAdaptor().getOperationType(), request.getMuleEvent())
+                .handle(request);
             if (RestOperationType.EXISTS == request.getProtocolAdaptor().getOperationType())
             {
                 request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());

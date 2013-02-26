@@ -202,7 +202,8 @@ public class RestOperationTestCase extends AbstractMuleTestCase
     }
 
     @Test
-    public void multipleAcceptableResponseMediaTypeMultipleMediaTypesSupportedQualityReversed() throws RestException
+    public void multipleAcceptableResponseMediaTypeMultipleMediaTypesSupportedQualityReversed()
+        throws RestException
     {
         accept(JSON_UTF_8.withParameter("q", "0.7"), XML_UTF_8.withParameter("q", "0.3"));
         request(XML_UTF_8);
@@ -270,7 +271,8 @@ public class RestOperationTestCase extends AbstractMuleTestCase
 
     private void expect(MediaType mediaType) throws RestException
     {
-        MuleEvent muleEvent = action.handle(request);
+        action.handle(request);
+        MuleEvent muleEvent = request.getMuleEvent();
         ArgumentCaptor<Object> arg = ArgumentCaptor.forClass(Object.class);
         verify(muleEvent.getMessage()).setPayload(arg.capture());
         assertEquals(mediaType.withoutParameters(), ((MediaType) arg.getValue()).withoutParameters());

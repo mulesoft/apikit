@@ -1,7 +1,6 @@
 
 package org.mule.module.apikit.rest.operation;
 
-import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.expression.ExpressionManager;
@@ -46,7 +45,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     }
 
     @Override
-    public MuleEvent handle(RestRequest request) throws RestException
+    public void handle(RestRequest request) throws RestException
     {
         ExpressionManager expManager = request.getService().getMuleContext().getExpressionManager();
 
@@ -62,19 +61,26 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         }
         try
         {
-            MuleEvent muleEvent = getHandler().process(request.getMuleEvent());
-            // If handler returns null then use NullPayload response
-            if (muleEvent == null)
+            MuleEvent responeEvent = getHandler().process(request.getMuleEvent());
+
+            if (responeEvent != null && responeEvent.getMessage() != null)
             {
-                muleEvent = new DefaultMuleEvent(new DefaultMuleMessage(NullPayload.getInstance(),
-                    request.getService().getMuleContext()), request.getMuleEvent());
+                request.getMuleEvent().setMessage(responeEvent.getMessage());
+                for (String name : responeEvent.getFlowVariableNames())
+                {
+                    request.getMuleEvent().setFlowVariable(name, responeEvent.getFlowVariable(name));
+                }
+            }
+            else
+            {
+                request.getMuleEvent().setMessage(
+                    new DefaultMuleMessage(NullPayload.getInstance(), request.getService().getMuleContext()));
             }
             if (responseRepresentation != null)
             {
-                Object payload = responseRepresentation.toRepresentation(muleEvent, request);
-                muleEvent.getMessage().setPayload(payload);
+                Object payload = responseRepresentation.toRepresentation(request.getMuleEvent(), request);
+                request.getMuleEvent().getMessage().setPayload(payload);
             }
-            return muleEvent;
         }
         catch (Exception e)
         {
@@ -131,7 +137,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     {
         return representations;
     }
-    
+
     public void setResource(RestResource resource)
     {
         this.resource = resource;

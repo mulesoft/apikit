@@ -10,7 +10,6 @@
 
 package org.mule.module.apikit.rest.resource;
 
-import org.mule.api.MuleEvent;
 import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
@@ -57,7 +56,7 @@ public class StaticResourceCollection extends AbstractRestResource
     class StaticResourceCollectionRetreiveAction extends AbstractRestOperation
     {
         @Override
-        public MuleEvent handle(RestRequest restRequest) throws RestException
+        public void handle(RestRequest restRequest) throws RestException
         {
             String path = restRequest.getNextPathElement();
             while (restRequest.hasMorePathElements())
@@ -132,9 +131,6 @@ public class StaticResourceCollection extends AbstractRestResource
                     }
                 }
             }
-
-            return restRequest.getMuleEvent();
-
         }
 
         @Override

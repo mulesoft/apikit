@@ -10,11 +10,9 @@
 
 package org.mule.module.apikit.rest;
 
-import org.mule.api.MuleEvent;
-
 public interface RestRequestHandler
 {
 
-    MuleEvent handle(RestRequest restRequest) throws RestException;
+    void handle(RestRequest restRequest) throws RestException;
 
 }

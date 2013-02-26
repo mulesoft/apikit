@@ -22,7 +22,7 @@ import java.util.Deque;
 public class DefaultRestRequest implements RestRequest
 {
 
-    protected MuleEvent muleEvent;
+    protected MuleEvent event;
     protected RestProtocolAdapter protocolAdapter;
     protected Deque<String> pathStack;
     protected RestWebService restWebService;
@@ -30,7 +30,7 @@ public class DefaultRestRequest implements RestRequest
 
     public DefaultRestRequest(MuleEvent event, RestWebService restWebService)
     {
-        this.muleEvent = event;
+        this.event = event;
         this.protocolAdapter = RestProtocolAdapterFactory.getInstance().getAdapterForEvent(event);
         this.restWebService = restWebService;
         relativeURI = StringUtils.difference(protocolAdapter.getBaseURI().toString(),
@@ -57,7 +57,7 @@ public class DefaultRestRequest implements RestRequest
     @Override
     public MuleEvent getMuleEvent()
     {
-        return muleEvent;
+        return event;
     }
 
     @Override

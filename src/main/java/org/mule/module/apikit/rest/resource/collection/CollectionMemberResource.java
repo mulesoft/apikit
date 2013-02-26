@@ -1,7 +1,6 @@
 
 package org.mule.module.apikit.rest.resource.collection;
 
-import org.mule.api.MuleEvent;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.RestOperationType;
@@ -28,18 +27,18 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
     }
 
     @Override
-    public MuleEvent handle(RestRequest restRequest) throws RestException
+    public void handle(RestRequest restRequest) throws RestException
     {
         restRequest.getMuleEvent().setFlowVariable(collectionResource.getMemberIdFlowVarName(),
             restRequest.getNextPathElement());
-        return super.handle(restRequest);
+        super.handle(restRequest);
     }
 
     public void setCollectionResource(CollectionResource collectionResource)
     {
         this.collectionResource = collectionResource;
     }
-    
+
     public CollectionResource getCollectionResource()
     {
         return collectionResource;

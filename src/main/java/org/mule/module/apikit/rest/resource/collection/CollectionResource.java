@@ -41,15 +41,15 @@ public class CollectionResource extends AbstractRestResource
     }
 
     @Override
-    public MuleEvent handle(RestRequest request) throws RestException
+    public void handle(RestRequest request) throws RestException
     {
         if (request.hasMorePathElements())
         {
-            return memberResource.handle(request);
+            memberResource.handle(request);
         }
         else
         {
-            return processResource(request);
+            processResource(request);
         }
     }
 

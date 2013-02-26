@@ -1,7 +1,6 @@
 
 package org.mule.module.apikit.rest.resource.collection;
 
-import org.mule.api.MuleEvent;
 import org.mule.module.apikit.UnexpectedException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
@@ -16,7 +15,7 @@ public class CreateCollectionMemberOperation extends AbstractRestOperation
 {
 
     @Override
-    public MuleEvent handle(RestRequest request) throws RestException
+    public void handle(RestRequest request) throws RestException
     {
         super.handle(request);
         try
@@ -25,15 +24,15 @@ public class CreateCollectionMemberOperation extends AbstractRestOperation
                 new URI(request.getProtocolAdaptor().getURI().toString()
                         + "/"
                         + request.getMuleEvent().getFlowVariable(
-                            ((CollectionMemberResource) resource).getCollectionResource()
-                                .getMemberIdFlowVarName())), request);
+                            ((CollectionMemberResource) resource).getCollectionResource().getName()
+                                            + "MemberId")), request);
         }
         catch (URISyntaxException e)
         {
             throw new UnexpectedException(e);
         }
         request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
-        return request.getMuleEvent();
+
     }
 
     public CreateCollectionMemberOperation()

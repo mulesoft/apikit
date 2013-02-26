@@ -1,7 +1,6 @@
 
 package org.mule.module.apikit.rest.resource;
 
-import org.mule.api.MuleEvent;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.module.apikit.rest.RestException;
@@ -25,7 +24,7 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
     }
 
     @Override
-    public MuleEvent handle(RestRequest restRequest) throws RestException
+    public void handle(RestRequest restRequest) throws RestException
     {
         try
         {
@@ -52,7 +51,6 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
             restRequest.getProtocolAdaptor().handleException(re, restRequest);
 
         }
-        return restRequest.getMuleEvent();
     }
 
     public void buildRoutingTable() throws InitialisationException

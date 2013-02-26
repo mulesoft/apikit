@@ -17,10 +17,10 @@ import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.api.WebServiceRoute;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
+import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
-import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
@@ -57,18 +57,18 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
     }
 
     @Override
-    public MuleEvent handle(RestRequest restRequest) throws RestException
+    public void handle(RestRequest restRequest) throws RestException
     {
         List<MediaType> acceptContentTypes = restRequest.getProtocolAdaptor()
             .getAcceptableResponseMediaTypes();
 
         if (acceptContentTypes.contains(MediaType.parse("application/swagger+json")))
         {
-            return swaggerJsonAction.handle(restRequest);
+            swaggerJsonAction.handle(restRequest);
         }
         else if (acceptContentTypes.contains(MediaType.parse("text/html")))
         {
-            return swaggerHtmlAction.handle(restRequest);
+            swaggerHtmlAction.handle(restRequest);
         }
         else
         {
@@ -99,7 +99,7 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
     final RestOperation swaggerJsonAction = new AbstractRestOperation()
     {
         @Override
-        public MuleEvent handle(RestRequest restRequest) throws RestException
+        public void handle(RestRequest restRequest) throws RestException
         {
             try
             {
@@ -145,7 +145,6 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
                 restRequest.getMuleEvent()
                     .getMessage()
                     .setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, json.length());
-                return restRequest.getMuleEvent();
 
             }
             catch (Exception e)
@@ -164,7 +163,7 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
     static final RestOperation swaggerHtmlAction = new AbstractRestOperation()
     {
         @Override
-        public MuleEvent handle(RestRequest restRequest) throws RestException
+        public void handle(RestRequest restRequest) throws RestException
         {
             InputStream in = null;
             try
@@ -207,7 +206,7 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
                 restRequest.getMuleEvent()
                     .getMessage()
                     .setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length());
-                return restRequest.getMuleEvent();
+
             }
             catch (JsonProcessingException e)
             {

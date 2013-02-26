@@ -61,7 +61,6 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     {
         given().body("{'id':1,'name'='one'}")
             .expect()
-
             .response()
             .statusCode(201)
             .header("Content-Length", "0")
