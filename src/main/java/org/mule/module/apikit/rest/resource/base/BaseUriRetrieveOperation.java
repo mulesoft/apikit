@@ -26,7 +26,7 @@ import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.module.apikit.rest.resource.RestResource;
-import org.mule.module.apikit.rest.swagger.RestSwaggerConstants;
+import org.mule.module.apikit.rest.swagger.SwaggerConstants;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.NullPayload;
 import org.mule.transport.http.HttpConnector;
@@ -111,7 +111,7 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
                 jsonGenerator.writeFieldName("apiVersion");
                 jsonGenerator.writeString("1.0");
                 jsonGenerator.writeFieldName("swaggerVersion");
-                jsonGenerator.writeString(RestSwaggerConstants.SWAGGER_VERSION);
+                jsonGenerator.writeString(SwaggerConstants.SWAGGER_VERSION);
                 jsonGenerator.writeFieldName("basePath");
                 jsonGenerator.writeString("{baseSwaggerUri}");
                 jsonGenerator.writeFieldName("apis");

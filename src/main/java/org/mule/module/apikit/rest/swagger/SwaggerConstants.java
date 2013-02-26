@@ -11,6 +11,6 @@
 
 package org.mule.module.apikit.rest.swagger;
 
-public class RestSwaggerConstants {
+public class SwaggerConstants {
     public static final String SWAGGER_VERSION = "1.0";
 }
