@@ -147,6 +147,16 @@ public class RestIntegrationTestCase extends FunctionalTestCase
         expect().response().statusCode(204).when().delete("/api/leagues/liga-bbva");
     }
 
+    @Test
+    public void testRetrieveOnSubCollectionArchetype() throws Exception {
+        expect().log().everything().response().body("teams.name", hasItems("Real Madrid", "Barcelona")).when().get("/api/leagues/liga-bbva/teams");
+    }
+
+    @Test
+    public void testRetrieveOnSubMemberArchetype() throws Exception {
+        given().log().all().header("Accept", "application/json").expect().response().log().all().statusCode(200).contentType("application/json").body("id", is("barcelona")).when().get("/api/leagues/liga-bbva/teams/barcelona");
+    }
+
 
 /*
 

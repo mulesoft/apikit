@@ -41,23 +41,22 @@
     </flow>
 
     <flow name="retrieveTeams">
-        <logger/>
-    </flow>
-
-    <flow name="createTeam">
-        <logger/>
+        <expression-component>
+            payload = app.registry['list-of-teams-' + leaguesMemberId];
+        </expression-component>
     </flow>
 
     <flow name="retrieveTeam">
-        <logger/>
-    </flow>
-
-    <flow name="updateTeam">
-        <logger/>
-    </flow>
-
-    <flow name="deleteTeam">
-        <logger/>
+        <logger level="WARN" message="leaguesMemberId: #[leaguesMemberId]"/>
+        <choice>
+            <when expression="#[app.registry['list-of-teams-' + leaguesMemberId].getTeam(teamsMemberId)]">
+                <set-payload value="#[app.registry['list-of-teams-' + leaguesMemberId].getTeam(teamsMemberId)]"
+                             returnClass="org.mule.module.apikit.rest.integration.Team"/>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="404" />
+            </otherwise>
+        </choice>
     </flow>
 
 
@@ -109,7 +108,22 @@
                 </spring:list>
             </spring:property>
         </spring:bean>
-
+        <spring:bean id="man-united" class="org.mule.module.apikit.rest.integration.Team">
+            <spring:property name="id" value="man-united"/>
+            <spring:property name="name" value="Manchester United"/>
+        </spring:bean>
+        <spring:bean id="man-city" class="org.mule.module.apikit.rest.integration.Team">
+            <spring:property name="id" value="man-city"/>
+            <spring:property name="name" value="Manchester City"/>
+        </spring:bean>
+        <spring:bean id="list-of-teams-premier-league" class="org.mule.module.apikit.rest.integration.Teams">
+            <spring:property name="teams">
+                <spring:list>
+                    <spring:ref bean="man-united"/>
+                    <spring:ref bean="man-city"/>
+                </spring:list>
+            </spring:property>
+        </spring:bean>
     </spring:beans>
 
 </mule>

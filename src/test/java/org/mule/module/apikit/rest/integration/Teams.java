@@ -43,6 +43,17 @@ public class Teams {
         this.teams = teams;
     }
 
+    public Team getTeam(String id)
+    {
+        for (Team team : teams)
+        {
+            if (team.getId().equals(id))
+            {
+                return team;
+            }
+        }
+        return null;
+    }
 
     @Transformer(resultMimeType = "application/json")
     public String toJson(Teams teams) throws IOException {

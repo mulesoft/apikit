@@ -29,16 +29,9 @@
                         <rest:representation mediaType="application/json"/>
                     </rest:retrieve>
                     <rest:member>
-                        <rest:create flow-ref="createTeam">
-                            <rest:representation mediaType="application/json"/>
-                        </rest:create>
                         <rest:retrieve flow-ref="retrieveTeam">
                             <rest:representation mediaType="application/json"/>
                         </rest:retrieve>
-                        <rest:update flow-ref="updateTeam">
-                            <rest:representation mediaType="application/json"/>
-                        </rest:update>
-                        <rest:delete flow-ref="deleteTeam"/>
                     </rest:member>
                 </rest:collection-resource>
             </rest:member>

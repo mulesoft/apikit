@@ -11,11 +11,18 @@
 
 package org.mule.module.apikit.rest.integration;
 
+import org.mule.api.annotations.ContainsTransformerMethods;
+import org.mule.api.annotations.Transformer;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+@ContainsTransformerMethods
 @JsonAutoDetect
 @XmlRootElement(namespace = "http://mulesoft.com/schemas/soccer")
 public class Team {
@@ -38,4 +45,12 @@ public class Team {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Transformer(resultMimeType = "application/json")
+    public static String toJson(Team team) throws IOException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.writeValueAsString(team);
+    }
+
 }
