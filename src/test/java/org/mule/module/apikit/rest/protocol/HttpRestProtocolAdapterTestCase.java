@@ -156,7 +156,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
 
         adapter = new HttpRestProtocolAdapter(event);
         assertEquals(1, adapter.getAcceptableResponseMediaTypes().size());
-        assertTrue(MediaType.HTML_UTF_8.is(adapter.getAcceptableResponseMediaTypes().get(0)));
+        assertTrue(MediaType.HTML_UTF_8.is(adapter.getAcceptableResponseMediaTypes().get(0).withoutParameters()));
     }
 
     @Test

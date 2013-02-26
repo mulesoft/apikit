@@ -62,11 +62,11 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
         List<MediaType> acceptContentTypes = restRequest.getProtocolAdaptor()
             .getAcceptableResponseMediaTypes();
 
-        if (acceptContentTypes.contains(MediaType.parse("application/swagger+json")))
+        if (isContentTypeAccepted(acceptContentTypes, MediaType.parse("application/swagger+json")))
         {
             swaggerJsonAction.handle(restRequest);
         }
-        else if (acceptContentTypes.contains(MediaType.parse("text/html")))
+        else if (isContentTypeAccepted(acceptContentTypes, MediaType.parse("text/html")))
         {
             swaggerHtmlAction.handle(restRequest);
         }
@@ -74,6 +74,18 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
         {
             throw new MediaTypeNotAcceptableException();
         }
+    }
+
+    private boolean isContentTypeAccepted(List<MediaType> acceptContentTypes, MediaType mediaType)
+    {
+        for (MediaType accept : acceptContentTypes)
+        {
+            if (accept.withoutParameters().equals(mediaType))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

@@ -70,25 +70,13 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     public void testRetrieveContentTypeOnCollectionArchetype() throws Exception {
         expect().log().body().response().contentType(ContentType.JSON).when().get("/api/leagues");
     }
-/*
-
-    @Test
-    public void testRetrieveLinkSelfOnCollectionArchetype() throws Exception {
-        expect().log().body().response().body("links[0].rel", is("self")).when().get("/api/leagues");
-        FlowAssert.verify("apiImplementation");
-    }
-
-    @Test
-    public void testRetrieveLinkSelfHrefOnCollectionArchetype() throws Exception {
-        expect().log().body().response().log().all().body("links[0].$href", is("http://localhost:" + Integer.toString(serverPort.getNumber()) + "/api/leagues")).when().get("/api/leagues");
-        FlowAssert.verify("apiImplementation");
-    }
 
     @Test
     public void testCreateOnCollectionArchetype() throws Exception {
         given().body("{ \"name\": \"MLS\" }").contentType("application/json").expect().statusCode(201).post("/api/leagues");
-        FlowAssert.verify("apiImplementation");
     }
+
+    /*
 
     @Test
     public void testCreateWithInvalidContentTypeOnCollectionArchetype() throws Exception {

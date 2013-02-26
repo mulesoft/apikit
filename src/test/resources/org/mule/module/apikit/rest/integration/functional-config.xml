@@ -49,7 +49,9 @@
     </rest:interface>
 
     <rest:service name="myService" interface-ref="myInterface">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
+            <mule:object-to-string-transformer/>
+        </http:inbound-endpoint>
     </rest:service>
 
 </mule-api>
