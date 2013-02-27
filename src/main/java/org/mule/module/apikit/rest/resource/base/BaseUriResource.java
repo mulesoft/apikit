@@ -12,7 +12,7 @@ public class BaseUriResource extends AbstractHierarchicalRestResource
 
     public BaseUriResource()
     {
-        super("");
+        super("", null);
     }
 
     @Override

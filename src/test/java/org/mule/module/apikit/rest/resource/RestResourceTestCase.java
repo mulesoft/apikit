@@ -163,7 +163,7 @@ public class RestResourceTestCase extends AbstractMuleTestCase
     {
         public DummyRestResource(String name)
         {
-            super(name);
+            super(name, null);
         }
 
         @Override

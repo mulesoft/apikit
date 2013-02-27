@@ -217,7 +217,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     {
         public DummyHierarchicalRestResource(String name)
         {
-            super(name);
+            super(name, null);
         }
 
         @Override

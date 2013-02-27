@@ -150,6 +150,20 @@ public final class RestContentTypeParser
         return NumberUtils.compare(lastOne.quality, 0) != 0 ?  MediaType.parse(lastOne.mimeType) : null;
     }
 
+    public static boolean isMediaTypeAcceptable(List<MediaType> acceptContentTypes, MediaType mediaType)
+    {
+        for (MediaType accept : acceptContentTypes)
+        {
+            if (accept.withoutParameters().equals(mediaType))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    
+    
     // hidden
     private RestContentTypeParser() {
     }

@@ -3,15 +3,16 @@ package org.mule.module.apikit.rest.resource.document;
 
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.AbstractHierarchicalRestResource;
+import org.mule.module.apikit.rest.resource.RestResource;
 
 import java.util.EnumSet;
 import java.util.Set;
 
 public class DocumentResource extends AbstractHierarchicalRestResource
 {
-    public DocumentResource(String name)
+    public DocumentResource(String name, RestResource parentResource)
     {
-        super(name);
+        super(name, parentResource);
     }
 
     @Override

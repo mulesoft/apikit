@@ -43,9 +43,9 @@ public class StaticResourceCollection extends AbstractRestResource
 
     protected String directory;
 
-    public StaticResourceCollection(String name, String directory)
+    public StaticResourceCollection(String name, RestResource parentResource, String directory)
     {
-        super(name);
+        super(name, parentResource);
         this.directory = directory;
         operations = Collections.<RestOperation> singletonList(new StaticResourceCollectionRetreiveAction());
     }

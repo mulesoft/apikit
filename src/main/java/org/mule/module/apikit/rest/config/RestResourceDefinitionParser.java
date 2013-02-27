@@ -11,6 +11,7 @@
 package org.mule.module.apikit.rest.config;
 
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
+import org.mule.module.apikit.rest.resource.base.BaseUriResource;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -21,7 +22,7 @@ public class RestResourceDefinitionParser extends ChildDefinitionParser
 
     public RestResourceDefinitionParser(Class<?> clazz)
     {
-        super("resource", clazz, false);
+        super("resource", clazz, true);
         addIgnored(ATTRIBUTE_NAME);
         addAlias("access", "accessExpression");
     }
@@ -30,6 +31,14 @@ public class RestResourceDefinitionParser extends ChildDefinitionParser
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
         builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_NAME));
+        if (!element.getParentNode().getLocalName().equals("interface"))
+        {
+            builder.addConstructorArgReference(getParentBeanName(element));
+        }
+        else
+        {
+            builder.addConstructorArgValue(new BaseUriResource());
+        }
         builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
     }
@@ -37,7 +46,6 @@ public class RestResourceDefinitionParser extends ChildDefinitionParser
     @Override
     public String getBeanName(Element element)
     {
-        return element.getParentNode().getAttributes().getNamedItem(ATTRIBUTE_NAME).getNodeValue() + "."
-               + element.getAttribute(ATTRIBUTE_NAME);
+        return getParentBeanName(element) + "." + element.getAttribute(ATTRIBUTE_NAME);
     }
 }

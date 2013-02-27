@@ -18,8 +18,7 @@ public class AbstractWebServiceOperation implements WebServiceOperation
 
     protected MessageProcessor handler;
     protected String accessExpression;
-    protected String description;
-
+    protected String description = "";
 
     @Override
     public MessageProcessor getHandler()

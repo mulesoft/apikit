@@ -3,6 +3,9 @@ package org.mule.module.apikit.rest.resource;
 
 import static org.mule.module.apikit.rest.operation.RestOperationType.EXISTS;
 import static org.mule.module.apikit.rest.operation.RestOperationType.RETRIEVE;
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.DESCRIPTION_FIELD_NAME;
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.OPERATIONS_FIELD_NAME;
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PATH_FIELD_NAME;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.expression.ExpressionManager;
@@ -16,7 +19,6 @@ import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
-import org.mule.module.apikit.rest.swagger.SwaggerConstants;
 import org.mule.transport.NullPayload;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -41,10 +43,12 @@ public abstract class AbstractRestResource implements RestResource
     protected List<RestOperation> operations = new ArrayList<RestOperation>();
     protected String accessExpression;
     protected Collection<RepresentationMetaData> representations = new HashSet<RepresentationMetaData>();
+    protected RestResource parentResource;
 
-    public AbstractRestResource(String name)
+    public AbstractRestResource(String name, RestResource parentResource)
     {
         this.name = name;
+        this.parentResource = parentResource;
     }
 
     public String getName()
@@ -253,19 +257,32 @@ public abstract class AbstractRestResource implements RestResource
     public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
     {
         jsonGenerator.writeStartObject();
-        jsonGenerator.writeFieldName(SwaggerConstants.PATH_FIELD_NAME);
-        jsonGenerator.writeString("/" + this.getName());
-        jsonGenerator.writeFieldName(SwaggerConstants.DESCRIPTION_FIELD_NAME);
-        jsonGenerator.writeString(this.getDescription().trim());
-        jsonGenerator.writeFieldName(SwaggerConstants.OPERATIONS_FIELD_NAME);
+        jsonGenerator.writeFieldName(PATH_FIELD_NAME);
+        jsonGenerator.writeString(getPath());
+        jsonGenerator.writeFieldName(DESCRIPTION_FIELD_NAME);
+        jsonGenerator.writeString(getDescription().trim());
+        jsonGenerator.writeFieldName(OPERATIONS_FIELD_NAME);
         jsonGenerator.writeStartArray();
 
         for (RestOperation operation : getOperations())
         {
-            operation.appendSwaggerJson(jsonGenerator);
+            operation.appendSwaggerDescriptor(jsonGenerator);
         }
+
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
+    }
+
+    public String getPath()
+    {
+        if (parentResource == null)
+        {
+            return getName();
+        }
+        else
+        {
+            return parentResource.getPath() + "/" + getName();
+        }
     }
 
 }

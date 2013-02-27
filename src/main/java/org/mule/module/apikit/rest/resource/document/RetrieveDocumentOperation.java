@@ -6,8 +6,10 @@ import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
+import org.mule.module.apikit.rest.resource.collection.CollectionMemberResource;
 import org.mule.module.apikit.rest.swagger.SwaggerConstants;
 import org.mule.module.apikit.rest.util.NameUtils;
+import org.mule.module.apikit.rest.util.RestContentTypeParser;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
 import org.mule.util.StringUtils;
@@ -31,9 +33,8 @@ public class RetrieveDocumentOperation extends AbstractRestOperation
     @Override
     public void handle(RestRequest restRequest) throws RestException
     {
-        if (restRequest.getProtocolAdaptor()
-            .getAcceptableResponseMediaTypes()
-            .contains(MediaType.create("application", "swagger+json")))
+        if (RestContentTypeParser.isMediaTypeAcceptable(restRequest.getProtocolAdaptor()
+            .getAcceptableResponseMediaTypes(), MediaType.create("application", "swagger+json")))
         {
             try
             {
@@ -48,6 +49,8 @@ public class RetrieveDocumentOperation extends AbstractRestOperation
                 jsonGenerator.writeString(SwaggerConstants.SWAGGER_VERSION);
                 jsonGenerator.writeFieldName("basePath");
                 jsonGenerator.writeString("{baseSwaggerUri}");
+                jsonGenerator.writeFieldName(SwaggerConstants.RESOURCE_PATH_FIELD_NAME);
+                jsonGenerator.writeString(resource.getPath());
                 jsonGenerator.writeFieldName(SwaggerConstants.APIS_FIELD_NAME);
                 jsonGenerator.writeStartArray();
 
@@ -86,35 +89,46 @@ public class RetrieveDocumentOperation extends AbstractRestOperation
     }
 
     @Override
-    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
+    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator)
+        throws JsonGenerationException, IOException
     {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeFieldName(SwaggerConstants.HTTP_METHOD_FIELD_NAME);
         jsonGenerator.writeString("GET");
-        jsonGenerator.writeFieldName("nickname");
+        jsonGenerator.writeFieldName(SwaggerConstants.NICKNAME_FIELD_NAME);
         jsonGenerator.writeString("retrieve" + StringUtils.capitalize(resource.getName()));
 
-        if (resource.getOperation(RestOperationType.RETRIEVE).getRepresentations() != null)
+        if (getAllRepresentations() != null)
         {
             jsonGenerator.writeFieldName(SwaggerConstants.SUPPORTED_CONTENT_TYPES_FIELD_NAME);
             jsonGenerator.writeStartArray();
-            for (RepresentationMetaData representation : resource.getOperation(RestOperationType.RETRIEVE)
-                .getRepresentations())
+            for (RepresentationMetaData representation : getAllRepresentations())
             {
                 jsonGenerator.writeString(representation.getMediaType().toString());
             }
             jsonGenerator.writeEndArray();
         }
 
+        if (resource instanceof CollectionMemberResource)
+        {
+            jsonGenerator.writeFieldName(SwaggerConstants.PARAMETERS_FIELD_NAME);
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeFieldName(SwaggerConstants.PARAM_TYPE_FIELD_NAME);
+            jsonGenerator.writeString(SwaggerConstants.PATH_FIELD_NAME);
+            jsonGenerator.writeFieldName(SwaggerConstants.NAME_FIELD_NAME);
+            jsonGenerator.writeString(resource.getName() + "Id");
+            jsonGenerator.writeFieldName(SwaggerConstants.DESCRIPTION_FIELD_NAME);
+            jsonGenerator.writeString("The id uses to identify " + resource.getName());
+            jsonGenerator.writeFieldName(SwaggerConstants.DATA_TYPE_FIELD_NAME);
+            jsonGenerator.writeString(SwaggerConstants.DEFAULT_DATA_TYPE);
+            jsonGenerator.writeFieldName(SwaggerConstants.REQUIRED_FIELD_NAME);
+            jsonGenerator.writeBoolean(true);
+            jsonGenerator.writeFieldName(SwaggerConstants.ALLOW_MULTIPLE_FIELD_NAME);
+            jsonGenerator.writeBoolean(false);
+            jsonGenerator.writeEndObject();
+        }
         jsonGenerator.writeFieldName("summary");
-        if (resource.getOperation(RestOperationType.RETRIEVE).getDescription() != null)
-        {
-            jsonGenerator.writeString(resource.getOperation(RestOperationType.RETRIEVE).getDescription());
-        }
-        else
-        {
-            jsonGenerator.writeNull();
-        }
+        jsonGenerator.writeString(getDescription());
 
         jsonGenerator.writeFieldName(SwaggerConstants.RESPONSE_CLASS_FIELD_NAME);
         jsonGenerator.writeString(StringUtils.capitalize(NameUtils.camel(resource.getName())));

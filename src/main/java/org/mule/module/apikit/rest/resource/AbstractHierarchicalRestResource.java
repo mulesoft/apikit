@@ -6,6 +6,10 @@ import org.mule.config.i18n.MessageFactory;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,9 +22,9 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
     protected List<RestResource> resources = Collections.unmodifiableList(new ArrayList<RestResource>());
     protected Map<String, RestResource> routingTable = new HashMap<String, RestResource>();
 
-    public AbstractHierarchicalRestResource(String name)
+    public AbstractHierarchicalRestResource(String name, RestResource parentResource)
     {
-        super(name);
+        super(name, parentResource);
     }
 
     @Override
@@ -101,5 +105,15 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
     public void initialise() throws InitialisationException
     {
         buildRoutingTable();
+    }
+
+    @Override
+    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
+    {
+        super.appendSwaggerJson(jsonGenerator);
+        for (RestResource resource : getResources())
+        {
+            resource.appendSwaggerJson(jsonGenerator);
+        }
     }
 }

@@ -5,7 +5,6 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
-import org.mule.tck.functional.FlowAssert;
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
@@ -18,6 +17,12 @@ import org.junit.Test;
 public class RestIntegrationTestCase extends FunctionalTestCase
 {
 
+    @Override
+    public int getTestTimeoutSecs()
+    {
+        return 6000;
+    }
+    
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
 

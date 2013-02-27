@@ -1,6 +1,10 @@
 
 package org.mule.module.apikit.rest.resource.collection;
 
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.DESCRIPTION_FIELD_NAME;
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.OPERATIONS_FIELD_NAME;
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PATH_FIELD_NAME;
+
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
@@ -8,7 +12,12 @@ import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.AbstractRestResource;
+import org.mule.module.apikit.rest.resource.RestResource;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -17,9 +26,9 @@ public class CollectionResource extends AbstractRestResource
 
     protected CollectionMemberResource memberResource;
 
-    public CollectionResource(String name)
+    public CollectionResource(String name, RestResource parentResource)
     {
-        super(name);
+        super(name, parentResource);
     }
 
     @Override
@@ -32,7 +41,6 @@ public class CollectionResource extends AbstractRestResource
     public void setMemberResource(CollectionMemberResource memberResource)
     {
         this.memberResource = memberResource;
-        memberResource.setCollectionResource(this);
     }
 
     public CollectionMemberResource getMemberResource()
@@ -65,6 +73,13 @@ public class CollectionResource extends AbstractRestResource
         {
             return super.getAction(actionType, muleEvent);
         }
+    }
+
+    @Override
+    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
+    {
+        super.appendSwaggerJson(jsonGenerator);
+        memberResource.appendSwaggerJson(jsonGenerator);
     }
 
 }

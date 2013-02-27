@@ -47,7 +47,7 @@ public class DocumentResourceTestCase extends AbstractMuleTestCase
         doCallRealMethod().when(httpAdapter).handleException(any(RestException.class), any(RestRequest.class));
         when(request.getProtocolAdaptor()).thenReturn(httpAdapter);
         when(request.getMuleEvent()).thenReturn(event);
-        doc = new DocumentResource("doc");
+        doc = new DocumentResource("doc", null);
     }
 
     @Test
@@ -63,8 +63,8 @@ public class DocumentResourceTestCase extends AbstractMuleTestCase
     @Test(expected = InitialisationException.class)
     public void errorOnDuplicageChildResourceNames() throws Exception
     {
-        DocumentResource childDoc1 = new DocumentResource("child");
-        DocumentResource childDoc2 = new DocumentResource("child");
+        DocumentResource childDoc1 = new DocumentResource("child", null);
+        DocumentResource childDoc2 = new DocumentResource("child", null);
         doc.setResources(Arrays.asList(new RestResource[] {childDoc1, childDoc2}));
         doc.buildRoutingTable();
     }

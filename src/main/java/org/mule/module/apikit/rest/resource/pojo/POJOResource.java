@@ -9,6 +9,7 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.AbstractRestResource;
+import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.transport.http.HttpConnector;
 
 import com.sun.jersey.api.core.DefaultResourceConfig;
@@ -32,9 +33,9 @@ public class POJOResource extends AbstractRestResource implements Initialisable
     protected WebApplication application;
     protected Object resource;
 
-    public POJOResource(String name)
+    public POJOResource(String name, RestResource parentResource)
     {
-        super(name);
+        super(name, parentResource);
     }
 
     @Override

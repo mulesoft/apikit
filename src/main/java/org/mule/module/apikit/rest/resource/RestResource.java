@@ -35,4 +35,5 @@ public interface RestResource extends RestRequestHandler, WebServiceRoute, Named
 
     void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException;
 
+    String getPath();
 }

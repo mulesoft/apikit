@@ -18,5 +18,5 @@ public interface RestOperation extends RestRequestHandler, WebServiceOperation
 
     Collection<RepresentationMetaData> getRepresentations();
 
-    void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException;
+    void appendSwaggerDescriptor(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException;
 }

@@ -178,7 +178,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     }
 
     @Override
-    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
+    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
     {
         // TODO Auto-generated method stub
 

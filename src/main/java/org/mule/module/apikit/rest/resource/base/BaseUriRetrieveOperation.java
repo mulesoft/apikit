@@ -27,6 +27,7 @@ import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.swagger.SwaggerConstants;
+import org.mule.module.apikit.rest.util.RestContentTypeParser;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.NullPayload;
 import org.mule.transport.http.HttpConnector;
@@ -62,11 +63,12 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
         List<MediaType> acceptContentTypes = restRequest.getProtocolAdaptor()
             .getAcceptableResponseMediaTypes();
 
-        if (isContentTypeAccepted(acceptContentTypes, MediaType.parse("application/swagger+json")))
+        if (RestContentTypeParser.isMediaTypeAcceptable(acceptContentTypes,
+            MediaType.parse("application/swagger+json")))
         {
             swaggerJsonAction.handle(restRequest);
         }
-        else if (isContentTypeAccepted(acceptContentTypes, MediaType.parse("text/html")))
+        else if (RestContentTypeParser.isMediaTypeAcceptable(acceptContentTypes, MediaType.parse("text/html")))
         {
             swaggerHtmlAction.handle(restRequest);
         }
@@ -74,18 +76,6 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
         {
             throw new MediaTypeNotAcceptableException();
         }
-    }
-
-    private boolean isContentTypeAccepted(List<MediaType> acceptContentTypes, MediaType mediaType)
-    {
-        for (MediaType accept : acceptContentTypes)
-        {
-            if (accept.withoutParameters().equals(mediaType))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

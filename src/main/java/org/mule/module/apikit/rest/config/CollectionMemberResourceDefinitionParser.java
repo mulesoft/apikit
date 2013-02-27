@@ -11,6 +11,7 @@
 package org.mule.module.apikit.rest.config;
 
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
+import org.mule.module.apikit.rest.resource.base.BaseUriResource;
 import org.mule.module.apikit.rest.resource.collection.CollectionMemberResource;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -22,23 +23,29 @@ public class CollectionMemberResourceDefinitionParser extends ChildDefinitionPar
 
     public CollectionMemberResourceDefinitionParser()
     {
-        super("memberResource", CollectionMemberResource.class, false);
+        super("memberResource",CollectionMemberResource.class, true);
         addIgnored(ATTRIBUTE_NAME);
     }
 
     @Override
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
-        String parentName = element.getParentNode()
-            .getAttributes()
-            .getNamedItem(ATTRIBUTE_NAME)
-            .getNodeValue();
-        builder.addConstructorArgValue(parentName.substring(parentName.lastIndexOf(".") + 1,
-            parentName.length())
-                                       + "Member");
+        if (!element.getParentNode().getLocalName().equals("interface"))
+        {
+            builder.addConstructorArgReference(getParentBeanName(element));
+        }
+        else
+        {
+            builder.addConstructorArgValue(new BaseUriResource());
+        }
         builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
-
     }
 
+    
+    @Override
+    public String getBeanName(Element element)
+    {
+        return element.getParentNode().getAttributes().getNamedItem(ATTRIBUTE_NAME).getNodeValue() + ".member";
+    }
 }
