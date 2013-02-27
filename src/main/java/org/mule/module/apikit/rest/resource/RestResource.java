@@ -19,19 +19,17 @@ import java.util.Set;
 
 public interface RestResource extends RestRequestHandler, WebServiceRoute, NamedObject
 {
-    boolean isActionTypeAllowed(RestOperationType actionType);
+    boolean isOperationTypeAllowed(RestOperationType actionType);
 
-    Set<RestOperationType> getAllowedActionTypes();
+    Set<RestOperationType> getAllowedOperationTypes();
 
-    void setOperations(List<RestOperation> actions);
+    void setOperations(List<RestOperation> operation);
 
     List<RestOperation> getOperations();
 
-    List<RestOperation> getAuthorizedActions(RestRequest request);
+    List<RestOperation> getAuthorizedOperations(RestRequest request);
 
     Collection<RepresentationMetaData> getRepresentations();
-
-    RestOperation getOperation(RestOperationType operationType);
 
     void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException;
 

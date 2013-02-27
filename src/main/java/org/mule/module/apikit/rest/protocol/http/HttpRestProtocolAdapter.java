@@ -159,7 +159,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
             message.setOutboundProperty("http.status",
                 HttpStatusCode.CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode());
             message.setOutboundProperty("Allow",
-                StringUtils.join(actionTypesToHttpMethods(anse.getResource().getAllowedActionTypes()), " ,"));
+                StringUtils.join(actionTypesToHttpMethods(anse.getResource().getAllowedOperationTypes()), " ,"));
             message.setPayload(NullPayload.getInstance());
 
         }

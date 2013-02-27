@@ -119,7 +119,7 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public boolean isActionTypeAllowed(RestOperationType actionType)
+    public boolean isOperationTypeAllowed(RestOperationType actionType)
     {
         for (RestOperation operation : operations)
         {
@@ -132,7 +132,7 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public Set<RestOperationType> getAllowedActionTypes()
+    public Set<RestOperationType> getAllowedOperationTypes()
     {
         Set<RestOperationType> allowedTypes = new HashSet<RestOperationType>();
         for (RestOperation operation : operations)
@@ -190,7 +190,7 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public List<RestOperation> getAuthorizedActions(RestRequest request)
+    public List<RestOperation> getAuthorizedOperations(RestRequest request)
     {
         List<RestOperation> result = new ArrayList<RestOperation>();
         for (RestOperation action : getOperations())

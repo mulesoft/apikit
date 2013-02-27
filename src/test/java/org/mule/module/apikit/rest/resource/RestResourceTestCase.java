@@ -154,7 +154,7 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         actions.add(action2);
         resource.setOperations(actions);
 
-        List<RestOperation> authorizedActions = resource.getAuthorizedActions(request);
+        List<RestOperation> authorizedActions = resource.getAuthorizedOperations(request);
         assertEquals(1, authorizedActions.size());
         assertEquals(action1, authorizedActions.get(0));
     }
