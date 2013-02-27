@@ -83,7 +83,8 @@ public class UpdateDocumentOperation extends AbstractRestOperation
             jsonGenerator.writeEndArray();
             jsonGenerator.writeEndObject();
         }
-
+        jsonGenerator.writeEndArray();
+        
         jsonGenerator.writeFieldName("summary");
         jsonGenerator.writeString(getDescription());
 

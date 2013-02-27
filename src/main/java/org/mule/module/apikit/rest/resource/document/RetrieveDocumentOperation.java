@@ -112,13 +112,14 @@ public class RetrieveDocumentOperation extends AbstractRestOperation
         if (resource instanceof CollectionMemberResource)
         {
             jsonGenerator.writeFieldName(SwaggerConstants.PARAMETERS_FIELD_NAME);
+            jsonGenerator.writeStartArray();
             jsonGenerator.writeStartObject();
             jsonGenerator.writeFieldName(SwaggerConstants.PARAM_TYPE_FIELD_NAME);
             jsonGenerator.writeString(SwaggerConstants.PATH_FIELD_NAME);
             jsonGenerator.writeFieldName(SwaggerConstants.NAME_FIELD_NAME);
             jsonGenerator.writeString(resource.getName() + "Id");
             jsonGenerator.writeFieldName(SwaggerConstants.DESCRIPTION_FIELD_NAME);
-            jsonGenerator.writeString("The id uses to identify " + resource.getName());
+            jsonGenerator.writeString("The id used to identify " + resource.getName());
             jsonGenerator.writeFieldName(SwaggerConstants.DATA_TYPE_FIELD_NAME);
             jsonGenerator.writeString(SwaggerConstants.DEFAULT_DATA_TYPE);
             jsonGenerator.writeFieldName(SwaggerConstants.REQUIRED_FIELD_NAME);
@@ -126,6 +127,7 @@ public class RetrieveDocumentOperation extends AbstractRestOperation
             jsonGenerator.writeFieldName(SwaggerConstants.ALLOW_MULTIPLE_FIELD_NAME);
             jsonGenerator.writeBoolean(false);
             jsonGenerator.writeEndObject();
+            jsonGenerator.writeEndArray();
         }
         jsonGenerator.writeFieldName("summary");
         jsonGenerator.writeString(getDescription());
