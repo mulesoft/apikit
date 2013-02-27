@@ -1,11 +1,6 @@
 
 package org.mule.module.apikit.rest.resource.collection;
 
-import static org.mule.module.apikit.rest.swagger.SwaggerConstants.DESCRIPTION_FIELD_NAME;
-import static org.mule.module.apikit.rest.swagger.SwaggerConstants.OPERATIONS_FIELD_NAME;
-import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PATH_FIELD_NAME;
-
-import org.mule.api.MuleEvent;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
@@ -62,7 +57,7 @@ public class CollectionResource extends AbstractRestResource
     }
 
     @Override
-    protected RestOperation getAction(RestOperationType actionType, MuleEvent muleEvent)
+    protected RestOperation getAction(RestOperationType actionType, RestRequest request)
         throws OperationNotAllowedException
     {
         if (actionType == RestOperationType.CREATE)
@@ -71,7 +66,7 @@ public class CollectionResource extends AbstractRestResource
         }
         else
         {
-            return super.getAction(actionType, muleEvent);
+            return super.getAction(actionType, request);
         }
     }
 

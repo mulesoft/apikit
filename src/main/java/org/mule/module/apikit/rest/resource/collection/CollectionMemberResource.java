@@ -4,13 +4,10 @@ package org.mule.module.apikit.rest.resource.collection;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.param.PathParameter;
 import org.mule.module.apikit.rest.resource.AbstractHierarchicalRestResource;
 import org.mule.module.apikit.rest.resource.RestResource;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -20,6 +17,7 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
     public CollectionMemberResource(RestResource parentResource)
     {
         super(parentResource.getName() + "Member", parentResource);
+        parameters.add(new PathParameter(parentResource.getName() + "MemberId"));
     }
 
     @Override
@@ -41,5 +39,5 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
     {
         return parentResource.getPath() + "/{" + getName() + "Id}";
     }
-    
+
 }

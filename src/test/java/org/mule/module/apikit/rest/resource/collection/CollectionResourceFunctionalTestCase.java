@@ -21,6 +21,13 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     public DynamicPort serverPort = new DynamicPort("serverPort");
 
     @Override
+    public int getTestTimeoutSecs()
+    {
+      
+        return 6000;
+    }
+    
+    @Override
     protected void doSetUp() throws Exception
     {
         RestAssured.port = serverPort.getNumber();
