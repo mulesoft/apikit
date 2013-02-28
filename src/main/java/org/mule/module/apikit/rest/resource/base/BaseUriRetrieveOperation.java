@@ -182,8 +182,8 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
                 String buffer = new String(baos.toByteArray());
 
                 buffer = buffer.replace("${swaggerUrl}", restRequest.getMuleEvent()
-                    .getMessageSourceURI()
-                    .toString()
+                    .getMessage()
+                    .getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY)
                                                          + "/_swagger/");
 
                 buffer = buffer.replace("${baseUrl}", restRequest.getMuleEvent()
