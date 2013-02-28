@@ -106,46 +106,103 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     }
 
     /*
-     * @Test public void testCreateWithInvalidContentTypeOnCollectionArchetype() throws Exception {
-     * given().body
-     * ("{ \"name\": \"MLS\" }").contentType("application/x-www-form-urlencoded").expect().statusCode
-     * (415).post("/api/leagues"); FlowAssert.verify("apiImplementation"); }
-     * @Test public void testCreateUsingXmlOnCollectionArchetype() throws Exception {
-     * given().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>"
-     * ).contentType("text/xml").expect().statusCode(201).post("/api/leagues");
-     * FlowAssert.verify("apiImplementation"); }
-     * @Test public void testCreateInvalidInputUsingXmlOnCollectionArchetype() throws Exception {
-     * given().log()
-     * .everything().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><xxx>MLS</xxx></league>"
-     * ).contentType("text/xml").expect().statusCode(400).post("/api/leagues");
-     * FlowAssert.verify("apiImplementation"); }
-     * @Test public void testCreateInvalidInputOnCollectionArchetype() throws Exception {
-     * given().log().everything
-     * ().body("{ \"xxx\": \"MLS\" }").contentType("application/json").expect().statusCode
-     * (400).post("/api/leagues"); FlowAssert.verify("apiImplementation"); }
-     * @Test public void testLocationOnCreateOnCollectionArchetype() throws Exception {
-     * given().log().everything
-     * ().body("{ \"name\": \"MLS\" }").contentType("application/json").expect().header("Location",
-     * is("http://localhost:8080/api/leagues/mls")).post("/api/leagues");
-     * FlowAssert.verify("apiImplementation"); } //<!-- GET {parentUri}/{leagueName} - Retrieve a single
-     * resource -> 200 --> //<!-- HEAD {parentUri}/{leagueName} - Does the resource exists? 200 : 404 -->
-     * //<!-- DELETE {parentUri}/{leagueName} - Delete a resource -> 204 -->
-     * @Test public void testNoPutOnDocumentArchetype() throws Exception {
-     * expect().response().statusCode(405).when().put("/api/leagues/liga-bbva");
-     * FlowAssert.verify("apiImplementation"); }
-     * @Test public void testNoPostOnDocumentArchetype() throws Exception {
-     * expect().response().statusCode(405).when().post("/api/leagues/liga-bbva");
-     * FlowAssert.verify("apiImplementation"); }
-     * @Test public void testRetrieveUsingXmlOnDocumentArchetype() throws Exception {
-     * given().log().all().header("Accept",
-     * "text/xml").expect().response().log().all().statusCode(200).contentType("text/xml").body("league.id",
-     * is("liga-bbva")).when().get("/api/leagues/liga-bbva"); FlowAssert.verify("apiImplementation"); }
-     * @Test public void testRetrieveUsinXmlOnDocumentArchetype2() throws Exception {
-     * given().log().all().header("Accept",
-     * "text/xml").expect().response().log().all().statusCode(200).contentType("text/xml").body("league.id",
-     * is("premier-league")).when().get("/api/leagues/premier-league");
-     * FlowAssert.verify("apiImplementation"); }
-     */
+    @Test
+    public void testCreateWithInvalidContentTypeOnCollectionArchetype() throws Exception
+    {
+        given().body
+                ("{ \"name\": \"MLS\" }").contentType("application/x-www-form-urlencoded").expect().statusCode
+                (415).post("/api/leagues");
+        FlowAssert.verify("apiImplementation");
+    }
+
+    @Test
+    public void testCreateUsingXmlOnCollectionArchetype() throws Exception
+    {
+        given().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>"
+        ).contentType("text/xml").expect().statusCode(201).post("/api/leagues");
+        FlowAssert.verify("apiImplementation");
+    }
+
+    @Test
+    public void testCreateInvalidInputUsingXmlOnCollectionArchetype() throws Exception
+    {
+        given().log()
+                .everything().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><xxx>MLS</xxx></league>"
+        ).contentType("text/xml").expect().statusCode(400).post("/api/leagues");
+        FlowAssert.verify("apiImplementation");
+    }
+
+    @Test
+    public void testCreateInvalidInputOnCollectionArchetype() throws Exception
+    {
+        given().log().everything
+                ().body("{ \"xxx\": \"MLS\" }").contentType("application/json").expect().statusCode
+                (400).post("/api/leagues");
+        FlowAssert.verify("apiImplementation");
+    }
+
+    @Test
+    public void testLocationOnCreateOnCollectionArchetype() throws Exception
+    {
+        given().log().everything
+                ().body("{ \"name\": \"MLS\" }").contentType("application/json").expect().header("Location",
+                                                                                                 is("http://localhost:8080/api/leagues/mls")).post("/api/leagues");
+        FlowAssert.verify("apiImplementation");
+    } //<!-- GET {parentUri}/{leagueName} - Retrieve a single
+
+    resource->200--> //<!-- HEAD {parentUri}/{leagueName} - Does the resource exists? 200 : 404 -->
+
+    //<!-- DELETE {parentUri}/{leagueName} - Delete a resource -> 204 -->
+    */
+
+    @Test
+    public void testNoUpdateOnCollection() throws Exception
+    {
+        expect().response().statusCode(405).when().put("/api/leagues");
+    }
+
+    @Test
+    public void testUpdateOnMember() throws Exception
+    {
+        given().body("{ \"name\": \"Liga Hispanica\" }")
+                .contentType("application/json")
+                .expect()
+                .statusCode(200)
+                .put("/api/leagues/liga-bbva");
+        expect().log()
+                .everything()
+                .response()
+                .body("leagues.name", hasItems("Liga Hispanica", "Premier League"))
+                .when()
+                .get("/api/leagues");
+    }
+
+    /*
+    @Test
+    public void testNoPostOnDocumentArchetype() throws Exception
+    {
+        expect().response().statusCode(405).when().post("/api/leagues/liga-bbva");
+        FlowAssert.verify("apiImplementation");
+    }
+
+    @Test
+    public void testRetrieveUsingXmlOnDocumentArchetype() throws Exception
+    {
+        given().log().all().header("Accept",
+                                   "text/xml").expect().response().log().all().statusCode(200).contentType("text/xml").body("league.id",
+                                                                                                                            is("liga-bbva")).when().get("/api/leagues/liga-bbva");
+        FlowAssert.verify("apiImplementation");
+    }
+
+    @Test
+    public void testRetrieveUsinXmlOnDocumentArchetype2() throws Exception
+    {
+        given().log().all().header("Accept",
+                                   "text/xml").expect().response().log().all().statusCode(200).contentType("text/xml").body("league.id",
+                                                                                                                            is("premier-league")).when().get("/api/leagues/premier-league");
+        FlowAssert.verify("apiImplementation");
+    }
+*/
 
     @Test
     public void testRetrieveOnMemberArchetype() throws Exception

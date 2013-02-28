@@ -14,9 +14,7 @@
     </flow>
 
     <flow name="createLeague">
-        <!--<set-payload value="#[payload]" returnClass="org.mule.module.apikit.rest.integration.League"/>-->
         <json:json-to-object-transformer returnClass="org.mule.module.apikit.rest.integration.League"/>
-        <!--<auto-transformer returnClass="org.mule.module.apikit.rest.integration.League"/>-->
         <set-variable variableName="leaguesMemberId" value="#[app.registry['list-of-leagues'].getLeagues().size() + 1]" />
         <expression-component>
             payload.id = leaguesMemberId;
@@ -34,6 +32,14 @@
                 <set-property propertyName="http.status" value="404" />
             </otherwise>
         </choice>
+    </flow>
+
+    <flow name="updateLeague">
+        <json:json-to-object-transformer returnClass="org.mule.module.apikit.rest.integration.League"/>
+            <expression-component>
+                league = app.registry['list-of-leagues'].getLeague(leaguesMemberId);
+                league.name = payload.name;
+            </expression-component>
     </flow>
 
     <flow name="deleteLeague">
