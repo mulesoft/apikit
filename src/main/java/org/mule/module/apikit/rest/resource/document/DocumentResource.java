@@ -20,5 +20,18 @@ public class DocumentResource extends AbstractHierarchicalRestResource
     {
         return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS, RestOperationType.UPDATE);
     }
+    
+    @Override
+    public String getDescription()
+    {
+        if (super.getDescription() != null)
+        {
+            return super.getDescription();
+        }
+        else
+        {
+            return getName() + " Document";
+        }
+    }
 
 }

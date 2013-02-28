@@ -77,4 +77,17 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
         }
     }
 
+    @Override
+    public String getDescription()
+    {
+        if (super.getDescription() != null)
+        {
+            return super.getDescription();
+        }
+        else
+        {
+            return getName() + " Collection Member";
+        }
+    }
+
 }

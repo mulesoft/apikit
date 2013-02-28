@@ -54,6 +54,8 @@ public class UpdateDocumentOperation extends AbstractRestOperation
         jsonGenerator.writeString("PUT");
         jsonGenerator.writeFieldName(SwaggerConstants.NICKNAME_FIELD_NAME);
         jsonGenerator.writeString("update" + StringUtils.capitalize(resource.getName()));
+        jsonGenerator.writeFieldName(SwaggerConstants.DESCRIPTION_FIELD_NAME);
+        jsonGenerator.writeString(getDescription());
 
         jsonGenerator.writeFieldName(PARAMETERS_FIELD_NAME);
         jsonGenerator.writeStartArray();

@@ -12,6 +12,7 @@ import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.AbstractRestResource;
 import org.mule.module.apikit.rest.resource.RestResource;
+import org.mule.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -93,4 +94,16 @@ public class CollectionResource extends AbstractRestResource
         memberResource.appendSwaggerJson(jsonGenerator);
     }
 
+    @Override
+    public String getDescription()
+    {
+        if (!StringUtils.isEmpty(super.getDescription()))
+        {
+            return super.getDescription();
+        }
+        else
+        {
+            return getName() + " Collection";
+        }
+    }
 }

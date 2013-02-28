@@ -66,6 +66,8 @@ public class CreateCollectionMemberOperation extends AbstractRestOperation
         jsonGenerator.writeString("POST");
         jsonGenerator.writeFieldName(SwaggerConstants.NICKNAME_FIELD_NAME);
         jsonGenerator.writeString("create" + StringUtils.capitalize(resource.getName()));
+        jsonGenerator.writeFieldName(SwaggerConstants.DESCRIPTION_FIELD_NAME);
+        jsonGenerator.writeString(getDescription());
 
         jsonGenerator.writeFieldName(PARAMETERS_FIELD_NAME);
         jsonGenerator.writeStartArray();

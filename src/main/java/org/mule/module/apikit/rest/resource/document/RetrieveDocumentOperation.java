@@ -31,6 +31,8 @@ public class RetrieveDocumentOperation extends AbstractRestOperation
         jsonGenerator.writeString("GET");
         jsonGenerator.writeFieldName(SwaggerConstants.NICKNAME_FIELD_NAME);
         jsonGenerator.writeString("retrieve" + StringUtils.capitalize(resource.getName()));
+        jsonGenerator.writeFieldName(SwaggerConstants.DESCRIPTION_FIELD_NAME);
+        jsonGenerator.writeString(getDescription());
 
         if (getAllRepresentations() != null)
         {

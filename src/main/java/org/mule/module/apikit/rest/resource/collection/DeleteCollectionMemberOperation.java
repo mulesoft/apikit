@@ -42,6 +42,8 @@ public class DeleteCollectionMemberOperation extends AbstractRestOperation
         jsonGenerator.writeString("DELETE");
         jsonGenerator.writeFieldName(SwaggerConstants.NICKNAME_FIELD_NAME);
         jsonGenerator.writeString("delete" + StringUtils.capitalize(resource.getName()));
+        jsonGenerator.writeFieldName(SwaggerConstants.DESCRIPTION_FIELD_NAME);
+        jsonGenerator.writeString(getDescription());
         jsonGenerator.writeFieldName(SwaggerConstants.PARAMETERS_FIELD_NAME);
         jsonGenerator.writeStartArray();
         for (RestParameter param : resource.getParameters())

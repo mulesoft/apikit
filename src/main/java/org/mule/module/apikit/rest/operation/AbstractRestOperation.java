@@ -15,6 +15,7 @@ import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
 import org.mule.transport.NullPayload;
+import org.mule.util.StringUtils;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -178,10 +179,24 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     }
 
     @Override
-    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
+    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator)
+        throws JsonGenerationException, IOException
     {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public String getDescription()
+    {
+        if (!StringUtils.isEmpty(super.getDescription()))
+        {
+            return super.getDescription();
+        }
+        else
+        {
+            return type.name() + " " + resource.getName();
+        }
     }
 
 }
