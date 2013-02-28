@@ -14,7 +14,9 @@
     </flow>
 
     <flow name="createLeague">
+        <!--<set-payload value="#[payload]" returnClass="org.mule.module.apikit.rest.integration.League"/>-->
         <json:json-to-object-transformer returnClass="org.mule.module.apikit.rest.integration.League"/>
+        <!--<auto-transformer returnClass="org.mule.module.apikit.rest.integration.League"/>-->
         <set-variable variableName="leaguesMemberId" value="#[app.registry['list-of-leagues'].getLeagues().size() + 1]" />
         <expression-component>
             payload.id = leaguesMemberId;

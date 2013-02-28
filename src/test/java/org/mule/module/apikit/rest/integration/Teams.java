@@ -1,14 +1,3 @@
-/**
- * Mule Rest Module
- *
- * Copyright 2011-2012 (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- *
- * This software is protected under international copyright law. All use of this software is
- * subject to MuleSoft's Master Subscription Agreement (or other master license agreement)
- * separately entered into in writing between you and MuleSoft. If such an agreement is not
- * in place, you may not use the software.
- */
-
 package org.mule.module.apikit.rest.integration;
 
 import org.mule.api.annotations.ContainsTransformerMethods;
@@ -31,15 +20,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 @ContainsTransformerMethods
 @XmlRootElement
 @JsonAutoDetect
-public class Teams {
+public class Teams
+{
+
     private List<Team> teams;
 
     @XmlElement(name = "teams")
-    public List<Team> getTeams() {
+    public List<Team> getTeams()
+    {
         return teams;
     }
 
-    public void setTeams(List<Team> teams) {
+    public void setTeams(List<Team> teams)
+    {
         this.teams = teams;
     }
 
@@ -56,13 +49,15 @@ public class Teams {
     }
 
     @Transformer(resultMimeType = "application/json")
-    public String toJson(Teams teams) throws IOException {
+    public String toJson(Teams teams) throws IOException
+    {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(teams);
     }
 
     @Transformer(resultMimeType = "text/xml")
-    public String toXml(Teams teams) throws IOException, JAXBException {
+    public String toXml(Teams teams) throws IOException, JAXBException
+    {
         JAXBContext context = JAXBContext.newInstance(getClass());
 
         Marshaller m = context.createMarshaller();

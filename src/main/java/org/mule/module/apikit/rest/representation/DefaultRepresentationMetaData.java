@@ -1,23 +1,27 @@
 
 package org.mule.module.apikit.rest.representation;
 
+import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
-import org.mule.api.transformer.TransformerException;
-import org.mule.config.i18n.MessageFactory;
-import org.mule.config.transformer.AnnotatedTransformerProxy;
 import org.mule.module.apikit.rest.RestRequest;
+import org.mule.module.apikit.rest.transform.DataTypePair;
+import org.mule.module.apikit.rest.transform.TransformerCache;
 import org.mule.transformer.types.DataTypeFactory;
-import org.mule.transformer.types.SimpleDataType;
 
 import com.google.common.net.MediaType;
 
-import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultRepresentationMetaData implements RepresentationMetaData
 {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MediaType mediaType;
     protected String schemaType;
@@ -53,17 +57,17 @@ public class DefaultRepresentationMetaData implements RepresentationMetaData
     public void setMediaType(MediaType mediaType)
     {
         this.mediaType = mediaType;
-    };
+    }
 
     public void setSchemaType(String schemaType)
     {
         this.schemaType = schemaType;
-    };
+    }
 
     public void setSchemaLocation(String schemaLocation)
     {
         this.schemaLocation = schemaLocation;
-    };
+    }
 
     @Override
     public Object fromRepresentation(Object payload)
@@ -72,27 +76,34 @@ public class DefaultRepresentationMetaData implements RepresentationMetaData
     }
 
     @Override
-    public Object toRepresentation(MuleEvent event, RestRequest request) throws MuleException
+    public Object toRepresentation(MuleEvent muleEvent, RestRequest request) throws MuleException
     {
-        DataType sourceDataType = DataTypeFactory.create(event.getMessage().getPayload().getClass());
-        DataType resultDataType = new SimpleDataType<String>(String.class, mediaType.withoutParameters().toString());
-        //Transformer transformer = event.getMuleContext().getRegistry().lookupTransformer(sourceDataType, resultDataType);
-        List<Transformer> transformers = event.getMuleContext().getRegistry().lookupTransformers(sourceDataType, resultDataType);
-        if (transformers == null || transformers.isEmpty())
+        DataType sourceDataType = DataTypeFactory.create(muleEvent.getMessage().getPayload().getClass());
+        DataType resultDataType = DataTypeFactory.create(String.class, mediaType.withoutParameters().toString());
+
+        if (logger.isDebugEnabled())
         {
-            throw new TransformerException(MessageFactory.createStaticMessage(String.format(
-                    "No transformer found for the following types: %s -> %s\n", sourceDataType, resultDataType)));
+            logger.debug(String.format("Resolving transformer between [source=%s] and [result=%s]", sourceDataType, resultDataType));
         }
-        Transformer transformer = transformers.get(0);
-        //TODO fix hack to get best possible transformer
-        for (Transformer tr : transformers)
+
+        Transformer transformer;
+        try
         {
-            if (tr instanceof AnnotatedTransformerProxy)
-            {
-                transformer = tr;
-            }
+            transformer = TransformerCache.getTransformerCache(muleEvent.getMuleContext()).get(new DataTypePair(sourceDataType, resultDataType));
         }
-        Object payload = transformer.process(event).getMessage().getPayload();
+        catch (ExecutionException e)
+        {
+            throw new DefaultMuleException(e.getCause());
+        }
+
+        if (logger.isDebugEnabled())
+        {
+            logger.debug(String.format("Transformer resolved to [transformer=%s]", transformer));
+        }
+
+        Object payload = transformer.transform(muleEvent.getMessage().getPayload());
+        muleEvent.getMessage().setOutboundProperty("Content-Type", mediaType.withoutParameters().toString());
+
         return payload;
     }
 

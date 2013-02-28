@@ -9,21 +9,16 @@
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <rest:interface name="myInterface">
-
         <rest:collection-resource name="leagues">
             <rest:retrieve flow-ref="retrieveLeagues">
-                <rest:representation mediaType="application/json"/>
+                <rest:representation mediaType="application/json" quality="0.8"/>
+                <rest:representation mediaType="text/xml" quality="0.2"/>
             </rest:retrieve>
-
             <rest:member>
-                <rest:create flow-ref="createLeague">
-                    <rest:representation mediaType="application/json"/>
-                </rest:create>
-                <rest:retrieve flow-ref="retrieveLeague">
-                    <rest:representation mediaType="application/json"/>
-                </rest:retrieve>
+                <rest:representation mediaType="application/json"/>
+                <rest:create flow-ref="createLeague"/>
+                <rest:retrieve flow-ref="retrieveLeague"/>
                 <rest:delete flow-ref="deleteLeague"/>
-
                 <rest:collection-resource name="teams">
                     <rest:retrieve flow-ref="retrieveTeams">
                         <rest:representation mediaType="application/json"/>
