@@ -87,8 +87,10 @@ public class CollectionResource extends AbstractRestResource
         jsonGenerator.writeStartArray();
 
         getOperation(RestOperationType.RETRIEVE).appendSwaggerDescriptor(jsonGenerator);
-        memberResource.getOperation(RestOperationType.CREATE).appendSwaggerDescriptor(jsonGenerator);
-
+        if (memberResource.getOperation(RestOperationType.CREATE) != null)
+        {
+            memberResource.getOperation(RestOperationType.CREATE).appendSwaggerDescriptor(jsonGenerator);
+        }
         jsonGenerator.writeEndArray();
         jsonGenerator.writeEndObject();
         memberResource.appendSwaggerJson(jsonGenerator);
