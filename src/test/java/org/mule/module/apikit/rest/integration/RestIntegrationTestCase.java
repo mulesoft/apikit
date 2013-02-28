@@ -56,28 +56,31 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     public void testRetrieveOnCollectionArchetype() throws Exception
     {
         expect().log()
-            .everything()
-            .response()
-            .body("leagues.name", hasItems("Liga BBVA", "Premier League"))
-            .when()
-            .get("/api/leagues");
+                .everything()
+                .response()
+                .body("leagues.name", hasItems("Liga BBVA", "Premier League"))
+                .when()
+                .get("/api/leagues");
     }
 
-    /*
-     * @Test public void testRetrieveAsXmlOnCollectionArchetype() throws Exception { given().header("Accept",
-     * "text/xml").expect().response().body("leagues.league.name", hasItems("Liga BBVA",
-     * "Premier League")).when().get("/api/leagues"); FlowAssert.verify("apiImplementation"); }
-     */
+
+    @Test
+    public void testRetrieveAsXmlOnCollectionArchetype() throws Exception
+    {
+        given().header("Accept", "text/xml").expect().response()
+                .body("leagues.league.name", hasItems("Liga BBVA", "Premier League")).when().get("/api/leagues");
+    }
+
 
     @Test
     public void testRetrieveOnCollectionArchetypeWithWrongContentType() throws Exception
     {
         given().header("Accept", "application/xml")
-            .expect()
-            .response()
-            .statusCode(406)
-            .when()
-            .get("/api/leagues");
+                .expect()
+                .response()
+                .statusCode(406)
+                .when()
+                .get("/api/leagues");
     }
 
     @Test
@@ -90,16 +93,16 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     public void testCreateOnCollectionArchetype() throws Exception
     {
         given().body("{ \"name\": \"MLS\" }")
-            .contentType("application/json")
-            .expect()
-            .statusCode(201)
-            .post("/api/leagues");
+                .contentType("application/json")
+                .expect()
+                .statusCode(201)
+                .post("/api/leagues");
         expect().log()
-            .everything()
-            .response()
-            .body("leagues.name", hasItems("Liga BBVA", "Premier League", "MLS"))
-            .when()
-            .get("/api/leagues");
+                .everything()
+                .response()
+                .body("leagues.name", hasItems("Liga BBVA", "Premier League", "MLS"))
+                .when()
+                .get("/api/leagues");
     }
 
     /*
@@ -148,17 +151,17 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     public void testRetrieveOnMemberArchetype() throws Exception
     {
         given().log()
-            .all()
-            .header("Accept", "application/json")
-            .expect()
-            .response()
-            .log()
-            .all()
-            .statusCode(200)
-            .contentType("application/json")
-            .body("id", is("liga-bbva"))
-            .when()
-            .get("/api/leagues/liga-bbva");
+                .all()
+                .header("Accept", "application/json")
+                .expect()
+                .response()
+                .log()
+                .all()
+                .statusCode(200)
+                .contentType("application/json")
+                .body("id", is("liga-bbva"))
+                .when()
+                .get("/api/leagues/liga-bbva");
     }
 
     @Test
@@ -171,28 +174,28 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     public void testRetrieveOnSubCollectionArchetype() throws Exception
     {
         expect().log()
-            .everything()
-            .response()
-            .body("teams.name", hasItems("Real Madrid", "Barcelona"))
-            .when()
-            .get("/api/leagues/liga-bbva/teams");
+                .everything()
+                .response()
+                .body("teams.name", hasItems("Real Madrid", "Barcelona"))
+                .when()
+                .get("/api/leagues/liga-bbva/teams");
     }
 
     @Test
     public void testRetrieveOnSubMemberArchetype() throws Exception
     {
         given().log()
-            .all()
-            .header("Accept", "application/json")
-            .expect()
-            .response()
-            .log()
-            .all()
-            .statusCode(200)
-            .contentType("application/json")
-            .body("id", is("barcelona"))
-            .when()
-            .get("/api/leagues/liga-bbva/teams/barcelona");
+                .all()
+                .header("Accept", "application/json")
+                .expect()
+                .response()
+                .log()
+                .all()
+                .statusCode(200)
+                .contentType("application/json")
+                .body("id", is("barcelona"))
+                .when()
+                .get("/api/leagues/liga-bbva/teams/barcelona");
     }
 
     /*
