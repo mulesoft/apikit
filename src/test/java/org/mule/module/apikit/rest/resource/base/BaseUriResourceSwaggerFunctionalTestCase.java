@@ -10,6 +10,7 @@ import org.mule.util.IOUtils;
 import com.jayway.restassured.RestAssured;
 
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -33,6 +34,7 @@ public class BaseUriResourceSwaggerFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
+    @Ignore
     public void getHtml() throws Exception
     {
         given().header("Accept", "text/html")
