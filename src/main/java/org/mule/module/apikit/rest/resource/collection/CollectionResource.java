@@ -1,6 +1,10 @@
 
 package org.mule.module.apikit.rest.resource.collection;
 
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.DESCRIPTION_FIELD_NAME;
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.OPERATIONS_FIELD_NAME;
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PATH_FIELD_NAME;
+
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
@@ -73,7 +77,19 @@ public class CollectionResource extends AbstractRestResource
     @Override
     public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
     {
-        super.appendSwaggerJson(jsonGenerator);
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeFieldName(PATH_FIELD_NAME);
+        jsonGenerator.writeString(getPath());
+        jsonGenerator.writeFieldName(DESCRIPTION_FIELD_NAME);
+        jsonGenerator.writeString(getDescription().trim());
+        jsonGenerator.writeFieldName(OPERATIONS_FIELD_NAME);
+        jsonGenerator.writeStartArray();
+
+        getOperation(RestOperationType.RETRIEVE).appendSwaggerDescriptor(jsonGenerator);
+        memberResource.getOperation(RestOperationType.CREATE).appendSwaggerDescriptor(jsonGenerator);
+
+        jsonGenerator.writeEndArray();
+        jsonGenerator.writeEndObject();
         memberResource.appendSwaggerJson(jsonGenerator);
     }
 

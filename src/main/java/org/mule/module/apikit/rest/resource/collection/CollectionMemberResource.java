@@ -1,13 +1,22 @@
 
 package org.mule.module.apikit.rest.resource.collection;
 
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.DESCRIPTION_FIELD_NAME;
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.OPERATIONS_FIELD_NAME;
+import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PATH_FIELD_NAME;
+
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
+import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.param.PathParameter;
 import org.mule.module.apikit.rest.resource.AbstractHierarchicalRestResource;
 import org.mule.module.apikit.rest.resource.RestResource;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -38,6 +47,34 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
     public String getPath()
     {
         return parentResource.getPath() + "/{" + getName() + "Id}";
+    }
+
+    @Override
+    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
+    {
+
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeFieldName(PATH_FIELD_NAME);
+        jsonGenerator.writeString(getPath());
+        jsonGenerator.writeFieldName(DESCRIPTION_FIELD_NAME);
+        jsonGenerator.writeString(getDescription().trim());
+        jsonGenerator.writeFieldName(OPERATIONS_FIELD_NAME);
+        jsonGenerator.writeStartArray();
+
+        for (RestOperation operation : getOperations())
+        {
+            if (!operation.getType().equals(RestOperationType.CREATE))
+            {
+                operation.appendSwaggerDescriptor(jsonGenerator);
+            }
+        }
+
+        jsonGenerator.writeEndArray();
+        jsonGenerator.writeEndObject();
+        for (RestResource resource : getResources())
+        {
+            resource.appendSwaggerJson(jsonGenerator);
+        }
     }
 
 }

@@ -323,5 +323,10 @@ public abstract class AbstractRestResource implements RestResource
     {
         this.parameters = parameters;
     }
+    
+    public RestResource getParentResource()
+    {
+        return parentResource;
+    }
 
 }
