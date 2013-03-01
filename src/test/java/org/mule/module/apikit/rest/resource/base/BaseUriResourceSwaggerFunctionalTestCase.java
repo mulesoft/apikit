@@ -83,9 +83,7 @@ public class BaseUriResourceSwaggerFunctionalTestCase extends FunctionalTestCase
             .statusCode(200)
             .contentType("application/swagger+json")
             .body(
-                Matchers.equalTo("{\"apiVersion\":\"1.0\",\"swaggerVersion\":\"1.0\",\"basePath\":\"http://localhost:"
-                                 + serverPort.getNumber()
-                                 + "/api\",\"apis\":[{\"path\":\"/leagues\",\"description\":\"\"},{\"path\":\"/teams\",\"description\":\"\"}]}"))
+                Matchers.equalTo("{\"apiVersion\":\"1.0\",\"swaggerVersion\":\"1.0\",\"apis\":[{\"path\":\"/leagues\",\"description\":\"\"},{\"path\":\"/teams\",\"description\":\"\"}]}"))
             .when()
             .get("/api");
         given().header("Accept", "application/swagger+json")
@@ -94,9 +92,7 @@ public class BaseUriResourceSwaggerFunctionalTestCase extends FunctionalTestCase
             .statusCode(200)
             .contentType("application/swagger+json")
             .body(
-                Matchers.equalTo("{\"apiVersion\":\"1.0\",\"swaggerVersion\":\"1.0\",\"basePath\":\"http://localhost:"
-                                 + serverPort.getNumber()
-                                 + "/api\",\"apis\":[{\"path\":\"/leagues\",\"description\":\"\"},{\"path\":\"/teams\",\"description\":\"\"}]}"))
+                Matchers.equalTo("{\"apiVersion\":\"1.0\",\"swaggerVersion\":\"1.0\",\"apis\":[{\"path\":\"/leagues\",\"description\":\"\"},{\"path\":\"/teams\",\"description\":\"\"}]}"))
             .when()
             .get("/api/");
     }
