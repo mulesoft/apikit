@@ -45,8 +45,6 @@ public class SwaggerResourceDescriptorOperation extends AbstractRestOperation
             jsonGenerator.writeString("1.0");
             jsonGenerator.writeFieldName("swaggerVersion");
             jsonGenerator.writeString(SwaggerConstants.SWAGGER_VERSION);
-            jsonGenerator.writeFieldName("basePath");
-            jsonGenerator.writeString("{baseSwaggerUri}");
             jsonGenerator.writeFieldName(SwaggerConstants.RESOURCE_PATH_FIELD_NAME);
             jsonGenerator.writeString(resource.getPath());
             jsonGenerator.writeFieldName(SwaggerConstants.APIS_FIELD_NAME);
@@ -59,9 +57,6 @@ public class SwaggerResourceDescriptorOperation extends AbstractRestOperation
             jsonGenerator.flush();
 
             String json = writer.toString();
-            json = json.replace("{baseSwaggerUri}", restRequest.getMuleEvent()
-                .getMessageSourceURI()
-                .toString());
 
             restRequest.getMuleEvent().getMessage().setPayload(json);
             restRequest.getMuleEvent()

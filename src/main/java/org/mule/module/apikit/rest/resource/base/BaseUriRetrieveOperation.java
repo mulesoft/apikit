@@ -114,8 +114,6 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
                 jsonGenerator.writeString("1.0");
                 jsonGenerator.writeFieldName("swaggerVersion");
                 jsonGenerator.writeString(SwaggerConstants.SWAGGER_VERSION);
-                jsonGenerator.writeFieldName("basePath");
-                jsonGenerator.writeString("{baseSwaggerUri}");
                 jsonGenerator.writeFieldName("apis");
                 jsonGenerator.writeStartArray();
                 for (WebServiceRoute resource : restWebService.getInterface().getRoutes())
@@ -131,10 +129,15 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
                 jsonGenerator.writeEndObject();
                 jsonGenerator.flush();
 
+                String baseUri = restRequest.getMuleEvent()
+                    .getMessage()
+                    .getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
+                if (!baseUri.endsWith("/"))
+                {
+                    baseUri = baseUri + "/";
+                }
+
                 String json = writer.toString();
-                json = json.replace("{baseSwaggerUri}", restRequest.getMuleEvent()
-                    .getMessageSourceURI()
-                    .toString());
 
                 restRequest.getMuleEvent().getMessage().setPayload(json);
                 restRequest.getMuleEvent()
@@ -181,19 +184,15 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
 
                 String buffer = new String(baos.toByteArray());
 
-                buffer = buffer.replace("${swaggerUrl}", restRequest.getMuleEvent()
+                String baseUri = restRequest.getMuleEvent()
                     .getMessage()
-                    .getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY)
-                                                         + "/_swagger/");
+                    .getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
+                if (!baseUri.endsWith("/"))
+                {
+                    baseUri = baseUri + "/";
+                }
 
-                buffer = buffer.replace("${baseUrl}", restRequest.getMuleEvent()
-                    .getMessageSourceURI()
-                    .toString());
-
-                buffer = buffer.replace("${resourcesJson}", restRequest.getMuleEvent()
-                    .getMessageSourceURI()
-                    .toString());
-
+                buffer = buffer.replace("${baseUrl}", baseUri);
                 buffer = buffer.replace("${pageTitle}", restRequest.getService().getInterface().getName()
                                                         + " UI");
 

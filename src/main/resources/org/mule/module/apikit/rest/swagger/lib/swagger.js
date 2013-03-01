@@ -65,7 +65,7 @@
           }
           _this.basePath = _this.basePath.replace(/\/$/, '');
         } else {
-          _this.basePath = _this.discoveryUrl.substring(0, _this.discoveryUrl.lastIndexOf('/'));
+          _this.basePath = _this.discoveryUrl;//.substring(0, _this.discoveryUrl.lastIndexOf('/'));
           log('derived basepath from discoveryUrl as ' + _this.basePath);
         }
         _this.resources = {};
