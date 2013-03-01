@@ -187,12 +187,14 @@ public class BaseUriRetrieveOperation extends AbstractRestOperation
                 String baseUri = restRequest.getMuleEvent()
                     .getMessage()
                     .getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
+
                 if (!baseUri.endsWith("/"))
                 {
                     baseUri = baseUri + "/";
                 }
-
+                buffer = buffer.replace("${swaggerUrl}", baseUri + "_swagger/");
                 buffer = buffer.replace("${baseUrl}", baseUri);
+
                 buffer = buffer.replace("${pageTitle}", restRequest.getService().getInterface().getName()
                                                         + " UI");
 
