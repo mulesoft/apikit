@@ -8,10 +8,10 @@ import org.mule.module.apikit.rest.resource.AbstractHierarchicalRestResource;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class BaseUriResource extends AbstractHierarchicalRestResource
+public class BaseResource extends AbstractHierarchicalRestResource
 {
 
-    public BaseUriResource()
+    public BaseResource()
     {
         super("", null);
     }

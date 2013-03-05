@@ -12,7 +12,7 @@ import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class BaseUriResourceFunctionalTestCase extends FunctionalTestCase
+public class BaseResourceFunctionalTestCase extends FunctionalTestCase
 {
 
     @Override
@@ -34,7 +34,7 @@ public class BaseUriResourceFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/rest/service-config.xml, org/mule/module/apikit/test-flows-config.xml";
+        return "org/mule/module/apikit/rest/resource/base/base-functional-config.xml, org/mule/module/apikit/test-flows-config.xml";
     }
 
     @Test

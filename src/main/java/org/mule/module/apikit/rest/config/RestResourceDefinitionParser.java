@@ -11,7 +11,7 @@
 package org.mule.module.apikit.rest.config;
 
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
-import org.mule.module.apikit.rest.resource.base.BaseUriResource;
+import org.mule.module.apikit.rest.resource.base.BaseResource;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -37,7 +37,7 @@ public class RestResourceDefinitionParser extends ChildDefinitionParser
         }
         else
         {
-            builder.addConstructorArgValue(new BaseUriResource());
+            builder.addConstructorArgValue(new BaseResource());
         }
         builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);

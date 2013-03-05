@@ -20,7 +20,7 @@ import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
-import org.mule.module.apikit.rest.resource.base.BaseUriResource;
+import org.mule.module.apikit.rest.resource.base.BaseResource;
 import org.mule.module.apikit.rest.resource.base.SwaggerResourceDescriptorOperation;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
 import org.mule.transport.NullPayload;
@@ -101,7 +101,7 @@ public abstract class AbstractRestResource implements RestResource
     protected RestOperation getAction(RestOperationType actionType, RestRequest request)
         throws OperationNotAllowedException
     {
-        if (!(this instanceof BaseUriResource)
+        if (!(this instanceof BaseResource)
             && RestContentTypeParser.isMediaTypeAcceptable(request.getProtocolAdaptor()
                 .getAcceptableResponseMediaTypes(), MediaType.create("application", "swagger+json")))
         {

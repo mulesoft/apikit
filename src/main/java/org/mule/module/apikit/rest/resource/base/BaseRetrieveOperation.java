@@ -45,14 +45,14 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
 
-public class BaseUriRetrieveOperation extends AbstractRestOperation
+public class BaseRetrieveOperation extends AbstractRestOperation
 {
 
     public static final String RESOURCE_BASE_PATH = "/org/mule/module/apikit/rest/swagger/";
 
     protected RestWebService restWebService;
 
-    public BaseUriRetrieveOperation(RestWebService restWebService)
+    public BaseRetrieveOperation(RestWebService restWebService)
     {
         this.restWebService = restWebService;
     }

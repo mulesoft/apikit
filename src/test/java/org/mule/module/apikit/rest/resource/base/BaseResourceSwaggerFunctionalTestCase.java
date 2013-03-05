@@ -14,7 +14,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class BaseUriResourceSwaggerFunctionalTestCase extends FunctionalTestCase
+public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -30,7 +30,7 @@ public class BaseUriResourceSwaggerFunctionalTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/rest/service-config.xml, org/mule/module/apikit/test-flows-config.xml";
+        return "org/mule/module/apikit/rest/resource/base/base-functional-config.xml, org/mule/module/apikit/test-flows-config.xml";
     }
 
     @Test
