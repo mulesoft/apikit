@@ -11,6 +11,7 @@
     <xsd:import namespace="http://www.mulesoft.org/schema/mule/api" schemaLocation="http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd" />
     <xsd:import namespace="http://www.mulesoft.org/schema/mule/schemadoc" schemaLocation="http://www.mulesoft.org/schema/mule/schemadoc/3.3/mule-schemadoc.xsd" />
 
+    <xsd:element name="api" type="api:apiType"/>
 
     <xsd:element name="interface" substitutionGroup="api:abstract-web-service-interface">
         <xsd:complexType>

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule-api xmlns="http://www.mulesoft.org/schema/mule/api"
-    xmlns:rest="http://www.mulesoft.org/schema/mule/api-rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<api xmlns="http://www.mulesoft.org/schema/mule/api-rest"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:http="http://www.mulesoft.org/schema/mule/http"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
        http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <rest:interface name="myInterface">
-        <rest:document-resource name="league">
-            <rest:retrieve flow-ref="retrieveLeague"/>
-            <rest:update flow-ref="updateLeague"/>
-            <rest:document-resource name="association">
-                <rest:retrieve flow-ref="retrieveLeagueAssociation"/>
-                <rest:update flow-ref="updateLeagueAssociation"/>
-            </rest:document-resource>
-        </rest:document-resource>
-    </rest:interface>
+    <interface name="myInterface">
+        <document-resource name="league">
+            <retrieve flow-ref="retrieveLeague"/>
+            <update flow-ref="updateLeague"/>
+            <document-resource name="association">
+                <retrieve flow-ref="retrieveLeagueAssociation"/>
+                <update flow-ref="updateLeagueAssociation"/>
+            </document-resource>
+        </document-resource>
+    </interface>
 
-    <rest:service name="myService" interface-ref="myInterface">
+    <service name="myService" interface-ref="myInterface">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
-    </rest:service>
+    </service>
 
-</mule-api>
+</api>

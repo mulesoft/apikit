@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule-api xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
-    xmlns:ws="http://www.mulesoft.org/schema/mule/api-ws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:rss="http://www.mulesoft.org/schema/mule/api"
+<api xmlns="http://www.mulesoft.org/schema/mule/api-ws" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
-       http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
        http://www.mulesoft.org/schema/mule/api-ws http://www.mulesoft.org/schema/mule/api-ws/current/mule-api-ws.xsd
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <ws:interface name="myInterface">
-        <ws:operation name="1" flow-ref="echo"/>
-    </ws:interface>
+    <interface name="myInterface">
+        <operation name="1" flow-ref="echo" />
+    </interface>
 
-    <ws:service name="myService" interface-ref="myInterface">
-        <mule:inbound-endpoint address="http://localhost:8080/"/>
-    </ws:service>
-    
-</mule-api>
+    <service name="myService" interface-ref="myInterface">
+        <mule:inbound-endpoint address="http://localhost:8080/" />
+    </service>
+
+</api>

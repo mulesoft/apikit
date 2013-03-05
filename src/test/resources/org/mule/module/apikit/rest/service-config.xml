@@ -1,40 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule-api xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
-    xmlns:rest="http://www.mulesoft.org/schema/mule/api-rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:http="http://www.mulesoft.org/schema/mule/http"
+<api xmlns="http://www.mulesoft.org/schema/mule/api-rest" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:http="http://www.mulesoft.org/schema/mule/http"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
        http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <rest:interface name="myInterface">
-        <rest:document-resource name="leagues">
-            <rest:retrieve flow-ref="retrieveLeagues"/>
-            <rest:update flow-ref="retrieveLeagues" access="#[false]"/>
-        </rest:document-resource>
-        <rest:document-resource name="teams" access="#[false]">
-            <rest:retrieve flow-ref="retrieveLeagues"/>
-        </rest:document-resource>
-    </rest:interface>
+    <interface name="myInterface">
+        <document-resource name="leagues">
+            <retrieve flow-ref="retrieveLeagues" />
+            <update flow-ref="retrieveLeagues" access="#[false]" />
+        </document-resource>
+        <document-resource name="teams" access="#[false]">
+            <retrieve flow-ref="retrieveLeagues" />
+        </document-resource>
+    </interface>
 
-    <rest:interface name="protectedInterface" access="#[false]">
-        <rest:document-resource name="leagues2">
-            <rest:retrieve flow-ref="retrieveLeagues"/>
-            <rest:update flow-ref="retrieveLeagues" access="#[false]"/>
-        </rest:document-resource>
-    </rest:interface>
+    <interface name="protectedInterface" access="#[false]">
+        <document-resource name="leagues2">
+            <retrieve flow-ref="retrieveLeagues" />
+            <update flow-ref="retrieveLeagues" access="#[false]" />
+        </document-resource>
+    </interface>
 
-    <rest:service name="myService" interface-ref="myInterface">
+    <service name="myService" interface-ref="myInterface">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
-            <mule:object-to-string-transformer/>
+            <mule:object-to-string-transformer />
         </http:inbound-endpoint>
-    </rest:service>
-    
-    <rest:service name="myService2" interface-ref="protectedInterface">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="protectedapi">
-            <mule:object-to-string-transformer/>
-        </http:inbound-endpoint>
-    </rest:service>
+    </service>
 
-</mule-api>
+    <service name="myService2" interface-ref="protectedInterface">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="protectedapi">
+            <mule:object-to-string-transformer />
+        </http:inbound-endpoint>
+    </service>
+
+</api>

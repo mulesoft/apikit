@@ -11,30 +11,25 @@
 
     <xsd:annotation>
         <xsd:documentation>
-            RSS is a popular syndication format used by many websites to provide a feed of data
-            such
-            as news or updates.
+            APIkit is a Mule module for building ReST and Web Service API's
         </xsd:documentation>
-
         <xsd:appinfo>
-            <schemadoc:short-name>WSAPI</schemadoc:short-name>
-            <schemadoc:page-title>Web Service API Module</schemadoc:page-title>
+            <schemadoc:short-name>APIkit</schemadoc:short-name>
+            <schemadoc:page-title>APIkit Module</schemadoc:page-title>
         </xsd:appinfo>
     </xsd:annotation>
 
-    <xsd:element name="mule-api">
+    <xsd:complexType name="apiType">
         <xsd:annotation>
             <xsd:documentation>
-                Root element.
+                An API that define as a set of services and their interfaces
             </xsd:documentation>
         </xsd:annotation>
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="abstract-web-service-interface" minOccurs="0" maxOccurs="unbounded"/>
-                <xsd:element ref="abstract-web-service" minOccurs="0" maxOccurs="unbounded"/>
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
+        <xsd:sequence>
+            <xsd:element ref="abstract-web-service-interface" minOccurs="0" maxOccurs="unbounded" />
+            <xsd:element ref="abstract-web-service" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
     
     <xsd:element name="abstract-web-service-interface" abstract="true" type="abstractWebServiceInterfaceType">
         <xsd:annotation>

@@ -21,6 +21,7 @@ public class RestAPINamespaceHandler extends MuleNamespaceHandler
 {
     public void init()
     {
+        registerBeanDefinitionParser("api", new org.mule.module.apikit.config.IgnoredDefinitionParser());
         registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(
             RestWebServiceInterface.class));
         registerBeanDefinitionParser("service", new RestWebServiceDefinitionParser());

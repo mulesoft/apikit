@@ -1,40 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule-api xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
-    xmlns:rest="http://www.mulesoft.org/schema/mule/api-rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:rss="http://www.mulesoft.org/schema/mule/api" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<api xmlns="http://www.mulesoft.org/schema/mule/api-rest" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
     xsi:schemaLocation="
-       http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
        http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <rest:interface name="myInterface" doc:description="interface description">
-        <rest:document-resource name="a" access="#[true]" doc:description="resource a description">
-            <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description"/>
-        </rest:document-resource>
-        <rest:document-resource name="b" access="#[true]" doc:description="resource b description">
-            <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description"/>
-        </rest:document-resource>
-    </rest:interface>
+    <interface name="myInterface" doc:description="interface description">
+        <document-resource name="a" access="#[true]" doc:description="resource a description">
+            <retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description" />
+        </document-resource>
+        <document-resource name="b" access="#[true]" doc:description="resource b description">
+            <retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description" />
+        </document-resource>
+    </interface>
 
-    <rest:interface name="myInterface2" doc:description="interface description">
-        <rest:document-resource name="a" access="#[true]" doc:description="resource a description">
-            <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description"/>
-        </rest:document-resource>
-        <rest:document-resource name="b" access="#[true]" doc:description="resource b description">
-            <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description"/>
-            <rest:update flow-ref="echo" access="#[true]" doc:description="resource b update description"/>
-            <rest:document-resource name="c" access="#[true]" doc:description="resource c description">
-                <rest:retrieve flow-ref="echo" access="#[true]" doc:description="resource c retrieve description"/>
-                <rest:update flow-ref="echo" access="#[true]" doc:description="resource c update description"/>
-            </rest:document-resource>
-        </rest:document-resource>
-    </rest:interface>
+    <interface name="myInterface2" doc:description="interface description">
+        <document-resource name="a" access="#[true]" doc:description="resource a description">
+            <retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description" />
+        </document-resource>
+        <document-resource name="b" access="#[true]" doc:description="resource b description">
+            <retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description" />
+            <update flow-ref="echo" access="#[true]" doc:description="resource b update description" />
+            <document-resource name="c" access="#[true]" doc:description="resource c description">
+                <retrieve flow-ref="echo" access="#[true]" doc:description="resource c retrieve description" />
+                <update flow-ref="echo" access="#[true]" doc:description="resource c update description" />
+            </document-resource>
+        </document-resource>
+    </interface>
 
-    <rest:service name="myService" interface-ref="myInterface" doc:description="service description">
+    <service name="myService" interface-ref="myInterface" doc:description="service description">
         <mule:inbound-endpoint address="http://localhost:8080" />
-    </rest:service>
+    </service>
 
-
-
-
-</mule-api>
+</api>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule-api xmlns="http://www.mulesoft.org/schema/mule/api" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
-    xmlns:rest="http://www.mulesoft.org/schema/mule/api-rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<api xmlns="http://www.mulesoft.org/schema/mule/api-rest" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:http="http://www.mulesoft.org/schema/mule/http"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
@@ -8,34 +8,34 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <rest:interface name="myInterface">
-        <rest:collection-resource name="leagues">
-            <rest:retrieve flow-ref="retrieveLeagues"/>
-            <rest:member>
-                <rest:create flow-ref="createLeague"/>
-                <rest:retrieve flow-ref="retrieveLeague"/>
-                <rest:update flow-ref="updateLeague"/>
-                <rest:delete flow-ref="deleteLeague"/>
-                <rest:collection-resource name="teams">
-                    <rest:retrieve flow-ref="retrieveTeams"/>
-                    <rest:member>
-                        <rest:create flow-ref="createTeam"/>
-                        <rest:retrieve flow-ref="retrieveTeam"/>
-                        <rest:update flow-ref="updateTeam"/>
-                        <rest:delete flow-ref="deleteTeam"/>
-                    </rest:member>    
-                </rest:collection-resource>
-                <rest:document-resource name="sponsor">
-                    <rest:retrieve flow-ref="retrieveSponsor"/>
-                </rest:document-resource>
-            </rest:member>    
-        </rest:collection-resource>
-    </rest:interface>
+    <interface name="myInterface">
+        <collection-resource name="leagues">
+            <retrieve flow-ref="retrieveLeagues"/>
+            <member>
+                <create flow-ref="createLeague"/>
+                <retrieve flow-ref="retrieveLeague"/>
+                <update flow-ref="updateLeague"/>
+                <delete flow-ref="deleteLeague"/>
+                <collection-resource name="teams">
+                    <retrieve flow-ref="retrieveTeams"/>
+                    <member>
+                        <create flow-ref="createTeam"/>
+                        <retrieve flow-ref="retrieveTeam"/>
+                        <update flow-ref="updateTeam"/>
+                        <delete flow-ref="deleteTeam"/>
+                    </member>    
+                </collection-resource>
+                <document-resource name="sponsor">
+                    <retrieve flow-ref="retrieveSponsor"/>
+                </document-resource>
+            </member>    
+        </collection-resource>
+    </interface>
 
-    <rest:service name="myService" interface-ref="myInterface">
+    <service name="myService" interface-ref="myInterface">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
             <mule:object-to-string-transformer/>
         </http:inbound-endpoint>
-    </rest:service>
+    </service>
 
-</mule-api>
+</api>

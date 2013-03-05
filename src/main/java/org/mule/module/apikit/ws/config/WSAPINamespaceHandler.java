@@ -21,10 +21,12 @@ public class WSAPINamespaceHandler extends AbstractMuleNamespaceHandler
 {
     public void init()
     {
+        registerBeanDefinitionParser("api", new org.mule.module.apikit.config.IgnoredDefinitionParser());
         registerBeanDefinitionParser("interface", new WebServiceInterfaceDefinitionParser(
             WSWebServiceInterface.class));
         registerBeanDefinitionParser("service", new WebServiceDefinitionParser(WSWebService.class));
-        registerBeanDefinitionParser("operation", new WebServiceOperationDefinitionParser("route", WSDLOperation.class));
+        registerBeanDefinitionParser("operation", new WebServiceOperationDefinitionParser("route",
+            WSDLOperation.class));
     }
 
 }

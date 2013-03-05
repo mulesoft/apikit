@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule-api xmlns="http://www.mulesoft.org/schema/mule/api"
-    xmlns:rest="http://www.mulesoft.org/schema/mule/api-rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<api xmlns="http://www.mulesoft.org/schema/mule/api-rest"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:http="http://www.mulesoft.org/schema/mule/http"
     xsi:schemaLocation="
        http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
        http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <rest:interface name="myInterface">
-        <rest:pojo-resource name="sponsor" resource-ref="sponsorResource"/>
-    </rest:interface>
+    <interface name="myInterface">
+        <pojo-resource name="sponsor" resource-ref="sponsorResource"/>
+    </interface>
 
-    <rest:service name="myService" interface-ref="myInterface">
+    <service name="myService" interface-ref="myInterface">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
-    </rest:service>
+    </service>
 
-</mule-api>
+</api>
