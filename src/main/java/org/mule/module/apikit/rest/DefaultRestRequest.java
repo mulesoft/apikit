@@ -31,25 +31,24 @@ public class DefaultRestRequest implements RestRequest
     public DefaultRestRequest(MuleEvent event, RestWebService restWebService)
     {
         this.event = event;
-        this.protocolAdapter = RestProtocolAdapterFactory.getInstance().getAdapterForEvent(event);
+        this.protocolAdapter = createProtocolAdapter(event);
         this.restWebService = restWebService;
         relativeURI = StringUtils.difference(protocolAdapter.getBaseURI().toString(),
             protocolAdapter.getURI().toString());
         initPathStack();
     }
 
+    protected RestProtocolAdapter createProtocolAdapter(MuleEvent event)
+    {
+        return RestProtocolAdapterFactory.getInstance().getAdapterForEvent(event);
+    }
+
     private void initPathStack()
     {
-        Deque<String> pathStack = new ArrayDeque<String>(Arrays.asList(protocolAdapter.getURI()
-            .getPath()
-            .split("/")));
-        // TODO: does not work with base paths with more than one element e.g: /a/b
-        String baseURIPath = protocolAdapter.getBaseURI().getPath().substring(1);
-
-        String pathElement = pathStack.removeFirst();
-        while (!pathElement.equals(baseURIPath))
+        Deque<String> pathStack = new ArrayDeque<String>(Arrays.asList(relativeURI.split("/")));
+        if (!pathStack.isEmpty() && pathStack.peekFirst().isEmpty())
         {
-            pathElement = pathStack.removeFirst();
+            pathStack.removeFirst();
         }
         this.pathStack = pathStack;
     }
