@@ -1,3 +1,4 @@
+
 package org.mule.module.apikit.rest;
 
 import static org.junit.Assert.assertEquals;
@@ -45,6 +46,36 @@ public class DefaultRestRequestTestCase
     }
 
     @Test
+    public void singleElementBasePathRootRequest2() throws URISyntaxException
+    {
+        when(httpAdapter.getBaseURI()).thenReturn(new URI("http://localhost:5555/api/"));
+        when(httpAdapter.getURI()).thenReturn(new URI("http://localhost:5555/api/"));
+        request = new TestRestRequest(event, restWebService);
+        assertEquals("", request.getNextPathElement());
+        assertFalse(request.hasMorePathElements());
+    }
+
+    @Test
+    public void singleElementBasePathRootRequest3() throws URISyntaxException
+    {
+        when(httpAdapter.getBaseURI()).thenReturn(new URI("http://localhost:5555/api/"));
+        when(httpAdapter.getURI()).thenReturn(new URI("http://localhost:5555/api"));
+        request = new TestRestRequest(event, restWebService);
+        assertEquals("", request.getNextPathElement());
+        assertFalse(request.hasMorePathElements());
+    }
+
+    @Test
+    public void singleElementBasePathRootRequest4() throws URISyntaxException
+    {
+        when(httpAdapter.getBaseURI()).thenReturn(new URI("http://localhost:5555/api"));
+        when(httpAdapter.getURI()).thenReturn(new URI("http://localhost:5555/api"));
+        request = new TestRestRequest(event, restWebService);
+        assertEquals("", request.getNextPathElement());
+        assertFalse(request.hasMorePathElements());
+    }
+
+    @Test
     public void singleElementBasePathSingleRequest() throws URISyntaxException
     {
         when(httpAdapter.getBaseURI()).thenReturn(new URI("http://localhost:5555/api"));
@@ -63,7 +94,6 @@ public class DefaultRestRequestTestCase
         assertEquals("leagues", request.getNextPathElement());
         assertFalse(request.hasMorePathElements());
     }
-
 
     @Test
     public void singleElementBasePathMultipleRequest() throws URISyntaxException
