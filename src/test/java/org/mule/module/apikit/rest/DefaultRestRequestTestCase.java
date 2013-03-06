@@ -117,6 +117,17 @@ public class DefaultRestRequestTestCase
         assertFalse(request.hasMorePathElements());
     }
 
+    @Test
+    public void withNioAsProtocol() throws URISyntaxException
+    {
+        when(httpAdapter.getBaseURI()).thenReturn(new URI("niohttp://localhost:5555/api/v1.0"));
+        when(httpAdapter.getURI()).thenReturn(new URI("http://localhost:5555/api/v1.0/leagues/1"));
+        request = new TestRestRequest(event, restWebService);
+        assertEquals("leagues", request.getNextPathElement());
+        assertEquals("1", request.getNextPathElement());
+        assertFalse(request.hasMorePathElements());
+    }
+
     class TestRestRequest extends DefaultRestRequest
     {
 

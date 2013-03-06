@@ -33,9 +33,17 @@ public class DefaultRestRequest implements RestRequest
         this.event = event;
         this.protocolAdapter = createProtocolAdapter(event);
         this.restWebService = restWebService;
-        relativeURI = StringUtils.difference(protocolAdapter.getBaseURI().toString(),
-            protocolAdapter.getURI().toString());
+        relativeURI = calculateRelativeURI();
         initPathStack();
+    }
+
+    protected String calculateRelativeURI()
+    {
+        String baseURI = protocolAdapter.getBaseURI().toString();
+        baseURI = baseURI.substring(baseURI.indexOf(":"));
+        String requestURI = protocolAdapter.getURI().toString();
+        requestURI = requestURI.substring(requestURI.indexOf(":"));
+        return StringUtils.difference(baseURI, requestURI);
     }
 
     protected RestProtocolAdapter createProtocolAdapter(MuleEvent event)
