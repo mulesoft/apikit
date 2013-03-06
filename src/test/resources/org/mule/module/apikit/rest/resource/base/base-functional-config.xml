@@ -29,6 +29,12 @@
             <mule:object-to-string-transformer />
         </http:inbound-endpoint>
     </service>
+    
+   <service name="myServiceNoSwagger" interface-ref="myInterface" enableSwagger="false">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="apiNoSwagger">
+            <mule:object-to-string-transformer />
+        </http:inbound-endpoint>
+    </service>
 
     <service name="myService2" interface-ref="protectedInterface">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="protectedapi">

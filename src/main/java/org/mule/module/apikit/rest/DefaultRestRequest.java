@@ -72,7 +72,7 @@ public class DefaultRestRequest implements RestRequest
     @Override
     public boolean hasMorePathElements()
     {
-        return !pathStack.isEmpty();
+        return !pathStack.isEmpty() && !pathStack.getFirst().equals("");
     }
 
     @Override

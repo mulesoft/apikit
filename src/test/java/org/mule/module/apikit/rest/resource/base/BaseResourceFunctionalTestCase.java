@@ -44,14 +44,33 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
             .response()
             .statusCode(405)
             .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .header("Content-Length", "0")
             .when()
             .put("/api");
         given().expect()
             .response()
             .statusCode(405)
             .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .header("Content-Length", "0")
             .when()
             .put("/api/");
+    }
+
+    @Test
+    public void updateNotSupportedSwaggerDisabled() throws Exception
+    {
+        given().expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .put("/apiSwaggerDisabled");
+        given().expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .put("/apiSwaggerDisabled/");
     }
 
     @Test
@@ -60,15 +79,34 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
         given().expect()
             .response()
             .statusCode(405)
+            .header("Content-Length", "0")
             .header("Allow", Matchers.equalToIgnoringCase("GET"))
             .when()
             .post("/api");
         given().expect()
             .response()
             .statusCode(405)
+            .header("Content-Length", "0")
             .header("Allow", Matchers.equalToIgnoringCase("GET"))
             .when()
             .post("/api/");
+    }
+
+    @Test
+    public void createNotSupportedSwaggerDisabled() throws Exception
+    {
+        given().expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .post("/apiSwaggerDisabled");
+        given().expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .post("/apiSwaggerDisabled/");
     }
 
     @Test
@@ -78,14 +116,34 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
             .response()
             .statusCode(405)
             .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .header("Content-Length", "0")
+
             .when()
             .delete("/api");
         given().expect()
             .response()
             .statusCode(405)
             .header("Allow", Matchers.equalToIgnoringCase("GET"))
+            .header("Content-Length", "0")
             .when()
             .delete("/api/");
+    }
+
+    @Test
+    public void deleteNotSupportedSwaggerDisabled() throws Exception
+    {
+        given().expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .delete("/apiSwaggerDisabled");
+        given().expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .delete("/apiSwaggerDisabled/");
     }
 
     @Test
@@ -93,6 +151,25 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
     {
         given().header("Accept", "text/html").expect().response().statusCode(200).when().get("/api");
         given().header("Accept", "text/html").expect().response().statusCode(200).when().get("/api/");
+    }
+
+    @Test
+    public void retrieveSwaggerDisabled() throws Exception
+    {
+        given().header("Accept", "text/html")
+            .expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .get("/apiSwaggerDisabled");
+        given().header("Accept", "text/html")
+            .expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .get("/apiSwaggerDisabled/");
     }
 
     @Test
@@ -122,10 +199,58 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void existsSwagerDisabled() throws Exception
+    {
+        given().expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .head("/apiSwaggerDisabled");
+        given().expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .head("/apiSwaggerDisabled/");
+    }
+
+    @Test
     public void retreiveUnsupportedContentTypes() throws Exception
     {
-        given().header("Accept", "application/json").expect().response().statusCode(406).when().get("/api");
-        given().header("Accept", "text/pain").expect().response().statusCode(406).when().get("/api");
+        given().header("Accept", "application/json")
+            .expect()
+            .response()
+            .statusCode(406)
+            .header("Content-Length", "0")
+            .when()
+            .get("/api");
+        given().header("Accept", "text/pain")
+            .expect()
+            .response()
+            .statusCode(406)
+            .header("Content-Length", "0")
+            .when()
+            .get("/api");
+    }
+
+    @Test
+    public void retreiveUnsupportedContentTypesSwagerDisabled() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .get("/apiSwaggerDisabled");
+        given().header("Accept", "text/pain")
+            .expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .get("/apiSwaggerDisabled");
     }
 
 }

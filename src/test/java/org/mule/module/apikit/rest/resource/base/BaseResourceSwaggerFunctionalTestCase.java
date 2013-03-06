@@ -10,7 +10,6 @@ import org.mule.util.IOUtils;
 import com.jayway.restassured.RestAssured;
 
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -34,7 +33,6 @@ public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
     }
 
     @Test
-    @Ignore
     public void getHtml() throws Exception
     {
         given().header("Accept", "text/html")
@@ -42,7 +40,9 @@ public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
             .response()
             .statusCode(200)
             .contentType("text/html")
-            .body(Matchers.hasXPath("//html/body/div[@id='header']/div[@class='swagger-ui-wrap']/a"))
+            .body(
+                Matchers.equalTo(IOUtils.getResourceAsString(
+                    "org/mule/module/apikit/rest/expected-index.html", getClass())))
             .when()
             .get("/api");
         given().header("Accept", "text/html")
@@ -50,9 +50,30 @@ public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
             .response()
             .statusCode(200)
             .contentType("text/html")
-            .body(Matchers.hasXPath("//html/body/div[@id='header']/div[@class='swagger-ui-wrap']/a"))
+            .body(
+                Matchers.equalTo(IOUtils.getResourceAsString(
+                    "org/mule/module/apikit/rest/expected-index.html", getClass())))
             .when()
             .get("/api/");
+    }
+
+    @Test
+    public void getHtmlSwaggerDisabled() throws Exception
+    {
+        given().header("Accept", "text/html")
+            .expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .get("/apiSwaggerDisabled");
+        given().header("Accept", "text/html")
+            .expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .get("/apiSwaggerDisabled/");
     }
 
     @Test
@@ -68,6 +89,18 @@ public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
                     "org/mule/module/apikit/rest/swagger/lib/swagger.js", this.getClass())))
             .when()
             .get("/api/_swagger/lib/swagger.js");
+    }
+
+    @Test
+    public void getResourcesSwaggerDisabled() throws Exception
+    {
+        given().header("Accept", "application/x-javascript")
+            .expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .get("/apiSwaggerDisabled/_swagger/lib/swagger.js");
     }
 
     /*
@@ -95,6 +128,24 @@ public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
                 Matchers.equalTo("{\"apiVersion\":\"1.0\",\"swaggerVersion\":\"1.0\",\"apis\":[{\"path\":\"/leagues\",\"description\":\"\"},{\"path\":\"/teams\",\"description\":\"\"}]}"))
             .when()
             .get("/api/");
+    }
+
+    public void getSwaggerJsonSwaggerDisabled() throws Exception
+    {
+        given().header("Accept", "application/swagger+json")
+            .expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .get("/apiSwaggerDisabled");
+        given().header("Accept", "application/swagger+json")
+            .expect()
+            .response()
+            .statusCode(404)
+            .header("Content-Length", "0")
+            .when()
+            .get("/apiSwaggerDisabled/");
     }
 
     @Test
