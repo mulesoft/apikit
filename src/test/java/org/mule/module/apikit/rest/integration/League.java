@@ -1,11 +1,12 @@
-package org.mule.module.apikit.rest.integration;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
+package org.mule.module.apikit.rest.integration;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 @JsonAutoDetect
 @XmlRootElement(namespace = "http://mulesoft.com/schemas/soccer")
@@ -25,7 +26,7 @@ public class League
         this.id = id;
     }
 
-    @JsonProperty(required = false)
+    @JsonProperty
     @XmlElement(required = false, namespace = "http://mulesoft.com/schemas/soccer")
     public String getId()
     {
@@ -37,7 +38,7 @@ public class League
         this.id = id;
     }
 
-    @JsonProperty(required = true)
+    @JsonProperty
     @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
     public String getName()
     {
@@ -52,10 +53,7 @@ public class League
     @Override
     public String toString()
     {
-        return "League{" +
-               "id='" + id + '\'' +
-               ", name='" + name + '\'' +
-               '}';
+        return "League{" + "id='" + id + '\'' + ", name='" + name + '\'' + '}';
     }
 
     @Override

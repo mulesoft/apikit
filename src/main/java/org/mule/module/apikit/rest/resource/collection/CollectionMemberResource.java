@@ -13,12 +13,12 @@ import org.mule.module.apikit.rest.param.PathParameter;
 import org.mule.module.apikit.rest.resource.AbstractHierarchicalRestResource;
 import org.mule.module.apikit.rest.resource.RestResource;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 
 public class CollectionMemberResource extends AbstractHierarchicalRestResource
 {

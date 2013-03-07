@@ -24,12 +24,12 @@ import org.mule.module.apikit.rest.util.NameUtils;
 import org.mule.transport.NullPayload;
 import org.mule.util.StringUtils;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 
 public class CreateCollectionMemberOperation extends AbstractRestOperation
 {

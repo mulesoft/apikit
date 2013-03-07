@@ -10,13 +10,13 @@ import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 
 public interface RestResource extends RestRequestHandler, WebServiceRoute, NamedObject
 {

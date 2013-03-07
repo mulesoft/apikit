@@ -25,8 +25,6 @@ import org.mule.module.apikit.rest.resource.base.SwaggerResourceDescriptorOperat
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
 import org.mule.transport.NullPayload;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.common.net.MediaType;
 
 import java.io.IOException;
@@ -36,6 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

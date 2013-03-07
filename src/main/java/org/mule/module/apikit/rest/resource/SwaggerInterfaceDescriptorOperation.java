@@ -18,10 +18,10 @@ import org.mule.module.apikit.rest.swagger.SwaggerConstants;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import java.io.StringWriter;
+
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
 
 public class SwaggerInterfaceDescriptorOperation extends AbstractRestOperation
 {
@@ -38,7 +38,7 @@ public class SwaggerInterfaceDescriptorOperation extends AbstractRestOperation
         {
             StringWriter writer = new StringWriter();
             JsonFactory jsonFactory = new JsonFactory();
-            JsonGenerator jsonGenerator = jsonFactory.createGenerator(writer);
+            JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(writer);
 
             jsonGenerator.writeStartObject();
             jsonGenerator.writeFieldName("apiVersion");

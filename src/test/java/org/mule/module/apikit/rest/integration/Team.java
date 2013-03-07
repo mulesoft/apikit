@@ -2,10 +2,10 @@ package org.mule.module.apikit.rest.integration;
 
 import org.mule.api.annotations.ContainsTransformerMethods;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.xml.bind.annotation.XmlRootElement;
+
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 @ContainsTransformerMethods
 @JsonAutoDetect
@@ -26,7 +26,7 @@ public class Team
         this.id = id;
     }
 
-    @JsonProperty(required = true)
+    @JsonProperty
     public String getName()
     {
         return name;

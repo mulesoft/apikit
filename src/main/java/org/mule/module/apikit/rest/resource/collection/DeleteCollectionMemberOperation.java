@@ -6,16 +6,14 @@ import org.mule.module.apikit.rest.RestParameter;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
-import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.module.apikit.rest.swagger.SwaggerConstants;
-import org.mule.module.apikit.rest.util.NameUtils;
 import org.mule.transport.NullPayload;
 import org.mule.util.StringUtils;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import java.io.IOException;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 
 public class DeleteCollectionMemberOperation extends AbstractRestOperation
 {
@@ -32,7 +30,7 @@ public class DeleteCollectionMemberOperation extends AbstractRestOperation
         request.getProtocolAdaptor().handleNoContent(request);
         request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
     }
-    
+
     @Override
     public void appendSwaggerDescriptor(JsonGenerator jsonGenerator)
         throws JsonGenerationException, IOException

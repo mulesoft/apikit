@@ -22,15 +22,15 @@ import org.mule.transport.http.HttpConstants;
 import org.mule.util.FilenameUtils;
 import org.mule.util.IOUtils;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonGenerator;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonGenerator;
 
 public class StaticResourceCollection extends AbstractRestResource
 {

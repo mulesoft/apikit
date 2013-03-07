@@ -34,9 +34,6 @@ import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
 import org.mule.util.IOUtils;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.net.MediaType;
 
 import java.io.ByteArrayOutputStream;
@@ -44,6 +41,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.List;
+
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonProcessingException;
 
 public class BaseRetrieveOperation extends AbstractRestOperation
 {
@@ -107,7 +108,7 @@ public class BaseRetrieveOperation extends AbstractRestOperation
             {
                 StringWriter writer = new StringWriter();
                 JsonFactory jsonFactory = new JsonFactory();
-                JsonGenerator jsonGenerator = jsonFactory.createGenerator(writer);
+                JsonGenerator jsonGenerator = jsonFactory.createJsonGenerator(writer);
 
                 jsonGenerator.writeStartObject();
                 jsonGenerator.writeFieldName("apiVersion");
