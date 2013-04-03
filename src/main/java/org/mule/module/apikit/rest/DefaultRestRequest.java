@@ -39,11 +39,9 @@ public class DefaultRestRequest implements RestRequest
 
     protected String calculateRelativeURI()
     {
-        String baseURI = protocolAdapter.getBaseURI().toString();
-        baseURI = baseURI.substring(baseURI.indexOf(":"));
-        String requestURI = protocolAdapter.getURI().toString();
-        requestURI = requestURI.substring(requestURI.indexOf(":"));
-        return StringUtils.difference(baseURI, requestURI);
+        String baseURIPath = protocolAdapter.getBaseURI().getPath();
+        String requestURIPath = protocolAdapter.getURI().getPath();
+        return StringUtils.difference(baseURIPath, requestURIPath);
     }
 
     protected RestProtocolAdapter createProtocolAdapter(MuleEvent event)

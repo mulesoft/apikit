@@ -128,6 +128,28 @@ public class DefaultRestRequestTestCase
         assertFalse(request.hasMorePathElements());
     }
 
+    @Test
+    public void withNonMatchingHostname() throws URISyntaxException
+    {
+        when(httpAdapter.getBaseURI()).thenReturn(new URI("http://0.0.0.0:5555/api"));
+        when(httpAdapter.getURI()).thenReturn(new URI("http://127.0.0.1:5555/api/leagues/1"));
+        request = new TestRestRequest(event, restWebService);
+        assertEquals("leagues", request.getNextPathElement());
+        assertEquals("1", request.getNextPathElement());
+        assertFalse(request.hasMorePathElements());
+    }
+
+    @Test
+    public void withoutPath() throws URISyntaxException
+    {
+        when(httpAdapter.getBaseURI()).thenReturn(new URI("http://0.0.0.0:5555"));
+        when(httpAdapter.getURI()).thenReturn(new URI("http://127.0.0.1:5555/leagues/1"));
+        request = new TestRestRequest(event, restWebService);
+        assertEquals("leagues", request.getNextPathElement());
+        assertEquals("1", request.getNextPathElement());
+        assertFalse(request.hasMorePathElements());
+    }
+
     class TestRestRequest extends DefaultRestRequest
     {
 
