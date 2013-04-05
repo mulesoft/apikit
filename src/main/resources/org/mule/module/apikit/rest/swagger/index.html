@@ -44,7 +44,7 @@
     <script type="text/javascript">
         $(function () {
             window.swaggerUi = new SwaggerUi({
-                discoveryUrl: document.URL.replace(/\/$/, ''),
+                discoveryUrl: document.URL.replace(/\/$/, '').split('#')[0],
                 apiKey:"",
                 dom_id:"swagger-ui-container",
                 supportHeaderParams: false,
