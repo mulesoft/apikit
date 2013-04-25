@@ -8,7 +8,6 @@ import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 
 public interface RestOperation extends RestRequestHandler, WebServiceOperation
@@ -18,5 +17,5 @@ public interface RestOperation extends RestRequestHandler, WebServiceOperation
 
     Collection<RepresentationMetaData> getRepresentations();
 
-    void appendSwaggerDescriptor(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException;
+    void appendSwaggerDescriptor(JsonGenerator jsonGenerator) throws IOException;
 }

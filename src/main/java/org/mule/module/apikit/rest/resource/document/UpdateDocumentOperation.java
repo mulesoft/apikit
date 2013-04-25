@@ -24,7 +24,6 @@ import org.mule.util.StringUtils;
 
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 
 public class UpdateDocumentOperation extends AbstractRestOperation
@@ -46,8 +45,7 @@ public class UpdateDocumentOperation extends AbstractRestOperation
     }
 
     @Override
-    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator)
-        throws JsonGenerationException, IOException
+    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator) throws IOException
     {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeFieldName(SwaggerConstants.HTTP_METHOD_FIELD_NAME);

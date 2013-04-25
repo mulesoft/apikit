@@ -6,6 +6,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
+import org.mule.module.apikit.rest.protocol.http.HttpStatusCode;
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
@@ -105,14 +106,28 @@ public class RestIntegrationTestCase extends FunctionalTestCase
                 .get("/api/leagues");
     }
 
-    /*
     @Test
-    public void testCreateWithInvalidContentTypeOnCollectionArchetype() throws Exception
+    public void testCreateInvalidInputTypeUsingJsonOnCollectionArchetype() throws Exception
     {
-        given().body
-                ("{ \"name\": \"MLS\" }").contentType("application/x-www-form-urlencoded").expect().statusCode
-                (415).post("/api/leagues");
-        FlowAssert.verify("apiImplementation");
+        given().log()
+                .everything().body("{ \"name\": 4 }"
+        ).contentType("application/json").expect().statusCode(HttpStatusCode.CLIENT_ERROR_BAD_REQUEST.getCode()).post("/api/leagues");
+    }
+
+    @Test
+    public void testCreateInvalidInputPropertyUsingJsonOnCollectionArchetype() throws Exception
+    {
+        given().log()
+                .everything().body("{ \"surname\": \"hola\" }"
+        ).contentType("application/json").expect().statusCode(HttpStatusCode.CLIENT_ERROR_BAD_REQUEST.getCode()).post("/api/leagues");
+    }
+
+    @Test
+    public void testCreateInvalidInputUsingXmlOnCollectionArchetype() throws Exception
+    {
+        given().log()
+                .everything().body("<leaguee xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></leaguee>"
+        ).contentType("text/xml").expect().statusCode(HttpStatusCode.CLIENT_ERROR_BAD_REQUEST.getCode()).post("/api/leagues");
     }
 
     @Test
@@ -120,15 +135,16 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     {
         given().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>"
         ).contentType("text/xml").expect().statusCode(201).post("/api/leagues");
-        FlowAssert.verify("apiImplementation");
     }
 
+
+    /*
     @Test
-    public void testCreateInvalidInputUsingXmlOnCollectionArchetype() throws Exception
+    public void testCreateWithInvalidContentTypeOnCollectionArchetype() throws Exception
     {
-        given().log()
-                .everything().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><xxx>MLS</xxx></league>"
-        ).contentType("text/xml").expect().statusCode(400).post("/api/leagues");
+        given().body
+                ("{ \"name\": \"MLS\" }").contentType("application/x-www-form-urlencoded").expect().statusCode
+                (415).post("/api/leagues");
         FlowAssert.verify("apiImplementation");
     }
 

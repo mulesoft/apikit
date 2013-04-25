@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<api xmlns="http://www.mulesoft.org/schema/mule/api-rest" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<api xmlns="http://www.mulesoft.org/schema/mule/api-rest"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-    xmlns:http="http://www.mulesoft.org/schema/mule/http"
-    xsi:schemaLocation="
-       http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
-       http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
-       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+     xmlns:http="http://www.mulesoft.org/schema/mule/http"
+     xsi:schemaLocation="http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
+       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <interface name="myInterface" doc:description="interface description">
         <document-resource name="a" access="#[true]" doc:description="resource a description">
-            <representation mediaType="text/xml" quality="1.0" schemaType="?" schemaLocation="?"/>
-            <representation mediaType="text/other" quality="1.0" schemaType="?" schemaLocation="?"/>
+            <representation mediaType="text/xml" quality="1.0" schemaType="XMLSchema" schemaLocation="?"/>
+            <representation mediaType="text/other" quality="1.0"/>
             <retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description">
-                <representation mediaType="text/html" quality="1.0" schemaType="?" schemaLocation="?"/>
-                <representation mediaType="text/plain" quality="1.0" schemaType="?" schemaLocation="?"/>
+                <representation mediaType="text/html" quality="1.0"/>
+                <representation mediaType="text/plain" quality="1.0"/>
             </retrieve>
         </document-resource>
         <document-resource name="b" access="#[true]" doc:description="resource b description">
@@ -31,8 +28,5 @@
     <service name="myService" interface-ref="myInterface" doc:description="service description">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
     </service>
-
-
-
 
 </api>

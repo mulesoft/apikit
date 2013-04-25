@@ -20,6 +20,11 @@ public class RestException extends Exception
         super();
     }
 
+    public RestException(String message)
+    {
+        super(message);
+    }
+
     public RestException(Throwable cause)
     {
         super(cause);

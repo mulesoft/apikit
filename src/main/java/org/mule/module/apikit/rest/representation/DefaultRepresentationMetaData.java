@@ -9,6 +9,10 @@ import org.mule.api.transformer.Transformer;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.transform.DataTypePair;
 import org.mule.module.apikit.rest.transform.TransformerCache;
+import org.mule.module.apikit.rest.validation.InvalidInputException;
+import org.mule.module.apikit.rest.validation.InvalidSchemaTypeException;
+import org.mule.module.apikit.rest.validation.RestSchemaValidator;
+import org.mule.module.apikit.rest.validation.RestSchemaValidatorFactory;
 import org.mule.transformer.types.DataTypeFactory;
 
 import com.google.common.net.MediaType;
@@ -24,7 +28,7 @@ public class DefaultRepresentationMetaData implements RepresentationMetaData
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MediaType mediaType;
-    protected String schemaType;
+    protected SchemaType schemaType;
     protected String schemaLocation;
 
     public DefaultRepresentationMetaData()
@@ -43,7 +47,7 @@ public class DefaultRepresentationMetaData implements RepresentationMetaData
     }
 
     @Override
-    public String getSchemaType()
+    public SchemaType getSchemaType()
     {
         return schemaType;
     }
@@ -59,7 +63,7 @@ public class DefaultRepresentationMetaData implements RepresentationMetaData
         this.mediaType = mediaType;
     }
 
-    public void setSchemaType(String schemaType)
+    public void setSchemaType(SchemaType schemaType)
     {
         this.schemaType = schemaType;
     }
@@ -105,6 +109,19 @@ public class DefaultRepresentationMetaData implements RepresentationMetaData
         muleEvent.getMessage().setOutboundProperty("Content-Type", mediaType.withoutParameters().toString());
 
         return payload;
+    }
+
+    @Override
+    public void validate(RestRequest request) throws InvalidInputException, InvalidSchemaTypeException
+    {
+        if (schemaType == null || schemaLocation == null)
+        {
+            return; //no validation needed
+        }
+        MuleEvent event = request.getMuleEvent();
+        RestSchemaValidator validator = RestSchemaValidatorFactory.getInstance().createValidator(schemaType, event.getMuleContext());
+        validator.validate(schemaLocation, event);
+
     }
 
 }

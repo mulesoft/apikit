@@ -153,7 +153,7 @@
     <xsd:complexType name="representationType">
         <xsd:attribute name="mediaType" type="xsd:string" />
         <xsd:attribute name="quality" type="qualitySimpleType" />
-        <xsd:attribute name="schemaType" type="xsd:string" />
+        <xsd:attribute name="schemaType" type="schemaTypeSimpleType" />
         <xsd:attribute name="schemaLocation" type="xsd:string" />
     </xsd:complexType>
 
@@ -172,6 +172,20 @@
                     <xsd:minInclusive value="0" />
                     <xsd:maxInclusive value="1" />
                 </xsd:restriction>
+            </xsd:simpleType>
+        </xsd:union>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="schemaTypeSimpleType">
+        <xsd:union>
+            <xsd:simpleType>
+                <xsd:restriction base="xsd:string">
+                    <xsd:enumeration value="JSONSchema"/>
+                    <xsd:enumeration value="XMLSchema"/>
+                </xsd:restriction>
+            </xsd:simpleType>
+            <xsd:simpleType>
+                <xsd:restriction base="mule:propertyPlaceholderType" />
             </xsd:simpleType>
         </xsd:union>
     </xsd:simpleType>

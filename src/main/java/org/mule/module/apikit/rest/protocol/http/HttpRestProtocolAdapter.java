@@ -21,6 +21,7 @@ import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.RestProtocolAdapter;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
+import org.mule.module.apikit.rest.validation.InvalidInputException;
 import org.mule.transport.NullPayload;
 import org.mule.transport.http.HttpConnector;
 import org.mule.util.StringUtils;
@@ -41,7 +42,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     private URI baseURI;
     private URI resourceURI;
     private RestOperationType operationType;
-    private List<MediaType> acceptableResponseMediaTypes = Collections.emptyList();;
+    private List<MediaType> acceptableResponseMediaTypes = Collections.emptyList();
     private MediaType requestMediaType;
     private Map<String, Object> queryParams;
 
@@ -59,7 +60,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
                 try
                 {
                     String requestPath;
-                    requestPath = (String) message.getInboundProperty("http.request.path");
+                    requestPath = message.getInboundProperty("http.request.path");
                     this.resourceURI = new URI("http", null, host, port, requestPath, null, null);
                 }
                 catch (URISyntaxException e)
@@ -72,7 +73,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
                 try
                 {
                     String requestPath;
-                    requestPath = (String) message.getInboundProperty("http.request.path");
+                    requestPath = message.getInboundProperty("http.request.path");
                     this.resourceURI = new URI("http", null, (String) message.getInboundProperty("host"), 80,
                         requestPath, null, null);
                 }
@@ -184,6 +185,17 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
             message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_UNAUTHORIZED.getCode());
             message.setPayload(NullPayload.getInstance());
         }
+        else if (re instanceof InvalidInputException)
+        {
+            message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_BAD_REQUEST.getCode());
+            message.setPayload(NullPayload.getInstance());
+        }
+        else
+        {
+            message.setOutboundProperty("http.status", HttpStatusCode.SERVER_ERROR_INTERNAL.getCode());
+            //TODO return content-type dependent error representation
+            message.setPayload(NullPayload.getInstance());
+        }
     }
 
     @Override
@@ -233,7 +245,14 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         request.getMuleEvent()
             .getMessage()
             .setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
-                HttpStatusCode.SUCCESS_NO_CONTENT.getCode());
+                                 HttpStatusCode.SUCCESS_NO_CONTENT.getCode());
     }
+
+    @Override
+    public void handleOK(RestRequest request)
+    {
+        request.getMuleEvent().getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, HttpStatusCode.SUCCESS_OK.getCode());
+    }
+
 
 }

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <api xmlns="http://www.mulesoft.org/schema/mule/api-rest" xmlns:mule="http://www.mulesoft.org/schema/mule/core"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:http="http://www.mulesoft.org/schema/mule/http"
-    xsi:schemaLocation="
-       http://www.mulesoft.org/schema/mule/api http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd
-       http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xmlns:http="http://www.mulesoft.org/schema/mule/http"
+     xsi:schemaLocation="http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
@@ -15,7 +13,10 @@
                 <representation mediaType="text/xml" quality="0.2"/>
             </retrieve>
             <member>
-                <representation mediaType="application/json"/>
+                <representation mediaType="application/json" schemaType="JSONSchema"
+                                schemaLocation="jsonschema:org.mule.module.apikit.rest.integration.League"/>
+                <representation mediaType="text/xml" schemaType="XMLSchema"
+                                schemaLocation="xmlschema:org.mule.module.apikit.rest.integration.League"/>
                 <create flow-ref="createLeague"/>
                 <retrieve flow-ref="retrieveLeague"/>
                 <update flow-ref="updateLeague"/>

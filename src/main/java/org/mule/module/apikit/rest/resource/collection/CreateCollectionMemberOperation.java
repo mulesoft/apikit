@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 
 public class CreateCollectionMemberOperation extends AbstractRestOperation
@@ -58,8 +57,7 @@ public class CreateCollectionMemberOperation extends AbstractRestOperation
     }
 
     @Override
-    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator)
-        throws JsonGenerationException, IOException
+    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator) throws IOException
     {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeFieldName(SwaggerConstants.HTTP_METHOD_FIELD_NAME);

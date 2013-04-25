@@ -41,5 +41,5 @@ public interface RestProtocolAdapter
 
     void handleNoContent(RestRequest request);
 
-    
+    void handleOK(RestRequest request);
 }

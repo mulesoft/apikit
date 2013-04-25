@@ -14,6 +14,8 @@ import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
+import org.mule.module.apikit.rest.validation.InvalidInputException;
+import org.mule.module.apikit.rest.validation.InvalidSchemaTypeException;
 import org.mule.transport.NullPayload;
 import org.mule.util.StringUtils;
 
@@ -24,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +110,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     }
 
     protected void validateSupportedRequestMediaType(RestRequest request)
-        throws UnsupportedMediaTypeException
+            throws UnsupportedMediaTypeException, InvalidSchemaTypeException, InvalidInputException
     {
         MediaType requestMediaType = request.getProtocolAdaptor().getRequestMediaType();
         if (requestMediaType == null)
@@ -118,7 +119,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
             return;
         }
 
-        boolean valid = false;
+        boolean found = false;
         for (RepresentationMetaData representation : getAllRepresentations())
         {
             if (logger.isDebugEnabled())
@@ -130,11 +131,12 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
                 .withoutParameters()
                 .is(request.getProtocolAdaptor().getRequestMediaType().withoutParameters()))
             {
-                valid = true;
+                found = true;
+                representation.validate(request);
                 break;
             }
         }
-        if (!valid)
+        if (!found)
         {
             throw new UnsupportedMediaTypeException();
         }
@@ -179,8 +181,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     }
 
     @Override
-    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator)
-        throws JsonGenerationException, IOException
+    public void appendSwaggerDescriptor(JsonGenerator jsonGenerator) throws IOException
     {
         // TODO Auto-generated method stub
 

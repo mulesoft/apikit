@@ -48,7 +48,7 @@ public class DocumentResourceConfigurationTestCase extends FunctionalTestCase
 
         assertEquals(1, resourceA.getOperations().size());
 
-        RestOperation action1 = (RestOperation) resourceA.getOperations().get(0);
+        RestOperation action1 = resourceA.getOperations().get(0);
         assertEquals(RestOperationType.RETRIEVE, action1.getType());
         assertEquals("resource a retrieve description", action1.getDescription());
         assertEquals("#[true]", action1.getAccessExpression());
@@ -65,13 +65,13 @@ public class DocumentResourceConfigurationTestCase extends FunctionalTestCase
         assertEquals("b", resourceB.getName());
         assertEquals("resource b description", resourceB.getDescription());
 
-        RestOperation action1 = (RestOperation) resourceB.getOperations().get(0);
+        RestOperation action1 = resourceB.getOperations().get(0);
         assertEquals(RestOperationType.RETRIEVE, action1.getType());
         assertEquals("resource b retrieve description", action1.getDescription());
         assertEquals("#[true]", action1.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action1.getHandler());
 
-        RestOperation action2 = (RestOperation) resourceB.getOperations().get(1);
+        RestOperation action2 = resourceB.getOperations().get(1);
         assertEquals(RestOperationType.UPDATE, action2.getType());
         assertEquals("resource b update description", action2.getDescription());
         assertEquals("#[true]", action2.getAccessExpression());
@@ -83,13 +83,13 @@ public class DocumentResourceConfigurationTestCase extends FunctionalTestCase
         assertEquals("c", nestedResource.getName());
         assertEquals("resource c description", nestedResource.getDescription());
 
-        RestOperation action3 = (RestOperation) nestedResource.getOperations().get(0);
+        RestOperation action3 = nestedResource.getOperations().get(0);
         assertEquals(RestOperationType.RETRIEVE, action3.getType());
         assertEquals("resource c retrieve description", action3.getDescription());
         assertEquals("#[true]", action3.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action3.getHandler());
 
-        RestOperation action4 = (RestOperation) nestedResource.getOperations().get(1);
+        RestOperation action4 = nestedResource.getOperations().get(1);
         assertEquals(RestOperationType.UPDATE, action4.getType());
         assertEquals("resource c update description", action4.getDescription());
         assertEquals("#[true]", action4.getAccessExpression());
