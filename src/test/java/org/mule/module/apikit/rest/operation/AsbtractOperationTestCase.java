@@ -30,9 +30,12 @@ import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 import org.mule.transport.NullPayload;
+import org.mule.transport.http.HttpConnector;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collections;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -120,6 +123,17 @@ public abstract class AsbtractOperationTestCase extends AbstractMuleTestCase
         operation.handle(restRequest);
         assertNotNull(restRequest.getMuleEvent());
         assertEquals(NullPayload.getInstance(), restRequest.getMuleEvent().getMessage().getPayload());
+    }
+
+    @Test
+    public void handlerReturnsCustomStatusCode() throws Exception
+    {
+        when(handler.process(any(MuleEvent.class))).thenReturn(event);
+        Map<String, Object> outboundProperties = Collections.<String, Object>singletonMap(HttpConnector.HTTP_STATUS_PROPERTY, "424");
+        when(event.getMessage()).thenReturn(new DefaultMuleMessage("", outboundProperties, muleContext));
+        operation.handle(restRequest);
+        assertEquals(event, restRequest.getMuleEvent());
+        assertEquals("424", restRequest.getMuleEvent().getMessage().getOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY));
     }
 
     public abstract AbstractRestOperation createOperation();
