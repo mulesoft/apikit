@@ -1,6 +1,4 @@
 /*
- * $Id: RssNamespaceHandler.java 21236 2011-02-10 05:12:40Z dirk.olmes $
- * --------------------------------------------------------------------------------------
  * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
  *
  * The software in this package is published under the terms of the CPAL v1.0

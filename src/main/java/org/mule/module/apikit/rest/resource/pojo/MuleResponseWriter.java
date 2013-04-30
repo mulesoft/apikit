@@ -1,6 +1,4 @@
 /*
- * $Id: MuleResponseWriter.java 19270 2010-09-01 10:37:41Z dirk.olmes $
- * --------------------------------------------------------------------------------------
  * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
  *
  * The software in this package is published under the terms of the CPAL v1.0
