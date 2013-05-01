@@ -6,14 +6,13 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <flow name="retrieveLeagues">
-        <set-payload value="#[registry:list-of-leagues]" returnClass="org.mule.module.apikit.rest.integration.Leagues"/>
+        <set-payload value="#[registry:list-of-leagues]"/>
     </flow>
 
     <flow name="createLeague">
         <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.rest.integration.League"/>
-        <set-variable variableName="leaguesMemberId"
-                      value="#[app.registry['list-of-leagues'].getLeagues().size() + 1]"/>
+        <set-variable variableName="leaguesMemberId" value="#[app.registry['list-of-leagues'].getLeagues().size() + 1]"/>
         <expression-component>
             payload.id = leaguesMemberId;
             app.registry['list-of-leagues'].getLeagues().add(payload);
@@ -24,8 +23,7 @@
         <logger level="WARN" message="leaguesMemberId: #[leaguesMemberId]"/>
         <choice>
             <when expression="#[app.registry['list-of-leagues'].getLeague(leaguesMemberId)]">
-                <set-payload value="#[app.registry['list-of-leagues'].getLeague(leaguesMemberId)]"
-                             returnClass="org.mule.module.apikit.rest.integration.League"/>
+                <set-payload value="#[app.registry['list-of-leagues'].getLeague(leaguesMemberId)]"/>
             </when>
             <otherwise>
                 <set-property propertyName="http.status" value="404"/>
@@ -50,16 +48,16 @@
 
     <flow name="retrieveTeams">
         <expression-component>
-            payload = app.registry['list-of-teams-' + leaguesMemberId];
+            //payload = app.registry['list-of-teams-' + leaguesMemberId];
+            payload = app.registry['list-of-leagues'].getLeague(leaguesMemberId).getTeams();
         </expression-component>
     </flow>
 
     <flow name="retrieveTeam">
         <logger level="WARN" message="leaguesMemberId: #[leaguesMemberId]"/>
         <choice>
-            <when expression="#[app.registry['list-of-teams-' + leaguesMemberId].getTeam(teamsMemberId)]">
-                <set-payload value="#[app.registry['list-of-teams-' + leaguesMemberId].getTeam(teamsMemberId)]"
-                             returnClass="org.mule.module.apikit.rest.integration.Team"/>
+            <when expression="#[app.registry['list-of-leagues'].?getLeague(leaguesMemberId).getTeam(teamsMemberId)]">
+                <set-payload value="#[app.registry['list-of-leagues'].getLeague(leaguesMemberId).getTeam(teamsMemberId)]"/>
             </when>
             <otherwise>
                 <set-property propertyName="http.status" value="404"/>
@@ -72,10 +70,25 @@
         <spring:bean id="liga-bbva" class="org.mule.module.apikit.rest.integration.League">
             <spring:property name="id" value="liga-bbva"/>
             <spring:property name="name" value="Liga BBVA"/>
+            <spring:property name="teams">
+                <spring:list>
+                    <spring:ref bean="real-madrid"/>
+                    <spring:ref bean="barcelona"/>
+                    <spring:ref bean="valencia"/>
+                    <spring:ref bean="athletic-bilbao"/>
+                    <spring:ref bean="atletico-madrid"/>
+                </spring:list>
+            </spring:property>
         </spring:bean>
         <spring:bean id="premier-league" class="org.mule.module.apikit.rest.integration.League">
             <spring:property name="id" value="premier-league"/>
             <spring:property name="name" value="Premier League"/>
+            <spring:property name="teams">
+                <spring:list>
+                    <spring:ref bean="man-united"/>
+                    <spring:ref bean="man-city"/>
+                </spring:list>
+            </spring:property>
         </spring:bean>
         <spring:bean id="list-of-leagues" class="org.mule.module.apikit.rest.integration.Leagues">
             <spring:property name="leagues">
@@ -105,17 +118,6 @@
             <spring:property name="id" value="atletico-madrid"/>
             <spring:property name="name" value="Atletico Madrid"/>
         </spring:bean>
-        <spring:bean id="list-of-teams-liga-bbva" class="org.mule.module.apikit.rest.integration.Teams">
-            <spring:property name="teams">
-                <spring:list>
-                    <spring:ref bean="real-madrid"/>
-                    <spring:ref bean="barcelona"/>
-                    <spring:ref bean="valencia"/>
-                    <spring:ref bean="athletic-bilbao"/>
-                    <spring:ref bean="atletico-madrid"/>
-                </spring:list>
-            </spring:property>
-        </spring:bean>
         <spring:bean id="man-united" class="org.mule.module.apikit.rest.integration.Team">
             <spring:property name="id" value="man-united"/>
             <spring:property name="name" value="Manchester United"/>
@@ -123,14 +125,6 @@
         <spring:bean id="man-city" class="org.mule.module.apikit.rest.integration.Team">
             <spring:property name="id" value="man-city"/>
             <spring:property name="name" value="Manchester City"/>
-        </spring:bean>
-        <spring:bean id="list-of-teams-premier-league" class="org.mule.module.apikit.rest.integration.Teams">
-            <spring:property name="teams">
-                <spring:list>
-                    <spring:ref bean="man-united"/>
-                    <spring:ref bean="man-city"/>
-                </spring:list>
-            </spring:property>
         </spring:bean>
     </spring:beans>
 

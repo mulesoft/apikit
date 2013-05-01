@@ -257,7 +257,7 @@ public class RestIntegrationTestCase extends FunctionalTestCase
         expect().log()
                 .everything()
                 .response()
-                .body("teams.name", hasItems("Real Madrid", "Barcelona"))
+                .body("name", hasItems("Real Madrid", "Barcelona"))
                 .when()
                 .get("/api/leagues/liga-bbva/teams");
     }
@@ -277,6 +277,36 @@ public class RestIntegrationTestCase extends FunctionalTestCase
                 .body("id", is("barcelona"))
                 .when()
                 .get("/api/leagues/liga-bbva/teams/barcelona");
+    }
+
+    @Test
+    public void testRetrieveInvalidPathOnSubMemberArchetype() throws Exception
+    {
+        given().log()
+                .all()
+                .header("Accept", "application/json")
+                .expect()
+                .response()
+                .log()
+                .all()
+                .statusCode(404)
+                .when()
+                .get("/api/leagues/liga-bbvaa/teams/barcelona");
+    }
+
+    @Test
+    public void testRetrieveInvalidPathOnMemberArchetype() throws Exception
+    {
+        given().log()
+                .all()
+                .header("Accept", "application/json")
+                .expect()
+                .response()
+                .log()
+                .all()
+                .statusCode(404)
+                .when()
+                .get("/api/leagues/liga-bbvaa");
     }
 
     /*

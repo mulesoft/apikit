@@ -9,8 +9,11 @@
 
 package org.mule.module.apikit.rest.integration;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
@@ -24,6 +27,7 @@ public class League
 
     private String id;
     private String name;
+    private List<Team> teams;
 
     public League()
     {
@@ -90,5 +94,28 @@ public class League
     public int hashCode()
     {
         return id != null ? id.hashCode() : 0;
+    }
+
+    @XmlTransient
+    public List<Team> getTeams()
+    {
+        return teams;
+    }
+
+    public void setTeams(List<Team> teams)
+    {
+        this.teams = teams;
+    }
+
+    public Team getTeam(String id)
+    {
+        for (Team team : teams)
+        {
+            if (team.getId().equals(id))
+            {
+                return team;
+            }
+        }
+        return null;
     }
 }
