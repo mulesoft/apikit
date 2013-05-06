@@ -8,12 +8,13 @@
 
 package org.mule.module.apikit.rest.param;
 
-public class PathParameter extends RestParameter
+import org.mule.module.apikit.rest.RestException;
+
+public class RestInvalidQueryParameterException extends RestException
 {
 
-    public PathParameter(String name)
+    public RestInvalidQueryParameterException(String message)
     {
-        this.name = name;
+        super(message);
     }
-
 }

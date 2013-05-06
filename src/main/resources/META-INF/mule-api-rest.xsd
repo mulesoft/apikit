@@ -113,8 +113,17 @@
         <xsd:complexContent>
             <xsd:extension base="api:abstractWebServiceOperationType">
                 <xsd:sequence>
-                    <xsd:element name="representation" type="representationType" minOccurs="0"
-                        maxOccurs="unbounded" />
+                    <xsd:element name="representation" type="representationType" minOccurs="0" maxOccurs="unbounded" />
+                    <xsd:element name="query-parameter" type="queryParameterType" maxOccurs="unbounded" minOccurs="0" />
+                    <!--
+                    <xsd:element name="parameters" maxOccurs="1" minOccurs="0">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="query-parameter" type="queryParameterType" maxOccurs="unbounded" minOccurs="0" />
+                            </xsd:sequence>
+                        </xsd:complexType>
+                    </xsd:element>
+                    -->
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>
@@ -189,5 +198,19 @@
             </xsd:simpleType>
         </xsd:union>
     </xsd:simpleType>
+
+    <xsd:complexType name="abstractParameterType">
+        <xsd:attribute name="name" type="xsd:string" />
+        <xsd:attribute name="description" type="xsd:string" />
+        <xsd:attribute name="defaultValue" type="xsd:string" />
+        <xsd:attribute name="required" type="mule:substitutableBoolean" />
+        <xsd:attribute name="allowMultiple" type="mule:substitutableBoolean" />
+    </xsd:complexType>
+
+    <xsd:complexType name="queryParameterType">
+        <xsd:complexContent>
+            <xsd:extension base="abstractParameterType" />
+        </xsd:complexContent>
+    </xsd:complexType>
 
 </xsd:schema>

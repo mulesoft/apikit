@@ -21,7 +21,7 @@ import static org.mule.module.apikit.rest.swagger.SwaggerConstants.SUPPORTED_CON
 
 import org.mule.module.apikit.UnexpectedException;
 import org.mule.module.apikit.rest.RestException;
-import org.mule.module.apikit.rest.RestParameter;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;

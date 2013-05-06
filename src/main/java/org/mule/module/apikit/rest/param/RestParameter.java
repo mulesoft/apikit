@@ -6,14 +6,20 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest;
+package org.mule.module.apikit.rest.param;
+
+import java.util.List;
 
 public class RestParameter
 {
 
     protected String name;
     protected String description;
+    protected String defaultValue;
     protected boolean required;
+    protected boolean allowMultiple;
+    protected List<String> allowableValues;
+
 
     public String getDescription()
     {
@@ -43,6 +49,31 @@ public class RestParameter
     public void setRequired(boolean required)
     {
         this.required = required;
+    }
+
+    public boolean isAllowMultiple()
+    {
+        return allowMultiple;
+    }
+
+    public String getDefaultValue()
+    {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue)
+    {
+        this.defaultValue = defaultValue;
+    }
+
+    public List<String> getAllowableValues()
+    {
+        return allowableValues;
+    }
+
+    public void setAllowableValues(List<String> allowableValues)
+    {
+        this.allowableValues = allowableValues;
     }
 
 }

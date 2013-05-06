@@ -21,7 +21,7 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.api.WebServiceRoute;
 import org.mule.module.apikit.rest.RestException;
-import org.mule.module.apikit.rest.RestParameter;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
@@ -251,12 +251,8 @@ public abstract class AbstractRestResource implements RestResource
     {
         ExpressionManager expManager = request.getMuleEvent().getMuleContext().getExpressionManager();
 
-        if (route.getAccessExpression() == null
-            || expManager.evaluateBoolean(route.getAccessExpression(), request.getMuleEvent()))
-        {
-            return true;
-        }
-        return false;
+        return route.getAccessExpression() == null
+               || expManager.evaluateBoolean(route.getAccessExpression(), request.getMuleEvent());
     }
 
     protected abstract Set<RestOperationType> getSupportedActionTypes();

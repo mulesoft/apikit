@@ -10,10 +10,9 @@ package org.mule.module.apikit.rest.operation;
 
 import static com.google.common.net.MediaType.JSON_UTF_8;
 import static com.google.common.net.MediaType.XML_UTF_8;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,6 +27,9 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
+import org.mule.module.apikit.rest.param.QueryParameter;
+import org.mule.module.apikit.rest.param.RestMissingQueryParameterException;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.representation.DefaultRepresentationMetaData;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
@@ -38,11 +40,11 @@ import org.mule.tck.size.SmallTest;
 import com.google.common.net.MediaType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -98,6 +100,53 @@ public class RestRequestOperationTestCase extends AbstractMuleTestCase
         action.setResource(resource);
 
     }
+
+    // Parameters
+    @Test
+    public void singleQueryParameter() throws RestException
+    {
+        String paramName = "param1";
+        when(httpAdapter.getQueryParameters()).thenReturn(Collections.<String, Object>singletonMap(paramName, "value1"));
+        RestParameter parameter = new QueryParameter(paramName);
+        action.setParameters(Collections.singletonList(parameter));
+        expectNoResponse();
+    }
+
+    @Test
+    public void singleQueryParameterDefaultValue() throws RestException
+    {
+        String paramName = "param1";
+        String defaultValue = "defaultValue";
+        Map<String, Object> queryParams = mock(Map.class);
+        when(httpAdapter.getQueryParameters()).thenReturn(queryParams);
+        RestParameter parameter = new QueryParameter(paramName);
+        parameter.setDefaultValue(defaultValue);
+        action.setParameters(Collections.singletonList(parameter));
+        expectNoResponse();
+        verify(queryParams).put(paramName, defaultValue);
+    }
+
+    @Test
+    public void singleQueryParameterRequired() throws RestException
+    {
+        String paramName = "param1";
+        when(httpAdapter.getQueryParameters()).thenReturn(Collections.<String, Object>singletonMap(paramName, "value1"));
+        RestParameter parameter = new QueryParameter(paramName);
+        parameter.setRequired(true);
+        action.setParameters(Collections.singletonList(parameter));
+        expectNoResponse();
+    }
+
+    @Test(expected = RestMissingQueryParameterException.class)
+    public void singleQueryParameterRequiredNotProvided() throws RestException
+    {
+        String paramName = "param1";
+        RestParameter parameter = new QueryParameter(paramName);
+        parameter.setRequired(true);
+        action.setParameters(Collections.singletonList(parameter));
+        expectNoResponse();
+    }
+
 
     // Request representation mediaTypes (as defined in the "Content-Type" request header)
 

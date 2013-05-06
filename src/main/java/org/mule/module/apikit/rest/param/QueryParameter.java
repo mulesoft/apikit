@@ -8,10 +8,14 @@
 
 package org.mule.module.apikit.rest.param;
 
-public class PathParameter extends RestParameter
+public class QueryParameter extends RestParameter
 {
 
-    public PathParameter(String name)
+    public QueryParameter()
+    {
+    }
+
+    public QueryParameter(String name)
     {
         this.name = name;
     }

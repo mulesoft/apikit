@@ -21,7 +21,7 @@ import static org.mule.module.apikit.rest.swagger.SwaggerConstants.RESPONSE_CLAS
 import static org.mule.module.apikit.rest.swagger.SwaggerConstants.SUPPORTED_CONTENT_TYPES_FIELD_NAME;
 
 import org.mule.module.apikit.rest.RestException;
-import org.mule.module.apikit.rest.RestParameter;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;

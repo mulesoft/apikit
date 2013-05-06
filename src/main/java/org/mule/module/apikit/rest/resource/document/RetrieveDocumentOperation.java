@@ -9,7 +9,7 @@
 
 package org.mule.module.apikit.rest.resource.document;
 
-import org.mule.module.apikit.rest.RestParameter;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;

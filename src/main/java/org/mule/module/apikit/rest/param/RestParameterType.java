@@ -6,7 +6,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest;
+package org.mule.module.apikit.rest.param;
 
 public enum RestParameterType {
     /**

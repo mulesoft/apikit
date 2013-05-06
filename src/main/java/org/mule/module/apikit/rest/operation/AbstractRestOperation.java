@@ -19,6 +19,9 @@ import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
+import org.mule.module.apikit.rest.param.RestInvalidQueryParameterException;
+import org.mule.module.apikit.rest.param.RestMissingQueryParameterException;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
@@ -33,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.slf4j.Logger;
@@ -46,6 +50,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     protected RestOperationType type;
     protected RestResource resource;
     protected Collection<RepresentationMetaData> representations = new HashSet<RepresentationMetaData>();
+    protected List<RestParameter> parameters;
 
     @Override
     public RestOperationType getType()
@@ -56,6 +61,17 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     public void setRepresentations(Collection<RepresentationMetaData> representations)
     {
         this.representations = representations;
+    }
+
+    public void setParameters(List<RestParameter> parameters)
+    {
+        this.parameters = parameters;
+    }
+
+    @Override
+    public List<RestParameter> getParameters()
+    {
+        return parameters;
     }
 
     @Override
@@ -79,6 +95,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
                 responseRepresentation = validateAcceptableResponeMediaType(request);
             }
         }
+        processParameters(request);
         try
         {
             MuleEvent responseEvent = getHandler().process(request.getMuleEvent());
@@ -167,6 +184,48 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
             }
         }
         throw new MediaTypeNotAcceptableException();
+    }
+
+    private void processParameters(RestRequest request) throws RestMissingQueryParameterException, RestInvalidQueryParameterException
+    {
+        if (parameters == null)
+        {
+            return;
+        }
+
+        for (RestParameter parameter : parameters)
+        {
+            populateQueryDefaultValue(parameter, request);
+            validateRequiredQueryParameter(parameter, request);
+            validateQueryAllowableValues(parameter, request);
+        }
+    }
+
+    private void populateQueryDefaultValue(RestParameter parameter, RestRequest request)
+    {
+        if (!request.getProtocolAdaptor().getQueryParameters().containsKey(parameter.getName()) && parameter.getDefaultValue() != null)
+        {
+            request.getProtocolAdaptor().getQueryParameters().put(parameter.getName(), parameter.getDefaultValue());
+        }
+    }
+
+    private void validateRequiredQueryParameter(RestParameter parameter, RestRequest request) throws RestMissingQueryParameterException
+    {
+        if (parameter.isRequired() && !request.getProtocolAdaptor().getQueryParameters().containsKey(parameter.getName()))
+        {
+            throw new RestMissingQueryParameterException("Query parameter " + parameter.getName() + " is missing");
+        }
+    }
+
+    private void validateQueryAllowableValues(RestParameter parameter, RestRequest request) throws RestInvalidQueryParameterException
+    {
+        if (parameter.getAllowableValues() != null && request.getProtocolAdaptor().getQueryParameters().containsKey(parameter.getName()))
+        {
+            if (!parameter.getAllowableValues().contains(request.getProtocolAdaptor().getQueryParameters().get(parameter.getName())))
+            {
+                throw new RestInvalidQueryParameterException("Query parameter " + parameter.getName() + " does not have a value listed as an allowable value");
+            }
+        }
     }
 
     @Override
