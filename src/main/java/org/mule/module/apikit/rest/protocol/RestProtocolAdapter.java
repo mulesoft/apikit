@@ -40,4 +40,6 @@ public interface RestProtocolAdapter
     void handleNoContent(RestRequest request);
 
     void handleOK(RestRequest request);
+
+    boolean isCustomStatusCodeSet(RestRequest request);
 }

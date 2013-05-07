@@ -22,6 +22,7 @@ import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.param.RestInvalidQueryParameterException;
 import org.mule.module.apikit.rest.param.RestMissingQueryParameterException;
 import org.mule.module.apikit.rest.param.RestParameter;
+import org.mule.module.apikit.rest.protocol.UserDefinedStatusCodeException;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
@@ -115,6 +116,10 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
                     {
                         request.getMuleEvent().setFlowVariable(name, responseEvent.getFlowVariable(name));
                     }
+                    if (request.getProtocolAdaptor().isCustomStatusCodeSet(request))
+                    {
+                        throw new UserDefinedStatusCodeException();
+                    }
                 }
             }
             else
@@ -127,6 +132,10 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
                 Object payload = responseRepresentation.toRepresentation(request.getMuleEvent(), request);
                 request.getMuleEvent().getMessage().setPayload(payload);
             }
+        }
+        catch (UserDefinedStatusCodeException ue)
+        {
+            throw ue;
         }
         catch (Exception e)
         {

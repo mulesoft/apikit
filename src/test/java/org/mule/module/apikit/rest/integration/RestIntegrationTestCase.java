@@ -115,6 +115,16 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void testCreateCustomStatusOnCollectionArchetype() throws Exception
+    {
+        given().log().everything().body("{ \"name\": \"(invlid name)\" }")
+                .contentType("application/json")
+                .expect()
+                .statusCode(400)
+                .post("/api/leagues");
+    }
+
+    @Test
     public void testCreateInvalidInputTypeUsingJsonOnCollectionArchetype() throws Exception
     {
         given().log()

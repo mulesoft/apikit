@@ -12,11 +12,19 @@
     <flow name="createLeague">
         <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.rest.integration.League"/>
-        <set-variable variableName="leaguesMemberId" value="#[app.registry['list-of-leagues'].getLeagues().size() + 1]"/>
-        <expression-component>
-            payload.id = leaguesMemberId;
-            app.registry['list-of-leagues'].getLeagues().add(payload);
-        </expression-component>
+        <choice>
+            <when expression="#[!payload.name.matches('\\w+')]">
+                <logger level="WARN" message="invalid name returning 400"/>
+                <set-property propertyName="http.status" value="400"/>
+            </when>
+            <otherwise>
+                <set-variable variableName="leaguesMemberId" value="#[app.registry['list-of-leagues'].getLeagues().size() + 1]"/>
+                <expression-component>
+                    payload.id = leaguesMemberId;
+                    app.registry['list-of-leagues'].getLeagues().add(payload);
+                </expression-component>
+            </otherwise>
+        </choice>
     </flow>
 
     <flow name="retrieveLeague">

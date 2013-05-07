@@ -8,6 +8,8 @@
 
 package org.mule.module.apikit.rest.protocol.http;
 
+import static org.mule.transport.http.HttpConnector.HTTP_STATUS_PROPERTY;
+
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
 import org.mule.module.apikit.UnauthorizedException;
@@ -18,10 +20,10 @@ import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
 import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.RestProtocolAdapter;
+import org.mule.module.apikit.rest.protocol.UserDefinedStatusCodeException;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.module.apikit.rest.validation.InvalidInputException;
 import org.mule.transport.NullPayload;
-import org.mule.transport.http.HttpConnector;
 import org.mule.util.StringUtils;
 
 import com.google.common.net.MediaType;
@@ -188,6 +190,10 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
             message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_BAD_REQUEST.getCode());
             message.setPayload(NullPayload.getInstance());
         }
+        else if (re instanceof UserDefinedStatusCodeException)
+        {
+            //status code and payload set by user
+        }
         else
         {
             message.setOutboundProperty("http.status", HttpStatusCode.SERVER_ERROR_INTERNAL.getCode());
@@ -232,7 +238,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     {
         request.getMuleEvent()
             .getMessage()
-            .setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, HttpStatusCode.SUCCESS_CREATED.getCode());
+            .setOutboundProperty(HTTP_STATUS_PROPERTY, HttpStatusCode.SUCCESS_CREATED.getCode());
         request.getMuleEvent().getMessage().setOutboundProperty("location", location.toString());
 
     }
@@ -242,15 +248,21 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     {
         request.getMuleEvent()
             .getMessage()
-            .setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
+            .setOutboundProperty(HTTP_STATUS_PROPERTY,
                                  HttpStatusCode.SUCCESS_NO_CONTENT.getCode());
     }
 
     @Override
     public void handleOK(RestRequest request)
     {
-        request.getMuleEvent().getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, HttpStatusCode.SUCCESS_OK.getCode());
+        request.getMuleEvent().getMessage().setOutboundProperty(HTTP_STATUS_PROPERTY, HttpStatusCode.SUCCESS_OK.getCode());
     }
 
+    @Override
+    public boolean isCustomStatusCodeSet(RestRequest request)
+    {
+        Object statusCode = request.getMuleEvent().getMessage().getOutboundProperty(HTTP_STATUS_PROPERTY);
+        return statusCode != null;
+    }
 
 }
