@@ -19,6 +19,7 @@ import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
+import org.mule.module.apikit.rest.param.ParameterList;
 import org.mule.module.apikit.rest.param.RestInvalidQueryParameterException;
 import org.mule.module.apikit.rest.param.RestMissingQueryParameterException;
 import org.mule.module.apikit.rest.param.RestParameter;
@@ -37,7 +38,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
 import org.codehaus.jackson.JsonGenerator;
 import org.slf4j.Logger;
@@ -51,7 +51,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     protected RestOperationType type;
     protected RestResource resource;
     protected Collection<RepresentationMetaData> representations = new HashSet<RepresentationMetaData>();
-    protected List<RestParameter> parameters;
+    protected ParameterList parameters;
 
     @Override
     public RestOperationType getType()
@@ -64,13 +64,13 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         this.representations = representations;
     }
 
-    public void setParameters(List<RestParameter> parameters)
+    public void setParameters(ParameterList parameters)
     {
         this.parameters = parameters;
     }
 
     @Override
-    public List<RestParameter> getParameters()
+    public ParameterList getParameters()
     {
         return parameters;
     }

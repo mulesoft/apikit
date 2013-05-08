@@ -27,6 +27,7 @@ import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestWebService;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
+import org.mule.module.apikit.rest.param.ParameterList;
 import org.mule.module.apikit.rest.param.QueryParameter;
 import org.mule.module.apikit.rest.param.RestMissingQueryParameterException;
 import org.mule.module.apikit.rest.param.RestParameter;
@@ -108,7 +109,7 @@ public class RestRequestOperationTestCase extends AbstractMuleTestCase
         String paramName = "param1";
         when(httpAdapter.getQueryParameters()).thenReturn(Collections.<String, Object>singletonMap(paramName, "value1"));
         RestParameter parameter = new QueryParameter(paramName);
-        action.setParameters(Collections.singletonList(parameter));
+        action.setParameters(new ParameterList(parameter));
         expectNoResponse();
     }
 
@@ -121,7 +122,7 @@ public class RestRequestOperationTestCase extends AbstractMuleTestCase
         when(httpAdapter.getQueryParameters()).thenReturn(queryParams);
         RestParameter parameter = new QueryParameter(paramName);
         parameter.setDefaultValue(defaultValue);
-        action.setParameters(Collections.singletonList(parameter));
+        action.setParameters(new ParameterList(parameter));
         expectNoResponse();
         verify(queryParams).put(paramName, defaultValue);
     }
@@ -133,7 +134,7 @@ public class RestRequestOperationTestCase extends AbstractMuleTestCase
         when(httpAdapter.getQueryParameters()).thenReturn(Collections.<String, Object>singletonMap(paramName, "value1"));
         RestParameter parameter = new QueryParameter(paramName);
         parameter.setRequired(true);
-        action.setParameters(Collections.singletonList(parameter));
+        action.setParameters(new ParameterList(parameter));
         expectNoResponse();
     }
 
@@ -143,7 +144,7 @@ public class RestRequestOperationTestCase extends AbstractMuleTestCase
         String paramName = "param1";
         RestParameter parameter = new QueryParameter(paramName);
         parameter.setRequired(true);
-        action.setParameters(Collections.singletonList(parameter));
+        action.setParameters(new ParameterList(parameter));
         expectNoResponse();
     }
 

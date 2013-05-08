@@ -2,7 +2,9 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <flow name="retrieveLeagues">
@@ -66,6 +68,12 @@
         <choice>
             <when expression="#[app.registry['list-of-leagues'].?getLeague(leaguesMemberId).getTeam(teamsMemberId)]">
                 <set-payload value="#[app.registry['list-of-leagues'].getLeague(leaguesMemberId).getTeam(teamsMemberId)]"/>
+                <!-- response-builder requires a transformer from Object to OutputHandler in oder to work -->
+                <!--
+                <http:response-builder>
+                    <http:cache-control maxAge="28800" />
+                </http:response-builder>
+                -->
             </when>
             <otherwise>
                 <set-property propertyName="http.status" value="404"/>

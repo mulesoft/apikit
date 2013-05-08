@@ -12,6 +12,7 @@ import org.mule.config.spring.handlers.MuleNamespaceHandler;
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
 import org.mule.module.apikit.config.WebServiceInterfaceDefinitionParser;
 import org.mule.module.apikit.rest.RestWebServiceInterface;
+import org.mule.module.apikit.rest.param.ParameterList;
 import org.mule.module.apikit.rest.param.QueryParameter;
 import org.mule.module.apikit.rest.resource.collection.CollectionResource;
 import org.mule.module.apikit.rest.resource.document.DocumentResource;
@@ -38,7 +39,7 @@ public class RestAPINamespaceHandler extends MuleNamespaceHandler
         registerBeanDefinitionParser("delete", new RestDeleteOperationDefinitionParser());
 
         registerBeanDefinitionParser("representation", new RepresentationDefinitionParser("representation"));
-        //registerBeanDefinitionParser("parameters", new ChildDefinitionParser("parameters", ArrayList.class, false));
+        registerBeanDefinitionParser("parameters", new ChildDefinitionParser("parameters", ParameterList.class, false));
         registerBeanDefinitionParser("query-parameter", new ChildDefinitionParser("parameter", QueryParameter.class, false));
     }
 

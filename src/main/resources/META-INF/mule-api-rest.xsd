@@ -9,7 +9,7 @@
     <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" />
     <xsd:import namespace="http://www.mulesoft.org/schema/mule/core" schemaLocation="http://www.mulesoft.org/schema/mule/core/current/mule.xsd" />
     <xsd:import namespace="http://www.mulesoft.org/schema/mule/api" schemaLocation="http://www.mulesoft.org/schema/mule/api/current/mule-api.xsd" />
-    <xsd:import namespace="http://www.mulesoft.org/schema/mule/schemadoc" schemaLocation="http://www.mulesoft.org/schema/mule/schemadoc/3.3/mule-schemadoc.xsd" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/schemadoc" schemaLocation="http://www.mulesoft.org/schema/mule/schemadoc/current/mule-schemadoc.xsd" />
 
     <xsd:element name="api" type="api:apiType"/>
 
@@ -114,8 +114,6 @@
             <xsd:extension base="api:abstractWebServiceOperationType">
                 <xsd:sequence>
                     <xsd:element name="representation" type="representationType" minOccurs="0" maxOccurs="unbounded" />
-                    <xsd:element name="query-parameter" type="queryParameterType" maxOccurs="unbounded" minOccurs="0" />
-                    <!--
                     <xsd:element name="parameters" maxOccurs="1" minOccurs="0">
                         <xsd:complexType>
                             <xsd:sequence>
@@ -123,7 +121,6 @@
                             </xsd:sequence>
                         </xsd:complexType>
                     </xsd:element>
-                    -->
                 </xsd:sequence>
             </xsd:extension>
         </xsd:complexContent>

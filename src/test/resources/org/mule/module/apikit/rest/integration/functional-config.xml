@@ -24,10 +24,10 @@
                 <collection-resource name="teams">
                     <retrieve flow-ref="retrieveTeams">
                         <representation mediaType="application/json"/>
-                        <!--<parameters>-->
+                        <parameters>
                             <query-parameter name="limit" description="Total amount of collection items to be retrieved" defaultValue="25"/>
-                            <!--<query-parameter paramName="offset" description="Offset at which the count should start" defaultValue="0"/>-->
-                        <!--</parameters>-->
+                            <query-parameter name="offset" description="Offset at which the count should start" defaultValue="0"/>
+                        </parameters>
                     </retrieve>
                     <member>
                         <retrieve flow-ref="retrieveTeam">

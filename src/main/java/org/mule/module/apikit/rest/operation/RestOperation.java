@@ -11,6 +11,7 @@ package org.mule.module.apikit.rest.operation;
 
 import org.mule.module.apikit.api.WebServiceOperation;
 import org.mule.module.apikit.rest.RestRequestHandler;
+import org.mule.module.apikit.rest.param.ParameterList;
 import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 
@@ -29,5 +30,5 @@ public interface RestOperation extends RestRequestHandler, WebServiceOperation
 
     void appendSwaggerDescriptor(JsonGenerator jsonGenerator) throws IOException;
 
-    List<RestParameter> getParameters();
+    ParameterList getParameters();
 }
