@@ -33,6 +33,7 @@ public class InterfaceConfigurationTestCase extends FunctionalTestCase
         assertNotNull(wsInterface);
         assertEquals(RestWebServiceInterface.class, wsInterface.getClass());
         assertEquals("myInterface", wsInterface.getName());
+        assertEquals("2.0", wsInterface.getVersion());
         assertEquals("interface description", wsInterface.getDescription());
         assertEquals(2, wsInterface.getRoutes().size());
     }
@@ -45,6 +46,7 @@ public class InterfaceConfigurationTestCase extends FunctionalTestCase
         assertNotNull(wsInterface);
         assertEquals(RestWebServiceInterface.class, wsInterface.getClass());
         assertEquals("myInterface2", wsInterface.getName());
+        assertEquals("1.0", wsInterface.getVersion());
         assertEquals("interface description", wsInterface.getDescription());
         assertEquals(2, wsInterface.getRoutes().size());
     }

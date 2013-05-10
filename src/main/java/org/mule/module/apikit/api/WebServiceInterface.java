@@ -6,7 +6,6 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit.api;
 
 import org.mule.api.NamedObject;
@@ -17,5 +16,7 @@ public interface WebServiceInterface extends WebServiceRoute, NamedObject
 {
 
     List<? extends WebServiceRoute> getRoutes();
+
+    String getVersion();
 
 }

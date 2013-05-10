@@ -16,6 +16,7 @@ import java.util.List;
 public abstract class AbstractWebServiceInterface implements WebServiceInterface
 {
     protected String name;
+    protected String version;
     protected String description;
     protected List<WebServiceRoute> routes;
 
@@ -39,6 +40,17 @@ public abstract class AbstractWebServiceInterface implements WebServiceInterface
     public String getName()
     {
         return name;
+    }
+    
+    @Override
+    public String getVersion()
+    {
+        return version;
+    }
+    
+    public void setVersion(String version)
+    {
+        this.version = version;
     }
 
     @Override

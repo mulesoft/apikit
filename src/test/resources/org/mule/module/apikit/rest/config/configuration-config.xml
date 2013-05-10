@@ -5,7 +5,7 @@
        http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <interface name="myInterface" doc:description="interface description">
+    <interface name="myInterface" version="2.0" doc:description="interface description">
         <document-resource name="a" doc:description="resource a description">
             <retrieve flow-ref="echo" doc:description="resource a retrieve description" />
         </document-resource>
