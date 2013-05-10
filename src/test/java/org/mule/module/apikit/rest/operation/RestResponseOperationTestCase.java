@@ -16,7 +16,6 @@ import static com.google.common.net.MediaType.XML_UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,7 +25,6 @@ import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.expression.ExpressionManager;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
@@ -100,40 +98,6 @@ public class RestResponseOperationTestCase extends AbstractMuleTestCase
         action.setHandler(handler);
         action.setResource(resource);
 
-    }
-
-    @Test
-    public void actionAuthorized() throws RestException, MuleException
-    {
-        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
-
-        action.setAccessExpression("#[true]");
-        when(expressionManager.evaluateBoolean("#[true]", event)).thenReturn(Boolean.TRUE);
-
-        action.handle(request);
-
-        verify(handler).process(event);
-        verify(httpAdapter, never()).handleException(any(RestException.class), any(RestRequest.class));
-        verify(message, never());
-    }
-
-    @Test
-    public void actionNotAuthorized() throws RestException, MuleException
-    {
-        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
-
-        action.setAccessExpression("#[false]");
-        when(expressionManager.evaluateBoolean("#[false]", event)).thenReturn(Boolean.FALSE);
-
-        try
-        {
-            action.handle(request);
-        }
-        catch (RestException re)
-        {
-            assertEquals(UnauthorizedException.class, re.getClass());
-            verify(handler, never()).process(event);
-        }
     }
 
     // Response representation mediaTypes (as defined in the "Accept" request header)

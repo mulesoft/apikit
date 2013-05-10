@@ -6,24 +6,24 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <interface name="myInterface" doc:description="interface description">
-        <document-resource name="a" access="#[true]" doc:description="resource a description">
-            <retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description" />
+        <document-resource name="a" doc:description="resource a description">
+            <retrieve flow-ref="echo" doc:description="resource a retrieve description" />
         </document-resource>
-        <document-resource name="b" access="#[true]" doc:description="resource b description">
-            <retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description" />
+        <document-resource name="b" doc:description="resource b description">
+            <retrieve flow-ref="echo" doc:description="resource b retrieve description" />
         </document-resource>
     </interface>
 
     <interface name="myInterface2" doc:description="interface description">
-        <document-resource name="a" access="#[true]" doc:description="resource a description">
-            <retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description" />
+        <document-resource name="a" doc:description="resource a description">
+            <retrieve flow-ref="echo" doc:description="resource a retrieve description" />
         </document-resource>
-        <document-resource name="b" access="#[true]" doc:description="resource b description">
-            <retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description" />
-            <update flow-ref="echo" access="#[true]" doc:description="resource b update description" />
-            <document-resource name="c" access="#[true]" doc:description="resource c description">
-                <retrieve flow-ref="echo" access="#[true]" doc:description="resource c retrieve description" />
-                <update flow-ref="echo" access="#[true]" doc:description="resource c update description" />
+        <document-resource name="b" doc:description="resource b description">
+            <retrieve flow-ref="echo" doc:description="resource b retrieve description" />
+            <update flow-ref="echo" doc:description="resource b update description" />
+            <document-resource name="c" doc:description="resource c description">
+                <retrieve flow-ref="echo" doc:description="resource c retrieve description" />
+                <update flow-ref="echo" doc:description="resource c update description" />
             </document-resource>
         </document-resource>
     </interface>

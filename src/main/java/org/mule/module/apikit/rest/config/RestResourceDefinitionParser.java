@@ -22,7 +22,6 @@ public class RestResourceDefinitionParser extends ChildDefinitionParser
     {
         super("resource", clazz, true);
         addIgnored(ATTRIBUTE_NAME);
-        addAlias("access", "accessExpression");
     }
 
     @Override

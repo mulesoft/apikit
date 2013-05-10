@@ -29,7 +29,6 @@ public class RepresentationDefinitionParser extends ChildDefinitionParser
         addIgnored(ATTRIBUTE_NAME);
         addIgnored("mediaType");
         addIgnored("quality");
-        addAlias("access", "accessExpression");
     }
 
     @Override

@@ -6,16 +6,13 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit.rest.operation;
 
 import static org.mule.module.apikit.rest.representation.RepresentationMetaData.MULE_RESPONSE_MEDIATYPE_PROPERTY;
 
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
-import org.mule.api.expression.ExpressionManager;
 import org.mule.module.apikit.AbstractWebServiceOperation;
-import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.RestException;
@@ -80,12 +77,6 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     @Override
     public void handle(RestRequest request) throws RestException
     {
-        ExpressionManager expManager = request.getService().getMuleContext().getExpressionManager();
-
-        if (accessExpression != null && !expManager.evaluateBoolean(accessExpression, request.getMuleEvent()))
-        {
-            throw new UnauthorizedException(this);
-        }
         RepresentationMetaData responseRepresentation = null;
         if (!getAllRepresentations().isEmpty())
         {
@@ -97,7 +88,9 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
             {
                 responseRepresentation = validateAcceptableResponeMediaType(request);
                 String mediaType = responseRepresentation.getMediaType().withoutParameters().toString();
-                request.getMuleEvent().getMessage().setOutboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY, mediaType);
+                request.getMuleEvent()
+                    .getMessage()
+                    .setOutboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY, mediaType);
             }
         }
         processParameters(request);
@@ -148,7 +141,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     }
 
     protected void validateSupportedRequestMediaType(RestRequest request)
-            throws UnsupportedMediaTypeException, InvalidSchemaTypeException, InvalidInputException
+        throws UnsupportedMediaTypeException, InvalidSchemaTypeException, InvalidInputException
     {
         MediaType requestMediaType = request.getProtocolAdaptor().getRequestMediaType();
         if (requestMediaType == null)
@@ -199,7 +192,8 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         throw new MediaTypeNotAcceptableException();
     }
 
-    private void processParameters(RestRequest request) throws RestMissingQueryParameterException, RestInvalidQueryParameterException
+    private void processParameters(RestRequest request)
+        throws RestMissingQueryParameterException, RestInvalidQueryParameterException
     {
         if (parameters == null)
         {
@@ -216,27 +210,38 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
 
     private void populateQueryDefaultValue(RestParameter parameter, RestRequest request)
     {
-        if (!request.getProtocolAdaptor().getQueryParameters().containsKey(parameter.getName()) && parameter.getDefaultValue() != null)
+        if (!request.getProtocolAdaptor().getQueryParameters().containsKey(parameter.getName())
+            && parameter.getDefaultValue() != null)
         {
-            request.getProtocolAdaptor().getQueryParameters().put(parameter.getName(), parameter.getDefaultValue());
+            request.getProtocolAdaptor()
+                .getQueryParameters()
+                .put(parameter.getName(), parameter.getDefaultValue());
         }
     }
 
-    private void validateRequiredQueryParameter(RestParameter parameter, RestRequest request) throws RestMissingQueryParameterException
+    private void validateRequiredQueryParameter(RestParameter parameter, RestRequest request)
+        throws RestMissingQueryParameterException
     {
-        if (parameter.isRequired() && !request.getProtocolAdaptor().getQueryParameters().containsKey(parameter.getName()))
+        if (parameter.isRequired()
+            && !request.getProtocolAdaptor().getQueryParameters().containsKey(parameter.getName()))
         {
-            throw new RestMissingQueryParameterException("Query parameter " + parameter.getName() + " is missing");
+            throw new RestMissingQueryParameterException("Query parameter " + parameter.getName()
+                                                         + " is missing");
         }
     }
 
-    private void validateQueryAllowableValues(RestParameter parameter, RestRequest request) throws RestInvalidQueryParameterException
+    private void validateQueryAllowableValues(RestParameter parameter, RestRequest request)
+        throws RestInvalidQueryParameterException
     {
-        if (parameter.getAllowableValues() != null && request.getProtocolAdaptor().getQueryParameters().containsKey(parameter.getName()))
+        if (parameter.getAllowableValues() != null
+            && request.getProtocolAdaptor().getQueryParameters().containsKey(parameter.getName()))
         {
-            if (!parameter.getAllowableValues().contains(request.getProtocolAdaptor().getQueryParameters().get(parameter.getName())))
+            if (!parameter.getAllowableValues().contains(
+                request.getProtocolAdaptor().getQueryParameters().get(parameter.getName())))
             {
-                throw new RestInvalidQueryParameterException("Query parameter " + parameter.getName() + " does not have a value listed as an allowable value");
+                throw new RestInvalidQueryParameterException(
+                    "Query parameter " + parameter.getName()
+                                    + " does not have a value listed as an allowable value");
             }
         }
     }

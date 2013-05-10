@@ -7,20 +7,20 @@
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
     <interface name="myInterface" doc:description="interface description">
-        <document-resource name="a" access="#[true]" doc:description="resource a description">
+        <document-resource name="a" doc:description="resource a description">
             <representation mediaType="text/xml" quality="1.0" schemaType="XMLSchema" schemaLocation="?"/>
             <representation mediaType="text/other" quality="1.0"/>
-            <retrieve flow-ref="echo" access="#[true]" doc:description="resource a retrieve description">
+            <retrieve flow-ref="echo" doc:description="resource a retrieve description">
                 <representation mediaType="text/html" quality="1.0"/>
                 <representation mediaType="text/plain" quality="1.0"/>
             </retrieve>
         </document-resource>
-        <document-resource name="b" access="#[true]" doc:description="resource b description">
-            <retrieve flow-ref="echo" access="#[true]" doc:description="resource b retrieve description"/>
-            <update flow-ref="echo" access="#[true]" doc:description="resource b update description"/>
-            <document-resource name="c" access="#[true]" doc:description="resource c description">
-                <retrieve flow-ref="echo" access="#[true]" doc:description="resource c retrieve description"/>
-                <update flow-ref="echo" access="#[true]" doc:description="resource c update description"/>
+        <document-resource name="b" doc:description="resource b description">
+            <retrieve flow-ref="echo" doc:description="resource b retrieve description"/>
+            <update flow-ref="echo" doc:description="resource b update description"/>
+            <document-resource name="c" doc:description="resource c description">
+                <retrieve flow-ref="echo" doc:description="resource c retrieve description"/>
+                <update flow-ref="echo" doc:description="resource c update description"/>
             </document-resource>
         </document-resource>
     </interface>

@@ -8,10 +8,8 @@
 
 package org.mule.module.apikit.rest.resource;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -31,10 +29,8 @@ import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -107,54 +103,6 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         verify(httpAdapter, times(1)).handleException(any(OperationNotAllowedException.class),
             any(RestRequest.class));
         verify(message).setOutboundProperty("http.status", 405);
-    }
-
-    @Test
-    public void resourceAuthorized() throws RestException, MuleException
-    {
-        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
-        when(action.getType()).thenReturn(RestOperationType.RETRIEVE);
-
-        resource.setAccessExpression("#[true]");
-
-        resource.handle(request);
-
-        verify(action).handle(request);
-        verify(httpAdapter, never()).handleException(any(RestException.class), any(RestRequest.class));
-        verify(message, never());
-    }
-
-    @Test
-    public void resourceNotAuthorized() throws RestException, MuleException
-    {
-        when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
-        when(action.getType()).thenReturn(RestOperationType.RETRIEVE);
-
-        resource.setAccessExpression("#[false]");
-
-        resource.handle(request);
-
-        verify(action, never()).handle(request);
-        verify(httpAdapter, times(1)).handleException(any(RestException.class), any(RestRequest.class));
-        verify(message).setOutboundProperty("http.status", 401);
-    }
-
-    @Test
-    public void getAuthorizedActions() throws RestException, MuleException
-    {
-        RestOperation action1 = mock(RestOperation.class);
-        when(action1.getAccessExpression()).thenReturn("#[true]");
-        RestOperation action2 = mock(RestOperation.class);
-        when(action2.getAccessExpression()).thenReturn("#[false]");
-
-        List<RestOperation> actions = new ArrayList<RestOperation>();
-        actions.add(action1);
-        actions.add(action2);
-        resource.setOperations(actions);
-
-        List<RestOperation> authorizedActions = resource.getAuthorizedOperations(request);
-        assertEquals(1, authorizedActions.size());
-        assertEquals(action1, authorizedActions.get(0));
     }
 
     static class DummyRestResource extends AbstractRestResource

@@ -73,12 +73,6 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
-                <xsd:attribute name="access" type="mule:nonBlankString" use="optional">
-                    <xsd:annotation>
-                        <xsd:documentation>
-                        </xsd:documentation>
-                    </xsd:annotation>
-                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -122,9 +116,7 @@
 
     <xsd:complexType name="abstractWebServiceRoute">
         <xsd:complexContent>
-            <xsd:extension base="mule:annotatedType">
-                <xsd:attribute name="access" type="xsd:string" use="optional"/>
-            </xsd:extension>
+            <xsd:extension base="mule:annotatedType"/>
         </xsd:complexContent>
     </xsd:complexType>
 

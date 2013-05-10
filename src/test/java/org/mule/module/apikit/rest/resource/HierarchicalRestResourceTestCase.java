@@ -89,28 +89,6 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
     }
 
     @Test
-    public void getAuthorizedNestedResources() throws RestException, MuleException
-    {
-        RestResource nestedResource1 = Mockito.mock(RestResource.class);
-        when(nestedResource1.getName()).thenReturn("1");
-        when(nestedResource1.getAccessExpression()).thenReturn("#[true]");
-        RestResource nestedResource2 = Mockito.mock(RestResource.class);
-        when(nestedResource2.getName()).thenReturn("2");
-        when(nestedResource2.getAccessExpression()).thenReturn("#[false]");
-
-        List<RestResource> nestedResources = new ArrayList<RestResource>();
-        nestedResources.add(nestedResource1);
-        nestedResources.add(nestedResource2);
-        resource.setResources(nestedResources);
-        resource.initialise();
-
-        List<RestResource> authorizedResources = resource.getAuthorizedResources(request);
-
-        assertEquals(1, authorizedResources.size());
-        assertEquals(nestedResource1, authorizedResources.get(0));
-    }
-
-    @Test
     public void nestedResourceRouting() throws RestException, MuleException, URISyntaxException
     {
         when(request.hasMorePathElements()).thenReturn(Boolean.TRUE).thenReturn(Boolean.FALSE);

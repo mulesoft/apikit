@@ -10,17 +10,17 @@
     <interface name="myInterface">
         <document-resource name="leagues">
             <retrieve flow-ref="retrieveLeagues" />
-            <update flow-ref="retrieveLeagues" access="#[false]" />
+            <update flow-ref="retrieveLeagues" />
         </document-resource>
-        <document-resource name="teams" access="#[false]">
+        <document-resource name="teams">
             <retrieve flow-ref="retrieveLeagues" />
         </document-resource>
     </interface>
 
-    <interface name="protectedInterface" access="#[false]">
+    <interface name="protectedInterface">
         <document-resource name="leagues2">
             <retrieve flow-ref="retrieveLeagues" />
-            <update flow-ref="retrieveLeagues" access="#[false]" />
+            <update flow-ref="retrieveLeagues" />
         </document-resource>
     </interface>
 

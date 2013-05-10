@@ -50,7 +50,6 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
         {
             resources.add(new SwaggerConsoleResource(swaggerConsolePath, resource));
         }
-        resource.setAccessExpression(webServiceInterface.getAccessExpression());
         resource.setResources(resources);
         resource.initialise();
         this.baseResource = resource;

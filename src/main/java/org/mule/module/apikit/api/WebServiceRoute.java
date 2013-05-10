@@ -13,7 +13,5 @@ package org.mule.module.apikit.api;
 public interface WebServiceRoute
 {
 
-    String getAccessExpression();
-    
     String getDescription();
 }

@@ -6,12 +6,10 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit;
 
 import org.mule.module.apikit.api.WebServiceInterface;
 import org.mule.module.apikit.api.WebServiceRoute;
-import org.mule.module.apikit.rest.RestRequest;
 
 import java.util.List;
 
@@ -19,8 +17,6 @@ public abstract class AbstractWebServiceRoute implements WebServiceInterface
 {
     protected String name;
     protected String description;
-    protected String accessExpression;
-
     protected List<WebServiceRoute> routes;
 
     public AbstractWebServiceRoute(String name)
@@ -56,14 +52,4 @@ public abstract class AbstractWebServiceRoute implements WebServiceInterface
         this.description = description;
     }
 
-    @Override
-    public String getAccessExpression()
-    {
-        return accessExpression;
-    }
-
-    public void setAccessExpression(String accessExpression)
-    {
-        this.accessExpression = accessExpression;
-    }
 }

@@ -41,19 +41,16 @@ public class CollectionResourceConfigurationTestCase extends FunctionalTestCase
         CollectionResource resourceA = (CollectionResource) wsInterface.getRoutes().get(0);
         assertEquals("a", resourceA.getName());
         assertEquals("resource a description", resourceA.getDescription());
-        assertEquals("#[true]", resourceA.getAccessExpression());
 
         RestOperation action1 = resourceA.getOperations().get(0);
         assertEquals(RestOperationType.RETRIEVE, action1.getType());
         assertEquals("resource a retrieve description", action1.getDescription());
-        assertEquals("#[true]", action1.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action1.getHandler());
 
         assertNotNull(resourceA.getMemberResource());
         CollectionMemberResource member = resourceA.getMemberResource();
         assertEquals(resourceA.getName() + "Member", member.getName());
         assertEquals("collection member description", member.getDescription());
-        assertNull(member.getAccessExpression());
         assertEquals(4, member.getOperations().size());
         assertEquals(1, resourceA.getOperations().size());
         assertEquals(2, member.getRepresentations().size());
@@ -61,32 +58,27 @@ public class CollectionResourceConfigurationTestCase extends FunctionalTestCase
         RestOperation action2 = member.getOperations().get(0);
         assertEquals(RestOperationType.CREATE, action2.getType());
         assertEquals("collection a member create description", action2.getDescription());
-        assertEquals("#[true]", action2.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action2.getHandler());
 
         RestOperation action3 = member.getOperations().get(1);
         assertEquals(RestOperationType.RETRIEVE, action3.getType());
         assertEquals("collection a member retrieve description", action3.getDescription());
-        assertEquals("#[true]", action3.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action3.getHandler());
 
         RestOperation action4 = member.getOperations().get(2);
         assertEquals(RestOperationType.UPDATE, action4.getType());
         assertEquals("collection a member update description", action4.getDescription());
-        assertEquals("#[true]", action4.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action4.getHandler());
 
         RestOperation action5 = member.getOperations().get(3);
         assertEquals(RestOperationType.DELETE, action5.getType());
         assertEquals("collection a member delete description", action5.getDescription());
-        assertEquals("#[true]", action5.getAccessExpression());
         assertEquals(muleContext.getRegistry().lookupObject("echo"), action5.getHandler());
 
         assertEquals(1, member.getResources().size());
         DocumentResource child = (DocumentResource) member.getResources().get(0);
         assertEquals("c", child.getName());
         assertEquals("resource c description", child.getDescription());
-        assertEquals("#[true]", child.getAccessExpression());
         assertEquals(2, child.getOperations().size());
         assertEquals(2, child.getRepresentations().size());
 

@@ -15,7 +15,6 @@ public class AbstractWebServiceOperation implements WebServiceOperation
 {
 
     protected MessageProcessor handler;
-    protected String accessExpression;
     protected String description = "";
 
     @Override
@@ -27,17 +26,6 @@ public class AbstractWebServiceOperation implements WebServiceOperation
     public void setHandler(MessageProcessor handler)
     {
         this.handler = handler;
-    }
-
-    @Override
-    public String getAccessExpression()
-    {
-        return accessExpression;
-    }
-
-    public void setAccessExpression(String accessExpression)
-    {
-        this.accessExpression = accessExpression;
     }
 
     @Override

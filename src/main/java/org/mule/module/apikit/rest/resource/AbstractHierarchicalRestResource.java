@@ -85,20 +85,6 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
         return resources;
     }
 
-    @Override
-    public List<RestResource> getAuthorizedResources(RestRequest request)
-    {
-        List<RestResource> result = new ArrayList<RestResource>();
-        for (RestResource resource : getResources())
-        {
-            if (isAuthorized(resource, request))
-            {
-                result.add(resource);
-            }
-        }
-        return result;
-    }
-
     public void setResources(List<RestResource> resources)
     {
         this.resources = Collections.unmodifiableList(resources);

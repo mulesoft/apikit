@@ -10,15 +10,9 @@ package org.mule.module.apikit.rest.resource;
 
 import static org.mule.module.apikit.rest.operation.RestOperationType.EXISTS;
 import static org.mule.module.apikit.rest.operation.RestOperationType.RETRIEVE;
-import static org.mule.module.apikit.rest.swagger.SwaggerConstants.DESCRIPTION_FIELD_NAME;
-import static org.mule.module.apikit.rest.swagger.SwaggerConstants.OPERATIONS_FIELD_NAME;
-import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PATH_FIELD_NAME;
 
 import org.mule.api.MuleEvent;
-import org.mule.api.expression.ExpressionManager;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.module.apikit.UnauthorizedException;
-import org.mule.module.apikit.api.WebServiceRoute;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
@@ -29,15 +23,12 @@ import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.transport.NullPayload;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +40,6 @@ public abstract class AbstractRestResource implements RestResource
     protected String description = "";
     protected List<RestOperation> operations = new ArrayList<RestOperation>();
     protected List<RestParameter> parameters = new ArrayList<RestParameter>();
-    protected String accessExpression;
     protected Collection<RepresentationMetaData> representations = new HashSet<RepresentationMetaData>();
     protected RestResource parentResource;
     protected RestOperation swaggerOperation;
@@ -169,7 +159,6 @@ public abstract class AbstractRestResource implements RestResource
     {
         try
         {
-            authorize(request);
             this.getAction(request.getProtocolAdaptor().getOperationType(), request).handle(request);
             if (RestOperationType.EXISTS == request.getProtocolAdaptor().getOperationType())
             {
@@ -184,17 +173,6 @@ public abstract class AbstractRestResource implements RestResource
     }
 
     @Override
-    public String getAccessExpression()
-    {
-        return accessExpression;
-    }
-
-    public void setAccessExpression(String accessExpression)
-    {
-        this.accessExpression = accessExpression;
-    }
-
-    @Override
     public String getDescription()
     {
         return description;
@@ -203,36 +181,6 @@ public abstract class AbstractRestResource implements RestResource
     public void setDescription(String description)
     {
         this.description = description;
-    }
-
-    @Override
-    public List<RestOperation> getAuthorizedOperations(RestRequest request)
-    {
-        List<RestOperation> result = new ArrayList<RestOperation>();
-        for (RestOperation action : getOperations())
-        {
-            if (isAuthorized(action, request))
-            {
-                result.add(action);
-            }
-        }
-        return result;
-    }
-
-    protected void authorize(RestRequest request) throws UnauthorizedException
-    {
-        if (!isAuthorized(this, request))
-        {
-            throw new UnauthorizedException(this);
-        }
-    }
-
-    protected boolean isAuthorized(WebServiceRoute route, RestRequest request)
-    {
-        ExpressionManager expManager = request.getMuleEvent().getMuleContext().getExpressionManager();
-
-        return route.getAccessExpression() == null
-               || expManager.evaluateBoolean(route.getAccessExpression(), request.getMuleEvent());
     }
 
     protected abstract Set<RestOperationType> getSupportedActionTypes();
