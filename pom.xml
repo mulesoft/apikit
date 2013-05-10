@@ -14,8 +14,8 @@
 
     <properties>
         <mule.version>3.4.0</mule.version>
-        <rest.assured.version>1.6.2</rest.assured.version>
-        <guava.version>13.0.1</guava.version>
+        <rest.assured.version>1.7.2</rest.assured.version>
+        <guava.version>14.0.1</guava.version>
     </properties>
 
     <build>

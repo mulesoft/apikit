@@ -6,10 +6,8 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit.rest.resource.base;
 
-import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.AbstractHierarchicalRestResource;
 
@@ -27,18 +25,7 @@ public class BaseResource extends AbstractHierarchicalRestResource
     @Override
     protected Set<RestOperationType> getSupportedActionTypes()
     {
-        return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS);
-    }
-
-    private RestOperation getSwaggerOperation()
-    {
-        if (swaggerOperation == null)
-        {
-            SwaggerResourceDescriptorOperation op = new SwaggerResourceDescriptorOperation();
-            op.setResource(this);
-            swaggerOperation = op;
-        }
-        return swaggerOperation;
+        return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS, RestOperationType.OPTIONS);
     }
 
 }

@@ -256,6 +256,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     {
         request.getMuleEvent().getMessage().setOutboundProperty(HTTP_STATUS_PROPERTY, HttpStatusCode.SUCCESS_OK.getCode());
     }
+    
 
     @Override
     public boolean isCustomStatusCodeSet(RestRequest request)

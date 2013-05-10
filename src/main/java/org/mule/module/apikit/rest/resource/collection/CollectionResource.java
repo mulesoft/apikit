@@ -6,12 +6,7 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit.rest.resource.collection;
-
-import static org.mule.module.apikit.rest.swagger.SwaggerConstants.DESCRIPTION_FIELD_NAME;
-import static org.mule.module.apikit.rest.swagger.SwaggerConstants.OPERATIONS_FIELD_NAME;
-import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PATH_FIELD_NAME;
 
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
@@ -22,12 +17,8 @@ import org.mule.module.apikit.rest.resource.AbstractRestResource;
 import org.mule.module.apikit.rest.resource.RestResource;
 import org.mule.util.StringUtils;
 
-import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
 
 public class CollectionResource extends AbstractRestResource
 {
@@ -81,30 +72,6 @@ public class CollectionResource extends AbstractRestResource
         {
             return super.getAction(actionType, request);
         }
-    }
-
-    @Override
-    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
-    {
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeFieldName(PATH_FIELD_NAME);
-        jsonGenerator.writeString(getPath());
-        jsonGenerator.writeFieldName(DESCRIPTION_FIELD_NAME);
-        jsonGenerator.writeString(getDescription().trim());
-        jsonGenerator.writeFieldName(OPERATIONS_FIELD_NAME);
-        jsonGenerator.writeStartArray();
-
-        if (getOperation(RestOperationType.RETRIEVE) != null)
-        {
-            getOperation(RestOperationType.RETRIEVE).appendSwaggerDescriptor(jsonGenerator);
-        }
-        if (memberResource.getOperation(RestOperationType.CREATE) != null)
-        {
-            memberResource.getOperation(RestOperationType.CREATE).appendSwaggerDescriptor(jsonGenerator);
-        }
-        jsonGenerator.writeEndArray();
-        jsonGenerator.writeEndObject();
-        memberResource.appendSwaggerJson(jsonGenerator);
     }
 
     @Override

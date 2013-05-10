@@ -27,9 +27,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
-
 public class StaticResourceCollection extends AbstractRestResource
 {
 
@@ -146,12 +143,6 @@ public class StaticResourceCollection extends AbstractRestResource
     protected Set<RestOperationType> getSupportedActionTypes()
     {
         return EnumSet.of(RestOperationType.RETRIEVE);
-    }
-
-    @Override
-    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
-    {
-        super.appendSwaggerJson(jsonGenerator);
     }
 
 }

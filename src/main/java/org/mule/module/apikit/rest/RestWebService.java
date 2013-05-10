@@ -15,21 +15,21 @@ import org.mule.api.MuleException;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.AbstractWebService;
-import org.mule.module.apikit.rest.operation.RestOperation;
+import org.mule.module.apikit.rest.documentation.swagger.SwaggerResourceDocumentationStrategy;
 import org.mule.module.apikit.rest.resource.HierarchicalRestResource;
 import org.mule.module.apikit.rest.resource.RestResource;
-import org.mule.module.apikit.rest.resource.StaticResourceCollection;
 import org.mule.module.apikit.rest.resource.base.BaseResource;
-import org.mule.module.apikit.rest.resource.base.BaseRetrieveOperation;
+import org.mule.module.apikit.rest.swagger.SwaggerConsoleResource;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class RestWebService extends AbstractWebService<RestWebServiceInterface>
 {
     protected boolean enableSwagger;
-    protected HierarchicalRestResource baseResource;;
+    protected String swaggerConsolePath = "console";
+    protected HierarchicalRestResource baseResource;
+    protected RestDocumentationStrategy documentationStrategy = new SwaggerResourceDocumentationStrategy();
 
     public RestWebService(String name,
                           RestWebServiceInterface webServiceInterface,
@@ -37,7 +37,6 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
                           MuleContext muleContext)
     {
         super(name, webServiceInterface, muleContext);
-        this.enableSwagger = enableSwagger;
     }
 
     @Override
@@ -49,10 +48,7 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
         resources.addAll((List<RestResource>) webServiceInterface.getRoutes());
         if (enableSwagger)
         {
-            resources.add(new StaticResourceCollection("_swagger", resource,
-                "/org/mule/module/apikit/rest/swagger"));
-            resource.setOperations(Collections.<RestOperation> singletonList(new BaseRetrieveOperation(
-                this)));
+            resources.add(new SwaggerConsoleResource(swaggerConsolePath, resource));
         }
         resource.setAccessExpression(webServiceInterface.getAccessExpression());
         resource.setResources(resources);
@@ -102,5 +98,15 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
             }
         };
 
+    }
+
+    public RestDocumentationStrategy getDocumentationStrategy()
+    {
+        return documentationStrategy;
+    }
+
+    public void setDocumentationStrategy(RestDocumentationStrategy documentationStrategy)
+    {
+        this.documentationStrategy = documentationStrategy;
     }
 }

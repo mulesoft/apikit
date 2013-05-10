@@ -17,9 +17,10 @@ import org.mule.tck.junit4.rule.DynamicPort;
 import com.jayway.restassured.RestAssured;
 
 import org.hamcrest.Matchers;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-
+@Ignore
 public class BaseResourceFunctionalTestCase extends FunctionalTestCase
 {
 

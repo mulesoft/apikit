@@ -6,7 +6,6 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit.rest.resource;
 
 import static org.mule.module.apikit.rest.operation.RestOperationType.EXISTS;
@@ -21,19 +20,14 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.UnauthorizedException;
 import org.mule.module.apikit.api.WebServiceRoute;
 import org.mule.module.apikit.rest.RestException;
-import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
-import org.mule.module.apikit.rest.resource.base.BaseResource;
-import org.mule.module.apikit.rest.resource.base.SwaggerResourceDescriptorOperation;
-import org.mule.module.apikit.rest.util.RestContentTypeParser;
 import org.mule.transport.NullPayload;
-
-import com.google.common.net.MediaType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -94,6 +88,10 @@ public abstract class AbstractRestResource implements RestResource
 
     public RestOperation getOperation(RestOperationType operationType)
     {
+        if (RestOperationType.OPTIONS == operationType)
+        {
+            return new OptionsOperation(this);
+        }
         RestOperation action = null;
         for (RestOperation a : getOperations())
         {
@@ -109,13 +107,6 @@ public abstract class AbstractRestResource implements RestResource
     protected RestOperation getAction(RestOperationType actionType, RestRequest request)
         throws OperationNotAllowedException
     {
-        if (!(this instanceof BaseResource)
-            && RestContentTypeParser.isMediaTypeAcceptable(request.getProtocolAdaptor()
-                .getAcceptableResponseMediaTypes(), MediaType.create("application", "swagger+json")))
-        {
-            return getSwaggerOperation();
-        }
-
         if (!getSupportedActionTypes().contains(actionType))
         {
             throw new OperationNotAllowedException(this, actionType);
@@ -130,17 +121,6 @@ public abstract class AbstractRestResource implements RestResource
             throw new OperationNotAllowedException(this, actionType);
         }
         return action;
-    }
-
-    private RestOperation getSwaggerOperation()
-    {
-        if (swaggerOperation == null)
-        {
-            SwaggerResourceDescriptorOperation op = new SwaggerResourceDescriptorOperation();
-            op.setResource(this);
-            swaggerOperation = op;
-        }
-        return swaggerOperation;
     }
 
     private RestOperation useRetrieveAsExists()
@@ -285,26 +265,6 @@ public abstract class AbstractRestResource implements RestResource
         this.representations = representations;
     }
 
-    @Override
-    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
-    {
-        jsonGenerator.writeStartObject();
-        jsonGenerator.writeFieldName(PATH_FIELD_NAME);
-        jsonGenerator.writeString(getPath());
-        jsonGenerator.writeFieldName(DESCRIPTION_FIELD_NAME);
-        jsonGenerator.writeString(getDescription().trim());
-        jsonGenerator.writeFieldName(OPERATIONS_FIELD_NAME);
-        jsonGenerator.writeStartArray();
-
-        for (RestOperation operation : getOperations())
-        {
-            operation.appendSwaggerDescriptor(jsonGenerator);
-        }
-
-        jsonGenerator.writeEndArray();
-        jsonGenerator.writeEndObject();
-    }
-
     public String getPath()
     {
         if (parentResource == null)
@@ -327,7 +287,7 @@ public abstract class AbstractRestResource implements RestResource
     {
         this.parameters = parameters;
     }
-    
+
     public RestResource getParentResource()
     {
         return parentResource;

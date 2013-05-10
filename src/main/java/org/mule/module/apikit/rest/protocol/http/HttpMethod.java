@@ -15,9 +15,10 @@ import static org.mule.module.apikit.rest.operation.RestOperationType.UPDATE;
 
 import org.mule.module.apikit.rest.operation.RestOperationType;
 
- enum HttpMethod
+enum HttpMethod
 {
-    POST(CREATE), GET(RETRIEVE), PUT(UPDATE), DELETE(RestOperationType.DELETE), HEAD(EXISTS);
+    POST(CREATE), GET(RETRIEVE), PUT(UPDATE), DELETE(RestOperationType.DELETE), HEAD(EXISTS), OPTIONS(
+                    RestOperationType.OPTIONS);
 
     private RestOperationType restOperationType;;
 

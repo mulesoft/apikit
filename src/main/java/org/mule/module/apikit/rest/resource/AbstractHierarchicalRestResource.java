@@ -6,7 +6,6 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit.rest.resource;
 
 import org.mule.api.lifecycle.InitialisationException;
@@ -14,15 +13,11 @@ import org.mule.config.i18n.MessageFactory;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
 
 public abstract class AbstractHierarchicalRestResource extends AbstractRestResource
     implements HierarchicalRestResource
@@ -115,13 +110,4 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
         buildRoutingTable();
     }
 
-    @Override
-    public void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException
-    {
-        super.appendSwaggerJson(jsonGenerator);
-        for (RestResource resource : getResources())
-        {
-            resource.appendSwaggerJson(jsonGenerator);
-        }
-    }
 }

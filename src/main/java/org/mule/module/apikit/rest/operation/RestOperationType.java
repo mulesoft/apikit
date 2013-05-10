@@ -34,7 +34,7 @@ public enum RestOperationType
             return true;
         }
     },
-    DELETE, EXISTS;
+    DELETE, EXISTS, OPTIONS;
 
     public boolean isRequestExpected()
     {

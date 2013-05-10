@@ -6,25 +6,20 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit.rest.resource;
 
 import org.mule.api.NamedObject;
 import org.mule.module.apikit.api.WebServiceRoute;
-import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.RestRequestHandler;
 import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonGenerator;
 
 public interface RestResource extends RestRequestHandler, WebServiceRoute, NamedObject
 {
@@ -39,8 +34,6 @@ public interface RestResource extends RestRequestHandler, WebServiceRoute, Named
     List<RestOperation> getAuthorizedOperations(RestRequest request);
 
     Collection<RepresentationMetaData> getRepresentations();
-
-    void appendSwaggerJson(JsonGenerator jsonGenerator) throws JsonGenerationException, IOException;
 
     String getPath();
 
