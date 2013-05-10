@@ -33,7 +33,7 @@ public class CollectionResource extends AbstractRestResource
     @Override
     protected Set<RestOperationType> getSupportedActionTypes()
     {
-        return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS, RestOperationType.CREATE);
+        return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS, RestOperationType.CREATE,  RestOperationType.OPTIONS);
 
     }
 

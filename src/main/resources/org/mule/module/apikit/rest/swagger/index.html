@@ -44,7 +44,7 @@
     <script type="text/javascript">
         $(function () {
             window.swaggerUi = new SwaggerUi({
-                discoveryUrl: document.URL.replace(/\/$/, '').split('#')[0],
+                discoveryUrl: '${baseUrl}',
                 apiKey:"",
                 dom_id:"swagger-ui-container",
                 supportHeaderParams: false,
@@ -75,7 +75,7 @@
 <body>
 <div id='header'>
     <div class="swagger-ui-wrap">
-        <a id="logo" href="${baseUrl}">${pageTitle}</a>
+        <a id="logo" href="${swaggerUrl}">${pageTitle}</a>
 
 
         <form id='api_selector'>

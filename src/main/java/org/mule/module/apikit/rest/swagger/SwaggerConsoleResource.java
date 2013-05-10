@@ -8,10 +8,13 @@
 
 package org.mule.module.apikit.rest.swagger;
 
+import org.mule.module.apikit.rest.RestRequest;
+import org.mule.module.apikit.rest.operation.OperationNotAllowedException;
+import org.mule.module.apikit.rest.operation.RestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.resource.AbstractRestResource;
 import org.mule.module.apikit.rest.resource.RestResource;
-import org.mule.module.apikit.rest.resource.StaticResourceCollection;
+import org.mule.module.apikit.rest.resource.StaticResourceRetrieveOperation;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -19,12 +22,12 @@ import java.util.Set;
 public class SwaggerConsoleResource extends AbstractRestResource
 {
 
-    protected StaticResourceCollection staticResourceCollection;;
+    protected RestOperation retrieveStaticResourceOperation;
 
     public SwaggerConsoleResource(String name, RestResource parentResource)
     {
         super(name, parentResource);
-        staticResourceCollection = new StaticResourceCollection(getName(), parentResource,
+        retrieveStaticResourceOperation = new StaticResourceRetrieveOperation(
             "/org/mule/module/apikit/rest/swagger");
     }
 
@@ -34,4 +37,26 @@ public class SwaggerConsoleResource extends AbstractRestResource
         return EnumSet.of(RestOperationType.RETRIEVE);
     }
 
+    @Override
+    protected RestOperation getAction(RestOperationType actionType, RestRequest request)
+        throws OperationNotAllowedException
+    {
+        if (RestOperationType.RETRIEVE == request.getProtocolAdaptor().getOperationType())
+        {
+            if (!request.hasMorePathElements()
+                || request.peekNextPathElement().equalsIgnoreCase("index.html"))
+            {
+                return new SwaggerConsoleRetrieveOperation(request.getService());
+            }
+
+            else
+            {
+                return retrieveStaticResourceOperation;
+            }
+        }
+        else
+        {
+            throw new OperationNotAllowedException(this, actionType);
+        }
+    }
 }

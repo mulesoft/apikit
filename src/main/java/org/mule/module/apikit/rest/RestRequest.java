@@ -17,6 +17,8 @@ public interface RestRequest
     MuleEvent getMuleEvent();
 
     String getNextPathElement();
+    
+    String peekNextPathElement();
 
     boolean hasMorePathElements();
 

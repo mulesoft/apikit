@@ -77,6 +77,16 @@ public class DefaultRestRequest implements RestRequest
         }
         return pathStack.removeFirst();
     }
+    
+    @Override
+    public String peekNextPathElement()
+    {
+        if (pathStack.isEmpty())
+        {
+            return "";
+        }
+        return pathStack.peekFirst();
+    }
 
     @Override
     public boolean hasMorePathElements()

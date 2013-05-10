@@ -21,10 +21,6 @@ public class OptionsOperation extends AbstractRestOperation
     {
         super();
         this.resource = resource;
-    }
-
-    public OptionsOperation()
-    {
         this.type = RestOperationType.OPTIONS;
     }
 
