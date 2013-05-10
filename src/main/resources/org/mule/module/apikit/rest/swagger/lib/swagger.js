@@ -51,9 +51,7 @@
     SwaggerApi.prototype.build = function() {
       var _this = this;
       this.progress('fetching resource list: ' + this.discoveryUrl);
-      return jQuery.ajax({url: this.discoveryUrl, beforeSend : function (xhr) {
-          xhr.setRequestHeader('Accept', 'application/swagger+json');
-      }, success: function(response) {
+      return jQuery.ajax({url: this.discoveryUrl, type: 'options' , success: function(response) {
         var res, resource, _i, _j, _len, _len1, _ref, _ref1;
         if (response.apiVersion != null) {
           _this.apiVersion = response.apiVersion;
@@ -210,9 +208,7 @@
         }
         this.url = this.api.suffixApiKey(this.api.basePath + this.path.replace('{format}', 'json'));
         this.api.progress('fetching resource ' + this.name + ': ' + this.url);
-        jQuery.ajax({url: this.url, beforeSend : function (xhr) {
-            xhr.setRequestHeader('Accept', 'application/swagger+json');
-        }, success: function(response) {
+        jQuery.ajax({url: this.url, type: 'options', success: function(response) {
           var endpoint, _i, _len, _ref;
           if ((response.basePath != null) && jQuery.trim(response.basePath).length > 0) {
             _this.basePath = response.basePath;

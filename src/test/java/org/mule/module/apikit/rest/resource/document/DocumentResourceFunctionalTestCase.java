@@ -80,7 +80,7 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void swagger() throws Exception
     {
-        given().header("Accept", "application/swagger+json")
+        given().header("Accept", "application/json")
             .expect()
             .log()
             .everything()
