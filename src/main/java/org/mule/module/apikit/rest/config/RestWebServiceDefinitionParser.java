@@ -34,7 +34,6 @@ public class RestWebServiceDefinitionParser extends OrphanDefinitionParser
         builder.addConstructorArgReference(element.getAttribute(ATTRIBUTE_INTERFACE_REF));
         builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_ENABLE_SWAGGER));
         builder.addConstructorArgReference(MuleProperties.OBJECT_MULE_CONTEXT);
-        builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.doParse(element, parserContext, builder);
     }
 }

@@ -6,27 +6,27 @@
      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/api-rest http://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <interface name="myInterface" doc:description="interface description">
-        <collection-resource name="a" doc:description="resource a description">
-            <retrieve flow-ref="echo" doc:description="resource a retrieve description">
+    <interface name="myInterface" description="interface description">
+        <collection-resource name="a" description="resource a description">
+            <retrieve flow-ref="echo" description="resource a retrieve description">
                 <representation mediaType="text/html" quality="1.0"/>
                 <representation mediaType="text/plain" quality="1.0"/>
             </retrieve>
-            <member doc:description="collection member description">
+            <member description="collection member description">
                 <representation mediaType="text/xml" quality="1.0" schemaType="XMLSchema" schemaLocation="?"/>
                 <representation mediaType="text/other" quality="1.0"/>
-                <create flow-ref="echo" doc:description="collection a member create description">
+                <create flow-ref="echo" description="collection a member create description">
                     <representation mediaType="text/html" quality="1.0"/>
                     <representation mediaType="text/plain" quality="1.0"/>
                 </create>
-                <retrieve flow-ref="echo" doc:description="collection a member retrieve description"/>
-                <update flow-ref="echo" doc:description="collection a member update description"/>
-                <delete flow-ref="echo" doc:description="collection a member delete description"/>
-                <document-resource name="c" doc:description="resource c description">
+                <retrieve flow-ref="echo" description="collection a member retrieve description"/>
+                <update flow-ref="echo" description="collection a member update description"/>
+                <delete flow-ref="echo" description="collection a member delete description"/>
+                <document-resource name="c" description="resource c description">
                     <representation mediaType="text/xml" quality="1.0" schemaType="XMLSchema" schemaLocation="?"/>
                     <representation mediaType="text/other" quality="1.0"/>
-                    <retrieve flow-ref="echo" doc:description="resource c retrieve description"/>
-                    <update flow-ref="echo" doc:description="resource c update description">
+                    <retrieve flow-ref="echo" description="resource c retrieve description"/>
+                    <update flow-ref="echo" description="resource c update description">
                         <representation mediaType="text/html" quality="1.0"/>
                         <representation mediaType="text/plain" quality="1.0"/>
                     </update>
@@ -36,7 +36,7 @@
     </interface>
 
 
-    <service name="myService" interface-ref="myInterface" doc:description="service description">
+    <service name="myService" interface-ref="myInterface" description="service description">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
     </service>
 

@@ -26,7 +26,6 @@ public class RestOperationDefinitionParser extends ChildDefinitionParser
     @Override
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
-        builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
     }
 

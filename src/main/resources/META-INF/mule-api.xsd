@@ -80,6 +80,12 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
+                <xsd:attribute name="description" type="mule:nonBlankString" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -94,6 +100,12 @@
                     <xsd:annotation>
                         <xsd:documentation>
                             The name used to identify this flow construct.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="description" type="mule:nonBlankString" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -123,7 +135,14 @@
 
     <xsd:complexType name="abstractWebServiceRoute">
         <xsd:complexContent>
-            <xsd:extension base="mule:annotatedType"/>
+            <xsd:extension base="mule:annotatedType">
+                <xsd:attribute name="description" type="mule:nonBlankString" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 

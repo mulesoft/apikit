@@ -36,7 +36,6 @@ public class CollectionMemberResourceDefinitionParser extends ChildDefinitionPar
         {
             builder.addConstructorArgValue(new BaseResource());
         }
-        builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
     }
 

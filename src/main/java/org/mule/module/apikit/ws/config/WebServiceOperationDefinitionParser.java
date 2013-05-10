@@ -28,7 +28,6 @@ public class WebServiceOperationDefinitionParser extends ChildDefinitionParser
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
         builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_NAME));
-        builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
     }
 }

@@ -36,7 +36,6 @@ public class RestResourceDefinitionParser extends ChildDefinitionParser
         {
             builder.addConstructorArgValue(new BaseResource());
         }
-        builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.parseChild(element, parserContext, builder);
     }
 

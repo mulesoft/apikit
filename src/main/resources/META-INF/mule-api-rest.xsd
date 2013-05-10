@@ -90,6 +90,7 @@
                         <xsd:element name="collection-resource" type="collectionResourceType" />
                     </xsd:choice>
                 </xsd:sequence>
+                <xsd:attribute name="description" type="mule:nonBlankString" />
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
@@ -198,7 +199,7 @@
 
     <xsd:complexType name="abstractParameterType">
         <xsd:attribute name="name" type="xsd:string" />
-        <xsd:attribute name="description" type="xsd:string" />
+        <xsd:attribute name="description" type="mule:nonBlankString" />
         <xsd:attribute name="defaultValue" type="xsd:string" />
         <xsd:attribute name="required" type="mule:substitutableBoolean" />
         <xsd:attribute name="allowMultiple" type="mule:substitutableBoolean" />

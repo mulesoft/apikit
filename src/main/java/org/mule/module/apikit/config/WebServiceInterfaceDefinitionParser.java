@@ -26,7 +26,6 @@ public class WebServiceInterfaceDefinitionParser extends OrphanDefinitionParser
     protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
         builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_NAME));
-        builder.addPropertyValue("description", element.getAttribute("doc:description"));
         super.doParse(element, parserContext, builder);
     }
 }
