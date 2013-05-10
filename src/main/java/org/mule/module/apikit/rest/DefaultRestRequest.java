@@ -8,10 +8,15 @@
 
 package org.mule.module.apikit.rest;
 
+import static org.mule.module.apikit.rest.representation.RepresentationMetaData.MULE_RESPONSE_MEDIATYPE_PROPERTY;
+
 import org.mule.api.MuleEvent;
 import org.mule.module.apikit.rest.protocol.RestProtocolAdapter;
 import org.mule.module.apikit.rest.protocol.RestProtocolAdapterFactory;
+import org.mule.transport.NullPayload;
 import org.mule.util.StringUtils;
+
+import com.google.common.net.MediaType;
 
 import java.util.ArrayDeque;
 import java.util.Arrays;
@@ -88,6 +93,37 @@ public class DefaultRestRequest implements RestRequest
     public RestWebService getService()
     {
         return restWebService;
+    }
+
+    @Override
+    public void setErrorPayload(String uri, String title, String detail, String statusCode)
+    {
+        String responseMediaType = getMuleEvent().getMessage().getInboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY);
+        if (responseMediaType == null)
+        {
+            responseMediaType = "notSet";
+        }
+        if (responseMediaType.equals(MediaType.JSON_UTF_8.withoutParameters().toString()))
+        {
+            String response = "{\"describedBy\":\"" + uri + "\"," +
+            "\"title\":\"" + title + "\"," +
+            "\"detail\":\"" + detail + "\"," +
+            "\"httpStatus\":\"" + statusCode + "\"}";
+            getMuleEvent().getMessage().setPayload(response);
+        }
+        else if (responseMediaType.equals(MediaType.XML_UTF_8.withoutParameters().toString()))
+        {
+            String response = "<problem><describedBy>" + uri + "</describedBy>" +
+            "<title>" + title + "</title>" +
+            "<detail>" + detail + "</detail>" +
+            "<httpStatus>" + statusCode + "</httpStatus></problem>";
+            getMuleEvent().getMessage().setPayload(response);
+        }
+        else
+        {
+            //TODO plain/text or nothing at all?
+            getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
+        }
     }
 
 }

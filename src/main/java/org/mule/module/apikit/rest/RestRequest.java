@@ -24,4 +24,5 @@ public interface RestRequest
 
     RestWebService getService();
 
+    void setErrorPayload(String uri, String title, String detail, String statusCode);
 }

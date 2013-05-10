@@ -11,12 +11,18 @@ package org.mule.module.apikit.rest.protocol;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mule.api.config.MuleProperties.CONTENT_TYPE_PROPERTY;
+import static org.mule.module.apikit.rest.representation.RepresentationMetaData.MULE_RESPONSE_MEDIATYPE_PROPERTY;
+import static org.mule.transport.http.HttpConnector.HTTP_STATUS_PROPERTY;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
-import org.mule.module.apikit.rest.RestRequest;
+import org.mule.module.apikit.rest.DefaultRestRequest;
+import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.operation.RestOperationType;
 import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
@@ -35,6 +41,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
@@ -43,11 +50,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
 {
     @Mock
-    RestRequest request;
+    DefaultRestRequest request;
     @Mock
     MuleEvent event;
     @Mock
-    MuleMessage message;;
+    MuleMessage message;
     HttpRestProtocolAdapter adapter;
 
     @Before
@@ -169,10 +176,8 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     @Test
     public void queryParameters()
     {
-        Map<String, String> queryParams = new HashMap<String, String>();
-
+        Map<String, Object> queryParams = new HashMap<String, Object>();
         when(message.getInboundProperty(HttpConnector.HTTP_QUERY_PARAMS)).thenReturn(queryParams);
-
         adapter = new HttpRestProtocolAdapter(event);
         assertEquals(queryParams, adapter.getQueryParameters());
     }
@@ -182,7 +187,35 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     {
         adapter = new HttpRestProtocolAdapter(event);
         adapter.handleException(new ResourceNotFoundException("1"), request);
-        verify(message).setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, 404);
+        verify(message).setOutboundProperty(HTTP_STATUS_PROPERTY, 404);
         verify(message).setPayload(any(NullPayload.class));
+    }
+
+    @Test
+    public void handleServerExceptionJson()
+    {
+        doCallRealMethod().when(request).setErrorPayload(anyString(), anyString(), anyString(), anyString());
+        when(message.getInboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY)).thenReturn("application/json");
+        adapter = new HttpRestProtocolAdapter(event);
+        adapter.handleException(new OperationHandlerException(new Exception("server error")), request);
+        verify(message).setOutboundProperty(HTTP_STATUS_PROPERTY, 500);
+        ArgumentCaptor<Object> arg = ArgumentCaptor.forClass(Object.class);
+        verify(message).setPayload(arg.capture());
+        assertTrue("unexpected payload: " + arg.getValue(), ((String) arg.getValue()).matches("\\{.*\"httpStatus\":\"500\".*}"));
+
+    }
+
+    @Test
+    public void handleServerExceptionXml()
+    {
+        doCallRealMethod().when(request).setErrorPayload(anyString(), anyString(), anyString(), anyString());
+        when(message.getInboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY)).thenReturn("text/xml");
+        adapter = new HttpRestProtocolAdapter(event);
+        adapter.handleException(new OperationHandlerException(new Exception("server error")), request);
+        verify(message).setOutboundProperty(HTTP_STATUS_PROPERTY, 500);
+        //verify(message).setOutboundProperty(CONTENT_TYPE_PROPERTY, "text/xml");
+        ArgumentCaptor<Object> arg = ArgumentCaptor.forClass(Object.class);
+        verify(message).setPayload(arg.capture());
+        assertTrue("unexpected payload: " + arg.getValue(), ((String) arg.getValue()).matches("<problem>.*<httpStatus>500</httpStatus>.*</problem>"));
     }
 }

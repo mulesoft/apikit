@@ -9,6 +9,8 @@
 
 package org.mule.module.apikit.rest.operation;
 
+import static org.mule.module.apikit.rest.representation.RepresentationMetaData.MULE_RESPONSE_MEDIATYPE_PROPERTY;
+
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.expression.ExpressionManager;
@@ -94,6 +96,8 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
             if (getType().isResponseExpected())
             {
                 responseRepresentation = validateAcceptableResponeMediaType(request);
+                String mediaType = responseRepresentation.getMediaType().withoutParameters().toString();
+                request.getMuleEvent().getMessage().setOutboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY, mediaType);
             }
         }
         processParameters(request);

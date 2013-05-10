@@ -8,6 +8,8 @@
 
 package org.mule.module.apikit.rest.representation;
 
+import static org.mule.api.config.MuleProperties.PROPERTY_PREFIX;
+
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.module.apikit.rest.RestRequest;
@@ -18,6 +20,7 @@ import com.google.common.net.MediaType;
 
 public interface RepresentationMetaData
 {
+    public static final String MULE_RESPONSE_MEDIATYPE_PROPERTY = PROPERTY_PREFIX + "RESPONSE_MEDIATYPE";
 
     MediaType getMediaType();
     SchemaType getSchemaType();

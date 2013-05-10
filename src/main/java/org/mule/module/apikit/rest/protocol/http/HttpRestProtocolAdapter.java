@@ -197,8 +197,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         else
         {
             message.setOutboundProperty("http.status", HttpStatusCode.SERVER_ERROR_INTERNAL.getCode());
-            //TODO return content-type dependent error representation
-            message.setPayload(NullPayload.getInstance());
+            request.setErrorPayload(null, re.toString(), re.getMessage(), String.valueOf(HttpStatusCode.SERVER_ERROR_INTERNAL.getCode()));
         }
     }
 
