@@ -17,13 +17,6 @@
         </document-resource>
     </interface>
 
-    <interface name="protectedInterface">
-        <document-resource name="leagues2">
-            <retrieve flow-ref="retrieveLeagues" />
-            <update flow-ref="retrieveLeagues" />
-        </document-resource>
-    </interface>
-
     <service name="myService" interface-ref="myInterface">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
             <mule:object-to-string-transformer />
@@ -32,12 +25,6 @@
     
    <service name="myServiceNoSwagger" interface-ref="myInterface" enableSwagger="false">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="apiNoSwagger">
-            <mule:object-to-string-transformer />
-        </http:inbound-endpoint>
-    </service>
-
-    <service name="myService2" interface-ref="protectedInterface">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="protectedapi">
             <mule:object-to-string-transformer />
         </http:inbound-endpoint>
     </service>

@@ -6,7 +6,6 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit.rest.resource.base;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -21,6 +20,7 @@ import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+
 @Ignore
 public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
 {
@@ -155,23 +155,6 @@ public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
             .header("Content-Length", "0")
             .when()
             .get("/apiSwaggerDisabled/");
-    }
-
-    @Test
-    public void getSwaggerJsonProtectedInterface() throws Exception
-    {
-        given().header("Accept", "application/swagger+json")
-            .expect()
-            .response()
-            .statusCode(401)
-            .when()
-            .get("/protectedapi");
-        given().header("Accept", "application/swagger+json")
-            .expect()
-            .response()
-            .statusCode(401)
-            .when()
-            .get("/protectedapi/");
     }
 
 }
