@@ -6,7 +6,6 @@
  * LICENSE.txt file.
  */
 
-
 package org.mule.module.apikit.rest.resource.base;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -16,19 +15,11 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
-import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-@Ignore
+
 public class BaseResourceFunctionalTestCase extends FunctionalTestCase
 {
-
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
 
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
@@ -49,217 +40,36 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void updateNotSupported() throws Exception
     {
-        given().expect()
-            .response()
-            .statusCode(405)
-            .header("Allow", Matchers.equalToIgnoringCase("GET"))
-            .header("Content-Length", "0")
-            .when()
-            .put("/api");
-        given().expect()
-            .response()
-            .statusCode(405)
-            .header("Allow", Matchers.equalToIgnoringCase("GET"))
-            .header("Content-Length", "0")
-            .when()
-            .put("/api/");
-    }
-
-    @Test
-    public void updateNotSupportedSwaggerDisabled() throws Exception
-    {
-        given().expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .put("/apiSwaggerDisabled");
-        given().expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .put("/apiSwaggerDisabled/");
+        given().expect().response().statusCode(405).header("Content-Length", "0").when().put("/api");
+        given().expect().response().statusCode(405).header("Content-Length", "0").when().put("/api/");
     }
 
     @Test
     public void createNotSupported() throws Exception
     {
-        given().expect()
-            .response()
-            .statusCode(405)
-            .header("Content-Length", "0")
-            .header("Allow", Matchers.equalToIgnoringCase("GET"))
-            .when()
-            .post("/api");
-        given().expect()
-            .response()
-            .statusCode(405)
-            .header("Content-Length", "0")
-            .header("Allow", Matchers.equalToIgnoringCase("GET"))
-            .when()
-            .post("/api/");
-    }
-
-    @Test
-    public void createNotSupportedSwaggerDisabled() throws Exception
-    {
-        given().expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .post("/apiSwaggerDisabled");
-        given().expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .post("/apiSwaggerDisabled/");
+        given().expect().response().statusCode(405).header("Content-Length", "0").when().post("/api");
+        given().expect().response().statusCode(405).header("Content-Length", "0").when().post("/api/");
     }
 
     @Test
     public void deleteNotSupported() throws Exception
     {
-        given().expect()
-            .response()
-            .statusCode(405)
-            .header("Allow", Matchers.equalToIgnoringCase("GET"))
-            .header("Content-Length", "0")
-
-            .when()
-            .delete("/api");
-        given().expect()
-            .response()
-            .statusCode(405)
-            .header("Allow", Matchers.equalToIgnoringCase("GET"))
-            .header("Content-Length", "0")
-            .when()
-            .delete("/api/");
+        given().expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api");
+        given().expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/");
     }
 
     @Test
-    public void deleteNotSupportedSwaggerDisabled() throws Exception
+    public void retrieveNotSupported() throws Exception
     {
-        given().expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .delete("/apiSwaggerDisabled");
-        given().expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .delete("/apiSwaggerDisabled/");
+        given().header("Accept", "text/html").expect().response().statusCode(405).when().get("/api");
+        given().header("Accept", "text/html").expect().response().statusCode(405).when().get("/api/");
     }
 
     @Test
-    public void retrieve() throws Exception
+    public void existsNotSupport() throws Exception
     {
-        given().header("Accept", "text/html").expect().response().statusCode(200).when().get("/api");
-        given().header("Accept", "text/html").expect().response().statusCode(200).when().get("/api/");
-    }
-
-    @Test
-    public void retrieveSwaggerDisabled() throws Exception
-    {
-        given().header("Accept", "text/html")
-            .expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .get("/apiSwaggerDisabled");
-        given().header("Accept", "text/html")
-            .expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .get("/apiSwaggerDisabled/");
-    }
-
-    @Test
-    public void retrieveUnauthorized() throws Exception
-    {
-        given().header("Accept", "text/html")
-            .expect()
-            .response()
-            .header("Content-Length", "0")
-            .statusCode(401)
-            .when()
-            .get("/protectedapi");
-        given().header("Accept", "text/html")
-            .expect()
-            .response()
-            .header("Content-Length", "0")
-            .statusCode(401)
-            .when()
-            .get("/protectedapi/");
-    }
-
-    @Test
-    public void exists() throws Exception
-    {
-        given().expect().response().statusCode(200).header("Content-Length", "0").when().head("/api");
-        given().expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/");
-    }
-
-    @Test
-    public void existsSwagerDisabled() throws Exception
-    {
-        given().expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .head("/apiSwaggerDisabled");
-        given().expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .head("/apiSwaggerDisabled/");
-    }
-
-    @Test
-    public void retreiveUnsupportedContentTypes() throws Exception
-    {
-        given().header("Accept", "application/json")
-            .expect()
-            .response()
-            .statusCode(406)
-            .header("Content-Length", "0")
-            .when()
-            .get("/api");
-        given().header("Accept", "text/pain")
-            .expect()
-            .response()
-            .statusCode(406)
-            .header("Content-Length", "0")
-            .when()
-            .get("/api");
-    }
-
-    @Test
-    public void retreiveUnsupportedContentTypesSwagerDisabled() throws Exception
-    {
-        given().header("Accept", "application/json")
-            .expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .get("/apiSwaggerDisabled");
-        given().header("Accept", "text/pain")
-            .expect()
-            .response()
-            .statusCode(404)
-            .header("Content-Length", "0")
-            .when()
-            .get("/apiSwaggerDisabled");
+        given().expect().response().statusCode(405).header("Content-Length", "0").when().head("/api");
+        given().expect().response().statusCode(405).header("Content-Length", "0").when().head("/api/");
     }
 
 }

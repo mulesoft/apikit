@@ -80,7 +80,7 @@ public class SwaggerConsoleRetrieveOperation extends AbstractRestOperation
                     baseUri = baseUri + "/";
                 }
                 buffer = buffer.replace("${swaggerUrl}", baseUri);
-                buffer = buffer.replace("${baseUrl}", restRequest.getProtocolAdaptor().getBaseURI().toString());
+                buffer = buffer.replace("${baseUrl}", restRequest.getProtocolAdaptor().getBaseURI().getRawPath());
 
                 buffer = buffer.replace("${pageTitle}", restRequest.getService().getInterface().getName()
                                                         + " UI");

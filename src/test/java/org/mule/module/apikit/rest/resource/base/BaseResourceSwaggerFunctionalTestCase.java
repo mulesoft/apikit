@@ -17,11 +17,9 @@ import org.mule.util.IOUtils;
 import com.jayway.restassured.RestAssured;
 
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Ignore
 public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
 {
 
@@ -97,7 +95,7 @@ public class BaseResourceSwaggerFunctionalTestCase extends FunctionalTestCase
                 Matchers.equalTo(IOUtils.getResourceAsString(
                     "org/mule/module/apikit/rest/swagger/lib/swagger.js", this.getClass())))
             .when()
-            .get("/api/_swagger/lib/swagger.js");
+            .get("/api/console/lib/swagger.js");
     }
 
     @Test
