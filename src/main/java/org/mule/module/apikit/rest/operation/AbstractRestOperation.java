@@ -297,7 +297,9 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         }
         if (jsonRepresentation == null)
         {
-            throw new MuleRuntimeException(CoreMessages.createStaticMessage("Couldn't not find json data type for resource " + resource.getName()));
+            //TODO PLG review if we should fail or just show 'unknown'
+            return "unknown";
+            //throw new MuleRuntimeException(CoreMessages.createStaticMessage("Couldn't not find json data type for resource " + resource.getName()));
         }
         return new SwaggerModel(jsonRepresentation).getName();
     }
