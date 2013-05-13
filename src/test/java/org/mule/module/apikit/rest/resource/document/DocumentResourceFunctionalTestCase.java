@@ -62,7 +62,7 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void update() throws Exception
     {
-        given().body("Premier League").expect().response().statusCode(200).when().put("/api/league");
+        given().body("Premier League").expect().response().statusCode(204).when().put("/api/league");
     }
 
     @Test
@@ -147,8 +147,20 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void updateOnNestedDocument() throws Exception
     {
-        given().body("AFA").expect().response().statusCode(200).when().put("/api/league/association");
-        given().body("AFA").expect().response().statusCode(200).when().put("/api/league/association/");
+        given().body("AFA")
+            .expect()
+            .response()
+            .statusCode(204)
+            .header("Content-Length", "0")
+            .when()
+            .put("/api/league/association");
+        given().body("AFA")
+            .expect()
+            .response()
+            .statusCode(204)
+            .header("Content-Length", "0")
+            .when()
+            .put("/api/league/association/");
     }
 
     @Test

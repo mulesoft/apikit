@@ -36,7 +36,6 @@ public class DeleteCollectionMemberOperation extends AbstractRestOperation
     {
         super.handle(request);
         request.getProtocolAdaptor().handleNoContent(request);
-        request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
     }
 
     @Override

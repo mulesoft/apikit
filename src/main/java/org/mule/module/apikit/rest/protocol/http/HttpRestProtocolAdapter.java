@@ -245,10 +245,13 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
     @Override
     public void handleNoContent(RestRequest request)
     {
-        request.getMuleEvent()
-            .getMessage()
-            .setOutboundProperty(HTTP_STATUS_PROPERTY,
-                                 HttpStatusCode.SUCCESS_NO_CONTENT.getCode());
+        if (request.getMuleEvent() != null && request.getMuleEvent().getMessage() != null)
+        {
+            request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
+            request.getMuleEvent()
+                .getMessage()
+                .setOutboundProperty(HTTP_STATUS_PROPERTY, HttpStatusCode.SUCCESS_NO_CONTENT.getCode());
+        }
     }
 
     @Override

@@ -45,10 +45,7 @@ public class UpdateDocumentOperation extends AbstractRestOperation
     public void handle(RestRequest request) throws RestException
     {
         super.handle(request);
-        if (request.getMuleEvent() != null && request.getMuleEvent().getMessage() != null)
-        {
-            request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
-        }
+        request.getProtocolAdaptor().handleNoContent(request);
     }
 
     @Override

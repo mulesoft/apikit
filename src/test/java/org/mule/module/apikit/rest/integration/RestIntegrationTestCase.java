@@ -207,7 +207,8 @@ public class RestIntegrationTestCase extends FunctionalTestCase
         given().body("{ \"name\": \"Liga Hispanica\" }")
                 .contentType("application/json")
                 .expect()
-                .statusCode(200)
+                .statusCode(204)
+                .header("Content-Length", "0")
                 .put("/api/leagues/liga-bbva");
         expect().log()
                 .everything()
@@ -264,7 +265,11 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     @Test
     public void testDeleteOnMemberArchetype() throws Exception
     {
-        expect().response().statusCode(204).when().delete("/api/leagues/liga-bbva");
+        expect().response()
+            .statusCode(204)
+            .header("Content-Length", "0")
+            .when()
+            .delete("/api/leagues/liga-bbva");
     }
 
     @Test

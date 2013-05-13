@@ -51,7 +51,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void exists() throws Exception
     {
-        expect().response().statusCode(200).when().head("/api/leagues");
+        expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/leagues");
     }
 
     @Test
@@ -112,7 +112,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
         given().body("{'id':1,'name'='ONE'}")
             .expect()
             .response()
-            .statusCode(200)
+            .statusCode(204)
             .header("Content-Length", "0")
             .when()
             .put("/api/leagues/1");
@@ -133,7 +133,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void existsNestedCollection() throws Exception
     {
-        expect().response().statusCode(200).when().head("/api/leagues/1/teams");
+        expect().response().statusCode(200).header("Content-Length", "0").when().head("/api/leagues/1/teams");
     }
 
     @Test
@@ -194,7 +194,7 @@ public class CollectionResourceFunctionalTestCase extends FunctionalTestCase
         given().body("{'id':3,'name'='THREE'}")
             .expect()
             .response()
-            .statusCode(200)
+            .statusCode(204)
             .header("Content-Length", "0")
             .when()
             .put("/api/leagues/1/teams/3");
