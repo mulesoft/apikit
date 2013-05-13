@@ -31,7 +31,7 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
     protected Set<RestOperationType> getSupportedActionTypes()
     {
         return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS, RestOperationType.UPDATE,
-            RestOperationType.DELETE);
+            RestOperationType.DELETE, RestOperationType.OPTIONS);
     }
 
     @Override

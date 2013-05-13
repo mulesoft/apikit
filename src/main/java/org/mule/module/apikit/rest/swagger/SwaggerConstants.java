@@ -18,6 +18,7 @@ public class SwaggerConstants
     public static final String SWAGGER_VERSION_FIELD_NAME = "swaggerVersion";
     public static final String API_VERSION_FIELD_NAME = "apiVersion";
     public static final String PATH_FIELD_NAME = "path";
+    public static final String QUERY_PARAMETER_TYPE = "query";
     public static final String DESCRIPTION_FIELD_NAME = "description";
     public static final String OPERATIONS_FIELD_NAME = "operations";
     public static final String HTTP_METHOD_FIELD_NAME = "httpMethod";

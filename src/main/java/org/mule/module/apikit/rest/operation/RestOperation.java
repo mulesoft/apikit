@@ -12,14 +12,13 @@ package org.mule.module.apikit.rest.operation;
 import org.mule.module.apikit.api.WebServiceOperation;
 import org.mule.module.apikit.rest.RestRequestHandler;
 import org.mule.module.apikit.rest.param.ParameterList;
-import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.List;
 
-import org.codehaus.jackson.JsonGenerator;
 
 public interface RestOperation extends RestRequestHandler, WebServiceOperation
 {

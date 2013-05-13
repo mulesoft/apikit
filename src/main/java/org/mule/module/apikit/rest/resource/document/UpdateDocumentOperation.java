@@ -19,20 +19,19 @@ import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PARAM_TYPE_FI
 import static org.mule.module.apikit.rest.swagger.SwaggerConstants.REQUIRED_FIELD_NAME;
 import static org.mule.module.apikit.rest.swagger.SwaggerConstants.RESPONSE_CLASS_FIELD_NAME;
 import static org.mule.module.apikit.rest.swagger.SwaggerConstants.SUPPORTED_CONTENT_TYPES_FIELD_NAME;
-
 import org.mule.module.apikit.rest.RestException;
-import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.module.apikit.rest.swagger.SwaggerConstants;
-import org.mule.module.apikit.rest.util.NameUtils;
 import org.mule.transport.NullPayload;
 import org.mule.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerator;
 
 public class UpdateDocumentOperation extends AbstractRestOperation
 {
@@ -92,8 +91,7 @@ public class UpdateDocumentOperation extends AbstractRestOperation
             jsonGenerator.writeFieldName(NAME_FIELD_NAME);
             jsonGenerator.writeString("body");
             jsonGenerator.writeFieldName(DATA_TYPE_FIELD_NAME);
-            jsonGenerator.writeString(NameUtils.singularize(StringUtils.capitalize(NameUtils.camel(resource.getName())))
-                                      + "ToBeUpdated");
+            jsonGenerator.writeString(getJsonDataType());
             jsonGenerator.writeFieldName(REQUIRED_FIELD_NAME);
             jsonGenerator.writeBoolean(true);
             jsonGenerator.writeFieldName(ALLOW_MULTIPLE_FIELD_NAME);

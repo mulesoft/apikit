@@ -48,6 +48,7 @@ public abstract class AbstractRestResource implements RestResource
     {
         this.name = name;
         this.parentResource = parentResource;
+        this.operations.add(new OptionsOperation(this));
         if (parentResource != null)
         {
             parameters.addAll(parentResource.getParameters());

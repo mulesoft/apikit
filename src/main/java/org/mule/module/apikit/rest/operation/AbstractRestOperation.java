@@ -9,15 +9,18 @@
 package org.mule.module.apikit.rest.operation;
 
 import static org.mule.module.apikit.rest.representation.RepresentationMetaData.MULE_RESPONSE_MEDIATYPE_PROPERTY;
-
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleRuntimeException;
+import org.mule.api.expression.ExpressionManager;
+import org.mule.config.i18n.CoreMessages;
 import org.mule.module.apikit.AbstractWebServiceOperation;
 import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
 import org.mule.module.apikit.rest.OperationHandlerException;
 import org.mule.module.apikit.rest.RestException;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
+import org.mule.module.apikit.rest.documentation.swagger.SwaggerModel;
 import org.mule.module.apikit.rest.param.ParameterList;
 import org.mule.module.apikit.rest.param.RestInvalidQueryParameterException;
 import org.mule.module.apikit.rest.param.RestMissingQueryParameterException;
@@ -31,6 +34,7 @@ import org.mule.module.apikit.rest.validation.InvalidSchemaTypeException;
 import org.mule.transport.NullPayload;
 import org.mule.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.google.common.net.MediaType;
 
 import java.io.IOException;
@@ -38,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
-import org.codehaus.jackson.JsonGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +53,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
     protected RestOperationType type;
     protected RestResource resource;
     protected Collection<RepresentationMetaData> representations = new HashSet<RepresentationMetaData>();
-    protected ParameterList parameters;
+    protected ParameterList parameters = new ParameterList();
 
     @Override
     public RestOperationType getType()
@@ -283,6 +286,22 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
         {
             return type.name() + " " + resource.getName();
         }
+    }
+
+    protected String getJsonDataType()
+    {
+        RepresentationMetaData jsonRepresentation = null;
+        for (RepresentationMetaData representation : getAllRepresentations()) {
+            if (representation.getMediaType().withoutParameters().equals(MediaType.JSON_UTF_8.withoutParameters()) && representation.getSchemaLocation() != null)
+            {
+                jsonRepresentation = representation;
+            }
+        }
+        if (jsonRepresentation == null)
+        {
+            throw new MuleRuntimeException(CoreMessages.createStaticMessage("Couldn't not find json data type for resource " + resource.getName()));
+        }
+        return new SwaggerModel(jsonRepresentation).getName();
     }
 
 }

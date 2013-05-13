@@ -9,13 +9,14 @@
 package org.mule.module.apikit.rest.param;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 public class ParameterList implements Iterable<RestParameter>
 {
 
-    protected List<RestParameter> parameters;
+    protected List<RestParameter> parameters = Collections.emptyList();
 
     public ParameterList()
     {

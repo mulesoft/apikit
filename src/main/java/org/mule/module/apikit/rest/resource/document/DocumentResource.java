@@ -26,7 +26,7 @@ public class DocumentResource extends AbstractHierarchicalRestResource
     @Override
     protected Set<RestOperationType> getSupportedActionTypes()
     {
-        return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS, RestOperationType.UPDATE,  RestOperationType.OPTIONS);
+        return EnumSet.of(RestOperationType.RETRIEVE, RestOperationType.EXISTS, RestOperationType.UPDATE, RestOperationType.OPTIONS);
     }
     
     @Override

@@ -9,6 +9,8 @@
 
 package org.mule.module.apikit.rest.integration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -97,6 +99,7 @@ public class League
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Team> getTeams()
     {
         return teams;

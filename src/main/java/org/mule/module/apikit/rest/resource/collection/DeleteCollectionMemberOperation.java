@@ -10,17 +10,18 @@
 package org.mule.module.apikit.rest.resource.collection;
 
 import org.mule.module.apikit.rest.RestException;
-import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.RestRequest;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.swagger.SwaggerConstants;
 import org.mule.transport.NullPayload;
 import org.mule.util.StringUtils;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+
 import java.io.IOException;
 
-import org.codehaus.jackson.JsonGenerator;
 
 public class DeleteCollectionMemberOperation extends AbstractRestOperation
 {

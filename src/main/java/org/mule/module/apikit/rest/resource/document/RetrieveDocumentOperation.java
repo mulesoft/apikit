@@ -9,17 +9,17 @@
 
 package org.mule.module.apikit.rest.resource.document;
 
-import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.operation.AbstractRestOperation;
 import org.mule.module.apikit.rest.operation.RestOperationType;
+import org.mule.module.apikit.rest.param.RestParameter;
 import org.mule.module.apikit.rest.representation.RepresentationMetaData;
 import org.mule.module.apikit.rest.swagger.SwaggerConstants;
 import org.mule.module.apikit.rest.util.NameUtils;
 import org.mule.util.StringUtils;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonGenerator;
 
-import org.codehaus.jackson.JsonGenerator;
+import java.io.IOException;
 
 public class RetrieveDocumentOperation extends AbstractRestOperation
 {
@@ -70,6 +70,25 @@ public class RetrieveDocumentOperation extends AbstractRestOperation
             jsonGenerator.writeBoolean(false);
             jsonGenerator.writeEndObject();
         }
+
+        for (RestParameter param : getParameters())
+        {
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeFieldName(SwaggerConstants.PARAM_TYPE_FIELD_NAME);
+            jsonGenerator.writeString(SwaggerConstants.QUERY_PARAMETER_TYPE);
+            jsonGenerator.writeFieldName(SwaggerConstants.NAME_FIELD_NAME);
+            jsonGenerator.writeString(param.getName());
+            jsonGenerator.writeFieldName(SwaggerConstants.DESCRIPTION_FIELD_NAME);
+            jsonGenerator.writeString(param.getDescription());
+            jsonGenerator.writeFieldName(SwaggerConstants.DATA_TYPE_FIELD_NAME);
+            jsonGenerator.writeString(SwaggerConstants.DEFAULT_DATA_TYPE);
+            jsonGenerator.writeFieldName(SwaggerConstants.REQUIRED_FIELD_NAME);
+            jsonGenerator.writeBoolean(false);
+            jsonGenerator.writeFieldName(SwaggerConstants.ALLOW_MULTIPLE_FIELD_NAME);
+            jsonGenerator.writeBoolean(true);
+            jsonGenerator.writeEndObject();
+        }
+
         jsonGenerator.writeEndArray();
 
         jsonGenerator.writeFieldName("summary");
