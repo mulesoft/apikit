@@ -15,7 +15,6 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mule.api.config.MuleProperties.CONTENT_TYPE_PROPERTY;
 import static org.mule.module.apikit.rest.representation.RepresentationMetaData.MULE_RESPONSE_MEDIATYPE_PROPERTY;
 import static org.mule.transport.http.HttpConnector.HTTP_STATUS_PROPERTY;
 
@@ -61,6 +60,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     public void setup() throws URISyntaxException
     {
         when(request.getMuleEvent()).thenReturn(event);
+        doCallRealMethod().when(request).setErrorPayload(anyString(), anyString(), anyString(), anyString());
         when(event.getMessageSourceURI()).thenReturn(new URI("http://localhost:8080/api"));
         when(event.getMessage()).thenReturn(message);
         when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
@@ -195,7 +195,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     public void handleServerExceptionJson()
     {
         doCallRealMethod().when(request).setErrorPayload(anyString(), anyString(), anyString(), anyString());
-        when(message.getInboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY)).thenReturn("application/json");
+        when(message.getOutboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY)).thenReturn("application/json");
         adapter = new HttpRestProtocolAdapter(event);
         adapter.handleException(new OperationHandlerException(new Exception("server error")), request);
         verify(message).setOutboundProperty(HTTP_STATUS_PROPERTY, 500);
@@ -209,7 +209,7 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     public void handleServerExceptionXml()
     {
         doCallRealMethod().when(request).setErrorPayload(anyString(), anyString(), anyString(), anyString());
-        when(message.getInboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY)).thenReturn("text/xml");
+        when(message.getOutboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY)).thenReturn("text/xml");
         adapter = new HttpRestProtocolAdapter(event);
         adapter.handleException(new OperationHandlerException(new Exception("server error")), request);
         verify(message).setOutboundProperty(HTTP_STATUS_PROPERTY, 500);

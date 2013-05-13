@@ -439,4 +439,9 @@ public enum HttpStatusCode
     {
         return code;
     }
+
+    public String getCodeAsString()
+    {
+        return String.valueOf(code);
+    }
 }

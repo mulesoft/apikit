@@ -8,6 +8,7 @@
 
 package org.mule.module.apikit.rest;
 
+import static org.mule.api.config.MuleProperties.CONTENT_TYPE_PROPERTY;
 import static org.mule.module.apikit.rest.representation.RepresentationMetaData.MULE_RESPONSE_MEDIATYPE_PROPERTY;
 
 import org.mule.api.MuleEvent;
@@ -108,7 +109,7 @@ public class DefaultRestRequest implements RestRequest
     @Override
     public void setErrorPayload(String uri, String title, String detail, String statusCode)
     {
-        String responseMediaType = getMuleEvent().getMessage().getInboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY);
+        String responseMediaType = getMuleEvent().getMessage().getOutboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY);
         if (responseMediaType == null)
         {
             responseMediaType = "notSet";
@@ -120,6 +121,7 @@ public class DefaultRestRequest implements RestRequest
             "\"detail\":\"" + detail + "\"," +
             "\"httpStatus\":\"" + statusCode + "\"}";
             getMuleEvent().getMessage().setPayload(response);
+            getMuleEvent().getMessage().setOutboundProperty(CONTENT_TYPE_PROPERTY, responseMediaType);
         }
         else if (responseMediaType.equals(MediaType.XML_UTF_8.withoutParameters().toString()))
         {
@@ -128,6 +130,7 @@ public class DefaultRestRequest implements RestRequest
             "<detail>" + detail + "</detail>" +
             "<httpStatus>" + statusCode + "</httpStatus></problem>";
             getMuleEvent().getMessage().setPayload(response);
+            getMuleEvent().getMessage().setOutboundProperty(CONTENT_TYPE_PROPERTY, responseMediaType);
         }
         else
         {

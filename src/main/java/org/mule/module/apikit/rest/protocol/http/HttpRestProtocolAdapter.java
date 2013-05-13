@@ -8,6 +8,10 @@
 
 package org.mule.module.apikit.rest.protocol.http;
 
+import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ERROR_BAD_REQUEST;
+import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ERROR_METHOD_NOT_ALLOWED;
+import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ERROR_NOT_ACCEPTABLE;
+import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ERROR_NOT_FOUND;
 import static org.mule.transport.http.HttpConnector.HTTP_STATUS_PROPERTY;
 
 import org.mule.api.MuleEvent;
@@ -158,21 +162,26 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         {
             OperationNotAllowedException anse = (OperationNotAllowedException) re;
             message.setOutboundProperty("http.status",
-                HttpStatusCode.CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode());
+                CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode());
             message.setOutboundProperty("Allow",
                 StringUtils.join(actionTypesToHttpMethods(anse.getResource().getAllowedOperationTypes()), " ,"));
-            message.setPayload(NullPayload.getInstance());
+            String detail = "The method specified in the Request-Line is not allowed for the resource identified by the Request-URI.";
+            request.setErrorPayload(null, "METHOD NOT ALLOWED", detail, String.valueOf(CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode()));
 
         }
         else if (re instanceof ResourceNotFoundException)
         {
-            message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_NOT_FOUND.getCode());
-            message.setPayload(NullPayload.getInstance());
+            message.setOutboundProperty("http.status", CLIENT_ERROR_NOT_FOUND.getCode());
+            String detail = "The server has not found anything matching the Request-URI or the server does not wish " +
+                            "to reveal exactly why the request has been refused, or no other response is applicable.";
+            request.setErrorPayload(null, "NOT FOUND", detail, String.valueOf(CLIENT_ERROR_NOT_FOUND.getCode()));
         }
         else if (re instanceof MediaTypeNotAcceptableException)
         {
-            message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_NOT_ACCEPTABLE.getCode());
-            message.setPayload(NullPayload.getInstance());
+            message.setOutboundProperty("http.status", CLIENT_ERROR_NOT_ACCEPTABLE.getCode());
+            String detail = "The resource identified by the request is only capable of generating response entities " +
+                            "whose content characteristics do not match the user's requirements (in Accept* headers).";
+            request.setErrorPayload(null, "NOT ACCEPTABLE", detail, CLIENT_ERROR_NOT_ACCEPTABLE.getCodeAsString());
         }
         else if (re instanceof UnsupportedMediaTypeException)
         {
@@ -187,8 +196,9 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         }
         else if (re instanceof InvalidInputException)
         {
-            message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_BAD_REQUEST.getCode());
-            message.setPayload(NullPayload.getInstance());
+            String detail = "The request could not be understood by the server due to malformed syntax.";
+            message.setOutboundProperty("http.status", CLIENT_ERROR_BAD_REQUEST.getCode());
+            request.setErrorPayload(null, detail, "BAD REQUEST", CLIENT_ERROR_BAD_REQUEST.getCodeAsString());
         }
         else if (re instanceof UserDefinedStatusCodeException)
         {

@@ -91,9 +91,7 @@ public abstract class AbstractRestOperation extends AbstractWebServiceOperation 
             {
                 responseRepresentation = validateAcceptableResponeMediaType(request);
                 String mediaType = responseRepresentation.getMediaType().withoutParameters().toString();
-                request.getMuleEvent()
-                    .getMessage()
-                    .setOutboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY, mediaType);
+                request.getMuleEvent().getMessage().setOutboundProperty(MULE_RESPONSE_MEDIATYPE_PROPERTY, mediaType);
             }
         }
         processParameters(request);
