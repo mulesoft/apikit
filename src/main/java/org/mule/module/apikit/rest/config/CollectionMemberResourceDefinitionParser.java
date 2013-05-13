@@ -9,7 +9,6 @@
 package org.mule.module.apikit.rest.config;
 
 import org.mule.config.spring.parsers.generic.ChildDefinitionParser;
-import org.mule.module.apikit.rest.resource.base.BaseResource;
 import org.mule.module.apikit.rest.resource.collection.CollectionMemberResource;
 
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -21,28 +20,23 @@ public class CollectionMemberResourceDefinitionParser extends ChildDefinitionPar
 
     public CollectionMemberResourceDefinitionParser()
     {
-        super("memberResource",CollectionMemberResource.class, true);
+        super("memberResource", CollectionMemberResource.class, true);
         addIgnored(ATTRIBUTE_NAME);
+        addIgnored("idVariableName");
     }
 
     @Override
     protected void parseChild(Element element, ParserContext parserContext, BeanDefinitionBuilder builder)
     {
-        if (!element.getParentNode().getLocalName().equals("interface"))
-        {
-            builder.addConstructorArgReference(getParentBeanName(element));
-        }
-        else
-        {
-            builder.addConstructorArgValue(new BaseResource());
-        }
+        builder.addConstructorArgReference(getParentBeanName(element));
+        builder.addConstructorArgValue(element.getAttribute("idVariableName"));
         super.parseChild(element, parserContext, builder);
     }
 
-    
     @Override
     public String getBeanName(Element element)
     {
-        return element.getParentNode().getAttributes().getNamedItem(ATTRIBUTE_NAME).getNodeValue() + ".member";
+        return element.getParentNode().getAttributes().getNamedItem(ATTRIBUTE_NAME).getNodeValue()
+               + ".member";
     }
 }

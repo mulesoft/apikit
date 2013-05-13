@@ -35,6 +35,11 @@
         </collection-resource>
     </interface>
 
+    <interface name="myInterface2" description="interface description">
+        <collection-resource name="b" description="resource a description">
+            <member description="collection member description" idVariableName="other"/>
+        </collection-resource>
+    </interface>
 
     <service name="myService" interface-ref="myInterface" description="service description">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>

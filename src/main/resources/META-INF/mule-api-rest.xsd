@@ -91,6 +91,14 @@
                     </xsd:choice>
                 </xsd:sequence>
                 <xsd:attribute name="description" type="mule:nonBlankString" />
+                <xsd:attribute name="idVariableName" type="mule:nonBlankString" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The name of the variable that contains that identifies the collection member.
+                            This variable name is shown in resource documentation and is the name of the flow variable passed to the flow. 
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>

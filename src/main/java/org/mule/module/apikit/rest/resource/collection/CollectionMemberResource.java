@@ -21,10 +21,20 @@ import java.util.Set;
 public class CollectionMemberResource extends AbstractHierarchicalRestResource
 {
 
-    public CollectionMemberResource(RestResource parentResource)
+    protected String idVariableName;
+
+    public CollectionMemberResource(RestResource parentResource, String memberIdVariableName)
     {
         super(parentResource.getName() + "Member", parentResource);
-        parameters.add(new PathParameter(parentResource.getName() + "MemberId"));
+        if (memberIdVariableName.isEmpty())
+        {
+            this.idVariableName = parentResource.getName() + "MemberId";
+        }
+        else
+        {
+            this.idVariableName = memberIdVariableName;
+        }
+        parameters.add(new PathParameter(this.idVariableName));
     }
 
     @Override
@@ -37,14 +47,14 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
     @Override
     public void handle(RestRequest restRequest) throws RestException
     {
-        restRequest.getMuleEvent().setFlowVariable(getName() + "Id", restRequest.getNextPathElement());
+        restRequest.getMuleEvent().setFlowVariable(idVariableName, restRequest.getNextPathElement());
         super.handle(restRequest);
     }
 
     @Override
     public String getPath()
     {
-        return parentResource.getPath() + "/{" + getName() + "Id}";
+        return parentResource.getPath() + "/{" + idVariableName + "}";
     }
 
     @Override
@@ -58,6 +68,11 @@ public class CollectionMemberResource extends AbstractHierarchicalRestResource
         {
             return getName() + " Collection Member";
         }
+    }
+
+    public String idVariableName()
+    {
+        return idVariableName;
     }
 
 }

@@ -10,7 +10,6 @@ package org.mule.module.apikit.rest.resource.collection;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import org.mule.module.apikit.rest.RestWebServiceInterface;
 import org.mule.module.apikit.rest.operation.RestOperation;
@@ -54,6 +53,7 @@ public class CollectionResourceConfigurationTestCase extends FunctionalTestCase
         assertEquals(4, member.getOperations().size());
         assertEquals(1, resourceA.getOperations().size());
         assertEquals(2, member.getRepresentations().size());
+        assertEquals("aMemberId", member.idVariableName());
 
         RestOperation action2 = member.getOperations().get(0);
         assertEquals(RestOperationType.CREATE, action2.getType());
@@ -81,6 +81,15 @@ public class CollectionResourceConfigurationTestCase extends FunctionalTestCase
         assertEquals("resource c description", child.getDescription());
         assertEquals(2, child.getOperations().size());
         assertEquals(2, child.getRepresentations().size());
+    }
+
+    @Test
+    public void customMemberIdVariableName() throws Exception
+    {
+        RestWebServiceInterface wsInterface = muleContext.getRegistry().lookupObject("myInterface2");
+        CollectionResource resourceB = (CollectionResource) wsInterface.getRoutes().get(0);
+        CollectionMemberResource member = resourceB.getMemberResource();
+        assertEquals("other", member.idVariableName());
 
     }
 

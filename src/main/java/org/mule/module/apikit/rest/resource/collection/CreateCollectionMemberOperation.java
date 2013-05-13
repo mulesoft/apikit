@@ -80,7 +80,7 @@ public class CreateCollectionMemberOperation extends AbstractRestOperation
         for (RestParameter param : resource.getParameters())
         {
             //TODO PLG in this case this parameter is not required.
-            if ((((CollectionMemberResource)resource).getParentResource().getName() + "MemberId").equals(param.getName()))
+            if ((((CollectionMemberResource) resource).idVariableName()).equals(param.getName()))
             {
                 continue;
             }
