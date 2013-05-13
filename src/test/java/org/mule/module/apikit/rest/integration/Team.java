@@ -10,10 +10,10 @@ package org.mule.module.apikit.rest.integration;
 
 import org.mule.api.annotations.ContainsTransformerMethods;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonProperty;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @ContainsTransformerMethods
 @JsonAutoDetect
