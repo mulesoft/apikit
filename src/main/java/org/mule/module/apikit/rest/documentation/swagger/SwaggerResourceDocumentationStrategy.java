@@ -66,15 +66,15 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
     {
         if (resource instanceof BaseResource)
         {
-            return createSwaggerResourceListing((BaseResource) resource);
+            return createSwaggerResourceListing((BaseResource) resource, request);
         }
         else
         {
-            return createSwaggerAPIDeclaration(resource, request.getProtocolAdaptor().getBaseURI());
+            return createSwaggerAPIDeclaration(resource, request.getProtocolAdaptor().getBaseURI(), request);
         }
     }
 
-    protected String createSwaggerAPIDeclaration(RestResource resource, URI baseURI)
+    protected String createSwaggerAPIDeclaration(RestResource resource, URI baseURI, RestRequest request)
     {
         try
         {
@@ -84,7 +84,7 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
 
             jsonGenerator.writeStartObject();
             jsonGenerator.writeFieldName("apiVersion");
-            jsonGenerator.writeString("1.0");
+            jsonGenerator.writeString(request.getService().getInterface().getVersion());
             jsonGenerator.writeFieldName("swaggerVersion");
             jsonGenerator.writeString(SwaggerConstants.SWAGGER_VERSION);
             jsonGenerator.writeFieldName("basePath");
@@ -114,7 +114,7 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
         }
     }
 
-    protected String createSwaggerResourceListing(BaseResource resource)
+    protected String createSwaggerResourceListing(BaseResource resource, RestRequest request)
     {
         try
         {
@@ -124,7 +124,7 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
 
             jsonGenerator.writeStartObject();
             jsonGenerator.writeFieldName("apiVersion");
-            jsonGenerator.writeString("1.0");
+            jsonGenerator.writeString(request.getService().getInterface().getVersion());
             jsonGenerator.writeFieldName("swaggerVersion");
             jsonGenerator.writeString(SwaggerConstants.SWAGGER_VERSION);
             jsonGenerator.writeFieldName(SwaggerConstants.APIS_FIELD_NAME);
@@ -174,7 +174,7 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
             }
             operation.appendSwaggerDescriptor(jsonGenerator);
         }
-        //TODO PLG fix the reason for this condition. Same reason as below.
+        //TODO PLG fix the reason for this condition. Same reason as
         if (resource instanceof CollectionResource)
         {
             CollectionResource collectionResource = (CollectionResource) resource;
