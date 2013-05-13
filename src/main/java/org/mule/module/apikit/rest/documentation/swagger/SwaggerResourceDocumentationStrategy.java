@@ -189,6 +189,13 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
                 continue;
             }
             operation.appendSwaggerDescriptor(jsonGenerator);
+            for (RepresentationMetaData representationMetaData : operation.getRepresentations())
+            {
+                if (representationMetaData.getMediaType().withoutParameters().equals(MediaType.JSON_UTF_8.withoutParameters()) && representationMetaData.getSchemaLocation() != null)
+                {
+                    models.add(new SwaggerModel(representationMetaData));
+                }
+            }
         }
         //TODO PLG fix the reason for this condition. Same reason as
         if (resource instanceof CollectionResource)
@@ -253,17 +260,15 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
                         continue;
                     }
 
-                    jsonGenerator.writeFieldName(model.getName());
-                    jsonGenerator.writeStartObject();
+                    jsonGenerator.writeFieldName(currentObject.getKey());
                     {
-
+                        jsonGenerator.writeStartObject();
                         jsonGenerator.writeFieldName("id");
-                        jsonGenerator.writeString(model.getName());
+                        jsonGenerator.writeString(currentObject.getKey());
 
                         jsonGenerator.writeFieldName(PROPERTIES_FIELD_NAME);
-                        jsonGenerator.writeStartObject();
                         {
-
+                            jsonGenerator.writeStartObject();
                             JsonNode fields = currentObject.getValue().get("properties");
                             if (fields != null)
                             {
@@ -278,17 +283,21 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
                                     if ("array".equals(propertyType)) {
                                         String itemType = field.get("items").get("type").asText();
                                         if ("object".equals(itemType)) {
-                                            jsonGenerator.writeStartObject();
-                                            jsonGenerator.writeFieldName("type");
-                                            jsonGenerator.writeString("array");
-                                            jsonGenerator.writeFieldName("items");
-                                            jsonGenerator.writeStartObject();
-                                            jsonGenerator.writeFieldName("$ref");
-                                            String innerObjectName = currentObject.getKey() + StringUtils.capitalize(NameUtils.singularize(fieldName));
-                                            jsonGenerator.writeString(innerObjectName);
-                                            innerObjects.add(new HashMap.SimpleEntry<String, JsonNode>(innerObjectName, field.get("items").get("properties")));
-                                            jsonGenerator.writeEndObject();
-                                            jsonGenerator.writeEndObject();
+                                            {
+                                                jsonGenerator.writeStartObject();
+                                                jsonGenerator.writeFieldName("type");
+                                                jsonGenerator.writeString("array");
+                                                jsonGenerator.writeFieldName("items");
+                                                {
+                                                    jsonGenerator.writeStartObject();
+                                                    jsonGenerator.writeFieldName("$ref");
+                                                    String innerObjectName = currentObject.getKey() + StringUtils.capitalize(NameUtils.singularize(fieldName));
+                                                    jsonGenerator.writeString(innerObjectName);
+                                                    innerObjects.add(new HashMap.SimpleEntry<String, JsonNode>(innerObjectName, field.get("items")));
+                                                    jsonGenerator.writeEndObject();
+                                                }
+                                                jsonGenerator.writeEndObject();
+                                            }
                                         } else {
                                             jsonGenerator.writeTree(field);
                                         }
@@ -307,10 +316,11 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
                                     }
                                 }
                             }
+                            jsonGenerator.writeEndObject();
                         }
                         jsonGenerator.writeEndObject();
                     }
-                    jsonGenerator.writeEndObject();
+
                 }
             }
         }

@@ -95,7 +95,7 @@ public class RetrieveDocumentOperation extends AbstractRestOperation
         jsonGenerator.writeString(getDescription());
 
         jsonGenerator.writeFieldName(SwaggerConstants.RESPONSE_CLASS_FIELD_NAME);
-        jsonGenerator.writeString(StringUtils.capitalize(NameUtils.camel(resource.getName())));
+        jsonGenerator.writeString(StringUtils.capitalize(NameUtils.camel(getJsonDataType())));
 
         jsonGenerator.writeEndObject();
     }
