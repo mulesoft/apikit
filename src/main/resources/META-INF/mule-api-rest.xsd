@@ -13,6 +13,35 @@
 
     <xsd:element name="api" type="api:apiType"/>
 
+    <xsd:element name="abstract-documentation-strategy" abstract="true" type="abstractDocumentationStrategyType"/>
+
+    <xsd:complexType name="abstractDocumentationStrategyType"/>
+
+    <xsd:element name="swagger-documentation" substitutionGroup="abstract-documentation-strategy">
+        <xsd:complexType>
+            <xsd:complexContent>
+                <xsd:extension base="abstractDocumentationStrategyType">
+                    <xsd:attribute name="enableConsole" type="mule:substitutableBoolean"
+                        default="true">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Enables the swagger console used for exploring and testing the API.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="consolePath" type="mule:nonBlankString" default="console">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Enables the swagger console used for exploring and testing the API.
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:extension>
+            </xsd:complexContent>
+        </xsd:complexType>
+    </xsd:element>
+    
+
     <xsd:element name="interface" substitutionGroup="api:abstract-web-service-interface">
         <xsd:complexType>
             <xsd:complexContent>
@@ -35,8 +64,9 @@
         <xsd:complexType>
             <xsd:complexContent>
                 <xsd:extension base="api:abstractWebServiceType">
-                    <xsd:attribute name="enableSwagger" type="mule:substitutableBoolean"
-                        default="true" />
+                    <xsd:sequence>
+                        <xsd:element ref="abstract-documentation-strategy" minOccurs="0"/>
+                    </xsd:sequence>
                 </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>

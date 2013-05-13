@@ -30,6 +30,7 @@
 
     <service name="myService" interface-ref="myInterface" description="service description">
         <mule:inbound-endpoint address="http://localhost:8080" />
+        <swagger-documentation/>
     </service>
 
 </api>

@@ -43,6 +43,7 @@
 
     <service name="myService" interface-ref="myInterface" description="service description">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <swagger-documentation/>
     </service>
 
 </api>

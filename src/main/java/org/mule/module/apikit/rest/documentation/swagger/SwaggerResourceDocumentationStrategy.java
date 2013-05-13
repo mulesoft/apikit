@@ -13,6 +13,7 @@ import static org.mule.module.apikit.rest.swagger.SwaggerConstants.MODELS_FIELD_
 import static org.mule.module.apikit.rest.swagger.SwaggerConstants.OPERATIONS_FIELD_NAME;
 import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PATH_FIELD_NAME;
 import static org.mule.module.apikit.rest.swagger.SwaggerConstants.PROPERTIES_FIELD_NAME;
+
 import org.mule.RequestContext;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleRuntimeException;
@@ -56,6 +57,21 @@ import org.springframework.util.StringUtils;
 public class SwaggerResourceDocumentationStrategy implements RestDocumentationStrategy
 {
 
+    protected boolean enableConsole = Boolean.TRUE;
+    protected String consolePath = "console";
+    
+    public SwaggerResourceDocumentationStrategy()
+    {
+        super();
+    }
+
+    public SwaggerResourceDocumentationStrategy(boolean enableConsole, String conolePath)
+    {
+        super();
+        this.enableConsole = enableConsole;
+        this.consolePath = conolePath;
+    }
+    
     public MediaType getDocumentationMediaType()
     {
         return MediaType.JSON_UTF_8;
@@ -299,5 +315,15 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
             }
         }
         jsonGenerator.writeEndObject();
+    }
+
+    public boolean isEnableConsole()
+    {
+        return enableConsole;
+    }
+
+    public String getConsolePath()
+    {
+        return consolePath;
     }
 }

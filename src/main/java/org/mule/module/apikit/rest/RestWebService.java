@@ -26,15 +26,11 @@ import java.util.List;
 
 public class RestWebService extends AbstractWebService<RestWebServiceInterface>
 {
-    protected boolean enableSwagger;
     protected String swaggerConsolePath = "console";
     protected HierarchicalRestResource baseResource;
-    protected RestDocumentationStrategy documentationStrategy = new SwaggerResourceDocumentationStrategy();
+    protected RestDocumentationStrategy documentationStrategy;
 
-    public RestWebService(String name,
-                          RestWebServiceInterface webServiceInterface,
-                          boolean enableSwagger,
-                          MuleContext muleContext)
+    public RestWebService(String name, RestWebServiceInterface webServiceInterface, MuleContext muleContext)
     {
         super(name, webServiceInterface, muleContext);
     }
@@ -46,9 +42,11 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
         BaseResource resource = new BaseResource();
         List<RestResource> resources = new ArrayList<RestResource>();
         resources.addAll((List<RestResource>) webServiceInterface.getRoutes());
-        if (enableSwagger)
+        if (documentationStrategy instanceof SwaggerResourceDocumentationStrategy
+            && ((SwaggerResourceDocumentationStrategy) documentationStrategy).isEnableConsole())
         {
-            resources.add(new SwaggerConsoleResource(swaggerConsolePath, resource));
+            resources.add(new SwaggerConsoleResource(
+                ((SwaggerResourceDocumentationStrategy) documentationStrategy).getConsolePath(), resource));
         }
         resource.setResources(resources);
         resource.initialise();
@@ -59,16 +57,6 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
     public String getConstructType()
     {
         return "REST-WEB-SERVICE";
-    }
-
-    public boolean isEnableSwagger()
-    {
-        return enableSwagger;
-    }
-
-    public void setEnableSwagger(boolean enableSwagger)
-    {
-        this.enableSwagger = enableSwagger;
     }
 
     public HierarchicalRestResource getBaseResource()

@@ -41,6 +41,7 @@ public class RestAPINamespaceHandler extends MuleNamespaceHandler
             ParameterList.class, false));
         registerBeanDefinitionParser("query-parameter", new ChildDefinitionParser("parameter",
             QueryParameter.class, false));
+        registerBeanDefinitionParser("swagger-documentation", new SwaggerDocumentationDefinitionParser());
     }
 
 }

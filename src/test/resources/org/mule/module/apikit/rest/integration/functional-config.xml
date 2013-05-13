@@ -43,6 +43,7 @@
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
             <mule:object-to-string-transformer/>
         </http:inbound-endpoint>
+        <swagger-documentation/>
     </service>
 
 </api>

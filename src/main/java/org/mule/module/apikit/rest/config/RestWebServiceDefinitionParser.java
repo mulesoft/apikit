@@ -19,7 +19,6 @@ import org.w3c.dom.Element;
 public class RestWebServiceDefinitionParser extends OrphanDefinitionParser
 {
     public static final String ATTRIBUTE_INTERFACE_REF = "interface-ref";
-    public static final String ATTRIBUTE_ENABLE_SWAGGER = "enableSwagger";
 
     public RestWebServiceDefinitionParser()
     {
@@ -32,7 +31,6 @@ public class RestWebServiceDefinitionParser extends OrphanDefinitionParser
     {
         builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_NAME));
         builder.addConstructorArgReference(element.getAttribute(ATTRIBUTE_INTERFACE_REF));
-        builder.addConstructorArgValue(element.getAttribute(ATTRIBUTE_ENABLE_SWAGGER));
         builder.addConstructorArgReference(MuleProperties.OBJECT_MULE_CONTEXT);
         super.doParse(element, parserContext, builder);
     }

@@ -48,7 +48,7 @@ public class RestWebServiceTestCase extends AbstractMuleTestCase
         Mockito.when(event.getMessage()).thenReturn(muleMessage);
         Mockito.when(event.getMessage().getInboundProperty("http.request.path")).thenReturn("/api/1/2");
         Mockito.when(muleMessage.getInboundProperty("http.method")).thenReturn("GET");
-        restWebService = new RestWebService("name", interface1, false, muleContext);
+        restWebService = new RestWebService("name", interface1, muleContext);
         restWebService.setMessageSource(trigger);
     }
 
