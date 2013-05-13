@@ -18,6 +18,7 @@
             <when expression="#[!payload.name.matches('\\w+')]">
                 <logger level="WARN" message="invalid name returning 400"/>
                 <set-property propertyName="http.status" value="400"/>
+                <set-payload value="Invalid League Name"/>
             </when>
             <otherwise>
                 <set-variable variableName="leaguesMemberId" value="#[app.registry['list-of-leagues'].getLeagues().size() + 1]"/>
@@ -44,10 +45,19 @@
     <flow name="updateLeague">
         <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.rest.integration.League"/>
-        <expression-component>
-            league = app.registry['list-of-leagues'].getLeague(leaguesMemberId);
-            league.name = payload.name;
-        </expression-component>
+        <choice>
+            <when expression="#[!payload.name.matches('[\\w ]+')]">
+                <logger level="WARN" message="invalid name returning 400"/>
+                <set-property propertyName="http.status" value="400"/>
+                <set-payload value="Invalid League Name"/>
+            </when>
+            <otherwise>
+                <expression-component>
+                    league = app.registry['list-of-leagues'].getLeague(leaguesMemberId);
+                    league.name = payload.name;
+                </expression-component>
+            </otherwise>
+        </choice>
     </flow>
 
     <flow name="deleteLeague">

@@ -11,6 +11,7 @@ package org.mule.module.apikit.rest.integration;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
@@ -125,9 +126,21 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     {
         given().log().everything().body("{ \"name\": \"(invlid name)\" }")
                 .contentType("application/json")
-                .expect()
+                .expect().log().everything()
                 .statusCode(400)
+                .body(containsString("Invalid League Name"))
                 .post("/api/leagues");
+    }
+
+    @Test
+    public void testUpdateCustomStatusOnCollectionArchetype() throws Exception
+    {
+        given().log().everything().body("{ \"name\": \"(invlid name)\" }")
+                .contentType("application/json")
+                .expect().log().everything()
+                .statusCode(400)
+                .body(containsString("Invalid League Name"))
+                .put("/api/leagues/liga-bbva");
     }
 
     @Test
