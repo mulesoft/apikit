@@ -21,6 +21,12 @@
     <build>
         <plugins>
             <plugin>
+                <!-- We can't upgrade until this get fixed http://jira.codehaus.org/browse/MRELEASE -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3.2</version>
+            </plugin>
+            <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
                 <version>1.8.0</version>
@@ -186,12 +192,17 @@
     </dependencies>
 
     <scm>
-        <connection>scm:git:git://github.com:mulesoft/mule-module-wsapi.git</connection>
-        <developerConnection>scm:git:git@github.com:mulesoft/mule-module-wsapi.git</developerConnection>
-        <url>http://github.com/mulesoft/mule-module-wsapi</url>
+        <connection>scm:git:git://github.com:mulesoft/mule-module-apikit.git</connection>
+        <developerConnection>scm:git:git@github.com:mulesoft/mule-module-apikit.git</developerConnection>
+        <url>http://github.com/mulesoft/mule-module-apikit</url>
     </scm>
 
     <distributionManagement>
+        <repository>
+            <id>mule-ee-releases</id>
+            <name>Mule Release Repository</name>
+            <url>http://dev.ee.mulesource.com/repository/content/repositories/releases/</url>
+        </repository>
         <snapshotRepository>
             <id>mule-ee-snapshots</id>
             <name>Mule Snapshot Repository</name>
