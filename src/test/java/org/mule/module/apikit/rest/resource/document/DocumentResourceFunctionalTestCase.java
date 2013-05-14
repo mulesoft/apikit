@@ -43,14 +43,14 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void documentNotFound() throws Exception
     {
-        expect().response().statusCode(404).header("Content-Length", "0").when().head("/api/league1");
-        expect().response().statusCode(404).header("Content-Length", "0").when().head("/api/league1/");
+        expect().response().log().everything().statusCode(404).when().head("/api/league1");
+        expect().response().log().everything().statusCode(404).when().head("/api/league1/");
     }
 
     @Test
     public void createNotAllowed() throws Exception
     {
-        expect().response().statusCode(405).header("Content-Length", "0").when().post("/api/league");
+        expect().response().statusCode(405).contentType("application/json").when().post("/api/league");
     }
 
     @Test
@@ -68,7 +68,7 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void deleteNotAllowed() throws Exception
     {
-        expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/league");
+        expect().response().statusCode(405).contentType("application/json").when().delete("/api/league");
     }
 
     @Test
@@ -95,8 +95,8 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void nestedDocumentNotFound() throws Exception
     {
-        expect().response().statusCode(404).header("Content-Length", "0").when().get("/api/league/bla");
-        expect().response().statusCode(404).header("Content-Length", "0").when().get("/api/league/bla/");
+        expect().response().statusCode(404).contentType("application/json").when().get("/api/league/bla");
+        expect().response().statusCode(404).contentType("application/json").when().get("/api/league/bla/");
     }
 
     @Test
@@ -104,12 +104,12 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     {
         expect().response()
             .statusCode(405)
-            .header("Content-Length", "0")
+            .contentType("application/json")
             .when()
             .post("/api/league/association");
         expect().response()
             .statusCode(405)
-            .header("Content-Length", "0")
+            .contentType("application/json")
             .when()
             .post("/api/league/association/");
     }
@@ -168,12 +168,12 @@ public class DocumentResourceFunctionalTestCase extends FunctionalTestCase
     {
         expect().response()
             .statusCode(405)
-            .header("Content-Length", "0")
+            .contentType("application/json")
             .when()
             .delete("/api/league/association");
         expect().response()
             .statusCode(405)
-            .header("Content-Length", "0")
+            .contentType("application/json")
             .when()
             .delete("/api/league/association/");
     }

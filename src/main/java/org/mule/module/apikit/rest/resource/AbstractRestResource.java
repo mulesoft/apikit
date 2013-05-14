@@ -158,17 +158,10 @@ public abstract class AbstractRestResource implements RestResource
 
     protected MuleEvent processResource(RestRequest request) throws RestException
     {
-        try
+        this.getAction(request.getProtocolAdaptor().getOperationType(), request).handle(request);
+        if (RestOperationType.EXISTS == request.getProtocolAdaptor().getOperationType())
         {
-            this.getAction(request.getProtocolAdaptor().getOperationType(), request).handle(request);
-            if (RestOperationType.EXISTS == request.getProtocolAdaptor().getOperationType())
-            {
-                request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
-            }
-        }
-        catch (RestException rana)
-        {
-            request.getProtocolAdaptor().handleException(rana, request);
+            request.getMuleEvent().getMessage().setPayload(NullPayload.getInstance());
         }
         return request.getMuleEvent();
     }

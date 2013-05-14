@@ -8,11 +8,9 @@
 
 package org.mule.module.apikit.rest.resource;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -112,7 +110,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         verify(message, never());
     }
 
-    @Test
+    @Test(expected = ResourceNotFoundException.class)
     public void nestedResourceNotFound() throws RestException, MuleException, URISyntaxException
     {
         when(request.hasMorePathElements()).thenReturn(Boolean.TRUE).thenReturn(Boolean.FALSE);
@@ -127,10 +125,6 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         resource.initialise();
 
         resource.handle(request);
-
-        verify(httpAdapter, times(1)).handleException(any(ResourceNotFoundException.class),
-            any(RestRequest.class));
-        verify(message).setOutboundProperty("http.status", 404);
     }
 
     @Test
@@ -168,7 +162,7 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         verify(message, never());
     }
 
-    @Test
+    @Test(expected = OperationNotAllowedException.class)
     public void nestedResourceActionTypeNotAllowed() throws RestException, MuleException, URISyntaxException
     {
         when(request.hasMorePathElements()).thenReturn(Boolean.TRUE).thenReturn(Boolean.FALSE);
@@ -183,10 +177,6 @@ public class HierarchicalRestResourceTestCase extends AbstractMuleTestCase
         resource.initialise();
 
         resource.handle(request);
-
-        verify(httpAdapter, times(1)).handleException(any(OperationNotAllowedException.class),
-            any(RestRequest.class));
-        verify(message).setOutboundProperty("http.status", 405);
     }
 
     static class DummyHierarchicalRestResource extends AbstractHierarchicalRestResource

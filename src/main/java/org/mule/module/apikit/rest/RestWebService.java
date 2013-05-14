@@ -72,15 +72,24 @@ public class RestWebService extends AbstractWebService<RestWebServiceInterface>
             @Override
             public MuleEvent process(MuleEvent event) throws MessagingException
             {
+                RestRequest request = null;
                 try
                 {
-                    RestRequest request = new DefaultRestRequest(event, RestWebService.this);
+                    request = new DefaultRestRequest(event, RestWebService.this);
                     baseResource.handle(request);
                     return request.getMuleEvent();
                 }
                 catch (RestException e)
                 {
-                    throw new MessagingException(event, e);
+                    if (request != null)
+                    {
+                        request.getProtocolAdaptor().handleException(e, request);
+                        return request.getMuleEvent();
+                    }
+                    else
+                    {
+                        throw new MessagingException(event, e);
+                    }
                 }
             }
         };

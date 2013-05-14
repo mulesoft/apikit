@@ -10,7 +10,6 @@ package org.mule.module.apikit.rest.protocol;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.verify;
@@ -27,7 +26,6 @@ import org.mule.module.apikit.rest.protocol.http.HttpRestProtocolAdapter;
 import org.mule.module.apikit.rest.resource.ResourceNotFoundException;
 import org.mule.tck.junit4.AbstractMuleTestCase;
 import org.mule.tck.size.SmallTest;
-import org.mule.transport.NullPayload;
 import org.mule.transport.http.HttpConnector;
 
 import com.google.common.net.MediaType;
@@ -60,7 +58,6 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
     public void setup() throws URISyntaxException
     {
         when(request.getMuleEvent()).thenReturn(event);
-        doCallRealMethod().when(request).setErrorPayload(anyString(), anyString(), anyString(), anyString());
         when(event.getMessageSourceURI()).thenReturn(new URI("http://localhost:8080/api"));
         when(event.getMessage()).thenReturn(message);
         when(message.getInboundProperty(HttpConnector.HTTP_METHOD_PROPERTY)).thenReturn("get");
@@ -188,7 +185,6 @@ public class HttpRestProtocolAdapterTestCase extends AbstractMuleTestCase
         adapter = new HttpRestProtocolAdapter(event);
         adapter.handleException(new ResourceNotFoundException("1"), request);
         verify(message).setOutboundProperty(HTTP_STATUS_PROPERTY, 404);
-        verify(message).setPayload(any(NullPayload.class));
     }
 
     @Test

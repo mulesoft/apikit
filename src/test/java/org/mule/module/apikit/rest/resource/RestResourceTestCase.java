@@ -11,7 +11,6 @@ package org.mule.module.apikit.rest.resource;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -92,17 +91,12 @@ public class RestResourceTestCase extends AbstractMuleTestCase
         verify(message, never());
     }
 
-    @Test
+    @Test(expected = OperationNotAllowedException.class)
     public void actionTypeNotAllowed() throws RestException, MuleException
     {
         when(httpAdapter.getOperationType()).thenReturn(RestOperationType.RETRIEVE);
         when(action.getType()).thenReturn(RestOperationType.UPDATE);
-
         resource.handle(request);
-
-        verify(httpAdapter, times(1)).handleException(any(OperationNotAllowedException.class),
-            any(RestRequest.class));
-        verify(message).setOutboundProperty("http.status", 405);
     }
 
     static class DummyRestResource extends AbstractRestResource

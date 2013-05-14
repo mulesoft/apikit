@@ -13,6 +13,7 @@ import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import org.mule.module.apikit.rest.protocol.http.HttpStatusCode;
@@ -59,7 +60,9 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     @Test
     public void testNoDeleteOnCollectionArchetype() throws Exception
     {
-        expect().response().statusCode(405).when().delete("/api/leagues");
+        expect().response().statusCode(405)
+                .body("title", is("METHOD NOT ALLOWED"))
+                .when().delete("/api/leagues");
     }
 
     @Test
@@ -288,12 +291,40 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     @Test
     public void testRetrieveOnSubCollectionArchetype() throws Exception
     {
-        expect().log()
+        given().header("Accept", "application/json")
+        .expect().log()
                 .everything()
                 .response()
                 .body("name", hasItems("Real Madrid", "Barcelona"))
                 .when()
                 .get("/api/leagues/liga-bbva/teams");
+    }
+
+    @Test
+    public void testRetrieveOnSubCollectionArchetypeForce500Json() throws Exception
+    {
+        expect().log()
+                .everything()
+                .response()
+                .statusCode(500)
+                .contentType("application/json")
+                .body("httpStatus", is("500"))
+                .when()
+                .get("/api/leagues/liga-bbvaa/teams");
+    }
+
+    @Test
+    public void testRetrieveOnSubCollectionArchetypeForce500Xml() throws Exception
+    {
+        given().header("Accept", "text/xml")
+        .expect().log()
+                .everything()
+                .response()
+                .statusCode(500)
+                .contentType("text/xml")
+                .body("httpStatus", hasItem("500"))
+                .when()
+                .get("/api/leagues/liga-bbvaa/teams");
     }
 
     @Test

@@ -9,6 +9,8 @@
 package org.mule.module.apikit.rest.resource.base;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -40,22 +42,26 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void updateNotSupported() throws Exception
     {
-        given().expect().response().statusCode(405).header("Content-Length", "0").when().put("/api");
-        given().expect().response().statusCode(405).header("Content-Length", "0").when().put("/api/");
+        given().header("Accept", "text/xml").expect().response().log().everything().statusCode(405)
+                .body("title", hasItem("METHOD NOT ALLOWED")).contentType("text/xml").when().put("/api");
+        given().header("Accept", "text/html").expect().response().log().everything().statusCode(405)
+                .header("Content-Length", "0").when().put("/api/");
     }
 
     @Test
     public void createNotSupported() throws Exception
     {
-        given().expect().response().statusCode(405).header("Content-Length", "0").when().post("/api");
-        given().expect().response().statusCode(405).header("Content-Length", "0").when().post("/api/");
+        given().header("Accept", "application/json").expect().response().log().everything().statusCode(405)
+                .body("title", is("METHOD NOT ALLOWED")).contentType("application/json").when().post("/api");
+        given().header("Accept", "text/plain").expect().response().statusCode(405)
+                .header("Content-Length", "0").when().post("/api/");
     }
 
     @Test
     public void deleteNotSupported() throws Exception
     {
-        given().expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api");
-        given().expect().response().statusCode(405).header("Content-Length", "0").when().delete("/api/");
+        given().expect().response().statusCode(405).contentType("application/json").when().delete("/api");
+        given().expect().response().statusCode(405).contentType("application/json").when().delete("/api/");
     }
 
     @Test
@@ -68,8 +74,8 @@ public class BaseResourceFunctionalTestCase extends FunctionalTestCase
     @Test
     public void existsNotSupport() throws Exception
     {
-        given().expect().response().statusCode(405).header("Content-Length", "0").when().head("/api");
-        given().expect().response().statusCode(405).header("Content-Length", "0").when().head("/api/");
+        given().expect().response().statusCode(405).when().head("/api");
+        given().expect().response().statusCode(405).when().head("/api/");
     }
 
 }

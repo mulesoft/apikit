@@ -12,6 +12,9 @@ import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ER
 import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ERROR_METHOD_NOT_ALLOWED;
 import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ERROR_NOT_ACCEPTABLE;
 import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ERROR_NOT_FOUND;
+import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ERROR_UNAUTHORIZED;
+import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE;
+import static org.mule.module.apikit.rest.protocol.http.HttpStatusCode.SERVER_ERROR_INTERNAL;
 import static org.mule.transport.http.HttpConnector.HTTP_STATUS_PROPERTY;
 
 import org.mule.api.MuleEvent;
@@ -161,44 +164,51 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         if (re instanceof OperationNotAllowedException)
         {
             OperationNotAllowedException anse = (OperationNotAllowedException) re;
-            message.setOutboundProperty("http.status",
-                CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode());
+            message.setOutboundProperty("http.status", CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode());
             message.setOutboundProperty("Allow",
                 StringUtils.join(actionTypesToHttpMethods(anse.getResource().getAllowedOperationTypes()), " ,"));
+            String uri = "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.6";
             String detail = "The method specified in the Request-Line is not allowed for the resource identified by the Request-URI.";
-            request.setErrorPayload(null, "METHOD NOT ALLOWED", detail, String.valueOf(CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode()));
+            request.setErrorPayload(uri, "METHOD NOT ALLOWED", detail, CLIENT_ERROR_METHOD_NOT_ALLOWED.getCodeAsString());
 
         }
         else if (re instanceof ResourceNotFoundException)
         {
             message.setOutboundProperty("http.status", CLIENT_ERROR_NOT_FOUND.getCode());
+            String uri = "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.5";
             String detail = "The server has not found anything matching the Request-URI or the server does not wish " +
                             "to reveal exactly why the request has been refused, or no other response is applicable.";
-            request.setErrorPayload(null, "NOT FOUND", detail, String.valueOf(CLIENT_ERROR_NOT_FOUND.getCode()));
+            request.setErrorPayload(uri, "NOT FOUND", detail, CLIENT_ERROR_NOT_FOUND.getCodeAsString());
         }
         else if (re instanceof MediaTypeNotAcceptableException)
         {
             message.setOutboundProperty("http.status", CLIENT_ERROR_NOT_ACCEPTABLE.getCode());
+            String uri = "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.7";
             String detail = "The resource identified by the request is only capable of generating response entities " +
                             "whose content characteristics do not match the user's requirements (in Accept* headers).";
-            request.setErrorPayload(null, "NOT ACCEPTABLE", detail, CLIENT_ERROR_NOT_ACCEPTABLE.getCodeAsString());
+            request.setErrorPayload(uri, "NOT ACCEPTABLE", detail, CLIENT_ERROR_NOT_ACCEPTABLE.getCodeAsString());
         }
         else if (re instanceof UnsupportedMediaTypeException)
         {
-            message.setOutboundProperty("http.status",
-                HttpStatusCode.CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE.getCode());
-            message.setPayload(NullPayload.getInstance());
+            message.setOutboundProperty("http.status", CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE.getCode());
+            String uri = "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.16";
+            String detail = "The server is refusing to service the request because the entity of the request is in a format not " +
+                            "supported by the requested resource for the requested method.";
+            request.setErrorPayload(uri, "UNSUPPORTED MEDIA TYPE", detail, CLIENT_ERROR_UNSUPPORTED_MEDIA_TYPE.getCodeAsString());
         }
         else if (re instanceof UnauthorizedException)
         {
-            message.setOutboundProperty("http.status", HttpStatusCode.CLIENT_ERROR_UNAUTHORIZED.getCode());
-            message.setPayload(NullPayload.getInstance());
+            message.setOutboundProperty("http.status", CLIENT_ERROR_UNAUTHORIZED.getCode());
+            String uri = "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.2";
+            String detail = "The request requires user authentication.";
+            request.setErrorPayload(uri, "UNAUTHORIZED", detail, CLIENT_ERROR_UNAUTHORIZED.getCodeAsString());
         }
         else if (re instanceof InvalidInputException)
         {
-            String detail = "The request could not be understood by the server due to malformed syntax.";
             message.setOutboundProperty("http.status", CLIENT_ERROR_BAD_REQUEST.getCode());
-            request.setErrorPayload(null, detail, "BAD REQUEST", CLIENT_ERROR_BAD_REQUEST.getCodeAsString());
+            String uri = "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1";
+            String detail = "The request could not be understood by the server due to malformed syntax.";
+            request.setErrorPayload(uri, detail, "BAD REQUEST", CLIENT_ERROR_BAD_REQUEST.getCodeAsString());
         }
         else if (re instanceof UserDefinedStatusCodeException)
         {
@@ -206,8 +216,10 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
         }
         else
         {
-            message.setOutboundProperty("http.status", HttpStatusCode.SERVER_ERROR_INTERNAL.getCode());
-            request.setErrorPayload(null, re.toString(), re.getMessage(), String.valueOf(HttpStatusCode.SERVER_ERROR_INTERNAL.getCode()));
+            message.setOutboundProperty("http.status", SERVER_ERROR_INTERNAL.getCode());
+            String uri = "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.1";
+            String title = re.getCause() != null ? re.getCause().getClass().getName() : re.getClass().getName();
+            request.setErrorPayload(uri, title, re.getMessage(), SERVER_ERROR_INTERNAL.getCodeAsString());
         }
     }
 

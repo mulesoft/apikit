@@ -33,30 +33,22 @@ public abstract class AbstractHierarchicalRestResource extends AbstractRestResou
     @Override
     public void handle(RestRequest restRequest) throws RestException
     {
-        try
+        if (restRequest.hasMorePathElements())
         {
-            if (restRequest.hasMorePathElements())
+            String path = restRequest.getNextPathElement();
+            RestResource resource = routingTable.get(path);
+            if (resource != null)
             {
-                String path = restRequest.getNextPathElement();
-                RestResource resource = routingTable.get(path);
-                if (resource != null)
-                {
-                    resource.handle(restRequest);
-                }
-                else
-                {
-                    throw new ResourceNotFoundException(path);
-                }
+                resource.handle(restRequest);
             }
             else
             {
-                processResource(restRequest);
+                throw new ResourceNotFoundException(path);
             }
         }
-        catch (RestException re)
+        else
         {
-            restRequest.getProtocolAdaptor().handleException(re, restRequest);
-
+            processResource(restRequest);
         }
     }
 
