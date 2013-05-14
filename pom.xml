@@ -194,8 +194,8 @@
         <connection>scm:git:git://github.com:mulesoft/mule-module-apikit.git</connection>
         <developerConnection>scm:git:git@github.com:mulesoft/mule-module-apikit.git</developerConnection>
         <url>http://github.com/mulesoft/mule-module-apikit</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <distributionManagement>
         <repository>
