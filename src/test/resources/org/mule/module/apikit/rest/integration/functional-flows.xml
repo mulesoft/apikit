@@ -68,7 +68,6 @@
 
     <flow name="retrieveTeams">
         <expression-component>
-            //payload = app.registry['list-of-teams-' + leaguesMemberId];
             payload = app.registry['list-of-leagues'].getLeague(leaguesMemberId).getTeams();
         </expression-component>
     </flow>
@@ -91,11 +90,27 @@
         </choice>
     </flow>
 
+    <flow name="retrieveFederation">
+        <expression-component>
+            payload = app.registry['list-of-leagues'].getLeague(leaguesMemberId).getFederation();
+        </expression-component>
+    </flow>
+
+    <flow name="updateFederation">
+        <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
+                            returnClass="org.mule.module.apikit.rest.integration.Federation"/>
+        <expression-component>
+            league = app.registry['list-of-leagues'].getLeague(leaguesMemberId);
+            league.federation = payload;
+        </expression-component>
+    </flow>
+
 
     <spring:beans>
         <spring:bean id="liga-bbva" class="org.mule.module.apikit.rest.integration.League">
             <spring:property name="id" value="liga-bbva"/>
             <spring:property name="name" value="Liga BBVA"/>
+            <spring:property name="federation" ref="spanish-federation"/>
             <spring:property name="teams">
                 <spring:list>
                     <spring:ref bean="real-madrid"/>
@@ -106,15 +121,24 @@
                 </spring:list>
             </spring:property>
         </spring:bean>
+        <spring:bean id="spanish-federation" class="org.mule.module.apikit.rest.integration.Federation">
+            <spring:property name="name" value="Real Federacion Espanola de Futbol"/>
+            <spring:property name="year" value="1909"/>
+        </spring:bean>
         <spring:bean id="premier-league" class="org.mule.module.apikit.rest.integration.League">
             <spring:property name="id" value="premier-league"/>
             <spring:property name="name" value="Premier League"/>
+            <spring:property name="federation" ref="english-federation"/>
             <spring:property name="teams">
                 <spring:list>
                     <spring:ref bean="man-united"/>
                     <spring:ref bean="man-city"/>
                 </spring:list>
             </spring:property>
+        </spring:bean>
+        <spring:bean id="english-federation" class="org.mule.module.apikit.rest.integration.Federation">
+            <spring:property name="name" value="Football Association"/>
+            <spring:property name="year" value="1863"/>
         </spring:bean>
         <spring:bean id="list-of-leagues" class="org.mule.module.apikit.rest.integration.Leagues">
             <spring:property name="leagues">

@@ -234,33 +234,6 @@ public class RestIntegrationTestCase extends FunctionalTestCase
                 .get("/api/leagues");
     }
 
-    /*
-    @Test
-    public void testNoPostOnDocumentArchetype() throws Exception
-    {
-        expect().response().statusCode(405).when().post("/api/leagues/liga-bbva");
-        FlowAssert.verify("apiImplementation");
-    }
-
-    @Test
-    public void testRetrieveUsingXmlOnDocumentArchetype() throws Exception
-    {
-        given().log().all().header("Accept",
-                                   "text/xml").expect().response().log().all().statusCode(200).contentType("text/xml").body("league.id",
-                                                                                                                            is("liga-bbva")).when().get("/api/leagues/liga-bbva");
-        FlowAssert.verify("apiImplementation");
-    }
-
-    @Test
-    public void testRetrieveUsinXmlOnDocumentArchetype2() throws Exception
-    {
-        given().log().all().header("Accept",
-                                   "text/xml").expect().response().log().all().statusCode(200).contentType("text/xml").body("league.id",
-                                                                                                                            is("premier-league")).when().get("/api/leagues/premier-league");
-        FlowAssert.verify("apiImplementation");
-    }
-*/
-
     @Test
     public void testRetrieveOnMemberArchetype() throws Exception
     {
@@ -374,16 +347,83 @@ public class RestIntegrationTestCase extends FunctionalTestCase
                 .get("/api/leagues/liga-bbvaa");
     }
 
-    /*
-     * @Test public void testRetrieveUsinJsonOnDocumentArchetype2() throws Exception {
-     * given().log().all().header("Accept",
-     * "application/json").expect().response().log().all().statusCode(200)
-     * .contentType("application/json").body("id",
-     * is("premier-league")).when().get("/api/leagues/premier-league");
-     * FlowAssert.verify("apiImplementation"); }
-     * @Test public void testRetrieveDoesntExistsOnDocumentArchetype() throws Exception {
-     * given().log().all().header("Accept",
-     * "text/xml").expect().response().log().all().statusCode(404).when().get("/api/leagues/mls");
-     * FlowAssert.verify("apiImplementation"); }
-     */
+    ///////////
+    // DOCUMENT
+    ///////////
+
+    @Test
+    public void testRetrieveOnDocumentArchetype() throws Exception
+    {
+        given().log().all().header("Accept", "application/json")
+                .expect().response().log().all()
+                .statusCode(200)
+                .contentType("application/json")
+                .body("year", is(1909))
+                .when().get("/api/leagues/liga-bbva/federation");
+    }
+
+    @Test
+    public void testRetrieveUnacceptedTypeOnDocumentArchetype() throws Exception
+    {
+        given().log().all().header("Accept", "text/xml")
+                .expect().response().log().all()
+                .statusCode(406).contentType("text/xml")
+                .body("title", hasItem("NOT ACCEPTABLE"))
+                .when().get("/api/leagues/liga-bbva/federation");
+    }
+
+    @Test
+    public void testUpdateOnDocumentArchetype() throws Exception
+    {
+        given().body("{ \"name\": \"Federacion Espanola\", \"year\":1991 }")
+                .contentType("application/json")
+                .expect().statusCode(204)
+                .header("Content-Length", "0")
+                .put("/api/leagues/liga-bbva/federation");
+
+        //verify updated data
+        given().log().all().header("Accept", "application/json")
+                .expect().response().log().all()
+                .statusCode(200)
+                .contentType("application/json")
+                .body("year", is(1991))
+                .when().get("/api/leagues/liga-bbva/federation");
+    }
+
+    @Test
+    public void testUpdateInvalidDataOnDocumentArchetype() throws Exception
+    {
+        given().body("{ \"name\": \"Federacion Espanola\", \"year\":\"nineteen eighty-four\" }")
+                .contentType("application/json")
+                .expect().log().all().statusCode(400)
+                .body("title", is("BAD REQUEST"))
+                .put("/api/leagues/liga-bbva/federation");
+    }
+
+    @Test
+    public void testUpdateInvalidRepresentationOnDocumentArchetype() throws Exception
+    {
+        given().body("Spanish League")
+                .contentType("text/plain")
+                .expect().log().all().statusCode(415)
+                .body("title", is("UNSUPPORTED MEDIA TYPE"))
+                .put("/api/leagues/liga-bbva/federation");
+    }
+
+    @Test
+    public void testNoDeleteOnDocumentArchetype() throws Exception
+    {
+        expect().response().statusCode(405)
+                .body("title", is("METHOD NOT ALLOWED"))
+                .when().delete("/api/leagues/liga-bbva/federation");
+    }
+
+    @Test
+    public void testNoCreateOnDocumentArchetype() throws Exception
+    {
+        expect().response().statusCode(405)
+                .body("title", is("METHOD NOT ALLOWED"))
+                .when().post("/api/leagues/liga-bbva/federation");
+    }
+
 }

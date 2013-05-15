@@ -29,6 +29,7 @@ public class League
     private String id;
     private String name;
     private List<Team> teams;
+    private Federation federation;
 
     public League()
     {
@@ -61,6 +62,18 @@ public class League
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public Federation getFederation()
+    {
+        return federation;
+    }
+
+    public void setFederation(Federation federation)
+    {
+        this.federation = federation;
     }
 
     @Override

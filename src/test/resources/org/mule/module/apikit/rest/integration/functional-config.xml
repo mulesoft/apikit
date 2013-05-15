@@ -36,6 +36,12 @@
                         </retrieve>
                     </member>
                 </collection-resource>
+                <document-resource name="federation">
+                    <representation mediaType="application/json" schemaType="JSONSchema"
+                                    schemaLocation="jsonschema:org.mule.module.apikit.rest.integration.Federation"/>
+                    <retrieve flow-ref="retrieveFederation"/>
+                    <update flow-ref="updateFederation"/>
+                </document-resource>
             </member>
         </collection-resource>
     </interface>

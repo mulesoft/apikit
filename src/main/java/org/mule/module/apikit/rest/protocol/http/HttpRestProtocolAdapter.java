@@ -208,7 +208,7 @@ public class HttpRestProtocolAdapter implements RestProtocolAdapter
             message.setOutboundProperty("http.status", CLIENT_ERROR_BAD_REQUEST.getCode());
             String uri = "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.1";
             String detail = "The request could not be understood by the server due to malformed syntax.";
-            request.setErrorPayload(uri, detail, "BAD REQUEST", CLIENT_ERROR_BAD_REQUEST.getCodeAsString());
+            request.setErrorPayload(uri, "BAD REQUEST", detail, CLIENT_ERROR_BAD_REQUEST.getCodeAsString());
         }
         else if (re instanceof UserDefinedStatusCodeException)
         {
