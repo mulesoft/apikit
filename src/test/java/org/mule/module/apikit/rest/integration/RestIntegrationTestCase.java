@@ -112,17 +112,13 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     @Test
     public void testCreateOnCollectionArchetype() throws Exception
     {
-        given().body("{ \"name\": \"MLS\" }")
+        given().body("{ \"name\": \"Major League Soccer\" }")
                 .contentType("application/json")
-                .expect()
-                .statusCode(201)
+                .expect().statusCode(201)
                 .post("/api/leagues");
-        expect().log()
-                .everything()
-                .response()
-                .body("leagues.name", hasItems("Liga BBVA", "Premier League", "MLS"))
-                .when()
-                .get("/api/leagues");
+        expect().log().everything().response()
+                .body("leagues.name", hasItems("Liga BBVA", "Premier League", "Major League Soccer"))
+                .when().get("/api/leagues");
     }
 
     @Test

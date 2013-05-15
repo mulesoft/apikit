@@ -15,7 +15,7 @@
         <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.rest.integration.League"/>
         <choice>
-            <when expression="#[!payload.name.matches('\\w+')]">
+            <when expression="#[!payload.name.matches('[\\w ]+')]">
                 <logger level="WARN" message="invalid name returning 400"/>
                 <set-property propertyName="http.status" value="400"/>
                 <set-payload value="Invalid League Name"/>
