@@ -305,8 +305,8 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
                                         jsonGenerator.writeStartObject();
                                         jsonGenerator.writeFieldName("type");
                                         String innerObjectName = currentObject.getKey() + StringUtils.capitalize(NameUtils.singularize(fieldName));
-                                        jsonGenerator.writeString(model.getName());
-                                        innerObjects.add(new HashMap.SimpleEntry<String, JsonNode>(innerObjectName, field.get("properties")));
+                                        jsonGenerator.writeString(innerObjectName);
+                                        innerObjects.add(new HashMap.SimpleEntry<String, JsonNode>(innerObjectName, field));
                                         jsonGenerator.writeEndObject();
                                     } else {
                                         jsonGenerator.writeStartObject();

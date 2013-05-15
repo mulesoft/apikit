@@ -6,19 +6,17 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest.integration;
-
-import org.mule.module.apikit.rest.integration.swagger.Developers;
+package org.mule.module.apikit.rest.integration.swagger;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonAutoDetect
-public class Team
+public class Developer
 {
 
     private String id;
     private String name;
-    private Developers teamMembers;
+    private String lastname;
 
     public String getId()
     {
@@ -40,13 +38,13 @@ public class Team
         this.name = name;
     }
 
-    public Developers getTeamMembers()
+    public String getLastname()
     {
-        return teamMembers;
+        return lastname;
     }
 
-    public void setTeamMembers(Developers teamMembers)
+    public void setLastname(String lastname)
     {
-        this.teamMembers = teamMembers;
+        this.lastname = lastname;
     }
 }

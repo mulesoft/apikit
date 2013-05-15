@@ -1,0 +1,14 @@
+{
+    "apiVersion": "2.3",
+    "swaggerVersion": "1.0",
+    "apis": [
+        {
+            "path": "/products",
+            "description": "products Collection"
+        },
+        {
+            "path": "/developers",
+            "description": "developers Collection"
+        }
+    ]
+}
