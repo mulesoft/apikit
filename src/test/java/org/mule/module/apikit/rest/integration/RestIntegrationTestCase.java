@@ -13,6 +13,7 @@ import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
@@ -267,10 +268,22 @@ public class RestIntegrationTestCase extends FunctionalTestCase
         given().header("Accept", "application/json")
         .expect().log()
                 .everything()
-                .response()
+                .response().statusCode(200)
                 .body("name", hasItems("Real Madrid", "Barcelona"))
                 .when()
                 .get("/api/leagues/liga-bbva/teams");
+    }
+
+    @Test
+    public void testRetrieveQueryParamOnSubCollectionArchetype() throws Exception
+    {
+        given().header("Accept", "application/json")
+        .expect().log()
+                .everything()
+                .response().statusCode(200)
+                .body("name", not(hasItems("Valencia")))
+                .when()
+                .get("/api/leagues/liga-bbva/teams?limit=2");
     }
 
     @Test

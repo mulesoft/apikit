@@ -68,7 +68,10 @@
 
     <flow name="retrieveTeams">
         <expression-component>
-            payload = app.registry['list-of-leagues'].getLeague(leaguesMemberId).getTeams();
+            teams = app.registry['list-of-leagues'].getLeague(leaguesMemberId).getTeams();
+            int from = (message.inboundProperties.?offset != null) ? Integer.valueOf(message.inboundProperties.offset) : 0;
+            to = (message.inboundProperties.?limit != null) ? Integer.valueOf(message.inboundProperties.limit) : (teams.size() - from);
+            payload = teams.subList(from, to);
         </expression-component>
     </flow>
 
