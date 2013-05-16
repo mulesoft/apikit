@@ -6,7 +6,7 @@
        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
 
-    <interface name="myInterface">
+    <interface name="myInterface" version="2.1">
         <collection-resource name="leagues">
             <retrieve flow-ref="retrieveLeagues">
                 <representation mediaType="application/json" quality="0.8"/>
@@ -30,7 +30,7 @@
                             <query-parameter name="offset" description="Offset at which the count should start" defaultValue="0"/>
                         </parameters>
                     </retrieve>
-                    <member>
+                    <member idVariableName="teamId">
                         <retrieve flow-ref="retrieveTeam">
                             <representation mediaType="application/json"/>
                         </retrieve>

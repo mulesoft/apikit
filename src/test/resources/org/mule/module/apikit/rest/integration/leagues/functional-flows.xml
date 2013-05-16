@@ -70,7 +70,7 @@
         <expression-component>
             teams = app.registry['list-of-leagues'].getLeague(leaguesMemberId).getTeams();
             int from = (message.inboundProperties.?offset != null) ? Integer.valueOf(message.inboundProperties.offset) : 0;
-            to = (message.inboundProperties.?limit != null) ? Integer.valueOf(message.inboundProperties.limit) : (teams.size() - from);
+            to = (message.inboundProperties.?limit != null) ? (Integer.valueOf(message.inboundProperties.limit) + from) : (teams.size() - from);
             payload = teams.subList(from, to);
         </expression-component>
     </flow>
@@ -78,8 +78,8 @@
     <flow name="retrieveTeam">
         <logger level="WARN" message="leaguesMemberId: #[leaguesMemberId]"/>
         <choice>
-            <when expression="#[app.registry['list-of-leagues'].?getLeague(leaguesMemberId).getTeam(teamsMemberId)]">
-                <set-payload value="#[app.registry['list-of-leagues'].getLeague(leaguesMemberId).getTeam(teamsMemberId)]"/>
+            <when expression="#[app.registry['list-of-leagues'].?getLeague(leaguesMemberId).getTeam(teamId)]">
+                <set-payload value="#[app.registry['list-of-leagues'].getLeague(leaguesMemberId).getTeam(teamId)]"/>
                 <!-- response-builder requires a transformer from Object to OutputHandler in oder to work -->
                 <!--
                 <http:response-builder>
