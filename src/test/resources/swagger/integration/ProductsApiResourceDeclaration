@@ -278,8 +278,8 @@
                 "name": {
                     "type": "string"
                 },
-                "teamMembers": {
-                    "type": "ProductsProductTeamTeamMember"
+                "developers": {
+                    "type": "ProductsProductTeamDeveloper"
                 }
             }
         },
@@ -294,13 +294,13 @@
                 }
             }
         },
-        "ProductsProductTeamTeamMember": {
-            "id": "ProductsProductTeamTeamMember",
+        "ProductsProductTeamDeveloper": {
+            "id": "ProductsProductTeamDeveloper",
             "properties": {
                 "developers": {
                     "type": "array",
                     "items": {
-                        "$ref": "ProductsProductTeamTeamMemberDeveloper"
+                        "$ref": "ProductsProductTeamDeveloperDeveloper"
                     }
                 }
             }
@@ -343,8 +343,8 @@
                 }
             }
         },
-        "ProductsProductTeamTeamMemberDeveloper": {
-            "id": "ProductsProductTeamTeamMemberDeveloper",
+        "ProductsProductTeamDeveloperDeveloper": {
+            "id": "ProductsProductTeamDeveloperDeveloper",
             "properties": {
                 "id": {
                     "type": "string"
@@ -397,8 +397,8 @@
                 "name": {
                     "type": "string"
                 },
-                "teamMembers": {
-                    "type": "ProductTeamTeamMember"
+                "developers": {
+                    "type": "ProductTeamDeveloper"
                 }
             }
         },
@@ -413,13 +413,13 @@
                 }
             }
         },
-        "ProductTeamTeamMember": {
-            "id": "ProductTeamTeamMember",
+        "ProductTeamDeveloper": {
+            "id": "ProductTeamDeveloper",
             "properties": {
                 "developers": {
                     "type": "array",
                     "items": {
-                        "$ref": "ProductTeamTeamMemberDeveloper"
+                        "$ref": "ProductTeamDeveloperDeveloper"
                     }
                 }
             }
@@ -462,8 +462,8 @@
                 }
             }
         },
-        "ProductTeamTeamMemberDeveloper": {
-            "id": "ProductTeamTeamMemberDeveloper",
+        "ProductTeamDeveloperDeveloper": {
+            "id": "ProductTeamDeveloperDeveloper",
             "properties": {
                 "id": {
                     "type": "string"

@@ -7,7 +7,7 @@
  */
 
 
-package org.mule.module.apikit.rest.integration;
+package org.mule.module.apikit.rest.integration.leagues;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;

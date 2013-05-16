@@ -8,8 +8,6 @@
 
 package org.mule.module.apikit.rest.integration.swagger;
 
-import org.mule.module.apikit.rest.integration.Team;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonAutoDetect
@@ -62,9 +60,9 @@ public class Product
             return false;
         }
 
-        Product league = (Product) o;
+        Product product = (Product) o;
 
-        if (id != null ? !id.equals(league.id) : league.id != null)
+        if (id != null ? !id.equals(product.id) : product.id != null)
         {
             return false;
         }

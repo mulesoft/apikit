@@ -14,9 +14,9 @@
             </retrieve>
             <member>
                 <representation mediaType="application/json" schemaType="JSONSchema"
-                                schemaLocation="jsonschema:org.mule.module.apikit.rest.integration.League"/>
+                                schemaLocation="jsonschema:org.mule.module.apikit.rest.integration.leagues.League"/>
                 <representation mediaType="text/xml" schemaType="XMLSchema"
-                                schemaLocation="xmlschema:org.mule.module.apikit.rest.integration.League"/>
+                                schemaLocation="xmlschema:org.mule.module.apikit.rest.integration.leagues.League"/>
                 <create flow-ref="createLeague"/>
                 <retrieve flow-ref="retrieveLeague"/>
                 <update flow-ref="updateLeague"/>
@@ -38,7 +38,7 @@
                 </collection-resource>
                 <document-resource name="federation">
                     <representation mediaType="application/json" schemaType="JSONSchema"
-                                    schemaLocation="jsonschema:org.mule.module.apikit.rest.integration.Federation"/>
+                                    schemaLocation="jsonschema:org.mule.module.apikit.rest.integration.leagues.Federation"/>
                     <retrieve flow-ref="retrieveFederation"/>
                     <update flow-ref="updateFederation"/>
                 </document-resource>

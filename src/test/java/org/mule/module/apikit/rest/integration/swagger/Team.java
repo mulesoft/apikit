@@ -15,6 +15,7 @@ public class Team
 {
 
     private String id;
+    private String name;
     private Developers developers;
 
     public String getId()
@@ -25,6 +26,16 @@ public class Team
     public void setId(String id)
     {
         this.id = id;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
     }
 
     public Developers getDevelopers()

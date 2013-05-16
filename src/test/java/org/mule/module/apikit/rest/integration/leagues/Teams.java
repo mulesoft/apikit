@@ -6,7 +6,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest.integration;
+package org.mule.module.apikit.rest.integration.leagues;
 
 import org.mule.api.annotations.ContainsTransformerMethods;
 import org.mule.api.annotations.Transformer;

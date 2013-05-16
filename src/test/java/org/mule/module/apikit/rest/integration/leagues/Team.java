@@ -6,19 +6,19 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.rest.integration;
-
-import org.mule.module.apikit.rest.integration.swagger.Developers;
+package org.mule.module.apikit.rest.integration.leagues;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 @JsonAutoDetect
+@XmlRootElement(namespace = "http://mulesoft.com/schemas/soccer")
 public class Team
 {
 
     private String id;
     private String name;
-    private Developers teamMembers;
 
     public String getId()
     {
@@ -40,13 +40,4 @@ public class Team
         this.name = name;
     }
 
-    public Developers getTeamMembers()
-    {
-        return teamMembers;
-    }
-
-    public void setTeamMembers(Developers teamMembers)
-    {
-        this.teamMembers = teamMembers;
-    }
 }

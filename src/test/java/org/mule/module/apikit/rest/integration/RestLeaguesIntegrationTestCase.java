@@ -27,7 +27,7 @@ import com.jayway.restassured.http.ContentType;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class RestIntegrationTestCase extends FunctionalTestCase
+public class RestLeaguesIntegrationTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -49,7 +49,7 @@ public class RestIntegrationTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/rest/integration/functional-config.xml, org/mule/module/apikit/rest/integration/functional-flows.xml";
+        return "org/mule/module/apikit/rest/integration/leagues/functional-config.xml, org/mule/module/apikit/rest/integration/leagues/functional-flows.xml";
     }
 
     @Test
