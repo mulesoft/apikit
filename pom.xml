@@ -63,6 +63,13 @@
     </build>
 
     <dependencies>
+
+        <dependency>
+          <groupId>org.yaml</groupId>
+          <artifactId>snakeyaml</artifactId>
+          <version>1.12</version>
+        </dependency>
+
         <dependency>
             <groupId>org.mule</groupId>
             <artifactId>mule-core</artifactId>

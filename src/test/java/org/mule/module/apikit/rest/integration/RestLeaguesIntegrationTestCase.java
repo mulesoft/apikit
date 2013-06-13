@@ -115,6 +115,7 @@ public class RestLeaguesIntegrationTestCase extends FunctionalTestCase
         given().body("{ \"name\": \"Major League Soccer\" }")
                 .contentType("application/json")
                 .expect().statusCode(201)
+                .header("Location", "http://localhost:" + serverPort.getValue() +"/api/leagues/3")
                 .post("/api/leagues");
         expect().log().everything().response()
                 .body("leagues.name", hasItems("Liga BBVA", "Premier League", "Major League Soccer"))
