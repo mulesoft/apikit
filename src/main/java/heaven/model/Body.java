@@ -10,6 +10,10 @@ public class Body
 
     public Body(Map<String, ?> bodyDescriptor)
     {
+        if (bodyDescriptor == null)
+        {
+            return;
+        }
         for (String key : bodyDescriptor.keySet())
         {
             mimeTypes.put(key, new MimeType(key, (Map<String, ?>) bodyDescriptor.get(key)));

@@ -1,0 +1,25 @@
+%TAG ! tag:heaven-lang.org,1.0:
+---
+title: Leagues API
+version: v1
+baseUri: http://localhost/api
+/leagues:
+    name: Leagues
+    get:
+        responses:
+            200:
+                body:
+                    application/json: !!null
+                    text/xml: !!null
+    post:
+        body:
+            application/json: !!null
+                #quality: 0.8
+            text/xml: !!null
+                #quality: 0.2
+    /{leagueId}:
+        get: !!null
+        put: !!null
+        delete: !!null
+        /teams:
+            get: !!null

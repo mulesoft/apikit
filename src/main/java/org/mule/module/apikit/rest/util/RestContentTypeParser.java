@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import heaven.model.MimeType;
 import org.apache.commons.lang.math.NumberUtils;
 
 /**
@@ -145,6 +146,26 @@ public final class RestContentTypeParser
 
         FitnessAndQuality lastOne = weightedMatches.get(weightedMatches.size() - 1);
         return NumberUtils.compare(lastOne.quality, 0) != 0 ?  MediaType.parse(lastOne.mimeType) : null;
+    }
+
+    public static MediaType bestMatch(List<MimeType> supportedRepresentations, List<MediaType> header) {
+        List<FitnessAndQuality> weightedMatches = new LinkedList<FitnessAndQuality>();
+        for (MimeType representation : supportedRepresentations) {
+            MediaType mediaType = getMediaType(representation);
+            FitnessAndQuality fitnessAndQuality = fitnessAndQualityParsed(mediaType, header);
+            fitnessAndQuality.mimeType = mediaType.toString();
+            weightedMatches.add(fitnessAndQuality);
+        }
+        Collections.sort(weightedMatches);
+
+        FitnessAndQuality lastOne = weightedMatches.get(weightedMatches.size() - 1);
+        return NumberUtils.compare(lastOne.quality, 0) != 0 ?  MediaType.parse(lastOne.mimeType) : null;
+    }
+
+    private static MediaType getMediaType(MimeType mimeType)
+    {
+        MediaType mediaType = MediaType.parse(mimeType.getType());
+        return mediaType.withParameter("q", "1");
     }
 
     public static boolean isMediaTypeAcceptable(List<MediaType> acceptContentTypes, MediaType mediaType)

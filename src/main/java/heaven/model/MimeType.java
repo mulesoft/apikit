@@ -7,14 +7,19 @@ import heaven.model.parameter.FormParameter;
 
 public class MimeType
 {
-    //private String type;
+    private String type;
     private String schema;
     private String example;
     private Map<String, FormParameter> formParameters;
 
     public MimeType(String type, Map<String, ?> mimeDescriptor)
     {
-        //this.type = type;
+        this.type = type;
+        if (mimeDescriptor == null)
+        {
+            return;
+        }
+
         //TODO validate not allowed fields
         if ("multipart/form-data".equals(type) ||
                 "application/x-www-form-urlencoded".equals(type))
@@ -36,6 +41,11 @@ public class MimeType
         }
     }
 
+    public String getType()
+    {
+        return type;
+    }
+
     public String getSchema()
     {
         return schema;
@@ -50,5 +60,13 @@ public class MimeType
     {
         //TODO throw exception if invalid type?
         return formParameters;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "MimeType{" +
+               "type='" + type + '\'' +
+               '}';
     }
 }

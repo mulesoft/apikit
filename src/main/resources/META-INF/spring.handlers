@@ -1,2 +1,3 @@
 http\://www.mulesoft.org/schema/mule/api-rest=org.mule.module.apikit.rest.config.RestAPINamespaceHandler
 http\://www.mulesoft.org/schema/mule/api-ws=org.mule.module.apikit.ws.config.WSAPINamespaceHandler
+http\://www.mulesoft.org/schema/mule/apikit=apikit2.config.ApikitNamespaceHandler

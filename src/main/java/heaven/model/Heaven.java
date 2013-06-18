@@ -39,9 +39,10 @@ public class Heaven
         }
         version = (String) descriptor.get("version");
         baseUri = (String) descriptor.get("baseUri");
+        URL baseUrl;
         try
         {
-            new URL(baseUri);
+            baseUrl = new URL(baseUri);
         }
         catch (MalformedURLException e)
         {
@@ -52,7 +53,7 @@ public class Heaven
             populateUriParameters((Map<String, ?>) descriptor.get("uriParameters"));
         }
 
-        resources.populate(descriptor, baseUri);
+        resources.populate(descriptor, baseUrl.getPath());
         List<Resource> collisions = resources.checkResourceCollision();
         if (!collisions.isEmpty())
         {

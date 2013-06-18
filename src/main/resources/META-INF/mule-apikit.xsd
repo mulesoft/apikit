@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.mulesoft.org/schema/mule/apikit" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:schemadoc="http://www.mulesoft.org/schema/mule/schemadoc"
+    xmlns:beans="http://www.springframework.org/schema/beans" targetNamespace="http://www.mulesoft.org/schema/mule/apikit"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/core" schemaLocation="http://www.mulesoft.org/schema/mule/core/3.3/mule.xsd" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/schemadoc" schemaLocation="http://www.mulesoft.org/schema/mule/schemadoc/3.3/mule-schemadoc.xsd" />
+
+    <xsd:annotation>
+        <xsd:documentation>
+            APIkit is a Mule module for building ReST API's
+        </xsd:documentation>
+        <xsd:appinfo>
+            <schemadoc:short-name>APIkit</schemadoc:short-name>
+            <schemadoc:page-title>APIkit Module</schemadoc:page-title>
+        </xsd:appinfo>
+    </xsd:annotation>
+
+    <xsd:element name="flow" type="flowType" substitutionGroup="mule:flow">
+        <xsd:annotation>
+            <xsd:documentation>
+                A rest specific flow that references a resource-action pair.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="flowType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:flowType">
+                <xsd:attribute name="resource" type="mule:nonBlankString" use="required"/>
+                <xsd:attribute name="action" type="mule:nonBlankString" use="required"/>
+           </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="rest-processor" type="restProcessorType" substitutionGroup="mule:abstract-message-processor">
+        <xsd:annotation>
+            <xsd:documentation>
+                A rest routing message processor.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="restProcessorType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractMessageProcessorType">
+                <xsd:attribute name="config" type="mule:nonBlankString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The location of the rest interface definition.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+</xsd:schema>
