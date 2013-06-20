@@ -58,4 +58,43 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:element name="mapping-exception-strategy" type="mappingExceptionStrategyType"
+                 substitutionGroup="mule:abstract-exception-strategy">
+        <xsd:annotation>
+            <xsd:documentation>
+                Exception strategy used to map exceptions to http status codes.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="mappingExceptionStrategyType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractNotificationExceptionStrategyType">
+                <xsd:sequence>
+                    <xsd:element name="mapping" type="mappingStatusToExceptionType" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="mappingStatusToExceptionType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractNotificationExceptionStrategyType">
+                <xsd:sequence>
+                    <xsd:element name="exception" minOccurs="1" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:attribute name="value" use="required" type="mule:nonBlankString" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:group ref="mule:messageProcessorOrOutboundEndpoint" minOccurs="1" maxOccurs="unbounded" />
+                </xsd:sequence>
+                <xsd:attribute name="statusCode" use="required" type="mule:substitutableInt">
+                    <xsd:annotation>
+                        <xsd:documentation>The http status code to be returned when the nested exceptions are thrown</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
 </xsd:schema>

@@ -8,7 +8,6 @@ import com.google.common.net.MediaType;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +18,8 @@ public class HttpProtocolAdapter
     private URI baseURI;
     private URI resourceURI;
     private String method;
-    private List<MediaType> acceptableResponseMediaTypes = Collections.emptyList();
-    private MediaType requestMediaType;
+    private String acceptableResponseMediaTypes;
+    private String requestMediaType;
     private Map<String, Object> queryParams;
 
     public HttpProtocolAdapter(MuleEvent event)
@@ -76,17 +75,17 @@ public class HttpProtocolAdapter
 
         if (!StringUtils.isBlank((String) message.getInboundProperty("accept")))
         {
-            this.acceptableResponseMediaTypes = parseAcceptHeader((String) message.getInboundProperty("accept"));
+            this.acceptableResponseMediaTypes = message.getInboundProperty("accept");
         }
 
         if (!StringUtils.isBlank((String) message.getInboundProperty("content-type")))
         {
-            this.requestMediaType = MediaType.parse((String) message.getInboundProperty("content-type"));
+            this.requestMediaType = message.getInboundProperty("content-type");
         }
         if (this.requestMediaType == null
             && !StringUtils.isBlank((String) message.getOutboundProperty("content-type")))
         {
-            this.requestMediaType = MediaType.parse((String) message.getOutboundProperty("content-type"));
+            this.requestMediaType = message.getOutboundProperty("content-type");
         }
 
         this.queryParams = message.getInboundProperty("http.query.params");
@@ -126,12 +125,12 @@ public class HttpProtocolAdapter
         return method;
     }
 
-    public List<MediaType> getAcceptableResponseMediaTypes()
+    public String getAcceptableResponseMediaTypes()
     {
         return acceptableResponseMediaTypes;
     }
 
-    public MediaType getRequestMediaType()
+    public String getRequestMediaType()
     {
         return requestMediaType;
     }

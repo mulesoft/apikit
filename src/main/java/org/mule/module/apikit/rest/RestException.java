@@ -8,6 +8,12 @@
 
 package org.mule.module.apikit.rest;
 
+import static org.mule.transport.http.HttpConnector.HTTP_STATUS_PROPERTY;
+
+import org.mule.api.MuleEvent;
+import org.mule.module.apikit.rest.protocol.http.HttpStatusCode;
+import org.mule.transport.NullPayload;
+
 public class RestException extends Exception
 {
 
@@ -28,4 +34,23 @@ public class RestException extends Exception
         super(cause);
     }
 
+    public MuleEvent updateMuleEvent(MuleEvent event)
+    {
+        String responseType = "application/json";
+        String accept = event.getMessage().getInboundProperty("accept");
+        if (accept != null)
+        {
+            responseType = accept.split(",")[0];
+        }
+        event.getMessage().setOutboundProperty("Content-Type", responseType);
+        event.getMessage().setOutboundProperty(HTTP_STATUS_PROPERTY, getStatus().getCode());
+        //TODO set error description on payload
+        event.getMessage().setPayload(NullPayload.getInstance());
+        return event;
+    }
+
+    public HttpStatusCode getStatus()
+    {
+        return HttpStatusCode.SERVER_ERROR_INTERNAL;
+    }
 }

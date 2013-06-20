@@ -10,6 +10,7 @@
 package org.mule.module.apikit.rest.resource;
 
 import org.mule.module.apikit.rest.RestException;
+import org.mule.module.apikit.rest.protocol.http.HttpStatusCode;
 
 public class ResourceNotFoundException extends RestException
 {
@@ -23,9 +24,16 @@ public class ResourceNotFoundException extends RestException
         this(path, null);
     }
 
+    @Deprecated //apikit1 only
     public ResourceNotFoundException(String path, RestResource restResource)
     {
         this.parentResource = restResource;
         this.resourcePath = path;
+    }
+
+    @Override
+    public HttpStatusCode getStatus()
+    {
+        return HttpStatusCode.CLIENT_ERROR_NOT_FOUND;
     }
 }

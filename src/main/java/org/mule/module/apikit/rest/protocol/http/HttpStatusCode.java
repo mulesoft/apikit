@@ -218,7 +218,9 @@ public enum HttpStatusCode
      * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.6">HTTP RFC - 10.4.6 405
      *      Method Not Allowed</a>
      */
-    CLIENT_ERROR_METHOD_NOT_ALLOWED(405),
+    CLIENT_ERROR_METHOD_NOT_ALLOWED(405,
+                                    "The method specified in the Request-Line is not allowed for the resource identified by the Request-URI.",
+                                    "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.4.6"),
 
     /**
      * The resource identified by the request is only capable of generating response entities whose content
@@ -420,19 +422,34 @@ public enum HttpStatusCode
      * A client connector faces an error during the communication with the remote server (interruption,
      * timeout, etc).
      */
-    CONNECTOR_ERROR_COMMUNICATION(1001),
+    CONNECTOR_ERROR_COMMUNICATION(1001,
+                                  "A client connector faces an error during the communication with the remote server (interruption, " +
+                                  " timeout, etc).",
+                                  null),
 
     /**
      * Generic status code sent by a client connector when an error occurs during the process of a request to
      * its server or the process of a response to its client.
      */
-    CONNECTOR_ERROR_INTERNAL(1002);
+    CONNECTOR_ERROR_INTERNAL(1002,
+                             "Generic status code sent by a client connector when an error occurs during the process of a request to" +
+                             " its server or the process of a response to its client.",
+                             null);
 
     private int code;
+    private String description;
+    private String url;
 
     HttpStatusCode(int code)
     {
+        this(code, null, null);
+    }
+
+    HttpStatusCode(int code, String url, String description)
+    {
         this.code = code;
+        this.description = description;
+        this.url = url;
     }
 
     public int getCode()
@@ -443,5 +460,15 @@ public enum HttpStatusCode
     public String getCodeAsString()
     {
         return String.valueOf(code);
+    }
+
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public String getUrl()
+    {
+        return url;
     }
 }

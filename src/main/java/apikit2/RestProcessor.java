@@ -24,6 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import apikit2.exception.MethodNotAllowedException;
+import apikit2.exception.MuleRestException;
+import apikit2.exception.NotFoundException;
 import heaven.model.Heaven;
 import heaven.model.Resource;
 import heaven.model.ResourceMap;
@@ -68,7 +71,8 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         uriResolverCache = CacheBuilder.newBuilder()
                 .maximumSize(URI_CACHE_SIZE)
                 .build(
-                        new CacheLoader<String, URIResolver>() {
+                        new CacheLoader<String, URIResolver>()
+                        {
                             public URIResolver load(String path) throws IOException
                             {
                                 return new URIResolver(path);
@@ -78,22 +82,30 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         uriPatternCache = CacheBuilder.newBuilder()
                 .maximumSize(URI_CACHE_SIZE)
                 .build(
-                        new CacheLoader<String, URIPattern>() {
-                            public URIPattern load(String path) throws Exception {
+                        new CacheLoader<String, URIPattern>()
+                        {
+                            public URIPattern load(String path) throws Exception
+                            {
                                 URIResolver resolver = uriResolverCache.get(path);
                                 Collection<URIPattern> matches = resolver.findAll(routingTable.keySet());
 
-                                if (matches.size() == 0) {
+                                if (matches.size() == 0)
+                                {
                                     logger.warn("No matching patterns for URI " + path);
-                                    return null;
-                                } else {
-                                    if (logger.isDebugEnabled()) {
+                                    throw new NotFoundException(path);
+                                }
+                                else
+                                {
+                                    if (logger.isDebugEnabled())
+                                    {
                                         logger.debug(matches.size() + " matching patterns for URI " + path + ". Finding best one...");
                                     }
-                                    for (URIPattern p : matches) {
+                                    for (URIPattern p : matches)
+                                    {
                                         boolean best = (p == resolver.find(routingTable.keySet(), URIResolver.MatchRule.BEST_MATCH));
 
-                                        if (best) {
+                                        if (best)
+                                        {
                                             return p;
                                         }
                                     }
@@ -130,16 +142,18 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
 
     private void buildRoutingTable(ResourceMap resources)
     {
-        for (Resource resource : resources) {
+        for (Resource resource : resources)
+        {
             String uri = resource.getUri();
             logger.debug("Adding URI to the routing table: " + uri);
             routingTable.put(new URIPattern(uri), resource);
-            if (resource.getResources() != null) {
+            if (resource.getResources() != null)
+            {
                 buildRoutingTable(resource.getResources());
             }
         }
     }
-    
+
     @Override
     public MuleEvent process(MuleEvent event) throws MuleException
     {
@@ -158,21 +172,32 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         }
         catch (ExecutionException e)
         {
+            if (e.getCause() instanceof MuleRestException)
+            {
+                throw (MuleRestException) e.getCause();
+            }
             throw new DefaultMuleException(e);
         }
 
         ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
-        if (logger.isDebugEnabled()) {
-            for (String name : resolvedVariables.names()) {
+        if (logger.isDebugEnabled())
+        {
+            for (String name : resolvedVariables.names())
+            {
                 logger.debug("        path variables: " + name + "=" + resolvedVariables.get(name));
             }
         }
 
-        for (String name : resolvedVariables.names()) {
+        for (String name : resolvedVariables.names())
+        {
             event.getMessage().setInvocationProperty(name, resolvedVariables.get(name));
         }
 
         Resource resource = routingTable.get(uriPattern);
+        if (resource.getAction(request.getMethod()) == null)
+        {
+            throw new MethodNotAllowedException(resource.getUri(), request.getMethod());
+        }
         RestFlow flow = getFlow(resource, request.getMethod());
         return request.process(flow, resource.getAction(request.getMethod()));
     }

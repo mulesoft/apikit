@@ -1,6 +1,8 @@
 package apikit2;
 
+import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import org.mule.tck.junit4.FunctionalTestCase;
@@ -37,7 +39,24 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void testGetOnLeaguesJSON() throws Exception
+    public void resourceNotFound() throws Exception
+    {
+        given().header("Accept", "application/json")
+        .expect().response().statusCode(404)
+                .body(is("resource not found"))
+                .when().get("/api/matches");
+    }
+
+    @Test
+    public void methodNotAllowed() throws Exception
+    {
+        expect().response().statusCode(405)
+                .body(is("method not allowed"))
+                .when().delete("/api/leagues");
+    }
+
+    @Test
+    public void getOnLeaguesJson() throws Exception
     {
         given().header("Accept", "application/json")
             .expect().log().everything()
@@ -47,7 +66,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void testGetOnLeaguesXML() throws Exception
+    public void getOnLeaguesXml() throws Exception
     {
         given().header("Accept", "text/xml")
             .expect().log().everything()

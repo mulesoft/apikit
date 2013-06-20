@@ -57,7 +57,7 @@ public class HttpRestRequest
     {
         this.action = action;
         MuleEvent responseEvent = requestEvent;
-        String responseRepresentation = null;
+        String responseRepresentation;
         try
         {
 
@@ -132,7 +132,7 @@ public class HttpRestRequest
         boolean found = false;
         if (adapter.getRequestMediaType() != null)
         {
-            requestMimeTypeName = adapter.getRequestMediaType().withoutParameters().toString();
+            requestMimeTypeName = adapter.getRequestMediaType();
         }
         for (String mimeTypeName : action.getBody().getMimeTypes().keySet())
         {
@@ -160,7 +160,7 @@ public class HttpRestRequest
         if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
         {
             //no response media-types defined, return highest quality accept type
-            return adapter.getAcceptableResponseMediaTypes().get(0).toString();
+            return adapter.getAcceptableResponseMediaTypes().split(",")[0];
         }
         MediaType bestMatch = RestContentTypeParser.bestMatch(mimeTypes, adapter.getAcceptableResponseMediaTypes());
         if (bestMatch == null)

@@ -14,9 +14,7 @@ baseUri: http://localhost/api
     post:
         body:
             application/json: !!null
-                #quality: 0.8
             text/xml: !!null
-                #quality: 0.2
     /{leagueId}:
         get: !!null
         put: !!null
