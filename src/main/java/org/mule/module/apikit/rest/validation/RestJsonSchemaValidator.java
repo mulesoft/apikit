@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.concurrent.ExecutionException;
 
+import apikit2.exception.BadRequestException;
+import heaven.model.Heaven;
 import org.eel.kitchen.jsonschema.report.ValidationReport;
 import org.eel.kitchen.jsonschema.util.JsonLoader;
 import org.slf4j.Logger;
@@ -42,6 +44,18 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
     {
         try
         {
+            validate(schemaLocation, muleEvent, null);
+        }
+        catch (BadRequestException badRequestException)
+        {
+            throw new InvalidInputException(badRequestException);
+        }
+    }
+
+    public void validate(String schemaPath, MuleEvent muleEvent, Heaven api) throws BadRequestException
+    {
+        try
+        {
             JsonNode data;
             Object input = muleEvent.getMessage().getPayload();
             if (input instanceof String)
@@ -58,10 +72,10 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             }
             else
             {
-                throw new InvalidInputException("Don't know how to parse " + input.getClass().getName());
+                throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
             }
 
-            JsonSchemaAndNode schema = JsonSchemaCache.getJsonSchemaCache(muleContext).get(schemaLocation);
+            JsonSchemaAndNode schema = JsonSchemaCache.getJsonSchemaCache(muleContext, api).get(schemaPath);
 
             ValidationReport report = schema.getJsonSchema().validate(data);
 
@@ -69,20 +83,20 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             {
                 String message = report.getMessages().get(0);
                 logger.info("Schema validation failed: " + message);
-                throw new InvalidInputException(message);
+                throw new BadRequestException(message);
             }
         }
         catch (ExecutionException e)
         {
-            throw new InvalidInputException(e);
+            throw new BadRequestException(e);
         }
         catch (RegistrationException e)
         {
-            throw new InvalidInputException(e);
+            throw new BadRequestException(e);
         }
         catch (IOException e)
         {
-            throw new InvalidInputException(e);
+            throw new BadRequestException(e);
         }
     }
 }

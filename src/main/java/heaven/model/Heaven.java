@@ -1,5 +1,7 @@
 package heaven.model;
 
+import org.mule.api.MuleRuntimeException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -166,4 +168,41 @@ public class Heaven
         return uriParameters;
     }
 
+    public Resource getResource(String path)
+    {
+        if (path.startsWith(baseUri))
+        {
+            path = path.substring(baseUri.length());
+        }
+
+        String baseUriPath;
+        try
+        {
+            baseUriPath = new URL(baseUri).getPath();
+        }
+        catch (MalformedURLException e)
+        {
+            throw new MuleRuntimeException(e); //cannot happen
+        }
+        if (path.startsWith(baseUriPath))
+        {
+            path = path.substring(baseUriPath.length());
+        }
+
+        for (Resource resource : resources)
+        {
+            if (path.startsWith(resource.getRelativeUri()))
+            {
+                if (path.length() == resource.getRelativeUri().length())
+                {
+                    return resource;
+                }
+                if (path.charAt(resource.getRelativeUri().length()) == '/')
+                {
+                    return resource.getResource(path.substring(resource.getRelativeUri().length()));
+                }
+            }
+        }
+        return null;
+    }
 }

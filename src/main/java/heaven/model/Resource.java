@@ -13,27 +13,38 @@ import org.apache.commons.lang.ArrayUtils;
 public class Resource
 {
 
-    private String parentUri;
     private String name;
+    private String parentUri;
     private String relativeUri;
     private Map<String, UriParameter> uriParameters = new HashMap<String, UriParameter>();
     private ResourceMap resources = new ResourceMap();
     private Map<String, Action> actions = new HashMap<String, Action>();
     private List<?> uses = new ArrayList();
 
-    private static final String[] ACTIONS = {"get", "post", "put", "delete", "head"};
+    //TODO refactor to enum in action class
+    public static final String[] ACTION_NAMES = {"get", "post", "put", "delete", "head"};
     private static final List<String> VALID_KEYS;
 
     static
     {
-        String[] keys = (String[]) ArrayUtils.addAll(ACTIONS, new String[] {"name", "uriParameters", "use"});
+        String[] keys = (String[]) ArrayUtils.addAll(ACTION_NAMES, new String[] {"name", "uriParameters", "use"});
         VALID_KEYS = Arrays.asList(keys);
     }
 
     public Resource(String relativeUri, Map<String, ?> descriptor, String parentUri)
     {
+        if (parentUri == null)
+        {
+            throw new IllegalArgumentException("parentUri cannot be null");
+        }
         this.parentUri = parentUri;
+
+        if (relativeUri == null)
+        {
+            throw new IllegalArgumentException("relativeUri cannot be null");
+        }
         this.relativeUri = relativeUri;
+
         name = (String) descriptor.get("name");
         if (descriptor.containsKey("uses"))
         {
@@ -67,7 +78,7 @@ public class Resource
         for (String param : descriptor.keySet())
         {
             //TODO do proper parsing with 3rd party lib
-            if (relativeUri.indexOf("{" + param + "}") == -1)
+            if (!relativeUri.contains("{" + param + "}"))
             {
                 throw new ParseException(String.format("Relative URI (%s) does not define \"%s\" parameter",
                                                        relativeUri, param));
@@ -79,11 +90,11 @@ public class Resource
     private void populateAction(Map descriptor)
     {
         boolean actionDefined = false;
-        for (String name : ACTIONS)
+        for (String name : ACTION_NAMES)
         {
             if (descriptor.containsKey(name))
             {
-                actions.put(name, new Action((Map) descriptor.get(name)));
+                actions.put(name, new Action(name, this, (Map) descriptor.get(name)));
                 actionDefined = true;
             }
         }
@@ -130,5 +141,60 @@ public class Resource
     public Map<String, UriParameter> getUriParameters()
     {
         return uriParameters;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o)
+        {
+            return true;
+        }
+        if (!(o instanceof Resource))
+        {
+            return false;
+        }
+
+        Resource resource = (Resource) o;
+
+        return parentUri.equals(resource.parentUri) && relativeUri.equals(resource.relativeUri);
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = parentUri.hashCode();
+        result = 31 * result + relativeUri.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Resource{" +
+               "name='" + name + '\'' +
+               ", parentUri='" + parentUri + '\'' +
+               ", relativeUri='" + relativeUri + '\'' +
+               '}';
+    }
+
+    public Resource getResource(String path)
+    {
+        for (Resource resource : resources)
+        {
+            if (path.startsWith(resource.getRelativeUri()))
+            {
+                if (path.length() == resource.getRelativeUri().length())
+                {
+                    return resource;
+                }
+                if (path.charAt(resource.getRelativeUri().length()) == '/')
+                {
+                    return resource.getResource(path.substring(resource.getRelativeUri().length()));
+                }
+            }
+        }
+        return null;
     }
 }

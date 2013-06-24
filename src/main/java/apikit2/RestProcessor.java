@@ -163,8 +163,8 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         //String path = protocolAdapter.getResourceUri().getPath();
         String path = request.getResourcePath();
 
-        URIPattern uriPattern = null;
-        URIResolver uriResolver = null;
+        URIPattern uriPattern;
+        URIResolver uriResolver;
         try
         {
             uriPattern = uriPatternCache.get(path);

@@ -30,7 +30,7 @@ public final class RestSchemaValidatorFactory
         return INSTANCE;
     }
 
-    public RestSchemaValidator createValidator(SchemaType schemaType, MuleContext muleContext) throws InvalidSchemaTypeException
+    public RestSchemaValidator createValidator(SchemaType schemaType, MuleContext muleContext)
     {
         if (schemaType == SchemaType.JSONSchema)
         {
@@ -41,6 +41,6 @@ public final class RestSchemaValidatorFactory
             return new RestXmlSchemaValidator(muleContext);
         }
 
-        throw new InvalidSchemaTypeException();
+        throw new IllegalArgumentException("Invalid schema type: " + schemaType);
     }
 }

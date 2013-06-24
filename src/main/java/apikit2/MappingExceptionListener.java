@@ -6,7 +6,9 @@ import org.mule.api.MuleEvent;
 import org.mule.exception.CatchMessagingExceptionStrategy;
 
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MappingExceptionListener extends CatchMessagingExceptionStrategy
 {
@@ -26,11 +28,17 @@ public class MappingExceptionListener extends CatchMessagingExceptionStrategy
     @Override
     public boolean accept(MuleEvent event)
     {
-        Throwable rootException = event.getMessage().getExceptionPayload().getRootException();
-        String name = rootException.getClass().getName();
-        if (exceptions.contains(name))
+        Throwable exception = event.getMessage().getExceptionPayload().getException();
+        Map<Throwable, Object> visited = new IdentityHashMap<Throwable, Object>();
+        while (exception != null && !visited.containsKey(exception))
         {
-            return true;
+            String name = exception.getClass().getName();
+            if (exceptions.contains(name))
+            {
+                return true;
+            }
+            visited.put(exception, null);
+            exception = exception.getCause();
         }
         return false;
     }

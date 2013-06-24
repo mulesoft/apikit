@@ -56,6 +56,33 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void unsupportedMediaType() throws Exception
+    {
+        given().body("Liga Criolla").contentType("text/plain")
+        .expect().response().statusCode(415)
+                .body(is("unsupported media type"))
+                .when().post("/api/leagues");
+    }
+
+    @Test
+    public void notAcceptable() throws Exception
+    {
+        given().header("Accept", "text/plain")
+        .expect().response().statusCode(406)
+                .body(is("not acceptable"))
+                .when().get("/api/leagues");
+    }
+
+    @Test
+    public void badRequest() throws Exception
+    {
+        given().body("{\"liga\": \"Criolla\"}").contentType("application/json")
+                .expect().response().statusCode(400)
+                .body(is("bad request"))
+                .when().post("/api/leagues");
+    }
+
+    @Test
     public void getOnLeaguesJson() throws Exception
     {
         given().header("Accept", "application/json")

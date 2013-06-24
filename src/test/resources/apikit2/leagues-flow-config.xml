@@ -19,6 +19,18 @@
             <apikit:exception value="apikit2.exception.MethodNotAllowedException"/>
             <set-payload value="method not allowed"/>
         </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="apikit2.exception.UnsupportedMediaTypeException"/>
+            <set-payload value="unsupported media type"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="apikit2.exception.NotAcceptableException"/>
+            <set-payload value="not acceptable"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="apikit2.exception.BadRequestException"/>
+            <set-payload value="bad request"/>
+        </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
     <flow name="doorway">

@@ -2,13 +2,14 @@ package apikit2.exception;
 
 import org.mule.api.MuleException;
 import org.mule.config.i18n.Message;
+import org.mule.config.i18n.MessageFactory;
 
 public class MuleRestException extends MuleException
 {
 
-    public MuleRestException(Message message)
+    public MuleRestException(String message)
     {
-        super(message);
+        super(MessageFactory.createStaticMessage(message));
     }
 
     public MuleRestException(Message message, Throwable cause)

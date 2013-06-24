@@ -244,7 +244,7 @@ public class SwaggerResourceDocumentationStrategy implements RestDocumentationSt
 
                 try {
                     MuleContext muleContext = RequestContext.getEventContext().getMuleContext();
-                    JsonSchemaAndNode jsonSchemaAndNode = JsonSchemaCache.getJsonSchemaCache(muleContext).get(model.getSchemaLocation());
+                    JsonSchemaAndNode jsonSchemaAndNode = JsonSchemaCache.getJsonSchemaCache(muleContext, null).get(model.getSchemaLocation());
                     JsonNode properties = jsonSchemaAndNode.getJsonNode();
                     innerObjects.add(new HashMap.SimpleEntry<String, JsonNode>(model.getName(), properties));
                 } catch (ExecutionException e) {

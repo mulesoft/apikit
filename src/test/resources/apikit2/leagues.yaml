@@ -13,7 +13,21 @@ baseUri: http://localhost/api
                     text/xml: !!null
     post:
         body:
-            application/json: !!null
+            application/json:
+                schema: |
+                    {
+                        "title": "League Schema",
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string"
+                            },
+                            "name": {
+                                "type": "string",
+                                "required": true
+                            }
+                        }
+                    }
             text/xml: !!null
     /{leagueId}:
         get: !!null

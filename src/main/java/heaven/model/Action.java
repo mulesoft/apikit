@@ -9,16 +9,29 @@ import heaven.model.parameter.QueryParameter;
 
 public class Action implements Traitable
 {
-
+    private String name;
     private String summary;
     private String description;
     private Map<String, Header> headers = new HashMap<String, Header>();
     private Map<String, QueryParameter> queryParameters = new HashMap<String, QueryParameter>();
     private Body body;
     private Map<Integer, Body> responses = new HashMap<Integer, Body>();
+    private Resource resource;
 
-    public Action(Map actionDescriptor)
+    public Action(String name, Resource resource, Map actionDescriptor)
     {
+        if (name == null)
+        {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        this.name = name;
+
+        if (resource == null)
+        {
+            throw new IllegalArgumentException("resource cannot be null");
+        }
+        this.resource = resource;
+
         //allow null descriptor: <action> : !!null
         if (actionDescriptor == null)
         {
@@ -125,5 +138,15 @@ public class Action implements Traitable
     public Map<Integer, Body> getResponses()
     {
         return responses;
+    }
+
+    public Resource getResource()
+    {
+        return resource;
+    }
+
+    public String getName()
+    {
+        return name;
     }
 }

@@ -10,7 +10,12 @@ package org.mule.module.apikit.rest.validation;
 
 import org.mule.api.MuleEvent;
 
+import apikit2.exception.BadRequestException;
+import heaven.model.Heaven;
+
 public interface RestSchemaValidator
 {
+    @Deprecated //apikit1 only
     void validate(String schemaLocation, MuleEvent muleEvent) throws InvalidInputException;
+    void validate(String schemaPath, MuleEvent muleEvent, Heaven api) throws BadRequestException;
 }

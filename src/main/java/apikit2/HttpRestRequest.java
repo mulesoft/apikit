@@ -1,16 +1,16 @@
 package apikit2;
 
-import org.mule.api.MessagingException;
+import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
-import org.mule.module.apikit.rest.MediaTypeNotAcceptableException;
-import org.mule.module.apikit.rest.RestException;
-import org.mule.module.apikit.rest.UnsupportedMediaTypeException;
+import org.mule.module.apikit.rest.representation.SchemaType;
 import org.mule.module.apikit.rest.transform.DataTypePair;
 import org.mule.module.apikit.rest.transform.TransformerCache;
 import org.mule.module.apikit.rest.util.RestContentTypeParser;
+import org.mule.module.apikit.rest.validation.RestSchemaValidator;
+import org.mule.module.apikit.rest.validation.RestSchemaValidatorFactory;
 import org.mule.transformer.types.DataTypeFactory;
 
 import com.google.common.net.MediaType;
@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import apikit2.exception.MuleRestException;
+import apikit2.exception.NotAcceptableException;
+import apikit2.exception.UnsupportedMediaTypeException;
 import heaven.model.Action;
 import heaven.model.Body;
 import heaven.model.Heaven;
@@ -56,43 +59,33 @@ public class HttpRestRequest
     public MuleEvent process(RestFlow flow, Action action) throws MuleException
     {
         this.action = action;
-        MuleEvent responseEvent = requestEvent;
-        String responseRepresentation;
-        try
+
+        //process query parameters
+
+        //validate request representation (content-type and schema if defined)
+        validateInputRepresentation();
+
+        //negotiate output representation
+        String responseRepresentation = negotiateOutputRepresentation();
+
+        //normalize payload
+
+        MuleEvent responseEvent = flow.process(requestEvent);
+
+        //build location response
+
+        //transform response
+        if (responseRepresentation != null)
         {
-
-            //process query parameters
-
-            //validate request representation (content-type and schema if defined)
-            validateInputRepresentation();
-
-            //negotiate output representation
-            responseRepresentation = negotiateOutputRepresentation();
-
-            //normalize payload
-
-            responseEvent = flow.process(requestEvent);
-
-            //build location response
-
-            //transform response
-            if (responseRepresentation != null)
-            {
-                transformToExpectedContentType(responseEvent, responseRepresentation);
-            }
-
-            //hateoas enricher
-
-            return responseEvent;
+            transformToExpectedContentType(responseEvent, responseRepresentation);
         }
-        catch (RestException e)
-        {
-            //TODO handle error response
-            throw new MessagingException(responseEvent, e);
-        }
+
+        //hateoas enricher
+
+        return responseEvent;
     }
 
-    private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation) throws RestException
+    private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation) throws MuleException
     {
         DataType sourceDataType = DataTypeFactory.create(muleEvent.getMessage().getPayload().getClass());
         DataType resultDataType = DataTypeFactory.create(String.class, responseRepresentation);
@@ -115,13 +108,13 @@ public class HttpRestRequest
         }
         catch (Exception e)
         {
-            throw new RestException(e);
+            throw new DefaultMuleException(e);
         }
 
         muleEvent.getMessage().setOutboundProperty("Content-Type", responseRepresentation);
     }
 
-    private void validateInputRepresentation() throws RestException
+    private void validateInputRepresentation() throws MuleRestException
     {
         if (action == null || action.getBody() == null)
         {
@@ -136,15 +129,20 @@ public class HttpRestRequest
         }
         for (String mimeTypeName : action.getBody().getMimeTypes().keySet())
         {
+            if (logger.isDebugEnabled())
+            {
+                logger.debug(String.format("comparing request media type %s with expected %s\n",
+                                           requestMimeTypeName, mimeTypeName));
+            }
             if (mimeTypeName.equals(requestMimeTypeName))
             {
-                if (logger.isDebugEnabled())
-                {
-                    logger.debug(String.format("comparing request media type %s with expected %s\n",
-                                        requestMimeTypeName, mimeTypeName));
-                }
                 found = true;
                 //TODO validate schema if defined
+                if (action.getBody().getMimeTypes().get(mimeTypeName).getSchema() != null &&
+                    (mimeTypeName.contains("xml") || mimeTypeName.contains("json")))
+                {
+                    validateSchema(mimeTypeName);
+                }
                 break;
             }
         }
@@ -154,7 +152,18 @@ public class HttpRestRequest
         }
     }
 
-    private String negotiateOutputRepresentation() throws RestException
+    private void validateSchema(String mimeTypeName) throws MuleRestException
+    {
+        SchemaType schemaType = mimeTypeName.contains("json") ? SchemaType.JSONSchema : SchemaType.XMLSchema;
+        RestSchemaValidator validator = RestSchemaValidatorFactory.getInstance().createValidator(schemaType, requestEvent.getMuleContext());
+        StringBuilder key = new StringBuilder(action.getResource().getUri());
+        key.append(",").append(action.getName());
+        key.append(",").append(mimeTypeName);
+        validator.validate(key.toString(), requestEvent, api);
+
+    }
+
+    private String negotiateOutputRepresentation() throws MuleRestException
     {
         List<MimeType> mimeTypes = getResponseMimeTypes();
         if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
@@ -165,7 +174,7 @@ public class HttpRestRequest
         MediaType bestMatch = RestContentTypeParser.bestMatch(mimeTypes, adapter.getAcceptableResponseMediaTypes());
         if (bestMatch == null)
         {
-            throw new MediaTypeNotAcceptableException();
+            throw new NotAcceptableException();
         }
         logger.debug("=== negotiated response content-type: " + bestMatch.toString());
         for (MimeType representation : mimeTypes)
@@ -175,7 +184,7 @@ public class HttpRestRequest
                 return representation.getType();
             }
         }
-        throw new MediaTypeNotAcceptableException();
+        throw new NotAcceptableException();
     }
 
     private List<MimeType> getResponseMimeTypes()

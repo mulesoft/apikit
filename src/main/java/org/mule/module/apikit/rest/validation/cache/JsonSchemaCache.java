@@ -14,18 +14,20 @@ import org.mule.api.registry.RegistrationException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 
+import heaven.model.Heaven;
+
 public final class JsonSchemaCache
 {
 
     private static final String REGISTRY_JSON_SCHEMA_CACHE_KEY = "__restRouterJsonSchemaCache";
 
-    public static LoadingCache<String, JsonSchemaAndNode> getJsonSchemaCache(MuleContext muleContext) throws RegistrationException
+    public static LoadingCache<String, JsonSchemaAndNode> getJsonSchemaCache(MuleContext muleContext, Heaven api) throws RegistrationException
     {
         if (muleContext.getRegistry().get(REGISTRY_JSON_SCHEMA_CACHE_KEY) == null)
         {
             LoadingCache<String, JsonSchemaAndNode> transformerCache = CacheBuilder.newBuilder()
                     .maximumSize(1000)
-                    .build(new JsonSchemaCacheLoader(muleContext));
+                    .build(new JsonSchemaCacheLoader(muleContext, api));
 
             muleContext.getRegistry().registerObject(REGISTRY_JSON_SCHEMA_CACHE_KEY, transformerCache);
         }
