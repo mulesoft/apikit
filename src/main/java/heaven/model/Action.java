@@ -60,11 +60,20 @@ public class Action implements Traitable
             {
                 if (key instanceof Integer)
                 {
-                    responses.put((Integer) key, new Body((Map<String, ?>) ((Map) responseDescriptor.get(key)).get("body")));
+                    Body body = new Body(null);
+                    if (responseDescriptor.get(key) != null)
+                    {
+                        body = new Body((Map<String, ?>) ((Map) responseDescriptor.get(key)).get("body"));
+                    }
+                    responses.put((Integer) key, body);
                 }
                 else if (key instanceof List)
                 {
-                    Body listBody = new Body((Map<String, ?>) ((Map) responseDescriptor.get(key)).get("body"));
+                    Body listBody = new Body(null);
+                    if (responseDescriptor.get(key) != null)
+                    {
+                        listBody = new Body((Map<String, ?>) ((Map) responseDescriptor.get(key)).get("body"));
+                    }
                     for (Integer code : (List<Integer>) key)
                     {
                         responses.put(code, listBody);

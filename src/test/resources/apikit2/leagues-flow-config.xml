@@ -42,12 +42,26 @@
     </flow>
 
     <apikit:flow name="retrieveLeagues" resource="/leagues" action="get">
-        <logger level="WARN" message="XXXXXXXXXXXX on retrieveLeagues"/>
         <set-payload value="#[registry:list-of-leagues]"/>
     </apikit:flow>
 
     <apikit:flow name="createLeague" resource="/leagues" action="post">
-        <logger/>
+        <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
+                            returnClass="org.mule.module.apikit.rest.integration.leagues.League"/>
+        <choice>
+            <when expression="#[!payload.name.matches('[\\w ]+')]">
+                <set-property propertyName="http.status" value="400"/>
+                <set-payload value="Invalid League Name"/>
+            </when>
+            <otherwise>
+                <set-property propertyName="Location" value="http://localhost:${serverPort}/api/leagues/#[app.registry['list-of-leagues'].getLeagues().size() + 1]"/>
+                <expression-component>
+                    payload.id = message.inboundProperties.get('Location');
+                    app.registry['list-of-leagues'].getLeagues().add(payload);
+                </expression-component>
+                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+            </otherwise>
+        </choice>
     </apikit:flow>
 
     <apikit:flow name="retrieveLeague" resource="/leagues/{leagueId}" action="get">

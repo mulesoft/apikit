@@ -13,6 +13,7 @@ import org.mule.module.apikit.rest.validation.io.SchemaResourceLoader;
 
 import com.google.common.cache.CacheLoader;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -21,6 +22,9 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import heaven.model.Action;
+import heaven.model.Heaven;
+import heaven.model.MimeType;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.xml.sax.SAXException;
@@ -29,17 +33,34 @@ public class XmlSchemaCacheLoader extends CacheLoader<String, Schema>
 {
 
     private ResourceLoader resourceLoader;
+    private Heaven api;
 
-    public XmlSchemaCacheLoader(MuleContext muleContext)
+    public XmlSchemaCacheLoader(MuleContext muleContext, Heaven api)
     {
+        this.api = api;
         this.resourceLoader = new SchemaResourceLoader(muleContext.getExecutionClassLoader());
     }
 
     @Override
     public Schema load(String schemaLocation) throws IOException, SAXException
     {
-        Resource schemaResource = resourceLoader.getResource(schemaLocation);
-        return compileSchema(schemaResource.getInputStream());
+        InputStream is;
+
+        if (schemaLocation.startsWith("/"))
+        {
+            //inline schema definition
+            //TODO remove hack to get schema using coords
+            String[] path = schemaLocation.split(",");
+            Action action = api.getResource(path[0]).getAction(path[1]);
+            MimeType mimeType = action.getBody().getMimeTypes().get(path[2]);
+            is = new ByteArrayInputStream(mimeType.getSchema().getBytes());
+        }
+        else
+        {
+            Resource schemaResource = resourceLoader.getResource(schemaLocation);
+            is = schemaResource.getInputStream();
+        }
+        return compileSchema(is);
     }
 
     private static Schema compileSchema(InputStream inputStream) throws SAXException

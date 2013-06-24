@@ -16,18 +16,20 @@ import com.google.common.cache.LoadingCache;
 
 import javax.xml.validation.Schema;
 
+import heaven.model.Heaven;
+
 public final class XmlSchemaCache
 {
 
     private static final String REGISTRY_JSON_SCHEMA_CACHE_KEY = "__restRouterXmlSchemaCache";
 
-    public static LoadingCache<String, Schema> getXmlSchemaCache(MuleContext muleContext) throws RegistrationException
+    public static LoadingCache<String, Schema> getXmlSchemaCache(MuleContext muleContext, Heaven api) throws RegistrationException
     {
         if (muleContext.getRegistry().get(REGISTRY_JSON_SCHEMA_CACHE_KEY) == null)
         {
             LoadingCache<String, Schema> transformerCache = CacheBuilder.newBuilder()
                     .maximumSize(1000)
-                    .build(new XmlSchemaCacheLoader(muleContext));
+                    .build(new XmlSchemaCacheLoader(muleContext, api));
 
             muleContext.getRegistry().registerObject(REGISTRY_JSON_SCHEMA_CACHE_KEY, transformerCache);
         }

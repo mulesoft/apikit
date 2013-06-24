@@ -74,9 +74,19 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void badRequest() throws Exception
+    public void badRequestJson() throws Exception
     {
         given().body("{\"liga\": \"Criolla\"}").contentType("application/json")
+                .expect().response().statusCode(400)
+                .body(is("bad request"))
+                .when().post("/api/leagues");
+    }
+
+    @Test
+    public void badRequestXml() throws Exception
+    {
+        given().body("<leaguee xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></leaguee>")
+                .contentType("text/xml")
                 .expect().response().statusCode(400)
                 .body(is("bad request"))
                 .when().post("/api/leagues");
@@ -88,7 +98,7 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().header("Accept", "application/json")
             .expect().log().everything()
                 .response().body("leagues.name", hasItems("Liga BBVA", "Premier League"))
-                .header("Content-type", "application/json")
+                .header("Content-type", "application/json").statusCode(200)
             .when().get("/api/leagues");
     }
 
@@ -98,8 +108,38 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().header("Accept", "text/xml")
             .expect().log().everything()
                 .response().body("leagues.league.name", hasItems("Liga BBVA", "Premier League"))
-                .header("Content-type", "text/xml")
+                .header("Content-type", "text/xml").statusCode(200)
             .when().get("/api/leagues");
     }
 
+    @Test
+    public void putOnLeaguesJson() throws Exception
+    {
+        given().body("{ \"name\": \"Major League Soccer\" }")
+                .contentType("application/json")
+                .expect().statusCode(201)
+                .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/3")
+                .post("/api/leagues");
+    }
+
+    @Test
+    public void putOnLeaguesXml() throws Exception
+    {
+        given().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>")
+                .contentType("text/xml")
+                .expect().statusCode(201)
+                .header("Location", "http://localhost:" + serverPort.getValue() +"/api/leagues/3")
+                .post("/api/leagues");
+    }
+
+    @Test
+    public void putCustomStatus() throws Exception
+    {
+        given().log().everything().body("{ \"name\": \"(invlid name)\" }")
+                .contentType("application/json")
+                .expect().log().everything()
+                .statusCode(400)
+                .body(is("Invalid League Name"))
+                .post("/api/leagues");
+    }
 }

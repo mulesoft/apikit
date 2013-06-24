@@ -43,13 +43,20 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
     }
 
     @Override
-    public void validate(String schemaPath, MuleEvent muleEvent, Heaven api) throws BadRequestException
+    public void validate(String schemaLocation, MuleEvent muleEvent) throws InvalidInputException
     {
-        //TODO implement
+        try
+        {
+            validate(schemaLocation, muleEvent, null);
+        }
+        catch (BadRequestException badRequestException)
+        {
+            throw new InvalidInputException(badRequestException);
+        }
     }
 
     @Override
-    public void validate(String schemaLocation, MuleEvent muleEvent) throws InvalidInputException
+    public void validate(String schemaPath, MuleEvent muleEvent, Heaven api) throws BadRequestException
     {
         try
         {
@@ -73,14 +80,14 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
                 throw new InvalidInputException("Don't know how to parse " + input.getClass().getName());
             }
 
-            Schema schema = XmlSchemaCache.getXmlSchemaCache(muleContext).get(schemaLocation);
+            Schema schema = XmlSchemaCache.getXmlSchemaCache(muleContext, api).get(schemaPath);
             Validator validator = schema.newValidator();
             validator.validate(new DOMSource(data.getDocumentElement()));
         }
         catch (Exception e)
         {
             logger.info("Schema validation failed: " + e.getMessage());
-            throw new InvalidInputException(e);
+            throw new BadRequestException(e);
         }
     }
 

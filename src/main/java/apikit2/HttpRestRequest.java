@@ -80,6 +80,12 @@ public class HttpRestRequest
             transformToExpectedContentType(responseEvent, responseRepresentation);
         }
 
+        //set success status
+        if (responseEvent.getMessage().getOutboundProperty("http.status") == null)
+        {
+            responseEvent.getMessage().setOutboundProperty("http.status", getSuccessStatus());
+        }
+
         //hateoas enricher
 
         return responseEvent;
@@ -190,20 +196,29 @@ public class HttpRestRequest
     private List<MimeType> getResponseMimeTypes()
     {
         List<MimeType> mimeTypes = new ArrayList<MimeType>();
-        for (Integer status : action.getResponses().keySet())
+        int status = getSuccessStatus();
+        if (status != -1)
         {
-            if (status >= 200 && status < 300)
+            Body body = action.getResponses().get(status);
+            if (body != null)
             {
-                Body body = action.getResponses().get(status);
-                if (body != null)
-                {
-                    Collection<MimeType> types = body.getMimeTypes().values();
-                    logger.debug(String.format("=== adding response mimeTypes for status %d : %s", status, types));
-                    mimeTypes.addAll(types);
-                }
+                Collection<MimeType> types = body.getMimeTypes().values();
+                logger.debug(String.format("=== adding response mimeTypes for status %d : %s", status, types));
+                mimeTypes.addAll(types);
             }
         }
         return mimeTypes;
     }
 
+    private int getSuccessStatus()
+    {
+        for (Integer status : action.getResponses().keySet())
+        {
+            if (status >= 200 && status < 300)
+            {
+                return status;
+            }
+        }
+        return -1;
+    }
 }
