@@ -30,7 +30,7 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
                 return exceptionListener.handleException(exception, event);
             }
         }
-        throw new MuleRuntimeException(CoreMessages.createStaticMessage("Default exception strategy must accept any event."));
+        throw new MuleRuntimeException(CoreMessages.createStaticMessage("Default exception strategy must accept any event: " + exception));
     }
 
     @Override

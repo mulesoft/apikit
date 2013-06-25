@@ -174,8 +174,7 @@ public class Resource
     {
         return "Resource{" +
                "name='" + name + '\'' +
-               ", parentUri='" + parentUri + '\'' +
-               ", relativeUri='" + relativeUri + '\'' +
+               ", uri='" + getUri() + '\'' +
                '}';
     }
 

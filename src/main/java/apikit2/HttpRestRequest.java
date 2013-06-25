@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import apikit2.exception.ApikitRuntimeException;
 import apikit2.exception.MuleRestException;
 import apikit2.exception.NotAcceptableException;
 import apikit2.exception.UnsupportedMediaTypeException;
@@ -83,6 +84,11 @@ public class HttpRestRequest
         //set success status
         if (responseEvent.getMessage().getOutboundProperty("http.status") == null)
         {
+            int status = getSuccessStatus();
+            if (status == -1)
+            {
+                throw new ApikitRuntimeException("No success status defined for action: " + action);
+            }
             responseEvent.getMessage().setOutboundProperty("http.status", getSuccessStatus());
         }
 

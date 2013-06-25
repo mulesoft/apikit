@@ -158,4 +158,13 @@ public class Action implements Traitable
     {
         return name;
     }
+
+    @Override
+    public String toString()
+    {
+        return "Action{" +
+               "name='" + name + '\'' +
+               ", resource=" + resource.getUri() +
+               '}';
+    }
 }

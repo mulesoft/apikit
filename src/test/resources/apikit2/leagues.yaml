@@ -12,7 +12,7 @@ baseUri: http://localhost/api
                     application/json: !!null
                     text/xml: !!null
     post:
-        body:
+        body: &league-schema
             application/json:
                 schema: |
                     {
@@ -45,8 +45,14 @@ baseUri: http://localhost/api
         responses:
             201: !!null
     /{leagueId}:
-        get: !!null
-        put: !!null
-        delete: !!null
-        /teams:
-            get: !!null
+        get:
+            responses:
+                200:
+                    body: *league-schema
+        put:
+            body: *league-schema
+            responses:
+                204: !!null
+        delete:
+            responses:
+                204: !!null

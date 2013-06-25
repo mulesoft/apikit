@@ -113,33 +113,91 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void putOnLeaguesJson() throws Exception
+    public void postOnLeaguesJson() throws Exception
     {
         given().body("{ \"name\": \"Major League Soccer\" }")
                 .contentType("application/json")
-                .expect().statusCode(201)
+            .expect().statusCode(201)
                 .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/3")
-                .post("/api/leagues");
+            .when().post("/api/leagues");
     }
 
     @Test
-    public void putOnLeaguesXml() throws Exception
+    public void postOnLeaguesXml() throws Exception
     {
         given().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>")
                 .contentType("text/xml")
-                .expect().statusCode(201)
+            .expect().statusCode(201)
                 .header("Location", "http://localhost:" + serverPort.getValue() +"/api/leagues/3")
-                .post("/api/leagues");
+            .when().post("/api/leagues");
     }
 
     @Test
-    public void putCustomStatus() throws Exception
+    public void postCustomStatus() throws Exception
     {
         given().log().everything().body("{ \"name\": \"(invlid name)\" }")
                 .contentType("application/json")
-                .expect().log().everything()
+            .expect()
                 .statusCode(400)
                 .body(is("Invalid League Name"))
-                .post("/api/leagues");
+            .when().post("/api/leagues");
+    }
+
+    @Test
+    public void getOnSingleLeagueJson() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body("name", is("Liga BBVA"))
+                .header("Content-type", "application/json").statusCode(200)
+            .when().get("/api/leagues/liga-bbva");
+    }
+
+    @Test
+    public void getOnSingleLeagueXml() throws Exception
+    {
+        given().header("Accept", "text/xml")
+            .expect()
+                .response().body("league.name", is("Liga BBVA"))
+                .header("Content-type", "text/xml").statusCode(200)
+            .when().get("/api/leagues/liga-bbva");
+    }
+
+    @Test
+    public void putOnSingleLeagueJson() throws Exception
+    {
+        given().body("{ \"name\": \"Liga Hispanica\" }")
+                .contentType("application/json")
+            .expect()
+                .statusCode(204)
+                .body(is(""))
+            .when().put("/api/leagues/liga-bbva");
+
+        expect().response()
+                .body("leagues.league.name", hasItems("Liga Hispanica", "Premier League"))
+            .when().get("/api/leagues");
+    }
+
+    @Test
+    public void putOnSingleLeagueXml() throws Exception
+    {
+        given().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>Hispanic League</name></league>")
+                .contentType("text/xml")
+            .expect()
+                .statusCode(204)
+                .body(is(""))
+            .when().put("/api/leagues/liga-bbva");
+
+        expect().response()
+                .body("leagues.league.name", hasItems("Hispanic League", "Premier League"))
+            .when().get("/api/leagues");
+    }
+
+    @Test
+    public void deleteOnSingleLeague() throws Exception
+    {
+        expect().response()
+            .statusCode(204).body(is(""))
+            .when().delete("/api/leagues/liga-bbva");
     }
 }
