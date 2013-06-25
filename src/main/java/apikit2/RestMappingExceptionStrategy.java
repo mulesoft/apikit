@@ -1,10 +1,10 @@
 package apikit2;
 
+import static org.mule.transport.http.HttpConnector.HTTP_STATUS_PROPERTY;
+
 import org.mule.api.GlobalNameableObject;
 import org.mule.api.MuleEvent;
-import org.mule.api.MuleRuntimeException;
 import org.mule.api.exception.MessagingExceptionHandlerAcceptor;
-import org.mule.config.i18n.CoreMessages;
 import org.mule.message.DefaultExceptionPayload;
 import org.mule.processor.AbstractMuleObjectOwner;
 
@@ -30,7 +30,14 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
                 return exceptionListener.handleException(exception, event);
             }
         }
-        throw new MuleRuntimeException(CoreMessages.createStaticMessage("Default exception strategy must accept any event: " + exception));
+        return defaultHandler(exception, event);
+    }
+
+    protected MuleEvent defaultHandler(Exception exception, MuleEvent event)
+    {
+        event.getMessage().setOutboundProperty(HTTP_STATUS_PROPERTY, 500);
+        event.getMessage().setPayload(exception.toString());
+        return event;
     }
 
     @Override
@@ -68,6 +75,5 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
     {
         return exceptionListeners;
     }
-
 
 }
