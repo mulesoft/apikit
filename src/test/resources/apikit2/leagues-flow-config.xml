@@ -30,6 +30,7 @@
         <apikit:mapping statusCode="400">
             <apikit:exception value="apikit2.exception.BadRequestException"/>
             <apikit:exception value="apikit2.exception.InvalidUriParameterException"/>
+            <apikit:exception value="apikit2.exception.InvalidQueryParameterException"/>
             <set-payload value="bad request"/>
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
@@ -99,6 +100,15 @@
     <apikit:flow name="deleteLeague" resource="/leagues/{leagueId}" action="delete">
         <expression-component>
             app.registry['list-of-leagues'].deleteLeague(leagueId)
+        </expression-component>
+    </apikit:flow>
+
+    <apikit:flow name="retrieveTeams" resource="/leagues/{leagueId}/teams" action="get">
+        <expression-component>
+            teams = app.registry['list-of-leagues'].getLeague(leagueId).getTeams();
+            int from = (message.inboundProperties.?offset != null) ? Integer.valueOf(message.inboundProperties.offset) : 0;
+            to = (message.inboundProperties.?limit != null) ? Math.min(Integer.valueOf(message.inboundProperties.limit), teams.size()) : teams.size();
+            payload = teams.subList(from, to);
         </expression-component>
     </apikit:flow>
 

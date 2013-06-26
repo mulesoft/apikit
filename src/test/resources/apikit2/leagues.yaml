@@ -62,3 +62,22 @@ baseUri: http://localhost/api
         delete:
             responses:
                 204: !!null
+        /teams:
+            get:
+                queryParameters:
+                    offset:
+                        name: Offset
+                        description: result set offset
+                        type: integer
+                        required: false
+                        minimum: 0
+                        default: 0
+                    limit:
+                        name: Limit
+                        description: result set size
+                        type: integer
+                        required: false
+                        minimum: 1
+                        maximum: 10
+                responses:
+                    200: !!null

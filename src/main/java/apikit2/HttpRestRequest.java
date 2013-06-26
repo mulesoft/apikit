@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 import apikit2.exception.ApikitRuntimeException;
+import apikit2.exception.InvalidQueryParameterException;
 import apikit2.exception.MuleRestException;
 import apikit2.exception.NotAcceptableException;
 import apikit2.exception.UnsupportedMediaTypeException;
@@ -27,6 +28,7 @@ import heaven.model.Action;
 import heaven.model.Body;
 import heaven.model.Heaven;
 import heaven.model.MimeType;
+import heaven.model.parameter.QueryParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +64,7 @@ public class HttpRestRequest
         this.action = action;
 
         //process query parameters
+        processQueryParameters();
 
         //process header parameters
 
@@ -95,6 +98,25 @@ public class HttpRestRequest
         //hateoas enricher
 
         return responseEvent;
+    }
+
+    private void processQueryParameters() throws InvalidQueryParameterException
+    {
+        for (QueryParameter expected : action.getQueryParameters().values())
+        {
+            String actual = requestEvent.getMessage().getInboundProperty(expected.getName());
+            if (actual == null && expected.isRequired())
+            {
+                throw new InvalidQueryParameterException("Required query parameter " + expected.getName() + " not specified");
+            }
+            if (actual != null)
+            {
+                if (!expected.validate(actual))
+                {
+                    throw new InvalidQueryParameterException("Invalid uri parameter value " + actual + " for " + expected.getName());
+                }
+            }
+        }
     }
 
     private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation) throws MuleException

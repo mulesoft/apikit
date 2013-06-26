@@ -2,7 +2,10 @@ package apikit2;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import org.mule.tck.junit4.FunctionalTestCase;
@@ -128,7 +131,7 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>")
                 .contentType("text/xml")
             .expect().statusCode(201)
-                .header("Location", "http://localhost:" + serverPort.getValue() +"/api/leagues/3")
+                .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/3")
             .when().post("/api/leagues");
     }
 
@@ -219,6 +222,47 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .response().body(is("bad request"))
                 .statusCode(400)
             .when().get("/api/leagues/invalid_name");
+    }
+
+    @Test
+    public void getTeamsQueryParams() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body("name", hasItems("Barcelona", "Real Madrid", "Valencia", "Athletic Bilbao", "Atletico Madrid"))
+                .header("Content-type", "application/json").statusCode(200)
+            .when().get("/api/leagues/liga-bbva/teams");
+    }
+
+    @Test
+    public void getTeamsQueryParamsOffset3() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body("name", allOf(hasItems("Athletic Bilbao", "Atletico Madrid"), not(hasItem("Barcelona")),
+                                               not(hasItem("Real Madrid")), not(hasItem("Valencia"))))
+                .header("Content-type", "application/json").statusCode(200)
+                .when().get("/api/leagues/liga-bbva/teams?offset=3");
+    }
+
+    @Test
+    public void getTeamsQueryParamsMinimumError() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body(is("bad request"))
+                .statusCode(400)
+                .when().get("/api/leagues/liga-bbva/teams?offset=-1");
+    }
+
+    @Test
+    public void getTeamsQueryParamsMaximumError() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body(is("bad request"))
+                .statusCode(400)
+                .when().get("/api/leagues/liga-bbva/teams?limit=11");
     }
 
 }
