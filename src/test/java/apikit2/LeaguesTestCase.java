@@ -200,4 +200,25 @@ public class LeaguesTestCase extends FunctionalTestCase
             .statusCode(204).body(is(""))
             .when().delete("/api/leagues/liga-bbva");
     }
+
+    @Test
+    public void uriParamMaxLenError() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body(is("bad request"))
+                .statusCode(400)
+            .when().get("/api/leagues/a-name-long-enough-not-to-be-valid");
+    }
+
+    @Test
+    public void uriParamPatternError() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body(is("bad request"))
+                .statusCode(400)
+            .when().get("/api/leagues/invalid_name");
+    }
+
 }

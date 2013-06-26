@@ -12,6 +12,8 @@ import heaven.model.validation.MaximumIntegerValidation;
 import heaven.model.validation.MaximumNumberValidation;
 import heaven.model.validation.MinLengthValidation;import heaven.model.validation.MinimumIntegerValidation;
 import heaven.model.validation.MinimumNumberValidation;import heaven.model.validation.PatternValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AbstractParam
 {
@@ -22,6 +24,8 @@ public class AbstractParam
     private List<Validation> validations = new ArrayList<Validation>();
     private Object defaultValue;
     private Object example;
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
     public AbstractParam(Map<String, ?> paramDescriptor)
@@ -146,5 +150,21 @@ public class AbstractParam
     public Object getExample()
     {
         return example;
+    }
+
+    public boolean validate(String value)
+    {
+        for (Validation validation : validations)
+        {
+            if (!validation.check(value))
+            {
+                if (logger.isInfoEnabled())
+                {
+                    logger.info(String.format("Validation %s failed for value %s", validation, value));
+                }
+                return false;
+            }
+        }
+        return true;
     }
 }

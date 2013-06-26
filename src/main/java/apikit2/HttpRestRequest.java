@@ -63,6 +63,8 @@ public class HttpRestRequest
 
         //process query parameters
 
+        //process header parameters
+
         //validate request representation (content-type and schema if defined)
         validateInputRepresentation();
 
@@ -72,8 +74,6 @@ public class HttpRestRequest
         //normalize payload
 
         MuleEvent responseEvent = flow.process(requestEvent);
-
-        //build location response
 
         //transform response
         if (responseRepresentation != null)

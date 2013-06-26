@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import apikit2.exception.InvalidUriParameterException;
 import apikit2.exception.MethodNotAllowedException;
 import apikit2.exception.MuleRestException;
 import apikit2.exception.NotFoundException;
@@ -179,27 +180,43 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
             throw new DefaultMuleException(e);
         }
 
-        ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
-        if (logger.isDebugEnabled())
-        {
-            for (String name : resolvedVariables.names())
-            {
-                logger.debug("        path variables: " + name + "=" + resolvedVariables.get(name));
-            }
-        }
-
-        for (String name : resolvedVariables.names())
-        {
-            event.getMessage().setInvocationProperty(name, resolvedVariables.get(name));
-        }
-
         Resource resource = routingTable.get(uriPattern);
         if (resource.getAction(request.getMethod()) == null)
         {
             throw new MethodNotAllowedException(resource.getUri(), request.getMethod());
         }
+
+        ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
+
+        processUriParameters(resolvedVariables, resource, event);
+
         RestFlow flow = getFlow(resource, request.getMethod());
         return request.process(flow, resource.getAction(request.getMethod()));
+    }
+
+    private void processUriParameters(ResolvedVariables resolvedVariables, Resource resource, MuleEvent event) throws InvalidUriParameterException
+    {
+        if (logger.isDebugEnabled())
+        {
+            for (String name : resolvedVariables.names())
+            {
+                logger.debug("        uri parameter: " + name + "=" + resolvedVariables.get(name));
+            }
+        }
+
+        for (String key : resource.getUriParameters().keySet())
+        {
+            String value = (String) resolvedVariables.get(key);
+            if (!resource.getUriParameters().get(key).validate(value))
+            {
+                throw new InvalidUriParameterException("Invalid uri parameter value " + value + " for " + key);
+            }
+
+        }
+        for (String name : resolvedVariables.names())
+        {
+            event.getMessage().setInvocationProperty(name, resolvedVariables.get(name));
+        }
     }
 
     private RestFlow getFlow(Resource resource, String method)

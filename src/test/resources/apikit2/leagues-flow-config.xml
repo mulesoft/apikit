@@ -29,6 +29,7 @@
         </apikit:mapping>
         <apikit:mapping statusCode="400">
             <apikit:exception value="apikit2.exception.BadRequestException"/>
+            <apikit:exception value="apikit2.exception.InvalidUriParameterException"/>
             <set-payload value="bad request"/>
         </apikit:mapping>
     </apikit:mapping-exception-strategy>

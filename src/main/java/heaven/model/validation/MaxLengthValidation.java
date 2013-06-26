@@ -13,6 +13,6 @@ public class MaxLengthValidation implements Validation
     @Override
     public boolean check(String input)
     {
-        return input.length() >= maxLength;
+        return input.length() <= maxLength;
     }
 }
