@@ -14,14 +14,14 @@ import org.mule.api.registry.RegistrationException;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 
-import heaven.model.Heaven;
+import org.raml.model.Raml;
 
 public final class JsonSchemaCache
 {
 
     private static final String REGISTRY_JSON_SCHEMA_CACHE_KEY = "__restRouterJsonSchemaCache";
 
-    public static LoadingCache<String, JsonSchemaAndNode> getJsonSchemaCache(MuleContext muleContext, Heaven api) throws RegistrationException
+    public static LoadingCache<String, JsonSchemaAndNode> getJsonSchemaCache(MuleContext muleContext, Raml api) throws RegistrationException
     {
         if (muleContext.getRegistry().get(REGISTRY_JSON_SCHEMA_CACHE_KEY) == null)
         {

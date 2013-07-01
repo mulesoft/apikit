@@ -24,9 +24,9 @@ import java.io.StringReader;
 import java.util.concurrent.ExecutionException;
 
 import apikit2.exception.BadRequestException;
-import heaven.model.Heaven;
 import org.eel.kitchen.jsonschema.report.ValidationReport;
 import org.eel.kitchen.jsonschema.util.JsonLoader;
+import org.raml.model.Raml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
         }
     }
 
-    public void validate(String schemaPath, MuleEvent muleEvent, Heaven api) throws BadRequestException
+    public void validate(String schemaPath, MuleEvent muleEvent, Raml api) throws BadRequestException
     {
         try
         {

@@ -17,6 +17,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -28,10 +29,9 @@ import apikit2.exception.InvalidUriParameterException;
 import apikit2.exception.MethodNotAllowedException;
 import apikit2.exception.MuleRestException;
 import apikit2.exception.NotFoundException;
-import heaven.model.Heaven;
-import heaven.model.Resource;
-import heaven.model.ResourceMap;
-import heaven.parser.HeavenParser;
+import org.raml.model.Raml;
+import org.raml.model.Resource;
+import org.raml.parser.visitor.YamlDocumentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
 
     private MuleContext muleContext;
     private String config;
-    private Heaven api;
+    private Raml api;
     private Map<String, RestFlow> restFlowMap;
     private Map<URIPattern, Resource> routingTable;
     private LoadingCache<String, URIResolver> uriResolverCache;
@@ -138,12 +138,16 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
 
     private void loadApiDefinition()
     {
-        api = new HeavenParser().parse(config);
+        YamlDocumentBuilder<Raml> builder = new YamlDocumentBuilder<Raml>(Raml.class);
+        InputStream ramlStream = this.getClass().getClassLoader().getResourceAsStream(config);
+        //TODO perform validation
+        api = builder.build(ramlStream);
+        //TODO save post-processed yaml to serve to clients
     }
 
-    private void buildRoutingTable(ResourceMap resources)
+    private void buildRoutingTable(Map<String, Resource> resources)
     {
-        for (Resource resource : resources)
+        for (Resource resource : resources.values())
         {
             String uri = resource.getUri();
             logger.debug("Adding URI to the routing table: " + uri);

@@ -67,9 +67,9 @@
     <dependencies>
 
         <dependency>
-          <groupId>org.yaml</groupId>
-          <artifactId>snakeyaml</artifactId>
-          <version>1.12</version>
+            <groupId>org.raml</groupId>
+            <artifactId>raml-parser</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <dependency>

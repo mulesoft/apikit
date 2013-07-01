@@ -22,9 +22,9 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import heaven.model.Action;
-import heaven.model.Heaven;
-import heaven.model.MimeType;
+import org.raml.model.Action;
+import org.raml.model.MimeType;
+import org.raml.model.Raml;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.xml.sax.SAXException;
@@ -33,9 +33,9 @@ public class XmlSchemaCacheLoader extends CacheLoader<String, Schema>
 {
 
     private ResourceLoader resourceLoader;
-    private Heaven api;
+    private Raml api;
 
-    public XmlSchemaCacheLoader(MuleContext muleContext, Heaven api)
+    public XmlSchemaCacheLoader(MuleContext muleContext, Raml api)
     {
         this.api = api;
         this.resourceLoader = new SchemaResourceLoader(muleContext.getExecutionClassLoader());
@@ -52,7 +52,7 @@ public class XmlSchemaCacheLoader extends CacheLoader<String, Schema>
             //TODO remove hack to get schema using coords
             String[] path = schemaLocation.split(",");
             Action action = api.getResource(path[0]).getAction(path[1]);
-            MimeType mimeType = action.getBody().getMimeTypes().get(path[2]);
+            MimeType mimeType = action.getBody().get(path[2]);
             is = new ByteArrayInputStream(mimeType.getSchema().getBytes());
         }
         else

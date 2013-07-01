@@ -24,11 +24,11 @@ import apikit2.exception.InvalidQueryParameterException;
 import apikit2.exception.MuleRestException;
 import apikit2.exception.NotAcceptableException;
 import apikit2.exception.UnsupportedMediaTypeException;
-import heaven.model.Action;
-import heaven.model.Body;
-import heaven.model.Heaven;
-import heaven.model.MimeType;
-import heaven.model.parameter.QueryParameter;
+import org.raml.model.Action;
+import org.raml.model.MimeType;
+import org.raml.model.Raml;
+import org.raml.model.Response;
+import org.raml.model.parameter.QueryParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,11 +38,11 @@ public class HttpRestRequest
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private MuleEvent requestEvent;
-    private Heaven api;
+    private Raml api;
     private Action action;
     private HttpProtocolAdapter adapter;
 
-    public HttpRestRequest(MuleEvent event, Heaven api)
+    public HttpRestRequest(MuleEvent event, Raml api)
     {
         requestEvent = event;
         this.api = api;
@@ -150,7 +150,7 @@ public class HttpRestRequest
 
     private void validateInputRepresentation() throws MuleRestException
     {
-        if (action == null || action.getBody() == null)
+        if (action == null || action.getBody().isEmpty())
         {
             logger.debug("=== no body types defined: accepting any request content-type");
             return;
@@ -161,7 +161,7 @@ public class HttpRestRequest
         {
             requestMimeTypeName = adapter.getRequestMediaType();
         }
-        for (String mimeTypeName : action.getBody().getMimeTypes().keySet())
+        for (String mimeTypeName : action.getBody().keySet())
         {
             if (logger.isDebugEnabled())
             {
@@ -172,7 +172,7 @@ public class HttpRestRequest
             {
                 found = true;
                 //TODO validate schema if defined
-                if (action.getBody().getMimeTypes().get(mimeTypeName).getSchema() != null &&
+                if (action.getBody().get(mimeTypeName).getSchema() != null &&
                     (mimeTypeName.contains("xml") || mimeTypeName.contains("json")))
                 {
                     validateSchema(mimeTypeName);
@@ -191,7 +191,7 @@ public class HttpRestRequest
         SchemaType schemaType = mimeTypeName.contains("json") ? SchemaType.JSONSchema : SchemaType.XMLSchema;
         RestSchemaValidator validator = RestSchemaValidatorFactory.getInstance().createValidator(schemaType, requestEvent.getMuleContext());
         StringBuilder key = new StringBuilder(action.getResource().getUri());
-        key.append(",").append(action.getName());
+        key.append(",").append(action.getType());
         key.append(",").append(mimeTypeName);
         validator.validate(key.toString(), requestEvent, api);
 
@@ -227,10 +227,10 @@ public class HttpRestRequest
         int status = getSuccessStatus();
         if (status != -1)
         {
-            Body body = action.getResponses().get(status);
-            if (body != null)
+            Response response = action.getResponses().get(String.valueOf(status));
+            if (response != null)
             {
-                Collection<MimeType> types = body.getMimeTypes().values();
+                Collection<MimeType> types = response.getBody().values();
                 logger.debug(String.format("=== adding response mimeTypes for status %d : %s", status, types));
                 mimeTypes.addAll(types);
             }
@@ -240,11 +240,12 @@ public class HttpRestRequest
 
     private int getSuccessStatus()
     {
-        for (Integer status : action.getResponses().keySet())
+        for (String status : action.getResponses().keySet())
         {
-            if (status >= 200 && status < 300)
+            int code = Integer.parseInt(status);
+            if (code >= 200 && code < 300)
             {
-                return status;
+                return code;
             }
         }
         return -1;
