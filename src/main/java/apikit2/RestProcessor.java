@@ -48,7 +48,7 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 public class RestProcessor implements MessageProcessor, Initialisable, MuleContextAware, FlowConstructAware
 {
 
-    public static final String APPLICATION_RAML_JSON = "application/raml+json";
+    public static final String APPLICATION_RAML = "application/raml";
     private static final int URI_CACHE_SIZE = 1000;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -216,10 +216,10 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         //check for raml descriptor request
         if (path.equals(api.getUri()) &&
             ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
-            request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML_JSON))
+            request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML))
         {
             event.getMessage().setPayload(ramlYaml);
-            event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML_JSON);
+            event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, ramlYaml.length());
             return event;
         }

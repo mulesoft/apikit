@@ -1,5 +1,6 @@
 package apikit2;
 
+import static apikit2.RestProcessor.APPLICATION_RAML;
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.port;
@@ -270,10 +271,10 @@ public class LeaguesTestCase extends FunctionalTestCase
     @Test
     public void getRaml() throws Exception
     {
-        given().header("Accept", "application/raml+json")
+        given().header("Accept", APPLICATION_RAML)
             .expect().log().everything()
                 .response().body(containsString("\"baseUri\": \"http://localhost:" + port + "/api\""))
-                .header("Content-type", "application/raml+json").statusCode(200)
+                .header("Content-type", APPLICATION_RAML).statusCode(200)
             .when().get("/api");
     }
 
