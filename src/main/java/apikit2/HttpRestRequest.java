@@ -49,6 +49,11 @@ public class HttpRestRequest
         adapter = new HttpProtocolAdapter(event);
     }
 
+    public HttpProtocolAdapter getAdapter()
+    {
+        return adapter;
+    }
+
     public String getResourcePath()
     {
         return adapter.getResourceURI().getPath();

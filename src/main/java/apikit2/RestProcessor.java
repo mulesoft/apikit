@@ -4,13 +4,18 @@ import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.construct.FlowConstruct;
+import org.mule.api.construct.FlowConstructAware;
 import org.mule.api.context.MuleContextAware;
+import org.mule.api.endpoint.ImmutableEndpoint;
 import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.construct.Flow;
 import org.mule.module.apikit.rest.uri.ResolvedVariables;
 import org.mule.module.apikit.rest.uri.URIPattern;
 import org.mule.module.apikit.rest.uri.URIResolver;
+import org.mule.transport.http.HttpConstants;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -20,8 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -29,25 +36,31 @@ import apikit2.exception.InvalidUriParameterException;
 import apikit2.exception.MethodNotAllowedException;
 import apikit2.exception.MuleRestException;
 import apikit2.exception.NotFoundException;
+import org.raml.model.ActionType;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.parser.visitor.YamlDocumentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
 
-public class RestProcessor implements MessageProcessor, Initialisable, MuleContextAware
+public class RestProcessor implements MessageProcessor, Initialisable, MuleContextAware, FlowConstructAware
 {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    public static final String APPLICATION_RAML_JSON = "application/raml+json";
     private static final int URI_CACHE_SIZE = 1000;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private MuleContext muleContext;
+    private FlowConstruct flowConstruct;
     private String config;
     private Raml api;
     private Map<String, RestFlow> restFlowMap;
     private Map<URIPattern, Resource> routingTable;
     private LoadingCache<String, URIResolver> uriResolverCache;
     private LoadingCache<String, URIPattern> uriPatternCache;
+    private String ramlYaml;
 
     public void setConfig(String config)
     {
@@ -62,6 +75,12 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
     @Override
     public void initialise() throws InitialisationException
     {
+        //avoid spring initialization
+        if (flowConstruct == null)
+        {
+            return;
+        }
+
         loadApiDefinition();
         loadRestFlowMap();
 
@@ -142,7 +161,33 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         InputStream ramlStream = this.getClass().getClassLoader().getResourceAsStream(config);
         //TODO perform validation
         api = builder.build(ramlStream);
-        //TODO save post-processed yaml to serve to clients
+        injectEndpointUri(builder);
+        ramlYaml = YamlDocumentBuilder.dumpFromAst(builder.getRootNode());
+    }
+
+    private void injectEndpointUri(YamlDocumentBuilder<Raml> builder)
+    {
+        String address = ((ImmutableEndpoint) ((Flow) flowConstruct).getMessageSource()).getAddress();
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("yaml baseUri: " + api.getBaseUri());
+            logger.debug("mule baseUri: " + address);
+        }
+        api.setBaseUri(address);
+        List<NodeTuple> tuples = new ArrayList<NodeTuple>();
+        for (NodeTuple tuple : builder.getRootNode().getValue())
+        {
+            if (((ScalarNode) tuple.getKeyNode()).getValue().equals("baseUri"))
+            {
+                ScalarNode valueNode = (ScalarNode) tuple.getValueNode();
+                tuples.add(new NodeTuple(tuple.getKeyNode(), new ScalarNode(valueNode.getTag(), address, valueNode.getStartMark(), valueNode.getEndMark(), valueNode.getStyle())));
+            }
+            else
+            {
+                tuples.add(tuple);
+            }
+        }
+        builder.getRootNode().setValue(tuples);
     }
 
     private void buildRoutingTable(Map<String, Resource> resources)
@@ -167,6 +212,17 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
 
         //String path = protocolAdapter.getResourceUri().getPath();
         String path = request.getResourcePath();
+
+        //check for raml descriptor request
+        if (path.equals(api.getUri()) &&
+            ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
+            request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML_JSON))
+        {
+            event.getMessage().setPayload(ramlYaml);
+            event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML_JSON);
+            event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, ramlYaml.length());
+            return event;
+        }
 
         URIPattern uriPattern;
         URIResolver uriResolver;
@@ -240,5 +296,11 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
             throw new RuntimeException(e);
         }
         return url.getPath();
+    }
+
+    @Override
+    public void setFlowConstruct(FlowConstruct flowConstruct)
+    {
+        this.flowConstruct = flowConstruct;
     }
 }

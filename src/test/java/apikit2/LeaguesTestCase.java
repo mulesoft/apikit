@@ -2,7 +2,9 @@ package apikit2;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.matchers.JUnitMatchers.hasItem;
@@ -263,6 +265,26 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .response().body(is("bad request"))
                 .statusCode(400)
                 .when().get("/api/leagues/liga-bbva/teams?limit=11");
+    }
+
+    @Test
+    public void getRaml() throws Exception
+    {
+        given().header("Accept", "application/raml+json")
+            .expect().log().everything()
+                .response().body(containsString("\"baseUri\": \"http://localhost:" + port + "/api\""))
+                .header("Content-type", "application/raml+json").statusCode(200)
+            .when().get("/api");
+    }
+
+    @Test
+    public void getRamlWrongContentType() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body(containsString("resource not found"))
+                .statusCode(404)
+            .when().get("/api");
     }
 
 }
