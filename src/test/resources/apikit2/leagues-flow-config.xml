@@ -29,8 +29,6 @@
         </apikit:mapping>
         <apikit:mapping statusCode="400">
             <apikit:exception value="apikit2.exception.BadRequestException"/>
-            <apikit:exception value="apikit2.exception.InvalidUriParameterException"/>
-            <apikit:exception value="apikit2.exception.InvalidQueryParameterException"/>
             <set-payload value="bad request"/>
         </apikit:mapping>
     </apikit:mapping-exception-strategy>

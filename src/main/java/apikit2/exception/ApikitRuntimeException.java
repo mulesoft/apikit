@@ -10,4 +10,9 @@ public class ApikitRuntimeException extends MuleRuntimeException
     {
         super(MessageFactory.createStaticMessage(message));
     }
+
+    public ApikitRuntimeException(Throwable t)
+    {
+        super(t);
+    }
 }

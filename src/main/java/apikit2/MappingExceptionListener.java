@@ -10,10 +10,12 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import apikit2.exception.ApikitRuntimeException;
+
 public class MappingExceptionListener extends CatchMessagingExceptionStrategy
 {
     private int statusCode;
-    private List<String> exceptions = new ArrayList<String>();
+    private List<Class<?>> exceptions = new ArrayList<Class<?>>();
 
     public void setStatusCode(int statusCode)
     {
@@ -22,7 +24,17 @@ public class MappingExceptionListener extends CatchMessagingExceptionStrategy
 
     public void setExceptions(List<String> exceptions)
     {
-        this.exceptions = exceptions;
+        for(String exception : exceptions)
+        {
+            try
+            {
+                this.exceptions.add(Class.forName(exception));
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new ApikitRuntimeException(e);
+            }
+        }
     }
 
     @Override
@@ -32,10 +44,12 @@ public class MappingExceptionListener extends CatchMessagingExceptionStrategy
         Map<Throwable, Object> visited = new IdentityHashMap<Throwable, Object>();
         while (exception != null && !visited.containsKey(exception))
         {
-            String name = exception.getClass().getName();
-            if (exceptions.contains(name))
+            for (Class declared : exceptions)
             {
-                return true;
+                if (declared.isAssignableFrom(exception.getClass()))
+                {
+                    return true;
+                }
             }
             visited.put(exception, null);
             exception = exception.getCause();
