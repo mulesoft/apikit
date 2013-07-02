@@ -109,6 +109,16 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void getOnLeaguesJsonTrailingSlash() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body("leagues.name", hasItems("Liga BBVA", "Premier League"))
+                .header("Content-type", "application/json").statusCode(200)
+            .when().get("/api/leagues/");
+    }
+
+    @Test
     public void getOnLeaguesXml() throws Exception
     {
         given().header("Accept", "text/xml")
