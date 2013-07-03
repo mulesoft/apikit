@@ -32,11 +32,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import apikit2.exception.ApikitRuntimeException;
 import apikit2.exception.InvalidUriParameterException;
 import apikit2.exception.MethodNotAllowedException;
 import apikit2.exception.MuleRestException;
 import apikit2.exception.NotFoundException;
-import org.raml.model.ActionType;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.parser.visitor.YamlDocumentBuilder;
@@ -158,7 +158,11 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
     private void loadApiDefinition()
     {
         YamlDocumentBuilder<Raml> builder = new YamlDocumentBuilder<Raml>(Raml.class);
-        InputStream ramlStream = this.getClass().getClassLoader().getResourceAsStream(config);
+        InputStream ramlStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(config);
+        if (ramlStream == null)
+        {
+            throw new ApikitRuntimeException(String.format("RAML descriptor %s not found", config));
+        }
         //TODO perform validation
         api = builder.build(ramlStream);
         injectEndpointUri(builder);
@@ -194,6 +198,11 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
     {
         for (Resource resource : resources.values())
         {
+            String parentUri = resource.getParentUri();
+            if (parentUri.contains("{version}"))
+            {
+                resource.setParentUri(parentUri.replaceAll("\\{version}", api.getVersion()));
+            }
             String uri = resource.getUri();
             logger.debug("Adding URI to the routing table: " + uri);
             routingTable.put(new URIPattern(uri), resource);
@@ -214,9 +223,9 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         String path = request.getResourcePath();
 
         //check for raml descriptor request
-        if (path.equals(api.getUri()) &&
+        if (path.equals(api.getUri()) /*&&
             ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
-            request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML))
+            request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML)*/)   //FIXME serve any content type
         {
             event.getMessage().setPayload(ramlYaml);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
@@ -251,6 +260,10 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         processUriParameters(resolvedVariables, resource, event);
 
         RestFlow flow = getFlow(resource, request.getMethod());
+        if (flow == null)
+        {
+            throw new ApikitRuntimeException("Flow not found for resource: " + resource);
+        }
         return request.process(flow, resource.getAction(request.getMethod()));
     }
 

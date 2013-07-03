@@ -16,6 +16,7 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -289,6 +290,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
+    @Ignore //content-type relaxed
     public void getRamlWrongContentType() throws Exception
     {
         given().header("Accept", "application/json")
