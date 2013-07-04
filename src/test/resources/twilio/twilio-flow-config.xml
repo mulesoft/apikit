@@ -41,8 +41,20 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
-    <apikit:flow name="retrieveLeagues" resource="/Accounts" action="get">
+    <apikit:flow name="retrieveAccounts" resource="/Accounts" action="get">
         <set-payload value="#[registry:list-of-accounts]"/>
+    </apikit:flow>
+
+    <apikit:flow name="retrieveAccount" resource="/Accounts/{AccountSid}" action="get">
+        <logger level="WARN" message="Sid: #[AccountSid]"/>
+        <choice>
+            <when expression="#[app.registry['list-of-accounts'].getAccount(AccountSid)]">
+                <set-payload value="#[app.registry['list-of-accounts'].getAccount(AccountSid)]"/>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="404"/>
+            </otherwise>
+        </choice>
     </apikit:flow>
 
     <spring:beans>

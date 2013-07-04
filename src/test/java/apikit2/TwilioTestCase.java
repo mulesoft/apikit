@@ -56,5 +56,14 @@ public class TwilioTestCase extends FunctionalTestCase
             .when().get("/2010-04-01/Accounts");
     }
 
+    @Test
+    public void getOnSingleAccountJson() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect().log().everything()
+                .response().body("sid", is("001"))
+                .header("Content-type", "application/json").statusCode(200)
+            .when().get("/2010-04-01/Accounts/001");
+    }
 
 }

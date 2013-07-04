@@ -20,5 +20,16 @@ public class Accounts
         this.accounts = accounts;
     }
 
+    public Account getAccount(String sid)
+    {
+        for (Account account : accounts)
+        {
+            if (account.getSid().equals(sid))
+            {
+                return account;
+            }
+        }
+        return null;
+    }
 
 }
