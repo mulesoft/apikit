@@ -61,6 +61,7 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
     private LoadingCache<String, URIResolver> uriResolverCache;
     private LoadingCache<String, URIPattern> uriPatternCache;
     private String ramlYaml;
+    private ConsoleHandler consoleHandler;
 
     public void setConfig(String config)
     {
@@ -83,6 +84,7 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
 
         loadApiDefinition();
         loadRestFlowMap();
+        consoleHandler = new ConsoleHandler(api.getBaseUri());
 
         routingTable = new HashMap<URIPattern, Resource>();
         buildRoutingTable(api.getResources());
@@ -221,6 +223,12 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
 
         //String path = protocolAdapter.getResourceUri().getPath();
         String path = request.getResourcePath();
+
+        //check for console request
+        if (path.startsWith(api.getUri() + "/console"))
+        {
+            return consoleHandler.process(event);
+        }
 
         //check for raml descriptor request
         if (path.equals(api.getUri()) /*&&

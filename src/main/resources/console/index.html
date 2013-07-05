@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Api Console</title>
+  <!-- Load Polymer -->
+  <script src="polymer.min.js"></script>
+  <script src="raml-parser.js"></script>
+  <script type="text/javascript" src="codemirror.js"></script>
+  <!-- Import Api Console elements -->
+  <link rel="import" href="raml.html">
+  <style>
+    body {
+      margin: 0px;
+      font-family: 'Ubuntu', sans-serif;
+      text-align: center;
+      background: rgb(248,248,248);
+    }
+
+    #content {
+      width: 960px;
+      margin: 0px auto;
+      text-align:left;
+    }
+  </style>
+</head>
+<body>
+  <div id="content">
+    <api-definition id="instagramApi" src="http://localhost:9001/app/sandbox/instagram-v1/instagram-v1.yml"></api-definition>
+    <api-console id="console" definition="#instagramApi"></api-console>
+  </div>
+</body>
+</html>

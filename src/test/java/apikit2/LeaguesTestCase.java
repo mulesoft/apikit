@@ -300,4 +300,37 @@ public class LeaguesTestCase extends FunctionalTestCase
             .when().get("/api");
     }
 
+    @Test
+    public void console() throws Exception
+    {
+        given().header("Accept", "text/html")
+            .expect().log().everything()
+                .response().body(allOf(containsString("<title>Api Console</title>"),
+                                       containsString("src=\"http://localhost:" + port + "/api\"")))
+                .header("Content-type", "text/html").statusCode(200)
+            .when().get("/api/console/index.html");
+    }
+
+    @Test
+    public void consoleDirectory() throws Exception
+    {
+        given().header("Accept", "text/html")
+            .expect().log().everything()
+                .response().body(allOf(containsString("<title>Api Console</title>"),
+                                       containsString("src=\"http://localhost:" + port + "/api\"")))
+                .header("Content-type", "text/html").statusCode(200)
+            .when().get("/api/console/");
+    }
+
+    @Test
+    public void consoleDirectoryNoSlash() throws Exception
+    {
+        given().header("Accept", "text/html")
+            .expect().log().everything()
+                .response().body(allOf(containsString("<title>Api Console</title>"),
+                                       containsString("src=\"http://localhost:" + port + "/api\"")))
+                .header("Content-type", "text/html").statusCode(200)
+            .when().get("/api/console");
+    }
+
 }

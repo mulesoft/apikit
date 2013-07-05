@@ -1,0 +1,1779 @@
+<element name="api-console-navbar" attributes="definition">
+  <template>
+    <style>header {
+  height: 60px;
+  display: block;
+  color: white;
+  background: #364655;
+  width: 960px;
+}
+header > h1 {
+  display: inline-block;
+  margin: 0px;
+  height: 100%;
+  width: 150px;
+  font-weight: 200;
+  vertical-align: middle;
+  line-height: 60px;
+  font-size: 22px;
+  background: #273746;
+  padding: 0px 20px;
+  border-right: 1px solid #293137;
+}
+header > h1 > em {
+  font-style: normal;
+  font-weight: bold;
+}
+header > span {
+  padding-left: 20px;
+  font-size: 19px;
+  vertical-align: middle;
+}
+</style>
+    <header>
+        <h1>api:<em>Console</em></h1>
+        <span>{{api.title}} {{api.version}}</span>
+    </header>
+  </template>
+  <script>Polymer.register(this, {
+    ready: function () {
+    }
+});</script>
+</element><element name="api-console-sidebar" attributes="resources documentation">
+  <template>
+    <style>/*!
+ * Preboot v2
+ *
+ * Open sourced under MIT license by @mdo.
+ * Some variables and mixins from Bootstrap (Apache 2 license).
+ */
+section,
+aside {
+  font-family: 'Ubuntu', sans-serif;
+}
+a,
+a:visited {
+  color: #07c;
+  text-decoration: none;
+  outline: 0;
+}
+a:hover,
+a:focus {
+  color: #000;
+}
+p a,
+p a:visited {
+  line-height: inherit;
+}
+h1 {
+  color: #9fa3a6;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-shadow: 1px 1px white;
+  margin: 0px;
+  padding: 25px 20px 10px 20px;
+}
+ul {
+  margin: 0px;
+  padding-left: 0px;
+}
+ul > li {
+  list-style: none;
+  font-size: 14px;
+  padding: 10px 20px;
+  border-top: 1px solid transparent;
+  border-bottom: 1px solid transparent;
+}
+ul > li > a,
+ul > li > a:visited {
+  color: black;
+}
+ul > li.active {
+  background: #fbfbfc;
+  border-top: 1px solid #dadcdd;
+  border-bottom: 1px solid #dadcdd;
+}
+ul > li.active > a,
+ul > li.active > a:visited {
+  color: #4e89ca;
+}
+</style>
+    <template if="{{documentation.length}}">
+      <section role="documentation">
+        <header>
+          <h1>Overview</h1>
+        </header>
+        <ul role="documentation">
+          <template repeat="{{document in documentation}}">
+            <template if="{{document.title == selectedDocumentation}}" bind="{{document}}">
+              <li class="active">
+                <a href="#" on-click="documentationClicked">{{title}}</a>
+              </li>
+            </template>
+            <template if="{{document.title != selectedDocumentation}}" bind="{{document}}">
+              <li>
+                <a href="#" on-click="documentationClicked">{{title}}</a>
+              </li>
+            </template>
+          </template>
+        </ul>
+      </section>
+    </template>
+    <template if="{{resources.length}}">
+      <section role="resources">
+        <header>
+          <h1>Api Reference</h1>
+        </header>
+        <ul>
+          <template repeat="{{resource in resources}}">
+            <template if="{{resource.name == selectedResource}}" bind="{{resource}}">
+              <li class="active">
+                <a href="#" on-click="resourceClicked">{{name}}</a>
+              </li>
+            </template>
+            <template if="{{resource.name != selectedResource}}" bind="{{resource}}">
+              <li>
+                <a href="#" on-click="resourceClicked">{{name}}</a>
+              </li>
+            </template>
+          </template>
+        </ul>
+      </section>
+    </template>
+  </template>
+  <script>Polymer.register(this, {
+    resources: null,
+    documentation: null,
+    selectedResource: null,
+    selectedDocumentation: null,
+    initialize: function () {
+        if (this.documentation && this.documentation.length) {
+            this.selectDocumentation(this.documentation[0]);
+            return;
+        }
+        if (this.resources && this.resources.length) {
+            this.selectResource(this.resources[0]);
+            return;
+        }
+    },
+    resourceClicked: function (event, detail, sender) {
+        this.selectResource(sender.templateInstance.model);
+    },
+    documentationClicked: function (event, detail, sender) {
+        this.selectDocumentation(sender.templateInstance.model);
+    },
+    selectResource: function (resource) {
+        this.selectedResource = resource.name;
+        this.selectedDocumentation = null;
+        this.fire('sidebar-resource-element-clicked', resource);
+    },
+    selectDocumentation: function (documentation) {
+        this.selectedDocumentation = documentation.title;
+        this.selectedResource = null;
+        this.fire('sidebar-documentation-element-clicked', documentation);
+    }
+});</script>
+</element><element name="api-console" attributes="definition">
+  <template>
+    <style>section[role=api-console] {
+  width: 960px;
+}
+aside[role=sidebar] {
+  float: left;
+  box-sizing: border-box;
+  width: 190px;
+  background: #eff2f4;
+  border-left: 1px solid #dadcdd;
+  border-right: 1px solid #dadcdd;
+  min-height: 3000px;
+}
+section[role=main] {
+  float: right;
+  box-sizing: border-box;
+  width: 770px;
+  min-height: 3000px;
+  border-right: 1px solid #dadcdd;
+  background: white;
+  overflow: scroll;
+}
+</style>
+
+    <section role="api-console">
+      <header>
+        <api-console-navbar id="navbar" definition="{{definition}}"></api-console-navbar>
+      </header>
+
+      <aside role="sidebar">
+        <!-- <select id="apiSelector" on-change="apiChanged">
+          <option value="http://localhost:9001/app/sandbox/instagram-v1/instagram-v1.yml">Instagram</option>
+          <option value="http://localhost:9001/twitter.yml">Twitter</option>
+          <option value="http://localhost:9001/shaka.yml">Shaka</option>
+        </select> -->
+
+        <api-console-sidebar id="sidebar"
+          resources="{{resources}}"
+          documentation="{{documentation}}"
+          on-sidebar-documentation-element-clicked="documentationElementClicked"
+          on-sidebar-resource-element-clicked="resourceElementClicked">
+        </api-console-sidebar>
+      </aside>
+
+      <section role="main">
+        <api-operation-list id="operationList" definition="{{definition}}"></api-operation-list>
+        <api-documentation id="documentation" definition="{{definition}}"></api-documentation>
+      </section>
+    </section>
+
+  </template>
+  <script>Polymer.register(this, {
+    ready: function () {
+        window.addEventListener('WebComponentsReady', function () {
+            this.apiDefinition = document.querySelector(this.definition);
+            this.apiDefinition.addEventListener('api-definition-loaded', this.onDefinitionReady.bind(this));
+        }.bind(this));
+    },
+    onDefinitionReady: function (event) {
+        this.resources = [];
+        this.api = event.detail.api;
+        this.resources = event.detail.resources;
+        this.documentation = event.detail.documentation;
+        this.$.operationList.resourcePath = null;
+        this.$.documentation.resourcePath = null;
+        this.$.sidebar.initialize();
+        this.$.navbar.api = event.detail;
+    },
+    resourceElementClicked: function(event, detail, sender) {
+        this.$.operationList.resourcePath = detail.name;
+        this.$.documentation.resourcePath = null;
+    },
+    documentationElementClicked: function(event, detail, sender) {
+        this.$.documentation.resourcePath = detail.title;
+        this.$.operationList.resourcePath = null;
+    },
+    apiChanged: function (event, detail, sender) {
+        this.apiDefinition.src = this.$.apiSelector.value;
+    }
+});</script>
+</element><element name="api-definition" attributes="src">
+    <template>
+        <style>@host {
+    * {
+        display: none;
+    }
+}</style>
+    </template>
+    <script>Polymer.register(this, {
+    callbacks: [],
+    srcChanged: function () {
+        var that = this;
+
+        RAML.Parser.loadFile(this.src).done(function (result) {
+            result.resources.forEach(function (resource) {
+                that.massage(resource);
+            });
+            console.log(result);
+
+            that.fire('api-definition-loaded', result);
+        });
+    },
+    massage: function (resource, parent) {
+        resource.use = this.readTraits(resource.use);
+
+        if (resource.resources) {
+            var temp = JSON.parse(JSON.stringify(resource));
+
+            delete temp.resources;
+
+            temp.relativeUri = '';
+
+            if (temp.methods) {
+                resource.resources.unshift(temp);
+            }
+
+            resource.resources.forEach(function (r) {
+                r.relativeUri = resource.relativeUri + r.relativeUri;
+
+                if (parent) {
+                    parent.resources.push(r);
+                }
+
+                this.massage(r, resource);
+            }.bind(this));
+        } else {
+            var exists = parent.resources.filter(function (p) {
+                return p.name == p.name;
+            }.bind(this)).pop();
+
+            if (parent && !exists) {
+                parent.resources.push(resource);
+            }
+        }
+    },
+    readTraits: function (usages) {
+        var temp = [];
+
+        if (usages) {
+            usages.forEach(function (use) {
+                if (typeof use === 'string' && temp.indexOf(use) === -1) {
+                    temp.push(use);
+                } else if (typeof use === 'object') {
+                    var keys = Object.keys(use);
+
+                    if (keys.length) {
+                        var key = Object.keys(use)[0];
+
+                        if (temp.indexOf(key) === -1) {
+                            temp.push(key);
+                        }
+                    }
+                }
+            });
+        }
+
+        return temp;
+    }
+});</script>
+</element><element name="api-documentation" attributes="definition resourcePath">
+  <template>
+    <style>/*!
+ * Preboot v2
+ *
+ * Open sourced under MIT license by @mdo.
+ * Some variables and mixins from Bootstrap (Apache 2 license).
+ */
+section,
+aside {
+  font-family: 'Ubuntu', sans-serif;
+}
+a,
+a:visited {
+  color: #07c;
+  text-decoration: none;
+  outline: 0;
+}
+a:hover,
+a:focus {
+  color: #000;
+}
+p a,
+p a:visited {
+  line-height: inherit;
+}
+div#content {
+  padding: 10px 22px 22px 22px;
+  font-size: 14px;
+}
+header {
+  height: 75px;
+  width: 100%;
+  border-bottom: 1px solid #dadcdd;
+  padding: 0px;
+  margin: 0px;
+}
+header h1 {
+  font-size: 23px;
+  line-height: 75px;
+  font-weight: 300;
+  padding: 0px;
+  margin: 0px;
+  margin-left: 22px;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 200;
+}
+</style>
+    <section role="api-documentation">
+      <header>
+        <h1>{{documentation.title}}</h1>
+      </header>
+      <div id="content"></div>
+    </section>
+  </template>
+  <script>var Showdown={extensions:{}},forEach=Showdown.forEach=function(a,b){if(typeof a.forEach=="function")a.forEach(b);else{var c,d=a.length;for(c=0;c<d;c++)b(a[c],c,a)}},stdExtName=function(a){return a.replace(/[_-]||\s/g,"").toLowerCase()};Showdown.converter=function(a){var b,c,d,e=0,f=[],g=[];if(typeof module!="undefind"&&typeof exports!="undefined"&&typeof require!="undefind"){var h=require("fs");if(h){var i=h.readdirSync((__dirname||".")+"/extensions").filter(function(a){return~a.indexOf(".js")}).map(function(a){return a.replace(/\.js$/,"")});Showdown.forEach(i,function(a){var b=stdExtName(a);Showdown.extensions[b]=require("./extensions/"+a)})}}this.makeHtml=function(a){return b={},c={},d=[],a=a.replace(/~/g,"~T"),a=a.replace(/\$/g,"~D"),a=a.replace(/\r\n/g,"\n"),a=a.replace(/\r/g,"\n"),a="\n\n"+a+"\n\n",a=M(a),a=a.replace(/^[ \t]+$/mg,""),Showdown.forEach(f,function(b){a=k(b,a)}),a=z(a),a=m(a),a=l(a),a=o(a),a=K(a),a=a.replace(/~D/g,"$"),a=a.replace(/~T/g,"~"),Showdown.forEach(g,function(b){a=k(b,a)}),a};if(a&&a.extensions){var j=this;Showdown.forEach(a.extensions,function(a){typeof a=="string"&&(a=Showdown.extensions[stdExtName(a)]);if(typeof a!="function")throw"Extension '"+a+"' could not be loaded.  It was either not found or is not a valid extension.";Showdown.forEach(a(j),function(a){a.type?a.type==="language"||a.type==="lang"?f.push(a):(a.type==="output"||a.type==="html")&&g.push(a):g.push(a)})})}var k=function(a,b){if(a.regex){var c=new RegExp(a.regex,"g");return b.replace(c,a.replace)}if(a.filter)return a.filter(b)},l=function(a){return a+="~0",a=a.replace(/^[ ]{0,3}\[(.+)\]:[ \t]*\n?[ \t]*<?(\S+?)>?[ \t]*\n?[ \t]*(?:(\n*)["(](.+?)[")][ \t]*)?(?:\n+|(?=~0))/gm,function(a,d,e,f,g){return d=d.toLowerCase(),b[d]=G(e),f?f+g:(g&&(c[d]=g.replace(/"/g,"&quot;")),"")}),a=a.replace(/~0/,""),a},m=function(a){a=a.replace(/\n/g,"\n\n");var b="p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math|ins|del|style|section|header|footer|nav|article|aside",c="p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math|style|section|header|footer|nav|article|aside";return a=a.replace(/^(<(p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math|ins|del)\b[^\r]*?\n<\/\2>[ \t]*(?=\n+))/gm,n),a=a.replace(/^(<(p|div|h[1-6]|blockquote|pre|table|dl|ol|ul|script|noscript|form|fieldset|iframe|math|style|section|header|footer|nav|article|aside)\b[^\r]*?<\/\2>[ \t]*(?=\n+)\n)/gm,n),a=a.replace(/(\n[ ]{0,3}(<(hr)\b([^<>])*?\/?>)[ \t]*(?=\n{2,}))/g,n),a=a.replace(/(\n\n[ ]{0,3}<!(--[^\r]*?--\s*)+>[ \t]*(?=\n{2,}))/g,n),a=a.replace(/(?:\n\n)([ ]{0,3}(?:<([?%])[^\r]*?\2>)[ \t]*(?=\n{2,}))/g,n),a=a.replace(/\n\n/g,"\n"),a},n=function(a,b){var c=b;return c=c.replace(/\n\n/g,"\n"),c=c.replace(/^\n/,""),c=c.replace(/\n+$/g,""),c="\n\n~K"+(d.push(c)-1)+"K\n\n",c},o=function(a){a=v(a);var b=A("<hr />");return a=a.replace(/^[ ]{0,2}([ ]?\*[ ]?){3,}[ \t]*$/gm,b),a=a.replace(/^[ ]{0,2}([ ]?\-[ ]?){3,}[ \t]*$/gm,b),a=a.replace(/^[ ]{0,2}([ ]?\_[ ]?){3,}[ \t]*$/gm,b),a=x(a),a=y(a),a=E(a),a=m(a),a=F(a),a},p=function(a){return a=B(a),a=q(a),a=H(a),a=t(a),a=r(a),a=I(a),a=G(a),a=D(a),a=a.replace(/  +\n/g," <br />\n"),a},q=function(a){var b=/(<[a-z\/!$]("[^"]*"|'[^']*'|[^'">])*>|<!(--.*?--\s*)+>)/gi;return a=a.replace(b,function(a){var b=a.replace(/(.)<\/?code>(?=.)/g,"$1`");return b=N(b,"\\`*_"),b}),a},r=function(a){return a=a.replace(/(\[((?:\[[^\]]*\]|[^\[\]])*)\][ ]?(?:\n[ ]*)?\[(.*?)\])()()()()/g,s),a=a.replace(/(\[((?:\[[^\]]*\]|[^\[\]])*)\]\([ \t]*()<?(.*?(?:\(.*?\).*?)?)>?[ \t]*((['"])(.*?)\6[ \t]*)?\))/g,s),a=a.replace(/(\[([^\[\]]+)\])()()()()()/g,s),a},s=function(a,d,e,f,g,h,i,j){j==undefined&&(j="");var k=d,l=e,m=f.toLowerCase(),n=g,o=j;if(n==""){m==""&&(m=l.toLowerCase().replace(/ ?\n/g," ")),n="#"+m;if(b[m]!=undefined)n=b[m],c[m]!=undefined&&(o=c[m]);else{if(!(k.search(/\(\s*\)$/m)>-1))return k;n=""}}n=N(n,"*_");var p='<a href="'+n+'"';return o!=""&&(o=o.replace(/"/g,"&quot;"),o=N(o,"*_"),p+=' title="'+o+'"'),p+=">"+l+"</a>",p},t=function(a){return a=a.replace(/(!\[(.*?)\][ ]?(?:\n[ ]*)?\[(.*?)\])()()()()/g,u),a=a.replace(/(!\[(.*?)\]\s?\([ \t]*()<?(\S+?)>?[ \t]*((['"])(.*?)\6[ \t]*)?\))/g,u),a},u=function(a,d,e,f,g,h,i,j){var k=d,l=e,m=f.toLowerCase(),n=g,o=j;o||(o="");if(n==""){m==""&&(m=l.toLowerCase().replace(/ ?\n/g," ")),n="#"+m;if(b[m]==undefined)return k;n=b[m],c[m]!=undefined&&(o=c[m])}l=l.replace(/"/g,"&quot;"),n=N(n,"*_");var p='<img src="'+n+'" alt="'+l+'"';return o=o.replace(/"/g,"&quot;"),o=N(o,"*_"),p+=' title="'+o+'"',p+=" />",p},v=function(a){function b(a){return a.replace(/[^\w]/g,"").toLowerCase()}return a=a.replace(/^(.+)[ \t]*\n=+[ \t]*\n+/gm,function(a,c){return A('<h1 id="'+b(c)+'">'+p(c)+"</h1>")}),a=a.replace(/^(.+)[ \t]*\n-+[ \t]*\n+/gm,function(a,c){return A('<h2 id="'+b(c)+'">'+p(c)+"</h2>")}),a=a.replace(/^(\#{1,6})[ \t]*(.+?)[ \t]*\#*\n+/gm,function(a,c,d){var e=c.length;return A("<h"+e+' id="'+b(d)+'">'+p(d)+"</h"+e+">")}),a},w,x=function(a){a+="~0";var b=/^(([ ]{0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(~0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/gm;return e?a=a.replace(b,function(a,b,c){var d=b,e=c.search(/[*+-]/g)>-1?"ul":"ol";d=d.replace(/\n{2,}/g,"\n\n\n");var f=w(d);return f=f.replace(/\s+$/,""),f="<"+e+">"+f+"</"+e+">\n",f}):(b=/(\n\n|^\n?)(([ ]{0,3}([*+-]|\d+[.])[ \t]+)[^\r]+?(~0|\n{2,}(?=\S)(?![ \t]*(?:[*+-]|\d+[.])[ \t]+)))/g,a=a.replace(b,function(a,b,c,d){var e=b,f=c,g=d.search(/[*+-]/g)>-1?"ul":"ol",f=f.replace(/\n{2,}/g,"\n\n\n"),h=w(f);return h=e+"<"+g+">\n"+h+"</"+g+">\n",h})),a=a.replace(/~0/,""),a};w=function(a){return e++,a=a.replace(/\n{2,}$/,"\n"),a+="~0",a=a.replace(/(\n)?(^[ \t]*)([*+-]|\d+[.])[ \t]+([^\r]+?(\n{1,2}))(?=\n*(~0|\2([*+-]|\d+[.])[ \t]+))/gm,function(a,b,c,d,e){var f=e,g=b,h=c;return g||f.search(/\n{2,}/)>-1?f=o(L(f)):(f=x(L(f)),f=f.replace(/\n$/,""),f=p(f)),"<li>"+f+"</li>\n"}),a=a.replace(/~0/g,""),e--,a};var y=function(a){return a+="~0",a=a.replace(/(?:\n\n|^)((?:(?:[ ]{4}|\t).*\n+)+)(\n*[ ]{0,3}[^ \t\n]|(?=~0))/g,function(a,b,c){var d=b,e=c;return d=C(L(d)),d=M(d),d=d.replace(/^\n+/g,""),d=d.replace(/\n+$/g,""),d="<pre><code>"+d+"\n</code></pre>",A(d)+e}),a=a.replace(/~0/,""),a},z=function(a){return a+="~0",a=a.replace(/(?:^|\n)```(.*)\n([\s\S]*?)\n```/g,function(a,b,c){var d=b,e=c;return e=C(e),e=M(e),e=e.replace(/^\n+/g,""),e=e.replace(/\n+$/g,""),e="<pre><code"+(d?' class="'+d+'"':"")+">"+e+"\n</code></pre>",A(e)}),a=a.replace(/~0/,""),a},A=function(a){return a=a.replace(/(^\n+|\n+$)/g,""),"\n\n~K"+(d.push(a)-1)+"K\n\n"},B=function(a){return a=a.replace(/(^|[^\\])(`+)([^\r]*?[^`])\2(?!`)/gm,function(a,b,c,d,e){var f=d;return f=f.replace(/^([ \t]*)/g,""),f=f.replace(/[ \t]*$/g,""),f=C(f),b+"<code>"+f+"</code>"}),a},C=function(a){return a=a.replace(/&/g,"&amp;"),a=a.replace(/</g,"&lt;"),a=a.replace(/>/g,"&gt;"),a=N(a,"*_{}[]\\",!1),a},D=function(a){return a=a.replace(/(\*\*|__)(?=\S)([^\r]*?\S[*_]*)\1/g,"<strong>$2</strong>"),a=a.replace(/(\*|_)(?=\S)([^\r]*?\S)\1/g,"<em>$2</em>"),a},E=function(a){return a=a.replace(/((^[ \t]*>[ \t]?.+\n(.+\n)*\n*)+)/gm,function(a,b){var c=b;return c=c.replace(/^[ \t]*>[ \t]?/gm,"~0"),c=c.replace(/~0/g,""),c=c.replace(/^[ \t]+$/gm,""),c=o(c),c=c.replace(/(^|\n)/g,"$1  "),c=c.replace(/(\s*<pre>[^\r]+?<\/pre>)/gm,function(a,b){var c=b;return c=c.replace(/^  /mg,"~0"),c=c.replace(/~0/g,""),c}),A("<blockquote>\n"+c+"\n</blockquote>")}),a},F=function(a){a=a.replace(/^\n+/g,""),a=a.replace(/\n+$/g,"");var b=a.split(/\n{2,}/g),c=[],e=b.length;for(var f=0;f<e;f++){var g=b[f];g.search(/~K(\d+)K/g)>=0?c.push(g):g.search(/\S/)>=0&&(g=p(g),g=g.replace(/^([ \t]*)/g,"<p>"),g+="</p>",c.push(g))}e=c.length;for(var f=0;f<e;f++)while(c[f].search(/~K(\d+)K/)>=0){var h=d[RegExp.$1];h=h.replace(/\$/g,"$$"),c[f]=c[f].replace(/~K\d+K/,h)}return c.join("\n\n")},G=function(a){return a=a.replace(/&(?!#?[xX]?(?:[0-9a-fA-F]+|\w+);)/g,"&amp;"),a=a.replace(/<(?![a-z\/?\$!])/gi,"&lt;"),a},H=function(a){return a=a.replace(/\\(\\)/g,O),a=a.replace(/\\([`*_{}\[\]()>#+-.!])/g,O),a},I=function(a){return a=a.replace(/<((https?|ftp|dict):[^'">\s]+)>/gi,'<a href="$1">$1</a>'),a=a.replace(/<(?:mailto:)?([-.\w]+\@[-a-z0-9]+(\.[-a-z0-9]+)*\.[a-z]+)>/gi,function(a,b){return J(K(b))}),a},J=function(a){var b=[function(a){return"&#"+a.charCodeAt(0)+";"},function(a){return"&#x"+a.charCodeAt(0).toString(16)+";"},function(a){return a}];return a="mailto:"+a,a=a.replace(/./g,function(a){if(a=="@")a=b[Math.floor(Math.random()*2)](a);else if(a!=":"){var c=Math.random();a=c>.9?b[2](a):c>.45?b[1](a):b[0](a)}return a}),a='<a href="'+a+'">'+a+"</a>",a=a.replace(/">.+:/g,'">'),a},K=function(a){return a=a.replace(/~E(\d+)E/g,function(a,b){var c=parseInt(b);return String.fromCharCode(c)}),a},L=function(a){return a=a.replace(/^(\t|[ ]{1,4})/gm,"~0"),a=a.replace(/~0/g,""),a},M=function(a){return a=a.replace(/\t(?=\t)/g,"    "),a=a.replace(/\t/g,"~A~B"),a=a.replace(/~B(.+?)~A/g,function(a,b,c){var d=b,e=4-d.length%4;for(var f=0;f<e;f++)d+=" ";return d}),a=a.replace(/~A/g,"    "),a=a.replace(/~B/g,""),a},N=function(a,b,c){var d="(["+b.replace(/([\[\]\\])/g,"\\$1")+"])";c&&(d="\\\\"+d);var e=new RegExp(d,"g");return a=a.replace(e,O),a},O=function(a,b){var c=b.charCodeAt(0);return"~E"+c+"E"}},typeof module!="undefined"&&(module.exports=Showdown),typeof define=="function"&&define.amd&&define("showdown",function(){return Showdown});
+window.Showdown = Showdown;
+Polymer.register(this, {
+    ready: function () {
+        this.hidden = true;
+        window.addEventListener('WebComponentsReady', function () {
+            var definition = document.querySelector(this.definition);
+
+            definition.addEventListener('api-definition-loaded', this.onDefinitionReady.bind(this));
+        }.bind(this));
+    },
+    onDefinitionReady: function (event) {
+        // var documentation = event.detail.documentation;
+
+        // if (documentation && documentation.length) {
+        //  this.resourcePath = documentation[0].title;
+        // }
+    },
+    resourcePathChanged: function () {
+        //// TODO: Check errors
+        if (!this.resourcePath) {
+            this.hidden = true;
+            this.documentation = null;
+            return;
+        }
+
+        this.documentation = this.definition.documentation.filter(function (p) {
+            return p.title == this.resourcePath;
+        }.bind(this)).pop();
+
+        this.$.content.innerHTML = this.renderAsHml(this.documentation.content);
+        this.hidden = false;
+    },
+    renderAsHml: function (markdown) {
+        var converter = new Showdown.converter();
+
+        return converter.makeHtml(markdown);
+    }
+});</script>
+</element><element name="api-operation-details-section-parameters" attributes="resource">
+  <template>
+  	<style></style>
+  </template>
+  <script>Polymer.register(this, {
+    ready: function () {}
+});</script>
+</element><element name="api-operation-details-section-request" attributes="resource">
+  <template>
+  	<style></style>
+  </template>
+  <script>Polymer.register(this, {
+    ready: function () {}
+});</script>
+</element><element name="api-operation-details-section-response" attributes="resource">
+  <template>
+  	<style></style>
+  </template>
+  <script></script>
+</element><element name="api-operation-details-section-try-it" attributes="resource method">
+  <template>
+    <style>/*!
+ * Preboot v2
+ *
+ * Open sourced under MIT license by @mdo.
+ * Some variables and mixins from Bootstrap (Apache 2 license).
+ */
+section,
+aside {
+  font-family: 'Ubuntu', sans-serif;
+}
+a,
+a:visited {
+  color: #07c;
+  text-decoration: none;
+  outline: 0;
+}
+a:hover,
+a:focus {
+  color: #000;
+}
+p a,
+p a:visited {
+  line-height: inherit;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] {
+  background: white;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > header {
+  display: block;
+  background: #fbfbfb;
+  height: 60px;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > header > h1 {
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 60px;
+  margin: 0px;
+  padding: 0px 20px;
+  color: black;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > header > ul {
+  display: none;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params],
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] {
+  border-top: 1px solid #dfe3e7;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params] > h2,
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > h2 {
+  font-size: 15px;
+  font-weight: 100;
+  color: #33373b;
+  line-height: 30px;
+  margin: 0px;
+  padding: 10px 20px 0px 20px;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params] > div[role=uri],
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] {
+  font-size: 16px;
+  font-weight: normal;
+  color: black;
+  line-height: 22px;
+  margin: 0px;
+  padding: 5px 20px 15px 20px;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params] > div[role=uri] > input {
+  border: 0;
+  border-bottom: 1px solid lightgrey;
+  font-size: 14px;
+  max-width: 80px;
+  text-align: center;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params] > div[role=uri] > input:focus {
+  outline: 0;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] {
+  padding-bottom: 10px;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] > label,
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=request-body] > label {
+  display: inline-block;
+  margin: 0px 10px 10px 0px;
+  color: #9ea3a6;
+  font-size: 13px;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] > label > input,
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=request-body] > label > textarea {
+  display: block;
+  border: 1px solid #dfe3e7;
+  height: 35px;
+  line-height: auto;
+  font-size: 13px;
+  padding: 0px 10px;
+  margin-left: -1px;
+  border-radius: 3px;
+  width: 110px;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] > label > input:focus,
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=request-body] > label > textarea:focus {
+  outline: 0;
+  border: 1px solid lightgrey;
+  box-shadow: 0px 0px 4px lightgrey;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=request-body] {
+  padding: 0px 20px 15px 20px;
+  display: block;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=request-body] > label {
+  display: block;
+  width: 100%;
+  line-height: 22px;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=request-body] > label textarea {
+  display: block;
+  box-sizing: border-box;
+  height: 120px;
+  width: 100%;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=try-it] {
+  text-align: right;
+  padding: 0px 20px 40px 0px;
+  font-size: 13px;
+  font-weight: bold;
+}
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=try-it] > span {
+  color: white;
+  cursor: pointer;
+  background: #7bd15c;
+  border-radius: 3px;
+  border: 1px solid #6cb750;
+  padding: 10px 40px;
+  box-shadow: 0px 0px 4px lightgrey;
+}
+section[role=api-operation-details-section-try-it] > section[role=response] {
+  border-top: 1px solid #dfe3e7;
+}
+section[role=api-operation-details-section-try-it] > section[role=response] {
+  border-top: 1px solid #dfe3e7;
+}
+section[role=api-operation-details-section-try-it] > section[role=response] > header {
+  display: block;
+  background: #fbfbfb;
+  height: 60px;
+}
+section[role=api-operation-details-section-try-it] > section[role=response] > header > h1 {
+  font-size: 16px;
+  font-weight: normal;
+  line-height: 60px;
+  margin: 0px;
+  padding: 0px 20px;
+  color: black;
+}
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=request-uri],
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-code],
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-headers],
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-body] {
+  background: #f4f6f8;
+  padding-bottom: 20px;
+}
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=request-uri] > h1,
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-code] > h1,
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-headers] > h1,
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-body] > h1 {
+  color: #9fa3a6;
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: bold;
+  text-shadow: 1px 1px white;
+  margin: 0px;
+  padding: 20px 20px 10px 20px;
+  border-top: 1px solid #dfe3e7;
+}
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=request-uri] > p,
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-code] > p,
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-headers] > p,
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-body] > p {
+  padding: 0px 20px;
+  margin: 0px;
+  font-family: monospace;
+}
+section[role=api-operation-details-section-try-it] > section[role=response] > section[role=response-body] {
+  max-height: 300px;
+  max-width: 723px;
+  overflow: scroll;
+}
+</style>
+    <section role="api-operation-details-section-try-it">
+      <section role="request" id="request">
+        <header>
+            <h1>Request</h1>
+            <ul role="type">
+                <li>JSON</li>
+                <li>XML</li>
+                <li>JSONP</li>
+            </ul>
+        </header>
+        <div role="uri-params">
+          <h2>Resource Uri</h2>
+          <div role="uri">
+            <template repeat="{{part in urlParts}}">
+              <template if="{{part.isTemplate}}">
+                /&nbsp;<input type="text" placeholder="{{part.name}}" value="{{ part.value }}">&nbsp;
+              </template>
+              <template if="{{!part.isTemplate}}">
+                /&nbsp;<span>{{part.name}}</span>
+              </template>
+            </template>
+          </div>
+        </div>
+        <template id="additionalParams" if="{{methodInfo.query.length || method == 'POST' || method == 'PUT'}}">
+          <div role="additional-params">
+            <div role="query-params">
+              <h2>Additional parameters</h2>
+              <template if="{{methodInfo.query.length}}">
+                <div role="params">
+                  <template repeat="{{queryParam in methodInfo.query}}">
+                    <label>{{queryParam.name}}
+                      <input type="text" placeholder="{{queryParam.example}}" value="{{queryParam.value}}">
+                    </label>
+                  </template>
+                </div>
+              </template>
+            </div>
+            <template id="requestBody" if="{{method == 'POST' || method == 'PUT'}}">
+              <div role="request-body">
+                <label>Body
+                  <textarea value="{{model.request.body}}"></textarea>
+                </label>
+              </div>
+            </template>
+          </div>
+        </template>
+        <div role="try-it">
+          <span on-click="tryIt">Try It!</span>
+        </div>
+      </section>
+      <section role="response" id="response">
+          <header>
+              <h1>Response</h1>
+          </header>
+          <section role="request-uri">
+              <h1>Request URL</h1>
+              <p>{{model.response.url}}</p>
+          </section>
+          <section role="response-code">
+              <h1>Response code</h1>
+              <p>{{model.response.statusCode}}</p>
+          </section>
+          <section role="response-headers">
+              <h1>Response headers</h1>
+              <p>{{model.response.headers}}</p>
+          </section>
+          <section role="response-body">
+              <h1>Response body</h1>
+              <p>
+                <codemirror source="{{model.response.body}}"></codemirror>
+              </p>
+          </section>
+
+      </section>
+    </section>
+  </template>
+  <script>var Helpers = (function () {
+	return {
+		joinUrl: function (url1, url2) {
+			if (url1.lastIndexOf('/') === url1.length - 1) {
+				url1 = url1.substring(0, url1.lastIndexOf('/'));
+			}
+
+			if (url2.indexOf('/') !== 0) {
+				url2 = '/' + url2;
+			}
+
+			return url1 + url2;
+		},
+		resolveParams: function (urlTemplate, params) {
+			if (params) {
+				params.forEach(function (p) {
+					if (p.value) {
+						urlTemplate = urlTemplate.replace(p.name, p.value);
+					}
+				});
+			}
+
+			return urlTemplate;
+		},
+		makeReadyStateHandler: function (xhr, callback) {
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4) {
+					callback && callback.call(null, xhr.responseText, xhr);
+				}
+			};
+		},
+		setRequestHeaders: function (xhr, headers) {
+			if (headers) {
+				for (var name in headers) {
+					xhr.setRequestHeader(name, headers[name]);
+				}
+			}
+		},
+		toQueryString: function (params) {
+			var r = [];
+			for (var n in params) {
+				var v = params[n];
+				n = encodeURIComponent(n);
+				r.push(v == null ? n : (n + '=' + encodeURIComponent(v)));
+			}
+			return r.join('&');
+		},
+		/**
+		 * Sends a HTTP request to the server and returns the XHR object.
+		 *
+		 * @method request
+		 * @param {Object} inOptions
+		 *    @param {String} inOptions.url The url to which the request is sent.
+		 *    @param {String} inOptions.method The HTTP method to use, default is GET.
+		 *    @param {boolean} inOptions.sync By default, all requests are sent asynchronously.
+		 *        To send synchronous requests, set to true.
+		 *    @param {Object} inOptions.params Data to be sent to the server.
+		 *    @param {Object} inOptions.body The content for the request body for POST method.
+		 *    @param {Object} inOptions.headers HTTP request headers.
+		 *    @param {Object} inOptions.callback Called when request is completed.
+		 * @returns {Object} XHR object.
+		 */
+		request: function (options) {
+			var xhr = new XMLHttpRequest();
+			var url = options.url;
+			var method = options.method || 'GET';
+			var async = !options.sync;
+			var params = this.toQueryString(options.params);
+			if (params && method == 'GET') {
+				url += (url.indexOf('?') > 0 ? '&' : '?') + params;
+			}
+			xhr.open(method, url, async);
+			this.makeReadyStateHandler(xhr, options.callback);
+
+			this.setRequestHeaders(xhr, options.headers);
+			xhr.send(method == 'POST' || method == 'PUT' ? (options.body || params) : null);
+			if (!async) {
+				xhr.onreadystatechange(xhr);
+			}
+			return xhr;
+		}
+	};
+})();
+Polymer.register(this, {
+    ready: function () {
+        this.$.response.hidden = true;
+        this.model = {
+            response: {},
+            request: {}
+        };
+    },
+    methodChanged: function () {
+        this.build();
+        this.model.request = {};
+        this.model.response.body = '';
+        this.model.response = {};
+
+        //// TOOD: clean codemirror
+    },
+    resourceChanged: function () {
+        this.build();
+    },
+    build: function () {
+        var paths = this.resource.relativeUri.split('/'),
+            template;
+
+        this.urlParts = [];
+
+        this.method = this.method || 'GET';
+
+        this.methodInfo = this.resource.methods.filter(function (p) {
+            return p.method.toUpperCase() == this.method;
+        }.bind(this)).pop();
+
+        var temp = [];
+
+        this.methodInfo = JSON.parse(JSON.stringify(this.methodInfo));
+
+        for (var prop in this.methodInfo.query) {
+            var queryParam = this.methodInfo.query[prop];
+
+            queryParam.name = prop;
+
+            temp.push(queryParam);
+        }
+
+        this.methodInfo.query = temp;
+
+        paths.forEach(function (path) {
+            template = path.match(/{(.*?)}/ig);
+
+            if (template) {
+                this.urlParts.push({
+                    name: template[0],
+                    isTemplate: true
+                });
+            } else {
+                if (path) {
+                    this.urlParts.push({
+                        name: path,
+                        isTemplate: false
+                    });
+                }
+            }
+        }.bind(this));
+    },
+    tryIt: function (event, detail, sender) {
+        var template = Helpers.joinUrl(this.resource.baseUri, this.resource.relativeUri);
+
+        this.model.response.url = Helpers.resolveParams(template, this.urlParts);
+        this.$.response.hidden = false;
+
+        var parameters = {};
+
+        this.methodInfo.query.forEach(function (q) {
+            if (q.value) {
+                parameters[q.name] = q.value;
+            }
+        });
+
+        var options = {
+            params: parameters,
+            method: this.method || 'GET',
+            url: Helpers.resolveParams(template, this.urlParts),
+            callback: function (responseText, xhr) {
+                this.model.response.url += (this.model.response.url.indexOf('?') > 0 ? '&' : '?') + this.toQueryString(parameters);
+                this.model.response.body = responseText;
+                this.model.response.statusCode = xhr.status;
+                this.model.response.headers = xhr.getAllResponseHeaders();
+            }.bind(this)
+        };
+
+        if (this.model.request.body) {
+            options.body = this.model.request.body;
+            options.headers = {
+                'content-type': 'application/json'
+            };
+        }
+
+        Helpers.request(options);
+
+        event.stopPropagation();
+    },
+    toQueryString: function (params) {
+        var r = [];
+        for (var n in params) {
+            var v = params[n];
+            n = encodeURIComponent(n);
+            r.push(v == null ? n : (n + '=' + encodeURIComponent(v)));
+        }
+        return r.join('&');
+    }
+});</script>
+</element>
+<element name="api-operation-details" attributes="resource">
+  <template>
+    <style>/*!
+ * Preboot v2
+ *
+ * Open sourced under MIT license by @mdo.
+ * Some variables and mixins from Bootstrap (Apache 2 license).
+ */
+section,
+aside {
+  font-family: 'Ubuntu', sans-serif;
+}
+a,
+a:visited {
+  color: #07c;
+  text-decoration: none;
+  outline: 0;
+}
+a:hover,
+a:focus {
+  color: #000;
+}
+p a,
+p a:visited {
+  line-height: inherit;
+}
+section[role=api-operation-details] {
+  background: white;
+}
+section[role=api-operation-details] > header {
+  padding: 15px 20px;
+}
+section[role=api-operation-details] > header > h1 {
+  margin: 5px 0px;
+  font-size: 16px;
+  font-weight: normal;
+  color: #6399d6;
+}
+section[role=api-operation-details] > header > p {
+  margin: 10px 0px;
+  font-size: 13px;
+  font-weight: normal;
+  color: black;
+}
+section[role=api-operation-details] > ul[role=details-sections] {
+  display: block;
+  width: 100%;
+  background: #f4f6f8;
+  border-top: 1px solid #dfe3e7;
+  border-bottom: 1px solid #dfe3e7;
+  padding: 0px;
+  margin: 0px;
+  font-size: 0px;
+  height: 60px;
+  box-shadow: inset 1px -1px 1px #eeeeee;
+}
+section[role=api-operation-details] > ul[role=details-sections] > li {
+  display: inline-block;
+  list-style: none;
+  text-align: left;
+  vertical-align: middle;
+  line-height: 60px;
+  font-size: 13px;
+  font-weight: bold;
+}
+section[role=api-operation-details] > ul[role=details-sections] > li > a,
+section[role=api-operation-details] > ul[role=details-sections] > li > span {
+  cursor: pointer;
+  padding: 0px 20px;
+  color: black;
+  border-right: 1px solid #dfe3e7;
+}
+section[role=api-operation-details] > ul[role=details-sections] > li.active {
+  background-color: #fbfbfb;
+  border-top: 1px solid #0078ca;
+  border-bottom: 1px solid white;
+  border-right: 1px solid #dfe3e7;
+  border-left: 1px solid #dfe3e7;
+  margin-top: -1px;
+  margin-left: -1px;
+  box-shadow: 1px -1px 1px #eeeeee;
+}
+section[role=api-operation-details] > ul[role=details-sections] > li.active > a,
+section[role=api-operation-details] > ul[role=details-sections] > li.active > span {
+  border-right: none;
+  color: #0078ca;
+}
+</style>
+    <section role="api-operation-details" on-click="preventDefault">
+      <header>
+          <h1>Summary</h1>
+          <p>{{operation.summary}}</p>
+      </header>
+      <ul role="details-sections">
+          <li role="try-it" class="active"><span>Try it</span></li>
+          <li role="parameters"><span>Parameters</span></li>
+          <li role="requests"><span>Request</span></li>
+          <li role="response"><span>Response</span></li>
+      </ul>
+      <api-operation-details-section-try-it id="tryIt" active="true" resource="{{resource}}"></api-operation-details-section-try-it>
+      <api-operation-details-section-parameters resource="{{resource}}"></api-operation-details-section-parameters>
+      <api-operation-details-section-request resource="{{resource}}"></api-operation-details-section-request>
+      <api-operation-details-section-response resource="{{resource}}"></api-operation-details-section-response>
+    </section>
+  </template>
+  <script>Polymer.register(this, {
+    ready: function () {},
+
+    preventDefault: function (event) {
+        event.stopPropagation();
+    }
+});</script>
+</element><element name="api-operation-list" attributes="definition resourcePath">
+  <template>
+  <style>header {
+  height: 75px;
+  width: 100%;
+  border-bottom: 1px solid #dadcdd;
+  padding: 0px;
+  margin: 0px;
+  margin-bottom: 20px;
+}
+header h1 {
+  font-size: 23px;
+  line-height: 75px;
+  font-weight: 200;
+  padding: 0px;
+  margin: 0px;
+  margin-left: 22px;
+}
+section[role=api-operation-list] {
+  padding: 22px;
+}
+</style>
+  <template if="topResource">
+    <header>
+      <h1>{{topResource.name}}</h1>
+    </header>
+  </template>
+  <section role="api-operation-list">
+    <template repeat="{{resource in resources}}">
+      <api-operation resource="{{resource}}"></api-operation>
+    </template>
+  </section>
+  </template>
+  <script>Polymer.register(this, {
+    topResource: null,
+    ready: function () {
+        this.hidden = true;
+        window.addEventListener('WebComponentsReady', function () {
+            var definition = document.querySelector(this.definition);
+
+            definition.addEventListener('api-definition-loaded', this.onDefinitionReady.bind(this));
+        }.bind(this));
+    },
+    onDefinitionReady: function (event) {
+        this.resources = [];
+        this.definition = event.detail;
+    },
+    resourcePathChanged: function () {
+        //// TODO: Check errors
+        if (!this.resourcePath) {
+            this.hidden = true;
+            this.resources = null;
+            this.topResource
+             = null;
+            return;
+        }
+
+        var filterdList = this.definition.resources.filter(function (p) {
+            return p.name == this.resourcePath;
+        }.bind(this)).pop();
+
+        filterdList.resources.forEach(function (resource) {
+            resource.baseUri = this.definition.baseUri.replace('{version}', this.definition.version);
+        }.bind(this));
+
+        this.resources = filterdList.resources;
+        this.topResource = filterdList.resources[0];
+
+        this.hidden = false;
+    }
+});</script>
+</element><element name="api-operation" attributes="active resource">
+  <template>
+    <style>/*!
+ * Preboot v2
+ *
+ * Open sourced under MIT license by @mdo.
+ * Some variables and mixins from Bootstrap (Apache 2 license).
+ */
+section,
+aside {
+  font-family: 'Ubuntu', sans-serif;
+}
+a,
+a:visited {
+  color: #07c;
+  text-decoration: none;
+  outline: 0;
+}
+a:hover,
+a:focus {
+  color: #000;
+}
+p a,
+p a:visited {
+  line-height: inherit;
+}
+section[role=api-operation] {
+  display: block;
+  border: 1px solid #dadcdd;
+  max-height: 45px;
+  color: black;
+  background: white;
+  padding: 15px 20px;
+  position: relative;
+  margin: 0px;
+  margin-top: -1px;
+  transition: max-height 0.05s;
+}
+/*TODO: Add an alternative solution for rounded corners!*/
+section[role=api-operation] > header {
+  height: 73px;
+}
+section[role=api-operation] > header h1 {
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0px;
+  padding: 0px;
+  color: black;
+}
+section[role=api-operation] > header h2 {
+  font-size: 12px;
+  font-weight: normal;
+  margin: 0px;
+  padding: 0px;
+  margin-top: 8px;
+  color: #9ea3a6;
+  letter-spacing: 1px;
+}
+section[role=api-operation] > header > div[role=summary] {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  margin-right: 20px;
+  text-align: right;
+  font-size: 0px;
+}
+section[role=api-operation] > header > div[role=summary] > ul {
+  display: block;
+  margin: 0px;
+  cursor: default;
+}
+section[role=api-operation] > header > div[role=summary] > ul > li {
+  display: inline-block;
+  margin-left: 4px;
+  list-style: none;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=traits] {
+  margin-top: 18px;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=traits] > li {
+  color: white;
+  text-transform: uppercase;
+  font-size: 10px;
+  line-height: 12px;
+  vertical-align: middle;
+  text-align: center;
+  background: #cfd3d7;
+  padding: 1px 4px 1px 4px;
+  border-radius: 2px;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] {
+  margin-top: 10px;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li {
+  text-transform: uppercase;
+  font-size: 11px;
+  line-height: 13px;
+  vertical-align: middle;
+  text-align: center;
+  padding: 1px 2px 0px 2px;
+  border-radius: 2px;
+  width: auto;
+  height: auto;
+  transition: max-width 0.4s ease-in;
+  position: relative;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li > a {
+  color: inherit;
+  line-height: inherit;
+  vertical-align: inherit;
+  text-align: inherit;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li:after {
+  background: transparent;
+  content: "";
+  height: 4px;
+  width: 2px;
+  position: absolute;
+  top: 50%;
+  right: -2px;
+  margin-top: -2px;
+  display: block;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li:before {
+  background: transparent;
+  content: "";
+  height: 4px;
+  width: 2px;
+  position: absolute;
+  top: 50%;
+  left: -2px;
+  margin-top: -2px;
+  display: block;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=get],
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=get]:after,
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=get]:before {
+  background: #7cbce4;
+}
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=get],
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=get]:after,
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=get]:before {
+  background: #0078ca;
+}
+section[role=api-operation]:not(.active) > header > div[role=summary] > ul[role=operations] > li {
+  color: transparent;
+  max-width: 8px;
+}
+section[role=api-operation]:not(.active):hover > header > div[role=summary] > ul[role=operations] > li {
+  color: white;
+  max-width: 80px;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=post],
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=post]:after,
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=post]:before {
+  background: #9ee9ab;
+}
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=post],
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=post]:after,
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=post]:before {
+  background: #41d25c;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=put],
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=put]:after,
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=put]:before {
+  background: #fdc692;
+}
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=put],
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=put]:after,
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=put]:before {
+  background: #dbb51d;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=delete],
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=delete]:after,
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li[role=delete]:before {
+  background: #f78f96;
+}
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=delete],
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=delete]:after,
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li[role=delete]:before {
+  background: #ea002f;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li:nth-of-type(1):before,
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li:nth-of-type(1):before {
+  background: transparent;
+}
+section[role=api-operation] > header > div[role=summary] > ul[role=operations] > li:last-of-type:after,
+section[role=api-operation]:hover > header > div[role=summary] > ul[role=operations] > li:last-of-type:after {
+  background: transparent;
+}
+section[role=api-operation] > section[role=api-operation-details] {
+  display: none;
+}
+/* api-operation hover */
+section[role=api-operation]:hover {
+  border-left: 1px solid #40cd5d;
+}
+section[role=api-operation]:hover > header h1 {
+  color: #3289ca;
+}
+section[role=api-operation]:hover > header h2 {
+  color: #33373b;
+}
+/* api-operation active */
+section[role=api-operation].active,
+section[role=api-operation].active:hover {
+  border: 1px solid #dadcdd;
+  transition: max-height 0.5s;
+  max-height: 2000px;
+}
+section[role=api-operation].active > header,
+section[role=api-operation].active:hover > header {
+  background: #3e505a;
+  transition: background 0.1s;
+}
+section[role=api-operation].active > header h1,
+section[role=api-operation].active:hover > header h1 {
+  color: white;
+}
+section[role=api-operation].active > header h2,
+section[role=api-operation].active:hover > header h2 {
+  color: white;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=traits],
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=traits] {
+  display: none;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations],
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] {
+  margin-top: 19px;
+  cursor: pointer;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li,
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] > li {
+  margin: 0px;
+  width: auto;
+  padding: 10px 20px;
+  border-radius: 0px;
+  border-top: 1px solid #3b454e;
+  border-bottom: 1px solid #3b454e;
+  border-left: 1px solid #3b454e;
+  color: #cfdcdc;
+  background: #67707a;
+  transition: none;
+  position: relative;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li > a,
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] > li > a {
+  line-height: 0px;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li.active,
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] > li.active {
+  background: #5688c9;
+  color: white;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li.active:after,
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] > li.active:after {
+  content: "";
+  display: block;
+  background: white;
+  position: absolute;
+  bottom: -28px;
+  top: auto;
+  right: 50%;
+  width: 12px;
+  height: 8px;
+  margin-right: -13px;
+  border-radius: 12px 0 0 0;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li.active:before,
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] > li.active:before {
+  content: "";
+  display: block;
+  background: white;
+  position: absolute;
+  bottom: -28px;
+  top: auto;
+  left: 50%;
+  width: 12px;
+  height: 8px;
+  margin-left: -12px;
+  border-radius: 0 12px 0 0;
+  z-index: 1;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li.active > a:after,
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li.active > span:after,
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li.active > p:after {
+  content: "";
+  display: block;
+  background: #3e505a;
+  position: absolute;
+  bottom: -28px;
+  right: 50%;
+  width: 20px;
+  height: 14px;
+  margin-right: -10px;
+  z-index: 0;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li:nth-of-type(1),
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] > li:nth-of-type(1) {
+  border-radius: 3px 0px 0px 3px;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li:last-of-type,
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] > li:last-of-type {
+  border-radius: 0px 3px 3px 0px;
+  border-right: 1px solid #3b454e;
+}
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li:before,
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] > li:before,
+section[role=api-operation].active > header > div[role=summary] > ul[role=operations] > li:after,
+section[role=api-operation].active:hover > header > div[role=summary] > ul[role=operations] > li:after {
+  width: 0px;
+  height: 0px;
+}
+section[role=api-operation].active,
+section[role=api-operation].active:hover {
+  padding: 0px;
+}
+section[role=api-operation].active > header > hgroup,
+section[role=api-operation].active:hover > header > hgroup {
+  padding: 15px 20px 0px 20px;
+}
+section[role=api-operation] > api-operation-details,
+section[role=api-operation]:hover > api-operation-details {
+  display: none;
+}
+section[role=api-operation].active > api-operation-details,
+section[role=api-operation].active:hover > api-operation-details {
+  display: block;
+}
+/*TODO: Add an alternative solution for rounded corners!*/
+</style>
+    <section role="api-operation" class="{{active:active}}">
+      <header id="operationHeader" on-click="headerClick">
+        <hgroup>
+          <h1>{{resource.name}}</h1>
+          <h2>{{resource.relativeUri}}</h2>
+        </hgroup>
+        <div role="summary" on-click="preventDefault">
+          <ul role="traits">
+            <template repeat="{{trait in resource.use}}">
+              <li>{{trait}}</li>
+            </template>
+          </ul>
+          <ul role="operations">
+            <template repeat="{{operation in resource.methods}}">
+              <template if="{{operation.method == selectedMethod}}">
+                <li role="{{operation.method}}" class="active" on-click="operationClicked"><span>{{operation.method}}</span></li>
+              </template>
+              <template if="{{operation.method != selectedMethod}}">
+                <li role="{{operation.method}}" on-click="operationClicked"><span>{{operation.method}}</span></li>
+              </template>
+            </template>
+          </ul>
+        </div>
+      </header>
+      <api-operation-details id="operationDetails" resource="{{resource}}"></api-operation-details>
+    </scection>
+  </template>
+  <script>Polymer.register(this, {
+    klass: '',
+    active: false,
+    selectedMethod: '',
+    ready: function () {},
+    headerClick: function (event) {
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        this.active = !this.active;
+        if (this.resource.methods.length && this.active) {
+            this.selectOperation(this.resource.methods[0]);
+        }
+        event.stopPropagation();
+    },
+    operationClicked: function (event, detail, sender) {
+        this.selectOperation(sender.templateInstance.model.operation);
+
+        this.preventDefault(event);
+
+        return false;
+    },
+    selectOperation: function (operation) {
+        this.$.operationDetails.operation = operation;
+        this.$.operationDetails.$.tryIt.method = operation.method.toUpperCase();
+        this.selectedMethod = operation.method;
+    },
+    preventDefault: function (event) {
+        event.stopPropagation();
+        event.preventDefault();
+        event.stopImmediatePropagation();
+    }
+});</script>
+</element><element name="codemirror" attributes="source">
+  <template>
+  	<style>/* BASICS */
+
+.CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  font-family: monospace;
+  height: 300px;
+}
+.CodeMirror-scroll {
+  /* Set scrolling behaviour here */
+  overflow: auto;
+}
+
+/* PADDING */
+
+.CodeMirror-lines {
+  padding: 4px 0; /* Vertical padding around content */
+}
+.CodeMirror pre {
+  padding: 0 4px; /* Horizontal padding of content */
+}
+
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  background-color: white; /* The little square between H and V scrollbars */
+}
+
+/* GUTTER */
+
+.CodeMirror-gutters {
+  border-right: 1px solid #ddd;
+  background-color: #f7f7f7;
+  white-space: nowrap;
+}
+.CodeMirror-linenumbers {}
+.CodeMirror-linenumber {
+  padding: 0 3px 0 5px;
+  min-width: 20px;
+  text-align: right;
+  color: #999;
+}
+
+/* CURSOR */
+
+.CodeMirror div.CodeMirror-cursor {
+  border-left: 1px solid black;
+  z-index: 3;
+}
+/* Shown when moving in bi-directional text */
+.CodeMirror div.CodeMirror-secondarycursor {
+  border-left: 1px solid silver;
+}
+.CodeMirror.cm-keymap-fat-cursor div.CodeMirror-cursor {
+  width: auto;
+  border: 0;
+  background: #7e7;
+  z-index: 1;
+}
+/* Can style cursor different in overwrite (non-insert) mode */
+.CodeMirror div.CodeMirror-cursor.CodeMirror-overwrite {}
+
+.cm-tab { display: inline-block; }
+
+/* DEFAULT THEME */
+
+.cm-s-default .cm-keyword {color: #708;}
+.cm-s-default .cm-atom {color: #219;}
+.cm-s-default .cm-number {color: #164;}
+.cm-s-default .cm-def {color: #00f;}
+.cm-s-default .cm-variable {color: black;}
+.cm-s-default .cm-variable-2 {color: #05a;}
+.cm-s-default .cm-variable-3 {color: #085;}
+.cm-s-default .cm-property {color: black;}
+.cm-s-default .cm-operator {color: black;}
+.cm-s-default .cm-comment {color: #a50;}
+.cm-s-default .cm-string {color: #a11;}
+.cm-s-default .cm-string-2 {color: #f50;}
+.cm-s-default .cm-meta {color: #555;}
+.cm-s-default .cm-error {color: #f00;}
+.cm-s-default .cm-qualifier {color: #555;}
+.cm-s-default .cm-builtin {color: #30a;}
+.cm-s-default .cm-bracket {color: #997;}
+.cm-s-default .cm-tag {color: #170;}
+.cm-s-default .cm-attribute {color: #00c;}
+.cm-s-default .cm-header {color: blue;}
+.cm-s-default .cm-quote {color: #090;}
+.cm-s-default .cm-hr {color: #999;}
+.cm-s-default .cm-link {color: #00c;}
+
+.cm-negative {color: #d44;}
+.cm-positive {color: #292;}
+.cm-header, .cm-strong {font-weight: bold;}
+.cm-em {font-style: italic;}
+.cm-link {text-decoration: underline;}
+
+.cm-invalidchar {color: #f00;}
+
+div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
+
+/* STOP */
+
+/* The rest of this file contains styles related to the mechanics of
+   the editor. You probably shouldn't touch them. */
+
+.CodeMirror {
+  line-height: 1;
+  position: relative;
+  overflow: hidden;
+  background: white;
+  color: black;
+}
+
+.CodeMirror-scroll {
+  /* 30px is the magic margin used to hide the element's real scrollbars */
+  /* See overflow: hidden in .CodeMirror */
+  margin-bottom: -30px; margin-right: -30px;
+  padding-bottom: 30px; padding-right: 30px;
+  height: 100%;
+  outline: none; /* Prevent dragging from highlighting the element */
+  position: relative;
+}
+.CodeMirror-sizer {
+  position: relative;
+}
+
+/* The fake, visible scrollbars. Used to force redraw during scrolling
+   before actuall scrolling happens, thus preventing shaking and
+   flickering artifacts. */
+.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  position: absolute;
+  z-index: 6;
+  display: none;
+}
+.CodeMirror-vscrollbar {
+  right: 0; top: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.CodeMirror-hscrollbar {
+  bottom: 0; left: 0;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+.CodeMirror-scrollbar-filler {
+  right: 0; bottom: 0;
+}
+.CodeMirror-gutter-filler {
+  left: 0; bottom: 0;
+}
+
+.CodeMirror-gutters {
+  position: absolute; left: 0; top: 0;
+  padding-bottom: 30px;
+  z-index: 3;
+}
+.CodeMirror-gutter {
+  white-space: normal;
+  height: 100%;
+  padding-bottom: 30px;
+  margin-bottom: -32px;
+  display: inline-block;
+  /* Hack to make IE7 behave */
+  *zoom:1;
+  *display:inline;
+}
+.CodeMirror-gutter-elt {
+  position: absolute;
+  cursor: default;
+  z-index: 4;
+}
+
+.CodeMirror-lines {
+  cursor: text;
+}
+.CodeMirror pre {
+  /* Reset some styles that the rest of the page might have set */
+  -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0;
+  border-width: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  white-space: pre;
+  word-wrap: normal;
+  line-height: inherit;
+  color: inherit;
+  z-index: 2;
+  position: relative;
+  overflow: visible;
+}
+.CodeMirror-wrap pre {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+.CodeMirror-linebackground {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: 0;
+}
+
+.CodeMirror-linewidget {
+  position: relative;
+  z-index: 2;
+  overflow: auto;
+}
+
+.CodeMirror-widget {
+}
+
+.CodeMirror-wrap .CodeMirror-scroll {
+  overflow-x: hidden;
+}
+
+.CodeMirror-measure {
+  position: absolute;
+  width: 100%; height: 0px;
+  overflow: hidden;
+  visibility: hidden;
+}
+.CodeMirror-measure pre { position: static; }
+
+.CodeMirror div.CodeMirror-cursor {
+  position: absolute;
+  visibility: hidden;
+  border-right: none;
+  width: 0;
+}
+.CodeMirror-focused div.CodeMirror-cursor {
+  visibility: visible;
+}
+
+.CodeMirror-selected { background: #d9d9d9; }
+.CodeMirror-focused .CodeMirror-selected { background: #d7d4f0; }
+
+.cm-searching {
+  background: #ffa;
+  background: rgba(255, 255, 0, .4);
+}
+
+/* IE7 hack to prevent it from returning funny offsetTops on the spans */
+.CodeMirror span { *vertical-align: text-bottom; }
+
+@media print {
+  /* Hide the cursor when printing */
+  .CodeMirror div.CodeMirror-cursor {
+    visibility: hidden;
+  }
+}
+
+.cm-s-eclipse span.cm-meta {color: #FF1717;}
+.cm-s-eclipse span.cm-keyword { line-height: 1em; font-weight: bold; color: #7F0055; }
+.cm-s-eclipse span.cm-atom {color: #219;}
+.cm-s-eclipse span.cm-number {color: #164;}
+.cm-s-eclipse span.cm-def {color: #00f;}
+.cm-s-eclipse span.cm-variable {color: black;}
+.cm-s-eclipse span.cm-variable-2 {color: #0000C0;}
+.cm-s-eclipse span.cm-variable-3 {color: #0000C0;}
+.cm-s-eclipse span.cm-property {color: green !important;}
+.cm-s-eclipse span.cm-operator {color: black;}
+.cm-s-eclipse span.cm-comment {color: #3F7F5F;}
+.cm-s-eclipse span.cm-string {color: #2A00FF;}
+.cm-s-eclipse span.cm-string-2 {color: #f50;}
+.cm-s-eclipse span.cm-error {color: #f00;}
+.cm-s-eclipse span.cm-qualifier {color: #555;}
+.cm-s-eclipse span.cm-builtin {color: #30a;}
+.cm-s-eclipse span.cm-bracket {color: #cc7;}
+.cm-s-eclipse span.cm-tag {color: #170;}
+.cm-s-eclipse span.cm-attribute {color: #00c;}
+.cm-s-eclipse span.cm-link {color: #219;}
+
+.cm-s-eclipse .CodeMirror-matchingbracket {
+  outline:1px solid grey;
+  color:black !important;
+}</style>
+  	<pre id="output" class="cm-s-eclipse"></pre>
+  </template>
+  <script>Polymer.register(this, {
+    sourceChanged: function () {
+        if (CodeMirror && this.source) {
+            CodeMirror.runMode(JSON.stringify(JSON.parse(this.source), null, 2), "application/json", this.$.output);
+        }
+
+        if (!this.source) {
+            this.$.output.innerHTML = '';
+        }
+    }
+});</script>
+</element>
