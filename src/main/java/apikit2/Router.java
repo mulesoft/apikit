@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
-public class RestProcessor implements MessageProcessor, Initialisable, MuleContextAware, FlowConstructAware
+public class Router implements MessageProcessor, Initialisable, MuleContextAware, FlowConstructAware
 {
 
     public static final String APPLICATION_RAML = "application/raml";

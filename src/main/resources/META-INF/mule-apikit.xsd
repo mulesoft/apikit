@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <xsd:schema xmlns="http://www.mulesoft.org/schema/mule/apikit" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:mule="http://www.mulesoft.org/schema/mule/core" xmlns:schemadoc="http://www.mulesoft.org/schema/mule/schemadoc"
-    xmlns:beans="http://www.springframework.org/schema/beans" targetNamespace="http://www.mulesoft.org/schema/mule/apikit"
-    elementFormDefault="qualified" attributeFormDefault="unqualified">
+            xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+            xmlns:schemadoc="http://www.mulesoft.org/schema/mule/schemadoc"
+            targetNamespace="http://www.mulesoft.org/schema/mule/apikit"
+            elementFormDefault="qualified" attributeFormDefault="unqualified">
 
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" />
@@ -38,7 +39,7 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:element name="rest-processor" type="restProcessorType" substitutionGroup="mule:abstract-message-processor">
+    <xsd:element name="router" type="routerType" substitutionGroup="mule:abstract-message-processor">
         <xsd:annotation>
             <xsd:documentation>
                 A rest routing message processor.
@@ -46,7 +47,7 @@
         </xsd:annotation>
     </xsd:element>
 
-    <xsd:complexType name="restProcessorType">
+    <xsd:complexType name="routerType">
         <xsd:complexContent>
             <xsd:extension base="mule:abstractMessageProcessorType">
                 <xsd:attribute name="config-ref" type="mule:nonBlankString" use="optional">

@@ -1,6 +1,6 @@
 package apikit2;
 
-import static apikit2.RestProcessor.APPLICATION_RAML;
+import static apikit2.Router.APPLICATION_RAML;
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.port;

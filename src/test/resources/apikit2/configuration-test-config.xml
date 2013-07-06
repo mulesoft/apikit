@@ -16,7 +16,7 @@
         <http:inbound-endpoint port="${serverPortDefault}" host="localhost" path="default">
             <object-to-string-transformer/>
         </http:inbound-endpoint>
-        <apikit:rest-processor config-ref="default"/>
+        <apikit:router config-ref="default"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
@@ -24,7 +24,7 @@
         <http:inbound-endpoint port="${serverPortCustom}" host="localhost" path="custom">
             <object-to-string-transformer/>
         </http:inbound-endpoint>
-        <apikit:rest-processor config-ref="custom"/>
+        <apikit:router config-ref="custom"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
@@ -32,7 +32,7 @@
         <http:inbound-endpoint port="${serverPortNoConsole}" host="localhost" path="no-console">
             <object-to-string-transformer/>
         </http:inbound-endpoint>
-        <apikit:rest-processor config-ref="no-console"/>
+        <apikit:router config-ref="no-console"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 

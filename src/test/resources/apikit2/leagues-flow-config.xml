@@ -39,7 +39,7 @@
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
             <object-to-string-transformer/>
         </http:inbound-endpoint>
-        <apikit:rest-processor/>
+        <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
