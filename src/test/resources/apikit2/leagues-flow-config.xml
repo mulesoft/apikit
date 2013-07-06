@@ -43,11 +43,11 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
-    <apikit:flow name="retrieveLeagues" resource="/leagues" action="get">
+    <flow name="get:/leagues">
         <set-payload value="#[registry:list-of-leagues]"/>
-    </apikit:flow>
+    </flow>
 
-    <apikit:flow name="createLeague" resource="/leagues" action="post">
+    <flow name="post:/leagues">
         <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.rest.integration.leagues.League"/>
         <choice>
@@ -64,9 +64,9 @@
                 <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
             </otherwise>
         </choice>
-    </apikit:flow>
+    </flow>
 
-    <apikit:flow name="retrieveLeague" resource="/leagues/{leagueId}" action="get">
+    <flow name="get:/leagues/{leagueId}">
         <logger level="WARN" message="leagueId: #[leagueId]"/>
         <choice>
             <when expression="#[app.registry['list-of-leagues'].getLeague(leagueId)]">
@@ -76,9 +76,9 @@
                 <set-property propertyName="http.status" value="404"/>
             </otherwise>
         </choice>
-    </apikit:flow>
+    </flow>
 
-    <apikit:flow name="updateLeague" resource="/leagues/{leagueId}" action="put">
+    <flow name="put:/leagues/{leagueId}">
         <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.rest.integration.leagues.League"/>
         <choice>
@@ -95,22 +95,22 @@
                 <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
             </otherwise>
         </choice>
-    </apikit:flow>
+    </flow>
 
-    <apikit:flow name="deleteLeague" resource="/leagues/{leagueId}" action="delete">
+    <flow name="delete:/leagues/{leagueId}">
         <expression-component>
             app.registry['list-of-leagues'].deleteLeague(leagueId)
         </expression-component>
-    </apikit:flow>
+    </flow>
 
-    <apikit:flow name="retrieveTeams" resource="/leagues/{leagueId}/teams" action="get">
+    <flow name="get:/leagues/{leagueId}/teams">
         <expression-component>
             teams = app.registry['list-of-leagues'].getLeague(leagueId).getTeams();
             int from = (message.inboundProperties.?offset != null) ? Integer.valueOf(message.inboundProperties.offset) : 0;
             to = (message.inboundProperties.?limit != null) ? Math.min(Integer.valueOf(message.inboundProperties.limit), teams.size()) : teams.size();
             payload = teams.subList(from, to);
         </expression-component>
-    </apikit:flow>
+    </flow>
 
     <spring:beans>
         <spring:bean id="liga-bbva" class="org.mule.module.apikit.rest.integration.leagues.League">

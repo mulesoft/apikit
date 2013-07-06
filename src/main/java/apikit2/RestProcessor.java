@@ -26,6 +26,7 @@ import com.google.common.cache.LoadingCache;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -56,7 +57,7 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
     private FlowConstruct flowConstruct;
     private Configuration config;
     private Raml api;
-    private Map<String, RestFlow> restFlowMap;
+    private Map<String, Flow> restFlowMap;
     private Map<URIPattern, Resource> routingTable;
     private LoadingCache<String, URIResolver> uriResolverCache;
     private LoadingCache<String, URIPattern> uriPatternCache;
@@ -151,13 +152,16 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
 
     private void loadRestFlowMap()
     {
-        restFlowMap = new HashMap<String, RestFlow>();
-        Collection<RestFlow> restFlows = muleContext.getRegistry().lookupObjects(RestFlow.class);
-        for (RestFlow flow : restFlows)
+        restFlowMap = new HashMap<String, Flow>();
+        Collection<Flow> flows = muleContext.getRegistry().lookupObjects(Flow.class);
+        for (Flow flow : flows)
         {
-            restFlowMap.put(flow.getResource() + flow.getAction(), flow);
+            String key = getRestFlowKey(flow.getName());
+            if (key != null)
+            {
+                restFlowMap.put(key, flow);
+            }
         }
-        //log map info
         if (logger.isDebugEnabled())
         {
             logger.debug("==== RestFlows defined:");
@@ -166,6 +170,21 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
                 logger.debug("\t\t" + key);
             }
         }
+    }
+
+    private String getRestFlowKey(String name)
+    {
+        String[] coords = name.split(":");
+        String[] methods = {"get", "put", "post", "delete", "head"};
+        if (coords.length < 2 || !Arrays.asList(methods).contains(coords[0]))
+        {
+            return null;
+        }
+        if (coords.length == 3 && !coords[2].equals(config.getName()))
+        {
+            return null;
+        }
+        return coords[0] + ":" + coords[1];
     }
 
     private void loadApiDefinition()
@@ -229,10 +248,8 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
     @Override
     public MuleEvent process(MuleEvent event) throws MuleException
     {
-        //RestProtocolAdapter protocolAdapter = RestProtocolAdapterFactory.getInstance().getAdapterForEvent(muleEvent, isUseRelativePath());
         HttpRestRequest request = new HttpRestRequest(event, api);
 
-        //String path = protocolAdapter.getResourceUri().getPath();
         String path = request.getResourcePath();
 
         //check for console request
@@ -285,7 +302,7 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
 
         processUriParameters(resolvedVariables, resource, event);
 
-        RestFlow flow = getFlow(resource, request.getMethod());
+        Flow flow = getFlow(resource, request.getMethod());
         if (flow == null)
         {
             throw new ApikitRuntimeException("Flow not found for resource: " + resource);
@@ -318,9 +335,9 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         }
     }
 
-    private RestFlow getFlow(Resource resource, String method)
+    private Flow getFlow(Resource resource, String method)
     {
-        return restFlowMap.get(resource.getUri() + method);
+        return restFlowMap.get(method + ":" + resource.getUri());
     }
 
     @Override

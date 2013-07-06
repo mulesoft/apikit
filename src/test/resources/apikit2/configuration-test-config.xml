@@ -36,9 +36,9 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
-    <apikit:flow name="retrieve" resource="/resource" action="get">
+    <flow name="get:/resource">
         <set-payload value="some resources"/>
-    </apikit:flow>
+    </flow>
 
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
         <apikit:mapping statusCode="404">

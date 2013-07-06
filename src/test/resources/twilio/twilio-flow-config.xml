@@ -43,11 +43,11 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
-    <apikit:flow name="retrieveAccounts" resource="/Accounts" action="get">
+    <flow name="get:/Accounts">
         <set-payload value="#[registry:list-of-accounts]"/>
-    </apikit:flow>
+    </flow>
 
-    <apikit:flow name="retrieveAccount" resource="/Accounts/{AccountSid}" action="get">
+    <flow name="get:/Accounts/{AccountSid}">
         <logger level="WARN" message="Sid: #[AccountSid]"/>
         <choice>
             <when expression="#[app.registry['list-of-accounts'].getAccount(AccountSid)]">
@@ -57,7 +57,7 @@
                 <set-property propertyName="http.status" value="404"/>
             </otherwise>
         </choice>
-    </apikit:flow>
+    </flow>
 
     <spring:beans>
         <spring:bean id="account1" class="twilio.Account">

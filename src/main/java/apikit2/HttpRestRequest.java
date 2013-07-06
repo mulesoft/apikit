@@ -5,6 +5,7 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
+import org.mule.construct.Flow;
 import org.mule.module.apikit.rest.representation.SchemaType;
 import org.mule.module.apikit.rest.transform.DataTypePair;
 import org.mule.module.apikit.rest.transform.TransformerCache;
@@ -67,7 +68,7 @@ public class HttpRestRequest
         return adapter.getMethod().toLowerCase();
     }
 
-    public MuleEvent process(RestFlow flow, Action action) throws MuleException
+    public MuleEvent process(Flow flow, Action action) throws MuleException
     {
         this.action = action;
 

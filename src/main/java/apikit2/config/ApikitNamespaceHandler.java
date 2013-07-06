@@ -18,7 +18,6 @@ public class ApikitNamespaceHandler extends MuleNamespaceHandler
     {
         registerBeanDefinitionParser("config", new MuleOrphanDefinitionParser(Configuration.class, true));
         registerBeanDefinitionParser("rest-processor", new ChildDefinitionParser("messageProcessor", RestProcessor.class));
-        registerBeanDefinitionParser("flow", new RestFlowDefinitionParser());
         registerBeanDefinitionParser("mapping-exception-strategy", new ExceptionStrategyDefinitionParser(RestMappingExceptionStrategy.class));
         registerBeanDefinitionParser("mapping", new ChildDefinitionParser("exceptionListener", MappingExceptionListener.class, false));
         registerBeanDefinitionParser("exception", new ChildListEntryDefinitionParser("exception", "value"));

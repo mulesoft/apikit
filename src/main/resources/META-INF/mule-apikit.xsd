@@ -38,23 +38,6 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:element name="flow" type="flowType" substitutionGroup="mule:flow">
-        <xsd:annotation>
-            <xsd:documentation>
-                A rest specific flow that references a resource-action pair.
-            </xsd:documentation>
-        </xsd:annotation>
-    </xsd:element>
-
-    <xsd:complexType name="flowType">
-        <xsd:complexContent>
-            <xsd:extension base="mule:flowType">
-                <xsd:attribute name="resource" type="mule:nonBlankString" use="required"/>
-                <xsd:attribute name="action" type="mule:nonBlankString" use="required"/>
-           </xsd:extension>
-        </xsd:complexContent>
-    </xsd:complexType>
-
     <xsd:element name="rest-processor" type="restProcessorType" substitutionGroup="mule:abstract-message-processor">
         <xsd:annotation>
             <xsd:documentation>
