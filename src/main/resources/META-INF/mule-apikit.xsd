@@ -19,6 +19,25 @@
         </xsd:appinfo>
     </xsd:annotation>
 
+    <xsd:element name="config" type="configType" substitutionGroup="mule:abstract-extension">
+        <xsd:annotation>
+            <xsd:documentation>
+                APIkit configuration element.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="configType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractExtensionType">
+                <xsd:attribute name="name" type="mule:nonBlankString" use="optional"/>
+                <xsd:attribute name="raml" type="mule:nonBlankString" use="required"/>
+                <xsd:attribute name="consoleEnabled" type="mule:substitutableBoolean" default="true" use="optional"/>
+                <xsd:attribute name="consolePath" type="mule:nonBlankString" default="console" use="optional"/>
+           </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <xsd:element name="flow" type="flowType" substitutionGroup="mule:flow">
         <xsd:annotation>
             <xsd:documentation>
@@ -47,10 +66,10 @@
     <xsd:complexType name="restProcessorType">
         <xsd:complexContent>
             <xsd:extension base="mule:abstractMessageProcessorType">
-                <xsd:attribute name="config" type="mule:nonBlankString" use="required">
+                <xsd:attribute name="config-ref" type="mule:nonBlankString" use="optional">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The location of the rest interface definition.
+                            The Router configuration.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
@@ -86,7 +105,7 @@
                             <xsd:attribute name="value" use="required" type="mule:nonBlankString" />
                         </xsd:complexType>
                     </xsd:element>
-                    <xsd:group ref="mule:messageProcessorOrOutboundEndpoint" minOccurs="1" maxOccurs="unbounded" />
+                    <xsd:group ref="mule:messageProcessorOrOutboundEndpoint" minOccurs="0" maxOccurs="unbounded" />
                 </xsd:sequence>
                 <xsd:attribute name="statusCode" use="required" type="mule:substitutableInt">
                     <xsd:annotation>

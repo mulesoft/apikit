@@ -1,0 +1,8 @@
+%TAG ! tag:heaven-lang.org,1.0:
+---
+title: Test API
+baseUri: http://localhost/{path}
+/resource:
+    get:
+        responses:
+            200: !!null

@@ -33,11 +33,13 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
+    <apikit:config name="leaguesApi" raml="apikit2/leagues.yaml" consoleEnabled="true" consolePath="console"/>
+
     <flow name="doorway">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
             <object-to-string-transformer/>
         </http:inbound-endpoint>
-        <apikit:rest-processor config="apikit2/leagues.yaml"/>
+        <apikit:rest-processor/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 

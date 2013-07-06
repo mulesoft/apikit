@@ -11,6 +11,8 @@ import org.mule.api.endpoint.ImmutableEndpoint;
 import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.api.registry.RegistrationException;
+import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.rest.uri.ResolvedVariables;
 import org.mule.module.apikit.rest.uri.URIPattern;
@@ -23,8 +25,6 @@ import com.google.common.cache.LoadingCache;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -54,7 +54,7 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
 
     private MuleContext muleContext;
     private FlowConstruct flowConstruct;
-    private String config;
+    private Configuration config;
     private Raml api;
     private Map<String, RestFlow> restFlowMap;
     private Map<URIPattern, Resource> routingTable;
@@ -63,14 +63,14 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
     private String ramlYaml;
     private ConsoleHandler consoleHandler;
 
-    public void setConfig(String config)
-    {
-        this.config = config;
-    }
-
     public void setMuleContext(MuleContext context)
     {
         this.muleContext = context;
+    }
+
+    public void setConfig(Configuration config)
+    {
+        this.config = config;
     }
 
     @Override
@@ -81,10 +81,21 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         {
             return;
         }
+        if (config == null)
+        {
+            try
+            {
+                config = muleContext.getRegistry().lookupObject(Configuration.class);
+            }
+            catch (RegistrationException e)
+            {
+                throw new InitialisationException(MessageFactory.createStaticMessage("APIKit configuration not Found"), this);
+            }
+        }
 
         loadApiDefinition();
         loadRestFlowMap();
-        consoleHandler = new ConsoleHandler(api.getBaseUri());
+        consoleHandler = new ConsoleHandler(api.getBaseUri(), config.getConsolePath());
 
         routingTable = new HashMap<URIPattern, Resource>();
         buildRoutingTable(api.getResources());
@@ -144,7 +155,7 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         Collection<RestFlow> restFlows = muleContext.getRegistry().lookupObjects(RestFlow.class);
         for (RestFlow flow : restFlows)
         {
-            restFlowMap.put(getBasePath() + flow.getResource() + flow.getAction(), flow);
+            restFlowMap.put(flow.getResource() + flow.getAction(), flow);
         }
         //log map info
         if (logger.isDebugEnabled())
@@ -160,7 +171,7 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
     private void loadApiDefinition()
     {
         YamlDocumentBuilder<Raml> builder = new YamlDocumentBuilder<Raml>(Raml.class);
-        InputStream ramlStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(config);
+        InputStream ramlStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(config.getRaml());
         if (ramlStream == null)
         {
             throw new ApikitRuntimeException(String.format("RAML descriptor %s not found", config));
@@ -225,9 +236,16 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
         String path = request.getResourcePath();
 
         //check for console request
-        if (path.startsWith(api.getUri() + "/console"))
+        if (path.startsWith(api.getUri() + "/" + config.getConsolePath()))
         {
-            return consoleHandler.process(event);
+            if (config.isConsoleEnabled())
+            {
+                return consoleHandler.process(event);
+            }
+            else
+            {
+                throw new NotFoundException("console disabled");
+            }
         }
 
         //check for raml descriptor request
@@ -303,20 +321,6 @@ public class RestProcessor implements MessageProcessor, Initialisable, MuleConte
     private RestFlow getFlow(Resource resource, String method)
     {
         return restFlowMap.get(resource.getUri() + method);
-    }
-
-    public String getBasePath()
-    {
-        URL url;
-        try
-        {
-            url = new URL(api.getBaseUri());
-        }
-        catch (MalformedURLException e)
-        {
-            throw new RuntimeException(e);
-        }
-        return url.getPath();
     }
 
     @Override

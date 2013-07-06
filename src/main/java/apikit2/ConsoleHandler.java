@@ -33,23 +33,37 @@ public class ConsoleHandler
     public static final String MIME_TYPE_GIF = "image/gif";
     public static final String MIME_TYPE_CSS = "text/css";
 
-    private static final String RESOURCE_BASE = "console";
+    private static final String RESOURCE_BASE = "/console";
 
     private MimetypesFileTypeMap mimeTypes;
     private String homePage;
+    private String consolePath;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public ConsoleHandler(String ramlUri) throws InitialisationException
+    public ConsoleHandler(String ramlUri, String consolePath) throws InitialisationException
     {
+
+        this.consolePath = sanitize(consolePath);
         mimeTypes = new MimetypesFileTypeMap();
         mimeTypes.addMimeTypes("text/javascript js");
         mimeTypes.addMimeTypes("text/css css");
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
-        System.out.println("indexHtml = " + indexHtml);
         homePage = indexHtml.replaceFirst("<api-definition id=\"([^\"]+)\" src=\"[^\"]+\">",
                                           "<api-definition id=\"$1\" src=\"" + ramlUri + "\">");
-        System.out.println("homePage = " + homePage);
+    }
+
+    private String sanitize(String consolePath)
+    {
+        if (consolePath.endsWith("/"))
+        {
+            consolePath = consolePath.substring(0, consolePath.length() - 1);
+        }
+        if (!consolePath.startsWith("/"))
+        {
+            consolePath = "/" + consolePath;
+        }
+        return consolePath;
     }
 
     public MuleEvent process(MuleEvent event) throws MuleException
@@ -69,9 +83,9 @@ public class ConsoleHandler
         InputStream in;
         try
         {
-            if (path.equals("/console") || path.equals("/console/") || path.equals("/console/index.html"))
+            if (path.equals(consolePath) || path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
             {
-                path = "/console/index.html";
+                path = RESOURCE_BASE + "/index.html";
                 in = new ByteArrayInputStream(homePage.getBytes());
             }
             else
