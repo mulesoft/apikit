@@ -1,0 +1,20 @@
+%TAG ! tag:raml.org,0.1:
+---
+title: Sample API
+version: v1
+baseUri: http://localhost/api
+/pet:
+    name: Pets
+    get:
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: |
+                            {
+                                "name": "Bobby",
+                                "food": "Ice Cream"
+                            }
+
+                    text/xml: !!null
+

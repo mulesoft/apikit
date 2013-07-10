@@ -5,16 +5,16 @@
   xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.mule.tools</groupId>
-  <artifactId>apikit-parent</artifactId>
+  <artifactId>apikit-tools</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
 
 
-  <name>APIKit parent</name>
+  <name>APIKit tools</name>
   
   <modules>
-      <module>mule-module-apikit</module>
-      <module>apikit-tools</module>
+      <module>apikit-maven-plugin</module>
+      <module>apikit-archetype</module>
   </modules>
 
 </project>
