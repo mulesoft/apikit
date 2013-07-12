@@ -2,9 +2,12 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.mule.tools</groupId>
+    <parent>
+        <groupId>org.mule.tools</groupId>
+        <artifactId>apikit-parent</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
     <artifactId>apikit-tools</artifactId>
-    <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>APIKit tools</name>
 
@@ -12,19 +15,5 @@
         <module>apikit-maven-plugin</module>
         <module>apikit-archetype</module>
     </modules>
-
-    <distributionManagement>
-        <repository>
-            <id>mule-ee-releases</id>
-            <name>Mule Release Repository</name>
-            <url>http://dev.ee.mulesource.com/repository/content/repositories/releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>mule-ee-snapshots</id>
-            <name>Mule Snapshot Repository</name>
-            <url>http://dev.ee.mulesource.com/repository/content/repositories/snapshots/</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
 
 </project>
