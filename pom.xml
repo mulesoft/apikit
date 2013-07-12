@@ -11,6 +11,7 @@
     <modules>
         <module>mule-module-apikit</module>
         <module>apikit-tools</module>
+        <module>distribution</module>
     </modules>
 
     <distributionManagement>

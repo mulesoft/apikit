@@ -8,7 +8,7 @@
     <artifactId>mule-module-apikit</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>APIkit Module</name>
+    <name>APIKit Module</name>
     <description>Module for creating API's using REST/SOAP Web Services</description>
 
     <properties>
