@@ -9,23 +9,23 @@
 
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
-            <apikit:exception value="apikit2.exception.NotFoundException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
             <set-payload value="resource not found"/>
         </apikit:mapping>
         <apikit:mapping statusCode="405">
-            <apikit:exception value="apikit2.exception.MethodNotAllowedException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
             <set-payload value="method not allowed"/>
         </apikit:mapping>
         <apikit:mapping statusCode="415">
-            <apikit:exception value="apikit2.exception.UnsupportedMediaTypeException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException"/>
             <set-payload value="unsupported media type"/>
         </apikit:mapping>
         <apikit:mapping statusCode="406">
-            <apikit:exception value="apikit2.exception.NotAcceptableException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>
             <set-payload value="not acceptable"/>
         </apikit:mapping>
         <apikit:mapping statusCode="400">
-            <apikit:exception value="apikit2.exception.BadRequestException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException"/>
             <set-payload value="bad request"/>
         </apikit:mapping>
     </apikit:mapping-exception-strategy>

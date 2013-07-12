@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+
+    <apikit:config name="default" raml="org/mule/module/apikit/config/config.yaml"/>
+    <apikit:config name="custom" raml="org/mule/module/apikit/config/config.yaml" consolePath="custom"/>
+    <apikit:config name="no-console" raml="org/mule/module/apikit/config/config.yaml" consoleEnabled="false"/>
+
+    <flow name="defaultEntry">
+        <http:inbound-endpoint port="${serverPortDefault}" host="localhost" path="default">
+            <object-to-string-transformer/>
+        </http:inbound-endpoint>
+        <apikit:router config-ref="default"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
+    <flow name="customEntry">
+        <http:inbound-endpoint port="${serverPortCustom}" host="localhost" path="custom">
+            <object-to-string-transformer/>
+        </http:inbound-endpoint>
+        <apikit:router config-ref="custom"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
+    <flow name="noConsoleEntry">
+        <http:inbound-endpoint port="${serverPortNoConsole}" host="localhost" path="no-console">
+            <object-to-string-transformer/>
+        </http:inbound-endpoint>
+        <apikit:router config-ref="no-console"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
+    <flow name="get:/resource">
+        <set-payload value="some resources"/>
+    </flow>
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-payload value="resource not found"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+</mule>

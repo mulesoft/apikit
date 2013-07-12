@@ -20,7 +20,7 @@
         <jdkName>JavaSE-1.6</jdkName>
         <jdk.version>1.6</jdk.version>
         <junit.version>4.9</junit.version>
-        <apikit.version>1.0-M4-SNAPSHOT</apikit.version>
+        <apikit.version>0.1-SNAPSHOT</apikit.version>
     </properties>
 
     <build>
