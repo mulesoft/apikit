@@ -12,7 +12,9 @@
 
 	<name>APIkit Target Platform Definition</name>
 
+	<groupId>org.mule.tools</groupId>
 	<artifactId>apikit</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>eclipse-target-definition</packaging>
 
 	<build>

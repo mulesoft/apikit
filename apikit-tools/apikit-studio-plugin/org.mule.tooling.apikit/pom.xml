@@ -9,6 +9,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<name>APIkit Studio Plugin</name>
+	<groupId>org.mule.tools</groupId>
 	<artifactId>org.mule.tooling.apikit</artifactId>
 	<packaging>eclipse-plugin</packaging>
 
