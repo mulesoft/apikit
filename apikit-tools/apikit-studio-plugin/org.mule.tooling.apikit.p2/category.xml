@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature id="org.mule.tooling.apikit.feature">
+      <category name="org.mule.tooling.apikit"/>
+   </feature>
+   <feature id="org.raml.editor.feature">
+      <category name="org.mule.tooling.apikit"/>
+   </feature>
+   <category-def name="org.mule.tooling.apikit" label="APIKit Studio Plugin"/>
+</site>

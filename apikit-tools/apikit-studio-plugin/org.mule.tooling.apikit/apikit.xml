@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?> <!-- SFTP -->
+<namespace xmlns="http://www.mulesoft.org/schema/mule/tooling.attributes"
+	url="http://www.mulesoft.org/schema/mule/apikit" prefix="apikit">
+
+	<global localId="config"
+		category="org.mule.tooling.globalCategory.conponentConfigurations"
+		description="Global Router configuration information." caption="Router"
+		image="icons/large/sub-flow-48x32.png" icon="icons/small/flow-24x16.png">
+		<attribute-category description="Defines an API."
+			caption="Router configuration">
+			<group caption="Generic" id="routerGenericProperties">
+				<name required="true"
+					description="Give a name to this configuration so it can be later referenced by config-ref."
+					caption="Name" name="name"></name>
+				<string caption="YAML File" description="Path to the YAML file"
+					name="raml" required="true" />
+				<boolean caption="Use Console"
+					description="Select/disable in order to use or not to the console"
+					name="consoleEnabled" xsdType="substitutableBoolean" alwaysFill="true" alwaysFillSimple="true" defaultValue="true" />
+				<string caption="Console Path" defaultValue="console"
+					description="The console path" name="consolePath" alwaysFill="true" alwaysFillSimple="true"/>
+			</group>
+		</attribute-category>
+	</global>
+
+	<flow localId="router" caption="Router" abstract="false"
+		supportsInbound="false" category="org.mule.tooling.category.endpoints"
+		icon="icons/small/Anypoint-Service-Registry-24x16.png" image="icons/large/Anypoint-Service-Registry-48x32.png"
+		xmlname="router" description="The Router element allows to define an API" versions="[3.5.0,8.0.0];EE">
+		<attribute-category description="General properties."
+			caption="General">
+			<group caption="Generic" id="routerGeneric">
+				<globalRef
+					requiredType="http://www.mulesoft.org/schema/mule/apikit/config"
+					description="Specify which configuration to use for this invocation."
+					caption="Router configuration" name="config-ref"></globalRef>
+			</group>
+		</attribute-category>
+	</flow>
+</namespace>
