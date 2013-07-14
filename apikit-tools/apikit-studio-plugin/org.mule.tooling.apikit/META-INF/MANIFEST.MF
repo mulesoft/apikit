@@ -12,5 +12,4 @@ Require-Bundle: org.eclipse.ui,
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: templates/,
- .
+Bundle-ClassPath: .

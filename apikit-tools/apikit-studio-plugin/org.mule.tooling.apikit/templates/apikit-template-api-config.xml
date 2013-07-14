@@ -1,9 +1,0 @@
-%TAG ! tag:raml.org,0.1:
----
-title: ${description}
-version: v3
-baseUri: ${serviceHost}
-#/gists:
-# name: Gists
-# /public:
-#   name: Public Gists
