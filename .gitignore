@@ -6,3 +6,5 @@
 target
 .DS_Store
 src/main/resources/console/app
+mule-module-apikit-plugin.zip
+mule-module-apikit.jar

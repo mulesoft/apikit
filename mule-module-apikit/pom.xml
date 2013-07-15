@@ -4,6 +4,7 @@
         <groupId>org.mule.modules</groupId>
         <artifactId>mule-modules</artifactId>
         <version>3.4.0</version>
+        <relativePath/>
     </parent>
     <artifactId>mule-module-apikit</artifactId>
     <version>0.1-SNAPSHOT</version>
