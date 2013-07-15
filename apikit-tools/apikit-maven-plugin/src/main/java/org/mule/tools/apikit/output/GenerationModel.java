@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class GenerationModel {
 
+    private static final char FLOW_NAME_SEPARATOR = ':';
+
     private final String verb;
     private Action action;
     private Resource resource;
@@ -134,5 +136,18 @@ public class GenerationModel {
 
     public API getApi() {
         return api;
+    }
+
+    public String getFlowName() {
+        StringBuilder flowName = new StringBuilder("");
+        flowName.append(action.getType().toString().toLowerCase())
+                .append(FLOW_NAME_SEPARATOR)
+                .append(getRelativeURI());
+
+        if(api.getConfig() != null && !StringUtils.isEmpty(api.getConfig().getName())) {
+            flowName.append(FLOW_NAME_SEPARATOR)
+                    .append(api.getConfig().getName());
+        }
+        return flowName.toString();
     }
 }

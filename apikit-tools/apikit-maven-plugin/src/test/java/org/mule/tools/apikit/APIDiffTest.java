@@ -44,7 +44,7 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifference() throws Exception {
-        API fromYAMLFile = API.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
+        API fromYAMLFile = API.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api", null);
 
         HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
         ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "a", "b");
@@ -64,7 +64,7 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifferenceMismatching() throws Exception {
-        API fromYAMLFile = API.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
+        API fromYAMLFile = API.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api", null);
 
         HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
         ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "b", "b");
@@ -84,7 +84,7 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifferenceAsymetric() throws Exception {
-        API fromYAMLFile = API.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
+        API fromYAMLFile = API.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api", null);
 
         HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
         ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "b", "b");

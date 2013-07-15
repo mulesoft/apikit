@@ -30,16 +30,18 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
+    <apikit:config raml="simple.yaml" />
+
     <flow name="main">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
             <object-to-string-transformer/>
         </http:inbound-endpoint>
-        <apikit:rest-processor config="simple.yaml"/>
+        <apikit:router />
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
 
-    <apikit:flow name="retrieveLeagues" resource="/pet" action="GET">
+    <flow name="get:/pet">
         <set-payload xmlns="" value="Hello world!"/>
-    </apikit:flow>
+    </flow>
 </mule>

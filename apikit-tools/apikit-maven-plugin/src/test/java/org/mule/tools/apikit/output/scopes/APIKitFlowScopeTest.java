@@ -17,8 +17,7 @@ public class APIKitFlowScopeTest {
     @Test
     public void testGenerate() throws Exception {
         GenerationModel flowEntry = mock(GenerationModel.class);
-        when(flowEntry.getRelativeURI()).thenReturn("/pet");
-        when(flowEntry.getVerb()).thenReturn("GET");
+        when(flowEntry.getFlowName()).thenReturn("get:/pet");
         when(flowEntry.getName()).thenReturn("retrievePet");
         when(flowEntry.getExample()).thenReturn("Hello world!");
 
@@ -28,16 +27,12 @@ public class APIKitFlowScopeTest {
         new APIKitFlowScope(flowEntry, mule);
         doc.setContent(mule);
 
-        String name = doc.getRootElement().getChildren().get(0).getAttribute("name").getValue();
-
         String s = Helper.nonSpaceOutput(doc);
 
-        Diff diff = XMLUnit.compareXML(String.format("<apikit:flow " +
-                "xmlns:apikit='http://www.mulesoft.org/schema/mule/apikit' " +
-                "resource='/pet' action='GET' name='%s'><set-payload " +
+        Diff diff = XMLUnit.compareXML("<flow " +
                 "xmlns='http://www.mulesoft.org/schema/mule/core' " +
-                "value='Hello world!' /></apikit:flow>",
-                name), s);
+                "name='get:/pet'><set-payload " +
+                "value='Hello world!' /></flow>", s);
 
         assertTrue(diff.toString(), diff.similar());
     }

@@ -9,11 +9,16 @@ import java.util.Map;
 
 public class API {
     private String baseUri;
+    private APIKitConfig config;
     private File xmlFile;
     private File yamlFile;
     private static final Map<File, API> factory = new HashMap<File, API>();
 
     public static API createAPIBinding(File yamlFile, File xmlFile, String path) {
+        return createAPIBinding(yamlFile, xmlFile, path, null);
+    }
+
+    public static API createAPIBinding(File yamlFile, File xmlFile, String path, APIKitConfig config) {
         Validate.notNull(yamlFile);
         Validate.notNull(path);
 
@@ -32,6 +37,7 @@ public class API {
         api.yamlFile = yamlFile;
         api.xmlFile = xmlFile;
         api.baseUri = path;
+        api.config = config;
 
         factory.put(yamlFile, api);
 
@@ -57,6 +63,10 @@ public class API {
 
     public String getBaseUri() {
         return baseUri;
+    }
+
+    public APIKitConfig getConfig() {
+        return config;
     }
 
     @Override

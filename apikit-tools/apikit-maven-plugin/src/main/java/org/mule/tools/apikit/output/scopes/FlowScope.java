@@ -1,5 +1,6 @@
 package org.mule.tools.apikit.output.scopes;
 
+import org.apache.commons.lang.StringUtils;
 import org.jdom2.Element;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
@@ -11,7 +12,7 @@ public class FlowScope implements Scope {
 
     private final Element main;
 
-    public FlowScope(Element mule, String exceptionStrategyRef, API api, String yamlFileName) {
+    public FlowScope(Element mule, String exceptionStrategyRef, API api, String configRef) {
         main = new Element("flow", XMLNS_NAMESPACE.getNamespace());
 
         main.setAttribute("name", "main");
@@ -24,9 +25,10 @@ public class FlowScope implements Scope {
 
         main.addContent(httpInboundEndpoint);
 
-        Element restProcessor = new Element("rest-processor", APIKitTools.API_KIT_NAMESPACE.getNamespace());
-        restProcessor.setAttribute("config", yamlFileName);
-
+        Element restProcessor = new Element("router", APIKitTools.API_KIT_NAMESPACE.getNamespace());
+        if(!StringUtils.isEmpty(configRef)) {
+            restProcessor.setAttribute("config-ref", configRef);
+        }
         main.addContent("\n        ");
         main.addContent(restProcessor);
 

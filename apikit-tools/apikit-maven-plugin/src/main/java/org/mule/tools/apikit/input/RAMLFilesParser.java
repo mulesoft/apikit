@@ -43,7 +43,7 @@ public class RAMLFilesParser {
     void collectResources(File filename, Set<ResourceActionPair> resources, Map<String, Resource> resourceMap, String baseUri) {
         for (Resource resource : resourceMap.values()) {
             for (Action action : resource.getActions().values()) {
-                API api = API.createAPIBinding(filename, null, baseUri);
+                API api = API.createAPIBinding(filename, null, baseUri, null);
                 ResourceActionPair resourceActionPair = new ResourceActionPair(api, resource.getUri(),
                         action.getType().toString());
                 generationModelProvider.add(api, resourceActionPair, resource, action);

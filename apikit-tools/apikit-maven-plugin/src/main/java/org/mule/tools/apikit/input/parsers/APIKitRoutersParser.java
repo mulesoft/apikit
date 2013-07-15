@@ -5,6 +5,7 @@ import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIKitConfig;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +33,8 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
     }
 
     @Override
-    public Set<API> parse(Document document) {
-        Set<API> includedApis = new HashSet<API>();
+    public Map<String, API> parse(Document document) {
+        Map<String, API> includedApis = new HashMap<String, API>();
 
         XPathExpression<Element> xp = XPathFactory.instance().compile("//*/*[local-name()='router']",
                                                                       Filters.element(APIKitTools.API_KIT_NAMESPACE.getNamespace()));
@@ -77,8 +78,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
                         path = "/" + path;
                     }
 
-                    includedApis.add(
-                            API.createAPIBinding(yamlPath, file, path, config));
+                    includedApis.put(config.getName(), API.createAPIBinding(yamlPath, file, path, config));
                 }
             }
         }

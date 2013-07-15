@@ -7,6 +7,7 @@ import org.jdom2.Element;
 import org.junit.Test;
 import org.mule.tools.apikit.Helper;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIKitConfig;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -17,10 +18,13 @@ public class FlowScopeTest {
     public void testGenerate() throws Exception {
         Document document = new Document();
         Element mule = new MuleScope(document).generate();
+        APIKitConfig config = new APIKitConfig.Builder("path/to/file.yaml").build();
+        new APIKitConfigScope(config, mule).generate();
         API api = mock(API.class);
         when(api.getBaseUri()).thenReturn("http://localhost:7777/api");
-
-        new FlowScope(mule, "ExceptionStrategyNameHere", api, "path/to/file.yaml").generate();
+        when(api.getConfig()).thenReturn(config);
+        
+        new FlowScope(mule, "ExceptionStrategyNameHere", api, null).generate();
 
         String s = Helper.nonSpaceOutput(mule);
 
@@ -34,11 +38,12 @@ public class FlowScopeTest {
                 "        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd\n" +
                 "        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd\n" +
                 "        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd\">" +
+                "<apikit:config raml=\"path/to/file.yaml\" consoleEnabled=\"true\" consolePath=\"console\" />" +
                 "<flow name=\"main\">" +
                 "<http:inbound-endpoint address=\"http://localhost:7777/api\">" +
                 "<object-to-string-transformer/>" +
                 "</http:inbound-endpoint>" +
-                "<apikit:rest-processor config=\"path/to/file.yaml\"/>" +
+                "<apikit:router />" +
                 "<exception-strategy ref=\"ExceptionStrategyNameHere\"/>" +
                 "</flow>" +
                 "</mule>";

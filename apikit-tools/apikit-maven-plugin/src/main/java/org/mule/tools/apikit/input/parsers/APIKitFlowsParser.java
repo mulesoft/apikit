@@ -1,6 +1,8 @@
 package org.mule.tools.apikit.input.parsers;
 
-import org.mule.tools.apikit.misc.APIKitTools;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
+
+import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.ResourceActionPair;
 
@@ -9,8 +11,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
@@ -19,9 +23,10 @@ import org.jdom2.xpath.XPathFactory;
 
 public class APIKitFlowsParser implements MuleConfigFileParser {
 
-    private final Set<API> includedApis;
+    private static final Logger LOGGER = Logger.getLogger(APIKitFlowsParser.class);
+    private final Map<String, API> includedApis;
 
-    public APIKitFlowsParser(final Set<API> includedApis) {
+    public APIKitFlowsParser(final Map<String, API> includedApis) {
         this.includedApis = includedApis;
     }
 
@@ -29,20 +34,21 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
     public Set<ResourceActionPair> parse(Document document)  {
         Set<ResourceActionPair> entries = new HashSet<ResourceActionPair>();
         XPathExpression<Element> xp = XPathFactory.instance().compile("//*/*[local-name()='flow']",
-                                                                      Filters.element(APIKitTools.API_KIT_NAMESPACE.getNamespace()));
+                                                                      Filters.element(XMLNS_NAMESPACE.getNamespace()));
         List<Element> elements = xp.evaluate(document);
         for (Element element : elements) {
-            String resource = element.getAttribute("resource").getValue();
-            String action = element.getAttribute("action").getValue();
-            String ref = element.getAttributeValue("ref");
-            API api = null;
-
-            if (ref != null) {
-                // TODO Add here the search for the config element
-            } else if (includedApis.size() > 0) {
-                api = includedApis.toArray(new API[0])[0];
+            String name = element.getAttributeValue("name");
+            APIKitFlow flow;
+            try {
+                flow = APIKitFlow.buildFromName(name);
+            } catch(IllegalArgumentException iae) {
+                LOGGER.info("Flow named '" + name + "' is not an APIKit Flow because it does not follow APIKit naming convention." );
+                continue;
             }
 
+            API api = includedApis.get(flow.getConfigRef());
+
+            String resource = flow.getResource();
             if (api != null) {
                 if (!resource.startsWith("/")) {
                     resource = "/" + resource;
@@ -69,7 +75,7 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
                     path = "/" + path;
                 }
 
-                entries.add(new ResourceActionPair(api, path + resource, action));
+                entries.add(new ResourceActionPair(api, path + resource, flow.getAction()));
             } else {
                 throw new IllegalStateException("No APIKit entries found in Mule config");
             }

@@ -9,6 +9,9 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaders;
 import org.jdom2.output.LineSeparator;
 import org.jdom2.output.XMLOutputter;
+
+import org.mule.tools.apikit.model.APIKitConfig;
+import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
 import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
 import org.mule.tools.apikit.output.scopes.ExceptionStrategyScope;
 import org.mule.tools.apikit.output.scopes.FlowScope;
@@ -97,6 +100,7 @@ public class MuleConfigGenerator {
                 xmlFile.getParentFile().mkdirs();
                 doc = new Document();
                 Element mule = new MuleScope(doc).generate();
+                new APIKitConfigScope(api.getConfig(), mule).generate();
                 Element exceptionStrategy = new ExceptionStrategyScope(mule).generate();
                 new FlowScope(mule, exceptionStrategy.getAttribute("name").getValue(),
                         api, api.getYamlFile().getName()).generate();
