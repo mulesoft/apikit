@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.mule.tooling.apikit.feature"
+      label="APIKit Studio Plugin"
+      version="1.0.0.qualifier">
+
+   <description url="http://www.example.com/description">
+      APIkit is a an Eclipse plugin for creating API definitions in
+Mule Studio.
+   </description>
+
+   <copyright url="http://www.mulesoft.com">
+      Copyright 2013 MuleSoft Inc.
+   </copyright>
+
+   <license url="http://www.mulesoft.com/downloads/legal/studio-license.html">
+      PLEASE READ THIS BETA AGREEMENT BEFORE PURCHASING OR USING THE
+PRODUCTS. BY ACCESSING OR USING THE PRODUCTS, CUSTOMER SIGNIFIES
+ITS ASSENT TO THIS AGREEMENT. IF YOU ARE ACTING ON BEHALF OF
+AN ENTITY, THEN YOU REPRESENT THAT YOU HAVE THE AUTHORITY TO
+ENTER INTO THIS AGREEMENT ON BEHALF OF THAT ENTITY. IF CUSTOMER
+DOES NOT ACCEPT THE TERMS OF THIS AGREEMENT, THEN IT MUST NOT
+ACCESS OR USE THE PRODUCTS.
+This Beta Agreement (&apos;Agreement&apos;) is between MuleSoft, Inc. (&apos;MuleSoft&apos;)
+and the purchaser or user of MuleSoft product that accepts the
+terms of this Agreement (&apos;Customer&apos;). The effective date of this
+Agreement (&apos;Effective Date&apos;) is the date that Customer uses MuleSoft
+products.
+1. Grant of License.
+1.1 The License.
+Subject to the terms of this Agreement, MuleSoft grants to Customer
+a personal, non-exclusive, non-transferable internal license
+to access, use and test the pre-release MuleSoft product (“Product”)
+and the materials provided to Customer by MuleSoft (“Materials”)
+during the term of this Agreement (“Evaluation Period”), solely
+to evaluate the features, functionality and performance of the
+Product. At the end of the Evaluation Period, the Product and
+Materials may cease to function. The Product may not be used
+for any other purpose, including but not limited to productive
+or commercial use.
+1.2 License Conditions.
+MuleSoft retains all right, title and interest in and to the
+Product and Materials, and modifications to the Product and the
+Materials. Customer may not decompile, disassemble or reverse
+engineer any Product. Customer may not make any copies of the
+Product or Materials.  Customer may not remove or modify any
+proprietary rights notices on the Products or Materials.  The
+Product and Materials may not be modified, altered or enhanced.
+Customer may not allow any third party to access the Product.
+In no event may Customer transfer, sublicense, distribute or
+run production applications on the Product. The Product may include
+individual open source software components, each of which has
+its own copyright and its own applicable license conditions.
+The open source software is licensed to Customer under the terms
+of the applicable open source license conditions and/or copyright
+notices that can be found in the open_source_licenses file, the
+Documentation or other materials accompanying the Software. Customer
+will obtain and install all prerequisite hardware and software
+(including any necessary access rights for MuleSoft) identified
+by MuleSoft.
+1.3 Requirements of Customer. 
+Customer will be responsible for: (i) evaluating the features
+of the Product, including usability, implementation, performance,
+scalability, rollout; (ii) providing feedback on any additional
+features requires, any functionality issues, and errors, flaws,
+failures, or faults in the Product via an online MuleSoft forum;
+and (iii) if jointly agreed to by the parties, participating
+in press releases and marketing campaigns and acting as a reference
+account.  
+1.4 &quot;Confidential Information&quot;. 
+means all information furnished by MuleSoft in oral, written
+or machine-readable form, disclosed as a result of this Agreement,
+and that should reasonably have been understood by Customer,
+because of legends or other markings, the circumstances of disclosure
+or the nature of the information itself, to be proprietary and
+confidential to MuleSoft, an affiliate of it or to a third party.
+The results of the evaluation will also be treated as MuleSoft
+Confidential Information. Customer will use a reasonable standard
+of care to prevent unauthorized access to or disclosure of the
+Confidential Information, but in no event less than a reasonable
+standard of care. Customer will disclose the Confidential Information
+only to its employees with a need to know. The restrictions of
+this Agreement on use and disclosure of Confidential Information
+shall not apply to information that becomes publicly known through
+no fault of the Customer or its personnel. All confidentiality
+obligations regarding Confidential Information shall survive
+with respect to any Confidential Information received prior to
+the expiration or termination of this Agreement. 
+1.5 Ownership. 
+Customer acknowledges that MuleSoft retains ownership of all
+right, title and interest to the Products and Materials and modifications
+and enhancements of the foregoing.
+2. Warranty Disclaimer.
+2.1 MuleSoft warrants that the Product and the Materials will
+be available for proper access. In the event of a breach of the
+foregoing warranty, Customer’s sole remedy and MuleSoft’s sole
+obligation will be to allow Customer to access the Product and
+Materials from a different MuleSoft access point.   
+2.2 EXCEPT AS EXPRESSLY PROVIDED IN THIS AGREEMENT, THE PRODUCT
+AND MATERIALS ARE PROVIDED “AS IS” AND WITHOUT WARRANTIES OR
+CONDITIONS OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY,
+NON-INFRINGEMENT, QUIET ENJOYMENT, ACCURACY OF DATA, SYSTEM INTEGRATION,
+COURSE OF PERFORMANCE AND FITNESS FOR A PARTICULAR PURPOSE. 
+MULESOFT DOES NOT GUARANTEE OR WARRANT THAT THE USE OF THE PRODUCT
+OR MATERIALS WILL BE UNINTERRUPTED OR ERROR FREE.
+3. Limitation of Liability.
+IN NO EVENT WILL MULESOFT OR ITS SUPPLIERS BE LIABLE FOR ANY
+CLAIM BASED UPON A THIRD PARTY CLAIM, ANY INCIDENTAL, CONSEQUENTIAL,
+SPECIAL, INDIRECT, EXEMPLARY OR PUNITIVE DAMAGES, WHETHER ARISING
+IN TORT, CONTRACT, OR OTHERWISE; OR FOR ANY DAMAGES ARISING OUT
+OF OR IN CONNECTION WITH ANY MALFUNCTIONS, DELAYS, LOSS OF DATA,
+LOST PROFITS, LOST SAVINGS, INTERRUPTION OF SERVICE, LOSS OF
+BUSINESS OR ANTICIPATORY PROFITS, EVEN IF MULESOFT HAS BEEN ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGES. MULESOFT’S AGGREGATE AND
+CUMULATIVE LIABILITY ARISING OUT OF OR RELATING TO THIS AGREEMENT,
+REGARDLESS OF THE FORM OF THE CAUSE OF ACTION, WHETHER IN CONTRACT,
+TORT (INCLUDING WITHOUT LIMITATION NEGLIGENCE), STATUTE OR OTHERWISE
+WILL BE LIMITED TO DIRECT DAMAGES AND WILL NOT EXCEED FIVE THOUSAND
+DOLLARS (US $5,000). THE ALLOCATIONS OF LIABILITY IN THIS SECTION
+REPRESENT THE AGREED AND BARGAINED FOR UNDERSTANDING OF THE PARTIES,
+AND THE COMPENSATION OF MULESOFT FOR THE SERVICES PROVIDED HEREUNDER
+REFLECTS SUCH ALLOCATIONS. THE FOREGOING LIMITATIONS, EXCLUSIONS
+AND DISCLAIMERS ARE AN ALLOCATION OF THE RISK BETWEEN THE PARTIES
+AND WILL APPLY TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE
+LAW, EVEN IF ANY REMEDY FAILS IN ITS ESSENTIAL PURPOSE.
+4. Terms and termination.
+The term of this Agreement will begin and end on the dates specified
+in the Evaluation Period above, when Product becomes generally
+available or on the first anniversary of the Effective Date,
+whichever occurs first. 
+4.1 This Agreement may be terminated at any time by either party
+upon written notice.  Upon termination or expiration of this
+Agreement, Customer will cease using the Product and Materials.
+Termination will not affect any claim, liability or right arising
+prior to termination.
+4.2 All rights and obligations granted under Sections 1.2, 1.4,
+1.5, 2, 3, 4 and 5 of this Agreement will survive the expiration
+or termination of this Agreement.  
+5. General.
+5.1 Independent Parties.  
+Neither Customer nor MuleSoft is a legal representative, partner
+or agent of the other.
+5.2 Entirety.
+This Agreement represents the entire agreement of the parties
+with regard to the Product, Materials, and Confidential Information
+and supersedes all other agreements related to this subject matter,
+except for nondisclosure agreement entered into by the parties.
+Delivery of an executed counterpart of this Agreement by facsimile
+or any other reliable means shall be deemed to be as effective
+for all purposes as delivery of the manually executed counterpart.
+This Agreement may not be amended except in writing signed by
+both parties.
+5.3 Severability.
+If any provision of this Agreement is held invalid or unenforceable
+for any reason but would be valid and enforceable if appropriately
+modified, then such provision will apply with the modification
+necessary to make it valid and enforceable.  If such provision
+cannot be so modified, the parties agree that such invalidity
+will not affect the validity of the remaining provisions of the
+Agreement; provided, however, that if Section 3 cannot be modified
+to be valid and enforceable, this Agreement will be deemed invalid
+in its entirety. 
+5.4 Export.
+Customer may not export or re-export the Product or Materials
+except in compliance with the United States Export Administration
+Act and the related rules and regulations and similar non-U.S.
+government restrictions, if applicable. 
+5.5 Notices.
+Any notice required or permitted under the terms of this Agreement
+or required by law must be in writing and must be (a) delivered
+in person, (b) sent by first class registered mail, or air mail,
+as appropriate, or (c) sent by overnight air courier, in each
+case properly posted and fully prepaid to the appropriate address
+set forth below. Either party may change its address for notice
+by notice to the other party given in accordance with this Section.
+Notices will be considered to have been given at the time of
+actual delivery in person, five (5) business days after deposit
+in the mail as set forth above, or two (2) days after delivery
+to an overnight air courier service.  Notices shall be sent to:
+If to MuleSoft: 
+MuleSoft, Inc. 
+30 Maiden Lane, Suite 500
+San Francisco, CA 94108
+Attn: Chief Financial Officer
+If to Customer: To the Contracts Manager at Customer’s corporate
+headquarters or to such other address as provided to MuleSoft
+by Customer in writing.
+5.6 Governing Law and Jurisdiction.
+.This Agreement will be governed by and construed in accordance
+with the laws of the State of New York without reference to its
+conflict of laws principles. All disputes arising out of or relating
+to this Agreement will be submitted to the exclusive jurisdiction
+of the state or federal courts located in New York, New York,
+and each party irrevocably consents to such personal jurisdiction
+and waives all objections to this venue.  The parties agree that
+neither the United Nations Convention on Contracts for the International
+Sale of Goods nor the Uniform Computer Information Transactions
+Act (UCITA) will apply in any respect to this Agreement.
+   </license>
+
+   <plugin
+         id="org.mule.tooling.apikit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+</feature>

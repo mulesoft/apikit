@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>apikit-studio-plugin</artifactId>
+		<groupId>org.mule.tools</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<name>APIkit Studio Plugin</name>
+	<groupId>org.mule.tools</groupId>
+	<artifactId>org.mule.tooling.apikit</artifactId>
+	<packaging>eclipse-plugin</packaging>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-bundle-classpath-libs</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<stripVersion>true</stripVersion>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.mule.modules</groupId>
+									<artifactId>mule-module-apikit</artifactId>
+									<version>0.1-SNAPSHOT</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.mule.modules</groupId>
+									<artifactId>mule-module-apikit-plugin</artifactId>
+									<version>0.1-SNAPSHOT</version>
+									<type>zip</type>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>muleee.releases</id>
+			<name>MuleEE Releases Repository</name>
+			<url>http://dev.ee.mulesource.com/repository/content/repositories/releases/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>muleee.snapshots</id>
+			<name>MuleEE Snapshots Repository</name>
+			<layout>default</layout>
+			<url>http://dev.ee.mulesource.com/repository/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
+</project>

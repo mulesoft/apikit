@@ -39,11 +39,11 @@ public class ExceptionStrategyScope implements Scope {
 
     public ExceptionStrategyScope(Element mule) {
         List<StatusCodeMapping> statusCodeMappings = Arrays.asList(
-                new StatusCodeMapping(404, "apikit2.exception.NotFoundException", "resource not found"),
-                new StatusCodeMapping(405, "apikit2.exception.MethodNotAllowedException", "method not allowed"),
-                new StatusCodeMapping(415, "apikit2.exception.UnsupportedMediaTypeException", "unsupported media type"),
-                new StatusCodeMapping(406, "apikit2.exception.NotAcceptableException", "not acceptable"),
-                new StatusCodeMapping(400, "apikit2.exception.BadRequestException", "bad request")
+                new StatusCodeMapping(404, "org.mule.module.apikit.exception.NotFoundException", "resource not found"),
+                new StatusCodeMapping(405, "org.mule.module.apikit.exception.MethodNotAllowedException", "method not allowed"),
+                new StatusCodeMapping(415, "org.mule.module.apikit.exception.UnsupportedMediaTypeException", "unsupported media type"),
+                new StatusCodeMapping(406, "org.mule.module.apikit.exception.NotAcceptableException", "not acceptable"),
+                new StatusCodeMapping(400, "org.mule.module.apikit.exception.BadRequestException", "bad request")
         );
 
         exceptionStrategy = new Element("mapping-exception-strategy",

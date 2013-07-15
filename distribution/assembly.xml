@@ -1,0 +1,26 @@
+<assembly>
+    <id>apikit-plugin-distribution</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>lib</outputDirectory>
+            <includes>
+                <include>org.mule.modules:mule-module-apikit</include>
+                <include>org.raml:raml-parser</include>
+                <include>com.google.guava:guava</include>
+                <include>com.fasterxml.jackson.core:jackson-databind</include>
+                <include>com.fasterxml.jackson.core:jackson-annotations</include>
+                <include>com.fasterxml.jackson.core:jackson-core</include>
+                <include>org.kitchen-eel:json-schema-validator</include>
+                <include>org.mozilla:rhino</include>
+                <include>commons-validator:commons-validator</include>
+                <include>commons-digester:commons-digester</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+
+</assembly>

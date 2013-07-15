@@ -1,15 +1,3 @@
-http\://www.mulesoft.org/schema/mule/api/3.3/mule-api.xsd=META-INF/mule-api.xsd
-http\://www.mulesoft.org/schema/mule/api/3.4/mule-api.xsd=META-INF/mule-api.xsd
-http\://www.mulesoft.org/schema/mule/api/current/mule-api.xsd=META-INF/mule-api.xsd
-
-http\://www.mulesoft.org/schema/mule/api-rest/3.3/mule-api-rest.xsd=META-INF/mule-api-rest.xsd
-http\://www.mulesoft.org/schema/mule/api-rest/3.4/mule-api-rest.xsd=META-INF/mule-api-rest.xsd
-http\://www.mulesoft.org/schema/mule/api-rest/current/mule-api-rest.xsd=META-INF/mule-api-rest.xsd
-
-http\://www.mulesoft.org/schema/mule/api-ws/3.3/mule-api-ws.xsd=META-INF/mule-api-ws.xsd
-http\://www.mulesoft.org/schema/mule/api-ws/3.4/mule-api-ws.xsd=META-INF/mule-api-ws.xsd
-http\://www.mulesoft.org/schema/mule/api-ws/current/mule-api-ws.xsd=META-INF/mule-api-ws.xsd
-
 http\://www.mulesoft.org/schema/mule/apikit/3.3/mule-apikit.xsd=META-INF/mule-apikit.xsd
 http\://www.mulesoft.org/schema/mule/apikit/3.4/mule-apikit.xsd=META-INF/mule-apikit.xsd
 http\://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd=META-INF/mule-apikit.xsd

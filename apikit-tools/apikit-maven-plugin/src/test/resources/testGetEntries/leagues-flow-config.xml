@@ -12,23 +12,23 @@
 
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
-            <apikit:exception value="apikit2.exception.NotFoundException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
             <set-payload value="resource not found"/>
         </apikit:mapping>
         <apikit:mapping statusCode="405">
-            <apikit:exception value="apikit2.exception.MethodNotAllowedException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
             <set-payload value="method not allowed"/>
         </apikit:mapping>
         <apikit:mapping statusCode="415">
-            <apikit:exception value="apikit2.exception.UnsupportedMediaTypeException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException"/>
             <set-payload value="unsupported media type"/>
         </apikit:mapping>
         <apikit:mapping statusCode="406">
-            <apikit:exception value="apikit2.exception.NotAcceptableException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>
             <set-payload value="not acceptable"/>
         </apikit:mapping>
         <apikit:mapping statusCode="400">
-            <apikit:exception value="apikit2.exception.BadRequestException"/>
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException"/>
             <set-payload value="bad request"/>
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
@@ -48,8 +48,8 @@
     </flow>
 
     <flow name="post:/leagues">
-        <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
-                            returnClass="org.mule.module.apikit.rest.integration.leagues.League"/>
+        <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
+                            returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
             <when expression="#[!payload.name.matches('[\\w ]+')]">
                 <set-property propertyName="http.status" value="400"/>
@@ -79,8 +79,8 @@
     </flow>
 
     <flow name="put:/leagues/{leagueId}">
-        <custom-transformer class="org.mule.module.apikit.rest.transform.PayloadNormalizerTransformer"
-                            returnClass="org.mule.module.apikit.rest.integration.leagues.League"/>
+        <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
+                            returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
             <when expression="#[!payload.name.matches('[\\w ]+')]">
                 <logger level="WARN" message="invalid name returning 400"/>
@@ -104,7 +104,7 @@
     </flow>
 
     <spring:beans>
-        <spring:bean id="liga-bbva" class="org.mule.module.apikit.rest.integration.leagues.League">
+        <spring:bean id="liga-bbva" class="org.mule.module.apikit.leagues.League">
             <spring:property name="id" value="liga-bbva"/>
             <spring:property name="name" value="Liga BBVA"/>
             <spring:property name="federation" ref="spanish-federation"/>
@@ -118,11 +118,11 @@
                 </spring:list>
             </spring:property>
         </spring:bean>
-        <spring:bean id="spanish-federation" class="org.mule.module.apikit.rest.integration.leagues.Federation">
+        <spring:bean id="spanish-federation" class="org.mule.module.apikit.leagues.Federation">
             <spring:property name="name" value="Real Federacion Espanola de Futbol"/>
             <spring:property name="year" value="1909"/>
         </spring:bean>
-        <spring:bean id="premier-league" class="org.mule.module.apikit.rest.integration.leagues.League">
+        <spring:bean id="premier-league" class="org.mule.module.apikit.leagues.League">
             <spring:property name="id" value="premier-league"/>
             <spring:property name="name" value="Premier League"/>
             <spring:property name="federation" ref="english-federation"/>
@@ -133,11 +133,11 @@
                 </spring:list>
             </spring:property>
         </spring:bean>
-        <spring:bean id="english-federation" class="org.mule.module.apikit.rest.integration.leagues.Federation">
+        <spring:bean id="english-federation" class="org.mule.module.apikit.leagues.Federation">
             <spring:property name="name" value="Football Association"/>
             <spring:property name="year" value="1863"/>
         </spring:bean>
-        <spring:bean id="list-of-leagues" class="org.mule.module.apikit.rest.integration.leagues.Leagues">
+        <spring:bean id="list-of-leagues" class="org.mule.module.apikit.leagues.Leagues">
             <spring:property name="leagues">
                 <spring:list>
                     <spring:ref bean="liga-bbva"/>
@@ -145,31 +145,31 @@
                 </spring:list>
             </spring:property>
         </spring:bean>
-        <spring:bean id="real-madrid" class="org.mule.module.apikit.rest.integration.leagues.Team">
+        <spring:bean id="real-madrid" class="org.mule.module.apikit.leagues.Team">
             <spring:property name="id" value="real-madrid"/>
             <spring:property name="name" value="Real Madrid"/>
         </spring:bean>
-        <spring:bean id="barcelona" class="org.mule.module.apikit.rest.integration.leagues.Team">
+        <spring:bean id="barcelona" class="org.mule.module.apikit.leagues.Team">
             <spring:property name="id" value="barcelona"/>
             <spring:property name="name" value="Barcelona"/>
         </spring:bean>
-        <spring:bean id="valencia" class="org.mule.module.apikit.rest.integration.leagues.Team">
+        <spring:bean id="valencia" class="org.mule.module.apikit.leagues.Team">
             <spring:property name="id" value="valencia"/>
             <spring:property name="name" value="Valencia"/>
         </spring:bean>
-        <spring:bean id="athletic-bilbao" class="org.mule.module.apikit.rest.integration.leagues.Team">
+        <spring:bean id="athletic-bilbao" class="org.mule.module.apikit.leagues.Team">
             <spring:property name="id" value="athletic-bilbao"/>
             <spring:property name="name" value="Athletic Bilbao"/>
         </spring:bean>
-        <spring:bean id="atletico-madrid" class="org.mule.module.apikit.rest.integration.leagues.Team">
+        <spring:bean id="atletico-madrid" class="org.mule.module.apikit.leagues.Team">
             <spring:property name="id" value="atletico-madrid"/>
             <spring:property name="name" value="Atletico Madrid"/>
         </spring:bean>
-        <spring:bean id="man-united" class="org.mule.module.apikit.rest.integration.leagues.Team">
+        <spring:bean id="man-united" class="org.mule.module.apikit.leagues.Team">
             <spring:property name="id" value="man-united"/>
             <spring:property name="name" value="Manchester United"/>
         </spring:bean>
-        <spring:bean id="man-city" class="org.mule.module.apikit.rest.integration.leagues.Team">
+        <spring:bean id="man-city" class="org.mule.module.apikit.leagues.Team">
             <spring:property name="id" value="man-city"/>
             <spring:property name="name" value="Manchester City"/>
         </spring:bean>

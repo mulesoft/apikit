@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns="http://www.mulesoft.org/schema/mule/apikit" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:mule="http://www.mulesoft.org/schema/mule/core"
+            xmlns:schemadoc="http://www.mulesoft.org/schema/mule/schemadoc"
+            targetNamespace="http://www.mulesoft.org/schema/mule/apikit"
+            elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/core" schemaLocation="http://www.mulesoft.org/schema/mule/core/3.3/mule.xsd" />
+    <xsd:import namespace="http://www.mulesoft.org/schema/mule/schemadoc" schemaLocation="http://www.mulesoft.org/schema/mule/schemadoc/3.3/mule-schemadoc.xsd" />
+
+    <xsd:annotation>
+        <xsd:documentation>
+            APIkit is a Mule module for building ReST API's
+        </xsd:documentation>
+        <xsd:appinfo>
+            <schemadoc:short-name>APIkit</schemadoc:short-name>
+            <schemadoc:page-title>APIkit Module</schemadoc:page-title>
+        </xsd:appinfo>
+    </xsd:annotation>
+
+    <xsd:element name="config" type="configType" substitutionGroup="mule:abstract-extension">
+        <xsd:annotation>
+            <xsd:documentation>
+                APIkit configuration element.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="configType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractExtensionType">
+                <xsd:attribute name="name" type="mule:nonBlankString" use="optional"/>
+                <xsd:attribute name="raml" type="mule:nonBlankString" use="required"/>
+                <xsd:attribute name="consoleEnabled" type="mule:substitutableBoolean" default="true" use="optional"/>
+                <xsd:attribute name="consolePath" type="mule:nonBlankString" default="console" use="optional"/>
+           </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="router" type="routerType" substitutionGroup="mule:abstract-message-processor">
+        <xsd:annotation>
+            <xsd:documentation>
+                A rest routing message processor.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="routerType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractMessageProcessorType">
+                <xsd:attribute name="config-ref" type="mule:nonBlankString" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The Router configuration.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:element name="mapping-exception-strategy" type="mappingExceptionStrategyType"
+                 substitutionGroup="mule:abstract-exception-strategy">
+        <xsd:annotation>
+            <xsd:documentation>
+                Exception strategy used to map exceptions to http status codes.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="mappingExceptionStrategyType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractNotificationExceptionStrategyType">
+                <xsd:sequence>
+                    <xsd:element name="mapping" type="mappingStatusToExceptionType" minOccurs="1" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+    <xsd:complexType name="mappingStatusToExceptionType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractNotificationExceptionStrategyType">
+                <xsd:sequence>
+                    <xsd:element name="exception" minOccurs="1" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:attribute name="value" use="required" type="mule:nonBlankString" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:group ref="mule:messageProcessorOrOutboundEndpoint" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+                <xsd:attribute name="statusCode" use="required" type="mule:substitutableInt">
+                    <xsd:annotation>
+                        <xsd:documentation>The http status code to be returned when the nested exceptions are thrown</xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
+</xsd:schema>
