@@ -9,7 +9,7 @@ public class APIKitConfig {
     public static final String RAML_ATTRIBUTE = "raml";
     public static final String CONSOLE_ENABLED_ATTRIBUTE = "consoleEnabled";
     public static final String CONSOLE_PATH_ATTRIBUTE = "consolePath";
-    private static final String DEFAULT_CONSOLE_PATH = "console";
+    public static final String DEFAULT_CONSOLE_PATH = "console";
 
     private String name;
     private String raml;

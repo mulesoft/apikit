@@ -1,8 +1,10 @@
 package org.mule.tools.apikit;
 
 import org.apache.maven.plugin.logging.Log;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.model.ResourceActionPair;
 import org.mule.tools.apikit.input.MuleConfigParser;
 
@@ -41,4 +43,39 @@ public class MuleConfigParserTest {
         assertEquals("leagues.yaml", apis.iterator().next().getYamlFile().getName());
 
     }
+
+    @Test
+    public void testCreationWithConfigRef() {
+        final InputStream resourceAsStream =
+                MuleConfigParser.class.getClassLoader().getResourceAsStream(
+                        "testGetEntries/leagues-flow-with-config-config.xml");
+        Log log = mock(Log.class);
+
+        HashSet<File> yamlPaths = new HashSet<File>();
+        yamlPaths.add(new File("leagues.yaml"));
+
+        HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
+        streams.put(new File(""), resourceAsStream);
+
+        MuleConfigParser muleConfigParser =
+                new MuleConfigParser(log, yamlPaths, streams);
+        Set<ResourceActionPair> set = muleConfigParser.getEntries();
+        assertNotNull(set);
+        assertEquals(5, set.size());
+
+        Set<API> apis = muleConfigParser.getIncludedApis();
+        assertNotNull(apis);
+        assertEquals(1, apis.size());
+        assertEquals("leagues.yaml", apis.iterator().next().getYamlFile().getName());
+
+        Map<String, APIKitConfig> configs = muleConfigParser.getApikitConfigs();
+        APIKitConfig leaguesConfig = configs.get("leagues-config");
+        assertNotNull(leaguesConfig);
+        assertEquals("leagues-config", leaguesConfig.getName());
+        assertEquals("leagues.yaml", leaguesConfig.getRaml());
+        assertTrue(leaguesConfig.isConsoleEnabled());
+        assertEquals(APIKitConfig.DEFAULT_CONSOLE_PATH, leaguesConfig.getConsolePath());
+
+    }
+
 }
