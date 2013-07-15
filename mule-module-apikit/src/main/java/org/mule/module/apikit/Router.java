@@ -4,6 +4,7 @@ import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.config.MuleProperties;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.construct.FlowConstructAware;
 import org.mule.api.context.MuleContextAware;
@@ -12,6 +13,7 @@ import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.registry.RegistrationException;
+import org.mule.config.ConfigResource;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.uri.ResolvedVariables;
@@ -23,6 +25,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -40,6 +45,9 @@ import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
+import org.raml.parser.loader.CompositeResourceLoader;
+import org.raml.parser.loader.DefaultResourceLoader;
+import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.visitor.YamlDocumentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,13 +197,23 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
 
     private void loadApiDefinition()
     {
-        YamlDocumentBuilder<Raml> builder = new YamlDocumentBuilder<Raml>(Raml.class);
-        InputStream ramlStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(config.getRaml());
+        ResourceLoader loader = new AppHomeResourceLoader(muleContext);
+        InputStream ramlStream = loader.fetchResource(config.getRaml());
+        if (ramlStream == null)
+        {
+            logger.info("Raml descriptor not found in APP home directory. Trying the class path...");
+            ramlStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(config.getRaml());
+        }
         if (ramlStream == null)
         {
             throw new ApikitRuntimeException(String.format("RAML descriptor %s not found", config));
         }
+
+        CompositeResourceLoader customLoader = new CompositeResourceLoader(loader, new DefaultResourceLoader());
+        YamlDocumentBuilder<Raml> builder = new YamlDocumentBuilder<Raml>(Raml.class, customLoader);
+
         //TODO perform validation
+
         api = builder.build(ramlStream);
         injectEndpointUri(builder);
         ramlYaml = YamlDocumentBuilder.dumpFromAst(builder.getRootNode());
@@ -344,5 +362,32 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
     public void setFlowConstruct(FlowConstruct flowConstruct)
     {
         this.flowConstruct = flowConstruct;
+    }
+
+    private static class AppHomeResourceLoader implements ResourceLoader
+    {
+        private final MuleContext muleContext;
+
+        public AppHomeResourceLoader(MuleContext muleContext)
+        {
+            this.muleContext = muleContext;
+        }
+
+        @Override
+        public InputStream fetchResource(String resourceName)
+        {
+            InputStream ramlStream = null;
+            String appHome = muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
+            File ramlFile = new File(appHome, resourceName);
+            try
+            {
+                ramlStream = new FileInputStream(ramlFile);
+            }
+            catch (FileNotFoundException e)
+            {
+                //ignore
+            }
+            return ramlStream;
+        }
     }
 }
