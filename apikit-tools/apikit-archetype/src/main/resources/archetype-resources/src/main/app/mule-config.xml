@@ -37,7 +37,7 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config raml="raml-example-v1.yml" />
+    <apikit:config raml="raml-example-v1.yaml" />
 
     <flow name="main">
         <http:inbound-endpoint address="http://localhost:8080/api">
