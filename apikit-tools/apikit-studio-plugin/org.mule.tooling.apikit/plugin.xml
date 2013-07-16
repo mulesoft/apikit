@@ -8,7 +8,7 @@
             contributionLibPathInMule="/plugins"
             contributionLibs="mule-module-apikit-plugin.zip"
             contributionNamespace="http://www.mulesoft.org/schema/mule/apikit"
-            contributionNamespaceFile="mule-apikit.xsd"
+            contributionNamespaceFile="http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd"
             contributionNamespacePrefix="apikit"
             contributionType="cloud-connector"
             icon="icons/small/flow-24x16.png"
