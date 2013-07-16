@@ -5,6 +5,7 @@
         <artifactId>apikit-parent</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
+    <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-apikit</artifactId>
     <packaging>jar</packaging>
     <name>APIKit Module</name>
