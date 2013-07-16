@@ -221,11 +221,19 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
 
     private void injectEndpointUri(YamlDocumentBuilder<Raml> builder)
     {
-        String address = ((ImmutableEndpoint) ((Flow) flowConstruct).getMessageSource()).getAddress();
+        ImmutableEndpoint endpoint = (ImmutableEndpoint) ((Flow) flowConstruct).getMessageSource();
+        String address = endpoint.getAddress();
+        String path = endpoint.getEndpointURI().getPath();
+        String chAddress = System.getProperty("fullDomain");
         if (logger.isDebugEnabled())
         {
-            logger.debug("yaml baseUri: " + api.getBaseUri());
+            logger.debug("raml baseUri: " + api.getBaseUri());
             logger.debug("mule baseUri: " + address);
+            logger.debug("chub baseUri: " + chAddress + path);
+        }
+        if (chAddress != null)
+        {
+            address = chAddress + path;
         }
         api.setBaseUri(address);
         List<NodeTuple> tuples = new ArrayList<NodeTuple>();
