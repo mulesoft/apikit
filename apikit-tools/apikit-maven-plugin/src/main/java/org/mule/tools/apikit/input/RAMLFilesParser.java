@@ -2,6 +2,7 @@ package org.mule.tools.apikit.input;
 
 import org.apache.maven.plugin.logging.Log;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.output.GenerationModelProvider;
 import org.mule.tools.apikit.model.ResourceActionPair;
 import org.raml.model.Action;
@@ -43,7 +44,7 @@ public class RAMLFilesParser {
     void collectResources(File filename, Set<ResourceActionPair> resources, Map<String, Resource> resourceMap, String baseUri) {
         for (Resource resource : resourceMap.values()) {
             for (Action action : resource.getActions().values()) {
-                API api = API.createAPIBinding(filename, null, baseUri, null);
+                API api = API.createAPIBinding(filename, null, baseUri, new APIKitConfig.Builder(filename.getName()).build());
                 ResourceActionPair resourceActionPair = new ResourceActionPair(api, resource.getUri(),
                         action.getType().toString());
                 generationModelProvider.add(api, resourceActionPair, resource, action);
