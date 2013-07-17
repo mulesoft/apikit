@@ -102,8 +102,9 @@ public class MuleConfigGenerator {
                 Element mule = new MuleScope(doc).generate();
                 new APIKitConfigScope(api.getConfig(), mule).generate();
                 Element exceptionStrategy = new ExceptionStrategyScope(mule).generate();
+                String configRef = api.getConfig() != null? api.getConfig().getName() : null;
                 new FlowScope(mule, exceptionStrategy.getAttribute("name").getValue(),
-                        api, api.getYamlFile().getName()).generate();
+                        api, configRef).generate();
             } else {
                 InputStream xmlInputStream = new FileInputStream(xmlFile);
                 doc = saxBuilder.build(xmlInputStream);

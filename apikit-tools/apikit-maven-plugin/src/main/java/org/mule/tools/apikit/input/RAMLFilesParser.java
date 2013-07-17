@@ -10,9 +10,14 @@ import org.mule.tools.apikit.model.ResourceActionPair;
 import org.raml.model.Action;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
+import org.raml.parser.loader.CompositeResourceLoader;
+import org.raml.parser.loader.DefaultResourceLoader;
+import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.visitor.YamlDocumentBuilder;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -20,11 +25,44 @@ public class RAMLFilesParser {
     private final GenerationModelProvider generationModelProvider;
     private Set<ResourceActionPair> entries = new HashSet<ResourceActionPair>();
 
+    public static final String API_HOME = "src/main/api";
+
     public RAMLFilesParser(Log log, GenerationModelProvider generationModelProvider, Map<File, InputStream> fileStreams) {
         this.generationModelProvider = generationModelProvider;
         List<File> processedFiles = new ArrayList<File>();
         for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet()) {
-            YamlDocumentBuilder<Raml> builderNodeHandler = new YamlDocumentBuilder<Raml>(Raml.class);
+            YamlDocumentBuilder<Raml> builderNodeHandler = new YamlDocumentBuilder<Raml>(Raml.class, new CompositeResourceLoader(new ResourceLoader()
+            {
+                @Override
+                public InputStream fetchResource(String resource)
+                {
+                    File file = new File(API_HOME, resource);
+                    if(file.exists()) {
+                        try {
+                            return new FileInputStream(file);
+                        } catch (FileNotFoundException e) {
+                            // Do nothing
+                        }
+                    }
+                    return null;
+                }
+            }, new ResourceLoader()
+            {
+                @Override
+                public InputStream fetchResource(String resource)
+                {
+                    File file = new File(resource);
+                    if(file.exists()) {
+                        try {
+                            return new FileInputStream(file);
+                        } catch(FileNotFoundException e) {
+                            // Do nothing
+                        }
+                    }
+                    return null;
+                }
+
+            }, new DefaultResourceLoader()));
             try {
                 Raml raml = builderNodeHandler.build(fileInputStreamEntry.getValue());
                 collectResources(fileInputStreamEntry.getKey(), entries, raml.getResources(), raml.getBaseUri());
