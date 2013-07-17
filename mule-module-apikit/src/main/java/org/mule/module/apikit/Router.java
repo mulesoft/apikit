@@ -251,16 +251,18 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         ImmutableEndpoint endpoint = (ImmutableEndpoint) ((Flow) flowConstruct).getMessageSource();
         String address = endpoint.getAddress();
         String path = endpoint.getEndpointURI().getPath();
+        String scheme = endpoint.getEndpointURI().getScheme();
         String chAddress = System.getProperty("fullDomain");
+        String chBaseUri = scheme + "://" + chAddress + path;
         if (logger.isDebugEnabled())
         {
             logger.debug("raml baseUri: " + api.getBaseUri());
             logger.debug("mule baseUri: " + address);
-            logger.debug("chub baseUri: " + chAddress + path);
+            logger.debug("chub baseUri: " + chBaseUri);
         }
         if (chAddress != null)
         {
-            address = chAddress + path;
+            address = chBaseUri;
         }
         api.setBaseUri(address);
         List<NodeTuple> tuples = new ArrayList<NodeTuple>();
