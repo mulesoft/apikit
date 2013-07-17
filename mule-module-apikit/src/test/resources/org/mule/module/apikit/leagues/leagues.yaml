@@ -1,4 +1,4 @@
-%TAG ! tag:heaven-lang.org,1.0:
+%TAG ! tag:raml.org,0.1:
 ---
 title: Leagues API
 version: v1
@@ -14,34 +14,9 @@ baseUri: http://localhost/api
     post:
         body: &league-schema
             application/json:
-                schema: |
-                    {
-                        "title": "League Schema",
-                        "type": "object",
-                        "properties": {
-                            "id": {
-                                "type": "string"
-                            },
-                            "name": {
-                                "type": "string",
-                                "required": true
-                            }
-                        }
-                    }
+                schema: !include org/mule/module/apikit/leagues/league.json
             text/xml:
-                schema: |
-                    <?xml version="1.0" encoding="ISO-8859-1" ?>
-                    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                     elementFormDefault="qualified" xmlns="http://mulesoft.com/schemas/soccer"
-                     targetNamespace="http://mulesoft.com/schemas/soccer">
-                    <xs:element name="league">
-                      <xs:complexType>
-                        <xs:sequence>
-                          <xs:element name="name" type="xs:string"/>
-                        </xs:sequence>
-                      </xs:complexType>
-                    </xs:element>
-                    </xs:schema>
+                schema: !include org/mule/module/apikit/leagues/league.xsd
         responses:
             201: !!null
     /{leagueId}:
