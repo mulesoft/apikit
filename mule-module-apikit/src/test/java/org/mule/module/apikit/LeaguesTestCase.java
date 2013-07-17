@@ -103,7 +103,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getOnLeaguesJson() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body("leagues.name", hasItems("Liga BBVA", "Premier League"))
                 .header("Content-type", "application/json").statusCode(200)
             .when().get("/api/leagues");
@@ -113,7 +113,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getOnLeaguesJsonTrailingSlash() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body("leagues.name", hasItems("Liga BBVA", "Premier League"))
                 .header("Content-type", "application/json").statusCode(200)
             .when().get("/api/leagues/");
@@ -123,7 +123,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getOnLeaguesXml() throws Exception
     {
         given().header("Accept", "text/xml")
-            .expect().log().everything()
+            .expect()
                 .response().body("leagues.league.name", hasItems("Liga BBVA", "Premier League"))
                 .header("Content-type", "text/xml").statusCode(200)
             .when().get("/api/leagues");
@@ -152,7 +152,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     @Test
     public void postCustomStatus() throws Exception
     {
-        given().log().everything().body("{ \"name\": \"(invlid name)\" }")
+        given().body("{ \"name\": \"(invlid name)\" }")
                 .contentType("application/json")
             .expect()
                 .statusCode(400)
@@ -164,7 +164,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getOnSingleLeagueJson() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body("name", is("Liga BBVA"))
                 .header("Content-type", "application/json").statusCode(200)
             .when().get("/api/leagues/liga-bbva");
@@ -222,7 +222,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void uriParamMaxLenError() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body(is("bad request"))
                 .statusCode(400)
             .when().get("/api/leagues/a-name-long-enough-not-to-be-valid");
@@ -232,7 +232,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void uriParamPatternError() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body(is("bad request"))
                 .statusCode(400)
             .when().get("/api/leagues/invalid_name");
@@ -242,7 +242,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getTeamsQueryParams() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body("name", hasItems("Barcelona", "Real Madrid", "Valencia", "Athletic Bilbao", "Atletico Madrid"))
                 .header("Content-type", "application/json").statusCode(200)
             .when().get("/api/leagues/liga-bbva/teams");
@@ -252,7 +252,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getTeamsQueryParamsOffset3() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body("name", allOf(hasItems("Athletic Bilbao", "Atletico Madrid"), not(hasItem("Barcelona")),
                                                not(hasItem("Real Madrid")), not(hasItem("Valencia"))))
                 .header("Content-type", "application/json").statusCode(200)
@@ -263,7 +263,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getTeamsQueryParamsMinimumError() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body(is("bad request"))
                 .statusCode(400)
                 .when().get("/api/leagues/liga-bbva/teams?offset=-1");
@@ -273,7 +273,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getTeamsQueryParamsMaximumError() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body(is("bad request"))
                 .statusCode(400)
                 .when().get("/api/leagues/liga-bbva/teams?limit=11");
@@ -283,7 +283,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getRaml() throws Exception
     {
         given().header("Accept", APPLICATION_RAML)
-            .expect().log().everything()
+            .expect()
                 .response().body(containsString("\"baseUri\": \"http://localhost:" + port + "/api\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
             .when().get("/api");
@@ -294,7 +294,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void getRamlWrongContentType() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body(containsString("resource not found"))
                 .statusCode(404)
             .when().get("/api");
@@ -304,7 +304,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void console() throws Exception
     {
         given().header("Accept", "text/html")
-            .expect().log().everything()
+            .expect()
                 .response().body(allOf(containsString("<title>Api Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/api\"")))
                 .header("Content-type", "text/html").statusCode(200)
@@ -315,7 +315,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void consoleDirectory() throws Exception
     {
         given().header("Accept", "text/html")
-            .expect().log().everything()
+            .expect()
                 .response().body(allOf(containsString("<title>Api Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/api\"")))
                 .header("Content-type", "text/html").statusCode(200)
@@ -326,7 +326,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     public void consoleDirectoryNoSlash() throws Exception
     {
         given().header("Accept", "text/html")
-            .expect().log().everything()
+            .expect()
                 .response().body(allOf(containsString("<title>Api Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/api\"")))
                 .header("Content-type", "text/html").statusCode(200)

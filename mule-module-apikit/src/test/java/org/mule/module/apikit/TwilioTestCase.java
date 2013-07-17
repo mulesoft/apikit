@@ -50,7 +50,7 @@ public class TwilioTestCase extends FunctionalTestCase
     public void getOnAccountsJson() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body("accounts.friendly_name", hasItems("account 1", "account 2"))
                 .header("Content-type", "application/json").statusCode(200)
             .when().get("/2010-04-01/Accounts");
@@ -60,7 +60,7 @@ public class TwilioTestCase extends FunctionalTestCase
     public void getOnSingleAccountJson() throws Exception
     {
         given().header("Accept", "application/json")
-            .expect().log().everything()
+            .expect()
                 .response().body("sid", is("001"))
                 .header("Content-type", "application/json").statusCode(200)
             .when().get("/2010-04-01/Accounts/001");

@@ -41,7 +41,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortDefault.getNumber();
         given()
-            .expect().log().everything()
+            .expect()
                 .response().body(is("some resources"))
                 .statusCode(200)
             .when().get("/default/resource");
@@ -52,7 +52,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortDefault.getNumber();
         given().header("Accept", "text/html")
-            .expect().log().everything()
+            .expect()
                 .response().body(allOf(containsString("<title>Api Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/default\"")))
                 .header("Content-type", "text/html").statusCode(200)
@@ -64,7 +64,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortCustom.getNumber();
         given()
-            .expect().log().everything()
+            .expect()
                 .response().body(is("some resources"))
                 .statusCode(200)
             .when().get("/custom/resource");
@@ -75,7 +75,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortCustom.getNumber();
         given().header("Accept", "text/html")
-            .expect().log().everything()
+            .expect()
                 .response().body(allOf(containsString("<title>Api Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/custom\"")))
                 .header("Content-type", "text/html").statusCode(200)
@@ -86,7 +86,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortNoConsole.getNumber();
         given()
-            .expect().log().everything()
+            .expect()
                 .response().body(is("some resources"))
                 .statusCode(200)
             .when().get("/no-console/resource");
@@ -97,7 +97,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortNoConsole.getNumber();
         given().header("Accept", "text/html")
-            .expect().log().everything()
+            .expect()
                 .response().body(containsString("resource not found"))
                 .statusCode(404)
             .when().get("/no-console/console/");
