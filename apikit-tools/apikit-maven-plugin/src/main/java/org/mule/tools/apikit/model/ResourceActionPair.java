@@ -15,7 +15,7 @@ public class ResourceActionPair {
         Validate.notNull(verb);
 
         this.uri = uri;
-        this.verb = verb;
+        this.verb = verb.toUpperCase();
         this.api = api;
     }
 

@@ -19,8 +19,10 @@ public class APIKitFlowScope implements Scope {
         // Example
         Element example = new Element("set-payload", XMLNS_NAMESPACE.getNamespace());
         example.setAttribute("value", StringEscapeUtils.escapeJava(flowEntry.getExample()));
-
+        flow.addContent("\n    ");
+        flow.addContent("    ");
         flow.addContent(example);
+        flow.addContent("\n    ");
         mule.addContent("\n    ");
         mule.addContent(flow);
     }

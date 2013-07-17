@@ -3,6 +3,7 @@ package org.mule.tools.apikit.input.parsers;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 
 import org.mule.tools.apikit.input.APIKitFlow;
+import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.ResourceActionPair;
 
@@ -53,26 +54,9 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
                 if (!resource.startsWith("/")) {
                     resource = "/" + resource;
                 }
-
-                String baseUri = api.getBaseUri();
-                List<String> split = new ArrayList<String>(Arrays.asList(baseUri.split("/")));
-
-                Collections.reverse(split);
-
-                String path = null;
-                for (String s : split) {
-                    if (!"".equals(s)) {
-                        path = s;
-                        break;
-                    }
-                }
-
+                String path = APIKitTools.getPathFromUri(api.getBaseUri());
                 if (path == null) {
                     throw new IllegalStateException("Inbound-endpoint Address URI is invalid");
-                }
-
-                if (!path.startsWith("/")) {
-                    path = "/" + path;
                 }
 
                 entries.add(new ResourceActionPair(api, path + resource, flow.getAction()));
