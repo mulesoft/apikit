@@ -42,12 +42,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.io.IOUtils;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
+import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.visitor.YamlDocumentBuilder;
+import org.raml.parser.visitor.YamlDocumentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.nodes.NodeTuple;
@@ -209,13 +212,38 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         }
 
         CompositeResourceLoader customLoader = new CompositeResourceLoader(loader, new DefaultResourceLoader());
+        String ramlBuffer;
+        try
+        {
+            ramlBuffer = IOUtils.toString(ramlStream);
+        }
+        catch (IOException e)
+        {
+            throw new ApikitRuntimeException(String.format("Cannot read RAML descriptor %s", config.getRaml()));
+        }
+
+        validateRaml(ramlBuffer, customLoader);
         YamlDocumentBuilder<Raml> builder = new YamlDocumentBuilder<Raml>(Raml.class, customLoader);
-
-        //TODO perform validation
-
-        api = builder.build(ramlStream);
+        api = builder.build(ramlBuffer);
         injectEndpointUri(builder);
         ramlYaml = YamlDocumentBuilder.dumpFromAst(builder.getRootNode());
+    }
+
+    protected void validateRaml(String ramlBuffer, ResourceLoader resourceLoader)
+    {
+        YamlDocumentValidator validator = new YamlDocumentValidator(Raml.class, resourceLoader);
+        List<ValidationResult> results = validator.validate(ramlBuffer);
+        if (!results.isEmpty())
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.append("Invalid RAML: ").append(results.size()).append(" errors found\n\n");
+            for (ValidationResult result : results)
+            {
+                sb.append(result.getMessage()).append(" -- ");
+                sb.append(result.getStartMark()).append("\n");
+            }
+            throw new ApikitRuntimeException(sb.toString());
+        }
     }
 
     private void injectEndpointUri(YamlDocumentBuilder<Raml> builder)
