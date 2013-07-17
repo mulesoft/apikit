@@ -222,7 +222,8 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
             throw new ApikitRuntimeException(String.format("Cannot read RAML descriptor %s", config.getRaml()));
         }
 
-        validateRaml(ramlBuffer, customLoader);
+        //TODO enable validations
+        //validateRaml(ramlBuffer, customLoader);
         YamlDocumentBuilder<Raml> builder = new YamlDocumentBuilder<Raml>(Raml.class, customLoader);
         api = builder.build(ramlBuffer);
         injectEndpointUri(builder);
