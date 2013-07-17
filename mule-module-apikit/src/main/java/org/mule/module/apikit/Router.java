@@ -208,7 +208,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         }
         if (ramlStream == null)
         {
-            throw new ApikitRuntimeException(String.format("RAML descriptor %s not found", config));
+            throw new ApikitRuntimeException(String.format("RAML descriptor %s not found", config.getRaml()));
         }
 
         CompositeResourceLoader customLoader = new CompositeResourceLoader(loader, new DefaultResourceLoader());
