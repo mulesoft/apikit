@@ -373,6 +373,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
 
     private static class AppHomeResourceLoader implements ResourceLoader
     {
+        protected final Logger logger = LoggerFactory.getLogger(getClass());
         private final MuleContext muleContext;
 
         public AppHomeResourceLoader(MuleContext muleContext)
@@ -385,6 +386,10 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         {
             InputStream ramlStream = null;
             String appHome = muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
+            if (logger.isDebugEnabled())
+            {
+                logger.debug(String.format("Looking for resource: %s on app.home: %s...", resourceName, appHome));
+            }
             File ramlFile = new File(appHome, resourceName);
             try
             {
@@ -392,7 +397,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
             }
             catch (FileNotFoundException e)
             {
-                //ignore
+                logger.info(String.format("Resource: %s Not Found on app.home: %s...", resourceName, appHome));
             }
             return ramlStream;
         }
