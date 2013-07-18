@@ -126,7 +126,7 @@
 
 	<flow localId="router" caption="APIKit Router" abstract="false"
 		supportsInbound="false" category="org.mule.tooling.category.endpoints"
-		icon="icons/small/Anypoint-Service-Registry-24x16.png" image="icons/large/Anypoint-Service-Registry-48x32.png"
+		icon="icons/small/apikit16x16.png" image="icons/large/apikit.png"
 		xmlname="router" description="The Router element allows to define an API"
 		versions="[3.4.0,8.0.0];EE">
 		<attribute-category description="General properties."
