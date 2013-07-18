@@ -305,7 +305,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title>Api Console</title>"),
+                .response().body(allOf(containsString("<title></title>"),
                                        containsString("src=\"http://localhost:" + port + "/api\"")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/index.html");
@@ -316,7 +316,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title>Api Console</title>"),
+                .response().body(allOf(containsString("<title></title>"),
                                        containsString("src=\"http://localhost:" + port + "/api\"")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/");
@@ -327,7 +327,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title>Api Console</title>"),
+                .response().body(allOf(containsString("<title></title>"),
                                        containsString("src=\"http://localhost:" + port + "/api\"")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console");

@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.IOUtils;
+import org.raml.model.ActionType;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.parser.loader.CompositeResourceLoader;
@@ -59,7 +60,7 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 public class Router implements MessageProcessor, Initialisable, MuleContextAware, FlowConstructAware
 {
 
-    public static final String APPLICATION_RAML = "application/raml";
+    public static final String APPLICATION_RAML = "application/raml+yaml";
     private static final int URI_CACHE_SIZE = 1000;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -322,9 +323,9 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         }
 
         //check for raml descriptor request
-        if (path.equals(api.getUri()) /*&&
+        if (path.equals(api.getUri()) &&
             ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
-            request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML)*/)   //FIXME serve any content type
+            request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML))
         {
             event.getMessage().setPayload(ramlYaml);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
