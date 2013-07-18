@@ -142,7 +142,7 @@ public class GenerationModel {
         StringBuilder flowName = new StringBuilder("");
         flowName.append(action.getType().toString().toLowerCase())
                 .append(FLOW_NAME_SEPARATOR)
-                .append(resource.getRelativeUri());
+                .append(resource.getUri());
 
         if(api.getConfig() != null && !StringUtils.isEmpty(api.getConfig().getName())) {
             flowName.append(FLOW_NAME_SEPARATOR)
