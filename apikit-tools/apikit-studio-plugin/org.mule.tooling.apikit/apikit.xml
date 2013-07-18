@@ -25,7 +25,7 @@
 		</attribute-category>
 	</global>
 
-	<!--scope versions="[3.5.0,8.0.0];EE" localId="mapping-exception-strategy" 
+	<!--scope versions="[3.4.0,8.0.0];EE" localId="mapping-exception-strategy" 
 		caption="Mapping Exception Strategy" icon="icons/small/CatchExceptionStrategy-24x16-1.png" 
 		image="icons/large/CatchExceptionStrategy-24x16-1.png" allowsAllExceptInbounds="true" 
 		visible="true" abstract="false" allowMulipleChildren="true" category="org.mule.tooling.ui.modules.core.exceptions" 
@@ -37,75 +37,7 @@
 		occurs." name="enableNotifications" defaultValue="true" value="true" /> </group> 
 		</attribute-category> </scope -->
 
-	<!--global versions="[3.5.0,8.0.0];EE" localId="mapping-exception-strategy" 
-		caption="Mapping Exception Strategy" icon="icons/small/CatchExceptionStrategy-24x16-1.png" 
-		image="icons/large/CatchExceptionStrategy-24x16-1.png" visible="true" abstract="false" 
-		allowMulipleChildren="true" category="org.mule.tooling.ui.modules.core.exceptions" 
-		description="This exception strategy allows you to map status codes to exceptions"> 
-		<attribute-category caption="General" description=""> <group caption="Settings"> 
-		<name required="true" description="Exception strategy name" caption="Name" 
-		name="name"></name> <boolean caption="Enable Notifications" description="Determines 
-		whether ExceptionNotifications will be fired from this strategy when an exception 
-		occurs." name="enableNotifications" defaultValue="true" value="true" /> </group> 
-		</attribute-category> </global -->
-
-	<!--scope localId="processor-chain" description="A Processor Chain is a 
-		linear chain of message processors which process a message in order." caption="Processor 
-		Chain" icon="icons/small/msgenricher-scope-24x16.png" image="icons/large/msgenricher-scope-48x32.png" 
-		extends="http://www.mulesoft.org/schema/mule/core/messageProcessorChainType" 
-		allowMulipleChildren="true"> </scope -->
-
-	<!-- nested localId="processor-chain" description="" caption="Processor 
-		Chain" icon="icons/small/msgenricher-scope-24x16.png" image="icons/large/msgenricher-scope-48x32.png"> 
-		</nested -->
-
-	<!--nested versions="[3.5.0,8.0.0];EE" localId="mapping" description="Maps 
-		status codes to exceptions" caption="Mapping" icon="icons/small/CatchExceptionStrategy-24x16-1.png" 
-		image="icons/large/Choice-48x32.png" category="org.mule.tooling.ui.modules.core.exceptions"> 
-		<integer caption="Status Code" defaultValue="404" description="The http status 
-		code to be returned when the nested exceptions are thrown" name="statusCode" 
-		xsdType="substitutableInt" required="true" /> <childElement name="http://www.mulesoft.org/schema/mule/apikit/processor-chain" 
-		description="" caption="" allowMultiple="false" /> </nested -->
-
-	<scope versions="[3.5.0,8.0.0];EE" localId="mapping"
-		description="Maps status codes to exceptions" caption="Mapping"
-		icon="icons/small/datamapper-24x16.png" image="icons/large/Choice-48x32.png"
-		category="org.mule.tooling.category.transformers">
-		<attribute-category caption="General"
-			description="Maps status codes to exceptions">
-			<group caption="Generic" id="mapping-code">
-				<integer caption="Status Code" defaultValue="404"
-					description="The http status code to be returned when the nested exceptions are thrown"
-					name="statusCode" xsdType="substitutableInt" required="true"
-					alwaysFill="true" alwaysFillSimple="true" />
-			</group>
-		</attribute-category>
-	</scope>
-
-	<scope versions="[3.5.0,8.0.0];EE" localId="mapping-exception-strategy"
-		description="This exception strategy allows you to map status codes to exceptions"
-		caption="Mapping Exception Strategy" icon="icons/small/CatchExceptionStrategy-24x16-1.png"
-		image="icons/large/Choice-48x32.png" allowMulipleChildren="true"
-		allowsAllExceptInbounds="true" visible="true" abstract="false"
-		category="org.mule.tooling.ui.modules.core.exceptions">
-		<attribute-category caption="General"
-			description="This exception strategy allows you to map status codes to exceptions">
-			<group caption="Generic" id="mapp-exception-strategy">
-				<name required="true" description="Exception strategy name"
-					caption="Name" name="name"></name>
-				<boolean caption="Enable Notifications"
-					description="Determines 
-		whether ExceptionNotifications will be fired from this strategy when an exception 
-		occurs."
-					name="enableNotifications" defaultValue="true" value="true" />
-			</group>
-		</attribute-category>
-		<!--childElement name="http://www.mulesoft.org/schema/mule/apikit/mapping" 
-			description="Maps status codes to exceptions" caption="Mapping" allowMultiple="false" 
-			/ -->
-	</scope>
-
-	<global versions="[3.5.0,8.0.0];EE" localId="mapping-exception-strategy"
+	<!--global versions="[3.4.0,8.0.0];EE" localId="mapping-exception-strategy"
 		caption="Mapping Exception Strategy" icon="icons/small/CatchExceptionStrategy-24x16-1.png"
 		image="icons/large/CatchExceptionStrategy-24x16-1.png" visible="true"
 		abstract="false" allowMulipleChildren="true"
@@ -122,13 +54,81 @@
 					name="enableNotifications" defaultValue="true" value="true" />
 			</group>
 		</attribute-category>
-	</global>
+	</global -->
+
+	<!--scope localId="processor-chain" description="A Processor Chain is a 
+		linear chain of message processors which process a message in order." caption="Processor 
+		Chain" icon="icons/small/msgenricher-scope-24x16.png" image="icons/large/msgenricher-scope-48x32.png" 
+		extends="http://www.mulesoft.org/schema/mule/core/messageProcessorChainType" 
+		allowMulipleChildren="true"> </scope -->
+
+	<!-- nested localId="processor-chain" description="" caption="Processor 
+		Chain" icon="icons/small/msgenricher-scope-24x16.png" image="icons/large/msgenricher-scope-48x32.png"> 
+		</nested -->
+
+	<!--nested versions="[3.4.0,8.0.0];EE" localId="mapping" description="Maps 
+		status codes to exceptions" caption="Mapping" icon="icons/small/CatchExceptionStrategy-24x16-1.png" 
+		image="icons/large/Choice-48x32.png" category="org.mule.tooling.ui.modules.core.exceptions"> 
+		<integer caption="Status Code" defaultValue="404" description="The http status 
+		code to be returned when the nested exceptions are thrown" name="statusCode" 
+		xsdType="substitutableInt" required="true" /> <childElement name="http://www.mulesoft.org/schema/mule/apikit/processor-chain" 
+		description="" caption="" allowMultiple="false" /> </nested -->
+
+	<!--scope versions="[3.4.0,8.0.0];EE" localId="mapping" description="Maps 
+		status codes to exceptions" caption="Mapping" icon="icons/small/datamapper-24x16.png" 
+		image="icons/large/Choice-48x32.png" category="org.mule.tooling.category.transformers"> 
+		<attribute-category caption="General" description="Maps status codes to exceptions"> 
+		<group caption="Generic" id="mapping-code"> <integer caption="Status Code" 
+		defaultValue="404" description="The http status code to be returned when 
+		the nested exceptions are thrown" name="statusCode" xsdType="substitutableInt" 
+		required="true" alwaysFill="true" alwaysFillSimple="true" /> </group> </attribute-category> 
+		</scope -->
+
+	<flow versions="[3.4.0,8.0.0];EE" localId="mapping-exception-strategy"
+		description="This exception strategy allows you to map status codes to exceptions"
+		caption="Mapping Exception Strategy" icon="icons/small/CatchExceptionStrategy-24x16-1.png"
+		image="icons/small/CatchExceptionStrategy-24x16-1.png" allowMulipleChildren="true"
+		allowsAllExceptInbounds="true" visible="true" abstract="false"
+		category="org.mule.tooling.ui.modules.core.exceptions">
+		<attribute-category caption="General"
+			description="This exception strategy allows you to map status codes to exceptions">
+			<group caption="Generic" id="mapp-exception-strategy">
+				<label
+					caption="Studio does not currently support configuration changes of this element in the Visual Editor.&#10;To modify this element, click the Configuration XML tab, then adjust the XML configuration of the&#10;mapping-exception-strategy."
+					visibleInDialog="true" name="mappingExceptionLabel" description=""
+					hiddenForUser="true" alignCenter="true" />
+				<name required="true" description="Exception strategy name"
+					caption="Name" name="name" visibleInDialog="false"></name>
+				<boolean caption="Enable Notifications"
+					description="Determines 
+		whether ExceptionNotifications will be fired from this strategy when an exception 
+		occurs."
+					name="enableNotifications" defaultValue="true" value="true"
+					visibleInDialog="false" />
+			</group>
+		</attribute-category>
+		<!--childElement name="http://www.mulesoft.org/schema/mule/apikit/mapping" 
+			description="Maps status codes to exceptions" caption="Mapping" allowMultiple="false" 
+			/ -->
+	</flow>
+
+	<!--global versions="[3.4.0,8.0.0];EE" localId="mapping-exception-strategy" 
+		caption="Mapping Exception Strategy" icon="icons/small/CatchExceptionStrategy-24x16-1.png" 
+		image="icons/large/CatchExceptionStrategy-24x16-1.png" visible="true" abstract="false" 
+		allowMulipleChildren="true" category="org.mule.tooling.ui.modules.core.exceptions" 
+		description="This exception strategy allows you to map status codes to exceptions"> 
+		<attribute-category caption="General" description=""> <group caption="Settings"> 
+		<name required="true" description="Exception strategy name" caption="Name" 
+		name="name"></name> <boolean caption="Enable Notifications" description="Determines 
+		whether ExceptionNotifications will be fired from this strategy when an exception 
+		occurs." name="enableNotifications" defaultValue="true" value="true" /> </group> 
+		</attribute-category> </global -->
 
 	<flow localId="router" caption="APIKit Router" abstract="false"
 		supportsInbound="false" category="org.mule.tooling.category.endpoints"
 		icon="icons/small/Anypoint-Service-Registry-24x16.png" image="icons/large/Anypoint-Service-Registry-48x32.png"
 		xmlname="router" description="The Router element allows to define an API"
-		versions="[3.5.0,8.0.0];EE">
+		versions="[3.4.0,8.0.0];EE">
 		<attribute-category description="General properties."
 			caption="General">
 			<group caption="Generic" id="routerGeneric">
@@ -139,17 +139,14 @@
 		</attribute-category>
 	</flow>
 
-	<transformer caption="Exception" localId="exception"
-		icon="icons/small/SetRemoveCopyAttachment-24x16-1.png" image="icons/large/SetRemoveCopyAttachment-48x32-1.png"
-		versions="[3.5.0,8.0.0];EE">
-		<attribute-category caption="General" description="General properties">
-			<group caption="Settings" id="settings">
-				<!--string caption="Value" defaultValue="" description="The value to 
-					be set on the exception. Supports expressions." name="value" singeLineForExpressions="true" 
-					required="true"> </string -->
-				<classname name="value" description="An implementation of an exception"
-					required="true" caption="Exception Class" />
-			</group>
-		</attribute-category>
-	</transformer>
+	<!--transformer caption="Exception" localId="exception" icon="icons/small/SetRemoveCopyAttachment-24x16-1.png" 
+		image="icons/large/SetRemoveCopyAttachment-48x32-1.png" versions="[3.4.0,8.0.0];EE"> 
+		<attribute-category caption="General" description="General properties"> <group 
+		caption="Settings" id="settings" -->
+	<!--string caption="Value" defaultValue="" description="The value to be 
+		set on the exception. Supports expressions." name="value" singeLineForExpressions="true" 
+		required="true"> </string -->
+	<!--classname name="value" description="An implementation of an exception" 
+		required="true" caption="Exception Class" /> </group> </attribute-category> 
+		</transformer -->
 </namespace>

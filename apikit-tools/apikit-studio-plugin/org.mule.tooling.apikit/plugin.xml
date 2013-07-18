@@ -12,7 +12,7 @@
             contributionNamespacePrefix="apikit"
             contributionType="cloud-connector"
             icon="icons/small/flow-24x16.png"
-            minimumVersion="3.5.0"
+            minimumVersion="3.4.0"
             name="Apikit"
             path="apikit.xml"
             version="1.0">
