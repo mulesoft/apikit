@@ -10,8 +10,8 @@
 
     <modules>
         <module>mule-module-apikit</module>
-        <module>apikit-tools</module>
         <module>distribution</module>
+        <module>apikit-tools</module>
     </modules>
 
     <dependencyManagement>
