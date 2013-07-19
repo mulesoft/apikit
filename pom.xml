@@ -33,7 +33,7 @@
         <snapshotRepository>
             <id>mulesoft-snapshots</id>
             <name>MuleSoft Snapshots Repository</name>
-            <url>https://repository-master.mulesoft.org/releases/</url>
+            <url>https://repository-master.mulesoft.org/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
