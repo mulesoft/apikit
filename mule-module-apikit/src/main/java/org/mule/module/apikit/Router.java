@@ -252,6 +252,10 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         ImmutableEndpoint endpoint = (ImmutableEndpoint) ((Flow) flowConstruct).getMessageSource();
         String address = endpoint.getAddress();
         String path = endpoint.getEndpointURI().getPath();
+        if (path.isEmpty())
+        {
+            address += "/";
+        }
         String scheme = endpoint.getEndpointURI().getScheme();
         String chAddress = System.getProperty("fullDomain");
         String chBaseUri = scheme + "://" + chAddress + path;

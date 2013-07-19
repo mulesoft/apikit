@@ -56,7 +56,8 @@ public class HttpRestRequest
     public String getResourcePath()
     {
         String path = adapter.getResourceURI().getPath();
-        int start = adapter.getBaseURI().getPath().length();
+        String basePath = adapter.getBaseURI().getPath();
+        int start = basePath.equals("/") ? 0 : basePath.length();
         int end = path.endsWith("/") ? path.length() - 1 : path.length();
         return path.substring(start, end);
     }

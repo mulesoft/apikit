@@ -74,6 +74,10 @@ public class ConsoleHandler
 
         // Remove the contextPath from the endpoint from the request as this isn't part of the path.
         path = path.substring(contextPath.length());
+        if (!path.startsWith("/"))
+        {
+            path = "/" + path;
+        }
 
         if (logger.isDebugEnabled())
         {

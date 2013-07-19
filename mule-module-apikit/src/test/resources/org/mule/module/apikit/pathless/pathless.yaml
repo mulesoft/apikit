@@ -1,0 +1,16 @@
+%TAG ! tag:raml.org,0.1:
+---
+title: Online Shopping API
+version: v1
+baseUri: http://api.myapp.com/api/{version}
+
+/orders:
+  name: Get Orders Summary
+  get:
+    summary: |
+      Retrieve all Orders summary.
+      Each order summary does not contain the details of the items included in the order.  
+    responses:
+      200:
+        body:
+          application/json: !!null
