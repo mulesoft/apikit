@@ -28,12 +28,12 @@
         <repository>
             <id>mulesoft-releases</id>
             <name>MuleSoft Releases Repository</name>
-            <url>http://repository-master.mulesoft.org/releases/</url>
+            <url>https://repository-master.mulesoft.org/releases/</url>
         </repository>
         <snapshotRepository>
             <id>mulesoft-snapshots</id>
             <name>MuleSoft Snapshots Repository</name>
-            <url>http://repository-master.mulesoft.org/releases/</url>
+            <url>https://repository-master.mulesoft.org/releases/</url>
         </snapshotRepository>
     </distributionManagement>
 
