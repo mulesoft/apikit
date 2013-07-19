@@ -12,5 +12,9 @@ baseUri: https://www.example.com/api/
     post:
         responses:
             200:
+                headers:
+                    location:
+                        type: string
+                        required: true
                 body:
                     application/json: !!null
