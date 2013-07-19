@@ -24,6 +24,8 @@ documentation:
         body: &league-schema
             application/json:
                 schema: !include org/mule/module/apikit/leagues/league.json
+                example: |
+                    { "name" : "liga criolla" }
             text/xml:
                 schema: !include org/mule/module/apikit/leagues/league.xsd
         responses:
