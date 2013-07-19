@@ -11,6 +11,7 @@ import org.jdom2.output.LineSeparator;
 import org.jdom2.output.XMLOutputter;
 
 import org.mule.tools.apikit.model.APIKitConfig;
+import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
 import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
 import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
 import org.mule.tools.apikit.output.scopes.ExceptionStrategyScope;
@@ -86,6 +87,8 @@ public class MuleConfigGenerator {
             }
         }
 
+        // Generate mule deploy properties file
+        new MuleDeployWriter(rootDirectory).generate();
     }
 
     Document getOrCreateDocument(Map<API, Document> docs, API api)
