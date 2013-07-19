@@ -448,7 +448,7 @@ section[role=api-operation-details-section-try-it] > section[role=request] > div
   border-bottom: 1px solid lightgrey;
   font-size: 14px;
   max-width: 100px;
-  text-align: center;
+  text-align: left;
 }
 section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params] > div[role=uri] input:focus {
   outline: 0;
@@ -591,6 +591,25 @@ section[role=api-operation-details] > header > p {
   font-size: 13px;
   font-weight: normal;
   color: black;
+}
+section[role=api-operation-details] > ul[role=response-type] {
+  position: absolute;
+  top: 159px;
+  border: 1px solid #dadcdd;
+  right: 15px;
+  padding: 0px;
+  vertical-align: middle;
+  border-radius: 2px;
+}
+section[role=api-operation-details] > ul[role=response-type] > li {
+  cursor: pointer;
+  display: inline-block;
+  list-style: none;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 13px;
+  padding: 8px 13px;
+  font-weight: bold;
 }
 section[role=api-operation-details] > ul[role=details-sections] {
   display: block;
