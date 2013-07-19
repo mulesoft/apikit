@@ -87,7 +87,15 @@ public class ConsoleHandler
         InputStream in;
         try
         {
-            if (path.equals(consolePath) || path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
+            if (path.equals(consolePath))
+            {
+                //client redirect
+                event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, String.valueOf(HttpConstants.SC_MOVED_PERMANENTLY));
+                String redirectLocation = event.getMessageSourceURI() + RESOURCE_BASE + "/";
+                event.getMessage().setOutboundProperty(HttpConstants.HEADER_LOCATION, redirectLocation);
+                return event;
+            }
+            if (path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
             {
                 path = RESOURCE_BASE + "/index.html";
                 in = new ByteArrayInputStream(homePage.getBytes());
