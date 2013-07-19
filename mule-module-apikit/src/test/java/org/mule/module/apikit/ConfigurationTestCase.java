@@ -53,7 +53,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
         RestAssured.port = serverPortDefault.getNumber();
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title></title>"),
+                .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/default\"")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/default/console/");
@@ -76,7 +76,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
         RestAssured.port = serverPortCustom.getNumber();
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title></title>"),
+                .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/custom\"")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/custom/custom/");

@@ -290,7 +290,6 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
-    @Ignore //content-type relaxed
     public void getRamlWrongContentType() throws Exception
     {
         given().header("Accept", "application/json")
@@ -305,7 +304,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title></title>"),
+                .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/api\"")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/index.html");
@@ -316,7 +315,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title></title>"),
+                .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/api\"")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/");
@@ -327,7 +326,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title></title>"),
+                .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/api\"")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console");
