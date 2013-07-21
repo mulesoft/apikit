@@ -2,7 +2,7 @@
 ---
 title: Leagues API
 version: v1
-baseUri: http://localhost/api
+baseUri: http://localhost:8080/api
 /leagues:
     name: Leagues
     get:
