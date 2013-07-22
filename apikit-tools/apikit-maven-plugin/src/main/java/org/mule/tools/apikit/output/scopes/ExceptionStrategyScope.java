@@ -2,6 +2,7 @@ package org.mule.tools.apikit.output.scopes;
 
 
 import org.jdom2.Element;
+
 import org.mule.tools.apikit.misc.APIKitTools;
 
 import java.util.Arrays;
@@ -63,13 +64,11 @@ public class ExceptionStrategyScope implements Scope {
 
             Element setPayload = new Element("set-payload", XMLNS_NAMESPACE.getNamespace());
             setPayload.setAttribute("value", statusCodeMapping.getMsg());
-            mapping.addContent("\n            ");
             mapping.addContent(setPayload);
 
             exceptionStrategy.addContent(mapping);
         }
 
-        mule.addContent("\n    ");
         mule.addContent(exceptionStrategy);
     }
 

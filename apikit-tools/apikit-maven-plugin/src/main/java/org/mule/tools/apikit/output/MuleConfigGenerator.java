@@ -7,10 +7,9 @@ import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaders;
-import org.jdom2.output.LineSeparator;
+import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
 import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
 import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
@@ -42,6 +41,8 @@ public class MuleConfigGenerator {
             "http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
     );
 
+    private static final String INDENTATION = "    ";
+
     private final Set<GenerationModel> flowEntries;
     private final Log log;
     private final File rootDirectory;
@@ -72,9 +73,11 @@ public class MuleConfigGenerator {
 
         // Write everything to files
         for (Map.Entry<API, Document> yamlFileDescriptorDocumentEntry : docs.entrySet()) {
-            XMLOutputter xout = new XMLOutputter();
-            xout.getFormat().setLineSeparator(LineSeparator.UNIX);
-            xout.getFormat().setEncoding("UTF-8");
+            Format prettyFormat = Format.getPrettyFormat();
+            prettyFormat.setIndent(INDENTATION);
+            prettyFormat.setLineSeparator(System.getProperty("line.separator"));
+            prettyFormat.setEncoding("UTF-8");
+            XMLOutputter xout = new XMLOutputter(prettyFormat);
             Document doc = yamlFileDescriptorDocumentEntry.getValue();
             File xmlFile = yamlFileDescriptorDocumentEntry.getKey().getXmlFile(rootDirectory);
             try {

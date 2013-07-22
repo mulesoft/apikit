@@ -2,6 +2,7 @@ package org.mule.tools.apikit.output.scopes;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom2.Element;
+
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 
@@ -29,20 +30,14 @@ public class FlowScope implements Scope {
         if(!StringUtils.isEmpty(configRef)) {
             restProcessor.setAttribute("config-ref", configRef);
         }
-        main.addContent("\n        ");
         main.addContent(restProcessor);
 
         Element exceptionStrategy = new Element("exception-strategy", XMLNS_NAMESPACE.getNamespace());
         exceptionStrategy.setAttribute("ref", exceptionStrategyRef);
 
-        main.addContent("\n        ");
         main.addContent(exceptionStrategy);
 
-        mule.addContent("\n    ");
-        mule.addContent("\n    ");
         mule.addContent(main);
-        mule.addContent("\n    ");
-
     }
 
     @Override
