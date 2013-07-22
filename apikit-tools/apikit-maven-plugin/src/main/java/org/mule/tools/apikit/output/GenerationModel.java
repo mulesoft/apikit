@@ -13,6 +13,7 @@ import java.util.Map;
 public class GenerationModel {
 
     private static final char FLOW_NAME_SEPARATOR = ':';
+    public static final String DEFAULT_TEXT = "";
 
     private final String verb;
     private Action action;
@@ -62,7 +63,7 @@ public class GenerationModel {
         if (exampleWrappee != null) {
             return exampleWrappee;
         } else {
-            return "Hello world!";
+            return DEFAULT_TEXT;
         }
 
     }

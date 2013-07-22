@@ -118,7 +118,7 @@ public class GenerationModelTest {
         Resource resource = mock(Resource.class);
         when(resource.getUri()).thenReturn("/api/pet");
         API api = mock(API.class);
-        assertEquals("Hello world!", new GenerationModel(api, resource, action).getExample());
+        assertEquals(GenerationModel.DEFAULT_TEXT, new GenerationModel(api, resource, action).getExample());
     }
 
     @Test
