@@ -40,7 +40,7 @@
     <apikit:config raml="raml-example-v1.yaml" />
 
     <flow name="main">
-        <http:inbound-endpoint address="http://localhost:8080/api">
+        <http:inbound-endpoint address="http://localhost:${http.port}/api">
             <object-to-string-transformer />
         </http:inbound-endpoint>
         <apikit:router />
