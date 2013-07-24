@@ -643,7 +643,8 @@ section[role=api-operation-details] > div[role=details-body] > ul[role=details-s
   padding: 0px;
   margin: 0px;
   font-size: 0px;
-  height: 43px;
+  height: 46px;
+  box-sizing: border-box;
   box-shadow: inset 1px -1px 1px #eeeeee;
 }
 section[role=api-operation-details] > div[role=details-body] > ul[role=details-sections] > li {
