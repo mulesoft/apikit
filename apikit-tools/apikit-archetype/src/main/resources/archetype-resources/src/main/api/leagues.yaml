@@ -327,7 +327,7 @@ documentation:
                         "type": "string"
                     }
                 },
-                "type": "object"
+                "type": "object",
                 "name": "Team"
             }
       responses:
