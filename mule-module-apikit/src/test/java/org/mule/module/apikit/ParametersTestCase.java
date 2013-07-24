@@ -1,6 +1,8 @@
 package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.containsString;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -51,5 +53,14 @@ public class ParametersTestCase extends FunctionalTestCase
                 .when().get("/api/resources?first=I");
     }
 
+    @Test
+    public void raml() throws Exception
+    {
+        given().header("Accept", "application/raml+yaml")
+            .expect()
+                .response().body(allOf(containsString("baseUri"),
+                                       containsString("http://localhost:" + serverPort.getNumber() + "/api")))
+                .statusCode(200).when().get("/api");
+    }
 
 }

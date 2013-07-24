@@ -1,5 +1,7 @@
 package org.mule.module.apikit;
 
+import static org.yaml.snakeyaml.nodes.Tag.STR;
+
 import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
@@ -52,6 +54,7 @@ import org.raml.parser.visitor.YamlDocumentBuilder;
 import org.raml.parser.visitor.YamlDocumentValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.yaml.snakeyaml.nodes.Node;
 import org.yaml.snakeyaml.nodes.NodeTuple;
 import org.yaml.snakeyaml.nodes.ScalarNode;
 
@@ -268,17 +271,25 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         }
         api.setBaseUri(address);
         List<NodeTuple> tuples = new ArrayList<NodeTuple>();
+        boolean baseUriPresent = false;
         for (NodeTuple tuple : builder.getRootNode().getValue())
         {
             if (((ScalarNode) tuple.getKeyNode()).getValue().equals("baseUri"))
             {
                 ScalarNode valueNode = (ScalarNode) tuple.getValueNode();
                 tuples.add(new NodeTuple(tuple.getKeyNode(), new ScalarNode(valueNode.getTag(), address, valueNode.getStartMark(), valueNode.getEndMark(), valueNode.getStyle())));
+                baseUriPresent = true;
             }
             else
             {
                 tuples.add(tuple);
             }
+        }
+        if (!baseUriPresent)
+        {
+            Node keyNode = new ScalarNode(STR, "baseUri", null, null, '0');
+            Node valueNode = new ScalarNode(STR, address, null, null, '0');
+            tuples.add(new NodeTuple(keyNode, valueNode));
         }
         builder.getRootNode().setValue(tuples);
     }
