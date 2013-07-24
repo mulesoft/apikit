@@ -4,16 +4,13 @@ import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.matchers.JUnitMatchers.hasItem;
-import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -25,6 +22,8 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     public DynamicPort serverPortEmptyPath = new DynamicPort("serverPortEmptyPath");
     @Rule
     public DynamicPort serverPortSlashPath = new DynamicPort("serverPortSlashPath");
+    @Rule
+    public DynamicPort serverPortAddressSlashPath = new DynamicPort("serverPortAddressSlashPath");
 
     @Override
     public int getTestTimeoutSecs()
@@ -46,10 +45,25 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void ramlPathless() throws Exception
+    {
+        RestAssured.port = serverPortPathless.getNumber();
+        raml();
+    }
+
+    @Test
     public void consoleEmptyPath() throws Exception
     {
         RestAssured.port = serverPortEmptyPath.getNumber();
         console();
+    }
+
+    @Test
+    @Ignore //MULE-6968
+    public void ramlEmptyPath() throws Exception
+    {
+        RestAssured.port = serverPortEmptyPath.getNumber();
+        raml();
     }
 
     @Test
@@ -59,14 +73,56 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
         console();
     }
 
+    @Test
+    @Ignore //MULE-6968
+    public void ramlSlashPath() throws Exception
+    {
+        RestAssured.port = serverPortSlashPath.getNumber();
+        raml();
+    }
+
+    @Test
+    public void consoleAddressSlashPath() throws Exception
+    {
+        RestAssured.port = serverPortAddressSlashPath.getNumber();
+        console("api");
+    }
+
+    @Test
+    public void ramlAddressSlashPath() throws Exception
+    {
+        RestAssured.port = serverPortAddressSlashPath.getNumber();
+        raml("api");
+    }
+
     private void console()
+    {
+        console("");
+    }
+
+    private void console(String path)
     {
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>api:Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + "/\"")))
+                                       containsString("src=\"http://localhost:" + port + "/" + path)))
                 .header("Content-type", "text/html").statusCode(200)
-            .when().get("/console/index.html");
+            .when().get(path + "/console/index.html");
+    }
+
+    private void raml()
+    {
+        raml("");
+    }
+
+    private void raml(String path)
+    {
+        given().header("Accept", "application/raml+yaml")
+            .expect()
+                .response().body(allOf(containsString("title"),
+                                       containsString("Endpoint API")))
+                .statusCode(200)
+            .when().get(path + "/");
     }
 
 }

@@ -57,6 +57,14 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
+    <flow name="doorwayAddressSlashPath">
+        <http:inbound-endpoint address="http://localhost:${serverPortAddressSlashPath}/api/">
+            <object-to-string-transformer/>
+        </http:inbound-endpoint>
+        <apikit:router/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
     <flow name="get:/orders">
         <logger level="INFO" message="siamo qui"/>
     </flow>
