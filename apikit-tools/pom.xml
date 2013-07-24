@@ -13,7 +13,7 @@
     <modules>
         <module>apikit-maven-plugin</module>
         <module>apikit-archetype</module>
-        <!--<module>apikit-studio-plugin</module>-->
+        <module>apikit-studio-plugin</module>
     </modules>
 
 </project>
