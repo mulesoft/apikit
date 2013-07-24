@@ -1,0 +1,14 @@
+%TAG ! tag:raml.org,0.1:
+---
+title: Parameters API
+/resources:
+  get:
+    queryParameters:
+        first:
+            type: string
+            required: true
+        second:
+            type: string
+            required: false
+    responses:
+      200: !!null

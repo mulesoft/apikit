@@ -6,7 +6,11 @@ import org.mule.api.MuleException;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.construct.Flow;
-
+import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.exception.InvalidQueryParameterException;
+import org.mule.module.apikit.exception.MuleRestException;
+import org.mule.module.apikit.exception.NotAcceptableException;
+import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.transform.TransformerCache;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
@@ -18,11 +22,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.module.apikit.exception.InvalidQueryParameterException;
-import org.mule.module.apikit.exception.MuleRestException;
-import org.mule.module.apikit.exception.NotAcceptableException;
-import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.raml.model.Action;
 import org.raml.model.MimeType;
 import org.raml.model.Raml;
@@ -110,18 +109,19 @@ public class HttpRestRequest
 
     private void processQueryParameters() throws InvalidQueryParameterException
     {
-        for (QueryParameter expected : action.getQueryParameters().values())
+        for (String expectedKey : action.getQueryParameters().keySet())
         {
-            String actual = requestEvent.getMessage().getInboundProperty(expected.getName());
+            QueryParameter expected = action.getQueryParameters().get(expectedKey);
+            String actual = requestEvent.getMessage().getInboundProperty(expectedKey);
             if (actual == null && expected.isRequired())
             {
-                throw new InvalidQueryParameterException("Required query parameter " + expected.getName() + " not specified");
+                throw new InvalidQueryParameterException("Required query parameter " + expected + " not specified");
             }
             if (actual != null)
             {
                 if (!expected.validate(actual))
                 {
-                    throw new InvalidQueryParameterException("Invalid uri parameter value " + actual + " for " + expected.getName());
+                    throw new InvalidQueryParameterException("Invalid uri parameter value " + actual + " for " + expected);
                 }
             }
         }
@@ -179,7 +179,6 @@ public class HttpRestRequest
             if (mimeTypeName.equals(requestMimeTypeName))
             {
                 found = true;
-                //TODO validate schema if defined
                 if (action.getBody().get(mimeTypeName).getSchema() != null &&
                     (mimeTypeName.contains("xml") || mimeTypeName.contains("json")))
                 {
