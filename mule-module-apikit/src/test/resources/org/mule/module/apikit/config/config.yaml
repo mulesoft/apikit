@@ -6,3 +6,6 @@ baseUri: http://localhost/{path}
     get:
         responses:
             200: !!null
+    patch:
+        responses:
+            204: !!null

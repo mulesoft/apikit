@@ -103,4 +103,13 @@ public class ConfigurationTestCase extends FunctionalTestCase
             .when().get("/no-console/console/");
     }
 
+    @Test
+    public void patch() throws Exception
+    {
+        RestAssured.port = serverPortDefault.getNumber();
+        given()
+            .expect().statusCode(204)
+            .when().patch("/default/resource");
+    }
+
 }

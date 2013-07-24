@@ -40,6 +40,10 @@
         <set-payload value="some resources"/>
     </flow>
 
+    <flow name="patch:/resource">
+        <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+    </flow>
+
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>

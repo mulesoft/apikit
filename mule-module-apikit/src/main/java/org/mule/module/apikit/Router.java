@@ -184,7 +184,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
     private String getRestFlowKey(String name)
     {
         String[] coords = name.split(":");
-        String[] methods = {"get", "put", "post", "delete", "head"};
+        String[] methods = {"get", "put", "post", "delete", "head", "patch", "options"};
         if (coords.length < 2 || !Arrays.asList(methods).contains(coords[0]))
         {
             return null;
