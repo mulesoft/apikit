@@ -293,7 +293,7 @@ documentation:
         404:
           description: |
             Unable to find a team with that identifier
-    patch:
+    put:
       summary: Update team details such as the name of the home stadium, or the name of the team itself.
       body:
         application/json:

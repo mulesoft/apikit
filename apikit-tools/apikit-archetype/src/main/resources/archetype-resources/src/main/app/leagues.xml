@@ -221,7 +221,7 @@
         </choice>
     </flow>
 
-    <flow name="patch:/teams/{teamId}:leaguesApi">
+    <flow name="put:/teams/{teamId}:leaguesApi">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="${package}.request.UpdateTeam"/>
         <choice>
