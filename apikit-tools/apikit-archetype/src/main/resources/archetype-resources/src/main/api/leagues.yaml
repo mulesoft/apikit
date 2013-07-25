@@ -72,7 +72,7 @@ documentation:
       summary: Update team details such as the name of the home stadium, or the name of the team itself.
       body:
         application/json:
-          example: !include examples/teamid-patch-example.json
+          example: !include examples/teamid-put-example.json
           schema: !include schemas/teamid-schema-input.json
 
       responses:
