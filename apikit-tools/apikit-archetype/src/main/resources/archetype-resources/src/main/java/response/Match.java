@@ -18,7 +18,7 @@ public class Match implements Serializable {
     private String homeTeam;
     private String awayTeam;
 
-    @JsonSerialize(using = JsonDateSerializer.class, include=JsonSerialize.Inclusion.NON_NULL)
+    @JsonSerialize(using = ${package}.serializer.JsonDateSerializer.class, include=JsonSerialize.Inclusion.NON_NULL)
     private Date date;
     private Integer homeTeamScore;
     private Integer awayTeamScore;

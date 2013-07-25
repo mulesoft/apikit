@@ -1,4 +1,4 @@
-package ${package}.response;
+package ${package}.serializer;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
