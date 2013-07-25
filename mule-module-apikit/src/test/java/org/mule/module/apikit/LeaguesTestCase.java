@@ -135,6 +135,7 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .contentType("application/json")
             .expect().statusCode(201)
                 .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/3")
+                .body(is("")).header("Content-Length", "0")
             .when().post("/api/leagues");
     }
 

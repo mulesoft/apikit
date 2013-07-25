@@ -209,8 +209,8 @@ public class HttpRestRequest
         List<MimeType> mimeTypes = getResponseMimeTypes();
         if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
         {
-            //no response media-types defined, return highest quality accept type
-            return adapter.getAcceptableResponseMediaTypes().split(",")[0];
+            //no response media-types defined, return no body
+            return null;
         }
         MediaType bestMatch = RestContentTypeParser.bestMatch(mimeTypes, adapter.getAcceptableResponseMediaTypes());
         if (bestMatch == null)
