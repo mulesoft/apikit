@@ -10,8 +10,6 @@ documentation:
       API Modeling Language). Feel free to poke around.
 /teams:
   name: Teams
-  #description: |
-  #  A collection of teams that are participating in La Liga. Teams API allow you add, remove and retrieve individual team information from La Liga.
   get:
     summary: Obtain information from a collection of teams simultaneously
     queryParameters:
@@ -236,8 +234,6 @@ documentation:
           The team already exists
   /{teamId}:
     name: Team
-    #description: |
-    #  The team is the basic unit for keeping track of a roster of players that are participating together in La Liga. With the Team APIs, you can obtain team-related information, like the team name, stats, points, and more.
     uriParameters:
       teamId:
         description: |
@@ -329,7 +325,7 @@ documentation:
       responses:
         204:
           description: |
-            The team has been succesfully updated
+            The team has been successfully updated
         404:
           description: |
             Unable to find a team with that identifier
@@ -427,8 +423,6 @@ documentation:
               }
 /fixture:
   name: Fixture
-  #description: |
-  #  A collection of teams that are participating in La Liga. Teams API allow you add, remove and retrieve individual team information from La Liga.
   get:
     summary: Retrieve a list of matches for the current season
     responses:
