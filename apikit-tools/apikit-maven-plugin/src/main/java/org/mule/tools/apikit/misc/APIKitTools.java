@@ -19,7 +19,7 @@ public class APIKitTools {
 
         Collections.reverse(split);
 
-        String path = null;
+        String path = "";
         for (String s : split) {
             if (!"".equals(s)) {
                 path = s;

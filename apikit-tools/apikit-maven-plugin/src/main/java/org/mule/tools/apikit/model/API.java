@@ -20,7 +20,6 @@ public class API {
 
     public static API createAPIBinding(File yamlFile, File xmlFile, String path, APIKitConfig config) {
         Validate.notNull(yamlFile);
-        Validate.notNull(path);
 
         if (factory.containsKey(yamlFile)) {
             API api = factory.get(yamlFile);
