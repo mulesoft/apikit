@@ -86,23 +86,24 @@ aside[role=sidebar] ul > li.active > a:visited {
 }
 section[role=api-console] {
   width: 960px;
+  margin-left: auto;
+  margin-right: auto;
 }
 aside[role=sidebar] {
-  float: left;
   box-sizing: border-box;
   width: 186px;
   background: #eff2f4;
   border-left: 1px solid #dadcdd;
   border-right: 1px solid #dadcdd;
-  min-height: 3000px;
+  min-height: 300px;
 }
 section[role=main] {
-  float: right;
   box-sizing: border-box;
-  width: 770px;
+  width: 774px;
   border-right: 1px solid #dadcdd;
   background: white;
   overflow: scroll;
+  min-height: 300px;
 }
 section[role=api-documentation] h1,
 section[role=api-documentation] h2,
@@ -1209,4 +1210,9 @@ section[role=api-operation].active:hover > api-operation-details {
   aside[role=sidebar] ul > li.active a {
     text-decoration: underline;
   }
+}
+body {
+  margin: 0px;
+  font-family: 'Ubuntu', sans-serif;
+  background: #f8f8f8;
 }
