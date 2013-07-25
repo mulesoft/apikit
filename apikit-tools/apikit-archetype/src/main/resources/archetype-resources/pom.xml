@@ -356,16 +356,6 @@
             <name>CodeHaus Releases</name>
             <url>http://repository.codehaus.org/</url>
         </repository>
-        <repository>
-            <id>mule-ee-releases</id>
-            <name>Mule EE Releases Repository</name>
-            <url>http://dev.ee.mulesource.com/repository/content/repositories/releases/</url>
-        </repository>
-        <repository>
-            <id>mule-ee-snapshots</id>
-            <name>Mule EE Snapshots Repository</name>
-            <url>http://dev.ee.mulesource.com/repository/content/repositories/snapshots/</url>
-        </repository>
     </repositories>
     <profiles>
         <profile>
