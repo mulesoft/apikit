@@ -18,7 +18,7 @@ public class Team implements Serializable {
     private String name;
     private String homeCity;
     private String stadium;
-    private int matches;
+    private Integer matches;
 
     @JsonProperty
     @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
@@ -62,7 +62,7 @@ public class Team implements Serializable {
 
     @JsonProperty
     @XmlElement(required = false, namespace = "http://mulesoft.com/schemas/soccer")
-    public int getMatches() {
+    public Integer getMatches() {
         return matches;
     }
 

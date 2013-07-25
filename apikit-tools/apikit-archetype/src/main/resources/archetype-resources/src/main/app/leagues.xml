@@ -78,7 +78,6 @@
                 teamRef.name = team.name;
                 teamRef.homeCity = team.homeCity;
                 teamRef.stadium = team.stadium;
-                teamRef.matches = team.matchesPlayed;
                 teamsResp.add(teamRef);
             }
             payload = teamsResp;
