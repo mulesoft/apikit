@@ -214,7 +214,7 @@ documentation:
                       "description": "Name of the team",
                       "type": "string",
                       "required": true
-                  }
+                  },
                   "stadium": {
                       "description": "Name of the stadium",
                       "type": "string"
