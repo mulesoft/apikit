@@ -3,35 +3,249 @@
 #set( $symbol_escape = '\' )
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
-      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
-      xmlns:client="http://www.mulesoft.org/schema/mule/client"
-      xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	  xmlns:mule-xml="http://www.mulesoft.org/schema/mule/xml"
-	  xmlns:test="http://www.mulesoft.org/schema/mule/test"
-    xsi:schemaLocation="
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-		http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd
-		http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-		http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
-		http://www.mulesoft.org/schema/mule/client http://www.mulesoft.org/schema/mule/client/current/mule-client.xsd
-		http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
-		http://www.mulesoft.org/schema/mule/xml http://www.mulesoft.org/schema/mule/xml/current/mule-xml.xsd
-	">
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core
+        http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http
+        http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit
+        http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd ">
 
-    <description>
-    
-    </description>
+    <http:connector name="httpConnector">
+        <service-overrides sessionHandler="org.mule.session.NullSessionHandler"/>
+    </http:connector>
+
+    <apikit:config name="leaguesApi" raml="leagues.yaml" consoleEnabled="true" consolePath="console" />
+
+    <spring:bean id="league" class="${package}.model.League" init-method="initialize"/>
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-payload value="resource not found" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-payload value="method not allowed" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-payload value="unsupported media type" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-payload value="not acceptable" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-payload value="bad request" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
 
     <flow name="main">
-        <vm:inbound-endpoint path="in" />
-
-        <!-- TODO add your service component here. This can also be a Spring bean using <spring-object bean="name"/> -->
-       	<append-string-transformer message=" Received" />
-    	<test:component logMessageDetails="true" />
-        <vm:outbound-endpoint path="out"/>
+        <http:inbound-endpoint address="http://localhost:${http.port}/api" connector-ref="httpConnector">
+            <object-to-string-transformer />
+        </http:inbound-endpoint>
+        <apikit:router />
+        <exception-strategy ref="Global_Mapping_Exception_Strategy" />
     </flow>
+
+    <flow name="delete:/teams/{teamId}:leaguesApi">
+        <choice>
+            <when expression="#[app.registry['league'].hasTeam(teamId)]">
+                <expression-component>
+                    app.registry['league'].deleteTeam(teamId);
+                </expression-component>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="404"/>
+            </otherwise>
+        </choice>
+    </flow>
+
+    <flow name="get:/teams:leaguesApi">
+        <expression-component>
+            teamsResp = new ArrayList();
+            teams = app.registry['league'].getTeams(message.inboundProperties['city']);
+            for(team : teams) {
+                teamRef = new ${package}.response.Team();
+                teamRef.id = team.id;
+                teamRef.name = team.name;
+                teamRef.homeCity = team.homeCity;
+                teamRef.stadium = team.stadium;
+                teamsResp.add(teamRef);
+            }
+            payload = teamsResp;
+        </expression-component>
+    </flow>
+
+    <flow name="get:/fixture/{homeTeamId}/{awayTeamId}:leaguesApi">
+        <set-variable variableName="match" value="#[app.registry['league'].getMatch(homeTeamId, awayTeamId)]"/>
+        <choice>
+            <when expression="#[app.registry['league'].hasMatch(homeTeamId, awayTeamId)]">
+                <expression-component>
+                    match = app.registry['league'].getMatch(homeTeamId, awayTeamId);
+                    matchResp = new ${package}.response.Match();
+                    matchResp.homeTeam = match.homeTeam.id;
+                    matchResp.awayTeam = match.awayTeam.id;
+                    matchResp.date = match.date;
+                    matchResp.homeTeamScore = match.homeTeamScore;
+                    matchResp.awayTeamScore = match.awayTeamScore;
+                    payload = matchResp;
+                </expression-component>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="404"/>
+            </otherwise>
+        </choice>
+    </flow>
+
+    <flow name="get:/teams/{teamId}:leaguesApi">
+        <choice>
+            <when expression="#[app.registry['league'].hasTeam(teamId)]">
+                <expression-component>
+                    team = app.registry['league'].getTeam(teamId);
+                    teamRef = null;
+                    if(team != null) {
+                        teamRef = new ${package}.response.Team();
+                        teamRef.id = team.id;
+                        teamRef.name = team.name;
+                        teamRef.homeCity = team.homeCity;
+                        teamRef.stadium = team.stadium;
+                        teamRef.matches = team.matchesPlayed;
+                    }
+                    payload = teamRef;
+                </expression-component>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="404"/>
+            </otherwise>
+        </choice>
+    </flow>
+
+    <flow name="get:/positions:leaguesApi">
+        <expression-component>
+            positions = new ${package}.response.Positions();
+            teams = app.registry['league'].orderTeamsByPosition();
+            positionsList = new ArrayList();
+
+            positionIndex = 1;
+            for(team : teams) {
+                position = new ${package}.response.Position();
+                position.position = positionIndex;
+                position.team = team.getId();
+                position.points = team.points;
+                position.matchesPlayed = team.matchesPlayed;
+                position.matchesWon = team.matchesWon;
+                position.matchesLost = team.matchesLost;
+                position.goalsInFavor = team.goalsInFavor;
+                position.goalsAgainst = team.goalsAgainst;
+                positionsList.add(position);
+                positionIndex = positionIndex + 1;
+            }
+
+            positions.positions = positionsList;
+            payload = positions;
+        </expression-component>
+    </flow>
+
+    <flow name="get:/fixture:leaguesApi">
+        <expression-component>
+            fixture = new ${package}.response.Fixture();
+            matches = app.registry['league'].getMatches();
+            matchesList = new ArrayList();
+
+            for(match : matches) {
+                matchRef = new ${package}.response.Match();
+                matchRef.homeTeam = match.homeTeam.id;
+                matchRef.awayTeam = match.awayTeam.id;
+                matchRef.date = match.date;
+                matchRef.homeTeamScore = match.homeTeamScore;
+                matchRef.awayTeamScore = match.awayTeamScore;
+                matchesList.add(matchRef);
+            }
+
+            fixture.fixture = matchesList;
+            payload = fixture;
+        </expression-component>
+    </flow>
+
+    <flow name="post:/teams:leaguesApi">
+        <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
+                            returnClass="${package}.request.Team"/>
+        <choice>
+            <when expression="#[app.registry['league'].hasTeam(payload.id)]">
+                <set-property propertyName="http.status" value="409"/>
+            </when>
+            <otherwise>
+                <set-property propertyName="Location" value="http://localhost:8080/api/teams/#[payload.id]"/>
+                <expression-component>
+                    team = new ${package}.model.Team();
+                    team.id = payload.id;
+                    team.name = payload.name;
+                    team.homeCity = payload.homeCity;
+                    team.stadium = payload.stadium;
+                    app.registry['league'].addTeam(team);
+                </expression-component>
+                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+            </otherwise>
+        </choice>
+    </flow>
+
+    <flow name="put:/fixture/{homeTeamId}/{awayTeamId}:leaguesApi">
+        <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
+                            returnClass="${package}.request.Score"/>
+        <choice>
+            <when expression="#[app.registry['league'].hasMatch(homeTeamId, awayTeamId)]">
+                <set-variable variableName="match" value="#[app.registry['league'].getMatch(homeTeamId, awayTeamId)]"/>
+                <choice>
+                    <when expression="#[new Date() >= match.date]">
+                        <expression-component>
+                            match.homeTeamScore = payload.homeTeamScore;
+                            match.awayTeamScore = payload.awayTeamScore;
+                        </expression-component>
+                    </when>
+                    <otherwise>
+                        <set-property propertyName="http.status" value="409"/>
+                    </otherwise>
+                </choice>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="404"/>
+            </otherwise>
+        </choice>
+    </flow>
+
+    <flow name="put:/teams/{teamId}:leaguesApi">
+        <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
+                            returnClass="${package}.request.UpdateTeam"/>
+        <choice>
+            <when expression="#[app.registry['league'].hasTeam(teamId)]">
+                <expression-component>
+                    team = app.registry['league'].getTeam(teamId);
+                    if(payload.name != null) {
+                        team.name = payload.name;
+                    }
+                    if(payload.homeCity != null) {
+                        team.homeCity = payload.homeCity;
+                    }
+                    if(payload.stadium != null) {
+                        team.stadium = payload.stadium;
+                    }
+                    payload = team;
+                </expression-component>
+                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="404"/>
+            </otherwise>
+        </choice>
+
+    </flow>
+
 </mule>

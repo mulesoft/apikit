@@ -19,8 +19,9 @@
         <vmtype>org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType</vmtype>
         <jdkName>JavaSE-1.6</jdkName>
         <jdk.version>1.6</jdk.version>
-        <junit.version>4.9</junit.version>
+        <junit.version>4.10</junit.version>
         <apikit.version>0.1-SNAPSHOT</apikit.version>
+        <rest.assured.version>1.8.1</rest.assured.version>
     </properties>
 
     <build>
@@ -316,19 +317,44 @@
             <artifactId>mule-tests-functional</artifactId>
             <version>${mule.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>mockobjects</groupId>
-            <artifactId>mockobjects-core</artifactId>
-            <version>0.09</version>
-            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest.assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <repositories>
@@ -355,6 +381,16 @@
             <id>codehaus-releases</id>
             <name>CodeHaus Releases</name>
             <url>http://repository.codehaus.org/</url>
+        </repository>
+        <repository>
+            <id>mule-ee-releases</id>
+            <name>Mule EE Releases Repository</name>
+            <url>http://dev.ee.mulesource.com/repository/content/repositories/releases/</url>
+        </repository>
+        <repository>
+            <id>mule-ee-snapshots</id>
+            <name>Mule EE Snapshots Repository</name>
+            <url>http://dev.ee.mulesource.com/repository/content/repositories/snapshots/</url>
         </repository>
     </repositories>
     <profiles>
