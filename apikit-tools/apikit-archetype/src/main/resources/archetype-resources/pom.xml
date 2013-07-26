@@ -364,11 +364,6 @@
             <url>http://repository.jboss.com/</url>
         </repository>
         <repository>
-            <id>mulesoft-releases</id>
-            <name>MuleSoft Releases</name>
-            <url>http://repository.mulesoft.org/releases/</url>
-        </repository>
-        <repository>
             <id>oss-sonatype-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
@@ -383,14 +378,16 @@
             <url>http://repository.codehaus.org/</url>
         </repository>
         <repository>
-            <id>mule-ee-releases</id>
-            <name>Mule EE Releases Repository</name>
-            <url>http://dev.ee.mulesource.com/repository/content/repositories/releases/</url>
+            <id>mulesoft-snapshots</id>
+            <name>MuleSoft Snapshots Repository</name>
+            <url>http://repository.mulesoft.org/snapshots/</url>
+            <layout>default</layout>
         </repository>
         <repository>
-            <id>mule-ee-snapshots</id>
-            <name>Mule EE Snapshots Repository</name>
-            <url>http://dev.ee.mulesource.com/repository/content/repositories/snapshots/</url>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
         </repository>
     </repositories>
     <profiles>
