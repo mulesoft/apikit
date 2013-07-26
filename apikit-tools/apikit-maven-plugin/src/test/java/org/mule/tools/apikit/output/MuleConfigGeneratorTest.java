@@ -78,6 +78,7 @@ public class MuleConfigGeneratorTest {
     public void testGenerateFlowWithExample() throws Exception {
         GenerationModel flowEntry = mock(GenerationModel.class);
         when(flowEntry.getFlowName()).thenReturn("get:/pet");
+        when(flowEntry.getContentType()).thenReturn("application/json");
         when(flowEntry.getExample()).thenReturn("{\"name\": \"John\", \"kind\": \"dog\"}");
 
         Document doc = new Document();
@@ -91,8 +92,9 @@ public class MuleConfigGeneratorTest {
         Diff diff = XMLUnit.compareXML("<flow " +
                 "xmlns='http://www.mulesoft.org/schema/mule/core' " +
                 "name='get:/pet'>" +
+                "<set-property propertyName='Content-Type' value='application/json'/>" +
                 "<set-payload " +
-                "value='{\\\"name\\\": \\\"John\\\", \\\"kind\\\": \\\"dog\\\"}' /></flow>", s);
+                "value='{\"name\": \"John\", \"kind\": \"dog\"}' /></flow>", s);
 
         assertTrue(diff.toString(), diff.similar());
     }

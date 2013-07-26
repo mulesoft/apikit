@@ -14,8 +14,16 @@ public class APIKitFlowScope implements Scope {
     public APIKitFlowScope(GenerationModel flowEntry, Element mule) {
         flow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
         flow.setAttribute("name", flowEntry.getFlowName());
+
+        if( flowEntry.getContentType() != null ) {
+            Element setContentType = new Element("set-property", XMLNS_NAMESPACE.getNamespace());
+            setContentType.setAttribute("propertyName", "Content-Type");
+            setContentType.setAttribute("value", flowEntry.getContentType());
+            flow.addContent(setContentType);
+        }
+
         Element example = new Element("set-payload", XMLNS_NAMESPACE.getNamespace());
-        example.setAttribute("value", StringEscapeUtils.escapeJava(flowEntry.getExample()));
+        example.setAttribute("value", flowEntry.getExample().trim());
         flow.addContent(example);
         mule.addContent(flow);
     }

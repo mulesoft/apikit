@@ -86,7 +86,6 @@ public class GenerationModel {
                                 return type.getExample();
                             }
                         }
-
                     }
                 }
             }
@@ -137,6 +136,21 @@ public class GenerationModel {
 
     public API getApi() {
         return api;
+    }
+
+    public String getContentType() {
+        if( action.getBody() != null ) {
+            for( String response : action.getResponses().keySet() ) {
+                int statusCode = Integer.parseInt(response);
+                if( statusCode > 200 && statusCode < 299 ) {
+                    if( action.getResponses().get(response).getBody() != null && action.getResponses().get(response).getBody().size() > 0 ) {
+                        return (String)action.getResponses().get(response).getBody().keySet().toArray()[0];
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     public String getFlowName() {

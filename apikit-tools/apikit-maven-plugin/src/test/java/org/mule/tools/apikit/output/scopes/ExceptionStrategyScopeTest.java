@@ -31,23 +31,28 @@ public class ExceptionStrategyScopeTest {
                 "<apikit:mapping-exception-strategy name=\"apiKitGlobalExceptionMapping\">" +
                 "<apikit:mapping statusCode=\"404\">" +
                 "<apikit:exception value=\"org.mule.module.apikit.exception.NotFoundException\"/>" +
-                "<set-payload value=\"resource not found\"/>" +
+                "<set-property propertyName=\"Content-Type\" value=\"application/json\"/>" +
+                "<set-payload value=\"{ &quot;message&quot;: &quot;Resource not found&quot; }\"/>" +
                 "</apikit:mapping>" +
                 "<apikit:mapping statusCode=\"405\">" +
                 "<apikit:exception value=\"org.mule.module.apikit.exception.MethodNotAllowedException\"/>" +
-                "<set-payload value=\"method not allowed\"/>" +
+                "<set-property propertyName=\"Content-Type\" value=\"application/json\"/>" +
+                "<set-payload value=\"{ &quot;message&quot;: &quot;Method not allowed&quot; }\"/>" +
                 "</apikit:mapping>" +
                 "<apikit:mapping statusCode=\"415\">" +
                 "<apikit:exception value=\"org.mule.module.apikit.exception.UnsupportedMediaTypeException\"/>" +
-                "<set-payload value=\"unsupported media type\"/>" +
+                "<set-property propertyName=\"Content-Type\" value=\"application/json\"/>" +
+                "<set-payload value=\"{ &quot;message&quot;: &quot;Unsupported media type&quot; }\"/>" +
                 "</apikit:mapping>" +
                 "<apikit:mapping statusCode=\"406\">" +
                 "<apikit:exception value=\"org.mule.module.apikit.exception.NotAcceptableException\"/>" +
-                "<set-payload value=\"not acceptable\"/>" +
+                "<set-property propertyName=\"Content-Type\" value=\"application/json\"/>" +
+                "<set-payload value=\"{ &quot;message&quot;: &quot;Not acceptable&quot; }\"/>" +
                 "</apikit:mapping>" +
                 "<apikit:mapping statusCode=\"400\">" +
                 "<apikit:exception value=\"org.mule.module.apikit.exception.BadRequestException\"/>" +
-                "<set-payload value=\"bad request\"/>" +
+                "<set-property propertyName=\"Content-Type\" value=\"application/json\"/>" +
+                "<set-payload value=\"{ &quot;message&quot;: &quot;Bad request&quot; }\"/>" +
                 "</apikit:mapping>" +
                 "</apikit:mapping-exception-strategy>" +
                 "</mule>";

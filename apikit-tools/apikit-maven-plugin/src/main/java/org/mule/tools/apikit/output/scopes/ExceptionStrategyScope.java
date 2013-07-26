@@ -40,11 +40,11 @@ public class ExceptionStrategyScope implements Scope {
 
     public ExceptionStrategyScope(Element mule) {
         List<StatusCodeMapping> statusCodeMappings = Arrays.asList(
-                new StatusCodeMapping(404, "org.mule.module.apikit.exception.NotFoundException", "resource not found"),
-                new StatusCodeMapping(405, "org.mule.module.apikit.exception.MethodNotAllowedException", "method not allowed"),
-                new StatusCodeMapping(415, "org.mule.module.apikit.exception.UnsupportedMediaTypeException", "unsupported media type"),
-                new StatusCodeMapping(406, "org.mule.module.apikit.exception.NotAcceptableException", "not acceptable"),
-                new StatusCodeMapping(400, "org.mule.module.apikit.exception.BadRequestException", "bad request")
+                new StatusCodeMapping(404, "org.mule.module.apikit.exception.NotFoundException", "{ \"message\": \"Resource not found\" }"),
+                new StatusCodeMapping(405, "org.mule.module.apikit.exception.MethodNotAllowedException", "{ \"message\": \"Method not allowed\" }"),
+                new StatusCodeMapping(415, "org.mule.module.apikit.exception.UnsupportedMediaTypeException", "{ \"message\": \"Unsupported media type\" }"),
+                new StatusCodeMapping(406, "org.mule.module.apikit.exception.NotAcceptableException", "{ \"message\": \"Not acceptable\" }"),
+                new StatusCodeMapping(400, "org.mule.module.apikit.exception.BadRequestException", "{ \"message\": \"Bad request\" }")
         );
 
         exceptionStrategy = new Element("mapping-exception-strategy",
@@ -61,6 +61,11 @@ public class ExceptionStrategyScope implements Scope {
             Element exception = new Element("exception", APIKitTools.API_KIT_NAMESPACE.getNamespace());
             exception.setAttribute("value", statusCodeMapping.getException());
             mapping.addContent(exception);
+            
+            Element setContentType = new Element("set-property", XMLNS_NAMESPACE.getNamespace());
+            setContentType.setAttribute("propertyName", "Content-Type");
+            setContentType.setAttribute("value", "application/json");
+            mapping.addContent(setContentType);
 
             Element setPayload = new Element("set-payload", XMLNS_NAMESPACE.getNamespace());
             setPayload.setAttribute("value", statusCodeMapping.getMsg());
