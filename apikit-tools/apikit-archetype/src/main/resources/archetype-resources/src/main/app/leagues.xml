@@ -51,7 +51,7 @@
         <http:inbound-endpoint address="http://localhost:8080/api" connector-ref="httpConnector">
             <object-to-string-transformer />
         </http:inbound-endpoint>
-        <apikit:router />
+        <apikit:router config-ref="leaguesApi"/>
         <exception-strategy ref="apiKitGlobalExceptionMapping" />
     </flow>
 
