@@ -141,10 +141,10 @@ documentation:
       body:
         application/json:
             example: |
-              [{
+              {
                 "homeTeamScore": 3,
                 "awayTeamScore": 0
-              }]
+              }
             schema: !include schemas/match-schema-input.json
  
       responses:
