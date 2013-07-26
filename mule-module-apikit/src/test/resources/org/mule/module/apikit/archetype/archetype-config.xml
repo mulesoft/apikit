@@ -3,12 +3,14 @@
     xmlns="http://www.mulesoft.org/schema/mule/core"
     xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
     xmlns:http="http://www.mulesoft.org/schema/mule/http"
+    xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
     xmlns:spring="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
     http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
     http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
     http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+    http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd ">
 
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
@@ -45,7 +47,15 @@
     </flow>
 
     <flow name="get:/resources">
-        <set-payload value="Hello world!" />
+        <set-payload value="                {\n                  &quot;name&quot;: &quot;Barcelona&quot;,\n                  &quot;id&quot;: &quot;BAR&quot;,\n                  &quot;homeCity&quot;: &quot;Barcelona&quot;,\n                  &quot;stadium&quot;: &quot;Camp Nou&quot;,\n                  &quot;matches&quot;: 24\n                }" />
+        <set-property propertyName="Content-Type" value="application/json"/>
+        <!--
+        <scripting:component>
+            <scripting:script engine="Groovy">
+                <scripting:text><![CDATA[message.getDataType().setMimeType("application/json");return message;]]></scripting:text>
+            </scripting:script>
+        </scripting:component>
+        -->
     </flow>
 
 </mule>
