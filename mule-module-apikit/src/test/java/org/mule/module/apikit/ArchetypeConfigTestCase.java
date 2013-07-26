@@ -54,7 +54,7 @@ public class ArchetypeConfigTestCase extends FunctionalTestCase
     {
         given().header("Accept", "application/json")
                 .expect()
-                .response().body(containsString("Hello world!"))
+                .response().body(containsString("\"name\": \"Barcelona\","))
                 .header("Content-type", "application/json").statusCode(200)
                 .when().get("/api/resources");
     }

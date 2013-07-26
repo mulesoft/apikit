@@ -3,6 +3,7 @@ package org.mule.module.apikit;
 import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.MuleMessage;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.construct.Flow;
@@ -129,7 +130,20 @@ public class HttpRestRequest
 
     private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation) throws MuleException
     {
-        DataType sourceDataType = DataTypeFactory.create(muleEvent.getMessage().getPayload().getClass());
+        MuleMessage message = muleEvent.getMessage();
+        String msgMimeType = message.getDataType().getMimeType();
+        String msgContentType = message.getOutboundProperty("Content-Type");
+        message.setOutboundProperty("Content-Type", responseRepresentation);
+
+        if (responseRepresentation.equals(msgMimeType) || responseRepresentation.equals(msgContentType))
+        {
+            if (logger.isDebugEnabled())
+            {
+                logger.debug(String.format("Response transformation not required. Message payload type is " + msgMimeType));
+            }
+            return;
+        }
+        DataType sourceDataType = DataTypeFactory.create(message.getPayload().getClass(), msgMimeType);
         DataType resultDataType = DataTypeFactory.create(String.class, responseRepresentation);
 
         if (logger.isDebugEnabled())
@@ -145,15 +159,14 @@ public class HttpRestRequest
             {
                 logger.debug(String.format("Transformer resolved to [transformer=%s]", transformer));
             }
-            Object payload = transformer.transform(muleEvent.getMessage().getPayload());
-            muleEvent.getMessage().setPayload(payload);
+            Object payload = transformer.transform(message.getPayload());
+            message.setPayload(payload);
         }
         catch (Exception e)
         {
             throw new DefaultMuleException(e);
         }
 
-        muleEvent.getMessage().setOutboundProperty("Content-Type", responseRepresentation);
     }
 
     private void validateInputRepresentation() throws MuleRestException
