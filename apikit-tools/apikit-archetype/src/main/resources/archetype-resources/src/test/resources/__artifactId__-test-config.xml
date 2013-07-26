@@ -24,7 +24,7 @@
 
     <spring:bean id="league" class="${package}.model.League" init-method="initialize"/>
 
-    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
+    <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
             <set-payload value="resource not found" />
@@ -52,7 +52,7 @@
             <object-to-string-transformer />
         </http:inbound-endpoint>
         <apikit:router />
-        <exception-strategy ref="Global_Mapping_Exception_Strategy" />
+        <exception-strategy ref="apiKitGlobalExceptionMapping" />
     </flow>
 
     <flow name="delete:/teams/{teamId}:leaguesApi">

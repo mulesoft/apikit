@@ -50,7 +50,7 @@ public class ExceptionStrategyScope implements Scope {
         exceptionStrategy = new Element("mapping-exception-strategy",
                 APIKitTools.API_KIT_NAMESPACE.getNamespace());
 
-        exceptionStrategy.setAttribute("name", "Global_Mapping_Exception_Strategy");
+        exceptionStrategy.setAttribute("name", "apiKitGlobalExceptionMapping");
 
         for (StatusCodeMapping statusCodeMapping : statusCodeMappings) {
             Element mapping = new Element("mapping",

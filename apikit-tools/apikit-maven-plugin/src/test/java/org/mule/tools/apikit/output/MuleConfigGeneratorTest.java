@@ -120,7 +120,7 @@ public class MuleConfigGeneratorTest {
         Element globalExceptionStrategy = rootElement.getChildren().get(0);
 
         assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
-        assertEquals("Global_Mapping_Exception_Strategy", globalExceptionStrategy.getAttribute("name").getValue());
+        assertEquals("apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
 
         Element mainFlow = rootElement.getChildren().get(1);
 

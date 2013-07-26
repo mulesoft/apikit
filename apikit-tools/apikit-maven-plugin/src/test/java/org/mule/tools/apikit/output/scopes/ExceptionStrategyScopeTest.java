@@ -28,7 +28,7 @@ public class ExceptionStrategyScopeTest {
                 "        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd\n" +
                 "        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd\n" +
                 "        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd\">" +
-                "<apikit:mapping-exception-strategy name=\"Global_Mapping_Exception_Strategy\">" +
+                "<apikit:mapping-exception-strategy name=\"apiKitGlobalExceptionMapping\">" +
                 "<apikit:mapping statusCode=\"404\">" +
                 "<apikit:exception value=\"org.mule.module.apikit.exception.NotFoundException\"/>" +
                 "<set-payload value=\"resource not found\"/>" +
