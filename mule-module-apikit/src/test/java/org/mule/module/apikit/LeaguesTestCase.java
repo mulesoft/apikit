@@ -211,6 +211,17 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void putCustomStatus() throws Exception
+    {
+        given().body("{ \"name\": \"(invlid name)\" }")
+                .contentType("application/json")
+            .expect()
+                .statusCode(400)
+                .body(is(""))
+            .when().put("/api/leagues/liga-bbva");
+    }
+
+    @Test
     public void deleteOnSingleLeague() throws Exception
     {
         expect().response()
