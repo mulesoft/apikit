@@ -105,6 +105,13 @@ section[role=main] {
   overflow: scroll;
   min-height: 300px;
 }
+footer {
+  height: 19px;
+  display: block;
+  color: white;
+  background: #364655;
+  width: 960px;
+}
 section[role=api-documentation] h1,
 section[role=api-documentation] h2,
 section[role=api-documentation] h3,
@@ -422,12 +429,12 @@ section[role=api-operation-details-section-try-it] > section[role=request] > hea
 section[role=api-operation-details-section-try-it] > section[role=request] > header > ul {
   display: none;
 }
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params],
+section[role=api-operation-details-section-try-it] > section[role=request] > form[role=uri-params],
 section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] {
   border-top: 1px solid #dfe3e7;
 }
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params] > h2,
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > h2 {
+section[role=api-operation-details-section-try-it] > section[role=request] > form[role=uri-params] > h2,
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > form[role=query-params] > h2 {
   font-size: 13px;
   font-weight: 100;
   color: #33373b;
@@ -435,8 +442,8 @@ section[role=api-operation-details-section-try-it] > section[role=request] > div
   margin: 0px;
   padding: 10px 20px 0px 20px;
 }
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params] > div[role=uri],
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] {
+section[role=api-operation-details-section-try-it] > section[role=request] > form[role=uri-params] > div[role=uri],
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > form[role=query-params] > div[role=params] {
   font-size: 13px;
   font-weight: normal;
   color: black;
@@ -444,27 +451,27 @@ section[role=api-operation-details-section-try-it] > section[role=request] > div
   margin: 0px;
   padding: 5px 20px 10px 20px;
 }
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params] > div[role=uri] input {
+section[role=api-operation-details-section-try-it] > section[role=request] > form[role=uri-params] > div[role=uri] input {
   border: 0;
   border-bottom: 1px solid lightgrey;
   font-size: 12px;
   max-width: 105px;
   text-align: left;
 }
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=uri-params] > div[role=uri] input:focus {
+section[role=api-operation-details-section-try-it] > section[role=request] > form[role=uri-params] > div[role=uri] input:focus {
   outline: 0;
 }
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] {
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > form[role=query-params] > div[role=params] {
   padding-bottom: 5px;
 }
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] label,
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > form[role=query-params] > div[role=params] label,
 section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=request-body] > label {
   display: inline-block;
   margin: 0px 10px 10px 0px;
   color: #9ea3a6;
   font-size: 12px;
 }
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] label > input,
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > form[role=query-params] > div[role=params] label > input,
 section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=request-body] > label > textarea {
   display: block;
   border: 1px solid #dfe3e7;
@@ -476,7 +483,7 @@ section[role=api-operation-details-section-try-it] > section[role=request] > div
   border-radius: 3px;
   width: 110px;
 }
-section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=query-params] > div[role=params] label > input:focus,
+section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > form[role=query-params] > div[role=params] label > input:focus,
 section[role=api-operation-details-section-try-it] > section[role=request] > div[role=additional-params] > div[role=request-body] > label > textarea:focus {
   outline: 0;
   border: 1px solid lightgrey;
@@ -1215,4 +1222,14 @@ body {
   margin: 0px;
   font-family: 'Ubuntu', sans-serif;
   background: #f8f8f8;
+}
+input.ng-invalid-required:focus {
+  border: 1px solid #e9322d !important;
+  border-radius: 3px;
+  -webkit-box-shadow: 0 0 6px #f8b9b7;
+  -moz-box-shadow: 0 0 6px #f8b9b7;
+  box-shadow: 0 0 6px #f8b9b7;
+}
+input.ng-invalid-required {
+  border-color: #e9322d !important;
 }
