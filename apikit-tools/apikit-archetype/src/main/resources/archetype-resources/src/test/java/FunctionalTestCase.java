@@ -131,7 +131,7 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase {
                 expect().
                 statusCode(HttpStatus.SC_NO_CONTENT).
                 when().
-                delete("/teaks" + NEW_TEAM_ID);
+                delete("/teams/" + NEW_TEAM_ID);
     }
 
     @Test
