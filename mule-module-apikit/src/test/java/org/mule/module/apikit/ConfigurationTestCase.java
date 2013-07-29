@@ -40,7 +40,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
     public void resourceOnDefaultConfig() throws Exception
     {
         RestAssured.port = serverPortDefault.getNumber();
-        given()
+        given().header("Accept", "text/plain")
             .expect()
                 .response().body(is("some resources"))
                 .statusCode(200)

@@ -5,7 +5,9 @@ baseUri: http://localhost/{path}
 /resource:
     get:
         responses:
-            200: !!null
+            200:
+                body:
+                    text/plain: !!null
     patch:
         responses:
             204: !!null

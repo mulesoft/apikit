@@ -141,7 +141,7 @@ public class HttpRestRequest
         String msgContentType = message.getOutboundProperty("Content-Type");
         message.setOutboundProperty("Content-Type", responseRepresentation);
 
-        if (responseRepresentation.equals(msgMimeType) || responseRepresentation.equals(msgContentType))
+        if (msgMimeType.startsWith(responseRepresentation) || msgContentType.startsWith(responseRepresentation))
         {
             if (logger.isDebugEnabled())
             {

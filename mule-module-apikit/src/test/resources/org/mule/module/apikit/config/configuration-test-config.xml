@@ -47,6 +47,7 @@
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-property propertyName="Content-Type" value="text/plain"/>
             <set-payload value="resource not found"/>
         </apikit:mapping>
     </apikit:mapping-exception-strategy>

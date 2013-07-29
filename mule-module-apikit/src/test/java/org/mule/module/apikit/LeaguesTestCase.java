@@ -156,7 +156,7 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .contentType("application/json")
             .expect()
                 .statusCode(400)
-                .body(is("Invalid League Name"))
+                .body(is(""))
             .when().post("/api/leagues");
     }
 
