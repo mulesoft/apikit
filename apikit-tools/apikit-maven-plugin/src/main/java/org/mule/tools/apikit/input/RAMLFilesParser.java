@@ -49,7 +49,7 @@ public class RAMLFilesParser {
                 YamlDocumentBuilder<Raml> builderNodeHandler = new YamlDocumentBuilder<Raml>(Raml.class, resourceLoader);
                 try {
                     Raml raml = builderNodeHandler.build(content);
-                    collectResources(fileInputStreamEntry.getKey(), entries, raml.getResources(), raml.getBaseUri());
+                    collectResources(fileInputStreamEntry.getKey(), entries, raml.getResources(), API.DEFAULT_BASE_URI);
                     processedFiles.add(fileInputStreamEntry.getKey());
                 } catch (Exception e) {
                     log.debug("Could not parse [" + fileInputStreamEntry.getKey() + "] as root yaml file.");

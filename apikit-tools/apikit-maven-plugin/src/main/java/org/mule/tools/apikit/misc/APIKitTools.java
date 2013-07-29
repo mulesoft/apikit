@@ -1,6 +1,7 @@
 package org.mule.tools.apikit.misc;
 
 import org.jdom2.Namespace;
+
 import org.mule.tools.apikit.output.NamespaceWithLocation;
 
 import java.util.ArrayList;

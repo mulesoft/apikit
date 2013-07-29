@@ -6,6 +6,7 @@
       xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:context="http://www.springframework.org/schema/context"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core
         http://www.mulesoft.org/schema/mule/core/current/mule.xsd
@@ -13,6 +14,7 @@
         http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
         http://www.mulesoft.org/schema/mule/apikit
         http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
         http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd ">
 
@@ -23,6 +25,7 @@
     <apikit:config name="leaguesApi" raml="leagues.yaml" consoleEnabled="true" consolePath="console" />
 
     <spring:bean id="league-api" class="${package}.LeagueAPI" init-method="initialize"/>
+    <context:property-placeholder location="leagues.properties" />
 
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
@@ -58,7 +61,7 @@
 
 
     <flow name="main">
-        <http:inbound-endpoint address="http://localhost:8080/api" connector-ref="httpConnector">
+        <http:inbound-endpoint address="http://localhost:${http.port}/api" connector-ref="httpConnector">
             <object-to-string-transformer />
         </http:inbound-endpoint>
         <apikit:router config-ref="leaguesApi"/>
@@ -104,7 +107,7 @@
     <flow name="post:/teams:leaguesApi">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="${package}.request.Team"/>
-        <set-property propertyName="Location" value="http://localhost:8080/api/teams/#[payload.id]"/>
+        <set-property propertyName="Location" value="http://localhost:${http.port}/api/teams/#[payload.id]"/>
         <expression-component>
             app.registry['league-api'].addTeam(payload);
         </expression-component>

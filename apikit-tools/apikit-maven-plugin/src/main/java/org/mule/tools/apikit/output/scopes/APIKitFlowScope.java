@@ -1,7 +1,6 @@
 package org.mule.tools.apikit.output.scopes;
 
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.jdom2.Element;
 
 import org.mule.tools.apikit.output.GenerationModel;

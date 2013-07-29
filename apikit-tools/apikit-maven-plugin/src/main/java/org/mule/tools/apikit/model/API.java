@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class API {
+
+    public static final String DEFAULT_BASE_URI = "http://localhost:${http.port}";
+
     private String baseUri;
     private APIKitConfig config;
     private File xmlFile;
