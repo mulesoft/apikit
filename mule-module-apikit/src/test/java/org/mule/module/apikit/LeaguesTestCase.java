@@ -156,7 +156,7 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .contentType("application/json")
             .expect()
                 .statusCode(400)
-                .body(is("Invalid League Name"))
+                .body(is(""))
             .when().post("/api/leagues");
     }
 
@@ -208,6 +208,17 @@ public class LeaguesTestCase extends FunctionalTestCase
         expect().response()
                 .body("leagues.league.name", hasItems("Hispanic League", "Premier League"))
             .when().get("/api/leagues");
+    }
+
+    @Test
+    public void putCustomStatus() throws Exception
+    {
+        given().body("{ \"name\": \"(invlid name)\" }")
+                .contentType("application/json")
+            .expect()
+                .statusCode(400)
+                .body(is(""))
+            .when().put("/api/leagues/liga-bbva");
     }
 
     @Test

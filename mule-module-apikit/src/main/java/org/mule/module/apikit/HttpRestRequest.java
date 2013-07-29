@@ -16,6 +16,7 @@ import org.mule.module.apikit.transform.TransformerCache;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
 import org.mule.transformer.types.DataTypeFactory;
+import org.mule.transport.NullPayload;
 
 import com.google.common.net.MediaType;
 
@@ -91,6 +92,11 @@ public class HttpRestRequest
         {
             transformToExpectedContentType(responseEvent, responseRepresentation);
         }
+        else
+        {
+            //sent empty response body when no response mime-type is defined
+            responseEvent.getMessage().setPayload(NullPayload.getInstance());
+        }
 
         //set success status
         if (responseEvent.getMessage().getOutboundProperty("http.status") == null)
@@ -135,7 +141,7 @@ public class HttpRestRequest
         String msgContentType = message.getOutboundProperty("Content-Type");
         message.setOutboundProperty("Content-Type", responseRepresentation);
 
-        if (responseRepresentation.equals(msgMimeType) || responseRepresentation.equals(msgContentType))
+        if (msgMimeType.startsWith(responseRepresentation) || msgContentType.startsWith(responseRepresentation))
         {
             if (logger.isDebugEnabled())
             {

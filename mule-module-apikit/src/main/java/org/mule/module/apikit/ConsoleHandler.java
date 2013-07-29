@@ -91,7 +91,11 @@ public class ConsoleHandler
             {
                 //client redirect
                 event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, String.valueOf(HttpConstants.SC_MOVED_PERMANENTLY));
-                String redirectLocation = event.getMessageSourceURI() + RESOURCE_BASE + "/";
+                String context = event.getMessage().getInboundProperty("http.context.uri");
+                String scheme = context.substring(0, context.indexOf("/"));
+                String host = event.getMessage().getInboundProperty("Host");
+                String requestPath = event.getMessage().getInboundProperty("http.request");
+                String redirectLocation = scheme + "//" + host + requestPath + "/";
                 event.getMessage().setOutboundProperty(HttpConstants.HEADER_LOCATION, redirectLocation);
                 return event;
             }

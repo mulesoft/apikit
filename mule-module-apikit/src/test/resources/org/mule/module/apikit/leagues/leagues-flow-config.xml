@@ -85,7 +85,6 @@
             <when expression="#[!payload.name.matches('[\\w ]+')]">
                 <logger level="WARN" message="invalid name returning 400"/>
                 <set-property propertyName="http.status" value="400"/>
-                <set-payload value="Invalid League Name"/>
             </when>
             <otherwise>
                 <expression-component>
