@@ -18,7 +18,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>
-                <version>0.1-RC2</version>
+                <version>0.1-RC3</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
