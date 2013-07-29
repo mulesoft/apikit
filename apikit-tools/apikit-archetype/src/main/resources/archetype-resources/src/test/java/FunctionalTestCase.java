@@ -79,61 +79,6 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase {
                 get("/teams/" + NEW_TEAM_ID);
     }
 
-    @org.junit.Ignore
-    @Test
-    public void teamsCRUD() throws Exception {
-        given().log().all().
-                body("{ \"id\": \"" + NEW_TEAM_ID + "\", \"name\": \"" + NEW_TEAM_NAME + "\" , \"homeCity\" : \"" + NEW_TEAM_CITY + "\", \"stadium\" : \"" + NEW_TEAM_STADIUM + "\"}").
-                contentType("application/json").
-                expect().
-                response().
-                statusCode(HttpStatus.SC_CREATED).
-                header("Location", "http://localhost:" + httpPort.getNumber() + "/api/teams/" + NEW_TEAM_ID).
-                when().
-                post("/teams");
-
-        given().log().all().
-                header("Accept", "application/json").
-                expect().
-                response().
-                statusCode(HttpStatus.SC_OK).
-                body("id", is(NEW_TEAM_ID)).
-                body("name", is(NEW_TEAM_NAME)).
-                body("homeCity", is(NEW_TEAM_CITY)).
-                body("stadium", is(NEW_TEAM_STADIUM)).
-                when().
-                get("/teams/" + NEW_TEAM_ID);
-
-        given().log().all().
-                contentType("application/json").
-                body("{\"name\": \"" + UPDATED_TEAM_NAME + "\"}").
-                expect().
-                response().
-                statusCode(HttpStatus.SC_NO_CONTENT).
-                when().
-                put("/teams/" + NEW_TEAM_ID);
-
-        given().log().all().
-                header("Accept", "application/json").
-                expect().
-                response().
-                statusCode(HttpStatus.SC_OK).
-                body("id", is(NEW_TEAM_ID)).
-                body("name", is(UPDATED_TEAM_NAME)).
-                body("homeCity", is(NEW_TEAM_CITY)).
-                body("stadium", is(NEW_TEAM_STADIUM)).
-                when().
-                get("/teams/" + NEW_TEAM_ID);
-
-        given().
-                log().all().
-                header("Accept", "application/json").
-                expect().
-                statusCode(HttpStatus.SC_NO_CONTENT).
-                when().
-                delete("/teams/" + NEW_TEAM_ID);
-    }
-
     @Test
     public void positions() throws Exception {
         given().log().all().
