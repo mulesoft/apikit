@@ -106,7 +106,7 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase {
 
         given().log().all().
                 contentType("application/json").
-                body("{\"name\": \"" + NEW_TEAM_NAME + "\"}").
+                body("{\"name\": \"" + UPDATED_TEAM_NAME + "\"}").
                 expect().
                 response().
                 statusCode(HttpStatus.SC_NO_CONTENT).
