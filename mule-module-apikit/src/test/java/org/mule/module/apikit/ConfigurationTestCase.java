@@ -23,6 +23,8 @@ public class ConfigurationTestCase extends FunctionalTestCase
     public DynamicPort serverPortCustom = new DynamicPort("serverPortCustom");
     @Rule
     public DynamicPort serverPortNoConsole = new DynamicPort("serverPortNoConsole");
+    @Rule
+    public DynamicPort serverPortMapping = new DynamicPort("serverPortMapping");
 
     @Override
     public int getTestTimeoutSecs()
@@ -68,6 +70,17 @@ public class ConfigurationTestCase extends FunctionalTestCase
                 .response().body(is("some resources"))
                 .statusCode(200)
             .when().get("/custom/resource");
+    }
+
+    @Test
+    public void resourceOnExplicitMappingConfig() throws Exception
+    {
+        RestAssured.port = serverPortMapping.getNumber();
+        given()
+            .expect()
+                .response().body(is("explicitely mapped flow"))
+                .statusCode(200)
+            .when().get("/mapping/resource");
     }
 
     @Test

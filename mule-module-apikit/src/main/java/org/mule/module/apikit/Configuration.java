@@ -1,5 +1,8 @@
 package org.mule.module.apikit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Configuration
 {
 
@@ -7,6 +10,7 @@ public class Configuration
     private String raml;
     private boolean consoleEnabled;
     private String consolePath;
+    private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
 
     public String getName()
     {
@@ -46,5 +50,15 @@ public class Configuration
     public void setConsolePath(String consolePath)
     {
         this.consolePath = consolePath;
+    }
+
+    public List<FlowMapping> getFlowMappings()
+    {
+        return flowMappings;
+    }
+
+    public void setFlowMappings(List<FlowMapping> flowMappings)
+    {
+        this.flowMappings = flowMappings;
     }
 }

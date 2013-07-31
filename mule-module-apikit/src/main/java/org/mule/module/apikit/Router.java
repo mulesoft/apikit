@@ -174,6 +174,10 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
                 restFlowMap.put(key, flow);
             }
         }
+        for (FlowMapping mapping : config.getFlowMappings())
+        {
+            restFlowMap.put(mapping.getAction() + ":" + mapping.getResource(), mapping.getFlow());
+        }
         if (logger.isDebugEnabled())
         {
             logger.debug("==== RestFlows defined:");

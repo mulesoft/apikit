@@ -31,6 +31,16 @@
     <xsd:complexType name="configType">
         <xsd:complexContent>
             <xsd:extension base="mule:abstractExtensionType">
+                <xsd:sequence>
+                    <xsd:element name="flow-mapping" minOccurs="0" maxOccurs="unbounded">
+                        <xsd:complexType>
+                            <xsd:attribute name="resource" use="required" type="mule:nonBlankString" />
+                            <xsd:attribute name="action" use="required" type="mule:nonBlankString" />
+                            <xsd:attribute name="flow-ref" use="required" type="mule:nonBlankString" />
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:group ref="mule:messageProcessorOrOutboundEndpoint" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
                 <xsd:attribute name="name" type="mule:nonBlankString" use="optional"/>
                 <xsd:attribute name="raml" type="mule:nonBlankString" use="required"/>
                 <xsd:attribute name="consoleEnabled" type="mule:substitutableBoolean" default="true" use="optional"/>

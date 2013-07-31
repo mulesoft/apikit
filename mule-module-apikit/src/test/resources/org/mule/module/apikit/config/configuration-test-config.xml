@@ -9,8 +9,15 @@
 
 
     <apikit:config name="default" raml="org/mule/module/apikit/config/config.yaml"/>
+
     <apikit:config name="custom" raml="org/mule/module/apikit/config/config.yaml" consolePath="custom"/>
+
     <apikit:config name="no-console" raml="org/mule/module/apikit/config/config.yaml" consoleEnabled="false"/>
+
+    <apikit:config name="mapped-flows" raml="org/mule/module/apikit/config/config.yaml">
+        <apikit:flow-mapping resource="/resource" action="get" flow-ref="retrieve"/>
+    </apikit:config>
+
 
     <flow name="defaultEntry">
         <http:inbound-endpoint port="${serverPortDefault}" host="localhost" path="default">
@@ -36,12 +43,24 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
+    <flow name="mappingEntry">
+        <http:inbound-endpoint port="${serverPortMapping}" host="localhost" path="mapping">
+            <object-to-string-transformer/>
+        </http:inbound-endpoint>
+        <apikit:router config-ref="mapped-flows"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
     <flow name="get:/resource">
         <set-payload value="some resources"/>
     </flow>
 
     <flow name="patch:/resource">
         <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+    </flow>
+
+    <flow name="retrieve">
+        <set-payload value="explicitely mapped flow"/>
     </flow>
 
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">

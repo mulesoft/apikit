@@ -7,6 +7,7 @@ import org.mule.config.spring.parsers.generic.MuleOrphanDefinitionParser;
 import org.mule.config.spring.parsers.specific.ExceptionStrategyDefinitionParser;
 
 import org.mule.module.apikit.Configuration;
+import org.mule.module.apikit.FlowMapping;
 import org.mule.module.apikit.MappingExceptionListener;
 import org.mule.module.apikit.RestMappingExceptionStrategy;
 import org.mule.module.apikit.Router;
@@ -17,6 +18,7 @@ public class ApikitNamespaceHandler extends MuleNamespaceHandler
     public void init()
     {
         registerBeanDefinitionParser("config", new MuleOrphanDefinitionParser(Configuration.class, true));
+        registerBeanDefinitionParser("flow-mapping", new ChildDefinitionParser("flowMapping", FlowMapping.class, false));
         registerBeanDefinitionParser("router", new ChildDefinitionParser("messageProcessor", Router.class));
         registerBeanDefinitionParser("mapping-exception-strategy", new ExceptionStrategyDefinitionParser(RestMappingExceptionStrategy.class));
         registerBeanDefinitionParser("mapping", new ChildDefinitionParser("exceptionListener", MappingExceptionListener.class, false));
