@@ -13,7 +13,7 @@ import java.util.Map;
 public class GenerationModel {
 
     private static final char FLOW_NAME_SEPARATOR = ':';
-    public static final String DEFAULT_TEXT = "";
+    public static final String DEFAULT_TEXT = "#[NullPayload.getInstance()]";
 
     private final String verb;
     private Action action;
