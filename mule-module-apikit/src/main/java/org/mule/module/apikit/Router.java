@@ -29,6 +29,7 @@ import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.transformer.simple.ObjectToString;
 import org.mule.transport.http.HttpConstants;
+import org.mule.util.StringMessageUtils;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -165,6 +166,12 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
                                 }
                             }
                         });
+
+        if (logger.isInfoEnabled())
+        {
+            String msg = String.format("APIKit Console URL: %s", api.getBaseUri() + "/" + config.getConsolePath());
+            logger.info(StringMessageUtils.getBoilerPlate(msg));
+        }
     }
 
     private void loadRestFlowMap()
