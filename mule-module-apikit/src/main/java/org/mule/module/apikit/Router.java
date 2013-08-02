@@ -15,6 +15,8 @@ import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.registry.RegistrationException;
+import org.mule.api.transformer.Transformer;
+import org.mule.api.transformer.TransformerException;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
@@ -25,6 +27,7 @@ import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
+import org.mule.transformer.simple.ObjectToString;
 import org.mule.transport.http.HttpConstants;
 
 import com.google.common.cache.CacheBuilder;
@@ -75,6 +78,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
     private LoadingCache<String, URIPattern> uriPatternCache;
     private String ramlYaml;
     private ConsoleHandler consoleHandler;
+    private Transformer inboundTransformer;
 
     public void setMuleContext(MuleContext context)
     {
@@ -106,6 +110,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
             }
         }
 
+        inboundTransformer = new ObjectToString();
         loadApiDefinition();
         loadRestFlowMap();
         consoleHandler = new ConsoleHandler(api.getBaseUri(), config.getConsolePath());
@@ -320,6 +325,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
     @Override
     public MuleEvent process(MuleEvent event) throws MuleException
     {
+        event = transform(event);
         HttpRestRequest request = new HttpRestRequest(event, api);
 
         String path = request.getResourcePath();
@@ -380,6 +386,17 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
             throw new ApikitRuntimeException("Flow not found for resource: " + resource);
         }
         return request.process(flow, resource.getAction(request.getMethod()));
+    }
+
+    private MuleEvent transform(MuleEvent event) throws TransformerException
+    {
+        String contentType = event.getMessage().getInboundProperty("Content-Type");
+        if (contentType != null && !contentType.contains("multipart/form-data"))
+        {
+            Object payload = inboundTransformer.transform(event.getMessage().getPayload());
+            event.getMessage().setPayload(payload);
+        }
+        return event;
     }
 
     private void processUriParameters(ResolvedVariables resolvedVariables, Resource resource, MuleEvent event) throws InvalidUriParameterException

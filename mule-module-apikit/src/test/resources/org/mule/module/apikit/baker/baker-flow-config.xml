@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
-      xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:spring="http://www.springframework.org/schema/beans"
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:spring="http://www.springframework.org/schema/beans"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-               http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
-               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-    <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
+    <http:connector name="httpConnector">
+        <service-overrides messageFactory="org.mule.transport.http.HttpMultipartMuleMessageFactory"/>
+    </http:connector>
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
             <set-payload value="resource not found"/>
@@ -30,16 +36,21 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config raml="simple.yaml" />
+    <apikit:config raml="org/mule/module/apikit/baker/baker-1.yaml"/>
 
-    <flow name="main">
+    <flow name="doorway">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
-        <apikit:router />
-        <exception-strategy ref="apiKitGlobalExceptionMapping"/>
+        <apikit:router/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
-
-    <flow name="get:/pet">
-        <set-payload xmlns="" value="Hello world!"/>
+    <flow name="get:/issues">
+        <set-payload value="no issues found!"/>
     </flow>
+
+    <flow name="post:/issues">
+        <logger level="WARN" message="posting a new issue: #[payload.getClass().getName()]"/>
+        <set-property propertyName="Location" value="http://localhost:${serverPort}/api/issues/1"/>
+    </flow>
+
 </mule>

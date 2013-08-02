@@ -52,9 +52,7 @@
     </apikit:mapping-exception-strategy>
 
     <flow name="main">
-        <http:inbound-endpoint address="http://localhost:${http.port}/api" connector-ref="httpConnector">
-            <object-to-string-transformer />
-        </http:inbound-endpoint>
+        <http:inbound-endpoint address="http://localhost:${http.port}/api" connector-ref="httpConnector"/>
         <apikit:router config-ref="leaguesApi" />
         <exception-strategy ref="apiKitGlobalExceptionMapping" />
     </flow>

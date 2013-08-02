@@ -36,9 +36,7 @@
     <apikit:config raml="leagues.yaml" />
 
     <flow name="doorway">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
-            <object-to-string-transformer/>
-        </http:inbound-endpoint>
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
         <apikit:router/>
         <exception-strategy ref="apiKitGlobalExceptionMapping"/>
     </flow>

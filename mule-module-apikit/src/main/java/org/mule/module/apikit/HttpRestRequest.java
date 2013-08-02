@@ -137,11 +137,12 @@ public class HttpRestRequest
     private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation) throws MuleException
     {
         MuleMessage message = muleEvent.getMessage();
-        String msgMimeType = message.getDataType().getMimeType();
+        String msgMimeType = message.getDataType() != null ? message.getDataType().getMimeType() : null;
         String msgContentType = message.getOutboundProperty("Content-Type");
         message.setOutboundProperty("Content-Type", responseRepresentation);
 
-        if (msgMimeType.startsWith(responseRepresentation) || msgContentType.startsWith(responseRepresentation))
+        if (msgMimeType != null && msgMimeType.contains(responseRepresentation) ||
+            msgContentType != null && msgContentType.contains(responseRepresentation))
         {
             if (logger.isDebugEnabled())
             {

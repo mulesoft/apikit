@@ -39,9 +39,7 @@
     <apikit:config raml="org/mule/module/apikit/archetype/archetype.yaml" />
 
     <flow name="main">
-        <http:inbound-endpoint address="http://localhost:${serverPort}/api">
-            <object-to-string-transformer />
-        </http:inbound-endpoint>
+        <http:inbound-endpoint address="http://localhost:${serverPort}/api"/>
         <apikit:router />
         <exception-strategy ref="Global_Mapping_Exception_Strategy" />
     </flow>

@@ -20,33 +20,25 @@
 
 
     <flow name="defaultEntry">
-        <http:inbound-endpoint port="${serverPortDefault}" host="localhost" path="default">
-            <object-to-string-transformer/>
-        </http:inbound-endpoint>
+        <http:inbound-endpoint port="${serverPortDefault}" host="localhost" path="default"/>
         <apikit:router config-ref="default"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
     <flow name="customEntry">
-        <http:inbound-endpoint port="${serverPortCustom}" host="localhost" path="custom">
-            <object-to-string-transformer/>
-        </http:inbound-endpoint>
+        <http:inbound-endpoint port="${serverPortCustom}" host="localhost" path="custom"/>
         <apikit:router config-ref="custom"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
     <flow name="noConsoleEntry">
-        <http:inbound-endpoint port="${serverPortNoConsole}" host="localhost" path="no-console">
-            <object-to-string-transformer/>
-        </http:inbound-endpoint>
+        <http:inbound-endpoint port="${serverPortNoConsole}" host="localhost" path="no-console"/>
         <apikit:router config-ref="no-console"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
     <flow name="mappingEntry">
-        <http:inbound-endpoint port="${serverPortMapping}" host="localhost" path="mapping">
-            <object-to-string-transformer/>
-        </http:inbound-endpoint>
+        <http:inbound-endpoint port="${serverPortMapping}" host="localhost" path="mapping"/>
         <apikit:router config-ref="mapped-flows"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>

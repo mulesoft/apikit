@@ -34,9 +34,7 @@
     <apikit:config raml="org/mule/module/apikit/parameters/parameters.yaml"/>
 
     <flow name="doorwayPathless">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api">
-            <object-to-string-transformer/>
-        </http:inbound-endpoint>
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
         <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>

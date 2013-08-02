@@ -36,9 +36,7 @@
     <apikit:config raml="org/mule/module/apikit/twilio/twilio-2010-04-01.yml"/>
 
     <flow name="doorway">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="2010-04-01">
-            <object-to-string-transformer/>
-        </http:inbound-endpoint>
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="2010-04-01"/>
         <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
