@@ -122,13 +122,13 @@ public class HttpRestRequest
             String actual = requestEvent.getMessage().getInboundProperty(expectedKey);
             if (actual == null && expected.isRequired())
             {
-                throw new InvalidQueryParameterException("Required query parameter " + expected + " not specified");
+                throw new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified");
             }
             if (actual != null)
             {
                 if (!expected.validate(actual))
                 {
-                    throw new InvalidQueryParameterException("Invalid uri parameter value " + actual + " for " + expected);
+                    throw new InvalidQueryParameterException("Invalid uri parameter value " + actual + " for " + expectedKey);
                 }
             }
         }
