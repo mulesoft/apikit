@@ -18,4 +18,18 @@
             version="1.0">
       </externalContribution>
    </extension>
+   <extension
+         point="org.mule.tooling.muleExamples">
+      <muleExample
+            description="This is an APIKit project example."
+            path="examples/testexample.zip"
+            name="ApiKit Project Example">
+         <targetServer
+               serverVersion="3.5.0">
+         </targetServer>
+         <targetServer
+               serverVersion="3.4.*">
+         </targetServer>
+      </muleExample>
+   </extension>
 </plugin>
