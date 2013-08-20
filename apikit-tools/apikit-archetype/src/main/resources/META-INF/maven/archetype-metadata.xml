@@ -6,49 +6,19 @@
     <fileSet filtered="true" packaged="true" encoding="UTF-8">
       <directory>src/main/java</directory>
       <includes>
-        <include>**/*.html</include>
-          <include>**/*.java</include>
+          <include>**/**</include>
       </includes>
-    </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
-        <directory>src/main/resources</directory>
-        <includes>
-            <include>**/*.json</include>
-            <include>**/*.properties</include>
-        </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/app</directory>
       <includes>
-        <include>**/*.xml</include>
-          <include>**/*.properties</include>
+        <include>**/**</include>
       </includes>
     </fileSet>
     <fileSet encoding="UTF-8">
       <directory>src/main/api</directory>
       <includes>
-        <include>**/*.json</include>
-        <include>**/*.yml</include>
-          <include>**/*.yaml</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="true" packaged="true" encoding="UTF-8">
-      <directory>src/test/java</directory>
-      <includes>
-        <include>**/*.java</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory>src/test/resources</directory>
-      <includes>
-        <include>**/*.xml</include>
-        <include>**/*.properties</include>
-      </includes>
-    </fileSet>
-    <fileSet encoding="UTF-8">
-      <directory></directory>
-      <includes>
-        <include>README.md</include>
+        <include>**/**</include>
       </includes>
     </fileSet>
   </fileSets>
