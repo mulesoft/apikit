@@ -22,7 +22,7 @@
          point="org.mule.tooling.muleExamples">
       <muleExample
             description="This is an APIKit project example."
-            path="examples/testexample.zip"
+            path="examples/apikit-leagues.zip"
             name="ApiKit Project Example">
          <targetServer
                serverVersion="3.5.0">
