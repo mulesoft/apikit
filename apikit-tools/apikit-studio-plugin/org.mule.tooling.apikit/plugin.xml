@@ -25,7 +25,7 @@
             path="examples/apikit-leagues.zip"
             name="ApiKit Project Example">
          <targetServer
-               serverVersion="3.5.0">
+               serverVersion="3.5.*">
          </targetServer>
          <targetServer
                serverVersion="3.4.*">

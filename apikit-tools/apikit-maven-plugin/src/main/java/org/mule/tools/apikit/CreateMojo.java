@@ -24,10 +24,10 @@ public class CreateMojo
     private BuildContext buildContext;
 
     /**
-     * Pattern of where to find the spec .yaml files.
+     * Pattern of where to find the spec .raml, .yaml or .yml files.
      */
     @Parameter
-    private String[] specIncludes = new String[]{"src/main/api/**/*.yaml", "src/main/api/**/*.yml"};
+    private String[] specIncludes = new String[]{"src/main/api/**/*.yaml", "src/main/api/**/*.yml", "src/main/api/**/*.raml"};
 
     /**
      * Pattern of what to exclude searching for .yaml files.
