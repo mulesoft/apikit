@@ -141,12 +141,21 @@ public class HttpRestRequest
         String msgContentType = message.getOutboundProperty("Content-Type");
         message.setOutboundProperty("Content-Type", responseRepresentation);
 
+        if (message.getPayload() instanceof NullPayload)
+        {
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Response transformation not required. Message payload type is NullPayload");
+            }
+            return;
+        }
+
         if (msgMimeType != null && msgMimeType.contains(responseRepresentation) ||
             msgContentType != null && msgContentType.contains(responseRepresentation))
         {
             if (logger.isDebugEnabled())
             {
-                logger.debug(String.format("Response transformation not required. Message payload type is " + msgMimeType));
+                logger.debug("Response transformation not required. Message payload type is " + msgMimeType);
             }
             return;
         }

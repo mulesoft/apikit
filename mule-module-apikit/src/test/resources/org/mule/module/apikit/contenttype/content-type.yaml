@@ -1,0 +1,10 @@
+%TAG ! tag:raml.org,0.1:
+---
+title: Parameters API
+/resources:
+  get:
+    responses:
+        200:
+            body:
+                application/json: !!null
+                text/xml: !!null
