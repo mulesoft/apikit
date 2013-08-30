@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.mule.tooling.ui.modules.core;bundle-version="3.5.0",
  org.mule.tooling.model;bundle-version="3.5.0",
- org.mule.tooling.core;bundle-version="3.5.0"
+ org.mule.tooling.core;bundle-version="3.5.0",
+ org.dom4j;bundle-version="1.6.1"
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
