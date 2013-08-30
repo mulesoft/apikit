@@ -60,6 +60,7 @@
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.mule.tooling.ui.modules.core" version="0.0.0"/>
+<unit id="org.mule.tooling.metadata" version="0.0.0"/>
 <unit id="org.mule.tooling.ui.widgets" version="0.0.0"/>
 <unit id="org.mule.tooling.core" version="0.0.0"/>
 <unit id="org.mule.tooling.model" version="0.0.0"/>
