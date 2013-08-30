@@ -63,7 +63,14 @@
 <unit id="org.mule.tooling.metadata" version="0.0.0"/>
 <unit id="org.mule.tooling.ui.widgets" version="0.0.0"/>
 <unit id="org.mule.tooling.core" version="0.0.0"/>
+<unit id="org.mule.tooling.utils.epl" version="0.0.0"/>
+<unit id="org.jruby" version="0.0.0"/>
+<unit id="org.mule.tooling.groovy.repackaged" version="0.0.0"/>
+<unit id="org.mule.tooling.cxf" version="0.0.0"/>
+<unit id="org.mule.tooling.messageflow" version="0.0.0"/>
+<unit id="org.mule.tooling.ui" version="0.0.0"/>
 <unit id="org.mule.tooling.model" version="0.0.0"/>
+<unit id="org.mule.tooling.ognl.repackaged" version="0.0.0"/>
 <unit id="org.dom4j" version="0.0.0"/>
 <unit id="org.mule.tooling.servers.commons" version="0.0.0"/>
 <repository location="https://corp.bamboo.mulesource.com/browse/TOOLING-STUDIO38/latestSuccessful/artifact/shared/studio-update-site"/>
