@@ -5,11 +5,46 @@
 <unit id="org.apache.commons.collections" version="0.0.0"/>
 <unit id="org.apache.commons.io" version="0.0.0"/>
 <unit id="org.apache.commons.lang" version="0.0.0"/>
+<unit id="org.apache.velocity" version="0.0.0"/>
 <unit id="org.jdom" version="0.0.0"/>
 <unit id="org.apache.ant" version="0.0.0"/>
 <unit id="org.junit" version="0.0.0"/>
 <unit id="org.hamcrest.core" version="0.0.0"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20120119162704/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.wst.common.fproj.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.wst.web_ui.feature.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.wst.xml_ui.feature.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.ecore.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.codegen.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.codegen.ui.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.common.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.common.ui.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.common.ui.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.codegen.ecore.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.codegen.ecore.ui.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.ecore.edit.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.mapping.ecore.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.mapping.ecore.editor.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.edit.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.databinding.edit.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.edit.ui.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.mapping.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.mapping.ui.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.converter.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.emf.ecore.editor.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.draw2d.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.gef.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.wst.jsdt.feature.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.xsd.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.xsd.ecore.converter.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.xsd.edit.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.xsd.mapping.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.xsd.mapping.editor.feature.group" version="0.0.0"/>
+<unit id="org.eclipse.xsd.editor.feature.group" version="0.0.0"/>
+<repository location="http://download.eclipse.org/releases/juno/201209280900"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.jdt.feature.group" version="0.0.0"/>
@@ -22,6 +57,12 @@
 <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.raml.editor.feature.feature.group" version="0.0.0"/>
 <repository location="https://corp.bamboo.mulesource.com/browse/MODULES-RAMLECLIPSEEDITOR/latestSuccessful/artifact/shared/update-site"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.mule.tooling.core" version="0.0.0"/>
+<unit id="org.dom4j" version="0.0.0"/>
+<unit id="org.mule.tooling.servers.commons" version="0.0.0"/>
+<repository location="https://corp.bamboo.mulesource.com/browse/TOOLING-STUDIO38/latestSuccessful/artifact/shared/studio-update-site"/>
 </location>
 </locations>
 </target>

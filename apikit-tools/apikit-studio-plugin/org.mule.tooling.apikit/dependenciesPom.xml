@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.raml</groupId>
+	<artifactId>org.raml.dependencies</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<properties>
+		<lib-dir>lib</lib-dir>
+	</properties>
+
+	<description>This pom exists because of the limitation on including dependencies when building with Tycho.
+	The maven-dependency-plugin allows us to copy artifacts to a directory, but in order to get the transitive
+	dependencies of a given artifact, we have to execute the copy-dependencies mojo, which has one pitfall:
+	it won't act on a specified dependency, instead, it will act on THE PROJECT's dependencies. That's why, we
+	need this project.</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.raml</groupId>
+			<artifactId>raml-parser</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>oro</groupId>
+			<artifactId>oro</artifactId>
+			<version>2.0.8</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>download-maven-dependencies</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<stripVersion>true</stripVersion>
+							<outputDirectory>${lib-dir}</outputDirectory>
+							<excludeTransitive>false</excludeTransitive>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>muleee.releases</id>
+			<name>MuleEE Releases Repository</name>
+			<url>http://dev.ee.mulesource.com/repository/content/repositories/releases/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>muleee.snapshots</id>
+			<name>MuleEE Snapshots Repository</name>
+			<layout>default</layout>
+			<url>http://dev.ee.mulesource.com/repository/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
+</project>
