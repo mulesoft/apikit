@@ -16,21 +16,48 @@
 					name="raml" required="true" />
 				<boolean caption="Use Console"
 					description="Select/disable in order to use or not to the console"
-					name="consoleEnabled" xsdType="substitutableBoolean" alwaysFill="true"
+					name="consoleEnabled" xsdType="substitutableBoolean"
 					alwaysFillSimple="true" defaultValue="true" />
 				<string caption="Console Path" defaultValue="console"
-					description="The console path" name="consolePath" alwaysFill="true"
-					alwaysFillSimple="true" />
+					description="The console path" name="consolePath" />
+			</group>
+			<!--childElement inplace="true" description="" caption="" name="http://www.mulesoft.org/schema/mule/apikit/flow-mapping"></childElement -->
+			<group caption="Mappings" id="mappings">
+				<childElement visibleInDialog="false" allowMultiple="true" inplace="true" required="false" description="" caption="" name="http://www.mulesoft.org/schema/mule/apikit/flow-mapping"></childElement>
+				<custom javaType="java.lang.String" class="org.mule.tooling.apikit.widgets.APIKitMappingCustomEditor"
+					description="Mapp resources and their actions to flows" caption="Mappings"
+					name="flow-mapping"></custom>	
+				<!--custom javaType="java.lang.String" recalcWhen="config-ref"
+					class="org.mule.tooling.apikit.widgets.APIKitMappingCustomEditor"
+					description="Mapp resources and their actions to flows" caption="Mappings"
+					name="flow-mapping"></custom-->
 			</group>
 		</attribute-category>
 	</global>
+	
+	<nested localId="flow-mapping" caption="" description="" required="false">
+		<string name="resource"
+			description="In case that the key above can't be found in the object store, the default expression is used to generate a value. This is useful in the case of the very first poll."
+			caption="Default Expression" indented="true" visibleInDialog="false"/>
+		<string name="action"
+			description="In case that the key above can't be found in the object store, the default expression is used to generate a value. This is useful in the case of the very first poll."
+			caption="Default Expression" indented="true" visibleInDialog="false"/>   	
+		<string name="flow"
+			description="In case that the key above can't be found in the object store, the default expression is used to generate a value. This is useful in the case of the very first poll."
+			caption="Default Expression" indented="true" visibleInDialog="false"/>
+	</nested>
+	<!-- nested localId="mapping" caption="" description="">
+		<custom javaType="java.lang.String" class="org.mule.tooling.apikit.widgets.APIKitMappingCustomEditor"
+					description="Mapp resources and their actions to flows" caption="Mappings"
+					name="flow-mapping"></custom>    					
+	</nested -->
 
 	<flow versions="[3.4.0,8.0.0];EE" localId="mapping-exception-strategy"
 		description="This exception strategy allows you to map status codes to exceptions"
 		caption="Mapping Exception Strategy" icon="icons/small/CatchExceptionStrategy-24x16-1.png"
-		image="icons/small/CatchExceptionStrategy-24x16-1.png" allowMulipleChildren="true"
-		allowsAllExceptInbounds="true" visible="true" abstract="false"
-		category="org.mule.tooling.ui.modules.core.exceptions">
+		image="icons/small/CatchExceptionStrategy-24x16-1.png"
+		allowMulipleChildren="true" allowsAllExceptInbounds="true" visible="true"
+		abstract="false" category="org.mule.tooling.ui.modules.core.exceptions">
 		<attribute-category caption="General"
 			description="This exception strategy allows you to map status codes to exceptions">
 			<group caption="Generic" id="mapp-exception-strategy">

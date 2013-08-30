@@ -6,10 +6,26 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.mule.tooling.apikit.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
- org.apache.commons.lang;bundle-version="2.3.0",
+ org.apache.commons.lang,
  org.eclipse.jdt.core,
- org.eclipse.core.runtime
+ org.eclipse.core.runtime,
+ org.mule.tooling.ui.modules.core;bundle-version="3.5.0",
+ org.mule.tooling.model;bundle-version="3.5.0",
+ org.mule.tooling.core;bundle-version="3.5.0"
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: .
+Bundle-ClassPath: .,
+ lib/commons-beanutils.jar,
+ lib/commons-collections.jar,
+ lib/commons-digester.jar,
+ lib/commons-io.jar,
+ lib/commons-lang.jar,
+ lib/commons-logging.jar,
+ lib/commons-validator.jar,
+ lib/log4j.jar,
+ lib/oro.jar,
+ lib/raml-parser.jar,
+ lib/slf4j-api.jar,
+ lib/slf4j-log4j12.jar,
+ lib/xml-apis.jar
