@@ -1,4 +1,4 @@
-%TAG ! tag:heaven-lang.org,1.0:
+%TAG ! tag:raml.org,0.1:
 ---
 title: Test API
 baseUri: http://localhost/{path}
@@ -11,3 +11,7 @@ baseUri: http://localhost/{path}
     patch:
         responses:
             204: !!null
+    put: ~
+
+/includedResource: !include org/mule/module/apikit/config/config-1.yaml
+

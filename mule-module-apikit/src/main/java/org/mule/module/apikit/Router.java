@@ -1,5 +1,7 @@
 package org.mule.module.apikit;
 
+import static org.raml.parser.rule.ValidationResult.Level.ERROR;
+import static org.raml.parser.rule.ValidationResult.Level.WARN;
 import static org.yaml.snakeyaml.nodes.Tag.STR;
 
 import org.mule.api.DefaultMuleException;
@@ -55,7 +57,7 @@ import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.visitor.YamlDocumentBuilder;
-import org.raml.parser.visitor.YamlDocumentValidator;
+import org.raml.parser.visitor.YamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.nodes.Node;
@@ -112,8 +114,8 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         }
 
         inboundTransformer = new ObjectToString();
-        loadApiDefinition();
         loadRestFlowMap();
+        loadApiDefinition();
         consoleHandler = new ConsoleHandler(api.getBaseUri(), config.getConsolePath());
 
         routingTable = new HashMap<URIPattern, Resource>();
@@ -248,19 +250,37 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
 
     protected void validateRaml(String ramlBuffer, ResourceLoader resourceLoader)
     {
-        YamlDocumentValidator validator = new YamlDocumentValidator(Raml.class, resourceLoader);
-        List<ValidationResult> results = validator.validate(ramlBuffer);
-        if (!results.isEmpty())
+        List<ValidationResult> results = YamlValidationService.createDefault(Raml.class, resourceLoader, new ActionImplementedRuleExtension(restFlowMap)).validate(ramlBuffer);
+        List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
+        if (!errors.isEmpty())
         {
-            StringBuilder sb = new StringBuilder();
-            sb.append("Invalid RAML: ").append(results.size()).append(" errors found\n\n");
-            for (ValidationResult result : results)
-            {
-                sb.append(result.getMessage()).append(" -- ");
-                sb.append(result.getStartMark()).append("\n");
-            }
-            throw new ApikitRuntimeException(sb.toString());
+            String msg = aggregateMessages(errors, "Invalid RAML -- errors found: ");
+            throw new ApikitRuntimeException(msg);
         }
+        List<ValidationResult> warnings = ValidationResult.getLevel(WARN, results);
+        if (!warnings.isEmpty())
+        {
+            logger.warn(aggregateMessages(warnings, "RAML Warnings -- warnings found: "));
+        }
+    }
+
+    private String aggregateMessages(List<ValidationResult> results, String header)
+    {
+        StringBuilder sb = new StringBuilder();
+        sb.append(header).append(results.size()).append("\n\n");
+        for (ValidationResult result : results)
+        {
+            sb.append(result.getMessage()).append(" -- ");
+            sb.append("file: ");
+            sb.append(result.getIncludeName() != null ? result.getIncludeName() : config.getRaml());
+            sb.append(" -- ");
+            if (result.getStartMark() != null)
+            {
+                sb.append(result.getStartMark());
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 
     private void injectEndpointUri(YamlDocumentBuilder<Raml> builder)

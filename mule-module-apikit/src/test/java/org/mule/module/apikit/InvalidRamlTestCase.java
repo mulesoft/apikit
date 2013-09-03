@@ -27,7 +27,7 @@ public class InvalidRamlTestCase
         }
         catch (ApikitRuntimeException e)
         {
-            assertThat(e.getMessage(), containsString("2 errors found"));
+            assertThat(e.getMessage(), containsString("errors found: 2"));
         }
     }
 
