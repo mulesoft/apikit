@@ -20,6 +20,7 @@ public class InvalidRamlTestCase
     {
 
         Router router = new Router();
+        router.setConfig(new Configuration());
         try
         {
             router.validateRaml(getRaml("org/mule/module/apikit/invalid-config.yaml"), new DefaultResourceLoader());
