@@ -24,7 +24,9 @@ import org.eclipse.jdt.launching.JavaRuntime;
 import org.mule.tooling.apikit.template.MavenParameterReplacer;
 import org.mule.tooling.apikit.template.TemplateFileWriter;
 import org.mule.tooling.core.builder.MuleNature;
+import org.mule.tooling.core.io.IMuleResources;
 import org.mule.tooling.core.packageManager.ImportPackageManager;
+import org.mule.tooling.core.utils.CoreUtils;
 
 
 /**
@@ -34,6 +36,7 @@ import org.mule.tooling.core.packageManager.ImportPackageManager;
 public class ImportAPIKitProjectManager extends ImportPackageManager {
 
     private PojoMavenModel mavenModel;
+    private File projectRootFile;
     public static final String POM_FILENAME = "pom.xml";
     public static final String POM_TEMPLATE_PATH = "/templates/pom.xml.tmpl";
 
@@ -47,6 +50,7 @@ public class ImportAPIKitProjectManager extends ImportPackageManager {
     public ImportAPIKitProjectManager(PojoMavenModel mavenModel, String projectName, File rootFile, String runtimeId, boolean copyToWorkspace) {
         super(projectName, rootFile, runtimeId, copyToWorkspace);
         this.mavenModel = mavenModel;
+        this.projectRootFile = rootFile;
     }
     
     /**
@@ -65,8 +69,8 @@ public class ImportAPIKitProjectManager extends ImportPackageManager {
 
         // Project is created in the default location
         project.create(desc, new SubProgressMonitor(monitor, 1));
-        copyEclipseDescriptorFiles(projectFile, monitor);
-        copyMuleToolingConfigFile(projectFile);
+        copyEclipseDescriptors(projectFile, monitor);
+        copyMuleToolingFile(projectFile);
         project.open(new SubProgressMonitor(monitor, 1));
         generatePomFile(project);
 
@@ -91,13 +95,54 @@ public class ImportAPIKitProjectManager extends ImportPackageManager {
 
         return javaProject;
     }
+    
+    /**
+     * Copy the classpath and the project files to the new project.
+     * 
+     * @param newProject
+     * @param monitor
+     */
+    private void copyEclipseDescriptors(final File newProject, final IProgressMonitor monitor) throws IOException {
+        final File dotClasspath = new File(projectRootFile, META_INF_DIR + "/" + IMuleResources.DOT_CLASSPATH);
+        if (dotClasspath.exists()) {
+            CoreUtils.copyFiles(dotClasspath, new File(newProject, "."));
+        } else {
+            final File rootDotClasspath = new File(projectRootFile, IMuleResources.DOT_CLASSPATH);
+            if (rootDotClasspath.exists()) {
+                CoreUtils.copyFiles(rootDotClasspath, new File(newProject, "."));
+            }
+        }
 
+        final File dotProject = new File(projectRootFile, META_INF_DIR + "/" + IMuleResources.DOT_PROJECT);
+        if (dotProject.exists()) {
+            CoreUtils.copyFiles(dotProject, new File(newProject, "."));
+        } else {
+            final File rootDotProject = new File(projectRootFile, IMuleResources.DOT_PROJECT);
+            if (rootDotProject.exists()) {
+                CoreUtils.copyFiles(rootDotProject, new File(newProject, "."));
+            }
+        }
+    }
+    
     private void generatePomFile(IProject project) {
         TemplateFileWriter templateWriter = new TemplateFileWriter(project, new NullProgressMonitor());
         try {
             templateWriter.apply(POM_TEMPLATE_PATH, POM_FILENAME, new MavenParameterReplacer(mavenModel));
         } catch (CoreException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Copies the mule project file.
+     * 
+     * @param newProject
+     */
+    private void copyMuleToolingFile(File newProject) throws IOException {
+        final File projectDescriptorFile = new File(projectRootFile, META_INF_DIR + "/" + IMuleResources.MULE_TOOLING_APPLICATION_FILE);
+
+        if (projectDescriptorFile.exists()) {
+            CoreUtils.copyFiles(projectDescriptorFile, new File(newProject, "."));
         }
     }
 

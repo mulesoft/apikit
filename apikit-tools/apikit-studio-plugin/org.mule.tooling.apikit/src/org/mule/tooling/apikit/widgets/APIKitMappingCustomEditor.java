@@ -76,11 +76,6 @@ public class APIKitMappingCustomEditor extends CustomEditor {
     }
 
     @Override
-    public void refreshOptions() {
-        System.out.println("refreshing options...");
-    }
-
-    @Override
     protected Control createControl(AttributesPropertyPage parentPage) {
         globalElementPage = parentPage;
         
@@ -368,6 +363,11 @@ public class APIKitMappingCustomEditor extends CustomEditor {
 
     public void setRamlPath(String ramlPath) {
         this.ramlPath = ramlPath;
+    }
+
+    @Override
+    public void refreshOptions() {
+        
     }
 
 }
