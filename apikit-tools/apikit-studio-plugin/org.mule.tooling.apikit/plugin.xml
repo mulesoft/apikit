@@ -32,4 +32,26 @@
          </targetServer>
       </muleExample>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+	  <category
+            name="%NewWizards.Category.Basic"
+            id="org.eclipse.ui.Basic">
+      </category>
+      <wizard
+            canFinishEarly="false"
+            class="org.mule.tooling.apikit.wizard.NewAPIKitProjectWizard"
+            category="org.eclipse.ui.Basic"
+            icon="icons/small/newAPIKitProject-16x16.png"
+            id="org.mule.tooling.apikit.wizard.ApikitProject"
+            name="APIkit Project"
+            project="true">
+      </wizard>
+   </extension>
+   <extension point="org.eclipse.ui.perspectiveExtensions">
+		<perspectiveExtension targetID="*">
+			<newWizardShortcut id="org.mule.tooling.apikit.wizard.ApikitProject">
+			</newWizardShortcut>
+		</perspectiveExtension>
+	</extension>
 </plugin>

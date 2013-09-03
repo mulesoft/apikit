@@ -9,10 +9,15 @@ Require-Bundle: org.eclipse.ui,
  org.apache.commons.lang,
  org.eclipse.jdt.core,
  org.eclipse.core.runtime,
- org.mule.tooling.ui.modules.core;bundle-version="3.5.0",
- org.mule.tooling.model;bundle-version="3.5.0",
- org.mule.tooling.core;bundle-version="3.5.0",
- org.dom4j;bundle-version="1.6.1"
+ org.mule.tooling.ui.modules.core,
+ org.mule.tooling.model,
+ org.mule.tooling.core,
+ org.dom4j,
+ org.mule.tooling.maven;bundle-version="3.5.0",
+ org.mule.tooling.maven.ui,
+ org.mule.tooling.ui;bundle-version="3.5.0",
+ org.apache.velocity;bundle-version="1.5.0",
+ org.eclipse.jdt.launching;bundle-version="3.6.101"
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
