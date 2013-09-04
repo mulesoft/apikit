@@ -42,8 +42,8 @@ public class ActionNotImplementedTupleRule extends DefaultTupleRule
         List<ValidationResult> result = new ArrayList<ValidationResult>();
         if (restFlowMap == null || restFlowMap.get(action + ":" + resource) == null)
         {
-            result.add(ValidationResult.create(WARN, String.format("Action %s from Resource %s has no implementation",
-                                                                   action, resource)));
+            result.add(ValidationResult.create(WARN, String.format("Resource-action pair has no implementation -> %s:%s ",
+                                                                   resource, action)));
         }
         return result;
     }

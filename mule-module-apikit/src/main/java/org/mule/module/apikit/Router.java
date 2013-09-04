@@ -228,7 +228,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         InputStream ramlStream = loader.fetchResource(config.getRaml());
         if (ramlStream == null)
         {
-            throw new ApikitRuntimeException(String.format("RAML descriptor %s not found", config.getRaml()));
+            throw new ApikitRuntimeException(String.format("API descriptor %s not found", config.getRaml()));
         }
 
         String ramlBuffer;
@@ -238,7 +238,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         }
         catch (IOException e)
         {
-            throw new ApikitRuntimeException(String.format("Cannot read RAML descriptor %s", config.getRaml()));
+            throw new ApikitRuntimeException(String.format("Cannot read API descriptor %s", config.getRaml()));
         }
 
         validateRaml(ramlBuffer, loader);
@@ -254,13 +254,13 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
         if (!errors.isEmpty())
         {
-            String msg = aggregateMessages(errors, "Invalid RAML -- errors found: ");
+            String msg = aggregateMessages(errors, "Invalid API descriptor -- errors found: ");
             throw new ApikitRuntimeException(msg);
         }
         List<ValidationResult> warnings = ValidationResult.getLevel(WARN, results);
         if (!warnings.isEmpty())
         {
-            logger.warn(aggregateMessages(warnings, "RAML Warnings -- warnings found: "));
+            logger.warn(aggregateMessages(warnings, "API descriptor Warnings -- warnings found: "));
         }
     }
 
@@ -271,12 +271,12 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         for (ValidationResult result : results)
         {
             sb.append(result.getMessage()).append(" -- ");
-            sb.append("file: ");
+            sb.append(" file: ");
             sb.append(result.getIncludeName() != null ? result.getIncludeName() : config.getRaml());
-            sb.append(" -- ");
             if (result.getStartMark() != null)
             {
-                sb.append(result.getStartMark());
+                sb.append(" -- ");
+                 sb.append(result.getStartMark());
             }
             sb.append("\n");
         }
@@ -297,7 +297,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         String chBaseUri = scheme + "://" + chAddress + path;
         if (logger.isDebugEnabled())
         {
-            logger.debug("raml baseUri: " + api.getBaseUri());
+            logger.debug("yaml baseUri: " + api.getBaseUri());
             logger.debug("mule baseUri: " + address);
             logger.debug("chub baseUri: " + chBaseUri);
         }
