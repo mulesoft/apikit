@@ -54,4 +54,19 @@
 			</newWizardShortcut>
 		</perspectiveExtension>
 	</extension>
+	<extension
+         point="org.mule.tooling.projectStructure">
+      <projectStructure
+            description="This is the extension used to add the &quot;api&quot; folder to the project structure."
+            folderPath="src/main/api"
+            id="org.raml.projectStructure"
+            isSourceFolder="true"
+            name="Structure Project Extension"
+            addToMuleRuntime="false"
+            wizardId="org.mule.tooling.apikit.wizard.ApikitProject">
+         <fileType
+               extension="yaml">
+         </fileType>
+      </projectStructure>
+   </extension>
 </plugin>

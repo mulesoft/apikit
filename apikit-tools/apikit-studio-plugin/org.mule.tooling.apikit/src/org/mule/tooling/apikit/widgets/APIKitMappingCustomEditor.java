@@ -262,7 +262,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
             PropertyCollectionMap subMap = new PropertyCollectionMap();
             subMap.addProperty("flow", mapping.getFlow().getName());
             subMap.addProperty("resource", mapping.getResource().getUri());
-            subMap.addProperty("action", mapping.getAction().getType().name());
+            subMap.addProperty("action", mapping.getAction().getType().name().toLowerCase());
             props.addPropertyCollection("@http://www.mulesoft.org/schema/mule/apikit/flow-mapping;"+i, subMap);
             i++;
         }
