@@ -31,8 +31,7 @@ public class Scaffolder {
     }
 
     public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> yamls,
-                      Map<File, InputStream> xmls)
-        throws MojoExecutionException {
+                      Map<File, InputStream> xmls)  {
         this.log = log;
 
         GenerationModelProvider generationModelProvider = new GenerationModelProvider();
