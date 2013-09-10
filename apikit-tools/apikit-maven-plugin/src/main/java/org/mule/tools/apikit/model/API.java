@@ -30,6 +30,7 @@ public class API {
             if (api.xmlFile == null && xmlFile != null) {
                 api.xmlFile = xmlFile;
             }
+            api.config = config;
 
             return api;
         }
