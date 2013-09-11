@@ -237,7 +237,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
             PropertiesMap propertiesMap = propertyCollectionMap.getPropertiesMap();
             String resource = propertiesMap.getProperty("resource", "");
             String action = propertiesMap.getProperty("action", "");
-            String flow = propertiesMap.getProperty("flow", "");
+            String flow = propertiesMap.getProperty("flow-ref", "");
             addMapping(resource, action, flow);
         }
         mappingsTableViewer.setInput(mappings);
@@ -260,7 +260,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
         int i = 0;
         for (Mapping mapping : mappings) {            
             PropertyCollectionMap subMap = new PropertyCollectionMap();
-            subMap.addProperty("flow", mapping.getFlow().getName());
+            subMap.addProperty("flow-ref", mapping.getFlow().getName());
             subMap.addProperty("resource", mapping.getResource().getUri());
             subMap.addProperty("action", mapping.getAction().getType().name().toLowerCase());
             props.addPropertyCollection("@http://www.mulesoft.org/schema/mule/apikit/flow-mapping;"+i, subMap);
