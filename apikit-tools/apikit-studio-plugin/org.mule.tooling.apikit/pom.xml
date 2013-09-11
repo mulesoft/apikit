@@ -75,18 +75,6 @@
 
 	<repositories>
 		<repository>
-			<id>muleee.releases</id>
-			<name>MuleEE Releases Repository</name>
-			<url>http://dev.ee.mulesource.com/repository/content/repositories/releases/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>muleee.snapshots</id>
-			<name>MuleEE Snapshots Repository</name>
-			<layout>default</layout>
-			<url>http://dev.ee.mulesource.com/repository/content/repositories/snapshots/</url>
-		</repository>
-		<repository>
                 <id>mulesoft-snapshots</id>
                 <name>MuleSoft Snapshots Repository</name>
                 <url>http://repository.mulesoft.org/snapshots/</url>

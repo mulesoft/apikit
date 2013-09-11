@@ -1,0 +1,9 @@
+**/bin/
+.metadata
+.DS_STORE
+**/target/
+org.mule.tooling.apikit/lib/*jar
+org.mule.tooling.apikit.feature/lib/*jar
+org.mule.tooling.apikit/*jar
+org.mule.tooling.apikit.deps/lib/*jar
+**/__contributionDependenciesLibs__
