@@ -34,6 +34,7 @@
 		<module>org.mule.tooling.apikit.target</module>
 		<module>org.mule.tooling.apikit</module>
 		<module>org.mule.tooling.apikit.feature</module>
+		<module>org.mule.tooling.apikit.deps</module>
 		<module>org.mule.tooling.apikit.p2</module>
 	</modules>
 

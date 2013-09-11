@@ -86,5 +86,17 @@
 			<layout>default</layout>
 			<url>http://dev.ee.mulesource.com/repository/content/repositories/snapshots/</url>
 		</repository>
+		<repository>
+                <id>mulesoft-snapshots</id>
+                <name>MuleSoft Snapshots Repository</name>
+                <url>http://repository.mulesoft.org/snapshots/</url>
+                <layout>default</layout>
+            </repository>
+            <repository>
+                <id>mulesoft-releases</id>
+                <name>MuleSoft Releases Repository</name>
+                <url>http://repository.mulesoft.org/releases/</url>
+                <layout>default</layout>
+            </repository>
 	</repositories>
 </project>

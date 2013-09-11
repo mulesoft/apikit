@@ -42,7 +42,7 @@
 		<string name="action"
 			description="In case that the key above can't be found in the object store, the default expression is used to generate a value. This is useful in the case of the very first poll."
 			caption="Default Expression" indented="true" visibleInDialog="false"/>   	
-		<string name="flow"
+		<string name="flow-ref"
 			description="In case that the key above can't be found in the object store, the default expression is used to generate a value. This is useful in the case of the very first poll."
 			caption="Default Expression" indented="true" visibleInDialog="false"/>
 	</nested>
