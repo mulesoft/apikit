@@ -204,4 +204,11 @@ Act (UCITA) will apply in any respect to this Agreement.
          install-size="0"
          version="0.0.0"/>
 
+   <plugin
+         id="org.mule.tooling.apikit.deps"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
