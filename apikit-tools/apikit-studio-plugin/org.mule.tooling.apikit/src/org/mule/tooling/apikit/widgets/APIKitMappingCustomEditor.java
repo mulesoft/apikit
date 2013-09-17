@@ -248,7 +248,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
         resource.setRelativeUri(resourceUri);
         resource.setParentUri("");
         Action action = new Action();
-        action.setType(ActionType.valueOf(actionName));
+        action.setType(ActionType.valueOf(actionName.toUpperCase()));
         Flow flow = new Flow();
         flow.setName(flowName);
         mappings.add(new Mapping(resource, action, flow));

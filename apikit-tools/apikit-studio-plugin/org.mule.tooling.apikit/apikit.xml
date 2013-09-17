@@ -17,9 +17,9 @@
 				<boolean caption="Use Console"
 					description="Select/disable in order to use or not to the console"
 					name="consoleEnabled" xsdType="substitutableBoolean"
-					alwaysFillSimple="true" defaultValue="true" />
+					alwaysFill="true" defaultValue="true" />
 				<string caption="Console Path" defaultValue="console"
-					description="The console path" name="consolePath" />
+					description="The console path" name="consolePath" alwaysFill="true"/>
 			</group>
 			<!--childElement inplace="true" description="" caption="" name="http://www.mulesoft.org/schema/mule/apikit/flow-mapping"></childElement -->
 			<group caption="Mappings" id="mappings">
