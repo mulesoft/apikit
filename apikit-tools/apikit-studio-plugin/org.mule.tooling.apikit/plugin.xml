@@ -21,9 +21,9 @@
    <extension
          point="org.mule.tooling.muleExamples">
       <muleExample
-            description="This is an APIKit project example."
+            description="Illustrates a fully-implemented REST API with RAML interface and Mule backend."
             path="examples/apikit-leagues.zip"
-            name="ApiKit Project Example">
+            name="REST API with APIkit">
          <targetServer
                serverVersion="3.5.*">
          </targetServer>
