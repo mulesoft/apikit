@@ -4,7 +4,7 @@ title: Sample API
 version: v1
 baseUri: http://localhost/api
 /pet:
-    name: Pets
+    displayName: Pets
     get:
         responses:
             200:
@@ -18,14 +18,14 @@ baseUri: http://localhost/api
                     application/json: !!null
                     text/xml: !!null
     /owner:
-        name: Pet Owners
+        displayName: Pet Owners
         get:
             responses:
                 200:
                     body:
                         application/json: !!null
 /car:
-    name: Cars
+    displayName: Cars
     get:
         responses:
             200:

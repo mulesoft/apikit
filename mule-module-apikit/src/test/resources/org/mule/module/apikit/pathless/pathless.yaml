@@ -5,7 +5,7 @@ version: v1
 baseUri: http://api.myapp.com/api/{version}
 
 /orders:
-  name: Get Orders Summary
+  displayName: Get Orders Summary
   get:
     summary: |
       Retrieve all Orders summary.

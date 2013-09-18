@@ -112,7 +112,7 @@ public class GenerationModel {
     public String getName() {
         StringBuilder name = new StringBuilder();
         name.append(this.getStringFromActionType());
-        String name1 = this.resource.getName();
+        String name1 = this.resource.getDisplayName();
 
         if (name1 == null) {
             StringBuffer buff = new StringBuffer();

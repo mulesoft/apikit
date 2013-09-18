@@ -13,7 +13,7 @@ documentation:
       content: |
         If you need support, please contact apikit@mulesoft.com.
 /leagues:
-    name: Leagues
+    displayName: Leagues
     get:
         responses:
             200:
@@ -52,14 +52,14 @@ documentation:
             get:
                 queryParameters:
                     offset:
-                        name: Offset
+                        displayName: Offset
                         description: result set offset
                         type: integer
                         required: false
                         minimum: 0
                         default: 0
                     limit:
-                        name: Limit
+                        displayName: Limit
                         description: result set size
                         type: integer
                         required: false

@@ -9,7 +9,7 @@ documentation:
     content: |
       This sample API has been created as part of your APIkit project. It is located in src/main/api. Feel free to poke around.
 /teams:
-  name: Teams
+  displayName: Teams
   #description: |
   #  A collection of teams that are participating in La Liga. Teams API allow you add, remove and retrieve individual team information from La Liga.
   get:
@@ -45,7 +45,7 @@ documentation:
         description: |
           The team already exists
   /{teamId}:
-    name: Team
+    displayName: Team
     #description: |
     #  The team is the basic unit for keeping track of a roster of players that are participating together in La Liga. With the Team APIs, you can obtain team-related information, like the team name, stats, points, and more.
     uriParameters:
@@ -91,7 +91,7 @@ documentation:
           description: |
             Unable to find a team with that identifier
 /positions:
-  name: Position Table
+  displayName: Position Table
   get:
     summary: Retrieve the current standing for the current season
     responses:
@@ -101,7 +101,7 @@ documentation:
             example: !include examples/positions-example.json
             schema: !include schemas/positions-output.json
 /fixture:
-  name: Fixture
+  displayName: Fixture
   #description: |
   #  A collection of teams that are participating in La Liga. Teams API allow you add, remove and retrieve individual team information from La Liga.
   get:
@@ -114,7 +114,7 @@ documentation:
             schema: !include schemas/fixture-schema-output.json 
  
   /{homeTeamId}/{awayTeamId}:
-    name: Match
+    displayName: Match
     uriParameters:
       homeTeamId:
         description: Id of the team that plays in its home stadium

@@ -136,7 +136,7 @@ public class GenerationModelTest {
         Action action = mock(Action.class);
         when(action.getType()).thenReturn(ActionType.GET);
         Resource resource = mock(Resource.class);
-        when(resource.getName()).thenReturn("Animal");
+        when(resource.getDisplayName()).thenReturn("Animal");
         when(resource.getUri()).thenReturn("/api/pet");
         API api = mock(API.class);
         assertEquals("retrieveAnimal", new GenerationModel(api, resource, action).getName());

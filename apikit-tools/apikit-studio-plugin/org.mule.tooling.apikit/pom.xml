@@ -6,7 +6,7 @@
 	<parent>
 		<artifactId>apikit-studio-plugin</artifactId>
 		<groupId>org.mule.tools</groupId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>0.2-SNAPSHOT</version>
 	</parent>
 	<name>APIkit Studio Plugin</name>
 	<groupId>org.mule.tools</groupId>
@@ -35,12 +35,12 @@
 								<artifactItem>
 									<groupId>org.mule.modules</groupId>
 									<artifactId>mule-module-apikit</artifactId>
-									<version>0.1-SNAPSHOT</version>
+									<version>${project.version}</version>
 								</artifactItem>
 								<artifactItem>
 									<groupId>org.mule.modules</groupId>
 									<artifactId>mule-module-apikit-plugin</artifactId>
-									<version>0.1-SNAPSHOT</version>
+									<version>${project.version}</version>
 									<type>zip</type>
 								</artifactItem>
 							</artifactItems>

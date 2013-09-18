@@ -4,7 +4,7 @@ title: Sample API
 version: v1
 baseUri: http://localhost/api
 /pet:
-    name: Pets
+    displayName: Pets
     get:
         responses:
             200:
