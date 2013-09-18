@@ -2,7 +2,7 @@
 <feature
       id="org.mule.tooling.apikit.feature"
       label="APIKit Studio Plugin"
-      version="1.0.0.qualifier">
+      version="0.2.0.qualifier">
 
    <description url="http://www.example.com/description">
       APIkit is a an Eclipse plugin for creating API definitions in
@@ -202,13 +202,13 @@ Act (UCITA) will apply in any respect to this Agreement.
          id="org.mule.tooling.apikit"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="0.2.0"/>
 
    <plugin
          id="org.mule.tooling.apikit.deps"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="0.2.0"
          unpack="false"/>
 
 </feature>
