@@ -10,6 +10,8 @@ public class Activator extends AbstractUIPlugin {
 
 	// The plug-in ID
 	public static final String PLUGIN_ID = "org.mule.tooling.apikit"; //$NON-NLS-1$
+	
+	public static final String API_FOLDER = "src/main/api";
 
 	// The shared instance
 	private static Activator plugin;

@@ -32,7 +32,7 @@
          </targetServer>
       </muleExample>
    </extension>
-   <extension
+   <!--extension
          point="org.eclipse.ui.newWizards">
 	  <category
             name="%NewWizards.Category.Basic"
@@ -53,7 +53,7 @@
 			<newWizardShortcut id="org.mule.tooling.apikit.wizard.ApikitProject">
 			</newWizardShortcut>
 		</perspectiveExtension>
-	</extension>
+	</extension-->
 	<extension
          point="org.mule.tooling.projectStructure">
       <projectStructure
@@ -104,5 +104,18 @@
         		</visibleWhen>
             </command>
         </menuContribution>
+   </extension>
+   <extension
+         point="org.mule.tooling.ui.wizardpagepart">
+         <wizardpagepart
+               class="org.mule.tooling.apikit.wizard.CreateAPIkitWizardPagePartExtension">
+         </wizardpagepart>
+   </extension>
+   <extension
+         point="org.mule.tooling.core.postImportActions">
+         <postImportAction
+            class="org.mule.tooling.apikit.action.EnableApikitSupportAction"
+            startLevel="11">
+      </postImportAction>
    </extension>
 </plugin>
