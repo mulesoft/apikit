@@ -8,6 +8,8 @@
 
 package org.mule.module.apikit.validation.cache;
 
+import static org.mule.module.apikit.validation.cache.SchemaCacheUtils.resolveSchema;
+
 import org.mule.api.MuleContext;
 import org.mule.module.apikit.validation.io.SchemaResourceLoader;
 
@@ -19,8 +21,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.eel.kitchen.jsonschema.util.JsonLoader;
-import org.raml.model.Action;
-import org.raml.model.MimeType;
 import org.raml.model.Raml;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -45,11 +45,7 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchemaAndNode
         if (schemaLocation.startsWith("/"))
         {
             //inline schema definition
-            //TODO remove hack to get schema using coords
-            String[] path = schemaLocation.split(",");
-            Action action = api.getResource(path[0]).getAction(path[1]);
-            MimeType mimeType = action.getBody().get(path[2]);
-            schemaNode = JsonLoader.fromString(mimeType.getSchema());
+            schemaNode = JsonLoader.fromString(resolveSchema(schemaLocation, api));
         }
         else
         {
@@ -63,4 +59,5 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchemaAndNode
         }
         return new JsonSchemaAndNode(schemaNode);
     }
+
 }

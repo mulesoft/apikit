@@ -22,8 +22,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.raml.model.Action;
-import org.raml.model.MimeType;
 import org.raml.model.Raml;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -49,11 +47,7 @@ public class XmlSchemaCacheLoader extends CacheLoader<String, Schema>
         if (schemaLocation.startsWith("/"))
         {
             //inline schema definition
-            //TODO remove hack to get schema using coords
-            String[] path = schemaLocation.split(",");
-            Action action = api.getResource(path[0]).getAction(path[1]);
-            MimeType mimeType = action.getBody().get(path[2]);
-            is = new ByteArrayInputStream(mimeType.getSchema().getBytes());
+            is = new ByteArrayInputStream(SchemaCacheUtils.resolveSchema(schemaLocation, api).getBytes());
         }
         else
         {

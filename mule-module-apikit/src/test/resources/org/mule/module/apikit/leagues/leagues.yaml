@@ -3,6 +3,7 @@
 title: Leagues API
 version: v1
 baseUri: http://localhost/api
+
 documentation:
     - title: Leagues
       content: |
@@ -12,6 +13,11 @@ documentation:
     - title: Contact
       content: |
         If you need support, please contact apikit@mulesoft.com.
+
+schemas:
+    league-json: !include org/mule/module/apikit/leagues/league.json
+    league-xml: !include org/mule/module/apikit/leagues/league.xsd
+
 /leagues:
     displayName: Leagues
     get:
@@ -23,11 +29,11 @@ documentation:
     post:
         body: &league-schema
             application/json:
-                schema: !include org/mule/module/apikit/leagues/league.json
+                schema: league-json
                 example: |
                     { "name" : "liga criolla" }
             text/xml:
-                schema: !include org/mule/module/apikit/leagues/league.xsd
+                schema: league-xml
         responses:
             201: !!null
     /{leagueId}:

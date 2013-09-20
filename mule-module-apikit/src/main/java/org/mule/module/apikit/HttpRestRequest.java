@@ -15,6 +15,7 @@ import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.transform.TransformerCache;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
+import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
 
@@ -226,11 +227,7 @@ public class HttpRestRequest
     {
         SchemaType schemaType = mimeTypeName.contains("json") ? SchemaType.JSONSchema : SchemaType.XMLSchema;
         RestSchemaValidator validator = RestSchemaValidatorFactory.getInstance().createValidator(schemaType, requestEvent.getMuleContext());
-        StringBuilder key = new StringBuilder(action.getResource().getUri());
-        key.append(",").append(action.getType());
-        key.append(",").append(mimeTypeName);
-        validator.validate(key.toString(), requestEvent, api);
-
+        validator.validate(SchemaCacheUtils.getSchemaCacheKey(action, mimeTypeName), requestEvent, api);
     }
 
     private String negotiateOutputRepresentation() throws MuleRestException
