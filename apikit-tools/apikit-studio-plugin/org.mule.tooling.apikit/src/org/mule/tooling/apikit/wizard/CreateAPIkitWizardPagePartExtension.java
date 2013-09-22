@@ -16,8 +16,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -35,7 +38,9 @@ import org.mule.tooling.ui.wizards.extensible.WizardContext;
 
 public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExtension implements IConfigurationTemplateExtension {
 
-    private static final String ADD_APIKIT_TEMPLATE_PROJECT = "Add APIKit template project";
+    private static final String APIKIT_SETTINGS = "APIKit Settings";
+
+    private static final String ADD_APIKIT_COMPONENTS = "Add APIKit components";
 
     @WizardContext
     private String projectName;
@@ -64,8 +69,17 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
 
     @Override
     public void createControl(Composite parent) {
-        final Button checkAPIkitButton = new Button(parent, SWT.CHECK);
-        checkAPIkitButton.setText(ADD_APIKIT_TEMPLATE_PROJECT);
+        Group apikitGroupBox = new Group(parent, SWT.NULL);
+        GridLayout layout = new GridLayout();
+        layout.marginWidth = 5;
+        layout.marginHeight = 5;
+        layout.numColumns = 1;
+
+        apikitGroupBox.setLayout(layout);
+        apikitGroupBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        apikitGroupBox.setText(APIKIT_SETTINGS);
+        final Button checkAPIkitButton = new Button(apikitGroupBox, SWT.CHECK);
+        checkAPIkitButton.setText(ADD_APIKIT_COMPONENTS);
         checkAPIkitButton.addSelectionListener(new SelectionAdapter() {
 
             @Override
