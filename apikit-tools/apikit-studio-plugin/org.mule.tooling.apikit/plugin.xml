@@ -93,7 +93,7 @@
             <command
                 label="Generate Flows"
                 commandId="org.mule.tooling.apikit.ui.commands.generateflows"
-                icon="icons/small/apikit16x16.png">
+                icon="icons/small/scaffolder.jpg">
                	<visibleWhen>
 					<with variable="selection">
 			   		    <iterate operator="and" ifEmpty="false">
