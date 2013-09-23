@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.mule.tooling.apikit.action.AddMappingAction;
 import org.mule.tooling.apikit.action.RemoveMappingAction;
+import org.mule.tooling.apikit.util.APIKitHelper;
 import org.mule.tooling.core.MuleConfigurationsCache;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.model.IMuleProject;
@@ -58,7 +59,9 @@ import org.raml.model.Action;
 import org.raml.model.ActionType;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
-import org.raml.parser.visitor.YamlDocumentBuilder;
+import org.raml.parser.loader.CompositeResourceLoader;
+import org.raml.parser.loader.DefaultResourceLoader;
+import org.raml.parser.loader.FileResourceLoader;
 
 public class APIKitMappingCustomEditor extends CustomEditor {
 
@@ -188,8 +191,8 @@ public class APIKitMappingCustomEditor extends CustomEditor {
             InputStream inputStream;
             try {
                 inputStream = new FileInputStream(ramlFile);
-                YamlDocumentBuilder<Raml> ramlSpecBuilder = new YamlDocumentBuilder<Raml>(Raml.class);
-                return ramlSpecBuilder.build(inputStream);
+                CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile));
+                return APIKitHelper.INSTANCE.retrieveRaml(ramlFile.getName(), inputStream, resourceLoader);
             } catch (FileNotFoundException e) {
                 System.out.println("raml file no existia");
             }

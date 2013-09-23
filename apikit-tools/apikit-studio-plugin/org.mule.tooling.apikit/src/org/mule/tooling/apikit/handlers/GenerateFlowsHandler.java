@@ -31,6 +31,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.apikit.Activator;
+import org.mule.tooling.apikit.util.APIKitHelper;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.io.IMuleResources;
 import org.mule.tooling.messageflow.editor.MultiPageMessageFlowEditor;
@@ -38,13 +39,9 @@ import org.mule.tooling.messageflow.util.MessageFlowUtils;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
 import org.mule.tooling.ui.utils.UiUtils;
 import org.mule.tools.apikit.ScaffolderAPI;
-import org.raml.model.Raml;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.FileResourceLoader;
-import org.raml.parser.rule.ValidationResult;
-import org.raml.parser.visitor.YamlDocumentValidator;
-import org.raml.parser.visitor.YamlValidationService;
 
 public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
 
@@ -63,17 +60,21 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
             // get the selected file
             ramlFile = (IFile) structured.getFirstElement();
             // get the path
-            YamlDocumentValidator ramlValidator = new YamlDocumentValidator(Raml.class);
+//            YamlDocumentValidator ramlValidator = new YamlDocumentValidator(Raml.class);
             File file = ramlFile.getRawLocation().toFile();
-            YamlValidationService validationService = new YamlValidationService(new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(file)),
-                    ramlValidator);
+            // YamlValidationService validationService = new YamlValidationService(new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(file)),
+            // ramlValidator);
             String content;
             try {
                 content = new Scanner(file).useDelimiter("\\Z").next();
-                List<ValidationResult> validation = validationService.validate(content);
-                if (isRamlFile(file) && validation.isEmpty()) {
+                CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(file));
+                if (isRamlFile(file) && APIKitHelper.INSTANCE.isBuildableYaml(file.getName(), content, resourceLoader)) {
                     return true;
                 }
+                // List<ValidationResult> validation = validationService.validate(content);
+                // if (isRamlFile(file) && validation.isEmpty()) {
+                // return true;
+                // }
             } catch (FileNotFoundException e) {
                 MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, MuleCorePlugin.PLUGIN_ID, e.getMessage()));
                 e.printStackTrace();

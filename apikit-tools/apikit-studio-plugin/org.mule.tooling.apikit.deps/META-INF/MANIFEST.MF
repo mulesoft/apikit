@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: APIKit dependencies plugin
-Bundle-SymbolicName: org.mule.tooling.apikit.deps
+Bundle-SymbolicName: org.mule.tooling.apikit.deps;singleton:=true
 Bundle-Version: 0.2.0.qualifier
 Bundle-Activator: org.mule.tooling.apikit.deps.Activator
 Require-Bundle: org.eclipse.core.runtime
