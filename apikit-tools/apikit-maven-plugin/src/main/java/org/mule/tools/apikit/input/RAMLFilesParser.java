@@ -28,7 +28,6 @@ import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 import org.raml.parser.visitor.RamlValidationService;
-import org.raml.parser.visitor.YamlDocumentBuilder;
 
 public class RAMLFilesParser
 {
@@ -57,9 +56,10 @@ public class RAMLFilesParser
             }
             ResourceLoader resourceLoader = getResourceLoader();
 
-            if (isBuildableYaml(fileInputStreamEntry.getKey().getName(), content, resourceLoader, log))
+            //TODO reenable after fixing validator
+            if (true || isValidYaml(fileInputStreamEntry.getKey().getName(), content, resourceLoader, log))
             {
-                YamlDocumentBuilder<Raml> builderNodeHandler = new YamlDocumentBuilder<Raml>(Raml.class, resourceLoader);
+                RamlDocumentBuilder builderNodeHandler = new RamlDocumentBuilder(resourceLoader);
                 try
                 {
                     Raml raml = builderNodeHandler.build(content);
@@ -82,21 +82,6 @@ public class RAMLFilesParser
         else
         {
             log.error("YAML Root not found. None of the files were recognized as root yaml files.");
-        }
-    }
-
-    private boolean isBuildableYaml(String fileName, String content, ResourceLoader resourceLoader, Log log)
-    {
-        try
-        {
-            RamlDocumentBuilder builder = new RamlDocumentBuilder(resourceLoader);
-            builder.build(content);
-            return true;
-        }
-        catch (Exception e)
-        {
-            log.info(String.format("File %s is not a valid yaml file.", fileName));
-            return false;
         }
     }
 

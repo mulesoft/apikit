@@ -56,9 +56,9 @@ import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
+import org.raml.parser.visitor.RamlDocumentBuilder;
 import org.raml.parser.visitor.RamlValidationService;
 import org.raml.parser.visitor.YamlDocumentBuilder;
-import org.raml.parser.visitor.YamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.nodes.Node;
@@ -244,7 +244,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
 
         //TODO skip till types and traits are omitted
         //validateRaml(ramlBuffer, loader);
-        YamlDocumentBuilder<Raml> builder = new YamlDocumentBuilder<Raml>(Raml.class, loader);
+        RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(ramlBuffer);
         injectEndpointUri(builder);
         ramlYaml = YamlDocumentBuilder.dumpFromAst(builder.getRootNode());
@@ -278,14 +278,14 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
             if (result.getStartMark() != null)
             {
                 sb.append(" -- ");
-                 sb.append(result.getStartMark());
+                sb.append(result.getStartMark());
             }
             sb.append("\n");
         }
         return sb.toString();
     }
 
-    private void injectEndpointUri(YamlDocumentBuilder<Raml> builder)
+    private void injectEndpointUri(RamlDocumentBuilder builder)
     {
         ImmutableEndpoint endpoint = (ImmutableEndpoint) ((Flow) flowConstruct).getMessageSource();
         String address = endpoint.getAddress();
