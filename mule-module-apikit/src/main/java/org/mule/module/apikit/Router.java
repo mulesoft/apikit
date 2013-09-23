@@ -56,6 +56,7 @@ import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
+import org.raml.parser.visitor.RamlValidationService;
 import org.raml.parser.visitor.YamlDocumentBuilder;
 import org.raml.parser.visitor.YamlValidationService;
 import org.slf4j.Logger;
@@ -241,7 +242,8 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
             throw new ApikitRuntimeException(String.format("Cannot read API descriptor %s", config.getRaml()));
         }
 
-        validateRaml(ramlBuffer, loader);
+        //TODO skip till types and traits are omitted
+        //validateRaml(ramlBuffer, loader);
         YamlDocumentBuilder<Raml> builder = new YamlDocumentBuilder<Raml>(Raml.class, loader);
         api = builder.build(ramlBuffer);
         injectEndpointUri(builder);
@@ -250,7 +252,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
 
     protected void validateRaml(String ramlBuffer, ResourceLoader resourceLoader)
     {
-        List<ValidationResult> results = YamlValidationService.createDefault(Raml.class, resourceLoader, new ActionImplementedRuleExtension(restFlowMap)).validate(ramlBuffer);
+        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader, new ActionImplementedRuleExtension(restFlowMap)).validate(ramlBuffer);
         List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
         if (!errors.isEmpty())
         {

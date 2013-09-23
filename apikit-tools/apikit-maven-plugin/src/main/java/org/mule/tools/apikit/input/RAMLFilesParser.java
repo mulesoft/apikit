@@ -26,8 +26,9 @@ import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
+import org.raml.parser.visitor.RamlDocumentBuilder;
+import org.raml.parser.visitor.RamlValidationService;
 import org.raml.parser.visitor.YamlDocumentBuilder;
-import org.raml.parser.visitor.YamlValidationService;
 
 public class RAMLFilesParser
 {
@@ -56,7 +57,7 @@ public class RAMLFilesParser
             }
             ResourceLoader resourceLoader = getResourceLoader();
 
-            if (isValidYaml(fileInputStreamEntry.getKey().getName(), content, resourceLoader, log))
+            if (isBuildableYaml(fileInputStreamEntry.getKey().getName(), content, resourceLoader, log))
             {
                 YamlDocumentBuilder<Raml> builderNodeHandler = new YamlDocumentBuilder<Raml>(Raml.class, resourceLoader);
                 try
@@ -84,9 +85,24 @@ public class RAMLFilesParser
         }
     }
 
+    private boolean isBuildableYaml(String fileName, String content, ResourceLoader resourceLoader, Log log)
+    {
+        try
+        {
+            RamlDocumentBuilder builder = new RamlDocumentBuilder(resourceLoader);
+            builder.build(content);
+            return true;
+        }
+        catch (Exception e)
+        {
+            log.info(String.format("File %s is not a valid yaml file.", fileName));
+            return false;
+        }
+    }
+
     private boolean isValidYaml(String fileName, String content, ResourceLoader resourceLoader, Log log)
     {
-        List<ValidationResult> validationResults = YamlValidationService.createDefault(Raml.class, resourceLoader).validate(content);
+        List<ValidationResult> validationResults = RamlValidationService.createDefault(resourceLoader).validate(content);
         if (validationResults != null && !validationResults.isEmpty())
         {
             log.info("File '" + fileName + "' is not a valid yaml file. See following error(s): ");
