@@ -1,5 +1,5 @@
 %YAML 1.2
-%TAG ! tag:raml.org,0.1:
+#%RAML 0.2
 ---
 title: La Liga
 version: 1.0
