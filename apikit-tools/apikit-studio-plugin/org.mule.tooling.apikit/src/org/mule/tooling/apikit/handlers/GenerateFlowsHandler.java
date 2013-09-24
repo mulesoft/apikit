@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -33,7 +35,9 @@ import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.apikit.Activator;
 import org.mule.tooling.apikit.util.APIKitHelper;
 import org.mule.tooling.core.MuleCorePlugin;
+import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.io.IMuleResources;
+import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.messageflow.editor.MultiPageMessageFlowEditor;
 import org.mule.tooling.messageflow.util.MessageFlowUtils;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
@@ -60,7 +64,7 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
             // get the selected file
             ramlFile = (IFile) structured.getFirstElement();
             // get the path
-//            YamlDocumentValidator ramlValidator = new YamlDocumentValidator(Raml.class);
+            // YamlDocumentValidator ramlValidator = new YamlDocumentValidator(Raml.class);
             File file = ramlFile.getRawLocation().toFile();
             // YamlValidationService validationService = new YamlValidationService(new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(file)),
             // ramlValidator);
@@ -114,30 +118,55 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
 
     private void doExecute(IProgressMonitor monitor) {
         IProject project = ramlFile.getParent().getProject();
-        monitor.beginTask("Generating flows...", 3);
-        if (!saveModifiedResources(project)) {
-            MessageDialog.openError(workbenchWindow.getShell(), "Generate flows", "The generation of flows failed. There are unsaved resources in the project.");
+        try {
+            IMuleProject muleProject = MuleRuntime.create(project);
+            if (muleProject == null) {
+                MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, MuleCorePlugin.PLUGIN_ID, "Could not generate mock flows. The current project is not a Mule Project."));
+                MessageDialog.openError(workbenchWindow.getShell(), "Generate flows", "The generation of flows failed. The current project is not a Mule Project.");
+                return;
+            }
+            monitor.beginTask("Generating flows...", 4);
+            if (!saveModifiedResources(project)) {
+                MessageDialog.openError(workbenchWindow.getShell(), "Generate flows", "The generation of flows failed. There are unsaved resources in the project.");
+                monitor.done();
+                return;
+            }
+            createMuleConfigs(monitor, project, muleProject);
+            runScaffolder(monitor, project);
             monitor.done();
-            return;
+        } catch (CoreException e) {
+            MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, MuleCorePlugin.PLUGIN_ID, e.getMessage()));
+            e.printStackTrace();
         }
+    }
+
+    private void runScaffolder(IProgressMonitor monitor, IProject project) throws CoreException {
         IFolder appFolder = project.getFolder(IMuleResources.MULE_APP_FOLDER);
         if (appFolder != null) {
             ScaffolderAPI scaffolderAPI = new ScaffolderAPI(ramlFile.getParent().getRawLocation().toFile(), appFolder.getRawLocation().toFile());
             monitor.subTask("Running scaffolder...");
             scaffolderAPI.run();
             monitor.worked(1);
-            try {
-                project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+            project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+            monitor.worked(1);
+            monitor.subTask("Updating Mule configurations...");
+            updateMessageFlowEditors();
+            monitor.worked(1);
+        }
+    }
+
+    private void createMuleConfigs(IProgressMonitor monitor, IProject project, IMuleProject muleProject) throws CoreException {
+        IFolder flowsFolder = project.getFolder(IMuleResources.MULE_MESSAGE_FLOWS_FOLDER);
+        if (flowsFolder != null) {
+            String ramlName = FilenameUtils.removeExtension(ramlFile.getName());
+            String nameOfCreatedMuleConfig = ramlName + "." + IMuleResources.MULE_MESSAGE_FLOW_SUFFIX;
+            IFile flowFile = flowsFolder.getFile(nameOfCreatedMuleConfig);
+            if (!flowFile.exists()) {
+                monitor.subTask("Creating Mule configurations...");
                 monitor.worked(1);
-                monitor.subTask("Updating Mule configurations...");
-                updateMessageFlowEditors();
-                monitor.worked(1);
-            } catch (CoreException e) {
-                MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, MuleCorePlugin.PLUGIN_ID, e.getMessage()));
-                e.printStackTrace();
+                UiUtils.createEmptyConfiguration(muleProject, nameOfCreatedMuleConfig, ramlName, StringUtils.EMPTY);
             }
         }
-        monitor.done();
     }
 
     private void updateMessageFlowEditors() {
