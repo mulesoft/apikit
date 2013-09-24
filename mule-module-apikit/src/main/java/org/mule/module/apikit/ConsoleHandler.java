@@ -49,8 +49,8 @@ public class ConsoleHandler
         mimeTypes.addMimeTypes("text/javascript js");
         mimeTypes.addMimeTypes("text/css css");
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
-        homePage = indexHtml.replaceFirst("<raml-definition id=\"([^\"]+)\" src=\"[^\"]+\">",
-                                          "<raml-definition id=\"$1\" src=\"" + ramlUri + "\">");
+        homePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\">",
+                                          "<raml-console src=\"" + ramlUri + "\">");
     }
 
     private String sanitize(String consolePath)

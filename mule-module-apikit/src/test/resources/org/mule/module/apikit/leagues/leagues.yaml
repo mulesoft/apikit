@@ -35,7 +35,8 @@ schemas:
             text/xml:
                 schema: league-xml
         responses:
-            201: !!null
+            201:
+                description: !!null
     /{leagueId}:
         uriParameters:
             leagueId:
@@ -50,10 +51,12 @@ schemas:
         put:
             body: *league-schema
             responses:
-                204: !!null
+                204:
+                    description: !!null
         delete:
             responses:
-                204: !!null
+                204:
+                    description: !!null
         /teams:
             get:
                 queryParameters:
