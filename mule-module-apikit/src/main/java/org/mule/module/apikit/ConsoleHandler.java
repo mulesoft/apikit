@@ -5,6 +5,7 @@ import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.lifecycle.InitialisationException;
+import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
 import org.mule.transport.http.HttpConstants;
@@ -17,10 +18,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import org.mule.module.apikit.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,7 @@ public class ConsoleHandler
 
     private MimetypesFileTypeMap mimeTypes;
     private String homePage;
+    private String homePageC5;
     private String consolePath;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -48,9 +50,10 @@ public class ConsoleHandler
         mimeTypes = new MimetypesFileTypeMap();
         mimeTypes.addMimeTypes("text/javascript js");
         mimeTypes.addMimeTypes("text/css css");
+        String indexHtmlC5 = IOUtils.toString(getClass().getResourceAsStream("/console/indexc5.html"));
+        homePageC5 = indexHtmlC5.replaceFirst("<raml-console src=\"[^\"]+\">", "<raml-console src=\"" + ramlUri + "\">");
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
-        homePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\">",
-                                          "<raml-console src=\"" + ramlUri + "\">");
+        homePage = indexHtml.replaceFirst("<raml-definition id=\"([^\"]+)\" src=\"[^\"]+\">", "<raml-definition id=\"$1\" src=\"" + ramlUri + "\">");
     }
 
     private String sanitize(String consolePath)
@@ -71,6 +74,7 @@ public class ConsoleHandler
 
         String path = event.getMessage().getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
         String contextPath = event.getMessage().getInboundProperty(HttpConnector.HTTP_CONTEXT_PATH_PROPERTY);
+        Map<String, String> queryParams = event.getMessage().getInboundProperty(HttpConnector.HTTP_QUERY_PARAMS);
 
         // Remove the contextPath from the endpoint from the request as this isn't part of the path.
         path = path.substring(contextPath.length());
@@ -102,7 +106,14 @@ public class ConsoleHandler
             if (path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
             {
                 path = RESOURCE_BASE + "/index.html";
-                in = new ByteArrayInputStream(homePage.getBytes());
+                if (queryParams.containsKey("c5"))
+                {
+                    in = new ByteArrayInputStream(homePageC5.getBytes());
+                }
+                else
+                {
+                    in = new ByteArrayInputStream(homePage.getBytes());
+                }
             }
             else
             {
@@ -131,7 +142,7 @@ public class ConsoleHandler
         }
         catch (IOException e)
         {
-            throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path),event);
+            throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path), event);
         }
 
         return resultEvent;
