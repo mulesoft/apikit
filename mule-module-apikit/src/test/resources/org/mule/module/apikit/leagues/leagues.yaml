@@ -15,8 +15,8 @@ documentation:
         If you need support, please contact apikit@mulesoft.com.
 
 schemas:
-    league-json: !include org/mule/module/apikit/leagues/league.json
-    league-xml: !include org/mule/module/apikit/leagues/league.xsd
+    - league-json: !include org/mule/module/apikit/leagues/league.json
+    - league-xml: !include org/mule/module/apikit/leagues/league.xsd
 
 /leagues:
     displayName: Leagues

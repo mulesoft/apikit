@@ -24,9 +24,9 @@ public class SchemaCacheUtils
         MimeType mimeType = action.getBody().get(path[2]);
         String schema = mimeType.getSchema();
         //check global schemas
-        if (api.getSchemas().containsKey(schema))
+        if (api.getConsolidatedSchemas().containsKey(schema))
         {
-            schema = api.getSchemas().get(schema);
+            schema = api.getConsolidatedSchemas().get(schema);
         }
         return schema;
     }
