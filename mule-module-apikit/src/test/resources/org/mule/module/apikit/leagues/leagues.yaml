@@ -36,7 +36,7 @@ schemas:
                 schema: league-xml
         responses:
             201:
-                description: !!null
+                description: league created
     /{leagueId}:
         uriParameters:
             leagueId:
@@ -52,11 +52,11 @@ schemas:
             body: *league-schema
             responses:
                 204:
-                    description: !!null
+                    description: league modified
         delete:
             responses:
                 204:
-                    description: !!null
+                    description: league deleted
         /teams:
             get:
                 queryParameters:

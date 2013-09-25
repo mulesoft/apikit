@@ -56,8 +56,7 @@ public class RAMLFilesParser
             }
             ResourceLoader resourceLoader = getResourceLoader();
 
-            //TODO reenable after fixing validator
-            if (true || isValidYaml(fileInputStreamEntry.getKey().getName(), content, resourceLoader, log))
+            if (isValidYaml(fileInputStreamEntry.getKey().getName(), content, resourceLoader, log))
             {
                 RamlDocumentBuilder builderNodeHandler = new RamlDocumentBuilder(resourceLoader);
                 try
