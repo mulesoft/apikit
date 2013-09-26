@@ -61,24 +61,18 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
         IStructuredSelection structured = (IStructuredSelection) selectionService.getSelection();
 
         if (structured.getFirstElement() instanceof IFile) {
-            // get the selected file
+
             ramlFile = (IFile) structured.getFirstElement();
-            // get the path
-            // YamlDocumentValidator ramlValidator = new YamlDocumentValidator(Raml.class);
             File file = ramlFile.getRawLocation().toFile();
-            // YamlValidationService validationService = new YamlValidationService(new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(file)),
-            // ramlValidator);
+
             String content;
             try {
                 content = new Scanner(file).useDelimiter("\\Z").next();
                 CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(file));
-                if (isRamlFile(file) && APIKitHelper.INSTANCE.isBuildableYaml(file.getName(), content, resourceLoader)) {
+                if (isRamlFile(file) && APIKitHelper.INSTANCE.isValidYaml(file.getName(), content, resourceLoader)) {
                     return true;
                 }
-                // List<ValidationResult> validation = validationService.validate(content);
-                // if (isRamlFile(file) && validation.isEmpty()) {
-                // return true;
-                // }
+
             } catch (FileNotFoundException e) {
                 MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, MuleCorePlugin.PLUGIN_ID, e.getMessage()));
                 e.printStackTrace();
