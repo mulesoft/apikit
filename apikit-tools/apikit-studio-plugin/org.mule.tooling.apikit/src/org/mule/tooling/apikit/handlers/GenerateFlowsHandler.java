@@ -37,6 +37,7 @@ import org.mule.tooling.apikit.util.APIKitHelper;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.io.IMuleResources;
+import org.mule.tooling.core.io.MuleResourceUtils;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.messageflow.editor.MultiPageMessageFlowEditor;
 import org.mule.tooling.messageflow.util.MessageFlowUtils;
@@ -125,8 +126,8 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
                 monitor.done();
                 return;
             }
-            createMuleConfigs(monitor, project, muleProject);
             runScaffolder(monitor, project);
+            createMuleConfigs(monitor, project, muleProject);
             monitor.done();
         } catch (CoreException e) {
             MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, MuleCorePlugin.PLUGIN_ID, e.getMessage()));
@@ -150,29 +151,28 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
     }
 
     private void createMuleConfigs(IProgressMonitor monitor, IProject project, IMuleProject muleProject) throws CoreException {
+        monitor.subTask("Creating necessary Mule configurations...");
         IFolder flowsFolder = project.getFolder(IMuleResources.MULE_MESSAGE_FLOWS_FOLDER);
-        if (flowsFolder != null) {
-            String ramlName = FilenameUtils.removeExtension(ramlFile.getName());
-            String nameOfCreatedMuleConfig = ramlName + "." + IMuleResources.MULE_MESSAGE_FLOW_SUFFIX;
-            IFile flowFile = flowsFolder.getFile(nameOfCreatedMuleConfig);
-            if (!flowFile.exists()) {
-                monitor.subTask("Creating Mule configurations...");
-                monitor.worked(1);
-                UiUtils.createEmptyConfiguration(muleProject, nameOfCreatedMuleConfig, ramlName, StringUtils.EMPTY);
+        IFolder muleConfigsFolder = project.getFolder(IMuleResources.MULE_APP_FOLDER);
+        IResource[] members = muleConfigsFolder.members();
+        String configFileName = "";
+        String mFlowFileName = "";
+        for (IResource configFile : members) {
+            if (MuleResourceUtils.isConfigFile(configFile)){
+                configFileName = FilenameUtils.removeExtension(configFile.getName());
+                mFlowFileName = configFileName + "." + IMuleResources.MULE_MESSAGE_FLOW_SUFFIX;
+                IFile mFlowFile = flowsFolder.getFile(mFlowFileName);
+                if (!mFlowFile.exists()) {
+                    UiUtils.createEmptyConfiguration(muleProject, mFlowFileName, configFileName, StringUtils.EMPTY);
+                }
             }
         }
     }
 
     private void updateMessageFlowEditors() {
-        MultiPageMessageFlowEditor multiPageFlowEditor = MessageFlowUtils.getInstance().getMultiPageMessageFlowEditor();
-        if (multiPageFlowEditor != null) {
-            multiPageFlowEditor.updateFlowFromSource();
-        } else {
-            MessageFlowUtils.getInstance();
-            Collection<MultiPageMessageFlowEditor> openEditors = MessageFlowUtils.getOpenMultipageMessageFlowEditors();
-            for (MultiPageMessageFlowEditor messageFlowEditor : openEditors) {
-                messageFlowEditor.updateFlowFromSource();
-            }
+        Collection<MultiPageMessageFlowEditor> openEditors = MessageFlowUtils.getOpenMultipageMessageFlowEditors();
+        for (MultiPageMessageFlowEditor messageFlowEditor : openEditors) {
+            messageFlowEditor.updateFlowFromSource();
         }
     }
 
