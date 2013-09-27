@@ -59,7 +59,6 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     }
 
     @Test
-    @Ignore //MULE-6968
     public void ramlEmptyPath() throws Exception
     {
         RestAssured.port = serverPortEmptyPath.getNumber();
@@ -74,7 +73,6 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     }
 
     @Test
-    @Ignore //MULE-6968
     public void ramlSlashPath() throws Exception
     {
         RestAssured.port = serverPortSlashPath.getNumber();
