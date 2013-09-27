@@ -10,7 +10,23 @@
     <packaging>maven-archetype</packaging>
     <name>APIKit Maven Archetype</name>
 
+    <properties>
+        <meta.groupId>groupId</meta.groupId>
+        <meta.artifactId>artifactId</meta.artifactId>
+        <meta.version>version</meta.version>
+        <meta.mule.version>mule.version</meta.mule.version>
+        <meta.apikit.version>apikit.version</meta.apikit.version>
+        <meta.prefix>${</meta.prefix>
+        <meta.suffix>}</meta.suffix>
+    </properties>
+
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

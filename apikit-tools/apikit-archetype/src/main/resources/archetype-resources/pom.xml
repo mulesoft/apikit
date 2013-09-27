@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>${groupId}</groupId>
-    <artifactId>${artifactId}</artifactId>
-    <version>${version}</version>
+    <groupId>${meta.prefix}${meta.groupId}${meta.suffix}</groupId>
+    <artifactId>${meta.prefix}${meta.artifactId}${meta.suffix}</artifactId>
+    <version>${meta.prefix}${meta.version}${meta.suffix}</version>
     <packaging>mule</packaging>
     <name>Mule APIKit Application</name>
 
@@ -13,14 +13,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <mule.version>3.4.0</mule.version>
+        <mule.version>${mule.version}</mule.version>
         <mule.appkit.version>3.4</mule.appkit.version>
         <eclipsePluginVersion>2.8</eclipsePluginVersion>
         <vmtype>org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType</vmtype>
         <jdkName>JavaSE-1.6</jdkName>
         <jdk.version>1.6</jdk.version>
         <junit.version>4.10</junit.version>
-        <apikit.version>0.2.0-SNAPSHOT</apikit.version>
+        <apikit.version>${project.version}</apikit.version>
         <rest.assured.version>1.8.1</rest.assured.version>
     </properties>
 
@@ -232,46 +232,46 @@
         <dependency>
             <groupId>org.mule</groupId>
             <artifactId>mule-core</artifactId>
-            <version>${mule.version}</version>
+            <version>${meta.prefix}${meta.mule.version}${meta.suffix}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Xml configuration -->
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-spring-config</artifactId>
-            <version>${mule.version}</version>
+            <version>${meta.prefix}${meta.mule.version}${meta.suffix}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Mule Transports -->
         <dependency>
             <groupId>org.mule.transports</groupId>
             <artifactId>mule-transport-http</artifactId>
-            <version>${mule.version}</version>
+            <version>${meta.prefix}${meta.mule.version}${meta.suffix}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Mule Modules -->
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-scripting</artifactId>
-            <version>${mule.version}</version>
+            <version>${meta.prefix}${meta.mule.version}${meta.suffix}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-json</artifactId>
-            <version>${mule.version}</version>
+            <version>${meta.prefix}${meta.mule.version}${meta.suffix}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-xml</artifactId>
-            <version>${mule.version}</version>
+            <version>${meta.prefix}${meta.mule.version}${meta.suffix}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-apikit</artifactId>
-            <version>${apikit.version}</version>
+            <version>${meta.prefix}${meta.apikit.version}${meta.suffix}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.mule</groupId>
@@ -303,7 +303,7 @@
         <dependency>
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-functional</artifactId>
-            <version>${mule.version}</version>
+            <version>${meta.prefix}${meta.mule.version}${meta.suffix}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>

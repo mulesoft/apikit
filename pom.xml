@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>apikit-parent</artifactId>
@@ -13,6 +14,10 @@
         <module>apikit-tools</module>
         <module>apikit-examples</module>
     </modules>
+
+    <properties>
+        <mule.version>3.5.0-bighorn</mule.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -47,21 +52,21 @@
             </plugins>
         </pluginManagement>
     </build>
-    
+
     <repositories>
-            <repository>
-                <id>mulesoft-snapshots</id>
-                <name>MuleSoft Snapshots Repository</name>
-                <url>http://repository.mulesoft.org/snapshots/</url>
-                <layout>default</layout>
-            </repository>
-            <repository>
-                <id>mulesoft-releases</id>
-                <name>MuleSoft Releases Repository</name>
-                <url>http://repository.mulesoft.org/releases/</url>
-                <layout>default</layout>
-            </repository>
-          </repositories>
+        <repository>
+            <id>mulesoft-snapshots</id>
+            <name>MuleSoft Snapshots Repository</name>
+            <url>http://repository.mulesoft.org/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
 
     <scm>
         <connection>scm:git:git://github.com:mulesoft/apikit.git</connection>
