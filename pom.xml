@@ -24,7 +24,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>
-                <version>${project.version}</version>
+                <version>0.2.0-M1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
