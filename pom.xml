@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>apikit-parent</artifactId>
-    <version>0.2.0-M1</version>
+    <version>0.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
@@ -71,7 +71,7 @@
         <connection>scm:git:git://github.com:mulesoft/apikit.git</connection>
         <developerConnection>scm:git:git@github.com:mulesoft/apikit.git</developerConnection>
         <url>http://github.com/mulesoft/apikit</url>
-        <tag>0.2.0-M1</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
