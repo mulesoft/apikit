@@ -1,89 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<artifactId>apikit-studio-plugin</artifactId>
-		<groupId>org.mule.tools</groupId>
-		<version>0.2.0-SNAPSHOT</version>
-	</parent>
-	<name>APIkit Studio Plugin</name>
-	<artifactId>org.mule.tooling.apikit</artifactId>
-	<packaging>eclipse-plugin</packaging>
-	
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy-bundle-classpath-libs</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}</outputDirectory>
-							<overWriteReleases>true</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-							<overWriteIfNewer>true</overWriteIfNewer>
-							<stripVersion>true</stripVersion>
-							<artifactItems>
-								<artifactItem>
-									<groupId>org.mule.modules</groupId>
-									<artifactId>mule-module-apikit</artifactId>
-									<version>${project.version}</version>
-								</artifactItem>
-								<artifactItem>
-									<groupId>org.mule.modules</groupId>
-									<artifactId>mule-module-apikit-plugin</artifactId>
-									<version>${project.version}</version>
-									<type>zip</type>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-invoker-plugin</artifactId>
-				<version>1.7</version>
-				<configuration>
-				</configuration>
-				<executions>
-					<execution>
-						<id>download-dependencies</id>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<phase>validate</phase>
-						<configuration>
-							<pom>dependenciesPom.xml</pom>
-							<goals>
-								<goal>validate</goal>
-							</goals>
-							<streamLogs>true</streamLogs>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.mule.tools</groupId>
+        <artifactId>apikit-studio-plugin</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+    </parent>
+    <name>APIkit Studio Plugin</name>
+    <artifactId>org.mule.tooling.apikit</artifactId>
+    <packaging>eclipse-plugin</packaging>
 
-	<repositories>
-		<repository>
-                <id>mulesoft-snapshots</id>
-                <name>MuleSoft Snapshots Repository</name>
-                <url>http://repository.mulesoft.org/snapshots/</url>
-                <layout>default</layout>
-            </repository>
-            <repository>
-                <id>mulesoft-releases</id>
-                <name>MuleSoft Releases Repository</name>
-                <url>http://repository.mulesoft.org/releases/</url>
-                <layout>default</layout>
-            </repository>
-	</repositories>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-bundle-classpath-libs</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}</outputDirectory>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <stripVersion>true</stripVersion>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.mule.modules</groupId>
+                                    <artifactId>mule-module-apikit</artifactId>
+                                    <version>${apikit.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.mule.modules</groupId>
+                                    <artifactId>mule-module-apikit-plugin</artifactId>
+                                    <version>${apikit.version}</version>
+                                    <type>zip</type>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <version>1.7</version>
+                <configuration>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>download-dependencies</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>validate</phase>
+                        <configuration>
+                            <pom>dependenciesPom.xml</pom>
+                            <goals>
+                                <goal>validate</goal>
+                            </goals>
+                            <streamLogs>true</streamLogs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>mulesoft-snapshots</id>
+            <name>MuleSoft Snapshots Repository</name>
+            <url>http://repository.mulesoft.org/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Releases Repository</name>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
 </project>

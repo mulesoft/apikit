@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Apikit
 Bundle-SymbolicName: org.mule.tooling.apikit;singleton:=true
-Bundle-Version: 0.2.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.mule.tooling.apikit.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.resources,
