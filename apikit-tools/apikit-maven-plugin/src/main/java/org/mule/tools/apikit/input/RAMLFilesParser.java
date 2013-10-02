@@ -67,7 +67,7 @@ public class RAMLFilesParser
                 }
                 catch (Exception e)
                 {
-                    log.debug("Could not parse [" + fileInputStreamEntry.getKey() + "] as root yaml file.");
+                    log.info("Could not parse [" + fileInputStreamEntry.getKey() + "] as root yaml file. Reason: " + e.getMessage());
                     log.debug(e);
                 }
             }
@@ -89,7 +89,7 @@ public class RAMLFilesParser
         List<ValidationResult> validationResults = RamlValidationService.createDefault(resourceLoader).validate(content);
         if (validationResults != null && !validationResults.isEmpty())
         {
-            log.info("File '" + fileName + "' is not a valid yaml file. See following error(s): ");
+            log.info("File '" + fileName + "' is not a valid root yaml file. See following error(s): ");
             int errorCount = 1;
             for (ValidationResult validationResult : validationResults)
             {

@@ -33,7 +33,7 @@ public class MuleConfigParser {
                 parseMuleConfigFile(file, stream, yamlPaths);
                 stream.close();
             } catch (Exception e) {
-                log.error("Error parsing Mule xml config file: [" + file + "]");
+                log.error("Error parsing Mule xml config file: [" + file + "]. Reason: " + e.getMessage());
                 log.debug(e);
             }
         }
