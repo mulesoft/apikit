@@ -1,10 +1,5 @@
 package org.mule.examples.leagues;
 
-import org.apache.commons.httpclient.HttpStatus;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -13,7 +8,13 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
-public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase {
+import org.apache.commons.httpclient.HttpStatus;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase
+{
 
     private static final String BARCELONA_ID = "BAR";
     private static final String BARCELONA_NAME = "Barcelona";
@@ -31,19 +32,22 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase {
     @ClassRule
     public static DynamicPort httpPort = new DynamicPort("http.port");
 
-    protected String getConfigResources() {
+    protected String getConfigResources()
+    {
         return "leagues-test-config.xml";
     }
 
     @Before
-    public void doSetUp() {
+    public void doSetUp()
+    {
         RestAssured.port = httpPort.getNumber();
         RestAssured.baseURI = "http://localhost";
         RestAssured.basePath = "/api";
     }
 
     @Test
-    public void initializedTeams() throws Exception {
+    public void initializedTeams() throws Exception
+    {
         given().log().all().
                 header("Accept", "application/json").
                 expect().
@@ -65,8 +69,11 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase {
                 when().
                 get("/teams/" + BARCELONA_ID);
     }
+
     @Test
-    public void teamNotFound() throws Exception {
+    public void teamNotFound() throws Exception
+    {
+        //Thread.sleep(Long.MAX_VALUE);
         given().log().all().
                 header("Accept", "application/json").
                 expect().
@@ -77,7 +84,18 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase {
     }
 
     @Test
-    public void positions() throws Exception {
+    public void newTeam() throws Exception
+    {
+        given().log().all().body("{\"name\": \"Barcelona\",\"id\": \"ATM\",\"homeCity\": \"Barcelona\",\"stadium\": \"Camp Nou\"}")
+                .contentType("application/json")
+                .expect().statusCode(201)
+                .header("Content-Length", "0")
+                .when().post("/teams");
+    }
+
+    @Test
+    public void positions() throws Exception
+    {
         given().log().all().
                 header("Accept", "application/json").
                 expect().
@@ -89,7 +107,8 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase {
     }
 
     @Test
-    public void fixture() throws Exception {
+    public void fixture() throws Exception
+    {
         given().log().all().
                 header("Accept", "application/json").
                 expect().

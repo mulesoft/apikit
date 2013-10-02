@@ -13,7 +13,7 @@ documentation:
   #description: |
   #  A collection of teams that are participating in La Liga. Teams API allow you add, remove and retrieve individual team information from La Liga.
   get:
-    summary: Obtain information from a collection of teams simultaneously
+    description: Obtain information from a collection of teams simultaneously
     queryParameters:
       city:
         description: |
@@ -28,7 +28,7 @@ documentation:
             schema: !include schemas/teams-schema-input.json         
             example: !include examples/teams-example.json     
   post:
-    summary: Add a new team to the league
+    description: Add a new team to the league
     body:
       application/json:
         example: !include examples/teams-post-example.json
@@ -57,7 +57,7 @@ documentation:
         maxLength: 3
         example: BAR
     get:
-      summary: Retrieve team-related information such as the name, the home city, the stadium, current position, and other statistical information about a team.
+      description: Retrieve team-related information such as the name, the home city, the stadium, current position, and other statistical information about a team.
       responses:
         200:
           body:
@@ -68,7 +68,7 @@ documentation:
           description: |
             Unable to find a team with that identifier
     put:
-      summary: Update team details such as the name of the home stadium, or the name of the team itself.
+      description: Update team details such as the name of the home stadium, or the name of the team itself.
       body:
         application/json:
           example: !include examples/teamid-put-example.json
@@ -82,7 +82,7 @@ documentation:
           description: |
             Unable to find a team with that identifier
     delete:
-      summary: Remove a team from the league. Notice that this operation is non-reversible and all data associated with the team, including its statistics will be lost. Use with caution.
+      description: Remove a team from the league. Notice that this operation is non-reversible and all data associated with the team, including its statistics will be lost. Use with caution.
       responses:
         204:
           description: |
@@ -93,7 +93,7 @@ documentation:
 /positions:
   displayName: Position Table
   get:
-    summary: Retrieve the current standing for the current season
+    description: Retrieve the current standing for the current season
     responses:
       200:
         body:
@@ -105,7 +105,7 @@ documentation:
   #description: |
   #  A collection of teams that are participating in La Liga. Teams API allow you add, remove and retrieve individual team information from La Liga.
   get:
-    summary: Retrieve a list of matches for the current season
+    description: Retrieve a list of matches for the current season
     responses:
       200:
         body:
@@ -129,7 +129,7 @@ documentation:
         maxLength: 3
         example: RMA
     get:
-      summary: Retrieve details of the match between the two teams
+      description: Retrieve details of the match between the two teams
       responses:
         200:
           body:
@@ -137,7 +137,7 @@ documentation:
               example: !include examples/match-get-example.json
               schema: !include schemas/match-schema-output.json
     put:
-      summary: Update match results. Can only be done after the game has ended.
+      description: Update match results. Can only be done after the game has ended.
       body:
         application/json:
             example: |
