@@ -153,7 +153,7 @@ public class RAMLFilesParser
         {
             for (Action action : resource.getActions().values())
             {
-                API api = API.createAPIBinding(filename, null, baseUri, new APIKitConfig.Builder(filename.getName()).build());
+                API api = API.createAPIBinding(filename, null, baseUri, null);
                 String path = APIKitTools.getPathFromUri(baseUri);
                 ResourceActionPair resourceActionPair = new ResourceActionPair(api, path + resource.getUri(),
                                                                                action.getType().toString());

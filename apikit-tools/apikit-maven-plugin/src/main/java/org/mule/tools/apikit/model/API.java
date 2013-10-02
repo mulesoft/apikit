@@ -72,6 +72,10 @@ public class API {
         return config;
     }
 
+    public void setDefaultConfig() {
+        config = new APIKitConfig.Builder(yamlFile.getName()).build();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

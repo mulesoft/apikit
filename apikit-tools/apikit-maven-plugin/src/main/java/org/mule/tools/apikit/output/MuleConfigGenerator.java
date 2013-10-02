@@ -9,6 +9,8 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaders;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 
 import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
 import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
@@ -20,6 +22,7 @@ import org.mule.tools.apikit.model.API;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -97,28 +100,43 @@ public class MuleConfigGenerator {
     Document getOrCreateDocument(Map<API, Document> docs, API api)
             throws IOException, JDOMException {
         Document doc;
-        SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
         if (docs.containsKey(api)) {
             doc = docs.get(api);
         } else {
-            File xmlFile = api.getXmlFile(rootDirectory);
-            if (!xmlFile.exists() || xmlFile.length() == 0) {
-                xmlFile.getParentFile().mkdirs();
-                doc = new Document();
-                Element mule = new MuleScope(doc).generate();
-                new APIKitConfigScope(api.getConfig(), mule).generate();
-                Element exceptionStrategy = new ExceptionStrategyScope(mule).generate();
-                String configRef = api.getConfig() != null? api.getConfig().getName() : null;
-                new FlowScope(mule, exceptionStrategy.getAttribute("name").getValue(),
-                        api, configRef).generate();
-            } else {
-                InputStream xmlInputStream = new FileInputStream(xmlFile);
-                doc = saxBuilder.build(xmlInputStream);
+            doc = getDocument(api);
+            if(api.getConfig() == null) {
+                api.setDefaultConfig();
+                generateAPIKitConfig(api, doc);
             }
-
             docs.put(api, doc);
         }
         return doc;
+    }
+
+    private Document getDocument(API api) throws IOException, JDOMException {
+        SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
+        Document doc;
+        File xmlFile = api.getXmlFile(rootDirectory);
+        if (!xmlFile.exists() || xmlFile.length() == 0) {
+            xmlFile.getParentFile().mkdirs();
+            doc = new Document();
+            new MuleScope(doc).generate();
+        } else {
+            InputStream xmlInputStream = new FileInputStream(xmlFile);
+            doc = saxBuilder.build(xmlInputStream);
+        }
+        return doc;
+    }
+
+    private void generateAPIKitConfig(API api, Document doc) {
+        XPathExpression muleExp = XPathFactory.instance().compile("//*[local-name()='mule']");
+        List<Element> mules = muleExp.evaluate(doc);
+        Element mule = mules.get(0);
+        new APIKitConfigScope(api.getConfig(), mule).generate();
+        Element exceptionStrategy = new ExceptionStrategyScope(mule).generate();
+        String configRef = api.getConfig() != null? api.getConfig().getName() : null;
+        new FlowScope(mule, exceptionStrategy.getAttribute("name").getValue(),
+                      api, configRef).generate();
     }
 
 }
