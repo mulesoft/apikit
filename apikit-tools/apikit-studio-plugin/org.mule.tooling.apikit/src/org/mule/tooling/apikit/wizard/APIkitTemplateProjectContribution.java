@@ -35,7 +35,7 @@ public class APIkitTemplateProjectContribution {
 
     public void addContributionsTo(final IMuleProject muleProject) {
 
-        URL resourceURL = NewAPIKitProjectWizard.class.getClassLoader().getResource("resources/sample");
+        URL resourceURL = APIkitTemplateProjectContribution.class.getClassLoader().getResource("resources/sample");
         try {
             final File workspaceDir = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toFile();
             final File newProject = new File(workspaceDir, muleProject.getName());

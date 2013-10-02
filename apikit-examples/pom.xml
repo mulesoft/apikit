@@ -12,6 +12,7 @@
 
     <modules>
         <module>leagues</module>
+        <module>studio-example</module>
     </modules>
 
 </project>

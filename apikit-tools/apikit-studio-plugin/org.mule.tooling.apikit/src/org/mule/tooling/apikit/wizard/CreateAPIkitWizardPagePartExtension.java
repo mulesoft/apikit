@@ -116,7 +116,7 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
 
     @Override
     public IFile createConfiguration(IMuleProject muleProject, String filename, String name, String description) throws CoreException {
-        URL resourceURL = NewAPIKitProjectWizard.class.getClassLoader().getResource("resources/sample");
+        URL resourceURL = CreateAPIkitWizardPagePartExtension.class.getClassLoader().getResource("resources/sample");
         File rootTemplateProjectFolder;
         try {
             rootTemplateProjectFolder = new File(FileLocator.resolve(resourceURL).toURI());

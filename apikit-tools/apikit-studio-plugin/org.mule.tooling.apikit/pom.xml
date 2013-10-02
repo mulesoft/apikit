@@ -11,66 +11,91 @@
     <name>APIkit Studio Plugin</name>
     <artifactId>org.mule.tooling.apikit</artifactId>
     <packaging>eclipse-plugin</packaging>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-bundle-classpath-libs</id>
+	
+	<properties>
+        <examples.dir>examples/</examples.dir>
+    </properties>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-bundle-classpath-libs</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+							<stripVersion>true</stripVersion>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.mule.modules</groupId>
+									<artifactId>mule-module-apikit</artifactId>
+									<version>${apikit.version}</version>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.mule.modules</groupId>
+									<artifactId>mule-module-apikit-plugin</artifactId>
+									<version>${apikit.version}</version>
+									<type>zip</type>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+					<execution>
+                        <id>copy-examples-artifacts</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${basedir}</outputDirectory>
+                            <outputDirectory>${examples.dir}</outputDirectory>
                             <overWriteReleases>true</overWriteReleases>
                             <overWriteSnapshots>true</overWriteSnapshots>
                             <overWriteIfNewer>true</overWriteIfNewer>
                             <stripVersion>true</stripVersion>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>org.mule.modules</groupId>
-                                    <artifactId>mule-module-apikit</artifactId>
-                                    <version>${apikit.version}</version>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.mule.modules</groupId>
-                                    <artifactId>mule-module-apikit-plugin</artifactId>
-                                    <version>${apikit.version}</version>
+                                    <groupId>org.mule.examples</groupId>
+    								<artifactId>apikit-example</artifactId>
                                     <type>zip</type>
+                                    <version>${apikit.version}</version>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-invoker-plugin</artifactId>
-                <version>1.7</version>
-                <configuration>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>download-dependencies</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>validate</phase>
-                        <configuration>
-                            <pom>dependenciesPom.xml</pom>
-                            <goals>
-                                <goal>validate</goal>
-                            </goals>
-                            <streamLogs>true</streamLogs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-invoker-plugin</artifactId>
+				<version>1.7</version>
+				<configuration>
+				</configuration>
+				<executions>
+					<execution>
+						<id>download-dependencies</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<phase>validate</phase>
+						<configuration>
+							<pom>dependenciesPom.xml</pom>
+							<goals>
+								<goal>validate</goal>
+							</goals>
+							<streamLogs>true</streamLogs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
     <repositories>
         <repository>

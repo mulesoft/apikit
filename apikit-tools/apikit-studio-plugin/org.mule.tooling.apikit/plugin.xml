@@ -22,7 +22,7 @@
          point="org.mule.tooling.muleExamples">
       <muleExample
             description="Illustrates a fully-implemented REST API with RAML interface and Mule backend."
-            path="examples/apikit-leagues.zip"
+            path="examples/apikit-example.zip"
             name="REST API with APIkit">
          <targetServer
                serverVersion="3.5.*">
@@ -32,28 +32,6 @@
          </targetServer>
       </muleExample>
    </extension>
-   <!--extension
-         point="org.eclipse.ui.newWizards">
-	  <category
-            name="%NewWizards.Category.Basic"
-            id="org.eclipse.ui.Basic">
-      </category>
-      <wizard
-            canFinishEarly="false"
-            class="org.mule.tooling.apikit.wizard.NewAPIKitProjectWizard"
-            category="org.eclipse.ui.Basic"
-            icon="icons/small/newAPIKitProject-16x16.png"
-            id="org.mule.tooling.apikit.wizard.ApikitProject"
-            name="APIkit Project"
-            project="true">
-      </wizard>
-   </extension>
-   <extension point="org.eclipse.ui.perspectiveExtensions">
-		<perspectiveExtension targetID="*">
-			<newWizardShortcut id="org.mule.tooling.apikit.wizard.ApikitProject">
-			</newWizardShortcut>
-		</perspectiveExtension>
-	</extension-->
 	<extension
          point="org.mule.tooling.projectStructure">
       <projectStructure
