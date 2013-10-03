@@ -13,9 +13,9 @@
             contributionType="cloud-connector"
             icon="icons/small/flow-24x16.png"
             minimumVersion="3.4.0"
-            name="Apikit"
+            name="APIkit"
             path="apikit.xml"
-            version="1.0">
+            version="0.2">
       </externalContribution>
    </extension>
    <extension
