@@ -73,7 +73,6 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase
     @Test
     public void teamNotFound() throws Exception
     {
-        //Thread.sleep(Long.MAX_VALUE);
         given().log().all().
                 header("Accept", "application/json").
                 expect().
@@ -86,7 +85,7 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase
     @Test
     public void newTeam() throws Exception
     {
-        given().log().all().body("{\"name\": \"Barcelona\",\"id\": \"ATM\",\"homeCity\": \"Barcelona\",\"stadium\": \"Camp Nou\"}")
+        given().log().all().body("{\"name\": \"Elche\",\"id\": \"ELC\",\"homeCity\": \"Elche\",\"stadium\": \"Martinez Valero\"}")
                 .contentType("application/json")
                 .expect().statusCode(201)
                 .header("Content-Length", "0")

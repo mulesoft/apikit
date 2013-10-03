@@ -54,6 +54,14 @@ public class ParametersTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void invalidBooleanQueryParamProvided() throws Exception
+    {
+        given()
+                .expect().response().statusCode(400)
+                .when().get("/api/resources?first=I&third=yes");
+    }
+
+    @Test
     public void raml() throws Exception
     {
         given().header("Accept", "application/raml+yaml")

@@ -10,5 +10,7 @@ title: Parameters API
         second:
             type: string
             required: false
+        third:
+            type: boolean
     responses:
       200: !!null
