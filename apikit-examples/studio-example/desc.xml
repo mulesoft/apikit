@@ -10,7 +10,6 @@
         <fileSet>
             <directory>../leagues</directory>
             <excludes>
-                <exclude>pom.xml</exclude>
                 <exclude>*.iml</exclude>
                 <exclude>target/**</exclude>
             </excludes>
