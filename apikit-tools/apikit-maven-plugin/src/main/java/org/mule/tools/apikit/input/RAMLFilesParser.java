@@ -1,14 +1,6 @@
 package org.mule.tools.apikit.input;
 
-import org.mule.tools.apikit.misc.APIKitTools;
-import org.mule.tools.apikit.model.API;
-import org.mule.tools.apikit.model.APIKitConfig;
-import org.mule.tools.apikit.model.ResourceActionPair;
-import org.mule.tools.apikit.output.GenerationModelProvider;
-
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,11 +11,16 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
+import org.mule.tools.apikit.misc.APIKitTools;
+import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.ResourceActionPair;
+import org.mule.tools.apikit.output.GenerationModelProvider;
 import org.raml.model.Action;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
+import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.visitor.RamlDocumentBuilder;
@@ -54,7 +51,7 @@ public class RAMLFilesParser
                 break;
 
             }
-            ResourceLoader resourceLoader = getResourceLoader();
+            ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(fileInputStreamEntry.getKey().getParentFile()));
 
             if (isValidYaml(fileInputStreamEntry.getKey().getName(), content, resourceLoader, log))
             {
@@ -100,52 +97,6 @@ public class RAMLFilesParser
         }
         return true;
     }
-
-    private ResourceLoader getResourceLoader()
-    {
-        return new CompositeResourceLoader(new ResourceLoader()
-        {
-            @Override
-            public InputStream fetchResource(String resource)
-            {
-                File file = new File(API_HOME, resource);
-                if (file.exists())
-                {
-                    try
-                    {
-                        return new FileInputStream(file);
-                    }
-                    catch (FileNotFoundException e)
-                    {
-                        // Do nothing
-                    }
-                }
-                return null;
-            }
-        }, new ResourceLoader()
-        {
-            @Override
-            public InputStream fetchResource(String resource)
-            {
-                File file = new File(resource);
-                if (file.exists())
-                {
-                    try
-                    {
-                        return new FileInputStream(file);
-                    }
-                    catch (FileNotFoundException e)
-                    {
-                        // Do nothing
-                    }
-                }
-                return null;
-            }
-
-        }, new DefaultResourceLoader()
-        );
-    }
-
 
     void collectResources(File filename, Set<ResourceActionPair> resources, Map<String, Resource> resourceMap, String baseUri)
     {
