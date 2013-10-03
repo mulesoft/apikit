@@ -69,7 +69,7 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
             String content;
             try {
                 content = new Scanner(file).useDelimiter("\\Z").next();
-                CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(file));
+                CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParent().getRawLocation().toFile()));
                 if (isRamlFile(file) && APIKitHelper.INSTANCE.isValidYaml(file.getName(), content, resourceLoader)) {
                     return true;
                 }
