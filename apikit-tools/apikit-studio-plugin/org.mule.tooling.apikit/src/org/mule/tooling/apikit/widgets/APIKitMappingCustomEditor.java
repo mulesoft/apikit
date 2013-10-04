@@ -191,7 +191,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
             InputStream inputStream;
             try {
                 inputStream = new FileInputStream(ramlFile);
-                CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile));
+                CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParentFile()));
                 return APIKitHelper.INSTANCE.retrieveRaml(ramlFile.getName(), inputStream, resourceLoader);
             } catch (FileNotFoundException e) {
                 System.out.println("raml file no existia");
