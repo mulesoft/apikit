@@ -1,5 +1,4 @@
-%YAML 1.2
-#%RAML 0.2
+#%RAML 0.8
 ---
 title: Sample API
 

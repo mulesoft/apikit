@@ -69,7 +69,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
 {
 
     public static final String APPLICATION_RAML = "application/raml+yaml";
-    public static final String VERSION = "#%RAML 0.2\n---\n";
+    public static final String VERSION = "#%RAML 0.8\n---\n";
     private static final int URI_CACHE_SIZE = 1000;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
