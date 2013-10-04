@@ -20,6 +20,7 @@ schemas:
 
 /leagues:
     displayName: Leagues
+    description: World Soccer Leagues
     get:
         responses:
             200:
