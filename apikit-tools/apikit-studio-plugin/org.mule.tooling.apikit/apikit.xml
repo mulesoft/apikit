@@ -9,7 +9,7 @@
 		<attribute-category description="Defines an API."
 			caption="Router configuration">
 			<group caption="Generic" id="routerGenericProperties">
-				<name required="true"
+				<name required="false"
 					description="Give a name to this configuration so it can be later referenced by config-ref."
 					caption="Name" name="name"></name>
 				<string caption="YAML File" description="Path to the YAML file"
@@ -90,7 +90,7 @@
 			<group caption="Generic" id="routerGeneric">
 				<globalRef requiredType="http://www.mulesoft.org/schema/mule/apikit/config"
 					description="Specify which configuration to use for this invocation."
-					caption="Router configuration" name="config-ref" required="true"></globalRef>
+					caption="Router configuration" name="config-ref" required="false"></globalRef>
 			</group>
 		</attribute-category>
 	</flow>
