@@ -47,7 +47,7 @@ public class APIkitTemplateProjectContribution {
             // Add the APIKit extension to the mule project
             final List<ExternalContributionMuleModule> externalModules = MuleCorePlugin.getModuleManager().getExternalModules();
             for (final ExternalContributionMuleModule externalContributionMuleModule : externalModules) {
-                if ("Apikit".equals(externalContributionMuleModule.getName())) {
+                if ("APIkit".equals(externalContributionMuleModule.getName())) {
                     try {
                         muleProject.addMuleExtension(externalContributionMuleModule);
                     } catch (CoreException e) {
