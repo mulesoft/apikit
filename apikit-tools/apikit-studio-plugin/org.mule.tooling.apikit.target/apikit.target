@@ -72,8 +72,6 @@
 <unit id="org.mule.tooling.model" version="0.0.0"/>
 <unit id="org.mule.tooling.ognl.repackaged" version="0.0.0"/>
 <unit id="org.dom4j" version="0.0.0"/>
-<unit id="org.mule.tooling.maven" version="0.0.0"/>
-<unit id="org.mule.tooling.maven.ui" version="0.0.0"/>
 <unit id="org.mule.tooling.runtime.ui" version="0.0.0"/>
 <unit id="org.mule.tooling.runtime" version="0.0.0"/>
 <unit id="org.mule.tooling.servers.commons" version="0.0.0"/>
