@@ -38,9 +38,9 @@ import org.mule.tooling.ui.wizards.extensible.WizardContext;
 
 public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExtension implements IConfigurationTemplateExtension {
 
-    private static final String APIKIT_SETTINGS = "APIKit Settings";
+    private static final String APIKIT_SETTINGS = "APIkit Settings";
 
-    private static final String ADD_APIKIT_COMPONENTS = "Add APIKit components";
+    private static final String ADD_APIKIT_COMPONENTS = "Add APIkit components";
 
     @WizardContext
     private String projectName;

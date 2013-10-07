@@ -80,7 +80,7 @@
 			/ -->
 	</flow>
 
-	<flow localId="router" caption="APIKit Router" abstract="false"
+	<flow localId="router" caption="APIkit Router" abstract="false"
 		supportsInbound="false" category="org.mule.tooling.category.endpoints"
 		icon="icons/small/apikit16x16.png" image="icons/large/apikit.png"
 		xmlname="router" description="The Router element allows to define an API"

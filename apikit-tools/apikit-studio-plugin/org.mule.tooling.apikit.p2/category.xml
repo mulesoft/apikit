@@ -6,5 +6,5 @@
    <feature id="org.raml.editor.feature">
       <category name="org.mule.tooling.apikit"/>
    </feature>
-   <category-def name="org.mule.tooling.apikit" label="APIKit Studio Plugin"/>
+   <category-def name="org.mule.tooling.apikit" label="APIkit Studio Plugin"/>
 </site>

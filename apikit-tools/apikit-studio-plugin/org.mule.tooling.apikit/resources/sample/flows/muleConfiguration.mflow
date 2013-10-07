@@ -77,7 +77,7 @@
                     <property name="auxiliary;index" value="24"/>
                 </properties>
             </endpoint>
-            <pattern name="APIKit Router" type="http://www.mulesoft.org/schema/mule/apikit/router" entity-id="APIKit Router#1">
+            <pattern name="APIkit Router" type="http://www.mulesoft.org/schema/mule/apikit/router" entity-id="APIkit Router#1">
                 <properties>
                     <property name="config-ref" value="apiConfig"/>
                     <property name="auxiliary;index" value="25"/>
