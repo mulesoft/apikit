@@ -10,13 +10,11 @@ import org.mule.tooling.core.model.IMuleProject;
 public class EnableApikitSupportAction implements ProjectLifecycleAction {
 
     @Override
-    public boolean execute(IMuleProject muleProject, IProgressMonitor monitor) {
+    public void execute(IMuleProject muleProject, IProgressMonitor monitor) {
         APIKitProjectHelper apikitHelper = new APIKitProjectHelper(muleProject);
         if (apikitHelper.isAPIKitProjectEnabled()) {
             APIkitTemplateProjectContribution templateProjectContribution = new APIkitTemplateProjectContribution();
             templateProjectContribution.addContributionsTo(muleProject);
-            return true;
         }
-        return false;
     }
 }
