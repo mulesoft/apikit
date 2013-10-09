@@ -1,5 +1,6 @@
 package org.mule.tooling.apikit.util;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
@@ -38,5 +39,10 @@ public enum APIKitHelper {
         } catch (Exception e) {
             return null;
         }
+    }
+    
+    public boolean isRamlFile(File ramlFile) {
+        String fileName = ramlFile.getName().toLowerCase();
+        return (fileName.endsWith("yaml") || fileName.endsWith("yml") || fileName.endsWith("raml"));
     }
 }

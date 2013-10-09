@@ -3,24 +3,18 @@ package org.mule.tooling.apikit.handlers;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -33,17 +27,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.apikit.Activator;
+import org.mule.tooling.apikit.scaffolder.FlowGenerator;
 import org.mule.tooling.apikit.util.APIKitHelper;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
-import org.mule.tooling.core.io.IMuleResources;
-import org.mule.tooling.core.io.MuleResourceUtils;
 import org.mule.tooling.core.model.IMuleProject;
-import org.mule.tooling.messageflow.editor.MultiPageMessageFlowEditor;
-import org.mule.tooling.messageflow.util.MessageFlowUtils;
 import org.mule.tooling.ui.utils.SaveModifiedResourcesDialog;
 import org.mule.tooling.ui.utils.UiUtils;
-import org.mule.tools.apikit.ScaffolderAPI;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.FileResourceLoader;
@@ -70,21 +60,16 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
             try {
                 content = new Scanner(file).useDelimiter("\\Z").next();
                 CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParent().getRawLocation().toFile()));
-                if (isRamlFile(file) && APIKitHelper.INSTANCE.isValidYaml(file.getName(), content, resourceLoader)) {
+                if (APIKitHelper.INSTANCE.isRamlFile(file) && APIKitHelper.INSTANCE.isValidYaml(file.getName(), content, resourceLoader)) {
                     return true;
                 }
 
             } catch (FileNotFoundException e) {
-                MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, MuleCorePlugin.PLUGIN_ID, e.getMessage()));
+                MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage()));
                 e.printStackTrace();
             }
         }
         return false;
-    }
-
-    private boolean isRamlFile(File ramlFile) {
-        String fileName = ramlFile.getName().toLowerCase();
-        return (fileName.endsWith("yaml") || fileName.endsWith("yml") || fileName.endsWith("raml"));
     }
 
     @Override
@@ -126,53 +111,13 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
                 monitor.done();
                 return;
             }
-            runScaffolder(monitor, project);
-            createMuleConfigs(monitor, project, muleProject);
+            FlowGenerator flowGenerator = new FlowGenerator();
+            flowGenerator.run(monitor, project, ramlFile.getRawLocation().toFile());
+            flowGenerator.createMuleConfigs(monitor, muleProject);
             monitor.done();
         } catch (CoreException e) {
-            MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, MuleCorePlugin.PLUGIN_ID, e.getMessage()));
+            MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage()));
             e.printStackTrace();
-        }
-    }
-
-    private void runScaffolder(IProgressMonitor monitor, IProject project) throws CoreException {
-        IFolder appFolder = project.getFolder(IMuleResources.MULE_APP_FOLDER);
-        if (appFolder != null) {
-            ScaffolderAPI scaffolderAPI = new ScaffolderAPI(ramlFile.getParent().getRawLocation().toFile(), appFolder.getRawLocation().toFile());
-            monitor.subTask("Running scaffolder...");
-            scaffolderAPI.run();
-            monitor.worked(1);
-            project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
-            monitor.worked(1);
-            monitor.subTask("Updating Mule configurations...");
-            updateMessageFlowEditors();
-            monitor.worked(1);
-        }
-    }
-
-    private void createMuleConfigs(IProgressMonitor monitor, IProject project, IMuleProject muleProject) throws CoreException {
-        monitor.subTask("Creating necessary Mule configurations...");
-        IFolder flowsFolder = project.getFolder(IMuleResources.MULE_MESSAGE_FLOWS_FOLDER);
-        IFolder muleConfigsFolder = project.getFolder(IMuleResources.MULE_APP_FOLDER);
-        IResource[] members = muleConfigsFolder.members();
-        String configFileName = "";
-        String mFlowFileName = "";
-        for (IResource configFile : members) {
-            if (MuleResourceUtils.isConfigFile(configFile)){
-                configFileName = FilenameUtils.removeExtension(configFile.getName());
-                mFlowFileName = configFileName + "." + IMuleResources.MULE_MESSAGE_FLOW_SUFFIX;
-                IFile mFlowFile = flowsFolder.getFile(mFlowFileName);
-                if (!mFlowFile.exists()) {
-                    UiUtils.createEmptyConfiguration(muleProject, mFlowFileName, configFileName, StringUtils.EMPTY);
-                }
-            }
-        }
-    }
-
-    private void updateMessageFlowEditors() {
-        Collection<MultiPageMessageFlowEditor> openEditors = MessageFlowUtils.getOpenMultipageMessageFlowEditors();
-        for (MultiPageMessageFlowEditor messageFlowEditor : openEditors) {
-            messageFlowEditor.updateFlowFromSource();
         }
     }
 

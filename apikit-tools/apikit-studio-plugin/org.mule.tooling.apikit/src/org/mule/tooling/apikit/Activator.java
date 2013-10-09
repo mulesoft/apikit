@@ -12,6 +12,11 @@ public class Activator extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.mule.tooling.apikit"; //$NON-NLS-1$
 	
 	public static final String API_FOLDER = "src/main/api";
+	
+	public static final String EXAMPLE_PROJECT_ROOT = "resources/sample"; 
+	
+	public static final String DEFAULT_RAML_FILE = "api.yaml";
+	
 
 	// The shared instance
 	private static Activator plugin;
