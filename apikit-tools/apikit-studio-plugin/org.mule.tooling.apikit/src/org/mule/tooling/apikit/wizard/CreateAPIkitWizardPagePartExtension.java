@@ -139,16 +139,31 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
                     ramlFile = null;
                 }
                 updateErrorMessage();
+                updatePagePartComplete();
             }
+
         });
         fileChooser.setEnabled(false);
         setPartComplete(true);
         parent.layout();
     }
     
+    private void updatePagePartComplete() {
+        String errorDescription = this.retrieveErrorMessage();
+        if (errorDescription.isEmpty()) {
+            setPartComplete(true);
+        } else {
+            setPartComplete(false);
+        }
+    }
+    
     private void updateErrorMessage() {
         String errorDescription = this.retrieveErrorMessage();
-        this.notifyErrorInConfiguration(errorDescription.isEmpty() ? null : errorDescription);
+        if (errorDescription.isEmpty()) {
+            this.notifyErrorsCleared();
+        } else {
+            this.notifyErrorInConfiguration(errorDescription);
+        }
     }
 
     private String retrieveErrorMessage() {
