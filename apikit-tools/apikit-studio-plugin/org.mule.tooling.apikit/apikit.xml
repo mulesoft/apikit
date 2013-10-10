@@ -90,7 +90,7 @@
 			<group caption="Generic" id="routerGeneric">
 				<globalRef requiredType="http://www.mulesoft.org/schema/mule/apikit/config"
 					description="Specify which configuration to use for this invocation."
-					caption="Router configuration" name="config-ref" required="false"></globalRef>
+					caption="Router configuration" name="config-ref" required="true"></globalRef>
 			</group>
 		</attribute-category>
 	</flow>
