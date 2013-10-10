@@ -5,7 +5,6 @@ package org.mule.tooling.apikit.widgets;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +38,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
+import org.mule.tooling.apikit.Activator;
 import org.mule.tooling.apikit.action.AddMappingAction;
 import org.mule.tooling.apikit.action.RemoveMappingAction;
 import org.mule.tooling.apikit.util.APIKitHelper;
@@ -65,6 +65,7 @@ import org.raml.parser.loader.FileResourceLoader;
 
 public class APIKitMappingCustomEditor extends CustomEditor {
 
+    private static final String RAML_EDITOR_NAME = "raml";
     private ToolBarManager manager;
     private TableViewer mappingsTableViewer;
     private IAction addMappingAction;
@@ -81,7 +82,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
     @Override
     protected Control createControl(AttributesPropertyPage parentPage) {
         globalElementPage = parentPage;
-        
+
         Group parentComposite = getGroup(globalElementPage);
         GridLayoutFactory.swtDefaults().numColumns(1).equalWidth(false).applyTo(parentComposite);
         GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).applyTo(parentComposite);
@@ -94,6 +95,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
         final Text text = (Text) ramlEditor.getText();
         setRamlPath(text.getText());
         text.addModifyListener(new ModifyListener() {
+
             @Override
             public void modifyText(ModifyEvent e) {
                 setRamlPath(text.getText());
@@ -163,12 +165,12 @@ public class APIKitMappingCustomEditor extends CustomEditor {
 
             @Override
             public void beforeEditorDeactivated(ColumnViewerEditorDeactivationEvent event) {
-            
+
             }
 
             @Override
             public void afterEditorDeactivated(ColumnViewerEditorDeactivationEvent event) {
-                
+
             }
         });
 
@@ -184,22 +186,17 @@ public class APIKitMappingCustomEditor extends CustomEditor {
 
         return parentComposite;
     }
-    
-    private Raml retrieveRamlSpec() {
+
+    private Raml retrieveRamlSpec() throws Exception {
         File ramlFile = retrieveRamlFile();
-        if (ramlFile != null) {
-            InputStream inputStream;
-            try {
-                inputStream = new FileInputStream(ramlFile);
-                CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParentFile()));
-                return APIKitHelper.INSTANCE.retrieveRaml(ramlFile.getName(), inputStream, resourceLoader);
-            } catch (FileNotFoundException e) {
-                System.out.println("raml file no existia");
-            }
+        if (ramlFile != null && ramlFile.exists()) {
+            InputStream inputStream = new FileInputStream(ramlFile);
+            CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParentFile()));
+            return APIKitHelper.INSTANCE.retrieveRaml(ramlFile.getName(), inputStream, resourceLoader);
         }
         return null;
     }
-    
+
     private Group getGroup(final AttributesPropertyPage parentPage) {
         Group parent = null;
         for (Control control : parentPage.getChildren()) {
@@ -261,12 +258,12 @@ public class APIKitMappingCustomEditor extends CustomEditor {
     public void saveTo(MessageFlowNode node, PropertyCollectionMap props) {
         props.getPropertyCollections().clear();
         int i = 0;
-        for (Mapping mapping : mappings) {            
+        for (Mapping mapping : mappings) {
             PropertyCollectionMap subMap = new PropertyCollectionMap();
             subMap.addProperty("flow-ref", mapping.getFlow().getName());
             subMap.addProperty("resource", mapping.getResource().getUri());
             subMap.addProperty("action", mapping.getAction().getType().name().toLowerCase());
-            props.addPropertyCollection("@http://www.mulesoft.org/schema/mule/apikit/flow-mapping;"+i, subMap);
+            props.addPropertyCollection("@http://www.mulesoft.org/schema/mule/apikit/flow-mapping;" + i, subMap);
             i++;
         }
     }
@@ -316,12 +313,25 @@ public class APIKitMappingCustomEditor extends CustomEditor {
             mappingsTableViewer.setInput(mappings);
         }
 
+        public Raml retrieveRamlSpec() throws Exception {
+            return APIKitMappingCustomEditor.this.retrieveRamlSpec();
+        }
+
+        public File retrieveRamlFile() {
+            return APIKitMappingCustomEditor.this.retrieveRamlFile();
+        }
+
         public Collection<Resource> generateResources() {
-            Raml ramlSpec = retrieveRamlSpec();
-            if (ramlSpec != null) {
-                return MappingManager.INSTANCE.retrieveResources(ramlSpec);    
+            Raml ramlSpec;
+            try {
+                ramlSpec = retrieveRamlSpec();
+                if (ramlSpec != null) {
+                    return MappingManager.INSTANCE.retrieveResources(ramlSpec);
+                }
+                return Collections.emptyList();
+            } catch (Exception e) {
+                return Collections.emptyList();
             }
-            return Collections.emptyList();
         }
 
         public Collection<Flow> generateFlows() {
@@ -335,7 +345,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
     }
 
     private StringFieldEditor getRamlEditor() {
-        final IFieldEditor ramlFileEditor = globalElementPage.getEditors().get("raml");
+        final IFieldEditor ramlFileEditor = globalElementPage.getEditors().get(RAML_EDITOR_NAME);
         if (ramlFileEditor != null && ramlFileEditor instanceof StringFieldEditor) {
             final StringFieldEditor ramlRefEditor = (StringFieldEditor) ramlFileEditor;
             return ramlRefEditor;
@@ -351,11 +361,12 @@ public class APIKitMappingCustomEditor extends CustomEditor {
             if (ramlFile != null && ramlFile.exists()) {
                 return ramlFile;
             } else {
-                ramlFile = muleProject.getFile("src/main/api/" + getRamlPath()).getRawLocation().toFile();
+                ramlFile = muleProject.getFile(Activator.API_FOLDER + File.separator + getRamlPath()).getRawLocation().toFile();
                 if (ramlFile != null && ramlFile.exists()) {
                     return ramlFile;
                 }
             }
+            return ramlFile;
         }
         return null;
     }
@@ -370,7 +381,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
 
     @Override
     public void refreshOptions() {
-        
+
     }
 
 }

@@ -35,7 +35,7 @@ public class APIkitTemplateProjectContribution {
 
     public void addContributionsTo(final IMuleProject muleProject) {
 
-        URL resourceURL = APIkitTemplateProjectContribution.class.getClassLoader().getResource("resources/sample");
+        URL resourceURL = APIkitTemplateProjectContribution.class.getClassLoader().getResource(Activator.EXAMPLE_PROJECT_ROOT);
         try {
             final File workspaceDir = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toFile();
             final File newProject = new File(workspaceDir, muleProject.getName());
@@ -60,13 +60,10 @@ public class APIkitTemplateProjectContribution {
             project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
         } catch (URISyntaxException e) {
             MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Resource template does not exist", e));
-            e.printStackTrace();
         } catch (IOException e) {
             MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Resource template does not exist", e));
-            e.printStackTrace();
         } catch (CoreException e) {
             MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Cannot refresh the project", e));
-            e.printStackTrace();
         }
     }
 }

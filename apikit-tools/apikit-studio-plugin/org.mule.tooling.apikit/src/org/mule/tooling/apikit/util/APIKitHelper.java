@@ -33,14 +33,10 @@ public enum APIKitHelper {
     }
 
     public Raml retrieveRaml(String fileName, InputStream content, ResourceLoader resourceLoader) {
-        try {
-            RamlDocumentBuilder builder = new RamlDocumentBuilder(resourceLoader);
-            return builder.build(content);
-        } catch (Exception e) {
-            return null;
-        }
+        RamlDocumentBuilder builder = new RamlDocumentBuilder(resourceLoader);
+        return builder.build(content);
     }
-    
+
     public boolean isRamlFile(File ramlFile) {
         String fileName = ramlFile.getName().toLowerCase();
         return (fileName.endsWith("yaml") || fileName.endsWith("yml") || fileName.endsWith("raml"));
