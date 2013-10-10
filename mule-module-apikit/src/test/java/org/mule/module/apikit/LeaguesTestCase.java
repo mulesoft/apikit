@@ -16,6 +16,7 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -343,4 +344,14 @@ public class LeaguesTestCase extends FunctionalTestCase
             .when().get("/api/console");
     }
 
+    @Test
+    @Ignore //TODO enable when cascade is released
+    public void putMultiPartFormData() throws Exception
+    {
+        given().multiPart("description", "Barcelona Badge")
+                .multiPart("image", "bbva.jpg", this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/leagues/bbva.jpg"))
+               .expect().statusCode(200)
+                .body("upload", is("OK"))
+               .when().put("/api/leagues/liga-bbva/badge");
+    }
 }

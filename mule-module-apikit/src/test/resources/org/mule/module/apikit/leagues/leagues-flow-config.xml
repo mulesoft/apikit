@@ -9,7 +9,6 @@
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
-
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
@@ -107,6 +106,13 @@
             to = (message.inboundProperties.?limit != null) ? Math.min(Integer.valueOf(message.inboundProperties.limit), teams.size()) : teams.size();
             payload = teams.subList(from, to);
         </expression-component>
+    </flow>
+
+    <flow name="put:/leagues/{leagueId}/badge">
+        <set-variable variableName="mp1" value="#[org.mule.util.IOUtils.toString(message.inboundAttachments['description'].getDataSource().getInputStream())]"/>
+        <set-variable variableName="mp2" value="#[message.inboundAttachments['image'].getDataSource().getPart().getContentDispositionFilename()]"/>
+        <set-property propertyName="Content-Type" value="application/json"/>
+        <set-payload value="{ &quot;upload&quot;: &quot;OK&quot; }"/>
     </flow>
 
     <spring:beans>

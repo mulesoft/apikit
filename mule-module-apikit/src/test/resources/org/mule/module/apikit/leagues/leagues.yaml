@@ -58,6 +58,18 @@ schemas:
             responses:
                 204:
                     description: league deleted
+        /badge:
+            put:
+                body:
+                    multipart/form-data:
+                        formParameters:
+                            description: ~
+                            image:
+                                type: file
+                responses:
+                    200:
+                        body:
+                            application/json: ~
         /teams:
             get:
                 queryParameters:
