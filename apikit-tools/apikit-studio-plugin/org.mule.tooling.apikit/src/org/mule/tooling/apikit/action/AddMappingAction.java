@@ -3,8 +3,7 @@
  */
 package org.mule.tooling.apikit.action;
 
-import java.io.File;
-
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -40,7 +39,7 @@ public class AddMappingAction extends Action {
     @Override
     public boolean isEnabled() {
         if (mappingAccessor != null) {
-            File ramlFile = mappingAccessor.retrieveRamlFile();
+            IFile ramlFile = mappingAccessor.retrieveRamlFile();
             Shell activeShell = Display.getCurrent().getActiveShell();
             if (ramlFile != null) {
                 if (ramlFile.exists()) {

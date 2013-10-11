@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -188,11 +189,12 @@ public class APIKitMappingCustomEditor extends CustomEditor {
     }
 
     private Raml retrieveRamlSpec() throws Exception {
-        File ramlFile = retrieveRamlFile();
+        IFile ramlFile = retrieveRamlFile();
         if (ramlFile != null && ramlFile.exists()) {
-            InputStream inputStream = new FileInputStream(ramlFile);
-            CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParentFile()));
-            return APIKitHelper.INSTANCE.retrieveRaml(ramlFile.getName(), inputStream, resourceLoader);
+            File file = ramlFile.getRawLocation().toFile();
+            InputStream inputStream = new FileInputStream(file);
+            CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(file.getParentFile()));
+            return APIKitHelper.INSTANCE.retrieveRaml(ramlFile, inputStream, resourceLoader);
         }
         return null;
     }
@@ -317,7 +319,7 @@ public class APIKitMappingCustomEditor extends CustomEditor {
             return APIKitMappingCustomEditor.this.retrieveRamlSpec();
         }
 
-        public File retrieveRamlFile() {
+        public IFile retrieveRamlFile() {
             return APIKitMappingCustomEditor.this.retrieveRamlFile();
         }
 
@@ -353,15 +355,15 @@ public class APIKitMappingCustomEditor extends CustomEditor {
         return null;
     }
 
-    private File retrieveRamlFile() {
-        File ramlFile = null;
+    private IFile retrieveRamlFile() {
+        IFile ramlFile = null;
         IMuleProject muleProject = MuleCorePlugin.getDesignContext().getMuleProject();
         if (getRamlPath() != null && !getRamlPath().isEmpty()) {
-            ramlFile = muleProject.getFile(getRamlPath()).getRawLocation().toFile();
+            ramlFile = muleProject.getFile(getRamlPath());
             if (ramlFile != null && ramlFile.exists()) {
                 return ramlFile;
             } else {
-                ramlFile = muleProject.getFile(Activator.API_FOLDER + File.separator + getRamlPath()).getRawLocation().toFile();
+                ramlFile = muleProject.getFile(Activator.API_FOLDER + File.separator + getRamlPath());
                 if (ramlFile != null && ramlFile.exists()) {
                     return ramlFile;
                 }

@@ -60,7 +60,7 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
             try {
                 content = new Scanner(file).useDelimiter("\\Z").next();
                 CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParent().getRawLocation().toFile()));
-                if (APIKitHelper.INSTANCE.isRamlFile(file) && APIKitHelper.INSTANCE.isValidYaml(file.getName(), content, resourceLoader)) {
+                if (APIKitHelper.INSTANCE.isRamlFile(file) && APIKitHelper.INSTANCE.isValidYaml(ramlFile, content, resourceLoader)) {
                     return true;
                 }
 
@@ -112,7 +112,7 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
                 return;
             }
             FlowGenerator flowGenerator = new FlowGenerator();
-            flowGenerator.run(monitor, project, ramlFile.getRawLocation().toFile());
+            flowGenerator.run(monitor, project, ramlFile);
             flowGenerator.createMuleConfigs(monitor, muleProject);
             monitor.done();
         } catch (CoreException e) {

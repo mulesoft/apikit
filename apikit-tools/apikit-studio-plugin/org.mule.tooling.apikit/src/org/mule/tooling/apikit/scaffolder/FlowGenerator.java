@@ -5,6 +5,7 @@ package org.mule.tooling.apikit.scaffolder;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.concurrent.Callable;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -22,6 +23,7 @@ import org.mule.tooling.messageflow.editor.MultiPageMessageFlowEditor;
 import org.mule.tooling.messageflow.util.MessageFlowUtils;
 import org.mule.tooling.ui.utils.UiUtils;
 import org.mule.tools.apikit.ScaffolderAPI;
+import org.raml.editor.util.ProjectClasspathRunner;
 
 
 /**
@@ -32,12 +34,20 @@ import org.mule.tools.apikit.ScaffolderAPI;
  */
 public class FlowGenerator {
     
-    public void run(IProgressMonitor monitor, IProject project, File ramlFile) throws CoreException {
-        IFolder appFolder = project.getFolder(IMuleResources.MULE_APP_FOLDER);
+    public void run(IProgressMonitor monitor, IProject project, final IFile ramlFile) throws CoreException {
+        final IFolder appFolder = project.getFolder(IMuleResources.MULE_APP_FOLDER);
+        final File file = ramlFile.getRawLocation().toFile();
         if (appFolder != null) {
-            ScaffolderAPI scaffolderAPI = new ScaffolderAPI(ramlFile.getParentFile(), appFolder.getRawLocation().toFile());
             monitor.subTask("Running scaffolder...");
-            scaffolderAPI.run();
+            new ProjectClasspathRunner().run(new Callable<Void>() {
+
+                @Override
+                public Void call() throws Exception {
+                    ScaffolderAPI scaffolderAPI = new ScaffolderAPI(file.getParentFile(), appFolder.getRawLocation().toFile());
+                    scaffolderAPI.run();
+                    return null;
+                }
+            }, ramlFile.getProject());
             monitor.worked(1);
             project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
             monitor.worked(1);
