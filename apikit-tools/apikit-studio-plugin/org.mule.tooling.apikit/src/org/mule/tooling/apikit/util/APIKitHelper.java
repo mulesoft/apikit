@@ -63,4 +63,12 @@ public enum APIKitHelper {
         }
         return true;
     }
+    
+    public boolean isValidYaml(final String content, final CompositeResourceLoader resourceLoader) {
+        List<ValidationResult> validationResults = RamlValidationService.createDefault(resourceLoader).validate(content);
+        if (validationResults != null && !validationResults.isEmpty()) {
+            return false;
+        }
+        return true;
+    }
 }

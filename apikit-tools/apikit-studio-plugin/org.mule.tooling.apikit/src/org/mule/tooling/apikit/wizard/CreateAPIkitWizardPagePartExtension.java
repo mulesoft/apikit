@@ -14,15 +14,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
@@ -183,10 +179,7 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
         if (tempFile.exists() && APIKitHelper.INSTANCE.isRamlFile(tempFile)) {
             String content = new Scanner(tempFile).useDelimiter("\\Z").next();
             CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(tempFile.getParentFile()));
-            IPath location= Path.fromOSString(tempFile.getAbsolutePath());
-            IWorkspace workspace= ResourcesPlugin.getWorkspace();
-            IFile ifile= workspace.getRoot().getFileForLocation(location);
-            if (APIKitHelper.INSTANCE.isValidYaml(ifile, content, resourceLoader)) {
+            if (APIKitHelper.INSTANCE.isValidYaml(content, resourceLoader)) {
                 ramlFile = tempFile;
                 return;
             }
