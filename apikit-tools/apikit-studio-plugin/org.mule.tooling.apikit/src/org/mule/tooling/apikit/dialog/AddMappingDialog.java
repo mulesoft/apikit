@@ -49,11 +49,13 @@ public class AddMappingDialog extends TitleAreaDialog {
         this.generatedMapping = new Mapping();
     }
 
+    @Override
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
         shell.setText("New Mapping");
     }
 
+    @Override
     protected Control createDialogArea(Composite parent) {
         parent = (Composite) super.createDialogArea(parent);
 

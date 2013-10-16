@@ -21,21 +21,8 @@ Require-Bundle: org.eclipse.ui,
  org.mule.tooling.messageflow,
  org.mule.tooling.apikit.deps,
  org.eclipse.ui.ide,
- org.eclipse.ui.forms,
- org.raml.editor;bundle-version="0.2.0"
+ org.eclipse.ui.forms
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-ClassPath: .,
- lib/commons-beanutils.jar,
- lib/commons-collections.jar,
- lib/commons-digester.jar,
- lib/commons-io.jar,
- lib/commons-lang.jar,
- lib/commons-logging.jar,
- lib/commons-validator.jar,
- lib/log4j.jar,
- lib/raml-parser.jar,
- lib/slf4j-api.jar,
- lib/slf4j-log4j12.jar,
- lib/xml-apis.jar
+Bundle-ClassPath: .

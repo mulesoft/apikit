@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.eclipse.core.resources.IFile;
-import org.raml.editor.util.ProjectClasspathRunner;
+import org.mule.tooling.apikit.deps.APIkitProjectClasspathRunner;
 import org.raml.model.Raml;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
@@ -20,8 +20,7 @@ public enum APIKitHelper {
 
     public boolean isBuildableYaml(IFile file, final String content, final ResourceLoader resourceLoader) {
         try {
-            new ProjectClasspathRunner().run(new Callable<Raml>() {
-
+            new APIkitProjectClasspathRunner().run(new Callable<Raml>() {
                 @Override
                 public Raml call() throws Exception {
                     RamlDocumentBuilder builder = new RamlDocumentBuilder(resourceLoader);
@@ -35,7 +34,7 @@ public enum APIKitHelper {
     }
 
     public Raml retrieveRaml(IFile ramlFile, final InputStream content, final ResourceLoader resourceLoader) {
-        Raml raml = new ProjectClasspathRunner().run(new Callable<Raml>() {
+        Raml raml = new APIkitProjectClasspathRunner().run(new Callable<Raml>() {
             @Override
             public Raml call() throws Exception {
                 RamlDocumentBuilder builder = new RamlDocumentBuilder(resourceLoader);
@@ -51,7 +50,7 @@ public enum APIKitHelper {
     }
 
     public boolean isValidYaml(IFile file, final String content, final CompositeResourceLoader resourceLoader) {
-        List<ValidationResult> validationResults = new ProjectClasspathRunner().run(new Callable<List<ValidationResult>>() {
+        List<ValidationResult> validationResults = new APIkitProjectClasspathRunner().run(new Callable<List<ValidationResult>>() {
 
             @Override
             public List<ValidationResult> call() throws Exception {

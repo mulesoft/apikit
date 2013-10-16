@@ -4,7 +4,9 @@ Bundle-Name: APIkit dependencies plugin
 Bundle-SymbolicName: org.mule.tooling.apikit.deps;singleton:=true
 Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.mule.tooling.apikit.deps.Activator
-Require-Bundle: org.eclipse.core.runtime
+Require-Bundle: org.eclipse.core.runtime,
+ org.raml.editor;bundle-version="0.2.0",
+ org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: lib/apikit-maven-plugin.jar,
@@ -14,7 +16,6 @@ Bundle-ClassPath: lib/apikit-maven-plugin.jar,
  lib/commons-digester.jar,
  lib/commons-io.jar,
  lib/commons-lang.jar,
- lib/commons-logging.jar,
  lib/commons-validator.jar,
  lib/jaxen.jar,
  lib/jdom2.jar,
@@ -25,12 +26,18 @@ Bundle-ClassPath: lib/apikit-maven-plugin.jar,
  lib/raml-parser.jar,
  lib/slf4j-api.jar,
  lib/slf4j-log4j12.jar,
- lib/xml-apis.jar
-Export-Package: org.mule.tools.apikit,
+ lib/xml-apis.jar,
+ lib/commons-logging.jar
+Export-Package: org.mule.tooling.apikit.deps,
+ org.mule.tools.apikit,
  org.mule.tools.apikit.input,
  org.mule.tools.apikit.input.parsers,
  org.mule.tools.apikit.misc,
  org.mule.tools.apikit.model,
  org.mule.tools.apikit.output,
  org.mule.tools.apikit.output.deployer,
- org.mule.tools.apikit.output.scopes
+ org.mule.tools.apikit.output.scopes,
+ org.raml.model,
+ org.raml.parser.loader,
+ org.raml.parser.rule,
+ org.raml.parser.visitor

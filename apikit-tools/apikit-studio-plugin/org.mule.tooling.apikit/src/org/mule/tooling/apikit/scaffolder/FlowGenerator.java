@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.mule.tooling.apikit.deps.APIkitProjectClasspathRunner;
 import org.mule.tooling.core.io.IMuleResources;
 import org.mule.tooling.core.io.MuleResourceUtils;
 import org.mule.tooling.core.model.IMuleProject;
@@ -23,7 +24,6 @@ import org.mule.tooling.messageflow.editor.MultiPageMessageFlowEditor;
 import org.mule.tooling.messageflow.util.MessageFlowUtils;
 import org.mule.tooling.ui.utils.UiUtils;
 import org.mule.tools.apikit.ScaffolderAPI;
-import org.raml.editor.util.ProjectClasspathRunner;
 
 
 /**
@@ -39,7 +39,7 @@ public class FlowGenerator {
         final File file = ramlFile.getRawLocation().toFile();
         if (appFolder != null) {
             monitor.subTask("Running scaffolder...");
-            new ProjectClasspathRunner().run(new Callable<Void>() {
+            new APIkitProjectClasspathRunner().run(new Callable<Void>() {
 
                 @Override
                 public Void call() throws Exception {
