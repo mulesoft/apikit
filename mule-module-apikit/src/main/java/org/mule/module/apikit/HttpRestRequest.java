@@ -140,6 +140,17 @@ public class HttpRestRequest
         MuleMessage message = muleEvent.getMessage();
         String msgMimeType = message.getDataType() != null ? message.getDataType().getMimeType() : null;
         String msgContentType = message.getOutboundProperty("Content-Type");
+
+        // user is in charge of setting content-type when using */*
+        if ("*/*".equals(responseRepresentation))
+        {
+            if (msgContentType == null)
+            {
+                throw new ApikitRuntimeException("Content-Type must be set in the flow when declaring */* response type");
+            }
+            responseRepresentation = msgContentType;
+        }
+
         message.setOutboundProperty("Content-Type", responseRepresentation);
 
         if (message.getPayload() instanceof NullPayload)

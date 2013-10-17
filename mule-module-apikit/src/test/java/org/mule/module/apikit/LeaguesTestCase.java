@@ -354,4 +354,15 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .body("upload", is("OK"))
                .when().put("/api/leagues/liga-bbva/badge");
     }
+
+    @Test
+    public void getAnyResponse() throws Exception
+    {
+        given().header("Accept", "application/json")
+            .expect()
+                .response().body("name", is("Liga BBVA"))
+                .header("Content-type", "application/json").statusCode(200)
+            .when().get("/api/leagues/liga-bbva/badge");
+    }
+
 }

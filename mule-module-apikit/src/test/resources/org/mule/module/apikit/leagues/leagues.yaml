@@ -25,8 +25,10 @@ schemas:
         responses:
             200:
                 body:
-                    application/json: !!null
-                    text/xml: !!null
+                    application/json:
+                        example: '.'
+                    text/xml:
+                        example: '.'
     post:
         body: &league-schema
             application/json:
@@ -63,13 +65,21 @@ schemas:
                 body:
                     multipart/form-data:
                         formParameters:
-                            description: ~
+                            description:
+                                type: string
                             image:
                                 type: file
                 responses:
                     200:
                         body:
-                            application/json: ~
+                            application/json:
+                                example: '.'
+            get:
+                responses:
+                    200:
+                        body:
+                            '*/*':
+                                example: '.'
         /teams:
             get:
                 queryParameters:
@@ -90,4 +100,5 @@ schemas:
                 responses:
                     200:
                         body:
-                            application/json: !!null
+                            application/json:
+                                example: '.'

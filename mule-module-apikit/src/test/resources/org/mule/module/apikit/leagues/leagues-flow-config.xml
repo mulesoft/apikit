@@ -115,6 +115,11 @@
         <set-payload value="{ &quot;upload&quot;: &quot;OK&quot; }"/>
     </flow>
 
+    <flow name="get:/leagues/{leagueId}/badge">
+        <set-property propertyName="Content-Type" value="application/json"/>
+        <set-payload value="{ &quot;name&quot;: &quot;Liga BBVA&quot; }"/>
+    </flow>
+
     <spring:beans>
         <spring:bean id="liga-bbva" class="org.mule.module.apikit.leagues.League">
             <spring:property name="id" value="liga-bbva"/>
