@@ -9,4 +9,6 @@ src/main/resources/console/app
 mule-module-apikit-plugin.zip
 mule-module-apikit.jar
 apikit-tools/apikit-studio-plugin/org.mule.tooling.apikit.deps/lib/
+apikit-tools/apikit-studio-plugin/org.mule.tooling.apikit/examples/
 build.log
+.mule
