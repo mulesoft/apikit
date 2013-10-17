@@ -13,14 +13,13 @@ import org.mule.transport.http.components.ResourceNotFoundException;
 import org.mule.transport.http.i18n.HttpMessages;
 import org.mule.util.FilenameUtils;
 import org.mule.util.IOUtils;
+import org.mule.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
-
-import javax.activation.MimetypesFileTypeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +35,6 @@ public class ConsoleHandler
 
     private static final String RESOURCE_BASE = "/console";
 
-    private MimetypesFileTypeMap mimeTypes;
     private String homePage;
     private String homePageC5;
     private String consolePath;
@@ -47,9 +45,6 @@ public class ConsoleHandler
     {
 
         this.consolePath = sanitize(consolePath);
-        mimeTypes = new MimetypesFileTypeMap();
-        mimeTypes.addMimeTypes("text/javascript js");
-        mimeTypes.addMimeTypes("text/css css");
         String indexHtmlC5 = IOUtils.toString(getClass().getResourceAsStream("/console/indexc5.html"));
         homePageC5 = indexHtmlC5.replaceFirst("<raml-console src=\"[^\"]+\">", "<raml-console src=\"" + ramlUri + "\">");
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
@@ -98,8 +93,13 @@ public class ConsoleHandler
                 String context = event.getMessage().getInboundProperty("http.context.uri");
                 String scheme = context.substring(0, context.indexOf("/"));
                 String host = event.getMessage().getInboundProperty("Host");
-                String requestPath = event.getMessage().getInboundProperty("http.request");
+                String requestPath = event.getMessage().getInboundProperty("http.request.path");
                 String redirectLocation = scheme + "//" + host + requestPath + "/";
+                String queryString = event.getMessage().getInboundProperty("http.query.string");
+                if (StringUtils.isNotEmpty(queryString))
+                {
+                    redirectLocation += "?" + queryString;
+                }
                 event.getMessage().setOutboundProperty(HttpConstants.HEADER_LOCATION, redirectLocation);
                 return event;
             }
