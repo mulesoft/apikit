@@ -195,6 +195,9 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
         } else {
             projectHelper.setAPIKitProjectEnabled(false);
         }
+        if (ramlFile != null) {
+            projectHelper.setAPIKitProjectFromRaml(true);
+        }
     }
 
     public void setCreateAPIKit(boolean createAPIKit) {
@@ -214,11 +217,6 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
     		try {
 				IFolder apiFolder = muleProject.getFolder(Activator.API_FOLDER);
 				FileUtils.copyFileToDirectory(ramlFile, apiFolder.getRawLocation().toFile());
-				//delete the default api.yaml file
-				File defaultRAMLFile = apiFolder.getFile(Activator.DEFAULT_RAML_FILE).getRawLocation().toFile();
-				if (defaultRAMLFile.exists()) {
-					FileUtils.forceDelete(defaultRAMLFile);
-				}
 				FlowGenerator flowGenerator = new FlowGenerator();
 				IFile ramlFileInProject = apiFolder.getFile(ramlFile.getName());
 	            flowGenerator.run(new NullProgressMonitor(), muleProject.getJavaProject().getProject(), ramlFileInProject);

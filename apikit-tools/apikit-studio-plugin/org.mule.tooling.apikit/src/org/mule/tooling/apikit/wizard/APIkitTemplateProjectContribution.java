@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.mule.tooling.apikit.Activator;
+import org.mule.tooling.apikit.util.APIKitProjectHelper;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
@@ -41,8 +42,11 @@ public class APIkitTemplateProjectContribution {
             final File newProject = new File(workspaceDir, muleProject.getName());
 
             // Copy src/main/api folder
-            final File rootTemplateProjectFolder = new File(FileLocator.resolve(resourceURL).toURI());
-            CoreUtils.copyFiles(new File(rootTemplateProjectFolder, Activator.API_FOLDER), new File(newProject, Activator.API_FOLDER));
+            APIKitProjectHelper projectHelper = new APIKitProjectHelper(muleProject);
+            if (!projectHelper.isAPIkitFromRAMLFile()) {
+                final File rootTemplateProjectFolder = new File(FileLocator.resolve(resourceURL).toURI());
+                CoreUtils.copyFiles(new File(rootTemplateProjectFolder, Activator.API_FOLDER), new File(newProject, Activator.API_FOLDER));
+            }
 
             // Add the APIKit extension to the mule project
             final List<ExternalContributionMuleModule> externalModules = MuleCorePlugin.getModuleManager().getExternalModules();

@@ -19,11 +19,29 @@ public class APIKitProjectHelper {
     
     private static final boolean APIKIT_ENABLED_DEFAULT = false;
     public static final String PREFERENCE_KEY_APIKIT_ENABLED = "apikitEnabled";
+    private static final boolean APIKIT_FROM_RAML_DEFAULT = false;
+    public static final String PREFERENCE_KEY_APIKIT_FROM_RAML = "apikitFromRaml";
+    
     private IEclipsePreferences preferenceNode;
     private IMuleProject muleProject;
 
     public APIKitProjectHelper(IMuleProject muleProject) {
         this.muleProject = muleProject;
+    }
+    
+    public boolean isAPIkitFromRAMLFile() {
+        IEclipsePreferences preferenceNode = getPreferenceNode();
+        return preferenceNode.getBoolean(PREFERENCE_KEY_APIKIT_FROM_RAML, APIKIT_FROM_RAML_DEFAULT);
+    }
+    
+    public void setAPIKitProjectFromRaml(boolean enabled) {
+        IEclipsePreferences preferenceNode = getPreferenceNode();
+        preferenceNode.putBoolean(PREFERENCE_KEY_APIKIT_FROM_RAML, enabled);
+        try {
+            preferenceNode.flush();
+        } catch (BackingStoreException e) {
+            MuleCorePlugin.logError("Problem storing the project's APIKit support preferences", e);
+        }
     }
     
     public boolean isAPIKitProjectEnabled() {
