@@ -37,6 +37,39 @@ public class ParametersTestCase extends FunctionalTestCase
         return "org/mule/module/apikit/parameters/parameters-config.xml";
     }
 
+
+    @Test
+    public void requiredHeaderNotProvided() throws Exception
+    {
+        given()
+                .expect().response().statusCode(400)
+                .when().get("/api/resources?first=f");
+    }
+
+    @Test
+    public void invalidHeaderProvided() throws Exception
+    {
+        given().header("one", "invalid")
+                .expect().response().statusCode(400)
+                .when().get("/api/resources?first=f");
+    }
+
+    @Test
+    public void invalidHeaderPlaceholderProvided() throws Exception
+    {
+        given().header("mule-special", "dough").header("one", "foo")
+                .expect().response().statusCode(400)
+                .when().get("/api/resources?first=f");
+    }
+
+    @Test
+    public void validHeaderPlaceholderProvided() throws Exception
+    {
+        given().header("mule-special", "yeah").header("one", "foo")
+                .expect().response().statusCode(200)
+                .when().get("/api/resources?first=f");
+    }
+
     @Test
     public void requiredQueryParamNotProvided() throws Exception
     {
@@ -46,9 +79,9 @@ public class ParametersTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void requiredQueryParamProvided() throws Exception
+    public void requiredQueryParamAndHeaderProvided() throws Exception
     {
-        given()
+        given().header("one", "foo")
                 .expect().response().statusCode(200)
                 .when().get("/api/resources?first=I");
     }

@@ -3,6 +3,14 @@
 title: Parameters API
 /resources:
   get:
+    headers:
+        one:
+            type: string
+            enum: [foo, bar]
+            required: true
+        mule-{?}:
+            type: string
+            enum: [wow, yeah]
     queryParameters:
         first:
             type: string

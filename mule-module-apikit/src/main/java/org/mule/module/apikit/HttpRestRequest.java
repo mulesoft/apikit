@@ -8,6 +8,7 @@ import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotAcceptableException;
@@ -24,11 +25,13 @@ import com.google.common.net.MediaType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.raml.model.Action;
 import org.raml.model.MimeType;
 import org.raml.model.Raml;
 import org.raml.model.Response;
+import org.raml.model.parameter.Header;
 import org.raml.model.parameter.QueryParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,6 +80,7 @@ public class HttpRestRequest
         processQueryParameters();
 
         //process header parameters
+        processHeaders();
 
         //validate request representation (content-type and schema if defined)
         validateInputRepresentation();
@@ -120,7 +124,7 @@ public class HttpRestRequest
         for (String expectedKey : action.getQueryParameters().keySet())
         {
             QueryParameter expected = action.getQueryParameters().get(expectedKey);
-            String actual = requestEvent.getMessage().getInboundProperty(expectedKey);
+            String actual = (String) ((Map) requestEvent.getMessage().getInboundProperty("http.query.params")).get(expectedKey);
             if (actual == null && expected.isRequired())
             {
                 throw new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified");
@@ -130,6 +134,43 @@ public class HttpRestRequest
                 if (!expected.validate(actual))
                 {
                     throw new InvalidQueryParameterException("Invalid uri parameter value " + actual + " for " + expectedKey);
+                }
+            }
+        }
+    }
+
+    private void processHeaders() throws InvalidHeaderException
+    {
+        for (String expectedKey : action.getHeaders().keySet())
+        {
+            Header expected = action.getHeaders().get(expectedKey);
+            Map<String, String> incomingHeaders = requestEvent.getMessage().getInboundProperty("http.headers");
+
+            if (expectedKey.contains("{?}"))
+            {
+                String regex = expectedKey.replace("{?}", ".*");
+                for (String incoming : incomingHeaders.keySet())
+                {
+                    String incomingValue = incomingHeaders.get(incoming);
+                    if (incoming.matches(regex) && !expected.validate(incomingValue))
+                    {
+                        throw new InvalidHeaderException("Invalid header value " + incomingValue + " for " + expectedKey);
+                    }
+                }
+            }
+            else
+            {
+                String actual = incomingHeaders.get(expectedKey);
+                if (actual == null && expected.isRequired())
+                {
+                    throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
+                }
+                if (actual != null)
+                {
+                    if (!expected.validate(actual))
+                    {
+                        throw new InvalidHeaderException("Invalid header value " + actual + " for " + expectedKey);
+                    }
                 }
             }
         }
