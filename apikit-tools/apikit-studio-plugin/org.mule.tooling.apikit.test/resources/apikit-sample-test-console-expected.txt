@@ -1,0 +1,247 @@
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Leagues 1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] >>> studio-maven-plugin:3.4.2-RC1:studio (default-cli) @ leagues >>>
+[INFO] 
+[INFO] --- mule-appkit-maven-plugin:3.4:attach-test-resources (default-attach-test-resources) @ leagues ---
+[INFO] attaching test resource /Users/federico/Documents/junit-workspace/dnd1381194394477/src/main/app
+[INFO] 
+[INFO] <<< studio-maven-plugin:3.4.2-RC1:studio (default-cli) @ leagues <<<
+[INFO] 
+[INFO] --- studio-maven-plugin:3.4.2-RC1:studio (default-cli) @ leagues ---
+[INFO] Using exclusions definition for Mule ESB Server version 3.4.0
+[INFO] Using as WTP server : null
+[INFO] excluded: org.mule:mule-core
+[INFO] excluded: org.mule.common:mule-common
+[INFO] excluded: org.mule.modules:mule-module-spring-config
+[INFO] excluded: org.mule.modules:mule-module-annotations
+[INFO] excluded: org.mule.modules:mule-module-json
+[INFO] excluded: org.mule.modules:mule-module-xml
+[INFO] excluded: org.mule.modules:mule-module-scripting
+[INFO] excluded: org.mule.modules:mule-module-builders
+[INFO] excluded: org.mule.tests:mule-tests-functional
+[INFO] excluded: org.mule:mule-core
+[INFO] excluded: org.mule.transports:mule-transport-http
+[INFO] excluded: org.mule.transports:mule-transport-ssl
+[INFO] excluded: org.mule.transports:mule-transport-tcp
+[INFO] Using source status cache: /Users/federico/Documents/junit-workspace/dnd1381194394477/target/mvn-eclipse-cache.properties
+[INFO] Using exclusions definition for Mule ESB Server version 3.4.0
+[INFO] Wrote settings to /Users/federico/Documents/junit-workspace/dnd1381194394477/.settings/org.eclipse.jdt.core.prefs
+[INFO] File /Users/federico/Documents/junit-workspace/dnd1381194394477/.project already exists.
+       Additional settings will be preserved, run mvn eclipse:clean if you want old settings to be removed.
+[INFO] Wrote Eclipse project for "leagues" to /Users/federico/Documents/junit-workspace/dnd1381194394477.
+[INFO] 
+       Sources for some artifacts are not available.
+       Please run the same goal with the -DdownloadSources=true parameter in order to check remote repositories for sources.
+       List of artifacts without a source archive:
+         o com.googlecode.json-simple:json-simple:1.1.1
+         o junit:junit:4.10
+         o com.jayway.restassured:rest-assured:1.8.1
+         o org.codehaus.groovy:groovy:2.1.2
+         o antlr:antlr:2.7.7
+         o org.ow2.asm:asm-tree:4.0
+         o org.ow2.asm:asm:4.0
+         o org.ow2.asm:asm-commons:4.0
+         o org.ow2.asm:asm-util:4.0
+         o org.ow2.asm:asm-analysis:4.0
+         o org.codehaus.groovy:groovy-xml:2.1.2
+         o org.apache.httpcomponents:httpclient:4.2.1
+         o org.apache.httpcomponents:httpcore:4.2.1
+         o commons-logging:commons-logging:1.0.4
+         o commons-codec:commons-codec:1.3-osgi
+         o org.apache.httpcomponents:httpmime:4.2.1
+         o org.hamcrest:hamcrest-library:1.2.1
+         o org.ccil.cowan.tagsoup:tagsoup:1.2.1
+         o com.jayway.restassured:json-path:1.8.1
+         o org.codehaus.groovy:groovy-json:2.1.2
+         o com.fasterxml.jackson.core:jackson-databind:2.1.1
+         o com.fasterxml.jackson.core:jackson-annotations:2.1.1
+         o com.fasterxml.jackson.core:jackson-core:2.1.1
+         o org.codehaus.jackson:jackson-core-asl:1.9.11
+         o org.codehaus.jackson:jackson-mapper-asl:1.9.11
+         o com.google.code.gson:gson:1.7.2
+         o com.jayway.restassured:rest-assured-common:1.8.1
+         o org.apache.commons:commons-lang3:3.1
+         o com.jayway.restassured:xml-path:1.8.1
+         o junit:junit-dep:4.10
+         o commons-beanutils:commons-beanutils:1.8.0
+         o org.safehaus.jug:jug:2.0.0
+         o commons-cli:commons-cli:1.2
+         o commons-collections:commons-collections:3.2.1
+         o commons-io:commons-io:1.4
+         o commons-lang:commons-lang:2.4
+         o commons-pool:commons-pool:1.5.3
+         o javax.activation:activation:1.1-osgi
+         o org.apache.geronimo.specs:geronimo-jta_1.1_spec:1.1.1
+         o org.apache.geronimo.specs:geronimo-j2ee-connector_1.5_spec:1.1-osgi
+         o javax.annotation:jsr250-api:1.0
+         o org.slf4j:jcl-over-slf4j:1.6.1
+         o org.slf4j:slf4j-api:1.6.1
+         o org.slf4j:slf4j-log4j12:1.6.1
+         o log4j:log4j:1.2.16
+         o asm:asm:3.1
+         o asm:asm-commons:3.1
+         o asm:asm-tree:3.1
+         o org.mvel:mvel2:2.1.3.Final
+         o org.jgrapht:jgrapht-jdk1.5:0.7.3
+         o org.mule.modules:mule-module-apikit:0.1-20130917.204547-90
+         o org.raml:raml-parser:0.1-20130903.142948-13
+         o commons-validator:commons-validator:1.3.1
+         o commons-digester:commons-digester:1.6
+         o xml-apis:xml-apis:1.0.b2
+         o cglib:cglib-nodep:2.2
+         o org.springframework:spring-context:3.2.1.RELEASE
+         o org.springframework:spring-beans:3.2.1.RELEASE
+         o org.springframework:spring-core:3.2.1.RELEASE
+         o org.springframework:spring-aop:3.2.1.RELEASE
+         o org.springframework:spring-expression:3.2.1.RELEASE
+         o dom4j:dom4j:1.6.1-osgi
+         o jaxen:jaxen:1.1.1
+         o jdom:jdom:1.0
+         o com.google.guava:guava:13.0.1
+         o org.kitchen-eel:json-schema-validator:1.2.2
+         o org.mozilla:rhino:1.7R4
+         o joda-time:joda-time:1.6
+         o org.apache.geronimo.specs:geronimo-stax-api_1.0_spec:1.0.1
+         o commons-jxpath:commons-jxpath:1.3-osgi
+         o com.thoughtworks.xstream:xstream:1.4.2
+         o xmlpull:xmlpull:1.1.3.1
+         o xpp3:xpp3_min:1.1.3.4.O-osgi
+         o org.codehaus.woodstox:woodstox-core-asl:4.0.8
+         o org.codehaus.woodstox:stax2-api:3.0.2
+         o net.java.dev.stax-utils:stax-utils:20080702-osgi
+         o net.sf.saxon:saxon:8.9.0.4-osgi
+         o net.sf.saxon:saxon-dom:8.9.0.4-osgi
+         o net.sf.saxon:saxon-xqj:8.9.0.4
+         o javax.xml.bind:jaxb-api:2.1
+         o com.sun.xml.bind:jaxb-impl:2.1.5
+         o de.odysseus.staxon:staxon:1.2
+         o javax.xml.stream:stax-api:1.0-2
+         o org.springframework:spring-web:3.2.1.RELEASE
+         o aopalliance:aopalliance:1.0
+         o org.livetribe:livetribe-jsr223:2.0.5
+         o org.codehaus.groovy:groovy-all:1.8.6
+         o commons-net:commons-net:2.0
+         o org.apache.ftpserver:ftpserver-core:1.0.2
+         o org.apache.ftpserver:ftplet-api:1.0.2
+         o org.apache.mina:mina-core:2.0.0-M6
+         o org.apache.sshd:sshd-core:0.6.0
+         o bouncycastle:bcprov-jdk14:139
+         o org.mockito:mockito-all:1.9.0
+         o commons-httpclient:commons-httpclient:3.1-osgi
+         o tomcat:tomcat-util:5.5.23
+         o tomcat:tomcat-apr:5.5.23
+         o org.samba.jcifs:jcifs:1.3.3
+
+       Javadoc for some artifacts is not available.
+       Please run the same goal with the -DdownloadJavadocs=true parameter in order to check remote repositories for javadoc.
+       List of artifacts without a javadoc archive:
+         o com.googlecode.json-simple:json-simple:1.1.1
+         o junit:junit:4.10
+         o com.jayway.restassured:rest-assured:1.8.1
+         o org.codehaus.groovy:groovy:2.1.2
+         o antlr:antlr:2.7.7
+         o org.ow2.asm:asm-tree:4.0
+         o org.ow2.asm:asm:4.0
+         o org.ow2.asm:asm-commons:4.0
+         o org.ow2.asm:asm-util:4.0
+         o org.ow2.asm:asm-analysis:4.0
+         o org.codehaus.groovy:groovy-xml:2.1.2
+         o org.apache.httpcomponents:httpclient:4.2.1
+         o org.apache.httpcomponents:httpcore:4.2.1
+         o commons-logging:commons-logging:1.0.4
+         o commons-codec:commons-codec:1.3-osgi
+         o org.apache.httpcomponents:httpmime:4.2.1
+         o org.hamcrest:hamcrest-library:1.2.1
+         o org.ccil.cowan.tagsoup:tagsoup:1.2.1
+         o com.jayway.restassured:json-path:1.8.1
+         o org.codehaus.groovy:groovy-json:2.1.2
+         o com.fasterxml.jackson.core:jackson-databind:2.1.1
+         o com.fasterxml.jackson.core:jackson-annotations:2.1.1
+         o com.fasterxml.jackson.core:jackson-core:2.1.1
+         o org.codehaus.jackson:jackson-core-asl:1.9.11
+         o org.codehaus.jackson:jackson-mapper-asl:1.9.11
+         o com.google.code.gson:gson:1.7.2
+         o com.jayway.restassured:rest-assured-common:1.8.1
+         o org.apache.commons:commons-lang3:3.1
+         o com.jayway.restassured:xml-path:1.8.1
+         o junit:junit-dep:4.10
+         o commons-beanutils:commons-beanutils:1.8.0
+         o org.safehaus.jug:jug:2.0.0
+         o commons-cli:commons-cli:1.2
+         o commons-collections:commons-collections:3.2.1
+         o commons-io:commons-io:1.4
+         o commons-lang:commons-lang:2.4
+         o commons-pool:commons-pool:1.5.3
+         o javax.activation:activation:1.1-osgi
+         o org.apache.geronimo.specs:geronimo-jta_1.1_spec:1.1.1
+         o org.apache.geronimo.specs:geronimo-j2ee-connector_1.5_spec:1.1-osgi
+         o javax.annotation:jsr250-api:1.0
+         o org.slf4j:jcl-over-slf4j:1.6.1
+         o org.slf4j:slf4j-api:1.6.1
+         o org.slf4j:slf4j-log4j12:1.6.1
+         o log4j:log4j:1.2.16
+         o asm:asm:3.1
+         o asm:asm-commons:3.1
+         o asm:asm-tree:3.1
+         o org.mvel:mvel2:2.1.3.Final
+         o org.jgrapht:jgrapht-jdk1.5:0.7.3
+         o org.mule.modules:mule-module-apikit:0.1-20130917.204547-90
+         o org.raml:raml-parser:0.1-20130903.142948-13
+         o commons-validator:commons-validator:1.3.1
+         o commons-digester:commons-digester:1.6
+         o xml-apis:xml-apis:1.0.b2
+         o cglib:cglib-nodep:2.2
+         o org.springframework:spring-context:3.2.1.RELEASE
+         o org.springframework:spring-beans:3.2.1.RELEASE
+         o org.springframework:spring-core:3.2.1.RELEASE
+         o org.springframework:spring-aop:3.2.1.RELEASE
+         o org.springframework:spring-expression:3.2.1.RELEASE
+         o dom4j:dom4j:1.6.1-osgi
+         o jaxen:jaxen:1.1.1
+         o jdom:jdom:1.0
+         o com.google.guava:guava:13.0.1
+         o org.kitchen-eel:json-schema-validator:1.2.2
+         o org.mozilla:rhino:1.7R4
+         o joda-time:joda-time:1.6
+         o org.apache.geronimo.specs:geronimo-stax-api_1.0_spec:1.0.1
+         o commons-jxpath:commons-jxpath:1.3-osgi
+         o com.thoughtworks.xstream:xstream:1.4.2
+         o xmlpull:xmlpull:1.1.3.1
+         o xpp3:xpp3_min:1.1.3.4.O-osgi
+         o org.codehaus.woodstox:woodstox-core-asl:4.0.8
+         o org.codehaus.woodstox:stax2-api:3.0.2
+         o net.java.dev.stax-utils:stax-utils:20080702-osgi
+         o net.sf.saxon:saxon:8.9.0.4-osgi
+         o net.sf.saxon:saxon-dom:8.9.0.4-osgi
+         o net.sf.saxon:saxon-xqj:8.9.0.4
+         o javax.xml.bind:jaxb-api:2.1
+         o com.sun.xml.bind:jaxb-impl:2.1.5
+         o de.odysseus.staxon:staxon:1.2
+         o javax.xml.stream:stax-api:1.0-2
+         o org.springframework:spring-web:3.2.1.RELEASE
+         o aopalliance:aopalliance:1.0
+         o org.livetribe:livetribe-jsr223:2.0.5
+         o org.codehaus.groovy:groovy-all:1.8.6
+         o commons-net:commons-net:2.0
+         o org.apache.ftpserver:ftpserver-core:1.0.2
+         o org.apache.ftpserver:ftplet-api:1.0.2
+         o org.apache.mina:mina-core:2.0.0-M6
+         o org.apache.sshd:sshd-core:0.6.0
+         o bouncycastle:bcprov-jdk14:139
+         o org.mockito:mockito-all:1.9.0
+         o commons-httpclient:commons-httpclient:3.1-osgi
+         o tomcat:tomcat-util:5.5.23
+         o tomcat:tomcat-apr:5.5.23
+         o org.samba.jcifs:jcifs:1.3.3
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 11.753s
+[INFO] Finished at: Mon Oct 07 18:07:07 PDT 2013
+[INFO] Final Memory: 14M/216M
+[INFO] ------------------------------------------------------------------------
