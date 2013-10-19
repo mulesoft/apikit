@@ -37,24 +37,33 @@
 
     <target name="unzipHeadlessJar">
 
-        <pathconvert property="file.list" >
+        <!--pathconvert property="file.list" >
             <map from="${eclipse-home}/plugins/" to=""/>
     
             <fileset dir="${eclipse-home}/plugins/">
                 <include name="org.eclipse.swtbot.eclipse.junit.headless*"/>
             </fileset>
         </pathconvert>
-  
+
         <loadresource property="file.name">
             <string value="${file.list}"/>
             <filterchain>
                 <headfilter lines="1"/>
             </filterchain>
         </loadresource>
+  
 
         <property name="jarName" value="${file.name}"/>
-        <property name="folderName" value="${file.name}"/>
-                
+        <property name="folderName" value="${file.name}"/-->
+  
+      <first id="first">
+            <fileset dir="${eclipse-home}/plugins/" includes="org.eclipse.swtbot.eclipse.junit.headless*.jar" />
+        </first>
+        <echo message="${toString:first}" />
+
+        <property name="jarName" value="${toString:first}"/>
+        <property name="folderName" value="${toString:first}"/>
+
         <script language="javascript">
             var before = project.getProperty("jarName");
             project.setProperty("folderName", before.replaceAll(".jar", ""));

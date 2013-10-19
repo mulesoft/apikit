@@ -42,7 +42,7 @@
     </target>
 
 
-    <target name="unzipHeadlessJar">
+    <!--target name="unzipHeadlessJar">
 
         <pathconvert property="file.list" >
             <map from="${eclipse-home}/plugins/" to=""/>
@@ -75,8 +75,51 @@
         </script>
 
         <replace file="${eclipse-home}/plugins/${folderName}/library.xml" token="org.eclipse.swtbot.eclipse.junit4.headless.swtbottestapplication" value="org.eclipse.swtbot.eclipse.junit.headless.swtbottestapplication"/>
-    </target>
+    </target-->
+   <target name="unzipHeadlessJar">
 
+        <!--pathconvert property="file.list" >
+            <map from="${eclipse-home}/plugins/" to=""/>
+    
+            <fileset dir="${eclipse-home}/plugins/">
+                <include name="org.eclipse.swtbot.eclipse.junit.headless*"/>
+            </fileset>
+        </pathconvert>
+
+        <loadresource property="file.name">
+            <string value="${file.list}"/>
+            <filterchain>
+                <headfilter lines="1"/>
+            </filterchain>
+        </loadresource>
+  
+
+        <property name="jarName" value="${file.name}"/>
+        <property name="folderName" value="${file.name}"/-->
+  
+      <first id="first">
+            <fileset dir="${eclipse-home}/plugins/" includes="org.eclipse.swtbot.eclipse.junit.headless*.jar" />
+        </first>
+        <echo message="${toString:first}" />
+
+        <property name="jarName" value="${toString:first}"/>
+        <property name="folderName" value="${toString:first}"/>
+
+        <script language="javascript">
+            var before = project.getProperty("jarName");
+            project.setProperty("folderName", before.replaceAll(".jar", ""));
+        </script>
+        
+        <!--unzip src="${eclipse-home}/plugins/${jarName}" dest="${eclipse-home}/plugins/${folderName}" overwrite="true"/-->
+         <unzip src="${jarName}" dest="${folderName}" overwrite="true"/>
+         <script language="javascript">
+            var eclipsehome = project.getProperty("eclipse-home");
+            var folderName = project.getProperty("folderName");
+            project.setProperty("library-file", folderName +"/library.xml");
+        </script>
+
+        <replace file="${folderName}/library.xml" token="org.eclipse.swtbot.eclipse.junit4.headless.swtbottestapplication" value="org.eclipse.swtbot.eclipse.junit.headless.swtbottestapplication"/>
+    </target>
     <target name="changeDisplay">
         <property environment="env" />  
         <script language="javascript">
