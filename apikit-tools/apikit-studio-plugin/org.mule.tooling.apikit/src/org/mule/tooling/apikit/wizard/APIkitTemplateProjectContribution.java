@@ -41,7 +41,7 @@ public class APIkitTemplateProjectContribution {
             final File workspaceDir = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toFile();
             final File newProject = new File(workspaceDir, muleProject.getName());
 
-            // Copy src/main/api folder
+            // Copy src/main/api folder if it is necessary
             APIKitProjectHelper projectHelper = new APIKitProjectHelper(muleProject);
             if (!projectHelper.isAPIkitFromRAMLFile()) {
                 final File rootTemplateProjectFolder = new File(FileLocator.resolve(resourceURL).toURI());

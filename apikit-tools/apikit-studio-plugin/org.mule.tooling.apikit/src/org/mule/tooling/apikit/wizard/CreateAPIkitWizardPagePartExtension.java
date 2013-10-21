@@ -218,10 +218,9 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
 				IFolder apiFolder = muleProject.getFolder(Activator.API_FOLDER);
 				FileUtils.copyFileToDirectory(ramlFile, apiFolder.getRawLocation().toFile());
 				FlowGenerator flowGenerator = new FlowGenerator();
-				IFile ramlFileInProject = apiFolder.getFile(ramlFile.getName());
-	            flowGenerator.run(new NullProgressMonitor(), muleProject.getJavaProject().getProject(), ramlFileInProject);
+	            flowGenerator.run(new NullProgressMonitor(), muleProject.getJavaProject().getProject(), Arrays.asList(ramlFile));
 	            flowGenerator.createMuleConfigs(new NullProgressMonitor(), muleProject);
-	            String mFlowName = FilenameUtils.removeExtension(ramlFileInProject.getName());
+	            String mFlowName = FilenameUtils.removeExtension(ramlFile.getName());
 	            IFile mflowFile = mflows.getFile(mFlowName + "." + IMuleResources.MULE_MESSAGE_FLOW_SUFFIX);
 	            return mflowFile;
 			} catch (IOException e) {

@@ -68,19 +68,24 @@
    </extension>
    <extension point="org.eclipse.ui.menus">
    		<menuContribution locationURI="popup:org.eclipse.ui.popup.any?after=additions">
-            <command
-                label="Generate Flows"
-                commandId="org.mule.tooling.apikit.ui.commands.generateflows"
-                icon="icons/small/scaffolder.jpg">
-               	<visibleWhen>
-					<with variable="selection">
-			   		    <iterate operator="and" ifEmpty="false">
-			      			<adapt type="org.eclipse.core.resources.IFile">
-			      			</adapt>
-			   		    </iterate>
-					</with>
-        		</visibleWhen>
-            </command>
+            <menu
+                  id="org.mule.tooling.apikit.ui.popup.menu"
+                  label="APIkit">
+                  <command
+              		commandId="org.mule.tooling.apikit.ui.commands.generateflows"
+              		label="Generate Flows"
+              		icon="icons/small/scaffolder.jpg"
+              		style="push">
+                    <visibleWhen>
+                     	<with variable="selection">
+					   		    <iterate operator="and" ifEmpty="false">
+					      			<adapt type="org.eclipse.core.resources.IResource">
+					      			</adapt>
+					   		    </iterate>
+						</with>
+                    </visibleWhen>
+        		  </command>
+            </menu>
         </menuContribution>
    </extension>
    <extension
