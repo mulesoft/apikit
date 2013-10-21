@@ -1,7 +1,6 @@
 package org.mule.tools.apikit;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,20 +12,23 @@ public class ScaffolderAPI {
     private final static List<String> apiExtensions = Arrays.asList(".yaml", ".raml", ".yml");
     private final static List<String> appExtensions = Arrays.asList(".xml");
 
-    private final File apiDir;
-    private final File appDir;
-
-    public ScaffolderAPI(File apiDir, File appDir) {
-        this.apiDir = apiDir;
-        this.appDir = appDir;
+    public ScaffolderAPI() {
+        
     }
-
-    public void run() {
+    
+    /**
+     * Modifies or creates the Mule config files which are contained in the appDir directory
+     * by running the scaffolder on the yamlFiles passed as parameter.
+     *  
+     * @param yamlFiles the yamlFiles to which the scaffolder will be run on
+     * @param appDir the directory which contained the generated Mule config files
+     */
+    public void run(List<File> yamlFiles, File appDir) {
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
-        List<String> yamlFiles = retrieveFilePaths(apiDir, apiExtensions);
+        List<String> yamlFilePaths = retrieveFilePaths(yamlFiles, apiExtensions);
         Scaffolder scaffolder;
         try {
-            scaffolder = Scaffolder.createScaffolder(new SystemStreamLog(), appDir, yamlFiles, muleXmlFiles);
+            scaffolder = Scaffolder.createScaffolder(new SystemStreamLog(), appDir, yamlFilePaths, muleXmlFiles);
         } catch(Exception e) {
             throw new RuntimeException("Error executing scaffolder", e);
         }
@@ -34,30 +36,30 @@ public class ScaffolderAPI {
     }
 
     private List<String> retrieveFilePaths(File dir, final List<String> extensions) {
-        List<String> filePaths = new ArrayList<String>();
         if(!dir.isDirectory()) {
             throw new IllegalArgumentException("File " + dir.getName() + " must be a directory");
         }
+        return retrieveFilePaths(new ArrayList<File>(Arrays.asList(dir.listFiles())), extensions);
+    }
 
-        File[] files = dir.listFiles(new FilenameFilter()  {
-            @Override
-            public boolean accept(File file, String fileName) {
-                for(String extension : extensions) {
-                    if(fileName.endsWith(extension)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-
+    private List<String> retrieveFilePaths(List<File> files, List<String> extensions) {
+        List<String> filePaths = new ArrayList<String>();
         if(files != null) {
             for(File file : files) {
-                filePaths.add(file.getAbsolutePath());
+                if (containsValidExtension(file, extensions)) {
+                    filePaths.add(file.getAbsolutePath());
+                }
             }
         }
-
         return filePaths;
     }
 
+    private boolean containsValidExtension(File file, List<String> extensions) {
+        for (String extension : extensions) {
+            if (file.getName().toLowerCase().endsWith(extension)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
