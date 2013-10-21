@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class API {
 
-    public static final String DEFAULT_BASE_URI = "http://localhost:${http.port}";
+    public static final String DEFAULT_BASE_URI = "http://localhost:${http.port}/api";
 
     private String baseUri;
     private APIKitConfig config;
@@ -73,7 +73,7 @@ public class API {
     }
 
     public void setDefaultConfig() {
-        config = new APIKitConfig.Builder(yamlFile.getName()).build();
+        config = new APIKitConfig.Builder(yamlFile.getName()).setName(APIKitConfig.DEFAULT_CONFIG_NAME).build();
     }
 
     @Override

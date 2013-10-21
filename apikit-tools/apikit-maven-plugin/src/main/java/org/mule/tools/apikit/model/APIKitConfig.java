@@ -10,6 +10,7 @@ public class APIKitConfig {
     public static final String CONSOLE_ENABLED_ATTRIBUTE = "consoleEnabled";
     public static final String CONSOLE_PATH_ATTRIBUTE = "consolePath";
     public static final String DEFAULT_CONSOLE_PATH = "console";
+    public static final String DEFAULT_CONFIG_NAME = "apiConfig";
 
     private String name;
     private String raml;

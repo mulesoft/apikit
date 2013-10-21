@@ -20,10 +20,6 @@ public class FlowScope implements Scope {
 
         Element httpInboundEndpoint = new Element("inbound-endpoint", HTTP_NAMESPACE.getNamespace());
         httpInboundEndpoint.setAttribute("address", api.getBaseUri());
-        Element objectToStringTransformer = new Element("object-to-string-transformer",
-                XMLNS_NAMESPACE.getNamespace());
-        httpInboundEndpoint.addContent(objectToStringTransformer);
-
         main.addContent(httpInboundEndpoint);
 
         Element restProcessor = new Element("router", APIKitTools.API_KIT_NAMESPACE.getNamespace());

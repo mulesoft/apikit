@@ -40,9 +40,7 @@ public class FlowScopeTest {
                 "        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd\">" +
                 "<apikit:config raml=\"path/to/file.yaml\" consoleEnabled=\"true\" consolePath=\"console\" />" +
                 "<flow name=\"main\">" +
-                "<http:inbound-endpoint address=\"http://localhost:7777/api\">" +
-                "<object-to-string-transformer/>" +
-                "</http:inbound-endpoint>" +
+                "<http:inbound-endpoint address=\"http://localhost:7777/api\"/>" +
                 "<apikit:router />" +
                 "<exception-strategy ref=\"ExceptionStrategyNameHere\"/>" +
                 "</flow>" +
