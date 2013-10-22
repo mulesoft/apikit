@@ -15,7 +15,7 @@
 	<packaging>eclipse-plugin</packaging>
 	<properties>
 		<lib-dir>lib</lib-dir>
-		<antfile>build.xml</antfile>
+		<antfile>buildLinux.xml</antfile>
 
 	</properties>
 	<build>
