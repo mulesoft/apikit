@@ -41,7 +41,7 @@
                           "goalsAgainst": {
                               "description": "Number of goals scored by other teams against this team",
                               "type": "integer"
-                          },
+                          }
                       },
                       "type": "object"
                   },

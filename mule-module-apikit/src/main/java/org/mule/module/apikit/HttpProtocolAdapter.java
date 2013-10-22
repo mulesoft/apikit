@@ -1,15 +1,15 @@
 package org.mule.module.apikit;
 
+import static org.mule.transport.http.HttpConnector.HTTP_METHOD_PROPERTY;
+import static org.mule.transport.http.HttpConnector.HTTP_QUERY_PARAMS;
+import static org.mule.transport.http.HttpConnector.HTTP_REQUEST_PATH_PROPERTY;
+
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
 import org.mule.util.StringUtils;
 
-import com.google.common.net.MediaType;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 public class HttpProtocolAdapter
@@ -36,7 +36,7 @@ public class HttpProtocolAdapter
                 try
                 {
                     String requestPath;
-                    requestPath = message.getInboundProperty("http.request.path");
+                    requestPath = message.getInboundProperty(HTTP_REQUEST_PATH_PROPERTY);
                     this.resourceURI = new URI("http", null, host, port, requestPath, null, null);
                 }
                 catch (URISyntaxException e)
@@ -49,7 +49,7 @@ public class HttpProtocolAdapter
                 try
                 {
                     String requestPath;
-                    requestPath = message.getInboundProperty("http.request.path");
+                    requestPath = message.getInboundProperty(HTTP_REQUEST_PATH_PROPERTY);
                     this.resourceURI = new URI("http", null, (String) message.getInboundProperty("host"), 80,
                                                requestPath, null, null);
                 }
@@ -64,14 +64,14 @@ public class HttpProtocolAdapter
             try
             {
                 this.resourceURI = new URI("http", null, baseURI.getHost(), baseURI.getPort(),
-                                           (String) message.getInboundProperty("http.request.path"), null, null);
+                                           (String) message.getInboundProperty(HTTP_REQUEST_PATH_PROPERTY), null, null);
             }
             catch (URISyntaxException e)
             {
                 throw new IllegalArgumentException("Cannot parse URI", e);
             }
         }
-        method = message.getInboundProperty("http.method");
+        method = message.getInboundProperty(HTTP_METHOD_PROPERTY);
 
         if (!StringUtils.isBlank((String) message.getInboundProperty("accept")))
         {
@@ -88,26 +88,7 @@ public class HttpProtocolAdapter
             this.requestMediaType = message.getOutboundProperty("content-type");
         }
 
-        this.queryParams = message.getInboundProperty("http.query.params");
-    }
-
-    private List<MediaType> parseAcceptHeader(String acceptHeader)
-    {
-        List<MediaType> mediaTypes = new LinkedList<MediaType>();
-        String[] types = StringUtils.split(acceptHeader, ',');
-        if (types != null)
-        {
-            for (String type : types)
-            {
-                MediaType mediaType = MediaType.parse(type.trim());
-                if (!mediaType.parameters().containsKey("q"))
-                {
-                    mediaType = mediaType.withParameter("q", "1");
-                }
-                mediaTypes.add(mediaType);
-            }
-        }
-        return mediaTypes;
+        this.queryParams = message.getInboundProperty(HTTP_QUERY_PARAMS);
     }
 
     public URI getBaseURI()
