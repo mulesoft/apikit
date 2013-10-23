@@ -3,11 +3,17 @@
  */
 package org.mule.tooling.apikit.util;
 
+import java.util.List;
+
 import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.mule.tooling.apikit.Activator;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.model.IMuleProject;
+import org.mule.tooling.core.module.ExternalContributionMuleModule;
 import org.osgi.service.prefs.BackingStoreException;
 
 
@@ -65,5 +71,18 @@ public class APIKitProjectHelper {
             preferenceNode = projectScope.getNode(Activator.PLUGIN_ID);
         }
         return preferenceNode;
+    }
+    
+    public void addAPIkitExtension() {
+    	final List<ExternalContributionMuleModule> externalModules = MuleCorePlugin.getModuleManager().getExternalModules();
+        for (final ExternalContributionMuleModule externalContributionMuleModule : externalModules) {
+            if ("APIkit".equals(externalContributionMuleModule.getName())) {
+                try {
+                    muleProject.addMuleExtension(externalContributionMuleModule);
+                } catch (CoreException e) {
+                    MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Could not add APIKit dependencies", e));
+                }
+            }
+        }
     }
 }

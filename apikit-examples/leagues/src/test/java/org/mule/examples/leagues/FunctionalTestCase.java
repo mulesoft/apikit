@@ -11,6 +11,7 @@ import com.jayway.restassured.RestAssured;
 import org.apache.commons.httpclient.HttpStatus;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase
@@ -83,6 +84,7 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase
     }
 
     @Test
+    @Ignore
     public void newTeam() throws Exception
     {
         given().log().all().body("{\"name\": \"Elche\",\"id\": \"ELC\",\"homeCity\": \"Elche\",\"stadium\": \"Martinez Valero\"}")

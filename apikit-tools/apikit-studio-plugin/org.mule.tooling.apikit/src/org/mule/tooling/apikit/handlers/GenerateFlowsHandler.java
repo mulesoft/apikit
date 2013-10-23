@@ -34,6 +34,7 @@ import org.eclipse.ui.PlatformUI;
 import org.mule.tooling.apikit.Activator;
 import org.mule.tooling.apikit.scaffolder.FlowGenerator;
 import org.mule.tooling.apikit.util.APIKitHelper;
+import org.mule.tooling.apikit.util.APIKitProjectHelper;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.MuleRuntime;
 import org.mule.tooling.core.model.IMuleProject;
@@ -103,7 +104,6 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
     @Override
     public Object execute(ExecutionEvent event) throws ExecutionException {
         IRunnableWithProgress op = new IRunnableWithProgress() {
-
             @Override
             public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                 doExecute(monitor);
@@ -139,6 +139,8 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
             FlowGenerator flowGenerator = new FlowGenerator();
             flowGenerator.run(monitor, currentProject, files);
             flowGenerator.createMuleConfigs(monitor, muleProject);
+            APIKitProjectHelper projectHelper = new APIKitProjectHelper(muleProject);
+            projectHelper.addAPIkitExtension();
             monitor.done();
         } catch (CoreException e) {
             MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage()));

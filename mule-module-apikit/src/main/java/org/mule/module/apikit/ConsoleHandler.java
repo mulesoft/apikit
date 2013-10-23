@@ -106,13 +106,13 @@ public class ConsoleHandler
             if (path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
             {
                 path = RESOURCE_BASE + "/index.html";
-                if (queryParams.containsKey("c5"))
+                if (queryParams.containsKey("piola"))
                 {
-                    in = new ByteArrayInputStream(homePageC5.getBytes());
+                    in = new ByteArrayInputStream(homePage.getBytes());
                 }
                 else
                 {
-                    in = new ByteArrayInputStream(homePage.getBytes());
+                    in = new ByteArrayInputStream(homePageC5.getBytes());
                 }
             }
             else
