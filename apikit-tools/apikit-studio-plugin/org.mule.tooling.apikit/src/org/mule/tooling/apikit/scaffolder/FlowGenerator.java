@@ -71,7 +71,9 @@ public class FlowGenerator {
                 mFlowFileName = configFileName + "." + IMuleResources.MULE_MESSAGE_FLOW_SUFFIX;
                 IFile mFlowFile = flowsFolder.getFile(mFlowFileName);
                 if (!mFlowFile.exists()) {
-                    UiUtils.createEmptyConfiguration(muleProject, mFlowFileName, configFileName, StringUtils.EMPTY);
+                    UiUtils.createAndShowEmptyConfiguration(muleProject, mFlowFileName, configFileName, StringUtils.EMPTY);
+                    MultiPageMessageFlowEditor multiPageMessageFlowEditor = MessageFlowUtils.getInstance().getMultiPageMessageFlowEditor();
+                    multiPageMessageFlowEditor.doSave(new NullProgressMonitor());
                 }
             }
         }
