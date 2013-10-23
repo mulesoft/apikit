@@ -18,9 +18,11 @@ import org.raml.model.Resource;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -35,7 +37,7 @@ public class MuleConfigGeneratorTest {
 
     @Test
     public void testGenerate() throws Exception {
-        Set<GenerationModel> entries = new HashSet<GenerationModel>();
+        List<GenerationModel> entries = new ArrayList<GenerationModel>();
 
         Resource resource = mock(Resource.class);
 
@@ -113,7 +115,7 @@ public class MuleConfigGeneratorTest {
         when(api.getXmlFile(any(File.class))).thenReturn(file);
 
         MuleConfigGenerator muleConfigGenerator =
-                new MuleConfigGenerator(mock(Log.class), new File(""), new HashSet<GenerationModel>());
+                new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>());
 
         Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 

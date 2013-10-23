@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.util.*;
 
 public class Scaffolder {
-    private final Log log;
     private final MuleConfigGenerator muleConfigGenerator;
 
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory,
@@ -34,8 +33,6 @@ public class Scaffolder {
 
     public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> yamls,
                       Map<File, InputStream> xmls)  {
-        this.log = log;
-
         GenerationModelProvider generationModelProvider = new GenerationModelProvider();
         APIFactory apiFactory = new APIFactory();
         RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, generationModelProvider, yamls, apiFactory);
@@ -43,7 +40,7 @@ public class Scaffolder {
 
         Set<ResourceActionPair> generate = new GenerationStrategy(log)
                 .generate(RAMLFilesParser, muleConfigParser);
-        Set<GenerationModel> generationModels = generationModelProvider.generate(generate);
+        List<GenerationModel> generationModels = generationModelProvider.generate(generate);
         muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels);
     }
 

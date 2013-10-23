@@ -24,7 +24,6 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class MuleConfigGenerator {
     public static final NamespaceWithLocation XMLNS_NAMESPACE = new NamespaceWithLocation(
@@ -46,11 +45,11 @@ public class MuleConfigGenerator {
 
     private static final String INDENTATION = "    ";
 
-    private final Set<GenerationModel> flowEntries;
+    private final List<GenerationModel> flowEntries;
     private final Log log;
     private final File rootDirectory;
 
-    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, Set<GenerationModel> flowEntries) {
+    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries) {
         this.log = log;
         this.flowEntries = flowEntries;
         this.rootDirectory = muleConfigOutputDirectory;

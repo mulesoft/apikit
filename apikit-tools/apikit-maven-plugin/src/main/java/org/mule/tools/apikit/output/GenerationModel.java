@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public class GenerationModel {
+public class GenerationModel implements Comparable<GenerationModel> {
 
     private static final char FLOW_NAME_SEPARATOR = ':';
     public static final String DEFAULT_TEXT = "#[NullPayload.getInstance()]";
@@ -164,5 +164,10 @@ public class GenerationModel {
                     .append(api.getConfig().getName());
         }
         return flowName.toString();
+    }
+
+    @Override
+    public int compareTo(GenerationModel generationModel) {
+        return this.getName().compareTo(generationModel.getName());
     }
 }
