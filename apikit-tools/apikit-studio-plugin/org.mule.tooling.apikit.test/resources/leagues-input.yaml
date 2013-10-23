@@ -11,7 +11,6 @@ documentation:
 /teams:
   displayName: Teams
   get:
-    summary: Obtain information from a collection of teams simultaneously
     queryParameters:
       city:
         description: |
@@ -182,7 +181,6 @@ documentation:
                 "stadium": "La Romareda"
               }]
   post:
-    summary: Add a new team to the league
     body:
       application/json:
         example: |
@@ -243,7 +241,6 @@ documentation:
         maxLength: 3
         example: BAR
     get:
-      summary: Retrieve team-related information such as the name, the home city, the stadium, current position, and other statistical information about a team.
       responses:
         200:
           body:
@@ -294,7 +291,6 @@ documentation:
           description: |
             Unable to find a team with that identifier
     put:
-      summary: Update team details such as the name of the home stadium, or the name of the team itself.
       body:
         application/json:
           example: |
@@ -330,7 +326,6 @@ documentation:
           description: |
             Unable to find a team with that identifier
     delete:
-      summary: Remove a team from the league. Notice that this operation is non-reversible and all data associated with the team, including its statistics will be lost. Use with caution.
       responses:
         204:
           description: |
@@ -341,7 +336,6 @@ documentation:
 /positions:
   displayName: Position Table
   get:
-    summary: Retrieve the current standing for the current season
     responses:
       200:
         body:
@@ -424,7 +418,6 @@ documentation:
 /fixture:
   displayName: Fixture
   get:
-    summary: Retrieve a list of matches for the current season
     responses:
       200:
         body:
@@ -482,7 +475,6 @@ documentation:
         maxLength: 3
         example: RMA
     get:
-      summary: Retrieve details of the match between the two teams
       responses:
         200:
           body:
@@ -529,7 +521,6 @@ documentation:
                     "type": "object"
                 }
     put:
-      summary: Update match results. Can only be done after the game has ended.
       body:
         application/json:
             example: |

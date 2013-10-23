@@ -1,5 +1,4 @@
 package org.mule.tooling.apikit.test;
-import static org.eclipse.swtbot.eclipse.finder.waits.Conditions.waitForEditor;
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withText;
 import static org.eclipse.swtbot.swt.finder.waits.Conditions.waitForWidget;
 
@@ -18,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mule.tooling.apikit.test.api.MuleGlobalElementWizardEditorBot;
 import org.mule.tooling.apikit.test.api.MulePropertiesEditorBot;
 import org.mule.tooling.apikit.test.api.MuleStudioBot;
+import org.mule.tooling.apikit.test.api.StudioPreferencesEditor;
 import org.mule.tooling.apikit.test.api.XmlComparer;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
@@ -72,9 +72,16 @@ public class SimpleTests {
 
     @Test
     public void checkIfMuleStudioIsPairedWithASR(){
+    	String token ="";
+    	String host = "agent-registry.mulesoft.com";
+    	String port = "443";
+    	String path = "";
     	getPrincipalShell().activate();
-    	SWTBotMenu file = bot.menu("Mule Studio").click();
-    	file.menu("Preferences...").click();
+    	SWTBotMenu file = bot.menu("Window").click();
+    	file.menu("Preferences").click();
+    	StudioPreferencesEditor preferences = new StudioPreferencesEditor(bot);
+    	preferences.assertASRagentConfiguration(token, host, port, path);
+    	
     	
     }
     
@@ -92,7 +99,7 @@ public class SimpleTests {
     }
     
     @Test
-  public void addAPIkitGlobalElementRouter() throws Exception {
+    public void addAPIkitGlobalElementRouter() throws Exception {
     	
     	String projectName = "dnd" + System.currentTimeMillis();
     	String flowName = "testflow";

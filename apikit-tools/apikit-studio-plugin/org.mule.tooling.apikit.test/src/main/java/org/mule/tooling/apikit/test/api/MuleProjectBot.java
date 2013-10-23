@@ -17,10 +17,20 @@ public class MuleProjectBot {
         SWTBotTreeItem projectTree = bot.tree().getTreeItem(projectName);
         return projectTree;
     }
-
     
-    public MuleProjectBot generateFlows(String projectName,String path, String yamlFileName){
-  		bot.viewByTitle("Package Explorer").bot().tree().getTreeItem(projectName).getNode(path).getNode(yamlFileName).contextMenu("Generate Flows").click();
-    		return this;
+    public boolean canGenerateFlows(String projectName,String path, String yamlFileName){
+    	String explorerName = "Package Explorer";
+    	String contextMenu = "APIkit";
+    	String generateFlowsButton = "Generate Flows";
+    	SWTBotTreeItem item = bot.viewByTitle(explorerName).bot().tree().getTreeItem(projectName).getNode(path).getNode(yamlFileName);
+    	return item.contextMenu(contextMenu).menu(generateFlowsButton).isEnabled();
+    }
+    
+    public boolean generateFlows(String projectName,String path, String yamlFileName){
+    	String explorerName = "Package Explorer";
+    	String contextMenu = "APIkit";
+    	String generateFlowsButton = "Generate Flows";
+    	bot.viewByTitle(explorerName).bot().tree().getTreeItem(projectName).getNode(path).getNode(yamlFileName).contextMenu(contextMenu).menu(generateFlowsButton).click();
+    	return true;
     }
 }

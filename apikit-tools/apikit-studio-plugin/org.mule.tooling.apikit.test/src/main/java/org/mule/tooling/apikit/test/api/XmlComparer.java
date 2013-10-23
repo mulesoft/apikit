@@ -1,9 +1,9 @@
 package org.mule.tooling.apikit.test.api;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import junit.framework.Assert;
 
 import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
@@ -24,7 +24,7 @@ public class XmlComparer {
         Diff diff = new Diff(expectedStream, actualStream);
         diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());
         DetailedDiff detailedDiff = new DetailedDiff(diff);
-        Assert.assertTrue(detailedDiff.toString(), detailedDiff.identical());
+        assertTrue("XML files are different. Details: " + detailedDiff.toString(), detailedDiff.identical());
     }
     
     
