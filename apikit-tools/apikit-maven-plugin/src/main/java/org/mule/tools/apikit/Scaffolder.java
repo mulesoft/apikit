@@ -2,6 +2,8 @@ package org.mule.tools.apikit;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+
+import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationModelProvider;
 import org.mule.tools.apikit.output.GenerationStrategy;
@@ -35,9 +37,9 @@ public class Scaffolder {
         this.log = log;
 
         GenerationModelProvider generationModelProvider = new GenerationModelProvider();
-        RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, generationModelProvider, yamls);
-        MuleConfigParser muleConfigParser = new MuleConfigParser(log, yamls.keySet(),
-                xmls);
+        APIFactory apiFactory = new APIFactory();
+        RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, generationModelProvider, yamls, apiFactory);
+        MuleConfigParser muleConfigParser = new MuleConfigParser(log, yamls.keySet(), xmls, apiFactory);
 
         Set<ResourceActionPair> generate = new GenerationStrategy(log)
                 .generate(RAMLFilesParser, muleConfigParser);

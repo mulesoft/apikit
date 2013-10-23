@@ -1,7 +1,9 @@
 package org.mule.tools.apikit;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionPair;
 import org.mule.tools.apikit.input.APIDiff;
 import org.mule.tools.apikit.input.MuleConfigParser;
@@ -19,6 +21,13 @@ import static org.mockito.Mockito.when;
 
 
 public class APIDiffTest {
+
+    private APIFactory apiFactory;
+
+    @Before
+    public void setUp() {
+        this.apiFactory = new APIFactory();
+    }
 
     private Set<ResourceActionPair> computeDifferenceSetHelper(HashSet<ResourceActionPair> a, HashSet<ResourceActionPair> b) {
         RAMLFilesParser RAMLFilesParser = mock(RAMLFilesParser.class);
@@ -44,7 +53,7 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifference() throws Exception {
-        API fromYAMLFile = API.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
+        API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
 
         HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
         ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "a", "b");
@@ -64,7 +73,7 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifferenceMismatching() throws Exception {
-        API fromYAMLFile = API.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
+        API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
 
         HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
         ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "b", "b");
@@ -84,7 +93,7 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifferenceAsymetric() throws Exception {
-        API fromYAMLFile = API.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
+        API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
 
         HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
         ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "b", "b");

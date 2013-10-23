@@ -2,6 +2,7 @@ package org.mule.tools.apikit;
 
 import org.junit.Test;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIFactory;
 
 import java.io.File;
 import static org.mule.tools.apikit.Helper.testEqualsHelper;
@@ -23,7 +24,7 @@ public class APITest {
     }
 
     public static API createAPIBinding(File a, File b) {
-        return API.createAPIBinding(a,b,"/api");
+        return new APIFactory().createAPIBinding(a,b,"/api");
     }
 
     @Test

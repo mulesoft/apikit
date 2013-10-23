@@ -2,6 +2,7 @@ package org.mule.tools.apikit.input.parsers;
 
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
 
 import java.io.File;
@@ -22,13 +23,16 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
     private final Map<String, APIKitConfig> apikitConfigs;
     private final Set<File> yamlPaths;
     private final File file;
+    private final APIFactory apiFactory;
 
     public APIKitRoutersParser(final Map<String, APIKitConfig> apikitConfigs,
                                final Set<File> yamlPaths,
-                               final File file) {
+                               final File file,
+                               final APIFactory apiFactory) {
         this.apikitConfigs = apikitConfigs;
         this.yamlPaths = yamlPaths;
         this.file = file;
+        this.apiFactory = apiFactory;
     }
 
     @Override
@@ -77,7 +81,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
                         path = "/" + path;
                     }
 
-                    includedApis.put(config.getName(), API.createAPIBinding(yamlPath, file, path, config));
+                    includedApis.put(config.getName(), apiFactory.createAPIBinding(yamlPath, file, path, config));
                 }
             }
         }

@@ -9,6 +9,7 @@ import org.mule.tools.apikit.input.parsers.APIKitConfigParser;
 import org.mule.tools.apikit.input.parsers.APIKitFlowsParser;
 import org.mule.tools.apikit.input.parsers.APIKitRoutersParser;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.model.ResourceActionPair;
 
@@ -24,8 +25,10 @@ public class MuleConfigParser {
     private Set<ResourceActionPair> entries = new HashSet<ResourceActionPair>();
     private Map<String, API> includedApis = new HashMap<String, API>();
     private Map<String, APIKitConfig> apikitConfigs = new HashMap<String, APIKitConfig>();
+    private final APIFactory apiFactory;
 
-    public MuleConfigParser(Log log, Set<File> yamlPaths, Map<File, InputStream> streams) {
+    public MuleConfigParser(Log log, Set<File> yamlPaths, Map<File, InputStream> streams, APIFactory apiFactory) {
+        this.apiFactory = apiFactory;
         for (Entry<File, InputStream> fileStreamEntry : streams.entrySet()) {
             InputStream stream = fileStreamEntry.getValue();
             File file = fileStreamEntry.getKey();
@@ -44,7 +47,7 @@ public class MuleConfigParser {
         Document document = saxBuilder.build(stream);
 
         apikitConfigs = new APIKitConfigParser().parse(document);
-        includedApis = new APIKitRoutersParser(apikitConfigs, yamlPaths, file).parse(document);
+        includedApis = new APIKitRoutersParser(apikitConfigs, yamlPaths, file, apiFactory).parse(document);
         entries = new APIKitFlowsParser(includedApis).parse(document);
     }
 

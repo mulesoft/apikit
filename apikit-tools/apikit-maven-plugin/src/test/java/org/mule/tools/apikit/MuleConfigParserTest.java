@@ -4,6 +4,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.model.ResourceActionPair;
 import org.mule.tools.apikit.input.MuleConfigParser;
@@ -32,7 +33,7 @@ public class MuleConfigParserTest {
         streams.put(new File(""), resourceAsStream);
 
         MuleConfigParser muleConfigParser =
-                new MuleConfigParser(log, yamlPaths, streams);
+                new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
         Set<ResourceActionPair> set = muleConfigParser.getEntries();
         assertNotNull(set);
         assertEquals(5, set.size());
@@ -58,7 +59,7 @@ public class MuleConfigParserTest {
         streams.put(new File(""), resourceAsStream);
 
         MuleConfigParser muleConfigParser =
-                new MuleConfigParser(log, yamlPaths, streams);
+                new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
         Set<ResourceActionPair> set = muleConfigParser.getEntries();
         assertNotNull(set);
         assertEquals(5, set.size());

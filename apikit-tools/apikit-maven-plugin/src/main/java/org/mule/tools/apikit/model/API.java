@@ -15,39 +15,24 @@ public class API {
     private APIKitConfig config;
     private File xmlFile;
     private File yamlFile;
-    private static final Map<File, API> factory = new HashMap<File, API>();
 
-    public static API createAPIBinding(File yamlFile, File xmlFile, String path) {
-        return createAPIBinding(yamlFile, xmlFile, path, null);
+    public API(File yamlFile, File xmlFile, String baseUri) {
+        this.baseUri = baseUri;
+        this.yamlFile = yamlFile;
+        this.xmlFile = xmlFile;
     }
 
-    public static API createAPIBinding(File yamlFile, File xmlFile, String path, APIKitConfig config) {
-        Validate.notNull(yamlFile);
-
-        if (factory.containsKey(yamlFile)) {
-            API api = factory.get(yamlFile);
-
-            if (api.xmlFile == null && xmlFile != null) {
-                api.xmlFile = xmlFile;
-            }
-            api.config = config;
-
-            return api;
-        }
-
-        API api = new API();
-
-        api.yamlFile = yamlFile;
-        api.xmlFile = xmlFile;
-        api.baseUri = path;
-        api.config = config;
-
-        factory.put(yamlFile, api);
-
-        return api;
+    public API(File yamlFile, File xmlFile, String baseUri, APIKitConfig config) {
+        this(yamlFile, xmlFile, baseUri);
+        this.config = config;
     }
 
-    private API() {
+    public File getXmlFile() {
+        return xmlFile;
+    }
+
+    public void setXmlFile(File xmlFile) {
+        this.xmlFile = xmlFile;
     }
 
     public File getXmlFile(File rootDirectory) {
@@ -70,6 +55,10 @@ public class API {
 
     public APIKitConfig getConfig() {
         return config;
+    }
+
+    public void setConfig(APIKitConfig config) {
+        this.config = config;
     }
 
     public void setDefaultConfig() {

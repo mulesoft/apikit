@@ -13,6 +13,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionPair;
 import org.mule.tools.apikit.output.GenerationModelProvider;
 import org.raml.model.Action;
@@ -31,12 +32,12 @@ public class RAMLFilesParser
 
     private final GenerationModelProvider generationModelProvider;
     private Set<ResourceActionPair> entries = new HashSet<ResourceActionPair>();
+    private final APIFactory apiFactory;
 
-    public static final String API_HOME = "src/main/api";
-
-    public RAMLFilesParser(Log log, GenerationModelProvider generationModelProvider, Map<File, InputStream> fileStreams)
+    public RAMLFilesParser(Log log, GenerationModelProvider generationModelProvider, Map<File, InputStream> fileStreams, APIFactory apiFactory)
     {
         this.generationModelProvider = generationModelProvider;
+        this.apiFactory = apiFactory;
         List<File> processedFiles = new ArrayList<File>();
         for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet())
         {
@@ -104,7 +105,7 @@ public class RAMLFilesParser
         {
             for (Action action : resource.getActions().values())
             {
-                API api = API.createAPIBinding(filename, null, baseUri, null);
+                API api = apiFactory.createAPIBinding(filename, null, baseUri, null);
                 String path = APIKitTools.getPathFromUri(baseUri);
                 ResourceActionPair resourceActionPair = new ResourceActionPair(api, path + resource.getUri(),
                                                                                action.getType().toString());
