@@ -1,8 +1,6 @@
 package org.mule.examples.leagues.model;
 
-import java.io.Serializable;
-
-public class Team implements Serializable {
+public class Team {
 
     private String id;
     private String name;

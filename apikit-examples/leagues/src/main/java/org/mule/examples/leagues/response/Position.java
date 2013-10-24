@@ -3,14 +3,12 @@ package org.mule.examples.leagues.response;
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @JsonAutoDetect
 @XmlRootElement(namespace = "http://mulesoft.com/schemas/soccer")
-public class Position implements Serializable {
+public class Position {
 
     private int position;
     private String team;

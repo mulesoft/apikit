@@ -23,12 +23,6 @@ public class FunctionalTestCase extends org.mule.tck.junit4.FunctionalTestCase
     private static final String BARCELONA_STADIUM = "Camp Nou";
 
     private static final String NEW_TEAM_ID = "NEW";
-    private static final String NEW_TEAM_NAME = "New Team";
-    private static final String NEW_TEAM_CITY = "Barcelona";
-    private static final String NEW_TEAM_STADIUM = "New Stadium";
-
-    private static final String UPDATED_TEAM_NAME = "Updated Team";
-
 
     @ClassRule
     public static DynamicPort httpPort = new DynamicPort("http.port");

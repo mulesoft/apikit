@@ -1,7 +1,6 @@
 package org.mule.examples.leagues.model;
 
 import java.io.InputStreamReader;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -18,7 +17,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-public class League implements Serializable {
+public class League {
 
     private static final Logger LOGGER = Logger.getLogger(League.class);
 
@@ -33,7 +32,7 @@ public class League implements Serializable {
         try {
             JSONObject jsonObject = (JSONObject) jsonParser.parse(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("teams.json")));
             JSONArray teams = (JSONArray) jsonObject.get("teams");
-            Iterator<JSONObject> iterator = teams.iterator();
+            Iterator<JSONObject> iterator = (Iterator<JSONObject>) teams.iterator();
             while(iterator.hasNext()) {
                 addTeam(iterator.next());
             }

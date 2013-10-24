@@ -4,15 +4,13 @@ import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @JsonAutoDetect
 @XmlRootElement(namespace = "http://mulesoft.com/schemas/soccer")
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class Team implements Serializable {
+public class Team {
 
     private String id;
     private String name;

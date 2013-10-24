@@ -1,9 +1,8 @@
 package org.mule.examples.leagues.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class Match implements Serializable {
+public class Match {
 
     private Team homeTeam;
     private Team awayTeam;

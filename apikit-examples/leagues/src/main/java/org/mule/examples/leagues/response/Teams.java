@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.JAXBContext;
@@ -14,7 +13,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 
-public class Teams implements Serializable {
+public class Teams {
     private List<Team> teams;
 
     @XmlElement(name = "teams")

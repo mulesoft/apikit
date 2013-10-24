@@ -1,6 +1,5 @@
 package org.mule.examples.leagues.response;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -13,7 +12,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonAutoDetect
 @XmlRootElement(namespace = "http://mulesoft.com/schemas/soccer")
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class Match implements Serializable {
+public class Match {
 
     private String homeTeam;
     private String awayTeam;
