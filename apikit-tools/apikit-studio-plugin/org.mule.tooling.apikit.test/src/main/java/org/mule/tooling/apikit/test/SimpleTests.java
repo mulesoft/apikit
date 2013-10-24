@@ -1,4 +1,5 @@
 package org.mule.tooling.apikit.test;
+import static org.eclipse.swtbot.eclipse.finder.waits.Conditions.waitForView;
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withText;
 import static org.eclipse.swtbot.swt.finder.waits.Conditions.waitForWidget;
 
@@ -11,7 +12,9 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mule.tooling.apikit.test.api.MuleGlobalElementWizardEditorBot;
@@ -36,12 +39,17 @@ public class SimpleTests {
         bot = new SWTWorkbenchBot();
         muleStudioBot = new MuleStudioBot(bot);
     }
-
+    
+    /*@Before
+    public void before(){
+    	 bot.resetWorkbench();
+    }*/
+    
     @Test
   public void changeAPIkitComponentName() throws Exception {
     	
     	String projectName = "dnd" + System.currentTimeMillis();
-    	String flowName = "testflow";
+    	String flowName = "testflowcomponentname";
     	muleStudioBot.createProject(projectName, "changeAPIkitComponentName");
     	muleStudioBot.createFlow(flowName, "Description of the flow");
 
@@ -65,7 +73,7 @@ public class SimpleTests {
       //XML comparison
         String expectedXml = "/resources/apikit-change-component-name-expected.xml";
 		XmlComparer comparer = new XmlComparer(bot);
-        comparer.compareToTheXMLUsingUI(flowName, expectedXml, true);
+        comparer.compareToTheXMLUsingUI("XML files are different.",flowName, expectedXml, true);
         
         muleStudioBot.saveAll();
     }
@@ -101,8 +109,8 @@ public class SimpleTests {
     @Test
     public void addAPIkitGlobalElementRouter() throws Exception {
     	
-    	String projectName = "dnd" + System.currentTimeMillis();
-    	String flowName = "testflow";
+    	String projectName = "aager" + System.currentTimeMillis();
+    	String flowName = "testflowglobalelement";
     	muleStudioBot.createProject(projectName, "changeAPIkitComponentName");
     	muleStudioBot.createFlow(flowName, "Description of the flow");
 
@@ -127,28 +135,30 @@ public class SimpleTests {
         //XML comparison
         String expectedXml = "resources/apikit-editing-global-element-expected.xml";
         XmlComparer comparer = new XmlComparer(bot);
-        comparer.compareToTheXMLUsingUI(flowName, expectedXml, true);
+        comparer.compareToTheXMLUsingUI("XML files are different.",flowName, expectedXml, true);
 
-        muleStudioBot.saveAll();
+        muleStudioBot.save();
     }
 
     @Test
     public void createNewAPIkitProject(){
     	
-    	String projectName = "dnd" + System.currentTimeMillis();
+    	String projectName = "cnap" + System.currentTimeMillis();
     	muleStudioBot.createProject(projectName, "newAPIkitProject");
     }
    
-    @Test
+    @Ignore
     public void createNewAPIkitExample() throws Exception{
-    	String projectName = "dnd" + System.currentTimeMillis();
+    	String projectName = "cnae" + System.currentTimeMillis();
     	
     	muleStudioBot.createAPIkitExample(projectName, "newAPIkitExample","REST API with APIkit");
     	//waitForEditor(withText("leagues"));
-    	String flowName = "leagues";//bot.activeEditor().getTitle();
+    	String flowName = "leagues";
     	waitForWidget((withText(flowName)));
 
         String consoleText = "";
+        waitForWidget((withText("Console")));
+        //waitForView(withText("Console")));
         bot.viewByTitle("Console").show();
         do{
         	consoleText = bot.viewByTitle("Console").bot().styledText().getText().toString();
@@ -158,7 +168,7 @@ public class SimpleTests {
     	//XML comparison
         String expectedXml = "resources/apikit-example-expected.xml";
         XmlComparer comparer = new XmlComparer(bot);
-        comparer.compareToTheXMLUsingUI(flowName, expectedXml, true);
+        comparer.compareToTheXMLUsingUI("XML files are different.",flowName, expectedXml, true);
         
         muleStudioBot.saveAll();
         //bot.waitUntil((ICondition)bot.viewByTitle("Console"));
@@ -177,46 +187,3 @@ public class SimpleTests {
     }
 }
     
-    /* @Test
-    public void completeFieldsInServiceRegistryComponent() throws Exception {
-      	final String ASR_NAME = "Anypoint Service Registry";
-
-      	final MuleProjectBot projectBot = muleStudioBot.createProject("dnd", "changeAPIkitComponentName");
-          final MuleConfigurationEditorBot muleConfigurationBot = projectBot.openMuleConfiguration("test");
-         
-      
-          muleConfigurationBot.addFlow("FlowTest")
-          .addHttpEndpoint("HTTP",MessageExchangePattern.REQUEST_RESPONSE,EndpointDirection.INBOUND).usingProperties().property("port","8081").property("host","localhost").property("org.mule.tooling.ui.modules.core.widgets.meta.ModeAttribute","http://www.mulesoft.org/schema/mule/http/endpoint").property("exchange-pattern","request-response").endProperties()
-          .addPattern("http://www.mulesoft.org/schema/mule/core/dynamic-router","Anypoint Service Registry")
-          .endFlow();
-
-          muleConfigurationBot.done();
-          
-          MulePropertiesEditorBot editorBot = muleConfigurationBot.editElementProperties(FLOW_NAME,ASR_NAME);
-          editorBot.setTextValue("Display Name:","ASR NAME");
-          editorBot.selectComboBox(0,"All");
-          editorBot.selectComboBox(1,"Consumer Key");
-          editorBot.setTextValue("Service Id:","service id");
-          editorBot.setTextValue("Consumer Key:","asdfadfadfadfadfs");
-          editorBot.apply();
-          
-          
-          bot.menu("File").menu("Save").click();
-          
-          
-          //XML comparison
-          String expectedXml = "/resources/asr-simple-test-expected.xml";
-  		String actualXml = "dnd/src/main/app/dnd.xml";
-  		XmlComparer comparer = new XmlComparer();
-          comparer.compareToTheXML(actualXml, expectedXml, true);*/
-          //XML comparison
-  	/*	try {
-  			String expectedXml = readResource("/resources/asr-simple-test-expected.xml");
-  			File file = new File("/Users/federico/Documents/junit-workspace/dnd/src/main/app/dnd.xml");
-  			FileInputStream fis = new FileInputStream(file);
-  			String actualXml = IOUtils.toString(fis);	
-  			assertIdenticalXML(expectedXml, actualXml,true);
-  		} catch (Exception e) {
-  			e.printStackTrace();
-  		}
-      }*/
