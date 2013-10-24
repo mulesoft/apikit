@@ -101,4 +101,11 @@
             startLevel="11">
       </postImportAction>
    </extension>
+   <extension
+         point="org.mule.tooling.core.postImportActions">
+         <postImportAction
+            class="org.mule.tooling.apikit.action.RevalidateMuleProjectAction"
+            startLevel="12">
+      </postImportAction>
+   </extension>
 </plugin>

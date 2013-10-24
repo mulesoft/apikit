@@ -21,7 +21,8 @@ Require-Bundle: org.eclipse.ui,
  org.mule.tooling.messageflow,
  org.mule.tooling.apikit.deps,
  org.eclipse.ui.ide,
- org.eclipse.ui.forms
+ org.eclipse.ui.forms,
+ org.mule.tooling.ui.widgets;bundle-version="3.5.0"
 Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
