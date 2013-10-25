@@ -53,7 +53,7 @@ public class JaxbTagResolver implements TagResolver
         }
         catch (Exception e)
         {
-            throw new ApikitRuntimeException(e.getMessage());
+            throw new ApikitRuntimeException(e);
         }
     }
 }
