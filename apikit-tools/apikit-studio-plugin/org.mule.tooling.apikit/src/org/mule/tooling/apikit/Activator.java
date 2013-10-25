@@ -13,6 +13,8 @@ public class Activator extends AbstractUIPlugin {
 	
 	public static final String API_FOLDER = "src/main/api";
 	
+	public static final String RESOURCES_FOLDER = "src/main/resources";
+	
 	public static final String EXAMPLE_PROJECT_ROOT = "resources/sample"; 
 	
 	public static final String DEFAULT_RAML_FILE = "api.yaml";

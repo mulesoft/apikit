@@ -41,10 +41,11 @@ public class APIkitTemplateProjectContribution {
 
             // Copy src/main/api folder if it is necessary
             APIKitProjectHelper projectHelper = new APIKitProjectHelper(muleProject);
+            final File rootTemplateProjectFolder = new File(FileLocator.resolve(resourceURL).toURI());
             if (!projectHelper.isAPIkitFromRAMLFile()) {
-                final File rootTemplateProjectFolder = new File(FileLocator.resolve(resourceURL).toURI());
                 CoreUtils.copyFiles(new File(rootTemplateProjectFolder, Activator.API_FOLDER), new File(newProject, Activator.API_FOLDER));
             }
+            CoreUtils.copyFiles(new File(rootTemplateProjectFolder, Activator.RESOURCES_FOLDER), new File(newProject, Activator.RESOURCES_FOLDER));
             // Add the APIKit extension to the mule project
             projectHelper.addAPIkitExtension();
             
