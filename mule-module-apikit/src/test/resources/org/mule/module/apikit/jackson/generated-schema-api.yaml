@@ -1,0 +1,12 @@
+#%RAML 0.8
+title: sample api
+/currentuser:
+    put:
+        body:
+            application/json:
+                schema: !jackson org.mule.module.apikit.User
+            text/xml:
+                schema: !jaxb org.mule.module.apikit.User
+        responses:
+            204: ~
+

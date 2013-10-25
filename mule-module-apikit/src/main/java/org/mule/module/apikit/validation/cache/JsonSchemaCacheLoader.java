@@ -1,11 +1,3 @@
-/*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- *
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
- */
-
 package org.mule.module.apikit.validation.cache;
 
 import static org.mule.module.apikit.validation.cache.SchemaCacheUtils.resolveSchema;
@@ -14,7 +6,6 @@ import org.mule.api.MuleContext;
 import org.mule.module.apikit.validation.io.SchemaResourceLoader;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.cache.CacheLoader;
 
 import java.io.IOException;
@@ -52,10 +43,6 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchemaAndNode
             //schema referenced by spring resource
             Resource schemaResource = resourceLoader.getResource(schemaLocation);
             schemaNode = JsonLoader.fromReader(new InputStreamReader(schemaResource.getInputStream()));
-        }
-        if (schemaNode instanceof ObjectNode)
-        {
-            ((ObjectNode) schemaNode).put("additionalProperties", false);
         }
         return new JsonSchemaAndNode(schemaNode);
     }

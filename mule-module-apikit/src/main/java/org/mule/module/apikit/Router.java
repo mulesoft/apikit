@@ -26,6 +26,8 @@ import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.module.apikit.transform.JacksonTagResolver;
+import org.mule.module.apikit.transform.JaxbTagResolver;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
@@ -244,7 +246,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         }
 
         validateRaml(ramlBuffer, loader);
-        RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
+        RamlDocumentBuilder builder = new RamlDocumentBuilder(loader, new JacksonTagResolver(), new JaxbTagResolver());
         api = builder.build(ramlBuffer);
         injectEndpointUri(builder);
         ramlYaml = VERSION + YamlDocumentBuilder.dumpFromAst(builder.getRootNode());
