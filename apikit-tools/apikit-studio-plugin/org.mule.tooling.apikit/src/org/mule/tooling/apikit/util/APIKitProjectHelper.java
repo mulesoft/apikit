@@ -4,16 +4,22 @@
 package org.mule.tooling.apikit.util;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.mule.tooling.apikit.Activator;
 import org.mule.tooling.core.MuleCorePlugin;
 import org.mule.tooling.core.model.IMuleProject;
 import org.mule.tooling.core.module.ExternalContributionMuleModule;
+import org.mule.tooling.ui.widgets.util.SilentRunner;
 import org.osgi.service.prefs.BackingStoreException;
 
 
@@ -85,4 +91,24 @@ public class APIKitProjectHelper {
             }
         }
     }
+
+    public void build(final IProgressMonitor monitor) {
+    	SilentRunner.run(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {                
+                muleProject.getJavaProject().getProject().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+                return null;
+            }
+        }, null);
+    }
+
+	public void refresh() {
+		SilentRunner.run(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {                
+            	muleProject.getJavaProject().getProject().refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+                return null;
+            }
+        }, null);
+	}
 }

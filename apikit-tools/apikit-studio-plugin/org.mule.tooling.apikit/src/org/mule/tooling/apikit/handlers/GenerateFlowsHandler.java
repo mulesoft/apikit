@@ -137,8 +137,7 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
                 return;
             }
             FlowGenerator flowGenerator = new FlowGenerator();
-            flowGenerator.run(monitor, currentProject, files);
-            flowGenerator.createMuleConfigs(monitor, muleProject);
+            flowGenerator.run(monitor, muleProject, files);
             APIKitProjectHelper projectHelper = new APIKitProjectHelper(muleProject);
             projectHelper.addAPIkitExtension();
             monitor.done();

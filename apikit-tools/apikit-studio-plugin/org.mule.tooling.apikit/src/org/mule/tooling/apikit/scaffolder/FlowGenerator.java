@@ -4,7 +4,6 @@
 package org.mule.tooling.apikit.scaffolder;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -35,7 +34,8 @@ import org.mule.tools.apikit.ScaffolderAPI;
  */
 public class FlowGenerator {
     
-    public void run(IProgressMonitor monitor, IProject project, final List<File> files) throws CoreException {
+    public void run(IProgressMonitor monitor, IMuleProject muleProject, final List<File> files) throws CoreException {
+        IProject project = muleProject.getJavaProject().getProject();
         final IFolder appFolder = project.getFolder(IMuleResources.MULE_APP_FOLDER);
         if (appFolder != null) {
             monitor.subTask("Running scaffolder...");
@@ -52,7 +52,7 @@ public class FlowGenerator {
             project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
             monitor.worked(1);
             monitor.subTask("Updating Mule configurations...");
-            updateMessageFlowEditors();
+            createMuleConfigs(monitor, muleProject);
             monitor.worked(1);
         }
     }
@@ -72,17 +72,13 @@ public class FlowGenerator {
                 IFile mFlowFile = flowsFolder.getFile(mFlowFileName);
                 if (!mFlowFile.exists()) {
                     UiUtils.createAndShowEmptyConfiguration(muleProject, mFlowFileName, configFileName, StringUtils.EMPTY);
-                    MultiPageMessageFlowEditor multiPageMessageFlowEditor = MessageFlowUtils.getInstance().getMultiPageMessageFlowEditor();
-                    multiPageMessageFlowEditor.doSave(new NullProgressMonitor());
+                } else {
+                    UiUtils.openEditorForFile(mFlowFile);
                 }
+                MultiPageMessageFlowEditor multiPageMessageFlowEditor = MessageFlowUtils.getInstance().getMultiPageMessageFlowEditor();
+                multiPageMessageFlowEditor.updateFlowFromSource();
+                multiPageMessageFlowEditor.doSave(new NullProgressMonitor());
             }
-        }
-    }
-
-    private void updateMessageFlowEditors() {
-        Collection<MultiPageMessageFlowEditor> openEditors = MessageFlowUtils.getOpenMultipageMessageFlowEditors();
-        for (MultiPageMessageFlowEditor messageFlowEditor : openEditors) {
-            messageFlowEditor.updateFlowFromSource();
         }
     }
 }
