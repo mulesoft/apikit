@@ -27,12 +27,13 @@ public class League {
     private HashMap<String, Team> teams = new HashMap<String, Team>();
     private HashMap<String, Match> fixture = new HashMap<String, Match>();
 
+    @SuppressWarnings("unchecked")
     public void initialize() {
         JSONParser jsonParser = new JSONParser();
         try {
             JSONObject jsonObject = (JSONObject) jsonParser.parse(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("teams.json")));
             JSONArray teams = (JSONArray) jsonObject.get("teams");
-            Iterator<JSONObject> iterator = (Iterator<JSONObject>) teams.iterator();
+            Iterator<JSONObject> iterator = teams.iterator();
             while(iterator.hasNext()) {
                 addTeam(iterator.next());
             }
@@ -168,13 +169,13 @@ public class League {
         Collections.sort(teams, new Comparator<Team>() {
             @Override
             public int compare(Team team, Team team2) {
-                int byPoints = Integer.valueOf(team2.getPoints()).compareTo(Integer.valueOf(team.getPoints()));
+                int byPoints = Integer.valueOf(team2.getPoints()).compareTo(team.getPoints());
                 if(byPoints != 0) {
                     return byPoints;
                 }
 
                 int byGoalDifference = Integer.valueOf(team2.getGoalsInFavor() - team2.getGoalsAgainst())
-                        .compareTo(Integer.valueOf(team.getGoalsInFavor() - team.getGoalsAgainst()));
+                        .compareTo(team.getGoalsInFavor() - team.getGoalsAgainst());
 
                 if(byGoalDifference != 0) {
                     return byGoalDifference;
