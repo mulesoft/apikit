@@ -19,7 +19,7 @@ public class XmlComparer {
 		this.bot = bot;
 	}
 
-    protected void assertIdenticalXML(String errorMessage, String expectedStream, String actualStream, boolean ignoreWhitespace) throws Exception {
+    public void assertIdenticalXML(String errorMessage, String expectedStream, String actualStream, boolean ignoreWhitespace) throws Exception {
         XMLUnit.setIgnoreWhitespace(ignoreWhitespace);
         Diff diff = new Diff(expectedStream, actualStream);
         diff.overrideElementQualifier(new RecursiveElementNameAndTextQualifier());

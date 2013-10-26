@@ -3,7 +3,9 @@
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd" version="EE-3.4.1">
-    <apikit:config name="apiConfig" raml="simpleYamlFile.yaml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <apikit:config name="apiConfig" raml="simpleyamlfilerfstegeMule34.yaml" consoleEnabled="true" consolePath="console" doc:name="Router">
+        <apikit:flow-mapping resource="/resource1" action="get" flow-ref="modifiedFlow"/>
+    </apikit:config>
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
@@ -36,7 +38,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         <apikit:router config-ref="apiConfig" doc:name="APIkit Router"/>
         <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>
-    <flow name="get:/resource1:apiConfig" doc:name="get:/resource1:apiConfig">
+    <flow name="modifiedFlow" doc:name="modifiedFlow">
         <set-payload value="#[NullPayload.getInstance()]" doc:name="Set Payload"/>
     </flow>
 </mule>

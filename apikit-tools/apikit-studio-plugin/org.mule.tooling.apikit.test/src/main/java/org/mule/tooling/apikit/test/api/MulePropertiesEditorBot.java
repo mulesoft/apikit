@@ -37,18 +37,18 @@ public class MulePropertiesEditorBot {
     	getViewBot().bot().comboBox(comboId).setSelection(selection);
     	return this;
     }
-    
+    /*
     public MuleGlobalElementWizardEditorBot clickTooltipButton(String tooltip){
     	activate();
     	editorBot.toolbarButtonWithTooltip(tooltip).click();
     	return new MuleGlobalElementWizardEditorBot(bot, this);
+    }*/
+    
+    public void clickTooltipButton(String tooltip){
+    	activate();
+    	editorBot.toolbarButtonWithTooltip(tooltip).click();
     }
 
-    public MuleGlobalElementWizardEditorBot clickTooltipButton2(MulePropertiesEditorBot editor, String tooltip){
-    	editorBot.toolbarButtonWithTooltip(tooltip).click();
-    	return new MuleGlobalElementWizardEditorBot(bot, this);
-    }
-    
     public String getTextValue(String label) {
     	return editorBot.textWithLabel(label).getText();
     }

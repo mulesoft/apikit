@@ -1,5 +1,4 @@
 package org.mule.tooling.apikit.test;
-import static org.eclipse.swtbot.eclipse.finder.waits.Conditions.waitForView;
 import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withText;
 import static org.eclipse.swtbot.swt.finder.waits.Conditions.waitForWidget;
 
@@ -12,15 +11,15 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mule.tooling.apikit.test.api.MuleGlobalElementWizardEditorBot;
+import org.mule.tooling.apikit.test.api.GlobalElementWizardEditorBot;
 import org.mule.tooling.apikit.test.api.MulePropertiesEditorBot;
 import org.mule.tooling.apikit.test.api.MuleStudioBot;
 import org.mule.tooling.apikit.test.api.StudioPreferencesEditor;
+import org.mule.tooling.apikit.test.api.UILabels;
 import org.mule.tooling.apikit.test.api.XmlComparer;
 
 @RunWith(SWTBotJunit4ClassRunner.class)
@@ -35,22 +34,26 @@ public class SimpleTests {
         SWTBotPreferences.TIMEOUT = 8000;
         // increase timeout to 1 second
         SWTBotPreferences.PLAYBACK_DELAY = 10;
-        // Don't use SWTWorkbenchBot here which relies on Platform 3.x
         bot = new SWTWorkbenchBot();
         muleStudioBot = new MuleStudioBot(bot);
     }
     
-    /*@Before
-    public void before(){
-    	 bot.resetWorkbench();
-    }*/
+    @Ignore
+  public void changeAPIkitComponentNameMule34() throws Exception {
+    	changeAPIkitComponentName(UILabels.MULE_34,"Mule34");
+    }
     
-    @Test
-  public void changeAPIkitComponentName() throws Exception {
+    @Ignore
+  public void changeAPIkitComponentNameMule35() throws Exception {
+    	changeAPIkitComponentName(UILabels.MULE_35,"Mule35");
+    }    	
+
+   public void changeAPIkitComponentName(String muleVersion,String nameAddition) throws Exception {
     	
     	String projectName = "dnd" + System.currentTimeMillis();
-    	String flowName = "testflowcomponentname";
-    	muleStudioBot.createProject(projectName, "changeAPIkitComponentName");
+    	String flowName = "testflowcomponentname"+nameAddition;
+    	String expectedXml = "/resources/changeAPIkitComponentName-expected.xml";
+    	muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
     	muleStudioBot.createFlow(flowName, "Description of the flow");
 
         SWTBotGefEditor editor = new SWTBotGefEditor(bot.editorByTitle(flowName).getReference(), bot);
@@ -71,14 +74,13 @@ public class SimpleTests {
         propertiesEditorBot.apply(); 
         
       //XML comparison
-        String expectedXml = "/resources/apikit-change-component-name-expected.xml";
-		XmlComparer comparer = new XmlComparer(bot);
+        XmlComparer comparer = new XmlComparer(bot);
         comparer.compareToTheXMLUsingUI("XML files are different.",flowName, expectedXml, true);
         
         muleStudioBot.saveAll();
     }
 
-    @Test
+    @Ignore
     public void checkIfMuleStudioIsPairedWithASR(){
     	String token ="";
     	String host = "agent-registry.mulesoft.com";
@@ -89,8 +91,6 @@ public class SimpleTests {
     	file.menu("Preferences").click();
     	StudioPreferencesEditor preferences = new StudioPreferencesEditor(bot);
     	preferences.assertASRagentConfiguration(token, host, port, path);
-    	
-    	
     }
     
     private SWTBotShell getPrincipalShell(){
@@ -105,13 +105,23 @@ public class SimpleTests {
     	}
     	return shell;
     }
+  
+    @Ignore
+    public void addAPIkitGlobalElementRouterMule34() throws Exception {
+    	addAPIkitGlobalElementRouter(UILabels.MULE_34,"Mule34");
+    }
     
-    @Test
-    public void addAPIkitGlobalElementRouter() throws Exception {
+    @Ignore
+    public void addAPIkitGlobalElementRouterMule35() throws Exception {
+    	addAPIkitGlobalElementRouter(UILabels.MULE_35,"Mule35");
+    }
+    
+    public void addAPIkitGlobalElementRouter(String muleVersion, String nameAddition) throws Exception {
     	
     	String projectName = "aager" + System.currentTimeMillis();
-    	String flowName = "testflowglobalelement";
-    	muleStudioBot.createProject(projectName, "changeAPIkitComponentName");
+    	String flowName = "testflowglobalelement" + nameAddition;
+    	String expectedXml = "resources/addAPIkitGlobalElementRouter-expected.xml";
+    	muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
     	muleStudioBot.createFlow(flowName, "Description of the flow");
 
         SWTBotGefEditor editor = new SWTBotGefEditor(bot.editorByTitle(flowName).getReference(), bot);
@@ -123,17 +133,17 @@ public class SimpleTests {
         
         MulePropertiesEditorBot propertiesEditorBot = new MulePropertiesEditorBot(bot);
         propertiesEditorBot.setTextValue("Display Name:", "newname");
-        MuleGlobalElementWizardEditorBot wizardEditor = propertiesEditorBot.clickTooltipButton("Add");
+        propertiesEditorBot.clickTooltipButton("Add");
+        GlobalElementWizardEditorBot wizardEditor = new GlobalElementWizardEditorBot(bot);
         
-        wizardEditor.setTextValue("Name:","MyRouter");
-        wizardEditor.setTextValue("YAML File:","yamlFile.yaml");
-        wizardEditor.setTextValue("Console Path:","new console path");
-        wizardEditor.clickButton("OK");
+        wizardEditor.setName("MyRouter");
+        wizardEditor.setYamlFileName("yamlFile.yaml");
+        wizardEditor.setConsolePath("new console path");
+        wizardEditor.clickOK();
         propertiesEditorBot.activate();
         propertiesEditorBot.apply();
         
         //XML comparison
-        String expectedXml = "resources/apikit-editing-global-element-expected.xml";
         XmlComparer comparer = new XmlComparer(bot);
         comparer.compareToTheXMLUsingUI("XML files are different.",flowName, expectedXml, true);
 
@@ -141,15 +151,25 @@ public class SimpleTests {
     }
 
     @Test
-    public void createNewAPIkitProject(){
+    public void createNewAPIkitProjectMule34(){
+    	createNewAPIkitProject(UILabels.MULE_34);
+    }
+    
+    @Test
+    public void createNewAPIkitProjectMule35(){
+    	createNewAPIkitProject(UILabels.MULE_35);
+    }
+    
+    public void createNewAPIkitProject(String muleVersion){
     	
     	String projectName = "cnap" + System.currentTimeMillis();
-    	muleStudioBot.createProject(projectName, "newAPIkitProject");
+    	muleStudioBot.createProject(projectName, "newAPIkitProject",muleVersion);
     }
    
     @Ignore
     public void createNewAPIkitExample() throws Exception{
     	String projectName = "cnae" + System.currentTimeMillis();
+    	String expectedXml = "resources/createNewAPIkitExample-expected.xml";
     	
     	muleStudioBot.createAPIkitExample(projectName, "newAPIkitExample","REST API with APIkit");
     	//waitForEditor(withText("leagues"));
@@ -166,7 +186,7 @@ public class SimpleTests {
         while(!consoleText.contains("BUILD SUCCESS") && !consoleText.contains("BUILD FAILED"));
 
     	//XML comparison
-        String expectedXml = "resources/apikit-example-expected.xml";
+        
         XmlComparer comparer = new XmlComparer(bot);
         comparer.compareToTheXMLUsingUI("XML files are different.",flowName, expectedXml, true);
         
