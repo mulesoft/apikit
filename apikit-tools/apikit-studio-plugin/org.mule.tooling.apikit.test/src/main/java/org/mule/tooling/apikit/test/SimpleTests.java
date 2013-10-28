@@ -3,7 +3,6 @@ import static org.eclipse.swtbot.swt.finder.matchers.WidgetMatcherFactory.withTe
 import static org.eclipse.swtbot.swt.finder.waits.Conditions.waitForWidget;
 
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
-import org.eclipse.swtbot.eclipse.gef.finder.widgets.SWTBotGefEditor;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
@@ -16,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mule.tooling.apikit.test.api.GlobalElementWizardEditorBot;
+import org.mule.tooling.apikit.test.api.MuleGefEditor;
 import org.mule.tooling.apikit.test.api.MulePropertiesEditorBot;
 import org.mule.tooling.apikit.test.api.MuleStudioBot;
 import org.mule.tooling.apikit.test.api.StudioPreferencesEditor;
@@ -38,12 +38,12 @@ public class SimpleTests {
         muleStudioBot = new MuleStudioBot(bot);
     }
     
-    @Ignore
+    @Test
   public void changeAPIkitComponentNameMule34() throws Exception {
     	changeAPIkitComponentName(UILabels.MULE_34,"Mule34");
     }
     
-    @Ignore
+    @Test
   public void changeAPIkitComponentNameMule35() throws Exception {
     	changeAPIkitComponentName(UILabels.MULE_35,"Mule35");
     }    	
@@ -51,23 +51,21 @@ public class SimpleTests {
    public void changeAPIkitComponentName(String muleVersion,String nameAddition) throws Exception {
     	
     	String projectName = "dnd" + System.currentTimeMillis();
-    	String flowName = "testflowcomponentname"+nameAddition;
-    	String expectedXml = "/resources/changeAPIkitComponentName-expected.xml";
+    	String flowName = "testflowcomponentname"+nameAddition.toLowerCase();
+    	String expectedXml = "/resources/changeAPIkitComponentName" + nameAddition + "-expected.xml";
     	muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
     	muleStudioBot.createFlow(flowName, "Description of the flow");
 
-        SWTBotGefEditor editor = new SWTBotGefEditor(bot.editorByTitle(flowName).getReference(), bot);
-        editor.bot().textWithLabel("Filter:").setText("HTTP");
-        editor.activateTool("HTTP").click(601,500);
-        editor.bot().textWithLabel("Filter:").setText("APIkit Router");
-        editor.activateTool("APIkit Router").click(70,80);
-        editor.click("APIkit Router");
+    	MuleGefEditor editor = new MuleGefEditor(bot, flowName);
+    	editor.filterAndDragNdrop("HTTP", 70, 40);
+    	editor.filterAndDragNdrop("APIkit Router", 70, 80);
+    	editor.clickOnAbox("APIkit Router");
         
         MulePropertiesEditorBot propertiesEditorBot = new MulePropertiesEditorBot(bot);
         propertiesEditorBot.setTextValue("Display Name:", "newname");
         propertiesEditorBot.apply();
         
-        editor.click("newname");
+        editor.clickOnAbox("newname");
         
         String nameInsideTheViewer = propertiesEditorBot.getTextValue("Display Name:");
         Assert.assertThat(nameInsideTheViewer, CoreMatchers.is("newname"));
@@ -80,7 +78,7 @@ public class SimpleTests {
         muleStudioBot.saveAll();
     }
 
-    @Ignore
+    @Test
     public void checkIfMuleStudioIsPairedWithASR(){
     	String token ="";
     	String host = "agent-registry.mulesoft.com";
@@ -106,38 +104,36 @@ public class SimpleTests {
     	return shell;
     }
   
-    @Ignore
+    @Test
     public void addAPIkitGlobalElementRouterMule34() throws Exception {
-    	addAPIkitGlobalElementRouter(UILabels.MULE_34,"Mule34");
+    	addAPIkitGlobalElementRouter(UILabels.MULE_34,"mule34");
     }
     
-    @Ignore
+    @Test
     public void addAPIkitGlobalElementRouterMule35() throws Exception {
-    	addAPIkitGlobalElementRouter(UILabels.MULE_35,"Mule35");
+    	addAPIkitGlobalElementRouter(UILabels.MULE_35,"mule35");
     }
     
     public void addAPIkitGlobalElementRouter(String muleVersion, String nameAddition) throws Exception {
     	
     	String projectName = "aager" + System.currentTimeMillis();
     	String flowName = "testflowglobalelement" + nameAddition;
-    	String expectedXml = "resources/addAPIkitGlobalElementRouter-expected.xml";
+    	String expectedXml = "resources/addAPIkitGlobalElementRouter" + nameAddition + "-expected.xml";
     	muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
     	muleStudioBot.createFlow(flowName, "Description of the flow");
 
-        SWTBotGefEditor editor = new SWTBotGefEditor(bot.editorByTitle(flowName).getReference(), bot);
-        editor.bot().textWithLabel("Filter:").setText("HTTP");
-        editor.activateTool("HTTP").click(601,500);
-        editor.bot().textWithLabel("Filter:").setText("APIkit Router");
-        editor.activateTool("APIkit Router").click(70,80);
-        editor.click("APIkit Router");
-        
+    	MuleGefEditor editor = new MuleGefEditor(bot, flowName);
+    	editor.filterAndDragNdrop("HTTP", 70, 40);
+    	editor.filterAndDragNdrop("APIkit Router", 70, 80);
+    	editor.clickOnAbox("APIkit Router");
+  
         MulePropertiesEditorBot propertiesEditorBot = new MulePropertiesEditorBot(bot);
         propertiesEditorBot.setTextValue("Display Name:", "newname");
         propertiesEditorBot.clickTooltipButton("Add");
         GlobalElementWizardEditorBot wizardEditor = new GlobalElementWizardEditorBot(bot);
         
-        wizardEditor.setName("MyRouter");
-        wizardEditor.setYamlFileName("yamlFile.yaml");
+        wizardEditor.setName("MyRouter"+ nameAddition);
+        wizardEditor.setYamlFileName("inexitentYamlFile" + nameAddition + ".yaml");
         wizardEditor.setConsolePath("new console path");
         wizardEditor.clickOK();
         propertiesEditorBot.activate();

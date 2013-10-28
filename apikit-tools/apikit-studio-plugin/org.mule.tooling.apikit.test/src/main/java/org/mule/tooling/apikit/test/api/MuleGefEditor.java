@@ -14,6 +14,7 @@ public class MuleGefEditor {
 		editor = new SWTBotGefEditor(bot.editorByTitle(flowName).getReference(), bot);
 	}
 	
+	
 	public void changeTab(String tabName){
 		bot.editorByTitle(flowName).bot().cTabItem(tabName).activate();
 	}
@@ -34,6 +35,10 @@ public class MuleGefEditor {
 	  	editor.doubleClick(boxName);
 	}
 	
+	public void filterAndDragNdrop(String component, int x, int y){
+		editor.bot().textWithLabel("Filter:").setText(component);
+        editor.activateTool(component).click(x,y);
+	}
 	
 
 }

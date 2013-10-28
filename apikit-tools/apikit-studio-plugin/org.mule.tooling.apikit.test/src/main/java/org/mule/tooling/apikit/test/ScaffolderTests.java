@@ -16,7 +16,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mule.tooling.apikit.test.api.APIDefinitionEditor;
-import org.mule.tooling.apikit.test.api.MuleProjectBot;
 import org.mule.tooling.apikit.test.api.MuleStudioBot;
 import org.mule.tooling.apikit.test.api.UILabels;
 import org.mule.tooling.apikit.test.api.XmlComparer;
@@ -67,7 +66,7 @@ public class ScaffolderTests {
 		  	final String yamlFilePath = "src/main/api";
 		  	final String yamlFileName = flowName + ".yaml";
 		  	
-		  	final MuleProjectBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
+		  	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
 		  	final APIDefinitionEditor apiDefinitionEditor = muleStudioBot.createAPIDefinitionFile(projectName +"/"+ yamlFilePath,yamlFileName,"title");
 		  	apiDefinitionEditor.completeYamlFile(yamlFileInput).save();
 		  	
@@ -99,7 +98,7 @@ public class ScaffolderTests {
 			final String yamlFilePath = "src/main/api";
 			final String yamlFileName = flowName  + ".yaml";
 			
-			final MuleProjectBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
+			final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
 			final APIDefinitionEditor apiDefinitionEditor = muleStudioBot.createAPIDefinitionFile(projectName +"/"+ yamlFilePath,yamlFileName,"title");
 			apiDefinitionEditor.completeYamlFile(yamlFileInput).save();
 			assertTrue("Cannot generate flows due to invalid yaml file.",projectBot.canGenerateFlows(projectName,yamlFilePath, yamlFileName));
@@ -128,7 +127,7 @@ public class ScaffolderTests {
 			final String yamlFilePath = "src/main/api";
 			final String yamlFileName = "invalid" + projectNameAddition + "-input.yaml";
 			
-			final MuleProjectBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
+			final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
 			final APIDefinitionEditor apiDefinitionEditor = muleStudioBot.createAPIDefinitionFile(projectName +"/"+ yamlFilePath,yamlFileName,"title");
 			apiDefinitionEditor.completeYamlFile(yamlFileInput).save();
 			assertTrue("This example should not be valid.",!projectBot.canGenerateFlows(projectName,yamlFilePath, yamlFileName));

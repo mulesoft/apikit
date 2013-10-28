@@ -4,10 +4,10 @@
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
-    <apikit:config name="MyRouter" raml="yamlFileMule34.yaml" consoleEnabled="true" consolePath="new console path" doc:name="Router"/>
-    <flow name="testflowglobalelementFlow1" doc:name="testflowglobalelementFlow1">
+    <apikit:config name="MyRoutermule34" raml="inexitentYamlFilemule34.yaml" consoleEnabled="true" consolePath="new console path" doc:name="Router"/>
+    <flow name="testflowglobalelementmule34Flow1" doc:name="testflowglobalelementmule34Flow1">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" doc:name="HTTP"/>
-        <apikit:router config-ref="MyRouter" doc:name="newname"/>
+        <apikit:router config-ref="MyRoutermule34" doc:name="newname"/>
     </flow>
 </mule>
 

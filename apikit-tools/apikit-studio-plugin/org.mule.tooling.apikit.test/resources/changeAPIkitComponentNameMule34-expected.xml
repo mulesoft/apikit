@@ -4,7 +4,7 @@
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
-    <flow name="testflowcomponentnameFlow1" doc:name="testflowcomponentnameFlow1">
+    <flow name="testflowcomponentnamemule34Flow1" doc:name="testflowcomponentnamemule34Flow1">
         <http:inbound-endpoint exchange-pattern="request-response" host="localhost" port="8081" doc:name="HTTP"/>
         <apikit:router config-ref="" doc:name="newname"/>
     </flow>

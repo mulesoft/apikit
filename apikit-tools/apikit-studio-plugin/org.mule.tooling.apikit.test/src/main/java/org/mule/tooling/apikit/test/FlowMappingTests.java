@@ -9,7 +9,6 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +16,6 @@ import org.mule.tooling.apikit.test.api.APIDefinitionEditor;
 import org.mule.tooling.apikit.test.api.FlowMappingEditor;
 import org.mule.tooling.apikit.test.api.GlobalElementWizardEditorBot;
 import org.mule.tooling.apikit.test.api.MuleGefEditor;
-import org.mule.tooling.apikit.test.api.MuleProjectBot;
 import org.mule.tooling.apikit.test.api.MulePropertiesEditorBot;
 import org.mule.tooling.apikit.test.api.MuleStudioBot;
 import org.mule.tooling.apikit.test.api.UILabels;
@@ -38,12 +36,6 @@ public class FlowMappingTests {
         bot = new SWTWorkbenchBot();
         muleStudioBot = new MuleStudioBot(bot);
     }
-   /*
-   @Before
-   public void before(){
-	   bot.resetWorkbench();
-   }*/
-   
    
    @Test
    public void referenceFlowSimpleTestAddingNewGlobalElementMule34() throws Exception{
@@ -64,7 +56,7 @@ public class FlowMappingTests {
 	  	final String yamlFilePath = "src/main/api";
 	  	final String yamlFileName = flowName + ".yaml";
 	  	
-	  	final MuleProjectBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
+	  	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
 	  	final APIDefinitionEditor apiDefinitionEditor = muleStudioBot.createAPIDefinitionFile(projectName +"/"+ yamlFilePath,yamlFileName,"title");
 	  	apiDefinitionEditor.completeYamlFile(yamlFileInput).save();
 	  	
@@ -129,7 +121,7 @@ public class FlowMappingTests {
 	  	final String yamlFilePath = "src/main/api";
 	  	final String yamlFileName = flowName + ".yaml";
 	  	
-	  	final MuleProjectBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
+	  	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
 	  	final APIDefinitionEditor apiDefinitionEditor = muleStudioBot.createAPIDefinitionFile(projectName +"/"+ yamlFilePath,yamlFileName,"title");
 	  	apiDefinitionEditor.completeYamlFile(yamlFileInput).save();
 	  	

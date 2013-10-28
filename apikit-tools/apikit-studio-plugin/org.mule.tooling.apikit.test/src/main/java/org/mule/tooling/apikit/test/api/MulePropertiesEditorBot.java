@@ -37,12 +37,6 @@ public class MulePropertiesEditorBot {
     	getViewBot().bot().comboBox(comboId).setSelection(selection);
     	return this;
     }
-    /*
-    public MuleGlobalElementWizardEditorBot clickTooltipButton(String tooltip){
-    	activate();
-    	editorBot.toolbarButtonWithTooltip(tooltip).click();
-    	return new MuleGlobalElementWizardEditorBot(bot, this);
-    }*/
     
     public void clickTooltipButton(String tooltip){
     	activate();

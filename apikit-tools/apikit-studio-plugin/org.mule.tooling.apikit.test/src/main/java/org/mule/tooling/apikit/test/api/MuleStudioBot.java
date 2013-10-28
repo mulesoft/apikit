@@ -13,7 +13,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTableItem;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotText;
-import org.mule.tooling.apikit.test.api.MuleProjectBot;
+import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
 
 public class MuleStudioBot {
 
@@ -42,8 +42,7 @@ public class MuleStudioBot {
         bot.perspectiveByLabel("Mule").activate();
     }
     
-
-    public MuleProjectBot createProject(String name, String description,String muleVersion) {
+    public MuleStudioBot createProject(String name, String description,String muleVersion) {
     	getPrincipalShell().activate();
     	waitForWidget((withText("File")));
     	SWTBotMenu file = bot.menu("File");
@@ -59,10 +58,10 @@ public class MuleStudioBot {
         bot.button("Next >").click();
         bot.button("Finish").click();
         bot.waitUntil(Conditions.shellCloses(muleProjectShell));
-        return new MuleProjectBot(name.toLowerCase(), description, bot);
+        return this;
     }
     
-    public MuleProjectBot createAPIkitProject(String name, String description, String muleVersion) {
+    public MuleStudioBot createAPIkitProject(String name, String description, String muleVersion) {
     	getPrincipalShell().activate();
     	SWTBotMenu file = bot.menu("File");
         SWTBotMenu newMenu = file.menu("New");
@@ -82,7 +81,7 @@ public class MuleStudioBot {
         bot.button("Finish").click();
 
         bot.waitUntil(Conditions.shellCloses(muleProjectShell));
-        return new MuleProjectBot(name.toLowerCase(), description, bot);
+        return this;
     }
 
     public APIDefinitionEditor createAPIDefinitionFile(String path, String name,String title) {
@@ -109,7 +108,7 @@ public class MuleStudioBot {
 		return new APIDefinitionEditor(bot);
     }
     
-    public MuleProjectBot createAPIkitExample(String name, String description, String exampleName) {
+    public MuleStudioBot createAPIkitExample(String name, String description, String exampleName) {
     	getPrincipalShell().activate();
     	SWTBotMenu file = bot.menu("File");
         SWTBotMenu newMenu = file.menu("New");
@@ -127,7 +126,7 @@ public class MuleStudioBot {
         Assert.assertTrue("Finish button is disabled",finishbutton.isEnabled());
         finishbutton.click();
         bot.waitUntil(Conditions.shellCloses(muleProjectShell));
-        return new MuleProjectBot(name.toLowerCase(), description, bot);
+        return this;
     }
         
     public MuleStudioBot save() {
@@ -194,4 +193,32 @@ public class MuleStudioBot {
     	return shell;
     }
 
+    protected SWTBotTreeItem getProjectTree(String projectName) {
+        bot.viewByTitle("Package Explorer").setFocus();
+        SWTBotTreeItem projectTree = bot.tree().getTreeItem(projectName);
+        return projectTree;
+    }
+    
+    public boolean canGenerateFlows(String projectName,String path, String yamlFileName){
+    	String explorerName = "Package Explorer";
+    	String contextMenu = "APIkit";
+    	String generateFlowsButton = "Generate Flows";
+    	
+    	bot.viewByTitle(explorerName).show();
+    	bot.viewByTitle(explorerName).setFocus();
+
+    	SWTBotTreeItem item = bot.viewByTitle(explorerName).bot().tree().getTreeItem(projectName).getNode(path).getNode(yamlFileName);
+    	return item.contextMenu(contextMenu).menu(generateFlowsButton).isEnabled();
+
+    }
+    
+    public boolean generateFlows(String projectName,String path, String yamlFileName){
+    	String explorerName = "Package Explorer";
+    	String contextMenu = "APIkit";
+    	String generateFlowsButton = "Generate Flows";
+    	bot.viewByTitle(explorerName).show();
+    	bot.viewByTitle(explorerName).setFocus();
+    	bot.viewByTitle(explorerName).bot().tree().getTreeItem(projectName).getNode(path).getNode(yamlFileName).contextMenu(contextMenu).menu(generateFlowsButton).click();
+    	return true;
+    }
 }
