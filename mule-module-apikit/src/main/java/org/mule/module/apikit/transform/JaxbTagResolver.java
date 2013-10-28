@@ -21,7 +21,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 public class JaxbTagResolver implements TagResolver
 {
 
-    private static final Tag JAXB_TAG = new Tag("!jaxb");
+    public static final Tag JAXB_TAG = new Tag("!jaxb");
 
     @Override
     public boolean handles(Tag tag)

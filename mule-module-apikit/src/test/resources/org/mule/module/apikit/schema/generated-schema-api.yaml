@@ -4,9 +4,9 @@ title: sample api
     put:
         body:
             application/json:
-                schema: !jackson org.mule.module.apikit.User
+                schema: !jackson org.mule.module.apikit.schema.User
             text/xml:
-                schema: !jaxb org.mule.module.apikit.User
+                schema: !jaxb org.mule.module.apikit.schema.User
         responses:
             204: ~
 

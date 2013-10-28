@@ -33,7 +33,7 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config name="salesApi" raml="org/mule/module/apikit/jackson/generated-schema-api.yaml" consoleEnabled="true" consolePath="console"/>
+    <apikit:config name="salesApi" raml="org/mule/module/apikit/schema/generated-schema-api.yaml" consoleEnabled="true" consolePath="console"/>
 
     <flow name="doorway">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>

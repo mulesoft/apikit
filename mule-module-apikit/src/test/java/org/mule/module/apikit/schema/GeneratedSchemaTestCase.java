@@ -1,4 +1,4 @@
-package org.mule.module.apikit;
+package org.mule.module.apikit.schema;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -32,7 +32,7 @@ public class GeneratedSchemaTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/jackson/generated-schema-config.xml";
+        return "org/mule/module/apikit/schema/generated-schema-config.xml";
     }
 
     @Test

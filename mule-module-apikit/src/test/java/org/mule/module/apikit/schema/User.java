@@ -1,4 +1,4 @@
-package org.mule.module.apikit;
+package org.mule.module.apikit.schema;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;

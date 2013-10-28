@@ -28,6 +28,7 @@ import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.transform.JacksonTagResolver;
 import org.mule.module.apikit.transform.JaxbTagResolver;
+import org.mule.module.apikit.transform.PojoValidatorTagResolver;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
@@ -57,6 +58,7 @@ import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
+import org.raml.parser.rule.NodeRuleFactory;
 import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 import org.raml.parser.visitor.RamlValidationService;
@@ -254,7 +256,8 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
 
     protected void validateRaml(String ramlBuffer, ResourceLoader resourceLoader)
     {
-        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader, new ActionImplementedRuleExtension(restFlowMap)).validate(ramlBuffer);
+        NodeRuleFactory ruleFactory = new NodeRuleFactory(new ActionImplementedRuleExtension(restFlowMap));
+        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader, ruleFactory, new PojoValidatorTagResolver()).validate(ramlBuffer);
         List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
         if (!errors.isEmpty())
         {

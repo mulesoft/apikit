@@ -18,7 +18,7 @@ import org.yaml.snakeyaml.nodes.Tag;
 public class JacksonTagResolver implements TagResolver
 {
 
-    private static final Tag JACKSON_TAG = new Tag("!jackson");
+    public static final Tag JACKSON_TAG = new Tag("!jackson");
 
     @Override
     public boolean handles(Tag tag)
