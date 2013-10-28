@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -170,5 +171,12 @@ public class FlowMappingTests {
     protected String readResource(String configName) throws IOException {
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(configName);
         return IOUtils.toString(resourceAsStream);
+    }
+    
+    @AfterClass
+    public static void afterClass() {
+    	
+    	muleStudioBot.saveAll();
+    	muleStudioBot.closeAll();
     }
 }

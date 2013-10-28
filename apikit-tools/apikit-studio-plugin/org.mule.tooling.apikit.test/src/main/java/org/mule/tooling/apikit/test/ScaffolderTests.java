@@ -12,6 +12,7 @@ import org.eclipse.swtbot.eclipse.finder.SWTWorkbenchBot;
 import org.eclipse.swtbot.swt.finder.junit.SWTBotJunit4ClassRunner;
 import org.eclipse.swtbot.swt.finder.utils.SWTBotPreferences;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotTreeItem;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -139,5 +140,11 @@ public class ScaffolderTests {
 	        return IOUtils.toString(resourceAsStream);
 	    }
 	   
+	    @AfterClass
+	    public static void afterClass() {
+	    	
+	    	muleStudioBot.saveAll();
+	    	muleStudioBot.closeAll();
+	    }
 	   
 }

@@ -129,16 +129,20 @@ public class MuleStudioBot {
         return this;
     }
         
-    public MuleStudioBot save() {
+    public MuleStudioBot save() throws Exception{
     	int i = 0;
     	for(i = 0; i < bot.shells().length; i++){
     		if (bot.shells()[i].getText().endsWith("Mule Studio")){
     			break;
     		}
     	}
+    	if (bot.shells()[i].bot().menu("File") == null){
+    		waitForWidget(withText("File")); 
+    	}
     	if (bot.shells()[i].bot().menu("File").menu("Save").isEnabled()){
     		bot.shells()[i].bot().menu("File").menu("Save").click();
     	}
+	
         return this;
     }
 
@@ -149,8 +153,24 @@ public class MuleStudioBot {
     			break;
     		}
     	}
+    	if (bot.shells()[i].bot().menu("File") == null){
+    		waitForWidget(withText("File")); 
+    	}
     	if (bot.shells()[i].activate().bot().menu("File").menu("Save All").isEnabled()){
     		bot.shells()[i].activate().bot().menu("File").menu("Save All").click();
+    	}
+        return this;
+    }
+    
+    public MuleStudioBot closeAll() {
+    	int i = 0;
+    	for(i = 0; i < bot.shells().length; i++){
+    		if (bot.shells()[i].getText().endsWith("Mule Studio")){
+    			break;
+    		}
+    	}
+    	if (bot.shells()[i].activate().bot().menu("File").menu("Close All").isEnabled()){
+    		bot.shells()[i].activate().bot().menu("File").menu("Close All").click();
     	}
         return this;
     }

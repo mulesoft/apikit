@@ -9,6 +9,7 @@ import org.eclipse.swtbot.swt.finder.widgets.SWTBotMenu;
 import org.eclipse.swtbot.swt.finder.widgets.SWTBotShell;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -78,7 +79,7 @@ public class SimpleTests {
         muleStudioBot.saveAll();
     }
 
-    @Test
+    @Ignore
     public void checkIfMuleStudioIsPairedWithASR(){
     	String token ="";
     	String host = "agent-registry.mulesoft.com";
@@ -106,18 +107,18 @@ public class SimpleTests {
   
     @Test
     public void addAPIkitGlobalElementRouterMule34() throws Exception {
-    	addAPIkitGlobalElementRouter(UILabels.MULE_34,"mule34");
+    	addAPIkitGlobalElementRouter(UILabels.MULE_34,"Mule34");
     }
     
     @Test
     public void addAPIkitGlobalElementRouterMule35() throws Exception {
-    	addAPIkitGlobalElementRouter(UILabels.MULE_35,"mule35");
+    	addAPIkitGlobalElementRouter(UILabels.MULE_35,"Mule35");
     }
     
     public void addAPIkitGlobalElementRouter(String muleVersion, String nameAddition) throws Exception {
     	
     	String projectName = "aager" + System.currentTimeMillis();
-    	String flowName = "testflowglobalelement" + nameAddition;
+    	String flowName = "testflowglobalelement" + nameAddition.toLowerCase();
     	String expectedXml = "resources/addAPIkitGlobalElementRouter" + nameAddition + "-expected.xml";
     	muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
     	muleStudioBot.createFlow(flowName, "Description of the flow");
@@ -200,6 +201,13 @@ public class SimpleTests {
 		SWTBotStyledText styledText = new SWTBotStyledText(swtStyledText);
 */
 
+    }
+   
+    @AfterClass
+    public static void afterClass() {
+    	
+    	muleStudioBot.saveAll();
+    	muleStudioBot.closeAll();
     }
 }
     
