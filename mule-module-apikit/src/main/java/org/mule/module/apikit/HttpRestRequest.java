@@ -8,6 +8,8 @@ import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.exception.InvalidFormParameterException;
 import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.exception.MuleRestException;
@@ -27,10 +29,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.activation.DataHandler;
+
 import org.raml.model.Action;
 import org.raml.model.MimeType;
 import org.raml.model.Raml;
 import org.raml.model.Response;
+import org.raml.model.parameter.FormParameter;
 import org.raml.model.parameter.Header;
 import org.raml.model.parameter.QueryParameter;
 import org.slf4j.Logger;
@@ -133,7 +138,7 @@ public class HttpRestRequest
             {
                 if (!expected.validate(actual))
                 {
-                    throw new InvalidQueryParameterException("Invalid uri parameter value " + actual + " for " + expectedKey);
+                    throw new InvalidQueryParameterException("Invalid query parameter value " + actual + " for " + expectedKey);
                 }
             }
         }
@@ -261,10 +266,22 @@ public class HttpRestRequest
             if (mimeTypeName.equals(requestMimeTypeName))
             {
                 found = true;
-                if (action.getBody().get(mimeTypeName).getSchema() != null &&
-                    (mimeTypeName.contains("xml") || mimeTypeName.contains("json")))
+                MimeType actionMimeType = action.getBody().get(mimeTypeName);
+                if (actionMimeType.getSchema() != null &&
+                    (mimeTypeName.contains("xml") ||
+                     mimeTypeName.contains("json")))
                 {
                     validateSchema(mimeTypeName);
+                }
+                else if (actionMimeType.getFormParameters() != null &&
+                         mimeTypeName.contains("multipart/form-data"))
+                {
+                    validateMultipartForm(actionMimeType.getFormParameters());
+                }
+                else if (actionMimeType.getFormParameters() != null &&
+                         mimeTypeName.contains("application/x-www-form-urlencoded"))
+                {
+                    validateUrlencodedForm(actionMimeType.getFormParameters());
                 }
                 break;
             }
@@ -272,6 +289,51 @@ public class HttpRestRequest
         if (!found)
         {
             throw new UnsupportedMediaTypeException();
+        }
+    }
+
+    private void validateUrlencodedForm(Map<String, List<FormParameter>> formParameters) throws BadRequestException
+    {
+        for (String expectedKey : formParameters.keySet())
+        {
+            if (formParameters.get(expectedKey).size() != 1)
+            {
+                //do not perform validation when multi-type parameters are used
+                continue;
+            }
+
+            FormParameter expected = formParameters.get(expectedKey).get(0);
+            String actual = (String) ((Map) requestEvent.getMessage().getInboundProperty("http.query.params")).get(expectedKey);
+            if (actual == null && expected.isRequired())
+            {
+                throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
+            }
+            if (actual != null)
+            {
+                if (!expected.validate(actual))
+                {
+                    throw new InvalidFormParameterException("Invalid form parameter value " + actual + " for " + expectedKey);
+                }
+            }
+        }
+    }
+
+    private void validateMultipartForm(Map<String, List<FormParameter>> formParameters) throws BadRequestException
+    {
+        for (String expectedKey : formParameters.keySet())
+        {
+            if (formParameters.get(expectedKey).size() != 1)
+            {
+                //do not perform validation when multi-type parameters are used
+                continue;
+            }
+            FormParameter expected = formParameters.get(expectedKey).get(0);
+            DataHandler dataHandler = requestEvent.getMessage().getInboundAttachment(expectedKey);
+            if (dataHandler == null && expected.isRequired())
+            {
+                //perform only 'required' validation to avoid consuming the stream
+                throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
+            }
         }
     }
 
