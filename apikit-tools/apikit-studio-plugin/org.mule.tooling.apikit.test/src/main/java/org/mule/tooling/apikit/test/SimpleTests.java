@@ -71,10 +71,11 @@ public class SimpleTests {
         String nameInsideTheViewer = propertiesEditorBot.getTextValue("Display Name:");
         Assert.assertThat(nameInsideTheViewer, CoreMatchers.is("newname"));
         propertiesEditorBot.apply(); 
-        
-      //XML comparison
+        editor.changeTab(UILabels.TAB_3);
+        //XML comparison
         XmlComparer comparer = new XmlComparer(bot);
-        comparer.compareToTheXMLUsingUI("XML files are different.",flowName, expectedXml, true);
+        String streamExpected = comparer.readResource(expectedXml);	
+        comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
         
         muleStudioBot.saveAll();
     }
@@ -141,9 +142,11 @@ public class SimpleTests {
         propertiesEditorBot.apply();
         
         //XML comparison
+        editor.changeTab(UILabels.TAB_3);
         XmlComparer comparer = new XmlComparer(bot);
-        comparer.compareToTheXMLUsingUI("XML files are different.",flowName, expectedXml, true);
-
+        String streamExpected = comparer.readResource(expectedXml);	
+        comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
+        
         muleStudioBot.save();
     }
 
@@ -183,10 +186,12 @@ public class SimpleTests {
         while(!consoleText.contains("BUILD SUCCESS") && !consoleText.contains("BUILD FAILED"));
 
     	//XML comparison
-        
+        MuleGefEditor editor = new MuleGefEditor(bot,flowName);
         XmlComparer comparer = new XmlComparer(bot);
-        comparer.compareToTheXMLUsingUI("XML files are different.",flowName, expectedXml, true);
-        
+        editor.changeTab(UILabels.TAB_3);
+        String streamExpected = comparer.readResource(expectedXml);	
+        comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
+             
         muleStudioBot.saveAll();
         //bot.waitUntil((ICondition)bot.viewByTitle("Console"));
     	//XML comparison

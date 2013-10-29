@@ -27,16 +27,8 @@ public class XmlComparer {
         assertTrue(errorMessage + " " + detailedDiff.toString(), detailedDiff.identical());
     }
     
-    protected String readResource(String configName) throws IOException {
+    public String readResource(String configName) throws IOException {
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(configName);
         return IOUtils.toString(resourceAsStream);
     }
-    
-    public void compareToTheXMLUsingUI(String errorMessage, String flowName, String expectedFilePath, boolean ignoreWhitespace) throws Exception{
-    	bot.editorByTitle(flowName).bot().cTabItem("Configuration XML").activate();
-	  	String actualXmlStream = bot.editorByTitle(flowName).toTextEditor().getText();
-    	String expectedXmlStream = readResource(expectedFilePath);
-		assertIdenticalXML(errorMessage,expectedXmlStream, actualXmlStream,true);
-    }
-    
 }

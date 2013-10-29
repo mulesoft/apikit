@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mule.tooling.apikit.test.api.APIDefinitionEditor;
+import org.mule.tooling.apikit.test.api.MuleGefEditor;
 import org.mule.tooling.apikit.test.api.MuleStudioBot;
 import org.mule.tooling.apikit.test.api.UILabels;
 import org.mule.tooling.apikit.test.api.XmlComparer;
@@ -75,8 +76,12 @@ public class ScaffolderTests {
 		  	
 		  	projectBot.generateFlows(projectName,yamlFilePath, yamlFileName);
 
-		  	XmlComparer comparer = new XmlComparer(bot);
-	        comparer.compareToTheXMLUsingUI("XML files are different.",flowName, xmlFileExpected,true);
+	        MuleGefEditor editor = new MuleGefEditor(bot, flowName);
+	        editor.changeTab(UILabels.TAB_3);
+			XmlComparer comparer = new XmlComparer(bot);
+			String streamExpected = comparer.readResource(xmlFileExpected);	
+			comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
+	        
 	        muleStudioBot.saveAll();
 	  }
 
@@ -105,9 +110,12 @@ public class ScaffolderTests {
 			assertTrue("Cannot generate flows due to invalid yaml file.",projectBot.canGenerateFlows(projectName,yamlFilePath, yamlFileName));
 			
 			projectBot.generateFlows(projectName,yamlFilePath, yamlFileName);
-			
+			MuleGefEditor editor = new MuleGefEditor(bot, flowName);
+		    editor.changeTab(UILabels.TAB_3);
 			XmlComparer comparer = new XmlComparer(bot);
-			comparer.compareToTheXMLUsingUI("XML files are different.",flowName, xmlFileExpected,true);
+			String streamExpected = comparer.readResource(xmlFileExpected);	
+			comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
+	        
 			muleStudioBot.saveAll();
 	  }
 
