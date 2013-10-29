@@ -46,7 +46,7 @@ public class ConsoleHandler
 
         this.consolePath = sanitize(consolePath);
         String indexHtmlC5 = IOUtils.toString(getClass().getResourceAsStream("/console/indexc5.html"));
-        homePageC5 = indexHtmlC5.replaceFirst("<raml-console src=\"[^\"]+\">", "<raml-console src=\"" + ramlUri + "\">");
+        homePageC5 = indexHtmlC5.replaceFirst("<raml-console src=\"[^\"]+\"", "<raml-console src=\"" + ramlUri + "\"");
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
         homePage = indexHtml.replaceFirst("<raml-definition id=\"([^\"]+)\" src=\"[^\"]+\">", "<raml-definition id=\"$1\" src=\"" + ramlUri + "\">");
     }
