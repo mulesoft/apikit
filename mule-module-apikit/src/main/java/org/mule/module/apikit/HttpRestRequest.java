@@ -119,8 +119,6 @@ public class HttpRestRequest
             responseEvent.getMessage().setOutboundProperty("http.status", getSuccessStatus());
         }
 
-        //hateoas enricher
-
         return responseEvent;
     }
 

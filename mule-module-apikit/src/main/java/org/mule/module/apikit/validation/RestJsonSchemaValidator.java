@@ -24,6 +24,8 @@ import java.io.StringReader;
 import java.util.concurrent.ExecutionException;
 
 import org.mule.module.apikit.exception.BadRequestException;
+
+import org.apache.commons.io.IOUtils;
 import org.eel.kitchen.jsonschema.report.ValidationReport;
 import org.eel.kitchen.jsonschema.util.JsonLoader;
 import org.raml.model.Raml;
@@ -46,13 +48,15 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
         {
             JsonNode data;
             Object input = muleEvent.getMessage().getPayload();
+            if (input instanceof InputStream)
+            {
+                input = IOUtils.toString((InputStream) input);
+                logger.debug("transforming payload to perform JSON Schema validation");
+                muleEvent.getMessage().setPayload(input);
+            }
             if (input instanceof String)
             {
                 data = JsonLoader.fromReader(new StringReader((String) input));
-            }
-            else if (input instanceof InputStream)
-            {
-                data = JsonLoader.fromReader(new InputStreamReader((InputStream) input));
             }
             else if (input instanceof byte[])
             {
