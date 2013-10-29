@@ -1,9 +1,6 @@
- <?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
- <!--  <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">-->
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<artifactId>apikit-studio-plugin</artifactId>
@@ -15,7 +12,7 @@
 	<packaging>eclipse-plugin</packaging>
 	<properties>
 		<lib-dir>lib</lib-dir>
-		<antfile>buildLinux.xml</antfile>
+		<antfile>build.xml</antfile>
 
 	</properties>
 	<build>
@@ -84,38 +81,6 @@
 			</activation>
 			<build>
 				<plugins>
-					<!--plugin>
-						<artifactId>maven-antrun-plugin</artifactId>
-						<version>1.7</version>
-						<executions>
-							<execution>
-								<id>generate-random-display-number</id>
-								<phase>validate</phase>
-								<configuration>
-									<target>
-										<taskdef resource="net/sf/antcontrib/antcontrib.properties"
-											classpathref="maven.plugin.classpath" />
-										<math result="random-display-number">
-											<op op="rint">
-												<op op="*">
-													<num value="32768" />
-													<op op="random" />
-												</op>
-											</op>
-										</math>
-										<echo message="Random number for Xvfb: ${random-display-number}" />
-										<property name="display-number" value="${random-display-number}" />
-									</target>
-									<failOnError>true</failOnError>
-									<exportAntProperties>true</exportAntProperties>
-								</configuration>
-								<goals>
-									<goal>run</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin-->
-
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>selenium-maven-plugin</artifactId>
@@ -169,13 +134,6 @@
 	                                </exclusion>
 	                            </exclusions>
 	                        </dependency>
-
-	                        <!--dependency>
-	                            <groupId>org.apache.ant</groupId>
-	                            <artifactId>ant-nodeps</artifactId>
-	                            <version>1.8.1</version>
-	                        </dependency-->
-
 	                        <dependency>
 								<groupId>org.apache.ant</groupId>
 								<artifactId>ant-junit</artifactId>

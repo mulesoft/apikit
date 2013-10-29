@@ -1,5 +1,6 @@
 package org.mule.tooling.apikit.test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -161,6 +162,61 @@ public class FlowMappingTests {
 	    editor.changeTab(UILabels.TAB_3);
 	    String modifiedExpected = readResource(xmlFileExpected);
 
+	    
+	  	XmlComparer comparer = new XmlComparer(bot);
+        comparer.assertIdenticalXML("XML files are different. ", modifiedExpected, editor.getTextOfTheTab(), true);
+        
+        muleStudioBot.saveAll();
+	}
+	
+	@Test
+	public void tryAddFlowMappingUsingInvalidYamlFileMule34() throws Exception{
+		tryAddFlowMappingUsingInvalidYamlFile(UILabels.MULE_34, "Mule34");
+	}
+
+	@Test
+	public void tryAddFlowMappingUsingInvalidYamlFileMule35() throws Exception{
+		tryAddFlowMappingUsingInvalidYamlFile(UILabels.MULE_35, "Mule35");
+	}
+	
+	public void tryAddFlowMappingUsingInvalidYamlFile(String muleVersion,String nameAddition) throws Exception{
+		final String yamlFileInput = "resources/tryAddFlowMappingUsingInvalidYamlFile-input.yaml";
+	  	final String xmlFileExpected = "resources/tryAddFlowMappingUsingInvalidYamlFile"+ nameAddition +"-expected.xml";
+		final String projectName = "tafmuiyf"+ System.currentTimeMillis();
+		final String flowName = "simpleyamlfiletafmuiyf" + nameAddition;
+	  	final String yamlFilePath = "src/main/api";
+	  	final String yamlFileName = flowName + ".yaml";
+	  	
+	  	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
+	  	final APIDefinitionEditor apiDefinitionEditor = muleStudioBot.createAPIDefinitionFile(projectName +"/"+ yamlFilePath,yamlFileName,"title");
+	  	apiDefinitionEditor.completeYamlFile(yamlFileInput).save();
+	  	
+	  	assertTrue("Cannot generate flows due to invalid yaml file.",projectBot.canGenerateFlows(projectName,yamlFilePath, yamlFileName));
+	  	
+	  	projectBot.generateFlows(projectName,yamlFilePath, yamlFileName);
+	  	
+	  	MuleGefEditor editor = new MuleGefEditor(bot, flowName);
+	  	editor.changeTab(UILabels.TAB_1);
+	  	editor.clickOnAbox("APIkit Router");
+	  	
+	        
+	    MulePropertiesEditorBot propertiesEditorBot = new MulePropertiesEditorBot(bot);
+	    
+	    propertiesEditorBot.clickTooltipButton("Edit");
+	    
+	    GlobalElementWizardEditorBot globalElementWizard = new GlobalElementWizardEditorBot(bot);
+	    globalElementWizard.setYamlFileName("yamlFileThatNotExists.yaml");
+	    globalElementWizard.clickOnAddAnewMapping();
+	    
+	    assertEquals("Could not add flow mapping", bot.activeShell().getText().toString());
+	    bot.activeShell().bot().button("OK").click();
+	    globalElementWizard.clickOK();
+	    
+	    propertiesEditorBot.apply();
+	    editor.changeTab(UILabels.TAB_3);
+	    String modifiedExpected = readResource(xmlFileExpected);
+	    
+	   
 	    
 	  	XmlComparer comparer = new XmlComparer(bot);
         comparer.assertIdenticalXML("XML files are different. ", modifiedExpected, editor.getTextOfTheTab(), true);

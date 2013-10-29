@@ -80,7 +80,7 @@ public class SimpleTests {
         muleStudioBot.saveAll();
     }
 
-    @Ignore
+    @Test
     public void checkIfMuleStudioIsPairedWithASR(){
     	String token ="";
     	String host = "agent-registry.mulesoft.com";
