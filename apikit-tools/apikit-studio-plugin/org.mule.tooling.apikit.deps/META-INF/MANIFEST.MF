@@ -35,7 +35,8 @@ Bundle-ClassPath: .,
  lib/joda-time.jar,
  lib/json-schema-validator.jar,
  lib/mailapi.jar,
- lib/rhino.jar
+ lib/rhino.jar,
+ lib/snakeyaml.jar
 Export-Package: org.mule.tooling.apikit.deps,
  org.mule.tools.apikit,
  org.mule.tools.apikit.input,
