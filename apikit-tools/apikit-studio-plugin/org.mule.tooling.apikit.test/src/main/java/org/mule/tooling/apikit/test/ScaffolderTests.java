@@ -82,7 +82,7 @@ public class ScaffolderTests {
 			String streamExpected = comparer.readResource(xmlFileExpected);	
 			comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
 	        
-	        muleStudioBot.saveAll();
+	        muleStudioBot.save();
 	  }
 
 	  @Test
@@ -116,7 +116,7 @@ public class ScaffolderTests {
 			String streamExpected = comparer.readResource(xmlFileExpected);	
 			comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
 	        
-			muleStudioBot.saveAll();
+			muleStudioBot.save();
 	  }
 
 	   @Test
