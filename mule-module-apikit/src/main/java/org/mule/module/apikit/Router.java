@@ -287,10 +287,6 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         ImmutableEndpoint endpoint = (ImmutableEndpoint) ((Flow) flowConstruct).getMessageSource();
         String address = endpoint.getAddress();
         String path = endpoint.getEndpointURI().getPath();
-        if (path.isEmpty())
-        {
-            address += "/";
-        }
         String scheme = endpoint.getEndpointURI().getScheme();
         String chAddress = System.getProperty("fullDomain");
         String chBaseUri = scheme + "://" + chAddress + path;
@@ -303,6 +299,11 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
         if (chAddress != null)
         {
             address = chBaseUri;
+        }
+        if (address.endsWith("/"))
+        {
+            logger.debug("removing trailing slash from baseuri -> " + address);
+            address = address.substring(0, address.length() - 1);
         }
         api.setBaseUri(address);
         List<NodeTuple> tuples = new ArrayList<NodeTuple>();

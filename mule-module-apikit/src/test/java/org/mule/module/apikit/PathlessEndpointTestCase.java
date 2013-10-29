@@ -41,61 +41,88 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     public void consolePathless() throws Exception
     {
         RestAssured.port = serverPortPathless.getNumber();
-        console();
+        console("");
     }
 
     @Test
     public void ramlPathless() throws Exception
     {
         RestAssured.port = serverPortPathless.getNumber();
-        raml();
+        raml("");
+    }
+
+    @Test
+    public void baseuriPathless() throws Exception
+    {
+        int port = serverPortPathless.getNumber();
+        RestAssured.port = port;
+        baseUri("", "http://localhost:" + port);
     }
 
     @Test
     public void consoleEmptyPath() throws Exception
     {
         RestAssured.port = serverPortEmptyPath.getNumber();
-        console();
+        console("");
     }
 
     @Test
     public void ramlEmptyPath() throws Exception
     {
         RestAssured.port = serverPortEmptyPath.getNumber();
-        raml();
+        raml("");
+    }
+
+    @Test
+    public void baseuriEmptyPath() throws Exception
+    {
+        int port = serverPortEmptyPath.getNumber();
+        RestAssured.port = port;
+        baseUri("", "http://localhost:" + port);
     }
 
     @Test
     public void consoleSlashPath() throws Exception
     {
         RestAssured.port = serverPortSlashPath.getNumber();
-        console();
+        console("");
     }
 
     @Test
     public void ramlSlashPath() throws Exception
     {
         RestAssured.port = serverPortSlashPath.getNumber();
-        raml();
+        raml("");
+    }
+
+    @Test
+    public void baseuriSlashPath() throws Exception
+    {
+        int port = serverPortSlashPath.getNumber();
+        RestAssured.port = port;
+        baseUri("", "http://localhost:" + port);
     }
 
     @Test
     public void consoleAddressSlashPath() throws Exception
     {
         RestAssured.port = serverPortAddressSlashPath.getNumber();
-        console("api");
+        console("/api");
     }
 
     @Test
     public void ramlAddressSlashPath() throws Exception
     {
         RestAssured.port = serverPortAddressSlashPath.getNumber();
-        raml("api");
+        raml("/api/");
     }
 
-    private void console()
+    @Test
+    public void baseuriAddressSlashPath() throws Exception
     {
-        console("");
+        int port = serverPortAddressSlashPath.getNumber();
+        RestAssured.port = port;
+        baseUri("/api", "http://localhost:" + port + "/api");
     }
 
     private void console(String path)
@@ -103,14 +130,9 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>api:Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + "/" + path)))
+                                       containsString("src=\"http://localhost:" + port + path)))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get(path + "/console/index.html");
-    }
-
-    private void raml()
-    {
-        raml("");
     }
 
     private void raml(String path)
@@ -119,6 +141,15 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
             .expect()
                 .response().body(allOf(containsString("title"),
                                        containsString("Endpoint API")))
+                .statusCode(200)
+            .when().get(path);
+    }
+
+    private void baseUri(String path, String expectedBaseUri)
+    {
+        given().header("Accept", "application/raml+yaml")
+            .expect()
+                .response().body(containsString("\"baseUri\": \"" + expectedBaseUri + "\""))
                 .statusCode(200)
             .when().get(path + "/");
     }
