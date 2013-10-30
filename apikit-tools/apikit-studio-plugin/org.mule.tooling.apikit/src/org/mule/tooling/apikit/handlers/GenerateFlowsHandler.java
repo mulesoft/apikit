@@ -2,10 +2,10 @@ package org.mule.tooling.apikit.handlers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.core.commands.AbstractHandler;
@@ -64,7 +64,7 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
 
             String content;
             try {
-                content = new Scanner(file).useDelimiter("\\Z").next();
+                content = FileUtils.readFileToString(file, "UTF-8");
                 CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParent().getRawLocation().toFile()));
                 if (APIKitHelper.INSTANCE.isRamlFile(file) && APIKitHelper.INSTANCE.isValidYaml(ramlFile, content, resourceLoader)) {
                     files = Arrays.asList(file);
@@ -74,7 +74,11 @@ public class GenerateFlowsHandler extends AbstractHandler implements IHandler {
             } catch (FileNotFoundException e) {
                 MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage()));
                 e.printStackTrace();
+            } catch (IOException e) {
+                MuleCorePlugin.getLog().log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, e.getMessage()));
+                e.printStackTrace();
             }
+            return false;
         } else if (structured.getFirstElement() instanceof IResource) {
             IResource resource = (IResource) structured.getFirstElement();
             currentProject = resource.getProject();

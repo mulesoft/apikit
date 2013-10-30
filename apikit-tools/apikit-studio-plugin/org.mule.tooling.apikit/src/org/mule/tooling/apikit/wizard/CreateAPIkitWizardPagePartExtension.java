@@ -2,13 +2,11 @@ package org.mule.tooling.apikit.wizard;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -135,7 +133,7 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
             public void selectionChanged(IWorkbenchPart part, ISelection selection) {
                 try {
                     updateRAMLFile();
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     ramlFile = null;
                 }
                 updateErrorMessage();
@@ -173,11 +171,11 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
         return "";
     }
     
-    private void updateRAMLFile() throws FileNotFoundException {
+    private void updateRAMLFile() throws IOException {
         String filePath = fileChooser.getFilePath();
         File tempFile = new File(filePath);
         if (tempFile.exists() && APIKitHelper.INSTANCE.isRamlFile(tempFile)) {
-            String content = new Scanner(tempFile).useDelimiter("\\Z").next();
+            String content = FileUtils.readFileToString(tempFile, "UTF-8");
             CompositeResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(tempFile.getParentFile()));
             if (APIKitHelper.INSTANCE.isValidYaml(content, resourceLoader)) {
                 ramlFile = tempFile;
