@@ -81,7 +81,7 @@
         </copy>
     </target>
 
-    <target name="suite-linux" depends="unzipHeadlessJar" >
+    <target name="suite-linux" depends="conditionOS" if="isUnixButNotMacOsX" >
         <property name="jvmOption" value=""></property>
         <delete dir="${eclipse-home}/${temp-workspace}" quiet="false" />
  
@@ -96,7 +96,7 @@
         </ant>
     </target>
 
-    <target name="suite-mac" depends="conditionOS" if="isUnixButNotMacOsX">      
+    <target name="suite-mac" depends="conditionOS" unless="isUnixButNotMacOsX">      
         <condition property="jvmOption" value="-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts">
            <os family="mac"/>
         </condition>

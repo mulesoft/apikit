@@ -224,6 +224,61 @@ public class FlowMappingTests {
         muleStudioBot.saveAll();
 	}
 	
+	@Test
+	public void tryDeleteFlowMappingUsingInvalidYamlFileMule34() throws Exception{
+		tryDeleteFlowMappingUsingInvalidYamlFile(UILabels.MULE_34, "Mule34");
+	}
+
+	@Test
+	public void tryDeleteFlowMappingUsingInvalidYamlFileMule35() throws Exception{
+		tryDeleteFlowMappingUsingInvalidYamlFile(UILabels.MULE_35, "Mule35");
+	}
+	
+	public void tryDeleteFlowMappingUsingInvalidYamlFile(String muleVersion,String nameAddition) throws Exception{
+		final String yamlFileInput = "resources/tryAddFlowMappingUsingInvalidYamlFile-input.yaml";
+	  	final String xmlFileExpected = "resources/tryAddFlowMappingUsingInvalidYamlFile"+ nameAddition +"-expected.xml";
+		final String projectName = "tdfmuiyf"+ System.currentTimeMillis();
+		final String flowName = "simpleyamlfiletdfmuiyf" + nameAddition;
+	  	final String yamlFilePath = "src/main/api";
+	  	final String yamlFileName = flowName + ".yaml";
+	  	
+	  	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
+	  	final APIDefinitionEditor apiDefinitionEditor = muleStudioBot.createAPIDefinitionFile(projectName +"/"+ yamlFilePath,yamlFileName,"title");
+	  	apiDefinitionEditor.completeYamlFile(yamlFileInput).save();
+	  	
+	  	assertTrue("Cannot generate flows due to invalid yaml file.",projectBot.canGenerateFlows(projectName,yamlFilePath, yamlFileName));
+	  	
+	  	projectBot.generateFlows(projectName,yamlFilePath, yamlFileName);
+	  	
+	  	MuleGefEditor editor = new MuleGefEditor(bot, flowName);
+	  	editor.changeTab(UILabels.TAB_1);
+	  	editor.clickOnAbox("APIkit Router");
+	  	
+	        
+	    MulePropertiesEditorBot propertiesEditorBot = new MulePropertiesEditorBot(bot);
+	    
+	    propertiesEditorBot.clickTooltipButton("Edit");
+	    
+	    GlobalElementWizardEditorBot globalElementWizard = new GlobalElementWizardEditorBot(bot);
+	    globalElementWizard.setYamlFileName("yamlFileThatNotExists.yaml");
+	    globalElementWizard.clickOnAddAnewMapping();
+	    
+	    assertEquals("Could not add flow mapping", bot.activeShell().getText().toString());
+	    bot.activeShell().bot().button("OK").click();
+	    globalElementWizard.clickOK();
+	    
+	    propertiesEditorBot.apply();
+	    editor.changeTab(UILabels.TAB_3);
+	    String modifiedExpected = readResource(xmlFileExpected);
+	    
+	   
+	    
+	  	XmlComparer comparer = new XmlComparer(bot);
+        comparer.assertIdenticalXML("XML files are different. ", modifiedExpected, editor.getTextOfTheTab(), true);
+        
+        muleStudioBot.saveAll();
+	}
+	
     protected String readResource(String configName) throws IOException {
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(configName);
         return IOUtils.toString(resourceAsStream);
