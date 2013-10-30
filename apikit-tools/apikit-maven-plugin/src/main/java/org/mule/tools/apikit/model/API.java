@@ -9,7 +9,8 @@ import java.util.Map;
 
 public class API {
 
-    public static final String DEFAULT_BASE_URI = "http://localhost:${http.port}/api";
+    public static final int DEFAULT_PORT = 8081;
+    public static final String DEFAULT_BASE_URI = "http://localhost:" + DEFAULT_PORT + "/api";
 
     private String baseUri;
     private APIKitConfig config;
