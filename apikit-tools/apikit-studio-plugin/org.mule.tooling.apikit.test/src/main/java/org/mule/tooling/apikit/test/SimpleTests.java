@@ -54,7 +54,21 @@ public class SimpleTests {
     	String projectName = "dnd" + System.currentTimeMillis();
     	String flowName = "testflowcomponentname"+nameAddition.toLowerCase();
     	String expectedXml = "/resources/changeAPIkitComponentName" + nameAddition + "-expected.xml";
-    	muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
+    	XmlComparer comparer = new XmlComparer();
+    	final MuleStudioBot projectBot = muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
+    	projectBot.openDefaultMflow(projectName);
+	  	
+	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
+	  	editordef.changeTab(UILabels.TAB_3);
+	  	
+	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultActual = editordef.getTextOfTheTab();
+	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
+	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	
+	  	editordef.setTextOfTheTab(defaultModified);
+	  	editordef.save();
+	  	editordef.changeTab(UILabels.TAB_1);
     	muleStudioBot.createFlow(flowName, "Description of the flow");
 
     	MuleGefEditor editor = new MuleGefEditor(bot, flowName);
@@ -73,14 +87,14 @@ public class SimpleTests {
         propertiesEditorBot.apply(); 
         editor.changeTab(UILabels.TAB_3);
         //XML comparison
-        XmlComparer comparer = new XmlComparer(bot);
+        
         String streamExpected = comparer.readResource(expectedXml);	
         comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
         
         muleStudioBot.saveAll();
     }
 
-    @Test
+    @Ignore
     public void checkIfMuleStudioIsPairedWithASR(){
     	String token ="";
     	String host = "agent-registry.mulesoft.com";
@@ -121,7 +135,21 @@ public class SimpleTests {
     	String projectName = "aager" + System.currentTimeMillis();
     	String flowName = "testflowglobalelement" + nameAddition.toLowerCase();
     	String expectedXml = "resources/addAPIkitGlobalElementRouter" + nameAddition + "-expected.xml";
-    	muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
+    	XmlComparer comparer = new XmlComparer();
+    	final MuleStudioBot projectBot = muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
+    	projectBot.openDefaultMflow(projectName);
+	  	
+	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
+	  	editordef.changeTab(UILabels.TAB_3);
+	  	
+	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultActual = editordef.getTextOfTheTab();
+	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
+	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	
+	  	editordef.setTextOfTheTab(defaultModified);
+	  	editordef.save();
+	  	editordef.changeTab(UILabels.TAB_1);
     	muleStudioBot.createFlow(flowName, "Description of the flow");
 
     	MuleGefEditor editor = new MuleGefEditor(bot, flowName);
@@ -143,7 +171,7 @@ public class SimpleTests {
         
         //XML comparison
         editor.changeTab(UILabels.TAB_3);
-        XmlComparer comparer = new XmlComparer(bot);
+        
         String streamExpected = comparer.readResource(expectedXml);	
         comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
         
@@ -187,7 +215,7 @@ public class SimpleTests {
 
     	//XML comparison
         MuleGefEditor editor = new MuleGefEditor(bot,flowName);
-        XmlComparer comparer = new XmlComparer(bot);
+        XmlComparer comparer = new XmlComparer();
         editor.changeTab(UILabels.TAB_3);
         String streamExpected = comparer.readResource(expectedXml);	
         comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);

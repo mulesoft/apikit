@@ -242,4 +242,11 @@ public class MuleStudioBot {
     	bot.viewByTitle(explorerName).bot().tree().getTreeItem(projectName).getNode(path).getNode(yamlFileName).contextMenu(contextMenu).menu(generateFlowsButton).click();
     	return true;
     }
+    
+    public void openDefaultMflow(String projectName){
+    	String explorerName = "Package Explorer";
+    	bot.viewByTitle(explorerName).show();
+    	bot.viewByTitle(explorerName).setFocus();
+    	bot.viewByTitle(explorerName).bot().tree().getTreeItem(projectName).getNode("flows").getNode(projectName+".mflow").click();
+    }
 }

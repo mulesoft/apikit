@@ -56,6 +56,13 @@ public class GlobalElementWizardEditorBot {
 		bot.toolbarButtonWithTooltip("Add a new mapping").click();
 	}
     
+    public void clickOnRemoveCurrentMapping(){
+    	activate();
+		bot.toolbarButtonWithTooltip("Remove the current selected mapping").click();
+    }
     
+	public String getTableText(int row, int column){
+		return bot.shell(WIZARD_TITLE).activate().bot().table(0).cell(row,column).toString();
+	}
     
 }
