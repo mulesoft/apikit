@@ -55,7 +55,7 @@ public class SimpleTests {
     	String flowName = "testflowcomponentname"+nameAddition.toLowerCase();
     	String expectedXml = "/resources/changeAPIkitComponentName" + nameAddition + "-expected.xml";
     	XmlComparer comparer = new XmlComparer();
-    	final MuleStudioBot projectBot = muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
+    	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "changeAPIkitComponentName",muleVersion);
     	projectBot.openDefaultMflow(projectName);
 	  	
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
@@ -136,7 +136,7 @@ public class SimpleTests {
     	String flowName = "testflowglobalelement" + nameAddition.toLowerCase();
     	String expectedXml = "resources/addAPIkitGlobalElementRouter" + nameAddition + "-expected.xml";
     	XmlComparer comparer = new XmlComparer();
-    	final MuleStudioBot projectBot = muleStudioBot.createProject(projectName, "changeAPIkitComponentName",muleVersion);
+    	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "changeAPIkitComponentName",muleVersion);
     	projectBot.openDefaultMflow(projectName);
 	  	
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);

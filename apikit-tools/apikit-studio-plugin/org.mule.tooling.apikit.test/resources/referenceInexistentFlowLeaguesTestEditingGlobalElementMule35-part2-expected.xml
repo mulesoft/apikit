@@ -34,7 +34,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
     <flow name="main" doc:name="main">
-        <http:inbound-endpoint address="http://localhost:${http.port}/api" doc:name="HTTP"/>
+        <http:inbound-endpoint address="http://localhost:8081/api" doc:name="HTTP"/>
         <apikit:router config-ref="apiConfig" doc:name="APIkit Router"/>
         <exception-strategy ref="apiKitGlobalExceptionMapping" doc:name="Reference Exception Strategy"/>
     </flow>

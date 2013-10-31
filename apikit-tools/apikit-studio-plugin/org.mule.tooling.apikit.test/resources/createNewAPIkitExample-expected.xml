@@ -58,7 +58,7 @@
 
 
     <flow name="main">
-        <http:inbound-endpoint address="http://localhost:${http.port}/api" connector-ref="httpConnector"/>
+        <http:inbound-endpoint address="http://localhost:8081/api" connector-ref="httpConnector"/>
         <apikit:router config-ref="leaguesApi"/>
         <exception-strategy ref="apiKitGlobalExceptionMapping" />
     </flow>
