@@ -16,7 +16,7 @@
     <global-element name="Router" type="http://www.mulesoft.org/schema/mule/apikit/config" entity-id="Router#1">
         <properties>
             <property name="consoleEnabled" value="true"/>
-            <property name="raml" value="api.yaml"/>
+            <property name="raml" value="api.raml"/>
             <property name="flow-mapping"/>
             <property name="consolePath" value="console"/>
             <property name="name" value="apiConfig"/>
