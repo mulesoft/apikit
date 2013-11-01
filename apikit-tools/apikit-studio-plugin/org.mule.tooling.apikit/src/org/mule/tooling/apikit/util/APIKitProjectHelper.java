@@ -29,6 +29,7 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 public class APIKitProjectHelper {
     
+    private static final String APIKIT_PLUGIN_ID = "APIkit";
     private static final boolean APIKIT_ENABLED_DEFAULT = false;
     public static final String PREFERENCE_KEY_APIKIT_ENABLED = "apikitEnabled";
     private static final boolean APIKIT_FROM_RAML_DEFAULT = false;
@@ -82,7 +83,7 @@ public class APIKitProjectHelper {
     public void addAPIkitExtension() {
     	final List<ExternalContributionMuleModule> externalModules = MuleCorePlugin.getModuleManager().getExternalModules();
         for (final ExternalContributionMuleModule externalContributionMuleModule : externalModules) {
-            if ("APIkit".equals(externalContributionMuleModule.getName())) {
+            if (APIKIT_PLUGIN_ID.equals(externalContributionMuleModule.getName())) {
                 try {
                     muleProject.addMuleExtension(externalContributionMuleModule);
                 } catch (CoreException e) {
