@@ -22,10 +22,10 @@
         <tycho-extras.version>0.16.0</tycho-extras.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <keystore.path>${project.parent.basedir}/raml.ks</keystore.path>
+        <keystore.path>${project.parent.basedir}/apikit.ks</keystore.path>
         <keystore.type>JKS</keystore.type>
-        <keystore.alias>raml</keystore.alias>
-        <keystore.store.password>ramlmani$here</keystore.store.password>
+        <keystore.alias>mulesoft</keystore.alias>
+        <keystore.store.password>mulemani$here</keystore.store.password>
 
         <jarsigner.tsa>https://timestamp.geotrust.com/tsa</jarsigner.tsa>
         <skipSign>true</skipSign>
@@ -92,7 +92,6 @@
                         <argument>-tsa</argument>
                         <argument>${jarsigner.tsa}</argument>
                     </arguments>
-                    <skip>${skipSign}</skip>
                 </configuration>
             </plugin>
         </plugins>
