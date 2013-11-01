@@ -1,0 +1,11 @@
+#%RAML 0.8
+---
+title: RAML Example API
+version: v1
+baseUri: https://www.example.com/api/
+/resources:
+    get:
+        responses:
+            200:
+                body:
+                    application/json: !!null

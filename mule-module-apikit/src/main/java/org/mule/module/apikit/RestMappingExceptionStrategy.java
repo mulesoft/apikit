@@ -35,9 +35,19 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
 
     protected MuleEvent defaultHandler(Exception exception, MuleEvent event)
     {
-        event.getMessage().setOutboundProperty(HTTP_STATUS_PROPERTY, 500);
-        event.getMessage().setPayload(exception.toString());
+        String currentStatus = event.getMessage().getOutboundProperty(HTTP_STATUS_PROPERTY);
+        //if status already 4xx or 5xx -> pass-through
+        if (!isErrorCode(Integer.valueOf(currentStatus)))
+        {
+            event.getMessage().setOutboundProperty(HTTP_STATUS_PROPERTY, 500);
+            event.getMessage().setPayload(exception.getMessage());
+        }
         return event;
+    }
+
+    private boolean isErrorCode(Integer currentStatus)
+    {
+        return currentStatus != null && currentStatus >= 400 && currentStatus < 600;
     }
 
     @Override

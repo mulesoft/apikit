@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+    xmlns="http://www.mulesoft.org/schema/mule/core"
+    xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+    xmlns:http="http://www.mulesoft.org/schema/mule/http"
+    xmlns:test="http://www.mulesoft.org/schema/mule/test"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+    http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+    http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+    http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+    http://www.mulesoft.org/schema/mule/test http://www.mulesoft.org/schema/mule/test/current/mule-test.xsd">
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-payload value="resource not found" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-payload value="method not allowed" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-payload value="unsupported media type" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-payload value="not acceptable" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-payload value="bad request" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+    <apikit:config raml="org/mule/module/apikit/exception/exception.yaml" />
+
+    <flow name="main">
+        <http:inbound-endpoint address="http://localhost:${serverPort}/api"/>
+        <set-property propertyName="http.status" value="401"/>
+        <test:component throwException="true" exceptionToThrow="org.mule.api.security.UnauthorisedException" />
+        <apikit:router />
+        <exception-strategy ref="Global_Mapping_Exception_Strategy" />
+    </flow>
+
+    <flow name="get:/resources">
+        <set-payload value="none" />
+    </flow>
+
+</mule>
+
