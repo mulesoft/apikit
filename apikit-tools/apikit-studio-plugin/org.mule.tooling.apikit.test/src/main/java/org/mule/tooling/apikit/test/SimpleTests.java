@@ -50,10 +50,15 @@ public class SimpleTests {
     }    	
 
    public void changeAPIkitComponentName(String muleVersion,String nameAddition) throws Exception {
-    	
+	    final String testName = "changeAPIkitComponentName";
+		final String testFolderMuleVersion = "resources/" + testName + "/" + testName + nameAddition;
+		final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
+		final String xmlFileExpected = testFolderMuleVersion +"-expected.xml";
+	 
+	   
     	String projectName = "dnd" + System.currentTimeMillis();
     	String flowName = "testflowcomponentname"+nameAddition.toLowerCase();
-    	String expectedXml = "/resources/changeAPIkitComponentName" + nameAddition + "-expected.xml";
+    	
     	XmlComparer comparer = new XmlComparer();
     	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "changeAPIkitComponentName",muleVersion);
     	projectBot.openDefaultMflow(projectName);
@@ -61,10 +66,10 @@ public class SimpleTests {
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 	  	editordef.changeTab(UILabels.TAB_3);
 	  	
-	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultExpected = comparer.readResource(defaultFileMuleVersion + "-expected.xml");
 	  	String defaultActual = editordef.getTextOfTheTab();
 	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	String defaultModified = comparer.readResource(defaultFileMuleVersion + "-modified.xml");
 	  	
 	  	editordef.setTextOfTheTab(defaultModified);
 	  	editordef.save();
@@ -88,7 +93,7 @@ public class SimpleTests {
         editor.changeTab(UILabels.TAB_3);
         //XML comparison
         
-        String streamExpected = comparer.readResource(expectedXml);	
+        String streamExpected = comparer.readResource(xmlFileExpected);	
         comparer.assertIdenticalXML("XML files are different. ", streamExpected, editor.getTextOfTheTab(), true);
         
         muleStudioBot.saveAll();
@@ -134,18 +139,20 @@ public class SimpleTests {
     	
     	String projectName = "aager" + System.currentTimeMillis();
     	String flowName = "testflowglobalelement" + nameAddition.toLowerCase();
-    	String expectedXml = "resources/addAPIkitGlobalElementRouter" + nameAddition + "-expected.xml";
+    	final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
+    	
+    	String expectedXml = "resources/addAPIkitGlobalElementRouter/addAPIkitGlobalElementRouter" + nameAddition + "-expected.xml";
     	XmlComparer comparer = new XmlComparer();
-    	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "changeAPIkitComponentName",muleVersion);
+    	final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "addAPIkitGlobalElementRouter",muleVersion);
     	projectBot.openDefaultMflow(projectName);
 	  	
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 	  	editordef.changeTab(UILabels.TAB_3);
 	  	
-	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultExpected = comparer.readResource(defaultFileMuleVersion + "-expected.xml");
 	  	String defaultActual = editordef.getTextOfTheTab();
 	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	String defaultModified = comparer.readResource(defaultFileMuleVersion + "-modified.xml");
 	  	
 	  	editordef.setTextOfTheTab(defaultModified);
 	  	editordef.save();
@@ -197,7 +204,7 @@ public class SimpleTests {
     @Ignore
     public void createNewAPIkitExample() throws Exception{
     	String projectName = "cnae" + System.currentTimeMillis();
-    	String expectedXml = "resources/createNewAPIkitExample-expected.xml";
+    	String expectedXml = "resources/createNewAPIkitExample/createNewAPIkitExample-expected.xml";
     	
     	muleStudioBot.createAPIkitExample(projectName, "newAPIkitExample","REST API with APIkit");
     	//waitForEditor(withText("leagues"));

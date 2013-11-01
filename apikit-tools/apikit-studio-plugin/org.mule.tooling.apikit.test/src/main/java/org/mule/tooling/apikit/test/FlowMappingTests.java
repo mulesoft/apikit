@@ -46,9 +46,13 @@ public class FlowMappingTests {
    }
 	
 	public void referenceFlowSimpleTestAddingNewGlobalElement(String muleVersion,String nameAddition) throws Exception{
-		final String yamlFileInput = "resources/referenceFlowSimpleTestAddingNewGlobalElement-input.yaml";
-		final String xmlFilePart1 = "resources/referenceFlowSimpleTestAddingNewGlobalElement" + nameAddition+ "-part1.xml";
-	  	final String xmlFileExpected = "resources/referenceFlowSimpleTestAddingNewGlobalElement"+ nameAddition+"-part2-expected.xml";
+		final String testName = "referenceFlowSimpleTestAddingNewGlobalElement";
+		final String testFolder = "resources/" + testName + "/" + testName;
+		final String testFolderMuleVersion = testFolder + nameAddition;
+		final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
+		final String yamlFileInput = testFolder + "-input.yaml";
+		final String xmlFilePart1 = testFolderMuleVersion + "-part1.xml";
+	  	final String xmlFileExpected = testFolderMuleVersion +"-part2-expected.xml";
 		final String projectName = "rfstange"+ System.currentTimeMillis();
 		final String flowName = "simpleyamlfilerfstange"+nameAddition;
 	  	final String yamlFilePath = "src/main/api";
@@ -60,10 +64,10 @@ public class FlowMappingTests {
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 	  	editordef.changeTab(UILabels.TAB_3);
 	  	
-	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultExpected = comparer.readResource(defaultFileMuleVersion + "-expected.xml");
 	  	String defaultActual = editordef.getTextOfTheTab();
 	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	String defaultModified = comparer.readResource(defaultFileMuleVersion + "-modified.xml");
 	  	
 	  	editordef.setTextOfTheTab(defaultModified);
 	  	editordef.save();
@@ -124,9 +128,14 @@ public class FlowMappingTests {
 	}
 	
 	public void referenceFlowSimpleTestEditingGlobalElement(String muleVersion,String nameAddition) throws Exception{
-		final String yamlFileInput = "resources/referenceFlowSimpleTestEditingGlobalElement-input.yaml";
-		final String xmlFilePart1 = "resources/referenceFlowSimpleTestEditingGlobalElement"+ nameAddition +"-part1.xml";
-	  	final String xmlFileExpected = "resources/referenceFlowSimpleTestEditingGlobalElement"+ nameAddition +"-part2-expected.xml";
+		final String testName = "referenceFlowSimpleTestEditingGlobalElement";
+		final String testFolder = "resources/" + testName + "/" + testName;
+		final String testFolderMuleVersion = testFolder + nameAddition;
+		
+		final String yamlFileInput = testFolder + "-input.yaml";
+		final String xmlFilePart1 = testFolderMuleVersion + "-part1.xml";
+	  	final String xmlFileExpected = testFolderMuleVersion +"-part2-expected.xml";
+	  	final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
 		final String projectName = "rfstege"+ System.currentTimeMillis();
 		final String flowName = "simpleyamlfilerfstege" + nameAddition;
 	  	final String yamlFilePath = "src/main/api";
@@ -138,10 +147,10 @@ public class FlowMappingTests {
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 	  	editordef.changeTab(UILabels.TAB_3);
 	  	
-	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultExpected = comparer.readResource(defaultFileMuleVersion + "-expected.xml");
 	  	String defaultActual = editordef.getTextOfTheTab();
 	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	String defaultModified = comparer.readResource(defaultFileMuleVersion + "-modified.xml");
 	  	
 	  	editordef.setTextOfTheTab(defaultModified);
 	  	editordef.save();
@@ -202,8 +211,13 @@ public class FlowMappingTests {
 	}
 	
 	public void tryAddFlowMappingUsingInvalidYamlFile(String muleVersion,String nameAddition) throws Exception{
-		final String yamlFileInput = "resources/tryAddFlowMappingUsingInvalidYamlFile-input.yaml";
-	  	final String xmlFileExpected = "resources/tryAddFlowMappingUsingInvalidYamlFile"+ nameAddition +"-expected.xml";
+		final String testName = "tryAddFlowMappingUsingInvalidYamlFile";
+		final String testFolder = "resources/" + testName + "/" + testName;
+		final String testFolderMuleVersion = testFolder + nameAddition;
+		final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
+		final String yamlFileInput = testFolder + "-input.yaml";
+	  	final String xmlFileExpected = testFolderMuleVersion +"-expected.xml";
+		
 		final String projectName = "tafmuiyf"+ System.currentTimeMillis();
 		final String flowName = "simpleyamlfiletafmuiyf" + nameAddition;
 	  	final String yamlFilePath = "src/main/api";
@@ -217,10 +231,10 @@ public class FlowMappingTests {
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 	  	editordef.changeTab(UILabels.TAB_3);
 	  	
-	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultExpected = comparer.readResource(defaultFileMuleVersion + "-expected.xml");
 	  	String defaultActual = editordef.getTextOfTheTab();
 	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	String defaultModified = comparer.readResource(defaultFileMuleVersion + "-modified.xml");
 	  	
 	  	editordef.setTextOfTheTab(defaultModified);
 	  	editordef.save();
@@ -270,8 +284,13 @@ public class FlowMappingTests {
 	}
 	
 	public void tryDeleteFlowMappingUsingInvalidYamlFile(String muleVersion,String nameAddition) throws Exception{
-		final String yamlFileInput = "resources/tryAddFlowMappingUsingInvalidYamlFile-input.yaml";
-	  	final String xmlFileExpected = "resources/tryAddFlowMappingUsingInvalidYamlFile"+ nameAddition +"-expected.xml";
+		final String testName = "tryAddFlowMappingUsingInvalidYamlFile";
+		final String testFolder = "resources/" + testName + "/" + testName;
+		final String testFolderMuleVersion = testFolder + nameAddition;
+		
+		final String yamlFileInput = testFolder + "-input.yaml";
+	  	final String xmlFileExpected = testFolderMuleVersion +"-expected.xml";
+	  	final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
 		final String projectName = "tdfmuiyf"+ System.currentTimeMillis();
 		final String flowName = "simpleyamlfiletdfmuiyf" + nameAddition;
 	  	final String yamlFilePath = "src/main/api";
@@ -283,10 +302,10 @@ public class FlowMappingTests {
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 	  	editordef.changeTab(UILabels.TAB_3);
 	  	
-	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultExpected = comparer.readResource(defaultFileMuleVersion + "-expected.xml");
 	  	String defaultActual = editordef.getTextOfTheTab();
 	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	String defaultModified = comparer.readResource(defaultFileMuleVersion + "-modified.xml");
 	  	
 	  	editordef.setTextOfTheTab(defaultModified);
 	  	editordef.save();
@@ -322,11 +341,6 @@ public class FlowMappingTests {
         
         muleStudioBot.saveAll();
 	}
-	/*
-    protected String readResource(String configName) throws IOException {
-        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream(configName);
-        return IOUtils.toString(resourceAsStream);
-    }*/
     
 	@Test
 	public void referenceFlowLeaguesTestEditingGlobalElementMule34() throws Exception{
@@ -339,10 +353,15 @@ public class FlowMappingTests {
 	}
 	
 	public void referenceFlowLeaguesTestEditingGlobalElement(String muleVersion,String nameAddition) throws Exception{
-		final String yamlFileInput = "resources/referenceFlowLeaguesTestEditingGlobalElement-input.yaml";
-		final String xmlFilePart1 = "resources/referenceFlowLeaguesTestEditingGlobalElement"+ nameAddition +"-part1-expected.xml";
-		final String xmlFilePart2 = "resources/referenceFlowLeaguesTestEditingGlobalElement"+ nameAddition +"-part2-modified.xml";
-	  	final String xmlFileExpected = "resources/referenceFlowLeaguesTestEditingGlobalElement"+ nameAddition +"-part3-expected.xml";
+		final String testName = "referenceFlowLeaguesTestEditingGlobalElement";
+		final String testFolder = "resources/" + testName + "/" + testName;
+		final String testFolderMuleVersion = testFolder + nameAddition;
+		
+		final String yamlFileInput = testFolder + "-input.yaml";
+	  	final String xmlFilePart1 = testFolderMuleVersion +"-part1-expected.xml";
+		final String xmlFilePart2 = testFolderMuleVersion +"-part2-modified.xml";
+	  	final String xmlFileExpected = testFolderMuleVersion +"-part3-expected.xml";
+	  	final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
 		final String projectName = "rfltege"+ System.currentTimeMillis();
 		final String flowName = "leaguesyamlfilerfltege" + nameAddition;
 	  	final String yamlFilePath = "src/main/api";
@@ -354,10 +373,10 @@ public class FlowMappingTests {
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 	  	editordef.changeTab(UILabels.TAB_3);
 	  	
-	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultExpected = comparer.readResource(defaultFileMuleVersion + "-expected.xml");
 	  	String defaultActual = editordef.getTextOfTheTab();
 	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	String defaultModified = comparer.readResource(defaultFileMuleVersion + "-modified.xml");
 	  	
 	  	editordef.setTextOfTheTab(defaultModified);
 	  	editordef.save();
@@ -423,9 +442,15 @@ public class FlowMappingTests {
 	}
 	
 	public void referenceInexistentFlowLeaguesTestEditingGlobalElement(String muleVersion,String nameAddition) throws Exception{
-		final String yamlFileInput = "resources/referenceInexistentFlowLeaguesTestEditingGlobalElement-input.yaml";
-		final String xmlFilePart1 = "resources/referenceInexistentFlowLeaguesTestEditingGlobalElement"+ nameAddition +"-part1-expected.xml";
-		final String xmlFileExpected = "resources/referenceInexistentFlowLeaguesTestEditingGlobalElement"+ nameAddition +"-part2-expected.xml";
+		final String testName = "referenceInexistentFlowLeaguesTestEditingGlobalElement";
+		final String testFolder = "resources/" + testName + "/" + testName;
+		final String testFolderMuleVersion = testFolder + nameAddition;
+		
+		final String yamlFileInput = testFolder + "-input.yaml";
+	  	final String xmlFilePart1 = testFolderMuleVersion +"-part1-expected.xml";	
+	  	final String xmlFileExpected = testFolderMuleVersion +"-part2-expected.xml";
+	  	final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
+		
 		final String projectName = "rifltege"+ System.currentTimeMillis();
 		final String flowName = "leaguesyamlfilerifltege" + nameAddition;
 	  	final String yamlFilePath = "src/main/api";
@@ -437,10 +462,10 @@ public class FlowMappingTests {
 	  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 	  	editordef.changeTab(UILabels.TAB_3);
 	  	
-	  	String defaultExpected = comparer.readResource("resources/default" + nameAddition + "-expected.xml");
+	  	String defaultExpected = comparer.readResource(defaultFileMuleVersion + "-expected.xml");
 	  	String defaultActual = editordef.getTextOfTheTab();
 	  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-	  	String defaultModified = comparer.readResource("resources/default" + nameAddition + "-modified.xml");
+	  	String defaultModified = comparer.readResource(defaultFileMuleVersion + "-modified.xml");
 	  	
 	  	editordef.setTextOfTheTab(defaultModified);
 	  	editordef.save();

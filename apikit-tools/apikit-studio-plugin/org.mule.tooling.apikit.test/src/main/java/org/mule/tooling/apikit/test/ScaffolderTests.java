@@ -61,8 +61,14 @@ public class ScaffolderTests {
 	  }
 		  
      public void createSimpleExampleUsingScaffolderCompareXML(String muleVersion,String nameAddition) throws Exception{
-		  	final String yamlFileInput = "resources/createSimpleExampleUsingScaffolderCompareXML-input.yaml";
-		  	final String xmlFileExpected = "/resources/createSimpleExampleUsingScaffolderCompareXML" + nameAddition + "-expected.xml";
+    	 	final String testName = "createSimpleExampleUsingScaffolderCompareXML";
+    	 	final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
+ 			final String testFolder = "resources/" + testName + "/" + testName;
+ 			final String testFolderMuleVersion = testFolder + nameAddition;
+ 		
+ 			final String yamlFileInput = testFolder + "-input.yaml";
+ 			final String xmlFileExpected = testFolderMuleVersion +"-expected.xml";
+    	 
 			final String projectName = "cseuscx"+ System.currentTimeMillis();
 			final String flowName = "simpleyamlfile" + nameAddition;
 		  	final String yamlFilePath = "src/main/api";
@@ -74,10 +80,10 @@ public class ScaffolderTests {
 		  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 		  	editordef.changeTab(UILabels.TAB_3);
 		  	
-		  	String defaultExpected = readResource("resources/default" + nameAddition + "-expected.xml");
+		  	String defaultExpected = readResource(defaultFileMuleVersion + "-expected.xml");
 		  	String defaultActual = editordef.getTextOfTheTab();
 		  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-		  	String defaultModified = readResource("resources/default" + nameAddition + "-modified.xml");
+		  	String defaultModified = readResource(defaultFileMuleVersion + "-modified.xml");
 		  	
 		  	editordef.setTextOfTheTab(defaultModified);
 		  	editordef.save();
@@ -110,8 +116,13 @@ public class ScaffolderTests {
 		  
 	  public void createLeaguesExampleUsingScaffolder(String muleVersion,String nameAddition) throws Exception{
 
-			final String yamlFileInput = "resources/createLeaguesExampleUsingScaffolder-input.yaml";
-			final String xmlFileExpected = "/resources/createLeaguesExampleUsingScaffolder"+ nameAddition +"-expected.xml";
+			final String testName = "createLeaguesExampleUsingScaffolder";
+ 			final String testFolder = "resources/" + testName + "/" + testName;
+ 			final String testFolderMuleVersion = testFolder + nameAddition;
+ 			final String defaultFileMuleVersion = "resources/default/default" + nameAddition;
+ 			final String yamlFileInput = testFolder + "-input.yaml";
+ 			final String xmlFileExpected = testFolderMuleVersion +"-expected.xml";
+		  
 			final String projectName = "cleus"+ System.currentTimeMillis();
 			final String flowName = "leaguesyamlfile"+ nameAddition;
 			final String yamlFilePath = "src/main/api";
@@ -123,10 +134,10 @@ public class ScaffolderTests {
 		  	MuleGefEditor editordef = new MuleGefEditor(bot, projectName);
 		  	editordef.changeTab(UILabels.TAB_3);
 		  	
-		  	String defaultExpected = readResource("resources/default" + nameAddition + "-expected.xml");
+		  	String defaultExpected = readResource(defaultFileMuleVersion + "-expected.xml");
 		  	String defaultActual = editordef.getTextOfTheTab();
 		  	comparer.assertIdenticalXML("The default flow was not generated as expected. ", defaultExpected, defaultActual, true);
-		  	String defaultModified = readResource("resources/default" + nameAddition + "-modified.xml");
+		  	String defaultModified = readResource(defaultFileMuleVersion + "-modified.xml");
 		  	
 		  	editordef.setTextOfTheTab(defaultModified);
 		  	editordef.save();
@@ -155,12 +166,15 @@ public class ScaffolderTests {
 		   createSalesInvalidExampleUsingScaffolder(UILabels.MULE_35, "Mule35");
 	   }
 	  
-	  public void createSalesInvalidExampleUsingScaffolder(String muleVersion,String projectNameAddition) throws Exception{
-		  final String yamlFileInput = "resources/createSalesInvalidExampleUsingScaffolder-input.yaml";
+	  public void createSalesInvalidExampleUsingScaffolder(String muleVersion,String nameAddition) throws Exception{
+		  final String testName = "createSalesInvalidExampleUsingScaffolder";
+			final String testFolder = "resources/" + testName + "/" + testName;
+			
+			final String yamlFileInput = testFolder + "-input.yaml";
 		  final String projectName = "csieuscx"+ System.currentTimeMillis();
 
 			final String yamlFilePath = "src/main/api";
-			final String yamlFileName = "invalid" + projectNameAddition + "-input.yaml";
+			final String yamlFileName = "invalid" + nameAddition + "-input.yaml";
 			
 			final MuleStudioBot projectBot = muleStudioBot.createAPIkitProject(projectName, "this is a description",muleVersion);
 			final APIDefinitionEditor apiDefinitionEditor = muleStudioBot.createAPIDefinitionFile(projectName +"/"+ yamlFilePath,yamlFileName,"title");
