@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,19 +35,15 @@ public class ConsoleHandler
     private static final String RESOURCE_BASE = "/console";
 
     private String homePage;
-    private String homePageC5;
     private String consolePath;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public ConsoleHandler(String ramlUri, String consolePath) throws InitialisationException
     {
-
         this.consolePath = sanitize(consolePath);
-        String indexHtmlC5 = IOUtils.toString(getClass().getResourceAsStream("/console/indexc5.html"));
-        homePageC5 = indexHtmlC5.replaceFirst("<raml-console src=\"[^\"]+\"", "<raml-console src=\"" + ramlUri + "\"");
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
-        homePage = indexHtml.replaceFirst("<raml-definition id=\"([^\"]+)\" src=\"[^\"]+\">", "<raml-definition id=\"$1\" src=\"" + ramlUri + "\">");
+        homePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"", "<raml-console src=\"" + ramlUri + "\"");
     }
 
     private String sanitize(String consolePath)
@@ -69,7 +64,6 @@ public class ConsoleHandler
 
         String path = event.getMessage().getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
         String contextPath = event.getMessage().getInboundProperty(HttpConnector.HTTP_CONTEXT_PATH_PROPERTY);
-        Map<String, String> queryParams = event.getMessage().getInboundProperty(HttpConnector.HTTP_QUERY_PARAMS);
 
         // Remove the contextPath from the endpoint from the request as this isn't part of the path.
         path = path.substring(contextPath.length());
@@ -106,14 +100,7 @@ public class ConsoleHandler
             if (path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
             {
                 path = RESOURCE_BASE + "/index.html";
-                if (queryParams.containsKey("piola"))
-                {
-                    in = new ByteArrayInputStream(homePage.getBytes());
-                }
-                else
-                {
-                    in = new ByteArrayInputStream(homePageC5.getBytes());
-                }
+                in = new ByteArrayInputStream(homePage.getBytes());
             }
             else
             {
