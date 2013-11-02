@@ -5,7 +5,7 @@ http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/a
 http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd
 http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
     <context:property-placeholder location="api.properties"/>
-    <apikit:config name="apiConfig" raml="api.yaml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
+    <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" doc:name="Router"/>
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">  
         <apikit:mapping statusCode="404"> 
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>  
