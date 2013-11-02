@@ -37,7 +37,7 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
     {
         String currentStatus = event.getMessage().getOutboundProperty(HTTP_STATUS_PROPERTY);
         //if status already 4xx or 5xx -> pass-through
-        if (!isErrorCode(Integer.valueOf(currentStatus)))
+        if (!isErrorCode(currentStatus))
         {
             event.getMessage().setOutboundProperty(HTTP_STATUS_PROPERTY, 500);
             event.getMessage().setPayload(exception.getMessage());
@@ -45,9 +45,22 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
         return event;
     }
 
-    private boolean isErrorCode(Integer currentStatus)
+    private boolean isErrorCode(String statusCode)
     {
-        return currentStatus != null && currentStatus >= 400 && currentStatus < 600;
+        if (statusCode == null)
+        {
+            return false;
+        }
+        int status = 0;
+        try
+        {
+            status = Integer.parseInt(statusCode);
+        }
+        catch (NumberFormatException nfe)
+        {
+            //ignore
+        }
+        return status >= 400 && status < 600;
     }
 
     @Override
