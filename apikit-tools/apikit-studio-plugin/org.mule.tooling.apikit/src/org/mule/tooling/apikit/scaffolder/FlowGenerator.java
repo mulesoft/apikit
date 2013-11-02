@@ -27,7 +27,7 @@ import org.mule.tools.apikit.ScaffolderAPI;
 
 
 /**
- * API to generate flows in Studio from a Yaml file.
+ * API to generate flows in Studio from a RAML file.
  * 
  * @author Sebastian Sampaoli
  *

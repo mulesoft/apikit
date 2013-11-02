@@ -27,3 +27,4 @@ Bundle-ActivationPolicy: lazy
 Eclipse-BundleShape: dir
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: .
+Bundle-Vendor: MuleSoft Inc.

@@ -12,7 +12,7 @@
 				<name required="false"
 					description="Give a name to this configuration so it can be later referenced by config-ref."
 					caption="Name" name="name"></name>
-				<string caption="YAML File" description="Path to the YAML file"
+				<string caption="RAML File" description="Path to the RAML file"
 					name="raml" required="true" />
 				<boolean caption="Use Console"
 					description="Select/disable in order to use or not to the console"

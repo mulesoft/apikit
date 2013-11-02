@@ -2,7 +2,8 @@
 <feature
       id="org.mule.tooling.apikit.feature"
       label="APIkit Studio Plugin"
-      version="1.1.0.qualifier">
+      version="1.1.0.qualifier"
+      provider-name="MuleSoft Inc.">
 
    <description url="http://www.example.com/description">
       APIkit is a an Eclipse plugin for creating API definitions in

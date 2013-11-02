@@ -58,7 +58,7 @@ public class CreateAPIkitWizardPagePartExtension extends BaseWizardPagePartExten
 
     private static final String RAML_FILE = "RAML file:";
 
-	private static final String INVALID_YAML_FILE = "The yaml file does not exist or is not a valid RAML file";
+	private static final String INVALID_YAML_FILE = "The RAML file does not exist or is not a valid RAML file";
 
     private static final String APIKIT_SETTINGS = "APIkit Settings";
 

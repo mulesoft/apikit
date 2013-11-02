@@ -58,3 +58,4 @@ Export-Package: org.mule.tooling.apikit.deps,
  org.raml.parser.tagresolver,
  org.raml.parser.utils,
  org.raml.parser.visitor
+Bundle-Vendor: MuleSoft Inc.
