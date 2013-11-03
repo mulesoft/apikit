@@ -18,13 +18,13 @@ Mule Studio.
          id="org.mule.tooling.apikit"
          download-size="0"
          install-size="0"
-         version="1.1.0"/>
+         version="1.1.0.qualifier"/>
 
    <plugin
          id="org.mule.tooling.apikit.deps"
          download-size="0"
          install-size="0"
-         version="1.1.0"
+         version="1.1.0.qualifier"
          unpack="false"/>
 
 </feature>
