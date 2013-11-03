@@ -120,6 +120,11 @@
         <set-payload value="{ &quot;name&quot;: &quot;Liga BBVA&quot; }"/>
     </flow>
 
+    <flow name="get:/leagues/{leagueId}/teams/leader">
+        <set-property propertyName="Content-Type" value="application/json"/>
+        <set-payload value="{ &quot;name&quot;: &quot;Aleti&quot; }"/>
+    </flow>
+
     <spring:beans>
         <spring:bean id="liga-bbva" class="org.mule.module.apikit.leagues.League">
             <spring:property name="id" value="liga-bbva"/>

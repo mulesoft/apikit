@@ -393,6 +393,7 @@ public class HttpRestRequest
                 return code;
             }
         }
-        return -1;
+        //default success status
+        return 200;
     }
 }

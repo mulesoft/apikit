@@ -102,3 +102,5 @@ schemas:
                         body:
                             application/json:
                                 example: '.'
+            /leader:
+                get: ~

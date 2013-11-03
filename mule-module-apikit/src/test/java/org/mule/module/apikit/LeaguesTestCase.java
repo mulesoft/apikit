@@ -365,4 +365,14 @@ public class LeaguesTestCase extends FunctionalTestCase
             .when().get("/api/leagues/liga-bbva/badge");
     }
 
+    @Test
+    public void getDefaultResponseCode() throws Exception
+    {
+        given()
+            .expect()
+                .response().statusCode(200)
+            .when().get("/api/leagues/liga-bbva/teams/leader");
+    }
+
+
 }
