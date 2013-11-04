@@ -33,15 +33,15 @@ public class APIkitTemplateProjectContribution {
     }
 
     public void addContributionsTo(final IMuleProject muleProject) {
-        URL resourceURL = APIkitTemplateProjectContribution.class.getClassLoader().getResource(Activator.EXAMPLE_PROJECT_ROOT);
         try {
             final File workspaceDir = ResourcesPlugin.getWorkspace().getRoot().getRawLocation().toFile();
             final File newProject = new File(workspaceDir, muleProject.getName());
 
             // Copy src/main/api folder if it is necessary
             APIKitProjectHelper projectHelper = new APIKitProjectHelper(muleProject);
-            final File rootTemplateProjectFolder = new File(FileLocator.resolve(resourceURL).toURI());
             if (!projectHelper.isAPIkitFromRAMLFile()) {
+                URL resourceURL = APIkitTemplateProjectContribution.class.getClassLoader().getResource(Activator.EXAMPLE_PROJECT_ROOT);
+                final File rootTemplateProjectFolder = new File(FileLocator.resolve(resourceURL).toURI());
                 CoreUtils.copyFiles(new File(rootTemplateProjectFolder, Activator.API_FOLDER), new File(newProject, Activator.API_FOLDER));
                 CoreUtils.copyFiles(new File(rootTemplateProjectFolder, Activator.RESOURCES_FOLDER), new File(newProject, Activator.RESOURCES_FOLDER));
             }
