@@ -12,56 +12,10 @@
     <description>Module for creating API's using REST/SOAP Web Services</description>
 
     <properties>
+        <licensePath>../LICENSE_HEADER.txt</licensePath>
         <rest.assured.version>1.7.2</rest.assured.version>
         <guava.version>14.0.1</guava.version>
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <!-- We can't upgrade until this get fixed http://jira.codehaus.org/browse/MRELEASE -->
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.3.2</version>
-            </plugin>
-            <plugin>
-                <groupId>com.mycila.maven-license-plugin</groupId>
-                <artifactId>maven-license-plugin</artifactId>
-                <version>1.8.0</version>
-                <configuration>
-                    <header>LICENSE_HEADER.txt</header>
-                    <excludes>
-                        <exclude>target/**</exclude>
-                        <exclude>**/.gitignore</exclude>
-                        <exclude>.idea/**</exclude>
-                        <exclude>**/*.xsd</exclude>
-                        <exclude>**/spring.schemas</exclude>
-                        <exclude>**/spring.handlers</exclude>
-                        <exclude>**/*.xml</exclude>
-                        <exclude>**/*.properties</exclude>
-                        <exclude>**/*.md</exclude>
-                        <exclude>**/*.css</exclude>
-                        <exclude>**/*.js</exclude>
-                        <exclude>**/*.html</exclude>
-                        <exclude>**/build-number.txt</exclude>
-                    </excludes>
-                    <mapping>
-                        <java>SLASHSTAR_STYLE</java>
-                    </mapping>
-                    <strictCheck>true</strictCheck>
-                </configuration>
-                <!--
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                -->
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencies>
 
