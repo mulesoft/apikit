@@ -15,7 +15,7 @@
         <service-overrides sessionHandler="org.mule.session.NullSessionHandler"/>
     </http:connector>
 
-    <apikit:config name="leaguesApi" raml="leagues.yaml" consoleEnabled="true" consolePath="console" />
+    <apikit:config name="leaguesApi" raml="leagues.raml" consoleEnabled="true" consolePath="console" />
 
     <spring:bean id="league-api" class="org.mule.examples.leagues.LeagueAPI" init-method="initialize"/>
     <context:property-placeholder location="leagues.properties" />
