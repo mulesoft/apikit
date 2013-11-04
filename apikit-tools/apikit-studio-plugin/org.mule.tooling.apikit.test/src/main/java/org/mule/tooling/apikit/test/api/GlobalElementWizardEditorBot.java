@@ -30,7 +30,7 @@ public class GlobalElementWizardEditorBot {
     
     public GlobalElementWizardEditorBot setYamlFileName(String value){
     	activate();
-    	bot.textWithLabel("YAML File:").setText(value);
+    	bot.textWithLabel("RAML File:").setText(value);
         return this;
     }
     
