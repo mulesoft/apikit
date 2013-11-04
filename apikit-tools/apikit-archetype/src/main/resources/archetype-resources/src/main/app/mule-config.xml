@@ -13,7 +13,7 @@
 
     <context:property-placeholder location="api.properties" />
 
-    <apikit:config name="apiConfig" raml="api.yaml" consoleEnabled="true" consolePath="console" />
+    <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" />
 
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
