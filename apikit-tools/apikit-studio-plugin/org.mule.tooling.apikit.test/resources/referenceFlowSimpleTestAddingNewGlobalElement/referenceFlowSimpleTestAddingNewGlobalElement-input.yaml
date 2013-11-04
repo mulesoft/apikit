@@ -1,8 +1,0 @@
-%YAML 1.2
-#%RAML 0.2
----
-title: Sample API
-/resource1:
- get: 
-  responses: 
-   200: ~
