@@ -29,6 +29,7 @@ title: Parameters API
                     second:
                         type: string
                         required: false
+                        enum: [ segundo, secondo ]
                     third:
                         type: boolean
         responses:

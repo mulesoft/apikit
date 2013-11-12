@@ -82,11 +82,19 @@ public class FormParametersTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void invalidUrlencodedFormProvided() throws Exception
+    public void invalidTypeUrlencodedFormProvided() throws Exception
     {
         given().header("Content-Type", "application/x-www-form-urlencoded")
             .expect().response().statusCode(400)
                 .when().post("/api/url-encoded?first=primer&second=segundo&third=35");
+    }
+
+    @Test
+    public void invalidEnumUrlencodedFormProvided() throws Exception
+    {
+        given().header("Content-Type", "application/x-www-form-urlencoded")
+            .expect().response().statusCode(400)
+                .when().post("/api/url-encoded?first=primer&second=second");
     }
 
 }
