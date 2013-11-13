@@ -383,6 +383,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
             event.getMessage().setPayload(ramlYaml);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, ramlYaml.length());
+            event.getMessage().setOutboundProperty("Access-Control-Allow-Origin", "*");
             return event;
         }
 
