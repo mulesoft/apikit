@@ -7,7 +7,6 @@
         http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
 
-
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
@@ -31,42 +30,22 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
+    <apikit:config raml="org/mule/module/apikit/console/console.raml" consoleEnabled="false"/>
 
-    <apikit:config name="pathless" raml="org/mule/module/apikit/pathless/pathless.yaml"/>
-
-    <apikit:config name="emptyPath" raml="org/mule/module/apikit/pathless/pathless.yaml"/>
-
-    <apikit:config name="slashPath" raml="org/mule/module/apikit/pathless/pathless.yaml"/>
-
-    <apikit:config name="addressSlashPath" raml="org/mule/module/apikit/pathless/pathless.yaml"/>
-
-
-    <flow name="doorwayPathless">
-        <http:inbound-endpoint port="${serverPortPathless}" host="localhost"/>
-        <apikit:router config-ref="pathless"/>
+    <flow name="router">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
-    <flow name="doorwayEmptyPath">
-        <http:inbound-endpoint port="${serverPortEmptyPath}" host="localhost" path=""/>
-        <apikit:router config-ref="emptyPath"/>
-        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    <flow name="console">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="console"/>
+        <apikit:console/>
     </flow>
 
-    <flow name="doorwaySlashPath">
-        <http:inbound-endpoint port="${serverPortSlashPath}" host="localhost" path="/"/>
-        <apikit:router config-ref="slashPath"/>
-        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
-    </flow>
-
-    <flow name="doorwayAddressSlashPath">
-        <http:inbound-endpoint address="http://localhost:${serverPortAddressSlashPath}/api/"/>
-        <apikit:router config-ref="addressSlashPath"/>
-        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
-    </flow>
-
-    <flow name="get:/orders">
-        <logger level="INFO" message="siamo qui"/>
+    <flow name="get:/user">
+        <set-property propertyName="Content-Type" value="application/json"/>
+        <set-payload value="{ &quot;name&quot;: &quot;Lisa&quot; }"/>
     </flow>
 
 </mule>

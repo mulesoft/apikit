@@ -63,6 +63,10 @@
                         <exclude>**/*.properties</exclude>
                         <exclude>**/*.md</exclude>
                         <exclude>**/*.woff</exclude>
+                        <exclude>**/*.svg</exclude>
+                        <exclude>**/*.ttf</exclude>
+                        <exclude>**/*.otf</exclude>
+                        <exclude>**/*.eot</exclude>
                         <exclude>**/spring.handlers</exclude>
                         <exclude>**/spring.schemas</exclude>
                         <exclude>**/*.html</exclude>

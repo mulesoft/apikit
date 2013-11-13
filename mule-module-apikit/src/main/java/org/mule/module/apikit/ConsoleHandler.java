@@ -58,7 +58,7 @@ public class ConsoleHandler
         {
             consolePath = consolePath.substring(0, consolePath.length() - 1);
         }
-        if (!consolePath.startsWith("/"))
+        if (!consolePath.isEmpty() && !consolePath.startsWith("/"))
         {
             consolePath = "/" + consolePath;
         }

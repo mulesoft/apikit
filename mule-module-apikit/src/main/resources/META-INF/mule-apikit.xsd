@@ -71,6 +71,28 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:element name="console" type="consoleType" substitutionGroup="mule:abstract-message-processor">
+        <xsd:annotation>
+            <xsd:documentation>
+                Message processor that exposes a rest console.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="consoleType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractMessageProcessorType">
+                <xsd:attribute name="config-ref" type="mule:nonBlankString" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The Console configuration.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <xsd:element name="mapping-exception-strategy" type="mappingExceptionStrategyType"
                  substitutionGroup="mule:abstract-exception-strategy">
         <xsd:annotation>
