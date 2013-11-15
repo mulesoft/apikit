@@ -98,7 +98,7 @@ public class CreateMojo
         List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
         List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
 
-        log.info("Processing the following yaml files: " + specFiles);
+        log.info("Processing the following RAML files: " + specFiles);
         log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
 
         Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles);
