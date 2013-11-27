@@ -8,6 +8,7 @@ package org.mule.module.apikit;
 
 import static org.raml.parser.rule.ValidationResult.Level.ERROR;
 import static org.raml.parser.rule.ValidationResult.Level.WARN;
+import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 import static org.yaml.snakeyaml.nodes.Tag.STR;
 
 import org.mule.api.MuleContext;
@@ -175,10 +176,10 @@ public class Configuration
             sb.append(result.getMessage()).append(" -- ");
             sb.append(" file: ");
             sb.append(result.getIncludeName() != null ? result.getIncludeName() : getRaml());
-            if (result.getStartMark() != null)
+            if (result.getLine() != UNKNOWN)
             {
-                sb.append(" -- ");
-                sb.append(result.getStartMark());
+                sb.append(" -- line ");
+                sb.append(result.getLine());
             }
             sb.append("\n");
         }
