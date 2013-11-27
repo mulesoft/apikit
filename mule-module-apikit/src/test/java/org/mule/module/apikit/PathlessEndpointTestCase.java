@@ -16,12 +16,12 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 public class PathlessEndpointTestCase extends FunctionalTestCase
 {
+
     @Rule
     public DynamicPort serverPortPathless = new DynamicPort("serverPortPathless");
     @Rule
@@ -134,30 +134,30 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     private void console(String path)
     {
         given().header("Accept", "text/html")
-            .expect()
+                .expect()
                 .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + path)))
                 .header("Content-type", "text/html").statusCode(200)
-            .when().get(path + "/console/index.html");
+                .when().get(path + "/console/index.html");
     }
 
     private void raml(String path)
     {
         given().header("Accept", "application/raml+yaml")
-            .expect()
+                .expect()
                 .response().body(allOf(containsString("title"),
                                        containsString("Endpoint API")))
                 .statusCode(200)
-            .when().get(path);
+                .when().get(path);
     }
 
     private void baseUri(String path, String expectedBaseUri)
     {
         given().header("Accept", "application/raml+yaml")
-            .expect()
-                .response().body(containsString("\"baseUri\": \"" + expectedBaseUri + "\""))
+                .expect()
+                .response().body(containsString("baseUri: \"" + expectedBaseUri + "\""))
                 .statusCode(200)
-            .when().get(path + "/");
+                .when().get(path + "/");
     }
 
 }

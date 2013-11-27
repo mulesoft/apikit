@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.raml.emitter.RamlEmitter;
 import org.raml.model.Raml;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
@@ -33,7 +34,6 @@ import org.raml.parser.rule.NodeRuleFactory;
 import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 import org.raml.parser.visitor.RamlValidationService;
-import org.raml.parser.visitor.YamlDocumentBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.nodes.Node;
@@ -44,7 +44,6 @@ public class Configuration
 {
 
     public static final String APPLICATION_RAML = "application/raml+yaml";
-    public static final String VERSION = "#%RAML 0.8\n---\n";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -146,7 +145,7 @@ public class Configuration
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(ramlBuffer);
         injectEndpointUri(builder);
-        apikitRaml = VERSION + YamlDocumentBuilder.dumpFromAst(builder.getRootNode());
+        apikitRaml = new RamlEmitter().dump(api);
     }
 
 

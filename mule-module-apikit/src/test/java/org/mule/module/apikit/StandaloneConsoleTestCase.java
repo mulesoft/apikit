@@ -49,21 +49,21 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     public void console() throws Exception
     {
         given().header("Accept", "text/html")
-            .expect()
+                .expect()
                 .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/console\"")))
                 .header("Content-type", "text/html").statusCode(200)
-            .when().get("/console/index.html");
+                .when().get("/console/index.html");
     }
 
     @Test
     public void getRaml() throws Exception
     {
         given().header("Accept", APPLICATION_RAML)
-            .expect()
-                .response().body(containsString("\"baseUri\": \"http://localhost:" + port + "/api\""))
+                .expect()
+                .response().body(containsString("baseUri: \"http://localhost:" + port + "/api\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
-            .when().get("/api");
+                .when().get("/api");
     }
 
 }

@@ -197,8 +197,10 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .body(is(""))
             .when().put("/api/leagues/liga-bbva");
 
-        expect().response()
-                .body("leagues.league.name", hasItems("Liga Hispanica", "Premier League"))
+        given().header("Accept", "application/json")
+            .expect()
+                .response().body("leagues.name", hasItems("Liga Hispanica", "Premier League"))
+                .header("Content-type", "application/json").statusCode(200)
             .when().get("/api/leagues");
     }
 
@@ -212,8 +214,10 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .body(is(""))
             .when().put("/api/leagues/liga-bbva");
 
-        expect().response()
-                .body("leagues.league.name", hasItems("Hispanic League", "Premier League"))
+        given().header("Accept", "application/json")
+            .expect()
+                .response().body("leagues.name", hasItems("Hispanic League", "Premier League"))
+                .header("Content-type", "application/json").statusCode(200)
             .when().get("/api/leagues");
     }
 
@@ -302,7 +306,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         given().header("Accept", APPLICATION_RAML)
             .expect()
-                .response().body(containsString("\"baseUri\": \"http://localhost:" + port + "/api\""))
+                .response().body(containsString("baseUri: \"http://localhost:" + port + "/api\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
             .when().get("/api");
     }

@@ -168,7 +168,7 @@ public class PathlessEndpointStandaloneTestCase extends FunctionalTestCase
     {
         given().header("Accept", "application/raml+yaml")
                 .expect()
-                .response().body(containsString("\"baseUri\": \"" + expectedBaseUri + "/api\""))
+                .response().body(containsString("baseUri: \"" + expectedBaseUri + "/api\""))
                 .statusCode(200)
                 .when().get(path + "/");
     }
