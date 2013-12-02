@@ -6,13 +6,17 @@
  */
 package org.mule.module.apikit;
 
+import org.mule.DefaultMuleMessage;
 import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
+import org.mule.api.transformer.TransformerException;
+import org.mule.api.transport.PropertyScope;
 import org.mule.construct.Flow;
+import org.mule.message.ds.StringDataSource;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.exception.InvalidFormParameterException;
@@ -27,6 +31,7 @@ import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
+import org.mule.transport.http.transformers.HttpRequestBodyToParamMap;
 
 import com.google.common.net.MediaType;
 
@@ -138,6 +143,10 @@ public class HttpRestRequest
             {
                 throw new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified");
             }
+            if (actual == null && expected.getDefaultValue() != null)
+            {
+                setQueryParameter(expectedKey, expected.getDefaultValue());
+            }
             if (actual != null)
             {
                 if (!expected.validate(actual))
@@ -146,6 +155,12 @@ public class HttpRestRequest
                 }
             }
         }
+    }
+
+    private void setQueryParameter(String key, String value)
+    {
+        requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
+        ((Map) requestEvent.getMessage().getInboundProperty("http.query.params")).put(key, value);
     }
 
     private void processHeaders() throws InvalidHeaderException
@@ -174,6 +189,10 @@ public class HttpRestRequest
                 {
                     throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
                 }
+                if (actual == null && expected.getDefaultValue() != null)
+                {
+                    setHeader(expectedKey, expected.getDefaultValue());
+                }
                 if (actual != null)
                 {
                     if (!expected.validate(actual))
@@ -183,6 +202,12 @@ public class HttpRestRequest
                 }
             }
         }
+    }
+
+    private void setHeader(String key, String value)
+    {
+        requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
+        ((Map) requestEvent.getMessage().getInboundProperty("http.headers")).put(key, value);
     }
 
     private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation) throws MuleException
@@ -270,23 +295,7 @@ public class HttpRestRequest
             if (mimeTypeName.equals(requestMimeTypeName))
             {
                 found = true;
-                MimeType actionMimeType = action.getBody().get(mimeTypeName);
-                if (actionMimeType.getSchema() != null &&
-                    (mimeTypeName.contains("xml") ||
-                     mimeTypeName.contains("json")))
-                {
-                    validateSchema(mimeTypeName);
-                }
-                else if (actionMimeType.getFormParameters() != null &&
-                         mimeTypeName.contains("multipart/form-data"))
-                {
-                    validateMultipartForm(actionMimeType.getFormParameters());
-                }
-                else if (actionMimeType.getFormParameters() != null &&
-                         mimeTypeName.contains("application/x-www-form-urlencoded"))
-                {
-                    validateUrlencodedForm(actionMimeType.getFormParameters());
-                }
+                valideateBody(mimeTypeName);
                 break;
             }
         }
@@ -296,8 +305,40 @@ public class HttpRestRequest
         }
     }
 
+    private void valideateBody(String mimeTypeName) throws MuleRestException
+    {
+        MimeType actionMimeType = action.getBody().get(mimeTypeName);
+        if (actionMimeType.getSchema() != null &&
+            (mimeTypeName.contains("xml") ||
+             mimeTypeName.contains("json")))
+        {
+            validateSchema(mimeTypeName);
+        }
+        else if (actionMimeType.getFormParameters() != null &&
+                 mimeTypeName.contains("multipart/form-data"))
+        {
+            validateMultipartForm(actionMimeType.getFormParameters());
+        }
+        else if (actionMimeType.getFormParameters() != null &&
+                 mimeTypeName.contains("application/x-www-form-urlencoded"))
+        {
+            validateUrlencodedForm(actionMimeType.getFormParameters());
+        }
+    }
+
     private void validateUrlencodedForm(Map<String, List<FormParameter>> formParameters) throws BadRequestException
     {
+        Map paramMap;
+        try
+        {
+            paramMap = (Map) new HttpRequestBodyToParamMap().transformMessage(requestEvent.getMessage(), requestEvent.getEncoding());
+        }
+        catch (TransformerException e)
+        {
+            logger.warn("Cannot validate url-encoded form", e);
+            return;
+        }
+
         for (String expectedKey : formParameters.keySet())
         {
             if (formParameters.get(expectedKey).size() != 1)
@@ -307,19 +348,24 @@ public class HttpRestRequest
             }
 
             FormParameter expected = formParameters.get(expectedKey).get(0);
-            String actual = (String) ((Map) requestEvent.getMessage().getInboundProperty("http.query.params")).get(expectedKey);
+            Object actual = paramMap.get(expectedKey);
             if (actual == null && expected.isRequired())
             {
                 throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
             }
-            if (actual != null)
+            if (actual == null && expected.getDefaultValue() != null)
             {
-                if (!expected.validate(actual))
+                paramMap.put(expectedKey, expected.getDefaultValue());
+            }
+            if (actual != null && actual instanceof String)
+            {
+                if (!expected.validate((String) actual))
                 {
                     throw new InvalidFormParameterException("Invalid form parameter value " + actual + " for " + expectedKey);
                 }
             }
         }
+        requestEvent.getMessage().setPayload(paramMap);
     }
 
     private void validateMultipartForm(Map<String, List<FormParameter>> formParameters) throws BadRequestException
@@ -337,6 +383,18 @@ public class HttpRestRequest
             {
                 //perform only 'required' validation to avoid consuming the stream
                 throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
+            }
+            if (dataHandler == null && expected.getDefaultValue() != null)
+            {
+                DataHandler defaultDataHandler = new DataHandler(new StringDataSource(expected.getDefaultValue(), expectedKey));
+                try
+                {
+                    ((DefaultMuleMessage) requestEvent.getMessage()).addInboundAttachment(expectedKey, defaultDataHandler);
+                }
+                catch (Exception e)
+                {
+                    logger.warn("Cannot set default part " + expectedKey, e);
+                }
             }
         }
     }

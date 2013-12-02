@@ -1,0 +1,54 @@
+#%RAML 0.8
+---
+title: Parameters API
+
+/headers:
+    get:
+        headers:
+            one:
+                type: string
+                enum: [foo, bar]
+                default: bar
+        responses:
+            200: !!null
+
+/queryParams:
+    get:
+        queryParameters:
+            first:
+                type: integer
+                default: 1
+        responses:
+          200: !!null
+
+/multipart:
+    post:
+        body:
+            multipart/form-data:
+                formParameters:
+                    first:
+                        type: string
+                        required: true
+                    second:
+                        type: string
+                        default: segundo
+                    third:
+                        type: boolean
+        responses:
+            201: ~
+
+/url-encoded:
+    post:
+        body:
+            application/x-www-form-urlencoded:
+                formParameters:
+                    first:
+                        type: string
+                        default: primo
+                    second:
+                        type: string
+                        required: true
+                    third:
+                        type: boolean
+        responses:
+            201: ~

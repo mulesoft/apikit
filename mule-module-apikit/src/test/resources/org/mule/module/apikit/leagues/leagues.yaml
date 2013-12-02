@@ -92,6 +92,12 @@ traits:
                                 example: '.'
         /teams:
             get:
+                headers:
+                    preferred:
+                        displayName: Preferred
+                        description: preferred team
+                        type: string
+                        default: BCN
                 queryParameters:
                     offset:
                         displayName: Offset
@@ -107,6 +113,7 @@ traits:
                         required: false
                         minimum: 1
                         maximum: 10
+                        default: 5
                 responses:
                     200:
                         body:

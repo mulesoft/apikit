@@ -7,15 +7,12 @@
 package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -51,7 +48,7 @@ public class FormParametersTestCase extends FunctionalTestCase
                 .multiPart("second", "segundo")
                 .multiPart("third", "true")
                 .multiPart("payload", "3.4")
-            .expect().response().statusCode(201)
+                .expect().response().statusCode(201)
                 .when().post("/api/multipart");
     }
 
@@ -61,7 +58,7 @@ public class FormParametersTestCase extends FunctionalTestCase
         given().multiPart("second", "segundo")
                 .multiPart("third", "true")
                 .multiPart("payload", "3.4")
-            .expect().response().statusCode(400)
+                .expect().response().statusCode(400)
                 .when().post("/api/multipart");
     }
 
@@ -69,32 +66,42 @@ public class FormParametersTestCase extends FunctionalTestCase
     public void validUrlencodedFormProvided() throws Exception
     {
         given().header("Content-Type", "application/x-www-form-urlencoded")
-            .expect().response().statusCode(201)
-                .when().post("/api/url-encoded?first=primer&second=segundo&third=true");
+                .formParam("first", "prime")
+                .formParam("second", "segundo")
+                .formParam("third", "true")
+                .expect().response().statusCode(201)
+                .when().post("/api/url-encoded");
     }
 
     @Test
     public void requiredUrlencodedFormParamNotProvided() throws Exception
     {
         given().header("Content-Type", "application/x-www-form-urlencoded")
-            .expect().response().statusCode(400)
-                .when().post("/api/url-encoded?second=segundo&third=true");
+                .formParam("second", "segundo")
+                .formParam("third", "true")
+                .expect().response().statusCode(400)
+                .when().post("/api/url-encoded");
     }
 
     @Test
     public void invalidTypeUrlencodedFormProvided() throws Exception
     {
         given().header("Content-Type", "application/x-www-form-urlencoded")
-            .expect().response().statusCode(400)
-                .when().post("/api/url-encoded?first=primer&second=segundo&third=35");
+                .formParam("first", "prime")
+                .formParam("second", "segundo")
+                .formParam("third", "35")
+                .expect().response().statusCode(400)
+                .when().post("/api/url-encoded");
     }
 
     @Test
     public void invalidEnumUrlencodedFormProvided() throws Exception
     {
         given().header("Content-Type", "application/x-www-form-urlencoded")
-            .expect().response().statusCode(400)
-                .when().post("/api/url-encoded?first=primer&second=second");
+                .formParam("first", "prime")
+                .formParam("second", "second")
+                .expect().response().statusCode(400)
+                .when().post("/api/url-encoded");
     }
 
 }

@@ -266,7 +266,7 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().header("Accept", "application/json")
             .expect()
                 .response().body("name", hasItems("Barcelona", "Real Madrid", "Valencia", "Athletic Bilbao", "Atletico Madrid"))
-                .header("Content-type", "application/json").statusCode(200)
+                .header("Content-type", "application/json").header("preferred-team", "BCN").statusCode(200)
             .when().get("/api/leagues/liga-bbva/teams");
     }
 
