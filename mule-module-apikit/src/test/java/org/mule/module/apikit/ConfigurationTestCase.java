@@ -31,6 +31,8 @@ public class ConfigurationTestCase extends FunctionalTestCase
     public DynamicPort serverPortNoConsole = new DynamicPort("serverPortNoConsole");
     @Rule
     public DynamicPort serverPortMapping = new DynamicPort("serverPortMapping");
+    @Rule
+    public DynamicPort serverPortNoValidations = new DynamicPort("serverPortNoValidations");
 
     @Override
     public int getTestTimeoutSecs()
@@ -49,10 +51,10 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortDefault.getNumber();
         given().header("Accept", "text/plain")
-            .expect()
+                .expect()
                 .response().body(is("some resources"))
                 .statusCode(200)
-            .when().get("/default/resource");
+                .when().get("/default/resource");
     }
 
     @Test
@@ -60,11 +62,11 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortDefault.getNumber();
         given().header("Accept", "text/html")
-            .expect()
+                .expect()
                 .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/default\"")))
                 .header("Content-type", "text/html").statusCode(200)
-            .when().get("/default/console/");
+                .when().get("/default/console/");
     }
 
     @Test
@@ -72,10 +74,10 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortCustom.getNumber();
         given()
-            .expect()
+                .expect()
                 .response().body(is("some resources"))
                 .statusCode(200)
-            .when().get("/custom/resource");
+                .when().get("/custom/resource");
     }
 
     @Test
@@ -83,10 +85,10 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortMapping.getNumber();
         given()
-            .expect()
+                .expect()
                 .response().body(is("explicitely mapped flow"))
                 .statusCode(200)
-            .when().get("/mapping/resource");
+                .when().get("/mapping/resource");
     }
 
     @Test
@@ -94,21 +96,22 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortCustom.getNumber();
         given().header("Accept", "text/html")
-            .expect()
+                .expect()
                 .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/custom\"")))
                 .header("Content-type", "text/html").statusCode(200)
-            .when().get("/custom/custom/");
+                .when().get("/custom/custom/");
     }
+
     @Test
     public void resourceOnNoConsoleConfig() throws Exception
     {
         RestAssured.port = serverPortNoConsole.getNumber();
         given()
-            .expect()
+                .expect()
                 .response().body(is("some resources"))
                 .statusCode(200)
-            .when().get("/no-console/resource");
+                .when().get("/no-console/resource");
     }
 
     @Test
@@ -116,10 +119,10 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortNoConsole.getNumber();
         given().header("Accept", "text/html")
-            .expect()
+                .expect()
                 .response().body(containsString("resource not found"))
                 .statusCode(404)
-            .when().get("/no-console/console/");
+                .when().get("/no-console/console/");
     }
 
     @Test
@@ -127,8 +130,32 @@ public class ConfigurationTestCase extends FunctionalTestCase
     {
         RestAssured.port = serverPortDefault.getNumber();
         given()
-            .expect().statusCode(204)
-            .when().patch("/default/resource");
+                .expect().statusCode(204)
+                .when().patch("/default/resource");
     }
 
+    @Test
+    public void enableValidations()
+    {
+        RestAssured.port = serverPortDefault.getNumber();
+        given().contentType("application/x-www-form-urlencoded")
+                .header("must", "true")
+                .formParam("must", "true")
+                .expect()
+                .response().body(containsString("no validations performed"))
+                .statusCode(200)
+                .when().put("/default/forgiving/one?must=true");
+    }
+
+    @Test
+    public void disableValidations()
+    {
+        RestAssured.port = serverPortNoValidations.getNumber();
+        given().contentType("application/x-www-form-urlencoded")
+                .formParam("one", "true")
+                .expect()
+                .response().body(containsString("no validations performed"))
+                .statusCode(200)
+                .when().put("/no-validations/forgiving/any");
+    }
 }

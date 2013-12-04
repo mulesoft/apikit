@@ -52,6 +52,7 @@ public class Configuration
     private String raml;
     private boolean consoleEnabled;
     private String consolePath;
+    private boolean disableValidations;
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private FlowConstruct flowConstruct;
     private Raml api;
@@ -95,6 +96,16 @@ public class Configuration
     public void setConsolePath(String consolePath)
     {
         this.consolePath = consolePath;
+    }
+
+    public boolean isDisableValidations()
+    {
+        return disableValidations;
+    }
+
+    public void setDisableValidations(boolean disableValidations)
+    {
+        this.disableValidations = disableValidations;
     }
 
     public List<FlowMapping> getFlowMappings()

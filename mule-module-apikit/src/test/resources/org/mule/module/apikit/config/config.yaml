@@ -15,3 +15,24 @@ baseUri: http://localhost/{path}
 
 /includedResource: !include org/mule/module/apikit/config/config-1.yaml
 
+/forgiving/{id}:
+    uriParameters:
+        id:
+            type: string
+            enum: [one]
+    put:
+        headers:
+            must:
+                required: true
+        queryParameters:
+            must:
+                required: true
+        body:
+            application/x-www-form-urlencoded:
+                formParameters:
+                    must:
+                        required: true
+        responses:
+            200:
+                body:
+                    text/plain: ~

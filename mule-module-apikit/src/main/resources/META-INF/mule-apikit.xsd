@@ -45,7 +45,15 @@
                 <xsd:attribute name="raml" type="mule:nonBlankString" use="required"/>
                 <xsd:attribute name="consoleEnabled" type="mule:substitutableBoolean" default="true" use="optional"/>
                 <xsd:attribute name="consolePath" type="mule:nonBlankString" default="console" use="optional"/>
-           </xsd:extension>
+                <xsd:attribute name="disableValidations" type="mule:substitutableBoolean" default="false" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Do no perform validation of uri parameters, headers, query parameters and body schemas.
+                            Default values are not enforced by the server.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
 

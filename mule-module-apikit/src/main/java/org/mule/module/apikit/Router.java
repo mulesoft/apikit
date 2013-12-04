@@ -234,7 +234,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
     @Override
     public MuleEvent process(MuleEvent event) throws MuleException
     {
-        HttpRestRequest request = new HttpRestRequest(event, getApi());
+        HttpRestRequest request = new HttpRestRequest(event, getConfig());
 
         String path = request.getResourcePath();
 
@@ -307,14 +307,17 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
             }
         }
 
-        for (String key : resource.getUriParameters().keySet())
+        if (!config.isDisableValidations())
         {
-            String value = (String) resolvedVariables.get(key);
-            if (!resource.getUriParameters().get(key).validate(value))
+            for (String key : resource.getUriParameters().keySet())
             {
-                throw new InvalidUriParameterException("Invalid uri parameter value " + value + " for " + key);
-            }
+                String value = (String) resolvedVariables.get(key);
+                if (!resource.getUriParameters().get(key).validate(value))
+                {
+                    throw new InvalidUriParameterException("Invalid uri parameter value " + value + " for " + key);
+                }
 
+            }
         }
         for (String name : resolvedVariables.names())
         {

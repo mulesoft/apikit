@@ -31,7 +31,7 @@ import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
-import org.mule.transport.http.transformers.HttpRequestBodyToParamMap;
+import org.mule.transport.http.transformers.FormTransformer;
 
 import com.google.common.net.MediaType;
 
@@ -44,7 +44,6 @@ import javax.activation.DataHandler;
 
 import org.raml.model.Action;
 import org.raml.model.MimeType;
-import org.raml.model.Raml;
 import org.raml.model.Response;
 import org.raml.model.parameter.FormParameter;
 import org.raml.model.parameter.Header;
@@ -58,14 +57,14 @@ public class HttpRestRequest
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private MuleEvent requestEvent;
-    private Raml api;
+    private Configuration config;
     private Action action;
     private HttpProtocolAdapter adapter;
 
-    public HttpRestRequest(MuleEvent event, Raml api)
+    public HttpRestRequest(MuleEvent event, Configuration config)
     {
         requestEvent = event;
-        this.api = api;
+        this.config = config;
         adapter = new HttpProtocolAdapter(event);
     }
 
@@ -91,24 +90,15 @@ public class HttpRestRequest
     public MuleEvent process(Flow flow, Action action) throws MuleException
     {
         this.action = action;
-
-        //process query parameters
-        processQueryParameters();
-
-        //process header parameters
-        processHeaders();
-
-        //validate request representation (content-type and schema if defined)
-        validateInputRepresentation();
-
-        //negotiate output representation
+        if (!config.isDisableValidations())
+        {
+            processQueryParameters();
+            processHeaders();
+        }
+        negotiateInputRepresentation();
         String responseRepresentation = negotiateOutputRepresentation();
-
-        //normalize payload
-
         MuleEvent responseEvent = flow.process(requestEvent);
 
-        //transform response
         if (responseRepresentation != null)
         {
             transformToExpectedContentType(responseEvent, responseRepresentation);
@@ -272,7 +262,7 @@ public class HttpRestRequest
 
     }
 
-    private void validateInputRepresentation() throws MuleRestException
+    private void negotiateInputRepresentation() throws MuleRestException
     {
         if (action == null || action.getBody().isEmpty())
         {
@@ -295,7 +285,10 @@ public class HttpRestRequest
             if (mimeTypeName.equals(requestMimeTypeName))
             {
                 found = true;
-                valideateBody(mimeTypeName);
+                if (!config.isDisableValidations())
+                {
+                    valideateBody(mimeTypeName);
+                }
                 break;
             }
         }
@@ -331,7 +324,7 @@ public class HttpRestRequest
         Map paramMap;
         try
         {
-            paramMap = (Map) new HttpRequestBodyToParamMap().transformMessage(requestEvent.getMessage(), requestEvent.getEncoding());
+            paramMap = (Map) new FormTransformer().transformMessage(requestEvent.getMessage(), requestEvent.getEncoding());
         }
         catch (TransformerException e)
         {
@@ -403,7 +396,7 @@ public class HttpRestRequest
     {
         SchemaType schemaType = mimeTypeName.contains("json") ? SchemaType.JSONSchema : SchemaType.XMLSchema;
         RestSchemaValidator validator = RestSchemaValidatorFactory.getInstance().createValidator(schemaType, requestEvent.getMuleContext());
-        validator.validate(SchemaCacheUtils.getSchemaCacheKey(action, mimeTypeName), requestEvent, api);
+        validator.validate(SchemaCacheUtils.getSchemaCacheKey(action, mimeTypeName), requestEvent, config.getApi());
     }
 
     private String negotiateOutputRepresentation() throws MuleRestException

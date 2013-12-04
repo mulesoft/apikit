@@ -18,6 +18,7 @@
         <apikit:flow-mapping resource="/resource" action="get" flow-ref="retrieve"/>
     </apikit:config>
 
+    <apikit:config name="no-validations" raml="org/mule/module/apikit/config/config.yaml" disableValidations="true"/>
 
     <flow name="defaultEntry">
         <http:inbound-endpoint port="${serverPortDefault}" host="localhost" path="default"/>
@@ -43,6 +44,12 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
+    <flow name="noValidations">
+        <http:inbound-endpoint port="${serverPortNoValidations}" host="localhost" path="no-validations"/>
+        <apikit:router config-ref="no-validations"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
     <flow name="get:/resource">
         <set-payload value="some resources"/>
     </flow>
@@ -53,6 +60,10 @@
 
     <flow name="retrieve">
         <set-payload value="explicitely mapped flow"/>
+    </flow>
+
+    <flow name="put:/forgiving/{id}">
+        <set-payload value="no validations performed"/>
     </flow>
 
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">

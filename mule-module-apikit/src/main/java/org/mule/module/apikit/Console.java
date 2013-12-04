@@ -94,7 +94,7 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
             throw new ApikitRuntimeException("API not initialized. Probably there is no APIkit Router associated to the Configuration");
         }
 
-        HttpRestRequest request = new HttpRestRequest(event, getApi());
+        HttpRestRequest request = new HttpRestRequest(event, getConfig());
 
         String path = request.getResourcePath();
 
