@@ -30,7 +30,6 @@ public class GenerationModel implements Comparable<GenerationModel> {
     public GenerationModel(API api, Resource resource, Action action) {
         this.api = api;
         Validate.notNull(api);
-        Validate.notNull(resource);
         Validate.notNull(action);
         Validate.notNull(action.getType());
         Validate.notNull(resource.getUri());
@@ -40,8 +39,10 @@ public class GenerationModel implements Comparable<GenerationModel> {
         this.action = action;
         this.splitPath = new ArrayList<String>(Arrays.asList(this.resource.getUri().split("/")));
         this.verb = action.getType().toString();
-        splitPath.remove(0);
-        splitPath.remove(0);
+        if(!splitPath.isEmpty()) {
+            splitPath.remove(0);
+            splitPath.remove(0);
+        }
     }
 
     public String getVerb() {
