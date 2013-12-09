@@ -23,6 +23,8 @@ import org.junit.Test;
 public class StandaloneConsoleTestCase extends FunctionalTestCase
 {
 
+    private static final String CONSOLE_PATH = "/konsole";
+
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
 
@@ -51,9 +53,19 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
                 .expect()
                 .response().body(allOf(containsString("<title>api:Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + "/console\"")))
+                                       containsString("src=\"http://localhost:" + port + CONSOLE_PATH + "\"")))
                 .header("Content-type", "text/html").statusCode(200)
-                .when().get("/console/index.html");
+                .when().get(CONSOLE_PATH + "/index.html");
+    }
+
+    @Test
+    public void consoleResource() throws Exception
+    {
+        given().header("Accept", "text/css")
+                .expect()
+                .response().body(containsString("#raml-console-unembedded"))
+                .header("Content-type", "text/css").statusCode(200)
+                .when().get(CONSOLE_PATH + "/styles/app.css");
     }
 
     @Test
