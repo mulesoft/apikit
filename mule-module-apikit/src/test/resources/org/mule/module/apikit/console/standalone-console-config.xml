@@ -39,7 +39,7 @@
     </flow>
 
     <flow name="console">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="console"/>
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="konsole"/>
         <apikit:console/>
     </flow>
 

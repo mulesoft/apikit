@@ -73,7 +73,7 @@ public class ConsoleHandler
 
         // Remove the contextPath from the endpoint from the request as this isn't part of the path.
         path = path.substring(contextPath.length());
-        if (!path.startsWith("/"))
+        if (!path.startsWith("/") && !path.isEmpty())
         {
             path = "/" + path;
         }
@@ -83,7 +83,7 @@ public class ConsoleHandler
             logger.debug("Console request: " + path);
         }
         MuleEvent resultEvent;
-        InputStream in;
+        InputStream in = null;
         try
         {
             if (path.equals(consolePath))
@@ -108,9 +108,9 @@ public class ConsoleHandler
                 path = RESOURCE_BASE + "/index.html";
                 in = new ByteArrayInputStream(homePage.getBytes());
             }
-            else
+            else if (path.startsWith(consolePath))
             {
-                in = getClass().getResourceAsStream(path);
+                in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(consolePath.length()));
             }
             if (in == null)
             {

@@ -70,6 +70,17 @@ public class ConfigurationTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void consoleResourceOnDefaultConfig() throws Exception
+    {
+        RestAssured.port = serverPortDefault.getNumber();
+        given().header("Accept", "text/css")
+                .expect()
+                .response().body(containsString("#raml-console-unembedded"))
+                .header("Content-type", "text/css").statusCode(200)
+                .when().get("/default/console/styles/app.css");
+    }
+
+    @Test
     public void resourceOnCustomConsolePathConfig() throws Exception
     {
         RestAssured.port = serverPortCustom.getNumber();
@@ -101,6 +112,17 @@ public class ConfigurationTestCase extends FunctionalTestCase
                                        containsString("src=\"http://localhost:" + port + "/custom\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/custom/custom/");
+    }
+
+    @Test
+    public void consoleResourceOnCustomConsolePathConfig() throws Exception
+    {
+        RestAssured.port = serverPortCustom.getNumber();
+        given().header("Accept", "text/css")
+                .expect()
+                .response().body(containsString("#raml-console-unembedded"))
+                .header("Content-type", "text/css").statusCode(200)
+                .when().get("/custom/custom/styles/app.css");
     }
 
     @Test
