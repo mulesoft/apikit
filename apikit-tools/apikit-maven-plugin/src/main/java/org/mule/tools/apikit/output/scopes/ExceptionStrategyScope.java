@@ -10,6 +10,7 @@ package org.mule.tools.apikit.output.scopes;
 import org.jdom2.Element;
 
 import org.mule.tools.apikit.misc.APIKitTools;
+import org.mule.tools.apikit.model.API;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +45,7 @@ public class ExceptionStrategyScope implements Scope {
         }
     }
 
-    public ExceptionStrategyScope(Element mule) {
+    public ExceptionStrategyScope(Element mule, String apiId) {
         List<StatusCodeMapping> statusCodeMappings = Arrays.asList(
                 new StatusCodeMapping(404, "org.mule.module.apikit.exception.NotFoundException", "{ \"message\": \"Resource not found\" }"),
                 new StatusCodeMapping(405, "org.mule.module.apikit.exception.MethodNotAllowedException", "{ \"message\": \"Method not allowed\" }"),
@@ -56,7 +57,7 @@ public class ExceptionStrategyScope implements Scope {
         exceptionStrategy = new Element("mapping-exception-strategy",
                 APIKitTools.API_KIT_NAMESPACE.getNamespace());
 
-        exceptionStrategy.setAttribute("name", "apiKitGlobalExceptionMapping");
+        exceptionStrategy.setAttribute("name", apiId + "-" + "apiKitGlobalExceptionMapping");
 
         for (StatusCodeMapping statusCodeMapping : statusCodeMappings) {
             Element mapping = new Element("mapping",

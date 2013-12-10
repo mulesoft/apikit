@@ -84,7 +84,7 @@ public class RAMLFilesParser
         }
         else
         {
-            log.error("RAML Root not found. None of the files were recognized as root RAML files.");
+            log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
         }
     }
 

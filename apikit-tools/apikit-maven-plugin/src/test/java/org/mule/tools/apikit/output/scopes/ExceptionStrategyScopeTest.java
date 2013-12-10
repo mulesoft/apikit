@@ -16,11 +16,14 @@ import org.mule.tools.apikit.Helper;
 import static org.junit.Assert.assertTrue;
 
 public class ExceptionStrategyScopeTest {
+
+    private static final String API_ID = "id";
+
     @Test
     public void testGenerate() throws Exception {
         Document document = new Document();
         Element mule = new MuleScope(document).generate();
-        new ExceptionStrategyScope(mule).generate();
+        new ExceptionStrategyScope(mule, API_ID).generate();
 
         String s = Helper.nonSpaceOutput(mule);
 
@@ -34,7 +37,7 @@ public class ExceptionStrategyScopeTest {
                 "        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd\n" +
                 "        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd\n" +
                 "        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd\">" +
-                "<apikit:mapping-exception-strategy name=\"apiKitGlobalExceptionMapping\">" +
+                "<apikit:mapping-exception-strategy name=\"id-apiKitGlobalExceptionMapping\">" +
                 "<apikit:mapping statusCode=\"404\">" +
                 "<apikit:exception value=\"org.mule.module.apikit.exception.NotFoundException\"/>" +
                 "<set-property propertyName=\"Content-Type\" value=\"application/json\"/>" +

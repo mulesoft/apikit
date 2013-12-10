@@ -62,6 +62,7 @@ public class MuleConfigGeneratorTest {
         when(yaml.getName()).thenReturn("hello.yaml");
         File file = folder.newFile("hello.xml");
 
+        when(api.getId()).thenReturn("hello");
         when(api.getYamlFile()).thenReturn(yaml);
         when(api.getXmlFile(any(File.class))).thenReturn(file);
         when(api.getBaseUri()).thenReturn("http://localhost/api");
@@ -117,6 +118,7 @@ public class MuleConfigGeneratorTest {
         File yaml = mock(File.class);
         when(yaml.getName()).thenReturn("hello.yaml");
         when(api.getYamlFile()).thenReturn(yaml);
+        when(api.getId()).thenReturn("hello");
         File file = folder.newFile("hello.xml");
         when(api.getXmlFile(any(File.class))).thenReturn(file);
 
@@ -130,12 +132,12 @@ public class MuleConfigGeneratorTest {
         Element globalExceptionStrategy = rootElement.getChildren().get(0);
 
         assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
-        assertEquals("apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
+        assertEquals("hello-apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
 
         Element mainFlow = rootElement.getChildren().get(1);
 
         assertEquals("flow", mainFlow.getName());
-        assertEquals("main", mainFlow.getAttribute("name").getValue());
+        assertEquals("hello-main", mainFlow.getAttribute("name").getValue());
         assertEquals(url, mainFlow.getChildren().get(0).getAttribute("address").getValue());
 
         // TODO Validate config

@@ -27,6 +27,7 @@ public class FlowScopeTest {
         APIKitConfig config = new APIKitConfig.Builder("path/to/file.yaml").build();
         new APIKitConfigScope(config, mule).generate();
         API api = mock(API.class);
+        when(api.getId()).thenReturn("file");
         when(api.getBaseUri()).thenReturn("http://localhost:7777/api");
         when(api.getConfig()).thenReturn(config);
         
@@ -45,7 +46,7 @@ public class FlowScopeTest {
                 "        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd\n" +
                 "        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd\">" +
                 "<apikit:config raml=\"path/to/file.yaml\" consoleEnabled=\"true\" consolePath=\"console\" />" +
-                "<flow name=\"main\">" +
+                "<flow name=\"file-main\">" +
                 "<http:inbound-endpoint address=\"http://localhost:7777/api\"/>" +
                 "<apikit:router />" +
                 "<exception-strategy ref=\"ExceptionStrategyNameHere\"/>" +

@@ -22,7 +22,7 @@ public class FlowScope implements Scope {
     public FlowScope(Element mule, String exceptionStrategyRef, API api, String configRef) {
         main = new Element("flow", XMLNS_NAMESPACE.getNamespace());
 
-        main.setAttribute("name", "main");
+        main.setAttribute("name", api.getId() + "-" + "main");
 
         Element httpInboundEndpoint = new Element("inbound-endpoint", HTTP_NAMESPACE.getNamespace());
         httpInboundEndpoint.setAttribute("address", api.getBaseUri());

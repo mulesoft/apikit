@@ -19,11 +19,13 @@ public class API {
     private APIKitConfig config;
     private File xmlFile;
     private File yamlFile;
+    private String id;
 
     public API(File yamlFile, File xmlFile, String baseUri) {
         this.baseUri = baseUri;
         this.yamlFile = yamlFile;
         this.xmlFile = xmlFile;
+        id = FilenameUtils.removeExtension(yamlFile.getName()).trim();
     }
 
     public API(File yamlFile, File xmlFile, String baseUri, APIKitConfig config) {
@@ -66,7 +68,7 @@ public class API {
     }
 
     public void setDefaultConfig() {
-        config = new APIKitConfig.Builder(yamlFile.getName()).setName(APIKitConfig.DEFAULT_CONFIG_NAME).build();
+        config = new APIKitConfig.Builder(yamlFile.getName()).setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME).build();
     }
 
     @Override
@@ -84,5 +86,9 @@ public class API {
     @Override
     public int hashCode() {
         return yamlFile.hashCode();
+    }
+
+    public String getId() {
+        return id;
     }
 }
