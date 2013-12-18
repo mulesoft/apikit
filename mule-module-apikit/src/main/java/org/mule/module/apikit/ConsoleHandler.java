@@ -49,6 +49,7 @@ public class ConsoleHandler
     {
         this.consolePath = sanitize(consolePath);
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
+        ramlUri = ramlUri.endsWith("/")? ramlUri : ramlUri + "/";
         homePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"", "<raml-console src=\"" + ramlUri + "\"");
     }
 

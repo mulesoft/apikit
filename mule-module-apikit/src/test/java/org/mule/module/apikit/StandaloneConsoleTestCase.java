@@ -53,7 +53,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
                 .expect()
                 .response().body(allOf(containsString("<title>api:Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + CONSOLE_PATH + "\"")))
+                                       containsString("src=\"http://localhost:" + port + CONSOLE_PATH + "/\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get(CONSOLE_PATH + "/index.html");
     }

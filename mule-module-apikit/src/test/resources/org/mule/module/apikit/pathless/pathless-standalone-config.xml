@@ -55,7 +55,7 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
     <flow name="routerPathless">
-        <http:inbound-endpoint address="http://localhost:${serverPortPathless}/api/"/>
+        <http:inbound-endpoint address="http://localhost:${serverPortPathless}/api"/>
         <apikit:router config-ref="pathless"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
@@ -67,7 +67,7 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
     <flow name="routerEmptyPath">
-        <http:inbound-endpoint address="http://localhost:${serverPortEmptyPath}/api/"/>
+        <http:inbound-endpoint address="http://localhost:${serverPortEmptyPath}/api"/>
         <apikit:router config-ref="emptyPath"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
@@ -79,7 +79,7 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
     <flow name="routerSlashPath">
-        <http:inbound-endpoint address="http://localhost:${serverPortSlashPath}/api/"/>
+        <http:inbound-endpoint address="http://localhost:${serverPortSlashPath}/api"/>
         <apikit:router config-ref="slashPath"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
@@ -91,7 +91,7 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
     <flow name="routerAddressSlashPath">
-        <http:inbound-endpoint address="http://localhost:${serverPortAddressSlashPath}/api/"/>
+        <http:inbound-endpoint address="http://localhost:${serverPortAddressSlashPath}/api"/>
         <apikit:router config-ref="addressSlashPath"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>

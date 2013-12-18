@@ -113,7 +113,7 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     public void consoleAddressSlashPath() throws Exception
     {
         RestAssured.port = serverPortAddressSlashPath.getNumber();
-        console("/api");
+        console("/api/");
     }
 
     @Test
@@ -138,7 +138,7 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
                 .response().body(allOf(containsString("<title>api:Console</title>"),
                                        containsString("src=\"http://localhost:" + port + path)))
                 .header("Content-type", "text/html").statusCode(200)
-                .when().get(path + "/console/index.html");
+                .when().get((path.endsWith("/") ? path.substring(0, path.length() - 1) : path) + "/console/index.html");
     }
 
     private void raml(String path)
