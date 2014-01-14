@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.module.apikit.Configuration.BIND_ALL_HOST;
+
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
@@ -25,6 +27,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +46,9 @@ public class ConsoleHandler
 
     private static final String RESOURCE_BASE = "/console";
 
-    private String homePage;
+    private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
     private String consolePath;
+    private String baseHost;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -50,7 +57,16 @@ public class ConsoleHandler
         this.consolePath = sanitize(consolePath);
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
         ramlUri = ramlUri.endsWith("/")? ramlUri : ramlUri + "/";
-        homePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"", "<raml-console src=\"" + ramlUri + "\"");
+        String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"", "<raml-console src=\"" + ramlUri + "\"");
+        try
+        {
+            baseHost = new URI(ramlUri).getHost();
+        }
+        catch (URISyntaxException e)
+        {
+            throw new RuntimeException(e);
+        }
+        homePage.put(baseHost, baseHomePage);
     }
 
     private String sanitize(String consolePath)
@@ -107,7 +123,12 @@ public class ConsoleHandler
             if (path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
             {
                 path = RESOURCE_BASE + "/index.html";
-                in = new ByteArrayInputStream(homePage.getBytes());
+                String host = event.getMessage().getInboundProperty("host");
+                if (host.contains(":"))
+                {
+                    host = host.split(":")[0];
+                }
+                in = new ByteArrayInputStream(getHomePage(host).getBytes());
             }
             else if (path.startsWith(consolePath))
             {
@@ -140,6 +161,22 @@ public class ConsoleHandler
         }
 
         return resultEvent;
+    }
+
+    private String getHomePage(String host)
+    {
+        if (!BIND_ALL_HOST.equals(baseHost))
+        {
+            return homePage.get(baseHost);
+        }
+
+        String page = homePage.get(host);
+        if (page == null)
+        {
+            page = homePage.get(baseHost).replace(BIND_ALL_HOST, host);
+            homePage.put(host, page);
+        }
+        return page;
     }
 
     private String getMimeType(String path)

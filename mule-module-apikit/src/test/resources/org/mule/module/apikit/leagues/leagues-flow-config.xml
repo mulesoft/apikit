@@ -35,7 +35,7 @@
     <apikit:config name="leaguesApi" raml="org/mule/module/apikit/leagues/leagues.yaml" consoleEnabled="true" consolePath="console"/>
 
     <flow name="doorway">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <http:inbound-endpoint port="${serverPort}" host="0.0.0.0" path="api"/>
         <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>

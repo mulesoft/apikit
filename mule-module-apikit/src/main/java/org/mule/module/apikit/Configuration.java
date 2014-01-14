@@ -9,7 +9,6 @@ package org.mule.module.apikit;
 import static org.raml.parser.rule.ValidationResult.Level.ERROR;
 import static org.raml.parser.rule.ValidationResult.Level.WARN;
 import static org.raml.parser.rule.ValidationResult.UNKNOWN;
-import static org.yaml.snakeyaml.nodes.Tag.STR;
 
 import org.mule.api.MuleContext;
 import org.mule.api.config.MuleProperties;
@@ -17,12 +16,16 @@ import org.mule.api.construct.FlowConstruct;
 import org.mule.api.endpoint.ImmutableEndpoint;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.util.BeanUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.raml.emitter.RamlEmitter;
@@ -37,14 +40,12 @@ import org.raml.parser.visitor.RamlDocumentBuilder;
 import org.raml.parser.visitor.RamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.ScalarNode;
 
 public class Configuration
 {
 
     public static final String APPLICATION_RAML = "application/raml+yaml";
+    public static final String BIND_ALL_HOST = "0.0.0.0";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -56,7 +57,8 @@ public class Configuration
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private FlowConstruct flowConstruct;
     private Raml api;
-    private String apikitRaml;
+    private String baseHost;
+    private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
 
     public String getName()
     {
@@ -123,9 +125,35 @@ public class Configuration
         return api;
     }
 
-    public String getApikitRaml()
+    /**
+     * Returns the RAML descriptor of the API.
+     * If the baseUri is bound to all interfaces (0.0.0.0) the host parameter
+     * is used to rewrite the base uri with the actual host received.
+     */
+    public String getApikitRaml(String host)
     {
-        return apikitRaml;
+        if (!BIND_ALL_HOST.equals(baseHost))
+        {
+            return apikitRaml.get(baseHost);
+        }
+
+        String hostRaml = apikitRaml.get(host);
+        if (hostRaml == null)
+        {
+            Raml clone;
+            try
+            {
+                clone = (Raml) BeanUtils.cloneBean(api);
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+            clone.setBaseUri(api.getBaseUri().replace(baseHost, host));
+            hostRaml = new RamlEmitter().dump(clone);
+            apikitRaml.put(host, hostRaml);
+        }
+        return hostRaml;
     }
 
     public void loadApiDefinition(MuleContext muleContext, FlowConstruct flowConstruct, Map<String, Flow> restFlowMap)
@@ -156,8 +184,8 @@ public class Configuration
         validateRaml(ramlBuffer, loader, restFlowMap);
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(ramlBuffer);
-        injectEndpointUri(builder);
-        apikitRaml = new RamlEmitter().dump(api);
+        injectEndpointUri();
+        apikitRaml.put(baseHost, new RamlEmitter().dump(api));
     }
 
 
@@ -197,32 +225,18 @@ public class Configuration
         return sb.toString();
     }
 
-    private void injectEndpointUri(RamlDocumentBuilder builder)
+    private void injectEndpointUri()
     {
         String address = getEndpointAddress(flowConstruct);
         api.setBaseUri(address);
-        List<NodeTuple> tuples = new ArrayList<NodeTuple>();
-        boolean baseUriPresent = false;
-        for (NodeTuple tuple : builder.getRootNode().getValue())
+        try
         {
-            if (((ScalarNode) tuple.getKeyNode()).getValue().equals("baseUri"))
-            {
-                ScalarNode valueNode = (ScalarNode) tuple.getValueNode();
-                tuples.add(new NodeTuple(tuple.getKeyNode(), new ScalarNode(valueNode.getTag(), address, valueNode.getStartMark(), valueNode.getEndMark(), valueNode.getStyle())));
-                baseUriPresent = true;
-            }
-            else
-            {
-                tuples.add(tuple);
-            }
+            baseHost = new URI(address).getHost();
         }
-        if (!baseUriPresent)
+        catch (URISyntaxException e)
         {
-            Node keyNode = new ScalarNode(STR, "baseUri", null, null, '0');
-            Node valueNode = new ScalarNode(STR, address, null, null, '0');
-            tuples.add(new NodeTuple(keyNode, valueNode));
+            throw new RuntimeException(e);
         }
-        builder.getRootNode().setValue(tuples);
     }
 
     public String getEndpointAddress(FlowConstruct flowConstruct)
