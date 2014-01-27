@@ -54,4 +54,11 @@ public class ActionNotImplementedTupleRule extends DefaultTupleRule
         return result;
     }
 
+    @Override
+    public TupleRule<?, ?> deepCopy()
+    {
+        checkClassToCopy(ActionNotImplementedTupleRule.class);
+        ActionNotImplementedTupleRule copy = new ActionNotImplementedTupleRule(restFlowMap);
+        return copy;
+    }
 }
