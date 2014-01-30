@@ -18,8 +18,6 @@ import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.util.BeanUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -27,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.commons.io.IOUtils;
 import org.raml.emitter.RamlEmitter;
 import org.raml.model.Raml;
 import org.raml.parser.loader.CompositeResourceLoader;
@@ -165,34 +162,18 @@ public class Configuration
         {
             loader = new CompositeResourceLoader(new FileResourceLoader(appHome), loader);
         }
-        InputStream ramlStream = loader.fetchResource(getRaml());
-        if (ramlStream == null)
-        {
-            throw new ApikitRuntimeException(String.format("API descriptor %s not found", getRaml()));
-        }
-
-        String ramlBuffer;
-        try
-        {
-            ramlBuffer = IOUtils.toString(ramlStream);
-        }
-        catch (IOException e)
-        {
-            throw new ApikitRuntimeException(String.format("Cannot read API descriptor %s", getRaml()));
-        }
-
-        validateRaml(ramlBuffer, loader, restFlowMap);
+        validateRaml(loader, restFlowMap);
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
-        api = builder.build(ramlBuffer);
+        api = builder.build(getRaml());
         injectEndpointUri();
         apikitRaml.put(baseHost, new RamlEmitter().dump(api));
     }
 
 
-    protected void validateRaml(String ramlBuffer, ResourceLoader resourceLoader, Map<String, Flow> restFlowMap)
+    protected void validateRaml(ResourceLoader resourceLoader, Map<String, Flow> restFlowMap)
     {
         NodeRuleFactory ruleFactory = new NodeRuleFactory(new ActionImplementedRuleExtension(restFlowMap));
-        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader, ruleFactory).validate(ramlBuffer);
+        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader, ruleFactory).validate(getRaml());
         List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
         if (!errors.isEmpty())
         {

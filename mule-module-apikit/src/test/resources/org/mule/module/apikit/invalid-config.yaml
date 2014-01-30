@@ -16,9 +16,9 @@ baseUri: http://localhost/api
     post:
         body: &league-schema
             application/json:
-                schema: !include org/mule/module/apikit/leagues/league.json
+                schema: !include leagues/league.json
             text/xml:
-                schema: !include org/mule/module/apikit/leagues/league.xsd
+                schema: !include leagues/league.xsd
         responses:
             201: !!null
     /{leagueId}:

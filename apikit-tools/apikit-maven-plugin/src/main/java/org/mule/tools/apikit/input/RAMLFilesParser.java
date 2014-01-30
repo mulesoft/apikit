@@ -48,30 +48,31 @@ public class RAMLFilesParser
         for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet())
         {
             String content;
+            File ramlFile = fileInputStreamEntry.getKey();
             try
             {
                 content = IOUtils.toString(fileInputStreamEntry.getValue());
             }
             catch (IOException ioe)
             {
-                log.info("Error loading file " + fileInputStreamEntry.getKey().getName());
+                log.info("Error loading file " + ramlFile.getName());
                 break;
 
             }
-            ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(fileInputStreamEntry.getKey().getParentFile()));
+            ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParentFile()));
 
-            if (isValidYaml(fileInputStreamEntry.getKey().getName(), content, resourceLoader, log))
+            if (isValidYaml(ramlFile.getName(), content, resourceLoader, log))
             {
                 RamlDocumentBuilder builderNodeHandler = new RamlDocumentBuilder(resourceLoader);
                 try
                 {
-                    Raml raml = builderNodeHandler.build(content);
-                    collectResources(fileInputStreamEntry.getKey(), entries, raml.getResources(), API.DEFAULT_BASE_URI);
-                    processedFiles.add(fileInputStreamEntry.getKey());
+                    Raml raml = builderNodeHandler.build(content, ramlFile.getName());
+                    collectResources(ramlFile, entries, raml.getResources(), API.DEFAULT_BASE_URI);
+                    processedFiles.add(ramlFile);
                 }
                 catch (Exception e)
                 {
-                    log.info("Could not parse [" + fileInputStreamEntry.getKey() + "] as root RAML file. Reason: " + e.getMessage());
+                    log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());
                     log.debug(e);
                 }
             }
@@ -90,7 +91,7 @@ public class RAMLFilesParser
 
     private boolean isValidYaml(String fileName, String content, ResourceLoader resourceLoader, Log log)
     {
-        List<ValidationResult> validationResults = RamlValidationService.createDefault(resourceLoader).validate(content);
+        List<ValidationResult> validationResults = RamlValidationService.createDefault(resourceLoader).validate(content, fileName);
         if (validationResults != null && !validationResults.isEmpty())
         {
             log.info("File '" + fileName + "' is not a valid root RAML file. See following error(s): ");

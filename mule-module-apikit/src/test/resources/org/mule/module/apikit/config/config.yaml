@@ -13,7 +13,7 @@ baseUri: http://localhost/{path}
             204: !!null
     put: ~
 
-/includedResource: !include org/mule/module/apikit/config/config-1.yaml
+/includedResource: !include config-1.yaml
 
 /forgiving/{id}:
     uriParameters:

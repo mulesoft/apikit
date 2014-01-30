@@ -11,9 +11,6 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
 import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.util.IOUtils;
-
-import java.io.InputStream;
 
 import org.junit.Test;
 import org.raml.parser.loader.DefaultResourceLoader;
@@ -27,10 +24,10 @@ public class InvalidRamlTestCase
 
         Router router = new Router();
         router.setConfig(new Configuration());
+        router.getConfig().setRaml("org/mule/module/apikit/invalid-config.yaml");
         try
         {
-            String raml = getRaml("org/mule/module/apikit/invalid-config.yaml");
-            router.getConfig().validateRaml(raml, new DefaultResourceLoader(), router.getRestFlowMap());
+            router.getConfig().validateRaml(new DefaultResourceLoader(), router.getRestFlowMap());
             fail();
         }
         catch (ApikitRuntimeException e)
@@ -39,9 +36,4 @@ public class InvalidRamlTestCase
         }
     }
 
-    private String getRaml(String resource)
-    {
-        InputStream stream = getClass().getClassLoader().getResourceAsStream(resource);
-        return IOUtils.toString(stream);
-    }
 }
