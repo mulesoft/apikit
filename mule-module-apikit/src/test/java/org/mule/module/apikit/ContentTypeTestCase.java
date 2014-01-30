@@ -53,4 +53,14 @@ public class ContentTypeTestCase extends FunctionalTestCase
             .when().get("/api/resources");
     }
 
+    @Test
+    public void getOnAcceptNotSpecified() throws Exception
+    {
+        given().header("Accept", "")
+            .expect()
+                .response().body(is(""))
+                .statusCode(200)
+            .when().get("/api/resources");
+    }
+
 }
