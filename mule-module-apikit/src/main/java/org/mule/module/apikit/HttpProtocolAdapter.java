@@ -114,6 +114,10 @@ public class HttpProtocolAdapter
 
     public String getAcceptableResponseMediaTypes()
     {
+        if (acceptableResponseMediaTypes == null)
+        {
+            return "*/*";
+        }
         return acceptableResponseMediaTypes;
     }
 
