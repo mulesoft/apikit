@@ -47,12 +47,14 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
+    <!-- works since MULE-6968 -->
     <flow name="doorwayEmptyPath">
         <http:inbound-endpoint port="${serverPortEmptyPath}" host="localhost" path=""/>
         <apikit:router config-ref="emptyPath"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
+    <!-- works since MULE-6968 -->
     <flow name="doorwaySlashPath">
         <http:inbound-endpoint port="${serverPortSlashPath}" host="localhost" path="/"/>
         <apikit:router config-ref="slashPath"/>

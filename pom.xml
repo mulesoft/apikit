@@ -15,7 +15,7 @@
     </modules>
 
     <properties>
-        <mule.version>3.5.0-bighorn</mule.version>
+        <mule.version>3.5.0-cascade</mule.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
     </properties>
 
