@@ -51,6 +51,11 @@
             <version>${mule.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-cors</artifactId>
+            <version>${cors.module.version}</version>
+        </dependency>
+        <dependency>
             <groupId>wsdl4j</groupId>
             <artifactId>wsdl4j</artifactId>
             <version>1.6.2</version>
