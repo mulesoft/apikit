@@ -15,8 +15,8 @@ import org.mule.api.MuleException;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.construct.FlowConstructAware;
 import org.mule.api.context.MuleContextAware;
-import org.mule.api.lifecycle.Initialisable;
-import org.mule.api.lifecycle.InitialisationException;
+import org.mule.api.lifecycle.StartException;
+import org.mule.api.lifecycle.Startable;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.registry.RegistrationException;
 import org.mule.config.i18n.MessageFactory;
@@ -49,7 +49,7 @@ import org.raml.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Router implements MessageProcessor, Initialisable, MuleContextAware, FlowConstructAware
+public class Router implements MessageProcessor, Startable, MuleContextAware, FlowConstructAware
 {
 
     private static final int URI_CACHE_SIZE = 1000;
@@ -90,7 +90,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
     }
 
     @Override
-    public void initialise() throws InitialisationException
+    public void start() throws MuleException
     {
         //avoid spring initialization
         if (flowConstruct == null)
@@ -105,7 +105,7 @@ public class Router implements MessageProcessor, Initialisable, MuleContextAware
             }
             catch (RegistrationException e)
             {
-                throw new InitialisationException(MessageFactory.createStaticMessage("APIKit configuration not Found"), this);
+                throw new StartException(MessageFactory.createStaticMessage("APIKit configuration not Found"), this);
             }
         }
 

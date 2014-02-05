@@ -43,13 +43,14 @@ public class Configuration
 
     public static final String APPLICATION_RAML = "application/raml+yaml";
     public static final String BIND_ALL_HOST = "0.0.0.0";
+    public static final String DEFAULT_CONSOLE_PATH = "console";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String name;
     private String raml;
-    private boolean consoleEnabled;
-    private String consolePath;
+    private boolean consoleEnabled = true;
+    private String consolePath = DEFAULT_CONSOLE_PATH;
     private boolean disableValidations;
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private FlowConstruct flowConstruct;
@@ -166,6 +167,8 @@ public class Configuration
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(getRaml());
         injectEndpointUri();
+        flowMappings = new ArrayList<FlowMapping>();
+        apikitRaml = new ConcurrentHashMap<String, String>();
         apikitRaml.put(baseHost, new RamlEmitter().dump(api));
     }
 
