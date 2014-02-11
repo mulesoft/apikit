@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.util.ClassUtils;
 
 public class MappingExceptionListener extends CatchMessagingExceptionStrategy
 {
@@ -34,7 +35,7 @@ public class MappingExceptionListener extends CatchMessagingExceptionStrategy
         {
             try
             {
-                this.exceptions.add(Class.forName(exception));
+                this.exceptions.add(ClassUtils.getClass(exception));
             }
             catch (ClassNotFoundException e)
             {
