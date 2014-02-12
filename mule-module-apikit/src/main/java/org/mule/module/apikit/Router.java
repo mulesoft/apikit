@@ -30,12 +30,15 @@ import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.transport.http.HttpConstants;
+import org.mule.util.IOUtils;
 import org.mule.util.StringMessageUtils;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
@@ -53,6 +56,8 @@ public class Router implements MessageProcessor, Startable, MuleContextAware, Fl
 {
 
     private static final int URI_CACHE_SIZE = 1000;
+    private static final String CONSOLE_URL_FILE = "consoleurl";
+
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private MuleContext muleContext;
@@ -164,9 +169,36 @@ public class Router implements MessageProcessor, Startable, MuleContextAware, Fl
                             }
                         });
 
+        publishConsoleUrl();
+    }
+
+    private void publishConsoleUrl()
+    {
+        String consoleUrl = getApi().getBaseUri() + "/" + config.getConsolePath();
+        File urlFile = new File(muleContext.getConfiguration().getWorkingDirectory(), CONSOLE_URL_FILE);
+        FileWriter writer = null;
+        try
+        {
+            if (!urlFile.exists())
+            {
+                urlFile.createNewFile();
+            }
+            writer = new FileWriter(urlFile, true);
+            writer.write(consoleUrl + "\n");
+            writer.flush();
+        }
+        catch (IOException e)
+        {
+            logger.error("cannot publish console url for studio", e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(writer);
+        }
+
         if (logger.isInfoEnabled())
         {
-            String msg = String.format("APIKit Console URL: %s", getApi().getBaseUri() + "/" + config.getConsolePath());
+            String msg = String.format("APIKit Console URL: %s", consoleUrl);
             logger.info(StringMessageUtils.getBoilerPlate(msg));
         }
     }
