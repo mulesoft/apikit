@@ -272,6 +272,16 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void getTeamsHeaderCaseInsensitive() throws Exception
+    {
+        given().header("Accept", "application/json").header("Preferred", "RMD")
+            .expect()
+                .response().body("name", hasItems("Barcelona", "Real Madrid", "Valencia", "Athletic Bilbao", "Atletico Madrid"))
+                .header("Content-type", "application/json").header("preferred-team", "RMD").statusCode(200)
+            .when().get("/api/leagues/liga-bbva/teams");
+    }
+
+    @Test
     public void getTeamsQueryParamsOffset3() throws Exception
     {
         given().header("Accept", "application/json")

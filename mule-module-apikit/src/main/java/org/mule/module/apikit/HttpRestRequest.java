@@ -32,6 +32,7 @@ import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
 import org.mule.transport.http.transformers.FormTransformer;
+import org.mule.util.CaseInsensitiveHashMap;
 
 import com.google.common.net.MediaType;
 
@@ -150,15 +151,17 @@ public class HttpRestRequest
     private void setQueryParameter(String key, String value)
     {
         requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
-        ((Map) requestEvent.getMessage().getInboundProperty("http.query.params")).put(key, value);
+        requestEvent.getMessage().<Map<String, String>>getInboundProperty("http.query.params").put(key, value);
     }
 
+
+    @SuppressWarnings("unchecked")
     private void processHeaders() throws InvalidHeaderException
     {
         for (String expectedKey : action.getHeaders().keySet())
         {
             Header expected = action.getHeaders().get(expectedKey);
-            Map<String, String> incomingHeaders = requestEvent.getMessage().getInboundProperty("http.headers");
+            Map<String, String> incomingHeaders = new CaseInsensitiveHashMap(requestEvent.getMessage().<Map>getInboundProperty("http.headers"));
 
             if (expectedKey.contains("{?}"))
             {
@@ -197,7 +200,7 @@ public class HttpRestRequest
     private void setHeader(String key, String value)
     {
         requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
-        ((Map) requestEvent.getMessage().getInboundProperty("http.headers")).put(key, value);
+        requestEvent.getMessage().<Map<String, String>>getInboundProperty("http.headers").put(key, value);
     }
 
     private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation) throws MuleException
@@ -319,9 +322,10 @@ public class HttpRestRequest
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void validateUrlencodedForm(Map<String, List<FormParameter>> formParameters) throws BadRequestException
     {
-        Map paramMap;
+        Map<String, String> paramMap;
         try
         {
             paramMap = (Map) new FormTransformer().transformMessage(requestEvent.getMessage(), requestEvent.getEncoding());
