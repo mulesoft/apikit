@@ -267,7 +267,7 @@ public class HttpRestRequest
 
     private void negotiateInputRepresentation() throws MuleRestException
     {
-        if (action == null || action.getBody().isEmpty())
+        if (action == null || !action.hasBody())
         {
             logger.debug("=== no body types defined: accepting any request content-type");
             return;
@@ -434,7 +434,7 @@ public class HttpRestRequest
         if (status != -1)
         {
             Response response = action.getResponses().get(String.valueOf(status));
-            if (response != null)
+            if (response != null && response.hasBody())
             {
                 Collection<MimeType> types = response.getBody().values();
                 logger.debug(String.format("=== adding response mimeTypes for status %d : %s", status, types));
