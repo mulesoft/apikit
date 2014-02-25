@@ -8,3 +8,11 @@ title: Parameters API
             body:
                 application/json: !!null
                 text/xml: !!null
+/multitype:
+  get:
+    responses:
+        200:
+            body:
+                application/json: ~
+                application/xml: ~
+                text/html: ~

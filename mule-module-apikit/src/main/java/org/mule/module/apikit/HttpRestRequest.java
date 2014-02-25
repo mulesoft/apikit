@@ -97,12 +97,13 @@ public class HttpRestRequest
             processHeaders();
         }
         negotiateInputRepresentation();
-        String responseRepresentation = negotiateOutputRepresentation();
+        List<MimeType> responseMimeTypes = getResponseMimeTypes();
+        String responseRepresentation = negotiateOutputRepresentation(responseMimeTypes);
         MuleEvent responseEvent = flow.process(requestEvent);
 
         if (responseRepresentation != null)
         {
-            transformToExpectedContentType(responseEvent, responseRepresentation);
+            transformToExpectedContentType(responseEvent, responseRepresentation, responseMimeTypes);
         }
         else
         {
@@ -203,7 +204,7 @@ public class HttpRestRequest
         requestEvent.getMessage().<Map<String, String>>getInboundProperty("http.headers").put(key, value);
     }
 
-    private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation) throws MuleException
+    private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation, List<MimeType> responseMimeTypes) throws MuleException
     {
         MuleMessage message = muleEvent.getMessage();
         String msgMimeType = message.getDataType() != null ? message.getDataType().getMimeType() : null;
@@ -216,10 +217,8 @@ public class HttpRestRequest
             {
                 throw new ApikitRuntimeException("Content-Type must be set in the flow when declaring */* response type");
             }
-            responseRepresentation = msgContentType;
+            return;
         }
-
-        message.setOutboundProperty("Content-Type", responseRepresentation);
 
         if (message.getPayload() instanceof NullPayload)
         {
@@ -230,12 +229,13 @@ public class HttpRestRequest
             return;
         }
 
-        if (msgMimeType != null && msgMimeType.contains(responseRepresentation) ||
-            msgContentType != null && msgContentType.contains(responseRepresentation))
+        String msgAcceptedContentType = acceptedContentType(msgMimeType, msgContentType, responseMimeTypes);
+        if (msgAcceptedContentType != null)
         {
+            message.setOutboundProperty("Content-Type", msgAcceptedContentType);
             if (logger.isDebugEnabled())
             {
-                logger.debug("Response transformation not required. Message payload type is " + msgMimeType);
+                logger.debug("Response transformation not required. Message payload type is " + msgAcceptedContentType);
             }
             return;
         }
@@ -257,12 +257,33 @@ public class HttpRestRequest
             }
             Object payload = transformer.transform(message.getPayload());
             message.setPayload(payload);
+            message.setOutboundProperty("Content-Type", responseRepresentation);
         }
         catch (Exception e)
         {
             throw new DefaultMuleException(e);
         }
 
+    }
+
+    /**
+     * checks if the current payload type is any of the accepted ones.
+     * @return null if it is not
+     */
+    private String acceptedContentType(String msgMimeType, String msgContentType, List<MimeType> responseMimeTypes)
+    {
+        for (MimeType responseMimeType : responseMimeTypes)
+        {
+            if (msgMimeType != null && msgMimeType.contains(responseMimeType.getType()))
+            {
+                return responseMimeType.getType();
+            }
+            if (msgContentType != null && msgContentType.contains(responseMimeType.getType()))
+            {
+                return responseMimeType.getType();
+            }
+        }
+        return null;
     }
 
     private void negotiateInputRepresentation() throws MuleRestException
@@ -403,9 +424,8 @@ public class HttpRestRequest
         validator.validate(SchemaCacheUtils.getSchemaCacheKey(action, mimeTypeName), requestEvent, config.getApi());
     }
 
-    private String negotiateOutputRepresentation() throws MuleRestException
+    private String negotiateOutputRepresentation(List<MimeType> mimeTypes) throws MuleRestException
     {
-        List<MimeType> mimeTypes = getResponseMimeTypes();
         if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
         {
             //no response media-types defined, return no body

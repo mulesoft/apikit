@@ -63,4 +63,43 @@ public class ContentTypeTestCase extends FunctionalTestCase
             .when().get("/api/resources");
     }
 
+    @Test
+    public void getOnAcceptAnythingResponseJson() throws Exception
+    {
+        given()
+             .header("Accept", "")
+             .header("ctype", "json")
+            .expect()
+                .response().contentType(is("application/json"))
+                .body(is("never mind"))
+                .statusCode(200)
+            .when().get("/api/multitype");
+    }
+
+    @Test
+    public void getOnAcceptAnythingResponseXml() throws Exception
+    {
+        given()
+             .header("Accept", "")
+             .header("ctype", "xml")
+            .expect()
+                .response().contentType(is("application/xml"))
+                .body(is("never mind"))
+                .statusCode(200)
+            .when().get("/api/multitype");
+    }
+
+    @Test
+    public void getOnAcceptAnythingResponseHtml() throws Exception
+    {
+        given()
+             .header("Accept", "")
+             .header("ctype", "default")
+            .expect()
+                .response().contentType(is("text/html"))
+                .body(is("never mind"))
+                .statusCode(200)
+            .when().get("/api/multitype");
+    }
+
 }

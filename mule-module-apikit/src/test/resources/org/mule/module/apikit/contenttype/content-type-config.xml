@@ -44,4 +44,24 @@
         <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
     </flow>
 
+    <flow name="get:/multitype">
+        <logger level="INFO" message="content type hint: #[message.inboundProperties.ctype]"/>
+        <choice>
+            <when expression="#[message.inboundProperties.ctype == 'json']">
+                <logger level="INFO" message="returning json"/>
+                <set-property propertyName="Content-Type" value="application/json"/>
+            </when>
+            <when expression="#[message.inboundProperties.ctype == 'xml']">
+                <logger level="INFO" message="returning xml"/>
+                <set-property propertyName="Content-Type" value="application/xml"/>
+            </when>
+            <otherwise>
+                <logger level="INFO" message="returning html"/>
+                <set-property propertyName="Content-Type" value="text/html"/>
+            </otherwise>
+        </choice>
+        <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+        <set-payload value="never mind"/>
+    </flow>
+
 </mule>
