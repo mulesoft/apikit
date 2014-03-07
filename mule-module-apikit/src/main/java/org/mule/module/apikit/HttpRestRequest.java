@@ -7,14 +7,17 @@
 package org.mule.module.apikit;
 
 import org.mule.DefaultMuleMessage;
+import org.mule.VoidMuleEvent;
 import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
+import org.mule.api.routing.filter.FilterUnacceptedException;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.api.transformer.TransformerException;
 import org.mule.api.transport.PropertyScope;
+import org.mule.config.i18n.CoreMessages;
 import org.mule.construct.Flow;
 import org.mule.message.ds.StringDataSource;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
@@ -101,6 +104,10 @@ public class HttpRestRequest
         String responseRepresentation = negotiateOutputRepresentation(responseMimeTypes);
         MuleEvent responseEvent = flow.process(requestEvent);
 
+        if (responseEvent == null || VoidMuleEvent.getInstance().equals(responseEvent))
+        {
+            throw new FilterUnacceptedException(CoreMessages.messageRejectedByFilter(), requestEvent);
+        }
         if (responseRepresentation != null)
         {
             transformToExpectedContentType(responseEvent, responseRepresentation, responseMimeTypes);
