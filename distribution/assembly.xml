@@ -10,6 +10,7 @@
             <outputDirectory>lib</outputDirectory>
             <includes>
                 <include>org.mule.modules:mule-module-apikit</include>
+                <include>org.mule.modules:mule-module-cors</include>
                 <include>org.raml:raml-parser</include>
                 <include>org.yaml:snakeyaml</include>
                 <include>com.google.guava:guava</include>
