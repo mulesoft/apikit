@@ -9,7 +9,9 @@
     <link rel="stylesheet" href="styles/app.css" type="text/css" />
   </head>
   <body ng-app="ramlConsoleApp" id="raml-console-unembedded">
-    <raml-console src="api-definition-file" with-root-documentation></raml-console>
+    <div style="position:relative; height: 100vh; overflow: auto;">
+      <raml-console src="api-definition-file" with-root-documentation></raml-console>
+    </div>
     <script src="vendor.js"></script>
     <script src="app.js"></script>
   </body>
