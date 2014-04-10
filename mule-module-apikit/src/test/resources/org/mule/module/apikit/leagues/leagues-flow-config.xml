@@ -159,6 +159,10 @@
                 </spring:list>
             </spring:property>
         </spring:bean>
+        <spring:bean id="league-one" class="org.mule.module.apikit.leagues.League">
+            <spring:property name="id" value="league+one"/>
+            <spring:property name="name" value="League One"/>
+        </spring:bean>
         <spring:bean id="english-federation" class="org.mule.module.apikit.leagues.Federation">
             <spring:property name="name" value="Football Association"/>
             <spring:property name="year" value="1863"/>
@@ -168,6 +172,7 @@
                 <spring:list>
                     <spring:ref bean="liga-bbva"/>
                     <spring:ref bean="premier-league"/>
+                    <spring:ref bean="league-one"/>
                 </spring:list>
             </spring:property>
         </spring:bean>

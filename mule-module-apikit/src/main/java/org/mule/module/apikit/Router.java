@@ -27,6 +27,7 @@ import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.uri.ResolvedVariables;
+import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.transport.http.HttpConstants;
@@ -128,7 +129,7 @@ public class Router implements MessageProcessor, Startable, MuleContextAware, Fl
                         {
                             public URIResolver load(String path) throws IOException
                             {
-                                return new URIResolver(path);
+                                return new URIResolver(URICoder.encode(path, '/'));
                             }
                         });
 

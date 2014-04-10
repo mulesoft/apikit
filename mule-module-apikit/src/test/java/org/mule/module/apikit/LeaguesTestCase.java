@@ -142,7 +142,7 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().body("{ \"name\": \"Major League Soccer\" }")
                 .contentType("application/json")
             .expect().statusCode(201)
-                .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/3")
+                .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/4")
                 .body(is("")).header("Content-Length", "0")
             .when().post("/api/leagues");
     }
@@ -153,7 +153,7 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().body("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>")
                 .contentType("text/xml")
             .expect().statusCode(201)
-                .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/3")
+                .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/4")
             .when().post("/api/leagues");
     }
 
@@ -393,6 +393,15 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().statusCode(200)
             .when().get("/api/leagues/liga-bbva/teams/leader");
+    }
+
+    @Test
+    public void resolveTemplateWithSpecialChars() throws Exception
+    {
+        given()
+            .expect()
+                .response().statusCode(200)
+            .when().get("/api/leagues/league+one");
     }
 
 

@@ -53,7 +53,7 @@ traits:
         uriParameters:
             leagueId:
                 type: string
-                pattern: '[-a-zA-Z0-9]*'
+                pattern: '[-a-zA-Z0-9+]*'
                 minLength: 1
                 maxLength: 20
         get:
