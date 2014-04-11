@@ -233,7 +233,10 @@ public class Configuration
         String chBaseUri = scheme + "://" + chAddress + path;
         if (logger.isDebugEnabled())
         {
-            logger.debug("yaml baseUri: " + api.getBaseUri());
+            if (api != null) 
+            {
+                logger.debug("yaml baseUri: " + api.getBaseUri());
+            }
             logger.debug("mule baseUri: " + address);
             logger.debug("chub baseUri: " + chBaseUri);
         }

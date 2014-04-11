@@ -84,6 +84,8 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
                 throw new InitialisationException(MessageFactory.createStaticMessage("APIKit configuration not Found"), this);
             }
         }
+        consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct), "");
+        consoleHandler.publishConsoleUrl(muleContext.getConfiguration().getWorkingDirectory());
     }
 
     @Override
@@ -111,10 +113,6 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
             return event;
         }
 
-        if (consoleHandler == null)
-        {
-            consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct), "");
-        }
         return consoleHandler.process(event);
     }
 }
