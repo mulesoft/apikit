@@ -4,6 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
+
 package org.mule.module.apikit;
 
 import static org.mule.module.apikit.Configuration.BIND_ALL_HOST;
@@ -21,10 +22,13 @@ import org.mule.transport.http.components.ResourceNotFoundException;
 import org.mule.transport.http.i18n.HttpMessages;
 import org.mule.util.FilenameUtils;
 import org.mule.util.IOUtils;
+import org.mule.util.StringMessageUtils;
 import org.mule.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -44,6 +48,8 @@ public class ConsoleHandler
     public static final String MIME_TYPE_GIF = "image/gif";
     public static final String MIME_TYPE_CSS = "text/css";
 
+    private static final String CONSOLE_URL_FILE = "consoleurl";
+
     private static final String RESOURCE_BASE = "/console";
 
     private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
@@ -51,16 +57,18 @@ public class ConsoleHandler
     private String baseHost;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private String ramlUri;
 
     public ConsoleHandler(String ramlUri, String consolePath) throws InitialisationException
     {
         this.consolePath = sanitize(consolePath);
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
-        ramlUri = ramlUri.endsWith("/")? ramlUri : ramlUri + "/";
-        String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"", "<raml-console src=\"" + ramlUri + "\"");
+        this.ramlUri = ramlUri.endsWith("/") ? ramlUri : ramlUri + "/";
+        String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
+                                                     "<raml-console src=\"" + this.ramlUri + "\"");
         try
         {
-            baseHost = new URI(ramlUri).getHost();
+            baseHost = new URI(this.ramlUri).getHost();
         }
         catch (URISyntaxException e)
         {
@@ -88,7 +96,8 @@ public class ConsoleHandler
         String path = event.getMessage().getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
         String contextPath = event.getMessage().getInboundProperty(HttpConnector.HTTP_CONTEXT_PATH_PROPERTY);
 
-        // Remove the contextPath from the endpoint from the request as this isn't part of the path.
+        // Remove the contextPath from the endpoint from the request as this isn't
+        // part of the path.
         path = path.substring(contextPath.length());
         if (!path.startsWith("/") && !path.isEmpty())
         {
@@ -105,8 +114,9 @@ public class ConsoleHandler
         {
             if (path.equals(consolePath))
             {
-                //client redirect
-                event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, String.valueOf(HttpConstants.SC_MOVED_PERMANENTLY));
+                // client redirect
+                event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
+                                                       String.valueOf(HttpConstants.SC_MOVED_PERMANENTLY));
                 String context = event.getMessage().getInboundProperty("http.context.uri");
                 String scheme = context.substring(0, context.indexOf("/"));
                 String host = event.getMessage().getInboundProperty("Host");
@@ -151,7 +161,8 @@ public class ConsoleHandler
             }
 
             resultEvent = new DefaultMuleEvent(new DefaultMuleMessage(buffer, event.getMuleContext()), event);
-            resultEvent.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY, String.valueOf(HttpConstants.SC_OK));
+            resultEvent.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
+                                                         String.valueOf(HttpConstants.SC_OK));
             resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, mimetype);
             resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length);
         }
@@ -203,6 +214,45 @@ public class ConsoleHandler
             mimeType = MIME_TYPE_CSS;
         }
         return mimeType;
+    }
+
+    public void publishConsoleUrl(String parentDirectory)
+    {
+        String path = "";
+        if (consolePath.startsWith("/"))
+        {
+            path = consolePath.substring(1, consolePath.length());
+        }
+        String consoleUrl = ramlUri + path;
+        if (!consoleUrl.isEmpty())
+        {
+            File urlFile = new File(parentDirectory, CONSOLE_URL_FILE);
+            FileWriter writer = null;
+            try
+            {
+                if (!urlFile.exists())
+                {
+                    urlFile.createNewFile();
+                }
+                writer = new FileWriter(urlFile, true);
+                writer.write(consoleUrl + "\n");
+                writer.flush();
+            }
+            catch (IOException e)
+            {
+                logger.error("cannot publish console url for studio", e);
+            }
+            finally
+            {
+                IOUtils.closeQuietly(writer);
+            }
+
+            if (logger.isInfoEnabled())
+            {
+                String msg = String.format("APIKit Console URL: %s", consoleUrl);
+                logger.info(StringMessageUtils.getBoilerPlate(msg));
+            }
+        }
     }
 
 }
