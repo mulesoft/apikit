@@ -17,7 +17,13 @@ import org.mule.api.endpoint.ImmutableEndpoint;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.util.BeanUtils;
+import org.mule.util.IOUtils;
+import org.mule.util.StringMessageUtils;
+import org.mule.util.StringUtils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -44,6 +50,7 @@ public class Configuration
     public static final String APPLICATION_RAML = "application/raml+yaml";
     public static final String BIND_ALL_HOST = "0.0.0.0";
     public static final String DEFAULT_CONSOLE_PATH = "console";
+    private static final String CONSOLE_URL_FILE = "consoleurl";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -57,6 +64,7 @@ public class Configuration
     private Raml api;
     private String baseHost;
     private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
+    private List<String> consoleUrls = new ArrayList<String>();
 
     public String getName()
     {
@@ -252,4 +260,50 @@ public class Configuration
         return address;
     }
 
+    public void addConsoleUrl(String url)
+    {
+        if (StringUtils.isNotBlank(url))
+        {
+            consoleUrls.add(url);
+        }
+    }
+
+    public void publishConsoleUrls(String parentDirectory)
+    {
+        File urlFile = new File(parentDirectory, CONSOLE_URL_FILE);
+        FileWriter writer = null;
+        try
+        {
+            if (!urlFile.exists())
+            {
+                urlFile.createNewFile();
+            }
+            writer = new FileWriter(urlFile, true);
+
+
+            for (String consoleUrl : consoleUrls)
+            {
+                writer.write(consoleUrl + "\n");
+            }
+
+            writer.flush();
+        }
+        catch (IOException e)
+        {
+            logger.error("cannot publish console url for studio", e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(writer);
+        }
+
+        if (logger.isInfoEnabled())
+        {
+            for (String consoleUrl : consoleUrls)
+            {
+                String msg = String.format("APIKit Console URL: %s", consoleUrl);
+                logger.info(StringMessageUtils.getBoilerPlate(msg));
+            }
+        }
+    }
 }

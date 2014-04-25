@@ -115,7 +115,7 @@ public class Router implements MessageProcessor, Startable, MuleContextAware, Fl
         if (config.isConsoleEnabled())
         {
             consoleHandler = new ConsoleHandler(getApi().getBaseUri(), config.getConsolePath());
-            consoleHandler.publishConsoleUrl(muleContext.getConfiguration().getWorkingDirectory());
+            config.addConsoleUrl(consoleHandler.getConsoleUrl());
         }
 
         routingTable = new HashMap<URIPattern, Resource>();
@@ -168,6 +168,7 @@ public class Router implements MessageProcessor, Startable, MuleContextAware, Fl
                                 }
                             }
                         });
+        config.publishConsoleUrls(muleContext.getConfiguration().getWorkingDirectory());
     }
 
     private void loadRestFlowMap()

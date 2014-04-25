@@ -85,7 +85,7 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
             }
         }
         consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct), "");
-        consoleHandler.publishConsoleUrl(muleContext.getConfiguration().getWorkingDirectory());
+        config.addConsoleUrl(consoleHandler.getConsoleUrl());
     }
 
     @Override
