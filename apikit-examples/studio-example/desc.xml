@@ -12,8 +12,17 @@
             <excludes>
                 <exclude>*.iml</exclude>
                 <exclude>target/**</exclude>
+                <exclude>pom.xml</exclude>
             </excludes>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>example-pom.xml</source>
+            <outputDirectory></outputDirectory>
+            <destName>pom.xml</destName>
+            <filtered>true</filtered>
+        </file>
+    </files>
 </assembly>

@@ -15,6 +15,12 @@
     <name>APIkit Example</name>
     <description>Mule APIKit sample application</description>
 
+    <properties>
+        <meta.mule.version>mule.version</meta.mule.version>
+        <meta.prefix>${</meta.prefix>
+        <meta.suffix>}</meta.suffix>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
