@@ -20,7 +20,7 @@
     <files>
         <file>
             <source>example-pom.xml</source>
-            <outputDirectory></outputDirectory>
+            <outputDirectory>leagues</outputDirectory>
             <destName>pom.xml</destName>
             <filtered>true</filtered>
         </file>
