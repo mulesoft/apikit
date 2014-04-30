@@ -37,7 +37,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +58,6 @@ public class Router implements MessageProcessor, Startable, MuleContextAware, Fl
     private MuleContext muleContext;
     private FlowConstruct flowConstruct;
     private Configuration config;
-    private Map<String, Flow> restFlowMap;
     private Map<URIPattern, Resource> routingTable;
     private LoadingCache<String, URIResolver> uriResolverCache;
     private LoadingCache<String, URIPattern> uriPatternCache;
@@ -110,8 +108,7 @@ public class Router implements MessageProcessor, Startable, MuleContextAware, Fl
             }
         }
 
-        loadRestFlowMap();
-        config.loadApiDefinition(muleContext, flowConstruct, restFlowMap);
+        config.loadApiDefinition(muleContext, flowConstruct);
         if (config.isConsoleEnabled())
         {
             consoleHandler = new ConsoleHandler(getApi().getBaseUri(), config.getConsolePath());
@@ -169,47 +166,6 @@ public class Router implements MessageProcessor, Startable, MuleContextAware, Fl
                             }
                         });
         config.publishConsoleUrls(muleContext.getConfiguration().getWorkingDirectory());
-    }
-
-    private void loadRestFlowMap()
-    {
-        restFlowMap = new HashMap<String, Flow>();
-        Collection<Flow> flows = muleContext.getRegistry().lookupObjects(Flow.class);
-        for (Flow flow : flows)
-        {
-            String key = getRestFlowKey(flow.getName());
-            if (key != null)
-            {
-                restFlowMap.put(key, flow);
-            }
-        }
-        for (FlowMapping mapping : config.getFlowMappings())
-        {
-            restFlowMap.put(mapping.getAction() + ":" + mapping.getResource(), mapping.getFlow());
-        }
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("==== RestFlows defined:");
-            for (String key : restFlowMap.keySet())
-            {
-                logger.debug("\t\t" + key);
-            }
-        }
-    }
-
-    private String getRestFlowKey(String name)
-    {
-        String[] coords = name.split(":");
-        String[] methods = {"get", "put", "post", "delete", "head", "patch", "options"};
-        if (coords.length < 2 || !Arrays.asList(methods).contains(coords[0]))
-        {
-            return null;
-        }
-        if (coords.length == 3 && !coords[2].equals(config.getName()))
-        {
-            return null;
-        }
-        return coords[0] + ":" + coords[1];
     }
 
     private void buildRoutingTable(Map<String, Resource> resources)
@@ -326,12 +282,7 @@ public class Router implements MessageProcessor, Startable, MuleContextAware, Fl
 
     private Flow getFlow(Resource resource, String method)
     {
-        return restFlowMap.get(method + ":" + resource.getUri());
-    }
-
-    Map<String, Flow> getRestFlowMap()
-    {
-        return restFlowMap;
+        return config.getRestFlowMap().get(method + ":" + resource.getUri());
     }
 
     @Override

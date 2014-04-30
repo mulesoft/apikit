@@ -27,7 +27,7 @@ public class InvalidRamlTestCase
         router.getConfig().setRaml("org/mule/module/apikit/invalid-config.yaml");
         try
         {
-            router.getConfig().validateRaml(new DefaultResourceLoader(), router.getRestFlowMap());
+            router.getConfig().validateRaml(new DefaultResourceLoader());
             fail();
         }
         catch (ApikitRuntimeException e)

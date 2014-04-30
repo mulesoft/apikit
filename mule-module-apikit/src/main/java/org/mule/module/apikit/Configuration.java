@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,6 +68,7 @@ public class Configuration
     private String baseHost;
     private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
     private List<String> consoleUrls = new ArrayList<String>();
+    private Map<String, Flow> restFlowMap;
 
     public String getName()
     {
@@ -162,7 +166,7 @@ public class Configuration
         return hostRaml;
     }
 
-    public void loadApiDefinition(MuleContext muleContext, FlowConstruct flowConstruct, Map<String, Flow> restFlowMap)
+    public void loadApiDefinition(MuleContext muleContext, FlowConstruct flowConstruct)
     {
         this.flowConstruct = flowConstruct;
         ResourceLoader loader = new DefaultResourceLoader();
@@ -171,7 +175,8 @@ public class Configuration
         {
             loader = new CompositeResourceLoader(new FileResourceLoader(appHome), loader);
         }
-        validateRaml(loader, restFlowMap);
+        initializeRestFlowMap(muleContext);
+        validateRaml(loader);
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(getRaml());
         injectEndpointUri();
@@ -180,8 +185,7 @@ public class Configuration
         apikitRaml.put(baseHost, new RamlEmitter().dump(api));
     }
 
-
-    protected void validateRaml(ResourceLoader resourceLoader, Map<String, Flow> restFlowMap)
+    protected void validateRaml(ResourceLoader resourceLoader)
     {
         NodeRuleFactory ruleFactory = new NodeRuleFactory(new ActionImplementedRuleExtension(restFlowMap));
         List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader, ruleFactory).validate(getRaml());
@@ -306,4 +310,54 @@ public class Configuration
             }
         }
     }
+
+    private void initializeRestFlowMap(MuleContext muleContext)
+    {
+        if (restFlowMap == null)
+        {
+            restFlowMap = new HashMap<String, Flow>();
+            Collection<Flow> flows = muleContext.getRegistry().lookupObjects(Flow.class);
+            for (Flow flow : flows)
+            {
+                String key = getRestFlowKey(flow.getName());
+                if (key != null)
+                {
+                    restFlowMap.put(key, flow);
+                }
+            }
+            for (FlowMapping mapping : getFlowMappings())
+            {
+                restFlowMap.put(mapping.getAction() + ":" + mapping.getResource(), mapping.getFlow());
+            }
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("==== RestFlows defined:");
+                for (String key : restFlowMap.keySet())
+                {
+                    logger.debug("\t\t" + key);
+                }
+            }
+        }
+    }
+
+    public Map<String, Flow> getRestFlowMap()
+    {
+        return restFlowMap;
+    }
+
+    private String getRestFlowKey(String name)
+    {
+        String[] coords = name.split(":");
+        String[] methods = {"get", "put", "post", "delete", "head", "patch", "options"};
+        if (coords.length < 2 || !Arrays.asList(methods).contains(coords[0]))
+        {
+            return null;
+        }
+        if (coords.length == 3 && !coords[2].equals(getName()))
+        {
+            return null;
+        }
+        return coords[0] + ":" + coords[1];
+    }
+
 }
