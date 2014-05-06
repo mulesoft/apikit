@@ -3,9 +3,11 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:cors="http://www.mulesoft.org/schema/mule/cors"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+        http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd">
 
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
         <apikit:mapping statusCode="404">
@@ -34,12 +36,18 @@
 
     <flow name="router">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <cors:validate publicResource="true" />
         <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
     <flow name="console">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="konsole"/>
+        <apikit:console/>
+    </flow>
+
+    <flow name="consoleNoPath">
+        <http:inbound-endpoint port="${serverPort2}" host="localhost"/>
         <apikit:console/>
     </flow>
 

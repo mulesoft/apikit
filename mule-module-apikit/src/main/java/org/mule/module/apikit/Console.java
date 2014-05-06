@@ -101,7 +101,7 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
         String path = request.getResourcePath();
 
         //check for raml descriptor request
-        if (path.isEmpty() &&
+        if ((path.isEmpty() || path.equals("/")) &&
             ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
             request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML))
         {
