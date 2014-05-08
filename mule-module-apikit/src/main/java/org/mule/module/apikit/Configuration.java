@@ -64,11 +64,13 @@ public class Configuration
     private boolean disableValidations;
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private FlowConstruct flowConstruct;
+    private MuleContext muleContext;
     private Raml api;
     private String baseHost;
     private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
     private List<String> consoleUrls = new ArrayList<String>();
     private Map<String, Flow> restFlowMap;
+    private boolean started;
 
     public String getName()
     {
@@ -169,13 +171,14 @@ public class Configuration
     public void loadApiDefinition(MuleContext muleContext, FlowConstruct flowConstruct)
     {
         this.flowConstruct = flowConstruct;
+        this.muleContext = muleContext;
         ResourceLoader loader = new DefaultResourceLoader();
         String appHome = muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
         if (appHome != null)
         {
             loader = new CompositeResourceLoader(new FileResourceLoader(appHome), loader);
         }
-        initializeRestFlowMap(muleContext);
+        initializeRestFlowMap();
         validateRaml(loader);
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(getRaml());
@@ -274,6 +277,37 @@ public class Configuration
 
     public void publishConsoleUrls(String parentDirectory)
     {
+        started = true;
+        if (isLastRouterToStart())
+        {
+            dumpUrlsFile(parentDirectory);
+        }
+
+        if (logger.isInfoEnabled())
+        {
+            for (String consoleUrl : consoleUrls)
+            {
+                String msg = String.format("APIKit Console URL: %s", consoleUrl);
+                logger.info(StringMessageUtils.getBoilerPlate(msg));
+            }
+        }
+    }
+
+    private boolean isLastRouterToStart()
+    {
+        Collection<Configuration> configurations = muleContext.getRegistry().lookupObjects(Configuration.class);
+        for (Configuration configuration : configurations)
+        {
+            if (!configuration.started)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void dumpUrlsFile(String parentDirectory)
+    {
         File urlFile = new File(parentDirectory, CONSOLE_URL_FILE);
         FileWriter writer = null;
         try
@@ -285,7 +319,7 @@ public class Configuration
             writer = new FileWriter(urlFile, true);
 
 
-            for (String consoleUrl : consoleUrls)
+            for (String consoleUrl : getAllConsoleUrls())
             {
                 writer.write(consoleUrl + "\n");
             }
@@ -300,18 +334,20 @@ public class Configuration
         {
             IOUtils.closeQuietly(writer);
         }
-
-        if (logger.isInfoEnabled())
-        {
-            for (String consoleUrl : consoleUrls)
-            {
-                String msg = String.format("APIKit Console URL: %s", consoleUrl);
-                logger.info(StringMessageUtils.getBoilerPlate(msg));
-            }
-        }
     }
 
-    private void initializeRestFlowMap(MuleContext muleContext)
+    private List<String> getAllConsoleUrls()
+    {
+        List<String> urls = new ArrayList<String>();
+        Collection<Configuration> configurations = muleContext.getRegistry().lookupObjects(Configuration.class);
+        for (Configuration configuration : configurations)
+        {
+            urls.addAll(configuration.consoleUrls);
+        }
+        return urls;
+    }
+
+    private void initializeRestFlowMap()
     {
         if (restFlowMap == null)
         {
