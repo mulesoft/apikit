@@ -19,10 +19,33 @@
     </fileSets>
     <files>
         <file>
-            <source>example-pom.xml</source>
+            <source>dot-classpath</source>
             <outputDirectory>leagues</outputDirectory>
-            <destName>pom.xml</destName>
-            <filtered>true</filtered>
+            <destName>.classpath</destName>
+        </file>
+        <file>
+            <source>dot-project</source>
+            <outputDirectory>leagues</outputDirectory>
+            <destName>.project</destName>
+        </file>
+        <file>
+            <source>mule-project.xml</source>
+            <outputDirectory>leagues</outputDirectory>
         </file>
     </files>
+
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>leagues/lib</outputDirectory>
+            <useStrictFiltering>true</useStrictFiltering>
+            <useProjectArtifact>false</useProjectArtifact>
+            <scope>runtime</scope>
+            <fileMode>0644</fileMode>
+            <includes>
+                <include>com.googlecode.json-simple:json-simple</include>
+                <include>com.jayway.restassured:rest-assured</include>
+                <include>org.hamcrest:hamcrest-library</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
 </assembly>
