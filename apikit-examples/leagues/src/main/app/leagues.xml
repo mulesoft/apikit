@@ -15,7 +15,7 @@
         <service-overrides sessionHandler="org.mule.session.NullSessionHandler"/>
     </http:connector>
 
-    <apikit:config name="leaguesApi" raml="leagues.raml" consoleEnabled="true" consolePath="console" />
+    <apikit:config name="leaguesApi" raml="leagues.raml" consoleEnabled="false"/>
 
     <spring:bean id="league-api" class="org.mule.examples.leagues.LeagueAPI" init-method="initialize"/>
     <context:property-placeholder location="leagues.properties" />
@@ -57,6 +57,11 @@
         <http:inbound-endpoint address="http://localhost:${http.port}/api" connector-ref="httpConnector"/>
         <apikit:router config-ref="leaguesApi"/>
         <exception-strategy ref="apiKitGlobalExceptionMapping" />
+    </flow>
+
+    <flow name="console">
+        <http:inbound-endpoint address="http://localhost:${http.port}/console" connector-ref="httpConnector"/>
+        <apikit:console config-ref="leaguesApi"/>
     </flow>
 
     <flow name="delete:/teams/{teamId}:leaguesApi">
