@@ -6,15 +6,15 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.module.apikit.transform.ApikitResponseTransformer.BEST_MATCH_REPRESENTATION;
+import static org.mule.module.apikit.transform.ApikitResponseTransformer.CONTRACT_MIME_TYPES;
+
 import org.mule.DefaultMuleMessage;
 import org.mule.VoidMuleEvent;
-import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.routing.filter.FilterUnacceptedException;
-import org.mule.api.transformer.DataType;
-import org.mule.api.transformer.Transformer;
 import org.mule.api.transformer.TransformerException;
 import org.mule.api.transport.PropertyScope;
 import org.mule.config.i18n.CoreMessages;
@@ -28,11 +28,10 @@ import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
-import org.mule.module.apikit.transform.TransformerCache;
+import org.mule.module.apikit.transform.ApikitResponseTransformer;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
-import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
 import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
@@ -64,12 +63,15 @@ public class HttpRestRequest
     private Configuration config;
     private Action action;
     private HttpProtocolAdapter adapter;
+    private ApikitResponseTransformer responseTransformer;
 
     public HttpRestRequest(MuleEvent event, Configuration config)
     {
         requestEvent = event;
         this.config = config;
         adapter = new HttpProtocolAdapter(event);
+        responseTransformer = new ApikitResponseTransformer();
+        responseTransformer.setMuleContext(requestEvent.getMuleContext());
     }
 
     public HttpProtocolAdapter getAdapter()
@@ -102,31 +104,46 @@ public class HttpRestRequest
         negotiateInputRepresentation();
         List<MimeType> responseMimeTypes = getResponseMimeTypes();
         String responseRepresentation = negotiateOutputRepresentation(responseMimeTypes);
+
+        if (responseMimeTypes != null)
+        {
+            requestEvent.getMessage().setInvocationProperty(CONTRACT_MIME_TYPES, responseMimeTypes);
+        }
+        if (responseRepresentation != null)
+        {
+            requestEvent.getMessage().setInvocationProperty(BEST_MATCH_REPRESENTATION, responseRepresentation);
+        }
+
         MuleEvent responseEvent = flow.process(requestEvent);
 
         if (responseEvent == null || VoidMuleEvent.getInstance().equals(responseEvent))
         {
             throw new FilterUnacceptedException(CoreMessages.messageRejectedByFilter(), requestEvent);
         }
+        MuleMessage message = responseEvent.getMessage();
         if (responseRepresentation != null)
         {
-            transformToExpectedContentType(responseEvent, responseRepresentation, responseMimeTypes);
+            Object newPayload = responseTransformer.transformToExpectedContentType(message, responseRepresentation, responseMimeTypes);
+            if (!message.getPayload().equals(newPayload))
+            {
+                message.setPayload(newPayload);
+            }
         }
         else
         {
             //sent empty response body when no response mime-type is defined
-            responseEvent.getMessage().setPayload(NullPayload.getInstance());
+            message.setPayload(NullPayload.getInstance());
         }
 
         //set success status
-        if (responseEvent.getMessage().getOutboundProperty("http.status") == null)
+        if (message.getOutboundProperty("http.status") == null)
         {
             int status = getSuccessStatus();
             if (status == -1)
             {
                 throw new ApikitRuntimeException("No success status defined for action: " + action);
             }
-            responseEvent.getMessage().setOutboundProperty("http.status", getSuccessStatus());
+            message.setOutboundProperty("http.status", getSuccessStatus());
         }
 
         return responseEvent;
@@ -209,88 +226,6 @@ public class HttpRestRequest
     {
         requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
         requestEvent.getMessage().<Map<String, String>>getInboundProperty("http.headers").put(key, value);
-    }
-
-    private void transformToExpectedContentType(MuleEvent muleEvent, String responseRepresentation, List<MimeType> responseMimeTypes) throws MuleException
-    {
-        MuleMessage message = muleEvent.getMessage();
-        String msgMimeType = message.getDataType() != null ? message.getDataType().getMimeType() : null;
-        String msgContentType = message.getOutboundProperty("Content-Type");
-
-        // user is in charge of setting content-type when using */*
-        if ("*/*".equals(responseRepresentation))
-        {
-            if (msgContentType == null)
-            {
-                throw new ApikitRuntimeException("Content-Type must be set in the flow when declaring */* response type");
-            }
-            return;
-        }
-
-        if (message.getPayload() instanceof NullPayload)
-        {
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Response transformation not required. Message payload type is NullPayload");
-            }
-            return;
-        }
-
-        String msgAcceptedContentType = acceptedContentType(msgMimeType, msgContentType, responseMimeTypes);
-        if (msgAcceptedContentType != null)
-        {
-            message.setOutboundProperty("Content-Type", msgAcceptedContentType);
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("Response transformation not required. Message payload type is " + msgAcceptedContentType);
-            }
-            return;
-        }
-        DataType sourceDataType = DataTypeFactory.create(message.getPayload().getClass(), msgMimeType);
-        DataType resultDataType = DataTypeFactory.create(String.class, responseRepresentation);
-
-        if (logger.isDebugEnabled())
-        {
-            logger.debug(String.format("Resolving transformer between [source=%s] and [result=%s]", sourceDataType, resultDataType));
-        }
-
-        Transformer transformer;
-        try
-        {
-            transformer = TransformerCache.getTransformerCache(muleEvent.getMuleContext()).get(new DataTypePair(sourceDataType, resultDataType));
-            if (logger.isDebugEnabled())
-            {
-                logger.debug(String.format("Transformer resolved to [transformer=%s]", transformer));
-            }
-            Object payload = transformer.transform(message.getPayload());
-            message.setPayload(payload);
-            message.setOutboundProperty("Content-Type", responseRepresentation);
-        }
-        catch (Exception e)
-        {
-            throw new DefaultMuleException(e);
-        }
-
-    }
-
-    /**
-     * checks if the current payload type is any of the accepted ones.
-     * @return null if it is not
-     */
-    private String acceptedContentType(String msgMimeType, String msgContentType, List<MimeType> responseMimeTypes)
-    {
-        for (MimeType responseMimeType : responseMimeTypes)
-        {
-            if (msgMimeType != null && msgMimeType.contains(responseMimeType.getType()))
-            {
-                return responseMimeType.getType();
-            }
-            if (msgContentType != null && msgContentType.contains(responseMimeType.getType()))
-            {
-                return responseMimeType.getType();
-            }
-        }
-        return null;
     }
 
     private void negotiateInputRepresentation() throws MuleRestException
