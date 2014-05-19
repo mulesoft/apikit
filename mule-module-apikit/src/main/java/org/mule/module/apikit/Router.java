@@ -48,7 +48,7 @@ public class Router extends AbstractRouter
                 throw new StartException(MessageFactory.createStaticMessage("APIKit configuration not Found"), this);
             }
         }
-        config.loadApiDefinition(muleContext, flowConstruct);
+        config.loadApiDefinition(flowConstruct);
         if (getConfig().isConsoleEnabled())
         {
             consoleHandler = new ConsoleHandler(getApi().getBaseUri(), getConfig().getConsolePath());

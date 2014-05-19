@@ -101,6 +101,7 @@ public class Configuration extends AbstractConfiguration
         this.flowMappings = flowMappings;
     }
 
+    @Override
     protected ResourceLoader getRamlResourceLoader()
     {
         ResourceLoader loader = new DefaultResourceLoader();

@@ -19,7 +19,6 @@ import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.api.registry.RegistrationException;
 import org.mule.config.i18n.MessageFactory;
-import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.transport.http.HttpConstants;
 
 import org.raml.model.ActionType;
@@ -91,11 +90,6 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
     @Override
     public MuleEvent process(MuleEvent event) throws MuleException
     {
-        if (getApi() == null)
-        {
-            throw new ApikitRuntimeException("API not initialized. Probably there is no APIkit Router associated to the Configuration");
-        }
-
         HttpRestRequest request = new HttpRestRouterRequest(event, getConfig());
 
         String path = request.getResourcePath();

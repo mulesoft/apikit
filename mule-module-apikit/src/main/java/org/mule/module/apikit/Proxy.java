@@ -11,6 +11,7 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.construct.FlowConstruct;
+import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.lifecycle.StartException;
 import org.mule.construct.Flow;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
@@ -82,7 +83,16 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
         protected void startConfiguration() throws StartException
         {
             config = new ProxyConfiguration(ramlUrl, disableValidations, next);
-            config.loadApiDefinition(muleContext, flowConstruct);
+            config.setMuleContext(muleContext);
+            try
+            {
+                config.initialise();
+            }
+            catch (InitialisationException e)
+            {
+                throw new RuntimeException(e);
+            }
+            config.loadApiDefinition(flowConstruct);
             basicFlow = buildBasicFlow();
         }
 

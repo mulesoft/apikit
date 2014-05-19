@@ -16,6 +16,7 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -46,6 +47,7 @@ public class PathlessEndpointStandaloneTestCase extends FunctionalTestCase
     }
 
     @Test
+    @Ignore //TODO reenable after refactoring standalone console
     public void consoleWithoutRouter()
     {
         RestAssured.port = serverPortNoRouter.getNumber();

@@ -12,7 +12,10 @@ import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 
 import org.mule.api.MuleContext;
 import org.mule.api.construct.FlowConstruct;
+import org.mule.api.context.MuleContextAware;
 import org.mule.api.endpoint.ImmutableEndpoint;
+import org.mule.api.lifecycle.Initialisable;
+import org.mule.api.lifecycle.InitialisationException;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.util.BeanUtils;
@@ -37,7 +40,7 @@ import org.raml.parser.visitor.RamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractConfiguration
+public abstract class AbstractConfiguration implements Initialisable, MuleContextAware
 {
     public static final String APPLICATION_RAML = "application/raml+yaml";
     public static final String BIND_ALL_HOST = "0.0.0.0";
@@ -53,19 +56,28 @@ public abstract class AbstractConfiguration
     private boolean disableValidations;
     protected Map<String, FlowResolver> restFlowMapWrapper;
 
-    public void loadApiDefinition(MuleContext muleContext, FlowConstruct flowConstruct)
+    @Override
+    public void initialise() throws InitialisationException
     {
-        this.flowConstruct = flowConstruct;
-        this.muleContext = muleContext;
+        if (muleContext == null)
+        {
+            return;
+        }
+
         ResourceLoader loader = getRamlResourceLoader();
         initializeRestFlowMap();
         validateRaml(loader);
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(raml);
+        initializeRestFlowMapWrapper();
+    }
+
+    public void loadApiDefinition(FlowConstruct flowConstruct)
+    {
+        this.flowConstruct = flowConstruct;
         injectEndpointUri(api);
         apikitRaml = new ConcurrentHashMap<String, String>();
         apikitRaml.put(baseHost, new RamlEmitter().dump(api));
-        initializeRestFlowMapWrapper();
     }
 
     protected abstract void initializeRestFlowMap();
@@ -211,6 +223,11 @@ public abstract class AbstractConfiguration
     public MuleContext getMuleContext()
     {
         return muleContext;
+    }
+
+    public void setMuleContext(MuleContext muleContext)
+    {
+        this.muleContext = muleContext;
     }
 
     protected void initializeRestFlowMapWrapper()

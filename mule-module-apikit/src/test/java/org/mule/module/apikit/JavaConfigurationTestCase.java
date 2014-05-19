@@ -10,6 +10,7 @@ import static com.jayway.restassured.RestAssured.given;
 
 import org.mule.api.MuleContext;
 import org.mule.api.endpoint.InboundEndpoint;
+import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.LoggerMessageProcessor;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
@@ -79,19 +80,19 @@ public class JavaConfigurationTestCase extends AbstractMuleTestCase
             InboundEndpoint inboundEndpoint = endpointURIEndpointBuilder.buildInboundEndpoint();
             muleContext.getRegistry().registerEndpoint(inboundEndpoint);
 
-            //gateway flow
-            Flow routerFlow = new Flow("RestRouterFlow", muleContext);
-            routerFlow.setMessageSource(inboundEndpoint);
-            final Router apikitRouter = configureApikitRouter(muleContext);
-            routerFlow.setMessageProcessors(Arrays.<MessageProcessor>asList(apikitRouter));
-            muleContext.getRegistry().registerFlowConstruct(routerFlow);
-
             //action-resource flow
             final Flow flow = new Flow("get:/leagues", muleContext);
             LoggerMessageProcessor loggerMessageProcessor = new LoggerMessageProcessor();
             loggerMessageProcessor.setMessage("Payload is #[payload]");
             flow.setMessageProcessors(Collections.<MessageProcessor>singletonList(loggerMessageProcessor));
             muleContext.getRegistry().registerFlowConstruct(flow);
+
+            //gateway flow
+            Flow routerFlow = new Flow("RestRouterFlow", muleContext);
+            routerFlow.setMessageSource(inboundEndpoint);
+            final Router apikitRouter = configureApikitRouter(muleContext);
+            routerFlow.setMessageProcessors(Arrays.<MessageProcessor>asList(apikitRouter));
+            muleContext.getRegistry().registerFlowConstruct(routerFlow);
 
             //start app
             muleContext.start();
@@ -103,11 +104,13 @@ public class JavaConfigurationTestCase extends AbstractMuleTestCase
         }
     }
 
-    private Router configureApikitRouter(MuleContext muleContext) throws IllegalAccessException, InvocationTargetException
+    private Router configureApikitRouter(MuleContext muleContext) throws IllegalAccessException, InvocationTargetException, InitialisationException
     {
         final Router apikitRouter = new Router();
         final Configuration config = new Configuration();
         config.setRaml("org/mule/module/apikit/leagues/leagues.yaml");
+        config.setMuleContext(muleContext);
+        config.initialise();
         apikitRouter.setConfig(config);
         apikitRouter.setMuleContext(muleContext);
         return apikitRouter;
