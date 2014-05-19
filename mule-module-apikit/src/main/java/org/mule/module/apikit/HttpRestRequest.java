@@ -54,18 +54,18 @@ import org.raml.model.parameter.QueryParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HttpRestRequest
+public abstract class HttpRestRequest
 {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private MuleEvent requestEvent;
-    private Configuration config;
-    private Action action;
-    private HttpProtocolAdapter adapter;
-    private ApikitResponseTransformer responseTransformer;
+    protected MuleEvent requestEvent;
+    protected AbstractConfiguration config;
+    protected Action action;
+    protected HttpProtocolAdapter adapter;
+    protected ApikitResponseTransformer responseTransformer;
 
-    public HttpRestRequest(MuleEvent event, Configuration config)
+    public HttpRestRequest(MuleEvent event, AbstractConfiguration config)
     {
         requestEvent = event;
         this.config = config;
@@ -116,38 +116,10 @@ public class HttpRestRequest
 
         MuleEvent responseEvent = flow.process(requestEvent);
 
-        if (responseEvent == null || VoidMuleEvent.getInstance().equals(responseEvent))
-        {
-            throw new FilterUnacceptedException(CoreMessages.messageRejectedByFilter(), requestEvent);
-        }
-        MuleMessage message = responseEvent.getMessage();
-        if (responseRepresentation != null)
-        {
-            Object newPayload = responseTransformer.transformToExpectedContentType(message, responseRepresentation, responseMimeTypes);
-            if (!message.getPayload().equals(newPayload))
-            {
-                message.setPayload(newPayload);
-            }
-        }
-        else
-        {
-            //sent empty response body when no response mime-type is defined
-            message.setPayload(NullPayload.getInstance());
-        }
-
-        //set success status
-        if (message.getOutboundProperty("http.status") == null)
-        {
-            int status = getSuccessStatus();
-            if (status == -1)
-            {
-                throw new ApikitRuntimeException("No success status defined for action: " + action);
-            }
-            message.setOutboundProperty("http.status", getSuccessStatus());
-        }
-
-        return responseEvent;
+        return processResponse(responseEvent, responseMimeTypes, responseRepresentation);
     }
+
+    protected abstract MuleEvent processResponse(MuleEvent responseEvent, List<MimeType> responseMimeTypes, String responseRepresentation) throws TransformerException, FilterUnacceptedException;
 
     private void processQueryParameters() throws InvalidQueryParameterException
     {
@@ -406,7 +378,7 @@ public class HttpRestRequest
         return mimeTypes;
     }
 
-    private int getSuccessStatus()
+    protected int getSuccessStatus()
     {
         for (String status : action.getResponses().keySet())
         {

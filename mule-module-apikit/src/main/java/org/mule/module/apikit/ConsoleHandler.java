@@ -13,7 +13,6 @@ import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.api.lifecycle.InitialisationException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
@@ -52,7 +51,7 @@ public class ConsoleHandler
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private String ramlUri;
 
-    public ConsoleHandler(String ramlUri, String consolePath) throws InitialisationException
+    public ConsoleHandler(String ramlUri, String consolePath)
     {
         this.consolePath = sanitize(consolePath);
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));

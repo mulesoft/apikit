@@ -101,6 +101,28 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:element name="proxy" type="proxyType" substitutionGroup="mule:abstract-message-processor">
+        <xsd:annotation>
+            <xsd:documentation>
+                Message processor that proxies a ReST API described in RAML.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="proxyType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractMessageProcessorType">
+                <xsd:attribute name="ramlUrl" type="mule:nonBlankString" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The RAML URL that describes the API to be proxied.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <xsd:element name="mapping-exception-strategy" type="mappingExceptionStrategyType"
                  substitutionGroup="mule:abstract-exception-strategy">
         <xsd:annotation>

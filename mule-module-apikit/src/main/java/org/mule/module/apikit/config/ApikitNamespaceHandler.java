@@ -16,6 +16,7 @@ import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.Console;
 import org.mule.module.apikit.FlowMapping;
 import org.mule.module.apikit.MappingExceptionListener;
+import org.mule.module.apikit.Proxy;
 import org.mule.module.apikit.RestMappingExceptionStrategy;
 import org.mule.module.apikit.Router;
 
@@ -28,6 +29,7 @@ public class ApikitNamespaceHandler extends MuleNamespaceHandler
         registerBeanDefinitionParser("flow-mapping", new ChildDefinitionParser("flowMapping", FlowMapping.class, false));
         registerBeanDefinitionParser("router", new ChildDefinitionParser("messageProcessor", Router.class));
         registerBeanDefinitionParser("console", new ChildDefinitionParser("messageProcessor", Console.class));
+        registerBeanDefinitionParser("proxy", new ChildDefinitionParser("messageProcessor", Proxy.class));
         registerBeanDefinitionParser("mapping-exception-strategy", new ExceptionStrategyDefinitionParser(RestMappingExceptionStrategy.class));
         registerBeanDefinitionParser("mapping", new ChildDefinitionParser("exceptionListener", MappingExceptionListener.class, false));
         registerBeanDefinitionParser("exception", new ChildListEntryDefinitionParser("exception", "value"));

@@ -6,17 +6,12 @@
  */
 package org.mule.module.apikit;
 
-import static org.raml.parser.rule.ValidationResult.Level.ERROR;
-import static org.raml.parser.rule.ValidationResult.Level.WARN;
-import static org.raml.parser.rule.ValidationResult.UNKNOWN;
-
 import org.mule.api.MuleContext;
+import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.api.config.MuleProperties;
-import org.mule.api.construct.FlowConstruct;
-import org.mule.api.endpoint.ImmutableEndpoint;
+import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
-import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.util.BeanUtils;
 import org.mule.util.IOUtils;
 import org.mule.util.StringMessageUtils;
 import org.mule.util.StringUtils;
@@ -24,50 +19,34 @@ import org.mule.util.StringUtils;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import org.raml.emitter.RamlEmitter;
-import org.raml.model.Raml;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.NodeRuleFactory;
-import org.raml.parser.rule.ValidationResult;
-import org.raml.parser.visitor.RamlDocumentBuilder;
-import org.raml.parser.visitor.RamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Configuration
+public class Configuration extends AbstractConfiguration
 {
 
-    public static final String APPLICATION_RAML = "application/raml+yaml";
-    public static final String BIND_ALL_HOST = "0.0.0.0";
     public static final String DEFAULT_CONSOLE_PATH = "console";
     private static final String CONSOLE_URL_FILE = "consoleurl";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private String name;
-    private String raml;
     private boolean consoleEnabled = true;
     private String consolePath = DEFAULT_CONSOLE_PATH;
-    private boolean disableValidations;
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
-    private FlowConstruct flowConstruct;
-    private MuleContext muleContext;
-    private Raml api;
-    private String baseHost;
-    private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
     private List<String> consoleUrls = new ArrayList<String>();
     private Map<String, Flow> restFlowMap;
     private boolean started;
@@ -112,16 +91,6 @@ public class Configuration
         this.consolePath = consolePath;
     }
 
-    public boolean isDisableValidations()
-    {
-        return disableValidations;
-    }
-
-    public void setDisableValidations(boolean disableValidations)
-    {
-        this.disableValidations = disableValidations;
-    }
-
     public List<FlowMapping> getFlowMappings()
     {
         return flowMappings;
@@ -132,139 +101,21 @@ public class Configuration
         this.flowMappings = flowMappings;
     }
 
-    public Raml getApi()
+    protected ResourceLoader getRamlResourceLoader()
     {
-        return api;
-    }
-
-    /**
-     * Returns the RAML descriptor of the API.
-     * If the baseUri is bound to all interfaces (0.0.0.0) the host parameter
-     * is used to rewrite the base uri with the actual host received.
-     */
-    public String getApikitRaml(String host)
-    {
-        if (!BIND_ALL_HOST.equals(baseHost))
-        {
-            return apikitRaml.get(baseHost);
-        }
-
-        String hostRaml = apikitRaml.get(host);
-        if (hostRaml == null)
-        {
-            Raml clone;
-            try
-            {
-                clone = (Raml) BeanUtils.cloneBean(api);
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(e);
-            }
-            clone.setBaseUri(api.getBaseUri().replace(baseHost, host));
-            hostRaml = new RamlEmitter().dump(clone);
-            apikitRaml.put(host, hostRaml);
-        }
-        return hostRaml;
-    }
-
-    public void loadApiDefinition(MuleContext muleContext, FlowConstruct flowConstruct)
-    {
-        this.flowConstruct = flowConstruct;
-        this.muleContext = muleContext;
         ResourceLoader loader = new DefaultResourceLoader();
         String appHome = muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
         if (appHome != null)
         {
             loader = new CompositeResourceLoader(new FileResourceLoader(appHome), loader);
         }
-        initializeRestFlowMap();
-        validateRaml(loader);
-        RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
-        api = builder.build(getRaml());
-        injectEndpointUri();
-        flowMappings = new ArrayList<FlowMapping>();
-        apikitRaml = new ConcurrentHashMap<String, String>();
-        apikitRaml.put(baseHost, new RamlEmitter().dump(api));
+        return loader;
     }
 
-    protected void validateRaml(ResourceLoader resourceLoader)
+    @Override
+    protected NodeRuleFactory getValidatorNodeRuleFactory()
     {
-        NodeRuleFactory ruleFactory = new NodeRuleFactory(new ActionImplementedRuleExtension(restFlowMap));
-        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader, ruleFactory).validate(getRaml());
-        List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
-        if (!errors.isEmpty())
-        {
-            String msg = aggregateMessages(errors, "Invalid API descriptor -- errors found: ");
-            throw new ApikitRuntimeException(msg);
-        }
-        List<ValidationResult> warnings = ValidationResult.getLevel(WARN, results);
-        if (!warnings.isEmpty())
-        {
-            logger.warn(aggregateMessages(warnings, "API descriptor Warnings -- warnings found: "));
-        }
-    }
-
-    private String aggregateMessages(List<ValidationResult> results, String header)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append(header).append(results.size()).append("\n\n");
-        for (ValidationResult result : results)
-        {
-            sb.append(result.getMessage()).append(" -- ");
-            sb.append(" file: ");
-            sb.append(result.getIncludeName() != null ? result.getIncludeName() : getRaml());
-            if (result.getLine() != UNKNOWN)
-            {
-                sb.append(" -- line ");
-                sb.append(result.getLine());
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-
-    private void injectEndpointUri()
-    {
-        String address = getEndpointAddress(flowConstruct);
-        api.setBaseUri(address);
-        try
-        {
-            baseHost = new URI(address).getHost();
-        }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public String getEndpointAddress(FlowConstruct flowConstruct)
-    {
-        ImmutableEndpoint endpoint = (ImmutableEndpoint) ((Flow) flowConstruct).getMessageSource();
-        String address = endpoint.getAddress();
-        String path = endpoint.getEndpointURI().getPath();
-        String scheme = endpoint.getEndpointURI().getScheme();
-        String chAddress = System.getProperty("fullDomain");
-        String chBaseUri = scheme + "://" + chAddress + path;
-        if (logger.isDebugEnabled())
-        {
-            if (api != null)
-            {
-                logger.debug("yaml baseUri: " + api.getBaseUri());
-            }
-            logger.debug("mule baseUri: " + address);
-            logger.debug("chub baseUri: " + chBaseUri);
-        }
-        if (chAddress != null)
-        {
-            address = chBaseUri;
-        }
-        if (address.endsWith("/"))
-        {
-            logger.debug("removing trailing slash from baseuri -> " + address);
-            address = address.substring(0, address.length() - 1);
-        }
-        return address;
+        return new NodeRuleFactory(new ActionImplementedRuleExtension(restFlowMap));
     }
 
     public void addConsoleUrl(String url)
@@ -347,11 +198,13 @@ public class Configuration
         return urls;
     }
 
-    private void initializeRestFlowMap()
+    protected void initializeRestFlowMap()
     {
         if (restFlowMap == null)
         {
             restFlowMap = new HashMap<String, Flow>();
+
+            //init flows by convention
             Collection<Flow> flows = muleContext.getRegistry().lookupObjects(Flow.class);
             for (Flow flow : flows)
             {
@@ -361,10 +214,13 @@ public class Configuration
                     restFlowMap.put(key, flow);
                 }
             }
+
+            //init flow mappings
             for (FlowMapping mapping : getFlowMappings())
             {
                 restFlowMap.put(mapping.getAction() + ":" + mapping.getResource(), mapping.getFlow());
             }
+
             if (logger.isDebugEnabled())
             {
                 logger.debug("==== RestFlows defined:");
@@ -376,7 +232,7 @@ public class Configuration
         }
     }
 
-    public Map<String, Flow> getRestFlowMap()
+    public Map<String, Flow> getRawRestFlowMap()
     {
         return restFlowMap;
     }
@@ -396,4 +252,72 @@ public class Configuration
         return coords[0] + ":" + coords[1];
     }
 
+    @Override
+    protected FlowResolver getFlowResolver(AbstractConfiguration abstractConfiguration, String key)
+    {
+        return new RouterFlowResolver((Configuration) abstractConfiguration, key);
+    }
+
+    private static class RouterFlowResolver implements FlowResolver
+    {
+
+        private static final String WRAPPER_FLOW_SUFFIX = "-gateway-wrapper";
+
+        private Map<String, Flow> restFlowMap;
+        private String key;
+        private Flow targetFlow;
+        private Flow wrapperFlow;
+
+        RouterFlowResolver(Configuration configuration, String key)
+        {
+            this.restFlowMap = configuration.restFlowMap;
+            this.key = key;
+            this.targetFlow = restFlowMap.get(key);
+        }
+
+        @Override
+        public Flow getFlow()
+        {
+            //already wrapped
+            if (wrapperFlow != null)
+            {
+                return wrapperFlow;
+            }
+
+            //target not implemented
+            if (targetFlow == null)
+            {
+                return null;
+            }
+
+            //wrap target
+            wrapperFlow = wrapFlow();
+            restFlowMap.put(key, wrapperFlow);
+            return wrapperFlow;
+        }
+
+        private Flow wrapFlow()
+        {
+            String flowName = targetFlow.getName() + WRAPPER_FLOW_SUFFIX;
+            MuleContext muleContext = targetFlow.getMuleContext();
+            Flow wrapper = new Flow(flowName, muleContext);
+            wrapper.setMessageProcessors(Collections.<MessageProcessor>singletonList(new MessageProcessor()
+            {
+                @Override
+                public MuleEvent process(MuleEvent muleEvent) throws MuleException
+                {
+                    return targetFlow.process(muleEvent);
+                }
+            }));
+            try
+            {
+                muleContext.getRegistry().registerFlowConstruct(wrapper);
+            }
+            catch (MuleException e)
+            {
+                throw new RuntimeException("Error registering flow " + flowName, e);
+            }
+            return wrapper;
+        }
+    }
 }
