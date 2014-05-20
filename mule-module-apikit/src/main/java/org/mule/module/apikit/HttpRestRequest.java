@@ -10,17 +10,13 @@ import static org.mule.module.apikit.transform.ApikitResponseTransformer.BEST_MA
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.CONTRACT_MIME_TYPES;
 
 import org.mule.DefaultMuleMessage;
-import org.mule.VoidMuleEvent;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.api.MuleMessage;
 import org.mule.api.routing.filter.FilterUnacceptedException;
 import org.mule.api.transformer.TransformerException;
 import org.mule.api.transport.PropertyScope;
-import org.mule.config.i18n.CoreMessages;
 import org.mule.construct.Flow;
 import org.mule.message.ds.StringDataSource;
-import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.exception.InvalidFormParameterException;
 import org.mule.module.apikit.exception.InvalidHeaderException;
@@ -28,11 +24,9 @@ import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
-import org.mule.module.apikit.transform.ApikitResponseTransformer;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
-import org.mule.transport.NullPayload;
 import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
 
@@ -63,15 +57,12 @@ public abstract class HttpRestRequest
     protected AbstractConfiguration config;
     protected Action action;
     protected HttpProtocolAdapter adapter;
-    protected ApikitResponseTransformer responseTransformer;
 
     public HttpRestRequest(MuleEvent event, AbstractConfiguration config)
     {
         requestEvent = event;
         this.config = config;
         adapter = new HttpProtocolAdapter(event);
-        responseTransformer = new ApikitResponseTransformer();
-        responseTransformer.setMuleContext(requestEvent.getMuleContext());
     }
 
     public HttpProtocolAdapter getAdapter()

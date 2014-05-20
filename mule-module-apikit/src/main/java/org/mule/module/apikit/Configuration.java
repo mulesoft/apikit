@@ -10,8 +10,11 @@ import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.config.MuleProperties;
+import org.mule.api.processor.DynamicPipelineException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
+import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.transform.ApikitResponseTransformer;
 import org.mule.util.IOUtils;
 import org.mule.util.StringMessageUtils;
 import org.mule.util.StringUtils;
@@ -222,6 +225,8 @@ public class Configuration extends AbstractConfiguration
                 restFlowMap.put(mapping.getAction() + ":" + mapping.getResource(), mapping.getFlow());
             }
 
+            addResponseTransformers(restFlowMap.values());
+
             if (logger.isDebugEnabled())
             {
                 logger.debug("==== RestFlows defined:");
@@ -229,6 +234,25 @@ public class Configuration extends AbstractConfiguration
                 {
                     logger.debug("\t\t" + key);
                 }
+            }
+        }
+    }
+
+    private void addResponseTransformers(Collection<Flow> flows)
+    {
+        for (Flow flow : flows)
+        {
+            try
+            {
+                flow.dynamicPipeline(null).injectAfter(new ApikitResponseTransformer()).resetAndUpdate();
+            }
+            catch (DynamicPipelineException e)
+            {
+                //ignore, transformer already added
+            }
+            catch (MuleException e)
+            {
+                throw new ApikitRuntimeException(e);
             }
         }
     }

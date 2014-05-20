@@ -33,7 +33,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         List<MimeType> responseMimeTypes = message.getInvocationProperty(CONTRACT_MIME_TYPES);
         if (responseRepresentation == null)
         {
-            //no transformation required
+            message.setPayload(NullPayload.getInstance());
             return message;
         }
         return transformToExpectedContentType(message, responseRepresentation, responseMimeTypes);

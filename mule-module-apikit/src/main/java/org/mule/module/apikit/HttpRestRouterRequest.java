@@ -13,7 +13,6 @@ import org.mule.api.routing.filter.FilterUnacceptedException;
 import org.mule.api.transformer.TransformerException;
 import org.mule.config.i18n.CoreMessages;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.transport.NullPayload;
 
 import java.util.List;
 
@@ -35,19 +34,6 @@ public class HttpRestRouterRequest extends HttpRestRequest
             throw new FilterUnacceptedException(CoreMessages.messageRejectedByFilter(), requestEvent);
         }
         MuleMessage message = responseEvent.getMessage();
-        if (responseRepresentation != null)
-        {
-            Object newPayload = responseTransformer.transformToExpectedContentType(message, responseRepresentation, responseMimeTypes);
-            if (!message.getPayload().equals(newPayload))
-            {
-                message.setPayload(newPayload);
-            }
-        }
-        else
-        {
-            //sent empty response body when no response mime-type is defined
-            message.setPayload(NullPayload.getInstance());
-        }
 
         //set success status
         if (message.getOutboundProperty("http.status") == null)
@@ -60,5 +46,6 @@ public class HttpRestRouterRequest extends HttpRestRequest
             message.setOutboundProperty("http.status", getSuccessStatus());
         }
 
-        return responseEvent;    }
+        return responseEvent;
+    }
 }
