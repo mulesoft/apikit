@@ -120,7 +120,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     protected abstract NodeRuleFactory getValidatorNodeRuleFactory();
 
-    protected abstract ResourceLoader getRamlResourceLoader();
+    public abstract ResourceLoader getRamlResourceLoader();
 
     private void injectEndpointUri(Raml ramlApi)
     {

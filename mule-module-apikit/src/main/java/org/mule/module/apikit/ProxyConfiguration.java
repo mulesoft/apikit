@@ -53,7 +53,7 @@ public class ProxyConfiguration extends AbstractConfiguration
     }
 
     @Override
-    protected ResourceLoader getRamlResourceLoader()
+    public ResourceLoader getRamlResourceLoader()
     {
         return new RamlUrlResourceLoader();
     }

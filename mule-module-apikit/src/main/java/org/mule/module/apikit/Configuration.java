@@ -102,7 +102,7 @@ public class Configuration extends AbstractConfiguration
     }
 
     @Override
-    protected ResourceLoader getRamlResourceLoader()
+    public ResourceLoader getRamlResourceLoader()
     {
         ResourceLoader loader = new DefaultResourceLoader();
         String appHome = muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
