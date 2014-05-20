@@ -24,14 +24,10 @@ public class Router extends AbstractRouter
 
     private ConsoleHandler consoleHandler;
 
-    public void setConfig(Configuration config)
-    {
-        this.config = config;
-    }
-
+    @Override
     public Configuration getConfig()
     {
-        return (Configuration) config;
+        return (Configuration) super.getConfig();
     }
 
     @Override

@@ -7,7 +7,6 @@
 package org.mule.module.apikit;
 
 import org.mule.api.MuleContext;
-import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
@@ -18,14 +17,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.raml.model.Action;
-import org.raml.model.ActionType;
-import org.raml.model.Resource;
 import org.raml.parser.loader.ResourceLoader;
-import org.raml.parser.loader.UrlResourceLoader;
 import org.raml.parser.rule.NodeRuleFactory;
 
 public class ProxyConfiguration extends AbstractConfiguration
@@ -33,11 +26,9 @@ public class ProxyConfiguration extends AbstractConfiguration
 
     private MessageProcessor chain;
 
-    public ProxyConfiguration(String ramlUrl, boolean disableValidations, MessageProcessor next)
+    public void setChain(MessageProcessor chain)
     {
-        this.chain = next;
-        this.raml = ramlUrl;
-        this.setDisableValidations(disableValidations);
+        this.chain = chain;
     }
 
     @Override
@@ -78,6 +69,15 @@ public class ProxyConfiguration extends AbstractConfiguration
             }
             return inputStream;
 
+        }
+    }
+
+    @Override
+    protected void initializeRestFlowMapWrapper()
+    {
+        if (chain != null)
+        {
+            super.initializeRestFlowMapWrapper();
         }
     }
 

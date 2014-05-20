@@ -151,6 +151,15 @@ public abstract class AbstractRouter implements ApiRouter
         this.flowConstruct = flowConstruct;
     }
 
+    public void setConfig(AbstractConfiguration config)
+    {
+        this.config = config;
+    }
+
+    public AbstractConfiguration getConfig()
+    {
+        return config;
+    }
 
     @Override
     public MuleEvent process(MuleEvent event) throws MuleException

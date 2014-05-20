@@ -101,6 +101,31 @@
         </xsd:complexContent>
     </xsd:complexType>
 
+    <xsd:element name="proxy-config" type="proxyConfigType" substitutionGroup="mule:abstract-extension">
+        <xsd:annotation>
+            <xsd:documentation>
+                APIkit Proxy configuration element.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="proxyConfigType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractExtensionType">
+                <xsd:attribute name="name" type="mule:nonBlankString" use="optional"/>
+                <xsd:attribute name="raml" type="mule:nonBlankString" use="required"/>
+                <xsd:attribute name="disableValidations" type="mule:substitutableBoolean" default="false" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Do no perform validation of uri parameters, headers, query parameters and body schemas.
+                            Default values are not enforced by the server.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <xsd:element name="proxy" type="proxyType" substitutionGroup="mule:abstract-message-processor">
         <xsd:annotation>
             <xsd:documentation>
@@ -112,16 +137,17 @@
     <xsd:complexType name="proxyType">
         <xsd:complexContent>
             <xsd:extension base="mule:abstractMessageProcessorType">
-                <xsd:attribute name="ramlUrl" type="mule:nonBlankString" use="required">
+                <xsd:attribute name="config-ref" type="mule:nonBlankString" use="optional">
                     <xsd:annotation>
                         <xsd:documentation>
-                            The RAML URL that describes the API to be proxied.
+                            The Proxy configuration.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+
 
     <xsd:element name="mapping-exception-strategy" type="mappingExceptionStrategyType"
                  substitutionGroup="mule:abstract-exception-strategy">

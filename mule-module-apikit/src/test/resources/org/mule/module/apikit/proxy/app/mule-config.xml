@@ -7,10 +7,18 @@
         http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
 
+    <apikit:proxy-config name="proxy-config" raml="http://localhost:${serverPort}/api" disableValidations="false"/>
+
     <flow name="proxy">
         <http:inbound-endpoint port="${proxyPort}" host="localhost" path="proxy"/>
-        <apikit:proxy ramlUrl="http://localhost:${serverPort}/api"/>
+        <apikit:proxy config-ref="proxy-config"/>
         <http:outbound-endpoint host="localhost" port="${serverPort}" path="api/#[message.inboundProperties['http.relative.path']]"/>
     </flow>
 
+    <!--
+    <flow name="proxyConsole">
+        <http:inbound-endpoint port="${proxyPort}" host="localhost" path="proxyConsole"/>
+        <apikiit:console config-ref="proxy-config" />
+    </flow>
+    -->
 </mule>

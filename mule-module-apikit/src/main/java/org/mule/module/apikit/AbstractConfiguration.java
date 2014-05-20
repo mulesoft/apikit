@@ -49,6 +49,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     protected FlowConstruct flowConstruct;
     protected MuleContext muleContext;
+    private String name;
     protected String raml;
     protected Raml api;
     private String baseHost;
@@ -257,5 +258,25 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     }
 
     protected abstract FlowResolver getFlowResolver(AbstractConfiguration abstractConfiguration, String key);
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getRaml()
+    {
+        return raml;
+    }
+
+    public void setRaml(String raml)
+    {
+        this.raml = raml;
+    }
 
 }

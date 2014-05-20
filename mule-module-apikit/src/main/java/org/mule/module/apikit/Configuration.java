@@ -46,33 +46,12 @@ public class Configuration extends AbstractConfiguration
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private String name;
     private boolean consoleEnabled = true;
     private String consolePath = DEFAULT_CONSOLE_PATH;
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private List<String> consoleUrls = new ArrayList<String>();
     private Map<String, Flow> restFlowMap;
     private boolean started;
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public String getRaml()
-    {
-        return raml;
-    }
-
-    public void setRaml(String raml)
-    {
-        this.raml = raml;
-    }
 
     public boolean isConsoleEnabled()
     {

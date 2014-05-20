@@ -11,8 +11,9 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.construct.FlowConstruct;
-import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.lifecycle.StartException;
+import org.mule.api.registry.RegistrationException;
+import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
 
@@ -24,8 +25,6 @@ import org.raml.model.Resource;
 public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRouter
 {
 
-    private String ramlUrl;
-    private boolean disableValidations;
     private ProxyRouter proxyRouter = new ProxyRouter();
 
     @Override
@@ -38,28 +37,6 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
     public MuleEvent process(MuleEvent muleEvent) throws MuleException
     {
         return proxyRouter.process(muleEvent);
-    }
-
-    //schema attributes
-
-    public String getRamlUrl()
-    {
-        return ramlUrl;
-    }
-
-    public void setRamlUrl(String ramlUrl)
-    {
-        this.ramlUrl = ramlUrl;
-    }
-
-    public boolean isDisableValidations()
-    {
-        return disableValidations;
-    }
-
-    public void setDisableValidations(boolean disableValidations)
-    {
-        this.disableValidations = disableValidations;
     }
 
     @Override
@@ -75,6 +52,11 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
         proxyRouter.setMuleContext(context);
     }
 
+    public void setConfig(ProxyConfiguration config)
+    {
+        proxyRouter.setConfig(config);
+    }
+
     private class ProxyRouter extends AbstractRouter
     {
         private Flow basicFlow;
@@ -82,16 +64,19 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
         @Override
         protected void startConfiguration() throws StartException
         {
-            config = new ProxyConfiguration(ramlUrl, disableValidations, next);
-            config.setMuleContext(muleContext);
-            try
+            if (config == null)
             {
-                config.initialise();
+                try
+                {
+                    config = muleContext.getRegistry().lookupObject(ProxyConfiguration.class);
+                }
+                catch (RegistrationException e)
+                {
+                    throw new StartException(MessageFactory.createStaticMessage("APIKit Proxy configuration not Found"), this);
+                }
             }
-            catch (InitialisationException e)
-            {
-                throw new RuntimeException(e);
-            }
+            ((ProxyConfiguration) config).setChain(next);
+            config.initializeRestFlowMapWrapper();
             config.loadApiDefinition(flowConstruct);
             basicFlow = buildBasicFlow();
         }
