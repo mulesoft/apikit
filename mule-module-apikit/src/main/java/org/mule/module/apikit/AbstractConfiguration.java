@@ -19,9 +19,17 @@ import org.mule.api.lifecycle.InitialisationException;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.util.BeanUtils;
+import org.mule.util.IOUtils;
+import org.mule.util.StringMessageUtils;
+import org.mule.util.StringUtils;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +52,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 {
     public static final String APPLICATION_RAML = "application/raml+yaml";
     public static final String BIND_ALL_HOST = "0.0.0.0";
+    private static final String CONSOLE_URL_FILE = "consoleurl";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -56,6 +65,8 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
     private boolean disableValidations;
     protected Map<String, FlowResolver> restFlowMapWrapper;
+    private List<String> consoleUrls = new ArrayList<String>();
+    private boolean started;
 
     @Override
     public void initialise() throws InitialisationException
@@ -258,6 +269,88 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     }
 
     protected abstract FlowResolver getFlowResolver(AbstractConfiguration abstractConfiguration, String key);
+
+    public void addConsoleUrl(String url)
+    {
+        if (StringUtils.isNotBlank(url))
+        {
+            consoleUrls.add(url);
+        }
+    }
+
+    public void publishConsoleUrls(String parentDirectory)
+    {
+        started = true;
+        if (isLastRouterToStart())
+        {
+            dumpUrlsFile(parentDirectory);
+        }
+
+        if (logger.isInfoEnabled())
+        {
+            for (String consoleUrl : consoleUrls)
+            {
+                String msg = String.format("APIKit Console URL: %s", consoleUrl);
+                logger.info(StringMessageUtils.getBoilerPlate(msg));
+            }
+        }
+    }
+
+    private boolean isLastRouterToStart()
+    {
+        Collection configurations = muleContext.getRegistry().lookupObjects(Configuration.class);
+        configurations.addAll(muleContext.getRegistry().lookupObjects(ProxyConfiguration.class));
+        for (Object configuration : configurations)
+        {
+            if (!((AbstractConfiguration) configuration).started)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private void dumpUrlsFile(String parentDirectory)
+    {
+        File urlFile = new File(parentDirectory, CONSOLE_URL_FILE);
+        FileWriter writer = null;
+        try
+        {
+            if (!urlFile.exists())
+            {
+                urlFile.createNewFile();
+            }
+            writer = new FileWriter(urlFile, true);
+
+
+            for (String consoleUrl : getAllConsoleUrls())
+            {
+                writer.write(consoleUrl + "\n");
+            }
+
+            writer.flush();
+        }
+        catch (IOException e)
+        {
+            logger.error("cannot publish console url for studio", e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(writer);
+        }
+    }
+
+    private List<String> getAllConsoleUrls()
+    {
+        List<String> urls = new ArrayList<String>();
+        Collection configurations = muleContext.getRegistry().lookupObjects(Configuration.class);
+        configurations.addAll(muleContext.getRegistry().lookupObjects(ProxyConfiguration.class));
+        for (Object configuration : configurations)
+        {
+            urls.addAll(((AbstractConfiguration) configuration).consoleUrls);
+        }
+        return urls;
+    }
 
     public String getName()
     {

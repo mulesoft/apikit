@@ -60,6 +60,7 @@ public abstract class AbstractRouter implements ApiRouter
     public void start() throws MuleException
     {
         startConfiguration();
+        getConfig().publishConsoleUrls(muleContext.getConfiguration().getWorkingDirectory());
         routingTable = new HashMap<URIPattern, Resource>();
         buildRoutingTable(getApi().getResources());
 

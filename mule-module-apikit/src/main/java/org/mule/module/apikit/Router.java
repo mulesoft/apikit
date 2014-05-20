@@ -50,7 +50,6 @@ public class Router extends AbstractRouter
             consoleHandler = new ConsoleHandler(getApi().getBaseUri(), getConfig().getConsolePath());
             getConfig().addConsoleUrl(consoleHandler.getConsoleUrl());
         }
-        getConfig().publishConsoleUrls(muleContext.getConfiguration().getWorkingDirectory());
     }
 
     @Override

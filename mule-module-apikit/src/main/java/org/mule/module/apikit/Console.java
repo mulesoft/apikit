@@ -27,7 +27,7 @@ import org.raml.model.Raml;
 public class Console implements MessageProcessor, Initialisable, MuleContextAware, FlowConstructAware
 {
 
-    private Configuration config;
+    private AbstractConfiguration config;
     private MuleContext muleContext;
     private ConsoleHandler consoleHandler;
     private FlowConstruct flowConstruct;
@@ -44,12 +44,12 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
         this.flowConstruct = flowConstruct;
     }
 
-    public void setConfig(Configuration config)
+    public void setConfig(AbstractConfiguration config)
     {
         this.config = config;
     }
 
-    public Configuration getConfig()
+    public AbstractConfiguration getConfig()
     {
         return config;
     }

@@ -15,13 +15,7 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.transform.ApikitResponseTransformer;
-import org.mule.util.IOUtils;
-import org.mule.util.StringMessageUtils;
-import org.mule.util.StringUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -42,16 +36,13 @@ public class Configuration extends AbstractConfiguration
 {
 
     public static final String DEFAULT_CONSOLE_PATH = "console";
-    private static final String CONSOLE_URL_FILE = "consoleurl";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private boolean consoleEnabled = true;
     private String consolePath = DEFAULT_CONSOLE_PATH;
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
-    private List<String> consoleUrls = new ArrayList<String>();
     private Map<String, Flow> restFlowMap;
-    private boolean started;
 
     public boolean isConsoleEnabled()
     {
@@ -99,86 +90,6 @@ public class Configuration extends AbstractConfiguration
     protected NodeRuleFactory getValidatorNodeRuleFactory()
     {
         return new NodeRuleFactory(new ActionImplementedRuleExtension(restFlowMap));
-    }
-
-    public void addConsoleUrl(String url)
-    {
-        if (StringUtils.isNotBlank(url))
-        {
-            consoleUrls.add(url);
-        }
-    }
-
-    public void publishConsoleUrls(String parentDirectory)
-    {
-        started = true;
-        if (isLastRouterToStart())
-        {
-            dumpUrlsFile(parentDirectory);
-        }
-
-        if (logger.isInfoEnabled())
-        {
-            for (String consoleUrl : consoleUrls)
-            {
-                String msg = String.format("APIKit Console URL: %s", consoleUrl);
-                logger.info(StringMessageUtils.getBoilerPlate(msg));
-            }
-        }
-    }
-
-    private boolean isLastRouterToStart()
-    {
-        Collection<Configuration> configurations = muleContext.getRegistry().lookupObjects(Configuration.class);
-        for (Configuration configuration : configurations)
-        {
-            if (!configuration.started)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private void dumpUrlsFile(String parentDirectory)
-    {
-        File urlFile = new File(parentDirectory, CONSOLE_URL_FILE);
-        FileWriter writer = null;
-        try
-        {
-            if (!urlFile.exists())
-            {
-                urlFile.createNewFile();
-            }
-            writer = new FileWriter(urlFile, true);
-
-
-            for (String consoleUrl : getAllConsoleUrls())
-            {
-                writer.write(consoleUrl + "\n");
-            }
-
-            writer.flush();
-        }
-        catch (IOException e)
-        {
-            logger.error("cannot publish console url for studio", e);
-        }
-        finally
-        {
-            IOUtils.closeQuietly(writer);
-        }
-    }
-
-    private List<String> getAllConsoleUrls()
-    {
-        List<String> urls = new ArrayList<String>();
-        Collection<Configuration> configurations = muleContext.getRegistry().lookupObjects(Configuration.class);
-        for (Configuration configuration : configurations)
-        {
-            urls.addAll(configuration.consoleUrls);
-        }
-        return urls;
     }
 
     protected void initializeRestFlowMap()

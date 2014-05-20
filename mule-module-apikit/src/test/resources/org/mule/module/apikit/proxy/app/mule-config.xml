@@ -15,10 +15,9 @@
         <http:outbound-endpoint host="localhost" port="${serverPort}" path="api/#[message.inboundProperties['http.relative.path']]"/>
     </flow>
 
-    <!--
     <flow name="proxyConsole">
         <http:inbound-endpoint port="${proxyPort}" host="localhost" path="proxyConsole"/>
-        <apikiit:console config-ref="proxy-config" />
+        <apikit:console config-ref="proxy-config" />
     </flow>
-    -->
+
 </mule>
