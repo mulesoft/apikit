@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+    <apikit:proxy-config name="proxy-config" raml="http://localhost:8080/proxy.raml" />
+
+    <flow name="main">
+        <http:inbound-endpoint address="http://localhost:8081/api"/>
+        <apikit:proxy config-ref="proxy-config"/>
+        <http:outbound-endpoint host="ec2-54-197-182-102.compute-1.amazonaws.com" port="8080" path="repository/#[message.inboundProperties['http.relative.path']]"/>
+    </flow>
+
+    <flow name="console">
+        <http:inbound-endpoint address="http://localhost:8081/console"/>
+        <apikit:console config-ref="proxy-config"/>
+    </flow>
+
+</mule>

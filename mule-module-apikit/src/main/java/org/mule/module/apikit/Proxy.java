@@ -17,15 +17,50 @@ import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.raml.model.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRouter
 {
 
+    public static final Set<String> MULE_REQUEST_HEADERS;
+    public static final Set<String> MULE_RESPONSE_HEADERS;
+
+    protected static final Logger LOGGER = LoggerFactory.getLogger(Proxy.class);
+
     private ProxyRouter proxyRouter = new ProxyRouter();
+
+    static
+    {
+        String[] headers =
+                {
+                        "http.context.path",
+                        "http.context.uri",
+                        "http.headers",
+                        "http.method",
+                        "http.query.params",
+                        "http.query.string",
+                        "http.relative.path",
+                        "http.request",
+                        "http.request.path",
+                        "http.status",
+                        "http.version",
+                        "server",
+                        "x-mule_encoding",
+                        "x-mule_session",
+                        "MULE_ORIGINATING_ENDPOINT",
+                        "MULE_REMOTE_CLIENT_ADDRESS"
+                };
+        MULE_RESPONSE_HEADERS = new HashSet<String>(Arrays.asList(headers));
+        MULE_REQUEST_HEADERS = new HashSet<String>(MULE_RESPONSE_HEADERS);
+        MULE_REQUEST_HEADERS.remove("http.method");
+    }
 
     @Override
     public void start() throws MuleException
@@ -57,8 +92,30 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
         proxyRouter.setConfig(config);
     }
 
+    public static void copyProperties(MuleEvent event, Set<String> skip)
+    {
+        MuleMessage message = event.getMessage();
+        Set<String> inboundPropertyNames = message.getInboundPropertyNames();
+        for (String name : inboundPropertyNames)
+        {
+            if (!skip.contains(name))
+            {
+                if (LOGGER.isDebugEnabled())
+                {
+                    LOGGER.debug(String.format(">>>>>>>  copying header %s -> %s", name, message.getInboundProperty(name)));
+                }
+                message.setOutboundProperty(name, message.getInboundProperty(name));
+            }
+            else
+            {
+                LOGGER.debug(String.format("/////// skipping header %s -> %s", name, message.getInboundProperty(name)));
+            }
+        }
+    }
+
     private class ProxyRouter extends AbstractRouter
     {
+
         private Flow basicFlow;
 
         @Override
@@ -100,12 +157,7 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
         @Override
         protected MuleEvent handleEvent(MuleEvent event, String path) throws MuleException
         {
-            MuleMessage message = event.getMessage();
-            Set<String> inboundPropertyNames = message.getInboundPropertyNames();
-            for (String name : inboundPropertyNames)
-            {
-                message.setOutboundProperty(name, message.getInboundProperty(name));
-            }
+            copyProperties(event, MULE_REQUEST_HEADERS);
             return null;
         }
 

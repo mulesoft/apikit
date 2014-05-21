@@ -25,6 +25,7 @@ public class HttpRestProxyRequest extends HttpRestRequest
     @Override
     protected MuleEvent processResponse(MuleEvent responseEvent, List<MimeType> responseMimeTypes, String responseRepresentation) throws TransformerException, FilterUnacceptedException
     {
+        Proxy.copyProperties(responseEvent, Proxy.MULE_RESPONSE_HEADERS);
         return responseEvent;
     }
 }
