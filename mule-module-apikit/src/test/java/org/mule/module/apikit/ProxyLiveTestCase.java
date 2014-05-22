@@ -49,4 +49,14 @@ public class ProxyLiveTestCase extends FunctionalTestCase
                 .when().get("/api/apis");
     }
 
+    @Test @Ignore
+    public void getApi() throws Exception
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().body(containsString("john.doe"))
+                .header("Content-type", "application/json").statusCode(200)
+                .when().get("/api/apis/6");
+    }
+
 }

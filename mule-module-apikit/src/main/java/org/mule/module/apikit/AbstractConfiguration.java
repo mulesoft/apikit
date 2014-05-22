@@ -258,7 +258,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     {
         for (Map.Entry<String, Resource> resourceEntry : resources.entrySet())
         {
-            String resource = resourceEntry.getKey();
+            String resource = resourceEntry.getValue().getUri();
             for (Map.Entry<ActionType, Action> actionEntry : resourceEntry.getValue().getActions().entrySet())
             {
                 String key = actionEntry.getKey().name().toLowerCase() + ":" + resource;
