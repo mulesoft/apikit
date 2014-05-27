@@ -58,6 +58,7 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
                         "MULE_REMOTE_CLIENT_ADDRESS"
                 };
         MULE_RESPONSE_HEADERS = new HashSet<String>(Arrays.asList(headers));
+        MULE_RESPONSE_HEADERS.remove("http.status");
         MULE_REQUEST_HEADERS = new HashSet<String>(MULE_RESPONSE_HEADERS);
         MULE_REQUEST_HEADERS.remove("http.method");
     }
@@ -173,6 +174,7 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
         protected MuleEvent handleEvent(MuleEvent event, String path) throws MuleException
         {
             copyProperties(event, MULE_REQUEST_HEADERS);
+            event.getMessage().setOutboundProperty("http.disable.status.code.exception.check", "true");
             return null;
         }
 

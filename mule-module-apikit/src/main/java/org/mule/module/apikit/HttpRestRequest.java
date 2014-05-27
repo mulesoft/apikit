@@ -223,8 +223,13 @@ public abstract class HttpRestRequest
         }
         if (!found)
         {
-            throw new UnsupportedMediaTypeException();
+            handleUnsupportedMediaType();
         }
+    }
+
+    protected void handleUnsupportedMediaType() throws UnsupportedMediaTypeException
+    {
+        throw new UnsupportedMediaTypeException();
     }
 
     private void valideateBody(String mimeTypeName) throws MuleRestException
@@ -339,7 +344,7 @@ public abstract class HttpRestRequest
         MediaType bestMatch = RestContentTypeParser.bestMatch(mimeTypes, adapter.getAcceptableResponseMediaTypes());
         if (bestMatch == null)
         {
-            throw new NotAcceptableException();
+            return handleNotAcceptable();
         }
         logger.debug("=== negotiated response content-type: " + bestMatch.toString());
         for (MimeType representation : mimeTypes)
@@ -349,6 +354,11 @@ public abstract class HttpRestRequest
                 return representation.getType();
             }
         }
+        return handleNotAcceptable();
+    }
+
+    protected String handleNotAcceptable() throws NotAcceptableException
+    {
         throw new NotAcceptableException();
     }
 

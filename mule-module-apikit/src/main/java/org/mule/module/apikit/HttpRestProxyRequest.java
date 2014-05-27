@@ -9,6 +9,8 @@ package org.mule.module.apikit;
 import org.mule.api.MuleEvent;
 import org.mule.api.routing.filter.FilterUnacceptedException;
 import org.mule.api.transformer.TransformerException;
+import org.mule.module.apikit.exception.NotAcceptableException;
+import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 
 import java.util.List;
 
@@ -27,5 +29,25 @@ public class HttpRestProxyRequest extends HttpRestRequest
     {
         Proxy.copyProperties(responseEvent, Proxy.MULE_RESPONSE_HEADERS);
         return responseEvent;
+    }
+
+    @Override
+    protected void handleUnsupportedMediaType() throws UnsupportedMediaTypeException
+    {
+        if (config.isDisableValidations())
+        {
+            return;
+        }
+        super.handleUnsupportedMediaType();
+    }
+
+    @Override
+    protected String handleNotAcceptable() throws NotAcceptableException
+    {
+        if (config.isDisableValidations())
+        {
+            return null;
+        }
+        return super.handleNotAcceptable();
     }
 }

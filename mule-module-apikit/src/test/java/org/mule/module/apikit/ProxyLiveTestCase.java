@@ -59,4 +59,31 @@ public class ProxyLiveTestCase extends FunctionalTestCase
                 .when().get("/api/apis/6");
     }
 
+    @Test @Ignore
+    public void notAcceptable() throws Exception
+    {
+        given().header("Accept", "application/xml")
+                .expect()
+                .response().statusCode(406)
+                .when().get("/api/apis");
+    }
+
+    @Test @Ignore
+    public void notFound() throws Exception
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().statusCode(404)
+                .when().get("/api/apiss");
+    }
+
+    @Test @Ignore
+    public void methodNotAllowed() throws Exception
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().statusCode(405)
+                .when().patch("/api/apis");
+    }
+
 }

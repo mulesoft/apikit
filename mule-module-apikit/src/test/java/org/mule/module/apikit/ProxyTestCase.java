@@ -8,7 +8,6 @@ package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -50,6 +49,9 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
         muleServer.start();
         getOnLeaguesJson();
         getOnLeagueJson();
+        notAcceptable();
+        notFound();
+        methodNotAllowed();
     }
 
     private void getOnLeaguesJson() throws Exception
@@ -68,6 +70,30 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
                 .response().body("name", is("Liga BBVA"))
                 .header("Content-type", "application/json").statusCode(200)
                 .when().get("/proxy/leagues/1");
+    }
+
+    private void notAcceptable() throws Exception
+    {
+        given().header("Accept", "application/xml")
+                .expect()
+                .response().statusCode(406)
+                .when().get("/proxy/leagues");
+    }
+
+    private void notFound() throws Exception
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().statusCode(404)
+                .when().get("/proxy/leaguess");
+    }
+
+    private void methodNotAllowed() throws Exception
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().statusCode(405)
+                .when().patch("/proxy/leagues");
     }
 
 }
