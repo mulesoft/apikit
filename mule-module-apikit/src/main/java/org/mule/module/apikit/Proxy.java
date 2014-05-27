@@ -87,6 +87,11 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
         proxyRouter.setMuleContext(context);
     }
 
+    public ProxyConfiguration getConfig()
+    {
+        return proxyRouter.getConfig();
+    }
+
     public void setConfig(ProxyConfiguration config)
     {
         proxyRouter.setConfig(config);
@@ -117,6 +122,16 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
     {
 
         private Flow basicFlow;
+
+        public ProxyConfiguration getConfig()
+        {
+            return (ProxyConfiguration) config;
+        }
+
+        public void setConfig(ProxyConfiguration config)
+        {
+            this.config = config;
+        }
 
         @Override
         protected void startConfiguration() throws StartException

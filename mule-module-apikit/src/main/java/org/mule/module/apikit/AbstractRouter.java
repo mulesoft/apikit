@@ -60,7 +60,7 @@ public abstract class AbstractRouter implements ApiRouter
     public void start() throws MuleException
     {
         startConfiguration();
-        getConfig().publishConsoleUrls(muleContext.getConfiguration().getWorkingDirectory());
+        config.publishConsoleUrls(muleContext.getConfiguration().getWorkingDirectory());
         routingTable = new HashMap<URIPattern, Resource>();
         buildRoutingTable(getApi().getResources());
 
@@ -150,16 +150,6 @@ public abstract class AbstractRouter implements ApiRouter
     public void setFlowConstruct(FlowConstruct flowConstruct)
     {
         this.flowConstruct = flowConstruct;
-    }
-
-    public void setConfig(AbstractConfiguration config)
-    {
-        this.config = config;
-    }
-
-    public AbstractConfiguration getConfig()
-    {
-        return config;
     }
 
     @Override
