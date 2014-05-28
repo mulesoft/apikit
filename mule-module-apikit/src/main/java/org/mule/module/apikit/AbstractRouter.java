@@ -19,20 +19,13 @@ import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
-import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.uri.ResolvedVariables;
-import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.transport.http.HttpConstants;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -45,92 +38,18 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractRouter implements ApiRouter
 {
 
-    private static final int URI_CACHE_SIZE = 1000;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MuleContext muleContext;
     protected FlowConstruct flowConstruct;
     protected AbstractConfiguration config;
-    protected Map<URIPattern, Resource> routingTable;
-    protected LoadingCache<String, URIResolver> uriResolverCache;
-    protected LoadingCache<String, URIPattern> uriPatternCache;
 
     @Override
     public void start() throws MuleException
     {
         startConfiguration();
         config.publishConsoleUrls(muleContext.getConfiguration().getWorkingDirectory());
-        routingTable = new HashMap<URIPattern, Resource>();
-        buildRoutingTable(getApi().getResources());
-
-        logger.info("Building resource URI cache...");
-        uriResolverCache = CacheBuilder.newBuilder()
-                .maximumSize(URI_CACHE_SIZE)
-                .build(
-                        new CacheLoader<String, URIResolver>()
-                        {
-                            public URIResolver load(String path) throws IOException
-                            {
-                                return new URIResolver(URICoder.encode(path, '/'));
-                            }
-                        });
-
-        uriPatternCache = CacheBuilder.newBuilder()
-                .maximumSize(URI_CACHE_SIZE)
-                .build(
-                        new CacheLoader<String, URIPattern>()
-                        {
-                            public URIPattern load(String path) throws Exception
-                            {
-                                URIResolver resolver = uriResolverCache.get(path);
-                                Collection<URIPattern> matches = resolver.findAll(routingTable.keySet());
-
-                                if (matches.size() == 0)
-                                {
-                                    logger.warn("No matching patterns for URI " + path);
-                                    throw new NotFoundException(path);
-                                }
-                                else
-                                {
-                                    if (logger.isDebugEnabled())
-                                    {
-                                        logger.debug(matches.size() + " matching patterns for URI " + path + ". Finding best one...");
-                                    }
-                                    for (URIPattern p : matches)
-                                    {
-                                        boolean best = (p == resolver.find(routingTable.keySet(), URIResolver.MatchRule.BEST_MATCH));
-
-                                        if (best)
-                                        {
-                                            return p;
-                                        }
-                                    }
-
-                                    return null;
-                                }
-                            }
-                        });
-
-    }
-
-    private void buildRoutingTable(Map<String, Resource> resources)
-    {
-        for (Resource resource : resources.values())
-        {
-            String parentUri = resource.getParentUri();
-            if (parentUri.contains("{version}"))
-            {
-                resource.setParentUri(parentUri.replaceAll("\\{version}", getApi().getVersion()));
-            }
-            String uri = resource.getUri();
-            logger.debug("Adding URI to the routing table: " + uri);
-            routingTable.put(new URIPattern(uri), resource);
-            if (resource.getResources() != null)
-            {
-                buildRoutingTable(resource.getResources());
-            }
-        }
     }
 
     protected abstract void startConfiguration() throws StartException;
@@ -187,8 +106,8 @@ public abstract class AbstractRouter implements ApiRouter
         URIResolver uriResolver;
         try
         {
-            uriPattern = uriPatternCache.get(path);
-            uriResolver = uriResolverCache.get(path);
+            uriPattern = getUriPatternCache().get(path);
+            uriResolver = getUriResolverCache().get(path);
         }
         catch (ExecutionException e)
         {
@@ -199,7 +118,7 @@ public abstract class AbstractRouter implements ApiRouter
             throw new DefaultMuleException(e);
         }
 
-        Resource resource = routingTable.get(uriPattern);
+        Resource resource = getRoutingTable().get(uriPattern);
         if (resource.getAction(request.getMethod()) == null)
         {
             throw new MethodNotAllowedException(resource.getUri(), request.getMethod());
@@ -217,9 +136,27 @@ public abstract class AbstractRouter implements ApiRouter
         return request.process(flow, resource.getAction(request.getMethod()));
     }
 
+    private Map<URIPattern, Resource> getRoutingTable()
+    {
+        return config.routingTable;
+    }
+
+    private LoadingCache<String, URIResolver> getUriResolverCache()
+    {
+        return config.uriResolverCache;
+    }
+
+    private LoadingCache<String, URIPattern> getUriPatternCache()
+    {
+        return config.uriPatternCache;
+    }
+
     protected abstract MuleEvent handleEvent(MuleEvent event, String path) throws MuleException;
 
-    protected abstract HttpRestRequest getHttpRestRequest(MuleEvent event);
+    private HttpRestRequest getHttpRestRequest(MuleEvent event)
+    {
+        return config.getHttpRestRequest(event);
+    }
 
     private String getRaml(String host)
     {

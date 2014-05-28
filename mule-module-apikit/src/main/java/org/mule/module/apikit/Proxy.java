@@ -179,12 +179,6 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
         }
 
         @Override
-        protected HttpRestRequest getHttpRestRequest(MuleEvent event)
-        {
-            return new HttpRestProxyRequest(event, config);
-        }
-
-        @Override
         protected Flow getFlow(Resource resource, String method)
         {
             FlowResolver flowResolver = config.getRestFlowMap().get(method + ":" + resource.getUri());

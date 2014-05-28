@@ -57,12 +57,6 @@ public class Router extends AbstractRouter
     }
 
     @Override
-    protected HttpRestRequest getHttpRestRequest(MuleEvent event)
-    {
-        return new HttpRestRouterRequest(event, getConfig());
-    }
-
-    @Override
     protected MuleEvent handleEvent(MuleEvent event, String path) throws MuleException
     {
         //check for console request

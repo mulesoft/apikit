@@ -7,6 +7,7 @@
 package org.mule.module.apikit;
 
 import org.mule.api.MuleContext;
+import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
@@ -35,6 +36,12 @@ public class ProxyConfiguration extends AbstractConfiguration
     protected void initializeRestFlowMap()
     {
         return;
+    }
+
+    @Override
+    protected HttpRestRequest getHttpRestRequest(MuleEvent event)
+    {
+        return new HttpRestProxyRequest(event, this);
     }
 
     @Override

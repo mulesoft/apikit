@@ -11,6 +11,7 @@ import static org.raml.parser.rule.ValidationResult.Level.WARN;
 import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 
 import org.mule.api.MuleContext;
+import org.mule.api.MuleEvent;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.context.MuleContextAware;
 import org.mule.api.endpoint.ImmutableEndpoint;
@@ -18,10 +19,18 @@ import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.module.apikit.uri.URICoder;
+import org.mule.module.apikit.uri.URIPattern;
+import org.mule.module.apikit.uri.URIResolver;
 import org.mule.util.BeanUtils;
 import org.mule.util.IOUtils;
 import org.mule.util.StringMessageUtils;
 import org.mule.util.StringUtils;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -34,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 
 import org.raml.emitter.RamlEmitter;
 import org.raml.model.Action;
@@ -50,9 +60,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractConfiguration implements Initialisable, MuleContextAware
 {
+
     public static final String APPLICATION_RAML = "application/raml+yaml";
     public static final String BIND_ALL_HOST = "0.0.0.0";
     private static final String CONSOLE_URL_FILE = "consoleurl";
+    private static final int URI_CACHE_SIZE = 1000;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -65,6 +77,9 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
     private boolean disableValidations;
     protected Map<String, FlowResolver> restFlowMapWrapper;
+    protected Map<URIPattern, Resource> routingTable;
+    protected LoadingCache<String, URIResolver> uriResolverCache;
+    protected LoadingCache<String, URIPattern> uriPatternCache;
     private List<String> consoleUrls = new ArrayList<String>();
     private boolean started;
 
@@ -82,6 +97,80 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(raml);
         initializeRestFlowMapWrapper();
+        routingTable = new HashMap<URIPattern, Resource>();
+        buildRoutingTable(getApi().getResources());
+        buildResourcePatternCaches();
+    }
+
+
+    private void buildResourcePatternCaches()
+    {
+        logger.info("Building resource URI cache...");
+        uriResolverCache = CacheBuilder.newBuilder()
+                .maximumSize(URI_CACHE_SIZE)
+                .build(
+                        new CacheLoader<String, URIResolver>()
+                        {
+                            public URIResolver load(String path) throws IOException
+                            {
+                                return new URIResolver(URICoder.encode(path, '/'));
+                            }
+                        });
+
+        uriPatternCache = CacheBuilder.newBuilder()
+                .maximumSize(URI_CACHE_SIZE)
+                .build(
+                        new CacheLoader<String, URIPattern>()
+                        {
+                            public URIPattern load(String path) throws Exception
+                            {
+                                URIResolver resolver = uriResolverCache.get(path);
+                                Collection<URIPattern> matches = resolver.findAll(routingTable.keySet());
+
+                                if (matches.size() == 0)
+                                {
+                                    logger.warn("No matching patterns for URI " + path);
+                                    throw new NotFoundException(path);
+                                }
+                                else
+                                {
+                                    if (logger.isDebugEnabled())
+                                    {
+                                        logger.debug(matches.size() + " matching patterns for URI " + path + ". Finding best one...");
+                                    }
+                                    for (URIPattern p : matches)
+                                    {
+                                        boolean best = (p == resolver.find(routingTable.keySet(), URIResolver.MatchRule.BEST_MATCH));
+
+                                        if (best)
+                                        {
+                                            return p;
+                                        }
+                                    }
+
+                                    return null;
+                                }
+                            }
+                        });
+    }
+
+    private void buildRoutingTable(Map<String, Resource> resources)
+    {
+        for (Resource resource : resources.values())
+        {
+            String parentUri = resource.getParentUri();
+            if (parentUri.contains("{version}"))
+            {
+                resource.setParentUri(parentUri.replaceAll("\\{version}", getApi().getVersion()));
+            }
+            String uri = resource.getUri();
+            logger.debug("Adding URI to the routing table: " + uri);
+            routingTable.put(new URIPattern(uri), resource);
+            if (resource.getResources() != null)
+            {
+                buildRoutingTable(resource.getResources());
+            }
+        }
     }
 
     public void loadApiDefinition(FlowConstruct flowConstruct)
@@ -372,4 +461,22 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         this.raml = raml;
     }
 
+    public Action getEventAction(MuleEvent event)
+    {
+        HttpRestRequest request = getHttpRestRequest(event);
+        String path = request.getResourcePath();
+        URIPattern uriPattern;
+        try
+        {
+            uriPattern = uriPatternCache.get(path);
+        }
+        catch (ExecutionException e)
+        {
+            return null;
+        }
+        Resource resource = routingTable.get(uriPattern);
+        return resource.getAction(request.getMethod());
+    }
+
+    protected abstract HttpRestRequest getHttpRestRequest(MuleEvent muleEvent);
 }
