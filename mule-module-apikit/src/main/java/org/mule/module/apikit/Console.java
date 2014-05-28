@@ -17,9 +17,10 @@ import org.mule.api.context.MuleContextAware;
 import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
-import org.mule.api.registry.RegistrationException;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.transport.http.HttpConstants;
+
+import java.util.Collection;
 
 import org.raml.model.ActionType;
 import org.raml.model.Raml;
@@ -74,14 +75,12 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
         }
         if (config == null)
         {
-            try
-            {
-                config = muleContext.getRegistry().lookupObject(Configuration.class);
-            }
-            catch (RegistrationException e)
+            Collection<AbstractConfiguration> configurations = AbstractConfiguration.getAllConfigurations(muleContext);
+            if (configurations.size() != 1)
             {
                 throw new InitialisationException(MessageFactory.createStaticMessage("APIKit configuration not Found"), this);
             }
+            config = configurations.iterator().next();
         }
         consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct), "");
         config.addConsoleUrl(consoleHandler.getConsoleUrl());

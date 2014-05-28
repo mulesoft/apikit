@@ -387,11 +387,9 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     private boolean isLastRouterToStart()
     {
-        Collection configurations = muleContext.getRegistry().lookupObjects(Configuration.class);
-        configurations.addAll(muleContext.getRegistry().lookupObjects(ProxyConfiguration.class));
-        for (Object configuration : configurations)
+        for (AbstractConfiguration configuration : getAllConfigurations(muleContext))
         {
-            if (!((AbstractConfiguration) configuration).started)
+            if (!configuration.started)
             {
                 return false;
             }
@@ -432,11 +430,9 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private List<String> getAllConsoleUrls()
     {
         List<String> urls = new ArrayList<String>();
-        Collection configurations = muleContext.getRegistry().lookupObjects(Configuration.class);
-        configurations.addAll(muleContext.getRegistry().lookupObjects(ProxyConfiguration.class));
-        for (Object configuration : configurations)
+        for (AbstractConfiguration configuration : getAllConfigurations(muleContext))
         {
-            urls.addAll(((AbstractConfiguration) configuration).consoleUrls);
+            urls.addAll(configuration.consoleUrls);
         }
         return urls;
     }
@@ -479,4 +475,12 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     }
 
     protected abstract HttpRestRequest getHttpRestRequest(MuleEvent muleEvent);
+
+    public static Collection<AbstractConfiguration> getAllConfigurations(MuleContext muleContext)
+    {
+        Collection<AbstractConfiguration> configurations = new ArrayList<AbstractConfiguration>();
+        configurations.addAll(muleContext.getRegistry().lookupObjects(Configuration.class));
+        configurations.addAll(muleContext.getRegistry().lookupObjects(ProxyConfiguration.class));
+        return configurations;
+    }
 }
