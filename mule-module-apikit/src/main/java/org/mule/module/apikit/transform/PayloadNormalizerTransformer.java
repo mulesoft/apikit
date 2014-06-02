@@ -14,8 +14,6 @@ import org.mule.config.i18n.MessageFactory;
 import org.mule.transformer.AbstractMessageTransformer;
 import org.mule.transformer.types.DataTypeFactory;
 
-import org.mule.module.apikit.DataTypePair;
-
 public class PayloadNormalizerTransformer extends AbstractMessageTransformer
 {
 

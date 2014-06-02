@@ -94,7 +94,7 @@ public abstract class AbstractRouter implements ApiRouter
             {
                 host = host.split(":")[0];
             }
-            String raml = getRaml(host);
+            String raml = config.getApikitRaml(host);
             event.getMessage().setPayload(raml);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, raml.length());
@@ -157,12 +157,6 @@ public abstract class AbstractRouter implements ApiRouter
     {
         return config.getHttpRestRequest(event);
     }
-
-    private String getRaml(String host)
-    {
-        return config.getApikitRaml(host);
-    }
-
 
     private void processUriParameters(ResolvedVariables resolvedVariables, Resource resource, MuleEvent event) throws InvalidUriParameterException
     {

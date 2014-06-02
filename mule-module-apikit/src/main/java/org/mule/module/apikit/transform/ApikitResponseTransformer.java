@@ -10,7 +10,6 @@ import org.mule.api.MuleMessage;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.api.transformer.TransformerException;
-import org.mule.module.apikit.DataTypePair;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.transformer.AbstractMessageTransformer;
 import org.mule.transformer.types.DataTypeFactory;

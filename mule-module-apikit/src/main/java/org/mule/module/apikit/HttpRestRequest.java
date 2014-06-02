@@ -26,6 +26,7 @@ import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
+import org.mule.module.apikit.validation.SchemaType;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
 import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;

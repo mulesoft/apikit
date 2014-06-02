@@ -60,11 +60,6 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
         return getConfig().getApi();
     }
 
-    private String getRaml(String host)
-    {
-        return getConfig().getApikitRaml(host);
-    }
-
     @Override
     public void initialise() throws InitialisationException
     {
@@ -98,7 +93,7 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
             ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
             request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML))
         {
-            String raml = getRaml((String) event.getMessage().getInboundProperty("http.host"));
+            String raml = config.getApikitRaml((String) event.getMessage().getInboundProperty("http.host"));
             event.getMessage().setPayload(raml);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, raml.length());

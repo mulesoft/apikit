@@ -13,8 +13,6 @@ import org.mule.api.transformer.Transformer;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 
-import org.mule.module.apikit.DataTypePair;
-
 public final class TransformerCache
 {
 

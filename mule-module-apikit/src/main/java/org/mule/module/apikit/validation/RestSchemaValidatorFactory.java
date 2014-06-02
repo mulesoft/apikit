@@ -8,8 +8,6 @@ package org.mule.module.apikit.validation;
 
 import org.mule.api.MuleContext;
 
-import org.mule.module.apikit.SchemaType;
-
 public final class RestSchemaValidatorFactory
 {
 

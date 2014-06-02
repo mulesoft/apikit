@@ -26,7 +26,6 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import org.mule.module.apikit.DataTypePair;
 import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 

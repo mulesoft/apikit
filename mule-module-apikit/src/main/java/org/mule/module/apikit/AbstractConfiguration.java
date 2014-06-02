@@ -20,6 +20,7 @@ import org.mule.api.lifecycle.InitialisationException;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
@@ -35,8 +36,10 @@ import com.google.common.cache.LoadingCache;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,6 +48,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.raml.emitter.RamlEmitter;
 import org.raml.model.Action;
 import org.raml.model.ActionType;
@@ -72,7 +76,8 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     protected MuleContext muleContext;
     private String name;
     protected String raml;
-    protected Raml api;
+    private Raml baseApi; //original raml
+    protected Raml api; //current raml
     private String baseHost;
     private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
     private boolean disableValidations;
@@ -96,12 +101,26 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         validateRaml(loader);
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(raml);
+        baseHost = getBaseHost();
         initializeRestFlowMapWrapper();
         routingTable = new HashMap<URIPattern, Resource>();
         buildRoutingTable(getApi().getResources());
         buildResourcePatternCaches();
     }
 
+    private String getBaseHost()
+    {
+        URL url;
+        try
+        {
+            url = new URL(api.getBaseUri());
+        }
+        catch (MalformedURLException e)
+        {
+            return "localhost";
+        }
+        return url.getHost();
+    }
 
     private void buildResourcePatternCaches()
     {
@@ -177,6 +196,13 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     {
         this.flowConstruct = flowConstruct;
         injectEndpointUri(api);
+        apikitRaml = new ConcurrentHashMap<String, String>();
+        apikitRaml.put(baseHost, new RamlEmitter().dump(api));
+    }
+
+    public void updateApi(Raml newApi)
+    {
+        api = newApi;
         apikitRaml = new ConcurrentHashMap<String, String>();
         apikitRaml.put(baseHost, new RamlEmitter().dump(api));
     }
@@ -273,15 +299,14 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
      */
     public String getApikitRaml(String host)
     {
-        if (!BIND_ALL_HOST.equals(baseHost))
+        if (host == null)
         {
             return apikitRaml.get(baseHost);
         }
-
         String hostRaml = apikitRaml.get(host);
         if (hostRaml == null)
         {
-            Raml clone = cloneRaml(api);
+            Raml clone = shallowCloneRaml(api);
             clone.setBaseUri(api.getBaseUri().replace(baseHost, host));
             hostRaml = new RamlEmitter().dump(clone);
             apikitRaml.put(host, hostRaml);
@@ -289,7 +314,12 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         return hostRaml;
     }
 
-    private Raml cloneRaml(Raml source)
+    private Raml deepCloneRaml(Raml source)
+    {
+        return (Raml) SerializationUtils.deserialize(SerializationUtils.serialize(source));
+    }
+
+    private Raml shallowCloneRaml(Raml source)
     {
         try
         {
@@ -483,4 +513,14 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         configurations.addAll(muleContext.getRegistry().lookupObjects(ProxyConfiguration.class));
         return configurations;
     }
+
+    public RamlUpdater getRamlUpdater()
+    {
+        if (baseApi == null)
+        {
+            baseApi = deepCloneRaml(api);
+        }
+        return new RamlUpdater(deepCloneRaml(baseApi), this);
+    }
+
 }
