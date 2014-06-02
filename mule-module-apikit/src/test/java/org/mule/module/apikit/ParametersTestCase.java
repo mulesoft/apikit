@@ -101,6 +101,14 @@ public class ParametersTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void repeatableQueryParam()
+    {
+        given().queryParam("status", "a", "b")
+                .expect().response().statusCode(200)
+                .when().get("/api/repeat");
+    }
+
+    @Test
     public void raml() throws Exception
     {
         given().header("Accept", "application/raml+yaml")

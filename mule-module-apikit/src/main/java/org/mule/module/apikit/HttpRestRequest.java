@@ -35,6 +35,7 @@ import com.google.common.net.MediaType;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -118,7 +119,7 @@ public abstract class HttpRestRequest
         for (String expectedKey : action.getQueryParameters().keySet())
         {
             QueryParameter expected = action.getQueryParameters().get(expectedKey);
-            String actual = (String) ((Map) requestEvent.getMessage().getInboundProperty("http.query.params")).get(expectedKey);
+            Object actual = ((Map) requestEvent.getMessage().getInboundProperty("http.query.params")).get(expectedKey);
             if (actual == null && expected.isRequired())
             {
                 throw new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified");
@@ -129,9 +130,21 @@ public abstract class HttpRestRequest
             }
             if (actual != null)
             {
-                if (!expected.validate(actual))
+                if (actual instanceof Collection && !expected.isRepeat())
                 {
-                    throw new InvalidQueryParameterException("Invalid query parameter value " + actual + " for " + expectedKey);
+                    throw new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable");
+                }
+                if (!(actual instanceof Collection))
+                {
+                    actual = Collections.singletonList(actual);
+                }
+                //noinspection unchecked
+                for (String param : (Collection<String>) actual)
+                {
+                    if (!expected.validate(param))
+                    {
+                        throw new InvalidQueryParameterException("Invalid query parameter value " + param + " for " + expectedKey);
+                    }
                 }
             }
         }

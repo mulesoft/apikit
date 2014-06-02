@@ -22,3 +22,9 @@ title: Parameters API
             type: boolean
     responses:
       200: !!null
+/repeat:
+    get:
+        queryParameters:
+            status:
+                type: string
+                repeat: true

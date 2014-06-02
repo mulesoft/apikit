@@ -43,4 +43,8 @@
         <logger level="INFO" message="siamo qui"/>
     </flow>
 
+    <flow name="get:/repeat">
+        <logger level="INFO" message="status: #[message.inboundProperties.status]"/>
+    </flow>
+
 </mule>
