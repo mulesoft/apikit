@@ -10,6 +10,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 import org.mule.api.lifecycle.InitialisationException;
+import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.tck.junit4.AbstractMuleContextTestCase;
 
 import org.junit.Before;
@@ -19,6 +20,7 @@ import org.raml.model.Action;
 public class ApiUpdateTestCase extends AbstractMuleContextTestCase
 {
 
+    private static final String GET_LEAGUES = "get:/leagues";
     private Configuration config;
 
     @Before
@@ -40,7 +42,7 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
                              "    required: true";
 
         assertInitialState();
-        config.getRamlUpdater().injectTrait(name, yaml).applyTrait(name, "get:/leagues").update();
+        config.getRamlUpdater().injectTrait(name, yaml).applyTrait(name, GET_LEAGUES).resetAndUpdate();
 
         assertThat(config.getApi().getTraits().size(), is(2));
         Action action = config.getApi().getResource("/leagues").getAction("get");
@@ -49,7 +51,7 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
         assertThat(action.getHeaders().size(), is(1));
         assertThat(action.getHeaders().get("injected").getDisplayName(), is("injected"));
 
-        config.getRamlUpdater().update();
+        config.getRamlUpdater().reset();
         assertInitialState();
     }
 
@@ -89,15 +91,33 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
 
         assertInitialState();
         config.getRamlUpdater().injectSecuritySchemes(name, yaml)
-                .applySecurityScheme(name, "get:/leagues").update();
+                .applySecurityScheme(name, GET_LEAGUES).resetAndUpdate();
 
         assertThat(config.getApi().getSecuritySchemes().size(), is(1));
         Action action = config.getApi().getResource("/leagues").getAction("get");
         assertThat(action.getSecuredBy().size(), is(1));
         assertThat(action.getSecuredBy().get(0).getName(), is(name));
 
-        config.getRamlUpdater().update();
+        config.getRamlUpdater().reset();
         assertInitialState();
+    }
+
+    @Test(expected = ApikitRuntimeException.class)
+    public void traitMismatch()
+    {
+        config.getRamlUpdater().injectTrait("rightName", "headers:").applyTrait("wrongName", GET_LEAGUES).resetAndUpdate();
+    }
+
+    @Test(expected = ApikitRuntimeException.class)
+    public void securitySchemaMismatch()
+    {
+        config.getRamlUpdater().injectSecuritySchemes("rightName", "settings:").applySecurityScheme("wrongName", GET_LEAGUES).resetAndUpdate();
+    }
+
+    @Test(expected = ApikitRuntimeException.class)
+    public void injectAndResetForbidden()
+    {
+        config.getRamlUpdater().injectSecuritySchemes("name", "settings:").reset();
     }
 
     private void assertInitialState()

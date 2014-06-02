@@ -7,6 +7,7 @@
 package org.mule.module.apikit.injector;
 
 import org.mule.module.apikit.AbstractConfiguration;
+import org.mule.module.apikit.exception.ApikitRuntimeException;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,9 +57,21 @@ public class RamlUpdater
         }
     }
 
-    public void update()
+    public void resetAndUpdate()
     {
         config.updateApi(raml);
+    }
+
+    public void reset()
+    {
+        if (injectedTraits.isEmpty() && injectedSecuritySchemes.isEmpty())
+        {
+            this.resetAndUpdate();
+        }
+        else
+        {
+            throw new ApikitRuntimeException("Cannot inject and reset with the same Updater");
+        }
     }
 
     private Template getTemplate(String name)
@@ -87,7 +100,12 @@ public class RamlUpdater
         for (String actionRef : actionRefs)
         {
             Action action = getAction(actionRef);
-            injectedTraits.get(name).applyToAction(action);
+            InjectableTrait injectableTrait = injectedTraits.get(name);
+            if (injectableTrait == null)
+            {
+                throw new ApikitRuntimeException("Trying to apply an undefined Trait: " + name);
+            }
+            injectableTrait.applyToAction(action);
         }
         return this;
     }
@@ -119,7 +137,12 @@ public class RamlUpdater
         for (String actionRef : actionRefs)
         {
             Action action = getAction(actionRef);
-            injectedSecuritySchemes.get(name).applyToAction(action);
+            InjectableSecurityScheme injectableSecurityScheme = injectedSecuritySchemes.get(name);
+            if (injectableSecurityScheme == null)
+            {
+                throw new ApikitRuntimeException("Trying to apply an undefined Security Scheme: " + name);
+            }
+            injectableSecurityScheme.applyToAction(action);
         }
         return this;
     }
