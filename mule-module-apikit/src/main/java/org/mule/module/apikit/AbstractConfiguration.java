@@ -103,9 +103,17 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         api = builder.build(raml);
         baseHost = getBaseHost();
         initializeRestFlowMapWrapper();
-        routingTable = new HashMap<URIPattern, Resource>();
-        buildRoutingTable(getApi().getResources());
+        loadRoutingTable();
         buildResourcePatternCaches();
+    }
+
+    private void loadRoutingTable()
+    {
+        if (routingTable == null)
+        {
+            routingTable = new ConcurrentHashMap<URIPattern, Resource>();
+        }
+        buildRoutingTable(getApi().getResources());
     }
 
     private String getBaseHost()
@@ -203,6 +211,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     public void updateApi(Raml newApi)
     {
         api = newApi;
+        loadRoutingTable();
         apikitRaml = new ConcurrentHashMap<String, String>();
         apikitRaml.put(baseHost, new RamlEmitter().dump(api));
     }

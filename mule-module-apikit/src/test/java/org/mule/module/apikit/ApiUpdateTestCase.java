@@ -11,6 +11,7 @@ import static org.junit.Assert.assertThat;
 
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.uri.URIPattern;
 import org.mule.tck.junit4.AbstractMuleContextTestCase;
 
 import org.junit.Before;
@@ -20,7 +21,9 @@ import org.raml.model.Action;
 public class ApiUpdateTestCase extends AbstractMuleContextTestCase
 {
 
-    private static final String GET_LEAGUES = "get:/leagues";
+    private static final String METHOD = "get";
+    private static final String RESOURCE = "/leagues";
+    private static final String GET_LEAGUES = METHOD + ":" + RESOURCE;
     private Configuration config;
 
     @Before
@@ -28,7 +31,7 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
     {
         config = new Configuration();
         config.setMuleContext(muleContext);
-        config.setRaml("org/mule/module/apikit/leagues/leagues.yaml");
+        config.setRaml("org/mule/module/apikit" + RESOURCE + "/leagues.yaml");
         config.initialise();
     }
 
@@ -45,14 +48,20 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
         config.getRamlUpdater().injectTrait(name, yaml).applyTrait(name, GET_LEAGUES).resetAndUpdate();
 
         assertThat(config.getApi().getTraits().size(), is(2));
-        Action action = config.getApi().getResource("/leagues").getAction("get");
+
+        assertTraitInjected(config.getApi().getResource(RESOURCE).getAction(METHOD));
+        assertTraitInjected(config.routingTable.get(new URIPattern(RESOURCE)).getAction(METHOD));
+
+        config.getRamlUpdater().reset();
+        assertInitialState();
+    }
+
+    private void assertTraitInjected(Action action)
+    {
         assertThat(action.getIs().size(), is(1));
         assertThat(action.getIs().get(0), is("header"));
         assertThat(action.getHeaders().size(), is(1));
         assertThat(action.getHeaders().get("injected").getDisplayName(), is("injected"));
-
-        config.getRamlUpdater().reset();
-        assertInitialState();
     }
 
     @Test
@@ -94,12 +103,17 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
                 .applySecurityScheme(name, GET_LEAGUES).resetAndUpdate();
 
         assertThat(config.getApi().getSecuritySchemes().size(), is(1));
-        Action action = config.getApi().getResource("/leagues").getAction("get");
-        assertThat(action.getSecuredBy().size(), is(1));
-        assertThat(action.getSecuredBy().get(0).getName(), is(name));
+        assertSecuritySchemeInjected(config.getApi().getResource(RESOURCE).getAction(METHOD), name);
+        assertSecuritySchemeInjected(config.routingTable.get(new URIPattern(RESOURCE)).getAction(METHOD), name);
 
         config.getRamlUpdater().reset();
         assertInitialState();
+    }
+
+    private void assertSecuritySchemeInjected(Action action, String name)
+    {
+        assertThat(action.getSecuredBy().size(), is(1));
+        assertThat(action.getSecuredBy().get(0).getName(), is(name));
     }
 
     @Test(expected = ApikitRuntimeException.class)
@@ -124,7 +138,7 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
     {
         assertThat(config.getApi().getTraits().size(), is(1));
         assertThat(config.getApi().getSecuritySchemes().size(), is(0));
-        Action action = config.getApi().getResource("/leagues").getAction("get");
+        Action action = config.getApi().getResource(RESOURCE).getAction(METHOD);
         assertThat(action.getIs().size(), is(0));
         assertThat(action.getHeaders().size(), is(0));
         assertThat(action.getSecuredBy().size(), is(0));
