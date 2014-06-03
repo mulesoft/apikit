@@ -21,39 +21,50 @@ import org.raml.model.Action;
 public class ApiUpdateTestCase extends AbstractMuleContextTestCase
 {
 
-    private static final String METHOD = "get";
-    private static final String RESOURCE = "/leagues";
-    private static final String GET_LEAGUES = METHOD + ":" + RESOURCE;
+    private static final String METHOD_GET = "get";
+    private static final String RESOURCE_LEAGUES = "/leagues";
+    private static final String GET_LEAGUES = METHOD_GET + ":" + RESOURCE_LEAGUES;
+    private static final String RESOURCE_ORDERS = "/orders";
+    private static final String GET_ORDERS = METHOD_GET + ":" + RESOURCE_ORDERS;
     private Configuration config;
+    private String traitName = "header";
+    private String traitYaml = "headers:\n" +
+                         "  injected:\n" +
+                         "    displayName: injected\n" +
+                         "    required: true";
 
-    @Before
-    public void setupConfig() throws InitialisationException
+    private void setupConfig(String yamlPath) throws InitialisationException
     {
         config = new Configuration();
         config.setMuleContext(muleContext);
-        config.setRaml("org/mule/module/apikit" + RESOURCE + "/leagues.yaml");
+        config.setRaml("org/mule/module/apikit/" + yamlPath);
         config.initialise();
+    }
+
+    @Before
+    public void setupConfigWithTraits() throws InitialisationException
+    {
+        setupConfig("leagues/leagues.yaml");
+    }
+
+    private void setupConfigWithoutTraits() throws InitialisationException
+    {
+        setupConfig("pathless/pathless.yaml");
     }
 
     @Test
     public void addAndRemoveTrait() throws InitialisationException
     {
-        String name = "header";
-        String yaml = "headers:\n" +
-                             "  injected:\n" +
-                             "    displayName: injected\n" +
-                             "    required: true";
-
-        assertInitialState();
-        config.getRamlUpdater().injectTrait(name, yaml).applyTrait(name, GET_LEAGUES).resetAndUpdate();
+        assertInitialStateWithTraits();
+        config.getRamlUpdater().injectTrait(traitName, traitYaml).applyTrait(traitName, GET_LEAGUES).resetAndUpdate();
 
         assertThat(config.getApi().getTraits().size(), is(2));
 
-        assertTraitInjected(config.getApi().getResource(RESOURCE).getAction(METHOD));
-        assertTraitInjected(config.routingTable.get(new URIPattern(RESOURCE)).getAction(METHOD));
+        assertTraitInjected(config.getApi().getResource(RESOURCE_LEAGUES).getAction(METHOD_GET));
+        assertTraitInjected(config.routingTable.get(new URIPattern(RESOURCE_LEAGUES)).getAction(METHOD_GET));
 
         config.getRamlUpdater().reset();
-        assertInitialState();
+        assertInitialStateWithTraits();
     }
 
     private void assertTraitInjected(Action action)
@@ -65,7 +76,24 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
     }
 
     @Test
-    public void addAndRemoveSecurityScheme()
+    public void addAndRemoveFirstTrait() throws InitialisationException
+    {
+        setupConfigWithoutTraits();
+
+        assertInitialStateWithoutTraits();
+        config.getRamlUpdater().injectTrait(traitName, traitYaml).applyTrait(traitName, GET_ORDERS).resetAndUpdate();
+
+        assertThat(config.getApi().getTraits().size(), is(1));
+
+        assertTraitInjected(config.getApi().getResource(RESOURCE_ORDERS).getAction(METHOD_GET));
+        assertTraitInjected(config.routingTable.get(new URIPattern(RESOURCE_ORDERS)).getAction(METHOD_GET));
+
+        config.getRamlUpdater().reset();
+        assertInitialStateWithoutTraits();
+    }
+
+    @Test
+    public void addAndRemoveSecurityScheme() throws InitialisationException
     {
         String name = "oauth2SecurityScheme";
         String yaml = "description: |\n" +
@@ -98,16 +126,16 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
                         "  authorizationGrants: [code, token]\n" +
                         "  scopes: [ 'https://www.google.com/m8/feeds' ]\n";
 
-        assertInitialState();
+        assertInitialStateWithTraits();
         config.getRamlUpdater().injectSecuritySchemes(name, yaml)
                 .applySecurityScheme(name, GET_LEAGUES).resetAndUpdate();
 
         assertThat(config.getApi().getSecuritySchemes().size(), is(1));
-        assertSecuritySchemeInjected(config.getApi().getResource(RESOURCE).getAction(METHOD), name);
-        assertSecuritySchemeInjected(config.routingTable.get(new URIPattern(RESOURCE)).getAction(METHOD), name);
+        assertSecuritySchemeInjected(config.getApi().getResource(RESOURCE_LEAGUES).getAction(METHOD_GET), name);
+        assertSecuritySchemeInjected(config.routingTable.get(new URIPattern(RESOURCE_LEAGUES)).getAction(METHOD_GET), name);
 
         config.getRamlUpdater().reset();
-        assertInitialState();
+        assertInitialStateWithTraits();
     }
 
     private void assertSecuritySchemeInjected(Action action, String name)
@@ -134,14 +162,25 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
         config.getRamlUpdater().injectSecuritySchemes("name", "settings:").reset();
     }
 
-    private void assertInitialState()
+    private void assertInitialState(int traits, String resource)
     {
-        assertThat(config.getApi().getTraits().size(), is(1));
+        assertThat(config.getApi().getTraits().size(), is(traits));
         assertThat(config.getApi().getSecuritySchemes().size(), is(0));
-        Action action = config.getApi().getResource(RESOURCE).getAction(METHOD);
+        Action action = config.getApi().getResource(resource).getAction(METHOD_GET);
         assertThat(action.getIs().size(), is(0));
         assertThat(action.getHeaders().size(), is(0));
         assertThat(action.getSecuredBy().size(), is(0));
+    }
+
+    private void assertInitialStateWithTraits()
+    {
+        assertInitialState(1, RESOURCE_LEAGUES);
+    }
+
+    private void assertInitialStateWithoutTraits()
+    {
+        assertInitialState(0, RESOURCE_ORDERS);
+
     }
 
 }
