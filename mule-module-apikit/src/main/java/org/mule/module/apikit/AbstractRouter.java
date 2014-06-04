@@ -89,12 +89,7 @@ public abstract class AbstractRouter implements ApiRouter
             ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
             request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML))
         {
-            String host = event.getMessage().getInboundProperty("host");
-            if (host.contains(":"))
-            {
-                host = host.split(":")[0];
-            }
-            String raml = config.getApikitRaml(host);
+            String raml = config.getApikitRaml(event);
             event.getMessage().setPayload(raml);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
             event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, raml.length());

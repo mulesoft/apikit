@@ -323,6 +323,16 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         return hostRaml;
     }
 
+    public String getApikitRaml(MuleEvent event)
+    {
+        String host = event.getMessage().getInboundProperty("host");
+        if (host.contains(":"))
+        {
+            host = host.split(":")[0];
+        }
+        return getApikitRaml(host);
+    }
+
     private Raml deepCloneRaml(Raml source)
     {
         return (Raml) SerializationUtils.deserialize(SerializationUtils.serialize(source));
