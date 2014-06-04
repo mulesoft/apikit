@@ -12,7 +12,7 @@
     <flow name="proxy">
         <http:inbound-endpoint port="${proxyPort}" host="localhost" path="proxy"/>
         <apikit:proxy config-ref="proxy-config"/>
-        <http:outbound-endpoint host="localhost" port="${serverPort}" path="api/#[message.inboundProperties['http.relative.path']]"/>
+        <http:outbound-endpoint host="localhost" port="${serverPort}" path="api/#[message.inboundProperties['http.relative.path']]?#[message.inboundProperties['http.query.string']]"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 

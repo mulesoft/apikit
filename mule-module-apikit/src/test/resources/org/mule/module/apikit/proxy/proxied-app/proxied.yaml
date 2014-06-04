@@ -92,10 +92,9 @@ traits:
                         displayName: Limit
                         description: result set size
                         type: integer
-                        required: false
+                        required: true
                         minimum: 1
                         maximum: 10
-                        default: 5
                 responses:
                     200:
                         body:

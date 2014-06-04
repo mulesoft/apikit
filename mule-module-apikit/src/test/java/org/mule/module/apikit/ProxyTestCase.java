@@ -52,6 +52,7 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
         notAcceptable();
         notFound();
         methodNotAllowed();
+        getWithRequiredQueryParam();
     }
 
     private void getOnLeaguesJson() throws Exception
@@ -94,6 +95,21 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
                 .expect()
                 .response().statusCode(405)
                 .when().patch("/proxy/leagues");
+    }
+
+    private void getWithRequiredQueryParam()
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().statusCode(400).body(is("bad request"))
+                .when().get("/proxy/leagues/1/teams");
+
+        given().header("Accept", "application/json")
+                .queryParam("limit", "5")
+                .expect()
+                .response().body("name", hasItems("Atleti", "Elche"))
+                .header("Content-type", "application/json").statusCode(200)
+                .when().get("/proxy/leagues/1/teams");
     }
 
 }
