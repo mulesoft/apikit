@@ -27,11 +27,19 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
     private static final String RESOURCE_ORDERS = "/orders";
     private static final String GET_ORDERS = METHOD_GET + ":" + RESOURCE_ORDERS;
     private Configuration config;
-    private String traitName = "header";
-    private String traitYaml = "headers:\n" +
-                         "  injected:\n" +
-                         "    displayName: injected\n" +
-                         "    required: true";
+    private String traitName = "secured";
+    private String traitYaml = "usage: Apply this to any method that needs to be secured\n" +
+                               "description: Some requests require authentication.\n" +
+                               "headers:\n" +
+                               "  injected:\n" +
+                               "    displayName: injected\n" +
+                               "    required: true\n" +
+                               "queryParameters:\n" +
+                               "  access_token:\n" +
+                               "    description: Access Token\n" +
+                               "    type: string\n" +
+                               "    example: ACCESS_TOKEN\n" +
+                               "    required: true";
 
     private void setupConfig(String yamlPath) throws InitialisationException
     {
@@ -70,9 +78,11 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
     private void assertTraitInjected(Action action)
     {
         assertThat(action.getIs().size(), is(1));
-        assertThat(action.getIs().get(0), is("header"));
+        assertThat(action.getIs().get(0), is(traitName));
         assertThat(action.getHeaders().size(), is(1));
         assertThat(action.getHeaders().get("injected").getDisplayName(), is("injected"));
+        assertThat(action.getQueryParameters().size(), is(1));
+        assertThat(action.getQueryParameters().get("access_token").getDescription(), is("Access Token"));
     }
 
     @Test
@@ -97,34 +107,34 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
     {
         String name = "oauth2SecurityScheme";
         String yaml = "description: |\n" +
-                        "    Dropbox supports OAuth 2.0 for authenticating all API requests.\n" +
-                        "type: OAuth 2.0\n" +
-                        "describedBy:\n" +
-                        "    headers:\n" +
-                        "        Authorization:\n" +
-                        "            description: |\n" +
-                        "               Used to send a valid OAuth 2 access token. Do not use\n" +
-                        "               with the \"access_token\" query string parameter.\n" +
-                        "            type: string\n" +
-                        "    queryParameters:\n" +
-                        "        access_token:\n" +
-                        "            description: |\n" +
-                        "               Used to send a valid OAuth 2 access token. Do not use together with\n" +
-                        "               the \"Authorization\" header\n" +
-                        "            type: string\n" +
-                        "    responses:\n" +
-                        "        401:\n" +
-                        "            description: |\n" +
-                        "                Bad or expired token.\n" +
-                        "        403:\n" +
-                        "            description: |\n" +
-                        "                Bad OAuth request (wrong consumer key, bad nonce, expired\n" +
-                        "                timestamp...). Unfortunately, re-authenticating the user won't help here.\n" +
-                        "settings:\n" +
-                        "  authorizationUri: https://www.dropbox.com/1/oauth2/authorize\n" +
-                        "  accessTokenUri: https://api.dropbox.com/1/oauth2/token\n" +
-                        "  authorizationGrants: [code, token]\n" +
-                        "  scopes: [ 'https://www.google.com/m8/feeds' ]\n";
+                      "    Dropbox supports OAuth 2.0 for authenticating all API requests.\n" +
+                      "type: OAuth 2.0\n" +
+                      "describedBy:\n" +
+                      "    headers:\n" +
+                      "        Authorization:\n" +
+                      "            description: |\n" +
+                      "               Used to send a valid OAuth 2 access token. Do not use\n" +
+                      "               with the \"access_token\" query string parameter.\n" +
+                      "            type: string\n" +
+                      "    queryParameters:\n" +
+                      "        access_token:\n" +
+                      "            description: |\n" +
+                      "               Used to send a valid OAuth 2 access token. Do not use together with\n" +
+                      "               the \"Authorization\" header\n" +
+                      "            type: string\n" +
+                      "    responses:\n" +
+                      "        401:\n" +
+                      "            description: |\n" +
+                      "                Bad or expired token.\n" +
+                      "        403:\n" +
+                      "            description: |\n" +
+                      "                Bad OAuth request (wrong consumer key, bad nonce, expired\n" +
+                      "                timestamp...). Unfortunately, re-authenticating the user won't help here.\n" +
+                      "settings:\n" +
+                      "  authorizationUri: https://www.dropbox.com/1/oauth2/authorize\n" +
+                      "  accessTokenUri: https://api.dropbox.com/1/oauth2/token\n" +
+                      "  authorizationGrants: [code, token]\n" +
+                      "  scopes: [ 'https://www.google.com/m8/feeds' ]\n";
 
         assertInitialStateWithTraits();
         config.getRamlUpdater().injectSecuritySchemes(name, yaml)
@@ -169,6 +179,7 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
         Action action = config.getApi().getResource(resource).getAction(METHOD_GET);
         assertThat(action.getIs().size(), is(0));
         assertThat(action.getHeaders().size(), is(0));
+        assertThat(action.getQueryParameters().size(), is(0));
         assertThat(action.getSecuredBy().size(), is(0));
     }
 

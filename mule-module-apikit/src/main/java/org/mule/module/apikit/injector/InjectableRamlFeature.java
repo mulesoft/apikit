@@ -27,18 +27,21 @@ public abstract class InjectableRamlFeature
 
     protected Raml parse()
     {
-        StringBuilder wholeYaml = new StringBuilder(getBoilerPlate());
+        StringBuilder wholeYaml = new StringBuilder(getBoilerPlateBefore());
         String[] split = yaml.split("[\r\n]+");
         for (String s : split)
         {
             wholeYaml.append(getIndentation()).append(s).append("\n");
         }
+        wholeYaml.append(getBoilerPlateAfter());
         return new RamlDocumentBuilder().build(wholeYaml.toString(), "");
     }
 
     public abstract void applyToAction(Action target);
 
-    protected abstract String getBoilerPlate();
+    protected abstract String getBoilerPlateBefore();
+
+    protected abstract String getBoilerPlateAfter();
 
     protected abstract String getIndentation();
 

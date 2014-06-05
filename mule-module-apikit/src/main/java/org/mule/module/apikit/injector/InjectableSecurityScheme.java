@@ -38,9 +38,15 @@ public class InjectableSecurityScheme extends InjectableRamlFeature
     }
 
     @Override
-    protected String getBoilerPlate()
+    protected String getBoilerPlateBefore()
     {
         return TEMPLATE;
+    }
+
+    @Override
+    protected String getBoilerPlateAfter()
+    {
+        return "";
     }
 
     @Override

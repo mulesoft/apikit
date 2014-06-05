@@ -16,8 +16,9 @@ public class InjectableTrait extends InjectableRamlFeature
 
     private static final String RESOURCE = "/base";
     private static final String ACTION = "get";
-    private static final String TEMPLATE = "#%RAML 0.8\ntitle: t\n" + RESOURCE + ":\n " + ACTION + ":\n";
-    private static final String INDENTATION = "  ";
+    private static final String TEMPLATE_BEFORE = "#%RAML 0.8\ntitle: t\ntraits:\n - injected:\n";
+    private static final String TEMPLATE_AFTER = RESOURCE + ":\n " + ACTION + ":\n  is: [injected]\n";
+    private static final String INDENTATION = "    ";
 
     private Action cache;
 
@@ -27,9 +28,15 @@ public class InjectableTrait extends InjectableRamlFeature
     }
 
     @Override
-    protected String getBoilerPlate()
+    protected String getBoilerPlateBefore()
     {
-        return TEMPLATE;
+        return TEMPLATE_BEFORE;
+    }
+
+    @Override
+    protected String getBoilerPlateAfter()
+    {
+        return TEMPLATE_AFTER;
     }
 
     @Override
