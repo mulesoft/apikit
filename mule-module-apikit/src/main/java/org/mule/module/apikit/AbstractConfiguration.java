@@ -43,8 +43,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
@@ -542,4 +544,16 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         return new RamlUpdater(deepCloneRaml(baseApi), this);
     }
 
+    public Set<String> getFlowActionRefs(Flow flow)
+    {
+        Set<String> actionRefs = new HashSet<String>();
+        for (Map.Entry<String, FlowResolver> entry : restFlowMapWrapper.entrySet())
+        {
+            if (flow == entry.getValue().getFlow())
+            {
+                actionRefs.add(entry.getKey());
+            }
+        }
+        return actionRefs;
+    }
 }

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
@@ -43,6 +44,7 @@ public class Configuration extends AbstractConfiguration
     private String consolePath = DEFAULT_CONSOLE_PATH;
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private Map<String, Flow> restFlowMap;
+    private Map<String, Flow> restFlowMapUnwrapped;
 
     public boolean isConsoleEnabled()
     {
@@ -131,6 +133,8 @@ public class Configuration extends AbstractConfiguration
                     logger.debug("\t\t" + key);
                 }
             }
+
+            restFlowMapUnwrapped = new HashMap<String, Flow>(restFlowMap);
         }
     }
 
@@ -151,6 +155,20 @@ public class Configuration extends AbstractConfiguration
                 throw new ApikitRuntimeException(e);
             }
         }
+    }
+
+    @Override
+    public Set<String> getFlowActionRefs(Flow flow)
+    {
+        Set<String> flowActionRefs = super.getFlowActionRefs(flow);
+        for (Map.Entry<String, Flow> entry : restFlowMapUnwrapped.entrySet())
+        {
+            if (flow == entry.getValue())
+            {
+                flowActionRefs.add(entry.getKey());
+            }
+        }
+        return flowActionRefs;
     }
 
     public Map<String, Flow> getRawRestFlowMap()
