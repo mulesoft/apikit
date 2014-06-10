@@ -19,6 +19,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
 
+import org.raml.parser.loader.ClassPathResourceLoader;
+import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.NodeRuleFactory;
 
@@ -35,7 +37,6 @@ public class ProxyConfiguration extends AbstractConfiguration
     @Override
     protected void initializeRestFlowMap()
     {
-        return;
     }
 
     @Override
@@ -53,7 +54,7 @@ public class ProxyConfiguration extends AbstractConfiguration
     @Override
     public ResourceLoader getRamlResourceLoader()
     {
-        return new RamlUrlResourceLoader();
+        return new CompositeResourceLoader(new RamlUrlResourceLoader(), new ClassPathResourceLoader());
     }
 
     private static class RamlUrlResourceLoader implements ResourceLoader
