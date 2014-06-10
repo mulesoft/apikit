@@ -6,8 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.transport.http.HttpConnector.HTTP_STATUS_PROPERTY;
-
 import org.mule.api.GlobalNameableObject;
 import org.mule.api.MuleEvent;
 import org.mule.api.exception.MessagingExceptionHandlerAcceptor;
@@ -36,37 +34,8 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
                 return exceptionListener.handleException(exception, event);
             }
         }
-        return defaultHandler(exception, event);
-    }
-
-    protected MuleEvent defaultHandler(Exception exception, MuleEvent event)
-    {
-        String currentStatus = String.valueOf(event.getMessage().getOutboundProperty(HTTP_STATUS_PROPERTY));
-        //if status already 4xx or 5xx -> pass-through
-        if (!isErrorCode(currentStatus))
-        {
-            event.getMessage().setOutboundProperty(HTTP_STATUS_PROPERTY, 500);
-            event.getMessage().setPayload(exception.getMessage());
-        }
+        //let mule do the default handling
         return event;
-    }
-
-    private boolean isErrorCode(String statusCode)
-    {
-        if (statusCode == null)
-        {
-            return false;
-        }
-        int status = 0;
-        try
-        {
-            status = Integer.parseInt(statusCode);
-        }
-        catch (NumberFormatException nfe)
-        {
-            //ignore
-        }
-        return status >= 400 && status < 600;
     }
 
     @Override

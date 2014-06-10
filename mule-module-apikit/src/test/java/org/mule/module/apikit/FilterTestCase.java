@@ -47,7 +47,7 @@ public class FilterTestCase extends FunctionalTestCase
     {
         given().body("plastic").contentType("text/plain")
                 .expect()
-                .statusCode(500)
+                .statusCode(406) //mapped by mule: META-INF/services/org/mule/config/http-exception-mappings.properties
                 .when().put("/api/some");
     }
 
