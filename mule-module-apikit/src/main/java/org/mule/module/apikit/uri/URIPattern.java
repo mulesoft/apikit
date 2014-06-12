@@ -7,7 +7,10 @@
 
 package org.mule.module.apikit.uri;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 
@@ -28,6 +31,8 @@ import java.util.regex.Pattern;
 public class URIPattern extends URITemplate implements Matchable
 {
 
+    private static final Set<Character> ESCAPE_CHARS = new HashSet<Character>(Arrays.asList('/', '{', '}'));
+
     /**
      * The regular expression pattern for matching URIs to this URI Pattern.
      */
@@ -44,15 +49,20 @@ public class URIPattern extends URITemplate implements Matchable
      * @param template The string following the URI template syntax.
      * @throws URITemplateSyntaxException If the string provided does not follow the proper syntax.
      */
-    public URIPattern(String template) throws IllegalArgumentException
+    public URIPattern(String template, boolean encode) throws IllegalArgumentException
     {
-        super(template);
+        super(encode ? URICoder.encode(template, ESCAPE_CHARS) : template);
         if (!isMatchable(this))
         {
             throw new IllegalArgumentException(
                     "Cannot create a URL pattern containing non-matchable tokens.");
         }
         this._pattern = computePattern(tokens());
+    }
+
+    public URIPattern(String template) throws IllegalArgumentException
+    {
+        this(template, true);
     }
 
     /**

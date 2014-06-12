@@ -111,11 +111,11 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         {
             if (msgMimeType != null && msgMimeType.contains(responseMimeType.getType()))
             {
-                return responseMimeType.getType();
+                return msgMimeType;
             }
             if (msgContentType != null && msgContentType.contains(responseMimeType.getType()))
             {
-                return responseMimeType.getType();
+                return msgContentType;
             }
         }
         return null;

@@ -1,0 +1,11 @@
+#%RAML 0.8
+title: unicode
+/pingüino:
+    get: &basic
+        responses:
+            200:
+                body:
+                    text/plain:
+                    text/html:
+    /{id}:
+        get: *basic

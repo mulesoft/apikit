@@ -17,6 +17,7 @@ import org.mule.module.apikit.uri.URIResolver;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class UriTemplateTestCase
@@ -61,6 +62,7 @@ public class UriTemplateTestCase
     }
 
     @Test
+    @Ignore //level two templates not supported as per raml spec
     public void specialNotUriEncodedCharactersLevelTwo()
     {
         for (char c : SPECIAL_CHARS_NOT_URI_ENCODED)
@@ -96,7 +98,7 @@ public class UriTemplateTestCase
         URIResolver resolver = new URIResolver(getUri(value));
         URIPattern pattern = new URIPattern(URL_PREFIX + "/{id}");
         URIResolveResult resolve = resolver.resolve(pattern);
-        assertThat((String) resolve.get("id"), is(value));
+        assertThat((String) resolve.get("id"), is(URICoder.encode(value)));
     }
 
     private void matchSingleTemplateLevelTwo(String value)

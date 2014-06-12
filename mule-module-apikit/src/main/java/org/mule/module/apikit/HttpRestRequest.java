@@ -24,6 +24,7 @@ import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
+import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
 import org.mule.module.apikit.validation.SchemaType;
@@ -78,7 +79,7 @@ public abstract class HttpRestRequest
         String basePath = adapter.getBaseURI().getPath();
         int start = basePath.endsWith("/") ? basePath.length() - 1 : basePath.length();
         int end = path.endsWith("/") ? path.length() - 1 : path.length();
-        return path.substring(start, end);
+        return URICoder.decode(path.substring(start, end));
     }
 
     public String getMethod()

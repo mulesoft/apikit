@@ -11,6 +11,9 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * An encoder/decoder for use by URI templates.
@@ -28,11 +31,11 @@ import java.text.Normalizer.Form;
  * @author Christophe Lauret
  * @version 11 June 2009
  * @see <a href="http://tools.ietf.org/html/rfc3986">RFC 3986 - Uniform Resource Identifier (URI):
- *      Generic Syntax<a/>
+ * Generic Syntax<a/>
  * @see <a href="http://tools.ietf.org/html/rfc3986#appendix-A">RFC 3986 - Uniform Resource
- *      Identifier (URI): Generic Syntax - Appendix A. Collected ABNF for URI</a>
+ * Identifier (URI): Generic Syntax - Appendix A. Collected ABNF for URI</a>
  * @see <a href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html#Specification">UAX #15:
- *      Unicode Normalization</a>
+ * Unicode Normalization</a>
  */
 public class URICoder
 {
@@ -79,11 +82,11 @@ public class URICoder
      * <p/>
      * This encoder will percent-encode all but <em>unreserved</em> characters.
      *
-     * @param s The string to encode.
-     * @param c An ASCII character that should not be encoded if found in the string.
+     * @param s     The string to encode.
+     * @param chars An ASCII set of characters that should not be encoded if found in the string.
      * @return The corresponding encoded string.
      */
-    public static String encode(String s, char c)
+    public static String encode(String s, Set<Character> chars)
     {
         if (s.length() == 0)
         {
@@ -91,7 +94,12 @@ public class URICoder
         }
         // Check whether we need to use UTF-8 encoder
         boolean ascii = isASCII(s);
-        return ascii ? encode_ASCII(s, c) : encode_UTF8(s, c);
+        return ascii ? encode_ASCII(s, chars) : encode_UTF8(s, chars);
+    }
+
+    public static String encode(String s, char c)
+    {
+        return encode(s, new HashSet<Character>(Arrays.asList(c)));
     }
 
     /**
@@ -117,15 +125,15 @@ public class URICoder
     /**
      * Encodes a string containing only ASCII characters.
      *
-     * @param s The string the encode (assuming ASCII characters only)
-     * @param e A character that does not require encoding if found in the string.
+     * @param s     The string the encode (assuming ASCII characters only)
+     * @param chars A set of characters that does not require encoding if found in the string.
      */
-    private static String encode_ASCII(String s, char e)
+    private static String encode_ASCII(String s, Set<Character> chars)
     {
         StringBuffer sb = new StringBuffer();
         for (char c : s.toCharArray())
         {
-            if (isUnreserved((int) c) || c == e)
+            if (isUnreserved((int) c) || chars.contains(c))
             {
                 sb.append(c);
             }
@@ -162,10 +170,10 @@ public class URICoder
     /**
      * Encodes a string containing non ASCII characters using an UTF-8 encoder.
      *
-     * @param s The string the encode (assuming ASCII characters only)
-     * @param e A character that does not require encoding if found in the string.
+     * @param s     The string the encode (assuming ASCII characters only)
+     * @param chars A set of characters that does not require encoding if found in the string.
      */
-    private static String encode_UTF8(String s, char e)
+    private static String encode_UTF8(String s, Set<Character> chars)
     {
         // TODO: Normalizer requires Java 6!
         String n = (Normalizer.isNormalized(s, Form.NFKC)) ? s : Normalizer.normalize(s, Form.NFKC);
@@ -176,7 +184,7 @@ public class URICoder
         while (bb.hasRemaining())
         {
             int b = bb.get() & 0xff;
-            if (isUnreserved(b) || b == e)
+            if (isUnreserved(b) || chars.contains((char) b))
             {
                 sb.append((char) b);
             }
@@ -255,10 +263,6 @@ public class URICoder
                 }
                 // TODO: handle error condition
             }
-            else if (c == '+')
-            {
-                sb.append(' ');
-            }
             else
             {
                 sb.append(c);
@@ -285,10 +289,6 @@ public class URICoder
                     byte b = (byte) (Integer.parseInt(hex, 16));
                     bb.put(b);
                 }
-            }
-            else if (c == '+')
-            {
-                bb.put((byte) ' ');
             }
             else
             {
@@ -318,7 +318,7 @@ public class URICoder
      * Appends the escape sequence for the given byte to the specified string buffer.
      *
      * @param sb The string buffer.
-     * @param b  The byte to escape.
+     * @param c  The byte to escape.
      */
     private static void appendEscape(StringBuffer sb, char c)
     {

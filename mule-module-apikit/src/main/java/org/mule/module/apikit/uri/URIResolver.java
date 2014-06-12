@@ -56,7 +56,7 @@ public class URIResolver
          * Indicates that the best matching pattern should be returned when finding a match in a list
          * of patterns. The best matching patterns is determined by the longest common string.
          */
-        BEST_MATCH;
+        BEST_MATCH
     }
 
     /**
@@ -69,9 +69,23 @@ public class URIResolver
      *
      * @param uri The URI to resolve.
      */
+    public URIResolver(String uri, boolean encode)
+    {
+        if (encode)
+        {
+            uri = encode(uri);
+        }
+        this._uri = uri;
+    }
+
     public URIResolver(String uri)
     {
-        this._uri = uri;
+        this(uri, true);
+    }
+
+    private String encode(String uri)
+    {
+        return URICoder.encode(uri, '/');
     }
 
     /**
@@ -238,7 +252,7 @@ public class URIResolver
      * @param patterns The URI patterns available.
      * @return The first URI pattern that matches or <code>null</code>.
      */
-    private final URIPattern findFirst(Set<URIPattern> patterns)
+    private URIPattern findFirst(Set<URIPattern> patterns)
     {
         if (patterns == null || patterns.size() == 0)
         {
@@ -260,7 +274,7 @@ public class URIResolver
      * @param patterns The URI patterns available.
      * @return The best URI pattern that matches or <code>null</code>.
      */
-    private final URIPattern findBest(Set<URIPattern> patterns)
+    private URIPattern findBest(Set<URIPattern> patterns)
     {
         if (patterns == null || patterns.size() == 0)
         {

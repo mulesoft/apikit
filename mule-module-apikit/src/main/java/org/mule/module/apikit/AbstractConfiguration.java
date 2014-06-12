@@ -21,7 +21,6 @@ import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.injector.RamlUpdater;
-import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.util.BeanUtils;
@@ -142,7 +141,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
                         {
                             public URIResolver load(String path) throws IOException
                             {
-                                return new URIResolver(URICoder.encode(path, '/'));
+                                return new URIResolver(path);
                             }
                         });
 
@@ -154,31 +153,14 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
                             public URIPattern load(String path) throws Exception
                             {
                                 URIResolver resolver = uriResolverCache.get(path);
-                                Collection<URIPattern> matches = resolver.findAll(routingTable.keySet());
+                                URIPattern match = resolver.find(routingTable.keySet(), URIResolver.MatchRule.BEST_MATCH);
 
-                                if (matches.size() == 0)
+                                if (match == null)
                                 {
                                     logger.warn("No matching patterns for URI " + path);
                                     throw new NotFoundException(path);
                                 }
-                                else
-                                {
-                                    if (logger.isDebugEnabled())
-                                    {
-                                        logger.debug(matches.size() + " matching patterns for URI " + path + ". Finding best one...");
-                                    }
-                                    for (URIPattern p : matches)
-                                    {
-                                        boolean best = (p == resolver.find(routingTable.keySet(), URIResolver.MatchRule.BEST_MATCH));
-
-                                        if (best)
-                                        {
-                                            return p;
-                                        }
-                                    }
-
-                                    return null;
-                                }
+                                return match;
                             }
                         });
     }
