@@ -102,6 +102,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         validateRaml(loader);
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(raml);
+        cleanBaseUriParameters(api);
         baseHost = getBaseHost();
         initializeRestFlowMapWrapper();
         loadRoutingTable();
@@ -253,6 +254,28 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         catch (URISyntaxException e)
         {
             throw new RuntimeException(e);
+        }
+    }
+
+    private void cleanBaseUriParameters(Raml ramlApi)
+    {
+        ramlApi.getBaseUriParameters().clear();
+        cleanBaseUriParameters(ramlApi.getResources());
+    }
+
+    private void cleanBaseUriParameters(Map<String, Resource> resources)
+    {
+        for (Resource resource : resources.values())
+        {
+            resource.getBaseUriParameters().clear();
+            for (Action action : resource.getActions().values())
+            {
+                action.getBaseUriParameters().clear();
+            }
+            if (!resource.getResources().isEmpty())
+            {
+                cleanBaseUriParameters(resource.getResources());
+            }
         }
     }
 

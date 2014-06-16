@@ -1,0 +1,15 @@
+#%RAML 0.8
+---
+title: BaseUri Parameters API
+baseUri: http://{domain}/{path}
+baseUriParameters: &params
+    domain:
+        type: string
+        required: true
+    path:
+        type: string
+        required: true
+/resources:
+    baseUriParameters: *params
+    get:
+       baseUriParameters: *params
