@@ -3,12 +3,12 @@
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
-      xmlns:cors="http://www.mulesoft.org/schema/mule/cors"
       xmlns:spring="http://www.springframework.org/schema/beans"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
-        http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd
+
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
@@ -34,18 +34,8 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config name="leaguesApi" raml="org/mule/module/apikit/leagues/leagues.yaml" consoleEnabled="true" consolePath="console"/>
-
-    <flow name="doorway">
-        <http:inbound-endpoint port="${serverPort}" host="0.0.0.0" path="api"/>
-        <apikit:router/>
-        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
-    </flow>
-
-    <flow name="console">
-        <http:inbound-endpoint port="${serverPort}" host="0.0.0.0" path="console"/>
-        <apikit:console config-ref="leaguesApi"/>
-    </flow>
+    <apikit:config name="leaguesApi" raml="org/mule/module/apikit/leagues/leagues.yaml" consoleEnabled="true"
+                   consolePath="console"/>
 
     <flow name="get:/leagues">
         <set-payload value="#[registry:list-of-leagues]"/>
@@ -60,7 +50,8 @@
                 <set-payload value="Invalid League Name"/>
             </when>
             <otherwise>
-                <set-property propertyName="Location" value="http://localhost:${serverPort}/api/leagues/#[app.registry['list-of-leagues'].getLeagues().size() + 1]"/>
+                <set-property propertyName="Location"
+                              value="http://localhost:${serverPort}/api/leagues/#[app.registry['list-of-leagues'].getLeagues().size() + 1]"/>
                 <expression-component>
                     payload.id = message.inboundProperties.get('Location');
                     app.registry['list-of-leagues'].getLeagues().add(payload);
@@ -117,8 +108,10 @@
     </flow>
 
     <flow name="put:/leagues/{leagueId}/badge">
-        <set-variable variableName="mp1" value="#[org.mule.util.IOUtils.toString(message.inboundAttachments['description'].getDataSource().getInputStream())]"/>
-        <set-variable variableName="mp2" value="#[message.inboundAttachments['image'].getDataSource().getPart().getContentDispositionFilename()]"/>
+        <set-variable variableName="mp1"
+                      value="#[org.mule.util.IOUtils.toString(message.inboundAttachments['description'].getDataSource().getInputStream())]"/>
+        <set-variable variableName="mp2"
+                      value="#[message.inboundAttachments['image'].getDataSource().getPart().getContentDispositionFilename()]"/>
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{ &quot;upload&quot;: &quot;OK&quot; }"/>
     </flow>
