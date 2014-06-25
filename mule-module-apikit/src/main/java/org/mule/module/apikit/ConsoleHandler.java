@@ -126,10 +126,6 @@ public class ConsoleHandler
             {
                 path = RESOURCE_BASE + "/index.html";
                 String host = event.getMessage().getInboundProperty("host");
-                if (host.contains(":"))
-                {
-                    host = host.split(":")[0];
-                }
                 in = new ByteArrayInputStream(getHomePage(host).getBytes());
             }
             else if (path.startsWith(consolePath))
@@ -173,11 +169,17 @@ public class ConsoleHandler
             return homePage.get(baseHost);
         }
 
-        String page = homePage.get(host);
+        String hostPart = host;
+        if (host.contains(":"))
+        {
+            hostPart = host.split(":")[0];
+        }
+
+        String page = homePage.get(hostPart);
         if (page == null)
         {
-            page = homePage.get(baseHost).replace(BIND_ALL_HOST, host);
-            homePage.put(host, page);
+            page = homePage.get(baseHost).replaceAll(BIND_ALL_HOST + "(:[0-9]*)*", host);
+            homePage.put(hostPart, page);
         }
         return page;
     }
