@@ -1,0 +1,20 @@
+#%RAML 0.8
+title: Sample API
+
+resourceTypes:
+  - basic:
+      get:
+        responses:
+          200:
+            body:
+              text/plain:
+                example: <<example>>
+
+/:
+  type: {basic: {example: 'root'}}
+
+  /under:
+    type: {basic: {example: 'under'}}
+
+/level:
+  type: {basic: {example: 'level'}}

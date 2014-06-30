@@ -99,6 +99,7 @@ public abstract class AbstractRouter implements ApiRouter
 
         URIPattern uriPattern;
         URIResolver uriResolver;
+        path = path.isEmpty()? "/" : path;
         try
         {
             uriPattern = getUriPatternCache().get(path);
