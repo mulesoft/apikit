@@ -99,7 +99,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
         RestAssured.port = serverPort2.getNumber();
         given().header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(containsString("baseUri: \"http://localhost:" + serverPort.getNumber() + "/api\""))
+                .response().body(containsString("baseUri: \"http://localhost:" + port + "/api\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/");
     }

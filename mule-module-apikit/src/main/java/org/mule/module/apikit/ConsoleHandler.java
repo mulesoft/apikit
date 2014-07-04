@@ -7,7 +7,7 @@
 
 package org.mule.module.apikit;
 
-import static org.mule.module.apikit.Configuration.BIND_ALL_HOST;
+import static org.mule.module.apikit.UrlUtils.getBaseSchemeHostPort;
 
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
@@ -27,8 +27,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,7 +44,7 @@ public class ConsoleHandler
     private static final String RESOURCE_BASE = "/console";
     private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
     private String consolePath;
-    private String baseHost;
+    private String baseSchemeHostPort;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private String ramlUri;
@@ -58,15 +56,8 @@ public class ConsoleHandler
         this.ramlUri = ramlUri.endsWith("/") ? ramlUri : ramlUri + "/";
         String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
                                                      "<raml-console src=\"" + this.ramlUri + "\"");
-        try
-        {
-            baseHost = new URI(this.ramlUri).getHost();
-        }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException(e);
-        }
-        homePage.put(baseHost, baseHomePage);
+        baseSchemeHostPort = getBaseSchemeHostPort(this.ramlUri);
+        homePage.put(baseSchemeHostPort, baseHomePage);
     }
 
     private String sanitize(String consolePath)
@@ -125,12 +116,7 @@ public class ConsoleHandler
             if (path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
             {
                 path = RESOURCE_BASE + "/index.html";
-                String host = event.getMessage().getInboundProperty("host");
-                if (host.contains(":"))
-                {
-                    host = host.split(":")[0];
-                }
-                in = new ByteArrayInputStream(getHomePage(host).getBytes());
+                in = new ByteArrayInputStream(getHomePage(getBaseSchemeHostPort(event)).getBytes());
             }
             else if (path.startsWith(consolePath))
             {
@@ -166,18 +152,18 @@ public class ConsoleHandler
         return resultEvent;
     }
 
-    private String getHomePage(String host)
+    private String getHomePage(String schemeHostPort)
     {
-        if (!BIND_ALL_HOST.equals(baseHost))
+        if (schemeHostPort == null)
         {
-            return homePage.get(baseHost);
+            return homePage.get(baseSchemeHostPort);
         }
 
-        String page = homePage.get(host);
+        String page = homePage.get(schemeHostPort);
         if (page == null)
         {
-            page = homePage.get(baseHost).replace(BIND_ALL_HOST, host);
-            homePage.put(host, page);
+            page = homePage.get(baseSchemeHostPort).replace(baseSchemeHostPort, schemeHostPort);
+            homePage.put(schemeHostPort, page);
         }
         return page;
     }

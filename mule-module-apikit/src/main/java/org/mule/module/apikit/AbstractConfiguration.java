@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.module.apikit.UrlUtils.getBaseSchemeHostPort;
 import static org.raml.parser.rule.ValidationResult.Level.ERROR;
 import static org.raml.parser.rule.ValidationResult.Level.WARN;
 import static org.raml.parser.rule.ValidationResult.UNKNOWN;
@@ -35,10 +36,6 @@ import com.google.common.cache.LoadingCache;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,7 +64,6 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 {
 
     public static final String APPLICATION_RAML = "application/raml+yaml";
-    public static final String BIND_ALL_HOST = "0.0.0.0";
     private static final String CONSOLE_URL_FILE = "consoleurl";
     private static final int URI_CACHE_SIZE = 1000;
 
@@ -79,7 +75,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     protected String raml;
     private Raml baseApi; //original raml
     protected Raml api; //current raml
-    private String baseHost;
+    private String baseSchemeHostPort;
     private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
     private boolean disableValidations;
     protected Map<String, FlowResolver> restFlowMapWrapper;
@@ -103,7 +99,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(raml);
         cleanBaseUriParameters(api);
-        baseHost = getBaseHost();
+        baseSchemeHostPort = getBaseSchemeHostPort(api.getBaseUri());
         initializeRestFlowMapWrapper();
         loadRoutingTable();
         buildResourcePatternCaches();
@@ -116,20 +112,6 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
             routingTable = new ConcurrentHashMap<URIPattern, Resource>();
         }
         buildRoutingTable(getApi().getResources());
-    }
-
-    private String getBaseHost()
-    {
-        URL url;
-        try
-        {
-            url = new URL(api.getBaseUri());
-        }
-        catch (MalformedURLException e)
-        {
-            return "localhost";
-        }
-        return url.getHost();
     }
 
     private void buildResourcePatternCaches()
@@ -189,16 +171,20 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     {
         this.flowConstruct = flowConstruct;
         injectEndpointUri(api);
-        apikitRaml = new ConcurrentHashMap<String, String>();
-        apikitRaml.put(baseHost, new RamlEmitter().dump(api));
+        resetRamlMap();
     }
 
     public void updateApi(Raml newApi)
     {
         api = newApi;
         loadRoutingTable();
+        resetRamlMap();
+    }
+
+    private void resetRamlMap()
+    {
         apikitRaml = new ConcurrentHashMap<String, String>();
-        apikitRaml.put(baseHost, new RamlEmitter().dump(api));
+        apikitRaml.put(baseSchemeHostPort, new RamlEmitter().dump(api));
     }
 
     protected abstract void initializeRestFlowMap();
@@ -247,14 +233,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     {
         String address = getEndpointAddress(flowConstruct);
         ramlApi.setBaseUri(address);
-        try
-        {
-            baseHost = new URI(address).getHost();
-        }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException(e);
-        }
+        baseSchemeHostPort = getBaseSchemeHostPort(address);
     }
 
     private void cleanBaseUriParameters(Raml ramlApi)
@@ -310,34 +289,28 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     /**
      * Returns the RAML descriptor of the API.
-     * If the baseUri is bound to all interfaces (0.0.0.0) the host parameter
-     * is used to rewrite the base uri with the actual host received.
+     * The schemeHostPort parameter is used to rewrite the base uri with the actual host received.
      */
-    public String getApikitRaml(String host)
+    public String getApikitRaml(String schemeHostPort)
     {
-        if (host == null)
+        if (schemeHostPort == null)
         {
-            return apikitRaml.get(baseHost);
+            return apikitRaml.get(baseSchemeHostPort);
         }
-        String hostRaml = apikitRaml.get(host);
+        String hostRaml = apikitRaml.get(schemeHostPort);
         if (hostRaml == null)
         {
             Raml clone = shallowCloneRaml(api);
-            clone.setBaseUri(api.getBaseUri().replace(baseHost, host));
+            clone.setBaseUri(api.getBaseUri().replace(baseSchemeHostPort, schemeHostPort));
             hostRaml = new RamlEmitter().dump(clone);
-            apikitRaml.put(host, hostRaml);
+            apikitRaml.put(schemeHostPort, hostRaml);
         }
         return hostRaml;
     }
 
     public String getApikitRaml(MuleEvent event)
     {
-        String host = event.getMessage().getInboundProperty("host");
-        if (host.contains(":"))
-        {
-            host = host.split(":")[0];
-        }
-        return getApikitRaml(host);
+        return getApikitRaml(getBaseSchemeHostPort(event));
     }
 
     private Raml deepCloneRaml(Raml source)
