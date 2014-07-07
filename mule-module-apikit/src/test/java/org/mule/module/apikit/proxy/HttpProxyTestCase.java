@@ -7,10 +7,8 @@
 package org.mule.module.apikit.proxy;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.Matchers.containsString;
 import static org.mule.module.apikit.AbstractConfiguration.APPLICATION_RAML;
-import static org.mule.module.apikit.util.RegexMatcher.matches;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -51,32 +49,30 @@ public class HttpProxyTestCase extends FunctionalTestCase
     public void getRaml() throws Exception
     {
         given().header("Accept", APPLICATION_RAML)
-            .expect()
+                .expect()
                 .response().body(containsString("baseUri: \"http://localhost:" + proxyPort.getValue() + "/api\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
-            .when().get("/api");
+                .when().get("/api");
     }
 
     @Test
     public void getConsole() throws Exception
     {
         given().header("Accept", "text/html")
-            .expect().log().everything()
+                .expect().log().everything()
                 .response().body(containsString("raml-console src=\"http://localhost:" + proxyPort.getValue() + "/console/\""))
                 .statusCode(200)
-            .when().get("/console");
+                .when().get("/console");
     }
 
     @Test
     public void getConsoleSlash() throws Exception
     {
-        //System.out.println("serverPort = " + serverPort.getValue() + " -- proxyPort = " + proxyPort.getValue());
-        //Thread.sleep(Long.MAX_VALUE);
         given().header("Accept", "text/html")
-            .expect().log().everything()
+                .expect().log().everything()
                 .response().body(containsString("raml-console src=\"http://localhost:" + proxyPort.getValue() + "/console/\""))
                 .statusCode(200)
-            .when().get("/console/");
+                .when().get("/console/");
     }
 
 }
