@@ -9,6 +9,7 @@ package org.mule.module.apikit.parameters;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -38,26 +39,27 @@ public class ParametersTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigResources()
+    protected String getConfigFile()
     {
         return "org/mule/module/apikit/parameters/parameters-config.xml";
     }
-
 
     @Test
     public void requiredHeaderNotProvided() throws Exception
     {
         given()
                 .expect().response().statusCode(400)
-                .when().get("/api/resources?first=f");
+                .body(is("Required header one not specified"))
+                .when().get("/api/resources?first=fi");
     }
 
     @Test
-    public void invalidHeaderProvided() throws Exception
+    public void invalidEnumHeaderProvided() throws Exception
     {
         given().header("one", "invalid")
                 .expect().response().statusCode(400)
-                .when().get("/api/resources?first=f");
+                .body(is("Invalid value 'invalid' for header one. Value must be one of [foo, bar]"))
+                .when().get("/api/resources?first=fi");
     }
 
     @Test
@@ -65,7 +67,8 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given().header("mule-special", "dough").header("one", "foo")
                 .expect().response().statusCode(400)
-                .when().get("/api/resources?first=f");
+                .body(is("Invalid value 'dough' for header mule-{?}. Value must be one of [wow, yeah]"))
+                .when().get("/api/resources?first=fi");
     }
 
     @Test
@@ -73,7 +76,7 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given().header("mule-special", "yeah").header("one", "foo")
                 .expect().response().statusCode(200)
-                .when().get("/api/resources?first=f");
+                .when().get("/api/resources?first=fi");
     }
 
     @Test
@@ -81,6 +84,7 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given()
                 .expect().response().statusCode(400)
+                .body(is("Required query parameter first not specified"))
                 .when().get("/api/resources");
     }
 
@@ -89,7 +93,61 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given().header("one", "foo")
                 .expect().response().statusCode(200)
-                .when().get("/api/resources?first=I");
+                .when().get("/api/resources?first=fi");
+    }
+
+    @Test
+    public void invalidQueryParamMinLength() throws Exception
+    {
+        given().header("one", "foo").queryParam("first", "f")
+                .expect().response().statusCode(400)
+                .body(is("Invalid value 'f' for query parameter first. Value length is shorter than 2"))
+                .when().get("/api/resources");
+    }
+
+    @Test
+    public void invalidQueryParamMaxLength() throws Exception
+    {
+        given().header("one", "foo").queryParam("first", "first")
+                .expect().response().statusCode(400)
+                .body(is("Invalid value 'first' for query parameter first. Value length is longer than 3"))
+                .when().get("/api/resources");
+    }
+
+    @Test
+    public void invalidQueryParamPattern() throws Exception
+    {
+        given().header("one", "foo").queryParam("first", "1st")
+                .expect().response().statusCode(400)
+                .body(is("Invalid value '1st' for query parameter first. Value does not match pattern [^0-9]*"))
+                .when().get("/api/resources");
+    }
+
+    @Test
+    public void invalidUriParamType() throws Exception
+    {
+        given().header("one", "foo").queryParam("first", "fi")
+                .expect().response().statusCode(400)
+                .body(is("Invalid value 'a' for uri parameter id. Integer required"))
+                .when().get("/api/resources/a");
+    }
+
+    @Test
+    public void invalidUriParamMinimum() throws Exception
+    {
+        given().header("one", "foo").queryParam("first", "fi")
+                .expect().response().statusCode(400)
+                .body(is("Invalid value '0' for uri parameter id. Value is below the minimum 1"))
+                .when().get("/api/resources/0");
+    }
+
+    @Test
+    public void invalidUriParamMaximum() throws Exception
+    {
+        given().header("one", "foo").queryParam("first", "fi")
+                .expect().response().statusCode(400)
+                .body(is("Invalid value '10' for uri parameter id. Value is above the maximum 5"))
+                .when().get("/api/resources/10");
     }
 
     @Test
@@ -97,7 +155,8 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given()
                 .expect().response().statusCode(400)
-                .when().get("/api/resources?first=I&third=yes");
+                .body(is("Invalid value 'yes' for query parameter third. Value must be one of [true, false]"))
+                .when().get("/api/resources?first=fi&third=yes");
     }
 
     @Test

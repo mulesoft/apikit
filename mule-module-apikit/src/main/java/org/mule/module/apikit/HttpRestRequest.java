@@ -144,7 +144,9 @@ public abstract class HttpRestRequest
                 {
                     if (!expected.validate(param))
                     {
-                        throw new InvalidQueryParameterException("Invalid query parameter value " + param + " for " + expectedKey);
+                        String msg = String.format("Invalid value '%s' for query parameter %s. %s",
+                                                   param, expectedKey, expected.message(param));
+                        throw new InvalidQueryParameterException(msg);
                     }
                 }
             }
@@ -174,7 +176,9 @@ public abstract class HttpRestRequest
                     String incomingValue = incomingHeaders.get(incoming);
                     if (incoming.matches(regex) && !expected.validate(incomingValue))
                     {
-                        throw new InvalidHeaderException("Invalid header value " + incomingValue + " for " + expectedKey);
+                        String msg = String.format("Invalid value '%s' for header %s. %s",
+                                                   incomingValue, expectedKey, expected.message(incomingValue));
+                        throw new InvalidHeaderException(msg);
                     }
                 }
             }
@@ -193,7 +197,9 @@ public abstract class HttpRestRequest
                 {
                     if (!expected.validate(actual))
                     {
-                        throw new InvalidHeaderException("Invalid header value " + actual + " for " + expectedKey);
+                        String msg = String.format("Invalid value '%s' for header %s. %s",
+                                                   actual, expectedKey, expected.message(actual));
+                        throw new InvalidHeaderException(msg);
                     }
                 }
             }
@@ -304,7 +310,9 @@ public abstract class HttpRestRequest
             {
                 if (!expected.validate((String) actual))
                 {
-                    throw new InvalidFormParameterException("Invalid form parameter value " + actual + " for " + expectedKey);
+                    String msg = String.format("Invalid value '%s' for form parameter %s. %s",
+                                               actual, expectedKey, expected.message((String) actual));
+                    throw new InvalidQueryParameterException(msg);
                 }
             }
         }

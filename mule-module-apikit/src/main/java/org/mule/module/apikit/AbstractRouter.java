@@ -32,6 +32,7 @@ import java.util.concurrent.ExecutionException;
 import org.raml.model.ActionType;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
+import org.raml.model.parameter.UriParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,7 +100,7 @@ public abstract class AbstractRouter implements ApiRouter
 
         URIPattern uriPattern;
         URIResolver uriResolver;
-        path = path.isEmpty()? "/" : path;
+        path = path.isEmpty() ? "/" : path;
         try
         {
             uriPattern = getUriPatternCache().get(path);
@@ -169,9 +170,12 @@ public abstract class AbstractRouter implements ApiRouter
             for (String key : resource.getUriParameters().keySet())
             {
                 String value = (String) resolvedVariables.get(key);
-                if (!resource.getUriParameters().get(key).validate(value))
+                UriParameter uriParameter = resource.getUriParameters().get(key);
+                if (!uriParameter.validate(value))
                 {
-                    throw new InvalidUriParameterException("Invalid uri parameter value " + value + " for " + key);
+                    String msg = String.format("Invalid value '%s' for uri parameter %s. %s",
+                                               value, key, uriParameter.message(value));
+                    throw new InvalidUriParameterException(msg);
                 }
 
             }
