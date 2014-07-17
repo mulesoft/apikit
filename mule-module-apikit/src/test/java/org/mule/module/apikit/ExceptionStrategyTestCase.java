@@ -37,19 +37,29 @@ public class ExceptionStrategyTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigResources()
+    protected String getConfigFile()
     {
         return "org/mule/module/apikit/exception/exception-strategy-config.xml";
     }
 
     @Test
-    public void getOnResourcesJson() throws Exception
+    public void userDefinedStatusOnException() throws Exception
     {
         given().header("Accept", "application/json")
                 .expect()
                 .response().body(containsString("exception"))
-                .header("Content-type", "text/plain").statusCode(401)
+                .header("Content-type", "text/plain").statusCode(410)
                 .when().get("/api/resources");
+    }
+
+    @Test
+    public void muleMappedStatusOnException() throws Exception
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().body(containsString("Authentication denied"))
+                .header("Content-type", "text/plain").statusCode(401)
+                .when().get("/mule/resources");
     }
 
 }
