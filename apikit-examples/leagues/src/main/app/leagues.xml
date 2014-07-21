@@ -60,7 +60,7 @@
     </flow>
 
     <flow name="console">
-        <http:inbound-endpoint address="http://localhost:${http.port}/console" connector-ref="httpConnector"/>
+        <http:inbound-endpoint address="http://localhost:${http.port}/console/" connector-ref="httpConnector"/>
         <apikit:console config-ref="leaguesApi"/>
     </flow>
 
