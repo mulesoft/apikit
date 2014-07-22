@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:jetty="http://www.mulesoft.org/schema/mule/jetty"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/jetty http://www.mulesoft.org/schema/mule/jetty/current/mule-jetty.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+    <apikit:proxy-config name="proxy-config" raml="http://localhost:${serverPort}/api" disableValidations="true"/>
+
+    <flow name="proxy">
+        <jetty:inbound-endpoint address="http://localhost:${proxyPort}/proxy" exchange-pattern="request-response"/>
+        <apikit:proxy config-ref="proxy-config"/>
+        <!--<http:outbound-endpoint host="localhost" port="${serverPort}" path="api/#[message.inboundProperties['http.relative.path']]?#[message.inboundProperties['http.query.string']]"/>-->
+        <http:outbound-endpoint host="localhost" port="${serverPort}" path="api/#[message.inboundProperties['http.request'].substring(message.inboundProperties['http.context.path'].length()+((message.inboundProperties['http.context.path'].length()>1)?1:0))]"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
+    <flow name="proxyConsole">
+        <jetty:inbound-endpoint address="http://localhost:${proxyPort}/proxyConsole" exchange-pattern="request-response"/>
+        <apikit:console config-ref="proxy-config" />
+    </flow>
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-payload value="resource not found"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
+            <set-payload value="method not allowed"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+</mule>

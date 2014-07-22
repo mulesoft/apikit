@@ -44,7 +44,7 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
     {
         muleServer.deployAppFromClasspathFolder("org/mule/module/apikit/proxy/proxied-app", "proxied");
         muleServer.start();
-        muleServer.deployAppFromClasspathFolder("org/mule/module/apikit/proxy/app", "proxy");
+        muleServer.deployAppFromClasspathFolder(getProxyAppFolder(), "proxy");
         muleServer.assertDeploymentSuccess("proxy");
         getOnLeaguesJson();
         getOnLeagueJson();
@@ -52,6 +52,11 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
         notFound();
         methodNotAllowed();
         getWithRequiredQueryParam();
+    }
+
+    protected String getProxyAppFolder()
+    {
+        return "org/mule/module/apikit/proxy/app";
     }
 
     private void getOnLeaguesJson() throws Exception
