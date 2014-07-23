@@ -13,6 +13,7 @@
                 <exclude>*.iml</exclude>
                 <exclude>target/**</exclude>
                 <exclude>pom.xml</exclude>
+                <exclude>src/test/**</exclude>
             </excludes>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
