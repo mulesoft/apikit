@@ -37,7 +37,7 @@ public class RootResourceTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "org/mule/module/apikit/resource/root-resource-config.xml";
     }

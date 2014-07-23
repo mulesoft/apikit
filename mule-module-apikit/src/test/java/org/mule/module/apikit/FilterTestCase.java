@@ -37,7 +37,7 @@ public class FilterTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "org/mule/module/apikit/filters/filter-flow-config.xml";
     }

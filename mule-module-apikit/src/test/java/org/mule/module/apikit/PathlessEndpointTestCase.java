@@ -16,6 +16,7 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -73,6 +74,7 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     }
 
     @Test
+    @Ignore //works since mule 3.5.0+
     public void ramlEmptyPath() throws Exception
     {
         RestAssured.port = serverPortEmptyPath.getNumber();
@@ -80,6 +82,7 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     }
 
     @Test
+    @Ignore //works since mule 3.5.0+
     public void baseuriEmptyPath() throws Exception
     {
         int port = serverPortEmptyPath.getNumber();
@@ -95,6 +98,7 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     }
 
     @Test
+    @Ignore //works since mule 3.5.0+
     public void ramlSlashPath() throws Exception
     {
         RestAssured.port = serverPortSlashPath.getNumber();
@@ -102,6 +106,7 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     }
 
     @Test
+    @Ignore //works since mule 3.5.0+
     public void baseuriSlashPath() throws Exception
     {
         int port = serverPortSlashPath.getNumber();

@@ -40,7 +40,7 @@ public class HttpProxyTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "org/mule/module/apikit/proxy/http-proxy-config.xml";
     }

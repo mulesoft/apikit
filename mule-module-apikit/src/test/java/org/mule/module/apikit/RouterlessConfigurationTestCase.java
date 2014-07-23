@@ -20,7 +20,7 @@ public class RouterlessConfigurationTestCase extends FunctionalTestCase
 {
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "org/mule/module/apikit/config/routerless-config.xml";
     }

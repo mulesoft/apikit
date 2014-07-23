@@ -40,7 +40,7 @@ public class UnicodeSupportTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "org/mule/module/apikit/unicode/resource-config.xml";
     }

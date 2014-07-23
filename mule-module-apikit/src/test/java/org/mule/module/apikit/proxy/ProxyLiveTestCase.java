@@ -34,7 +34,7 @@ public class ProxyLiveTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "org/mule/module/apikit/proxy/proxy-live-config.xml";
     }

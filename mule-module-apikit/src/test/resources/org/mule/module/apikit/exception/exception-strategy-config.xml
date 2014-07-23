@@ -60,13 +60,13 @@
         </ss:authentication-manager>
     </spring:beans>
 
-    <mule-ss:security-manager name="example-security-manager">
+    <mule-ss:security-manager>
         <mule-ss:delegate-security-provider name="example-security-provider" delegate-ref="example-authentication-manager" />
     </mule-ss:security-manager>
 
     <flow name="muleMappedStatusException">
         <http:inbound-endpoint address="http://localhost:${serverPort}/mule"/>
-        <mule-ss:http-security-filter securityManager-ref="example-security-manager" realm="mule-realm" />
+        <mule-ss:http-security-filter realm="mule-realm" />
         <apikit:router />
         <exception-strategy ref="Global_Mapping_Exception_Strategy" />
     </flow>

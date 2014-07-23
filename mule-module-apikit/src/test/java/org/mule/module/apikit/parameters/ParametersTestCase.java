@@ -39,7 +39,7 @@ public class ParametersTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "org/mule/module/apikit/parameters/parameters-config.xml";
     }

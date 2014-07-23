@@ -6,6 +6,9 @@
  */
 package org.mule.module.apikit.proxy;
 
+import org.junit.Ignore;
+
+@Ignore //works since mule 3.5.0+
 public class ProxyJettyTestCase extends ProxyTestCase
 {
 

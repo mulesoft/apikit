@@ -15,6 +15,7 @@
         <licensePath>../LICENSE_HEADER.txt</licensePath>
         <rest.assured.version>1.7.2</rest.assured.version>
         <guava.version>14.0.1</guava.version>
+        <muleTestsInfrastructure.version>3.5.0</muleTestsInfrastructure.version>
     </properties>
 
     <build>
@@ -173,7 +174,7 @@
         <dependency>
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-infrastructure</artifactId>
-            <version>${mule.version}</version>
+            <version>${muleTestsInfrastructure.version}</version>
             <scope>test</scope>
         </dependency>
 

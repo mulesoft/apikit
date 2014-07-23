@@ -47,9 +47,9 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String[] getConfigFiles()
+    protected String getConfigResources()
     {
-        return new String[] {"org/mule/module/apikit/leagues/leagues-base-flow-config.xml", "org/mule/module/apikit/leagues/leagues-http-flow-config.xml"};
+        return "org/mule/module/apikit/leagues/leagues-base-flow-config.xml, org/mule/module/apikit/leagues/leagues-http-flow-config.xml";
     }
 
     @Test

@@ -10,12 +10,13 @@ import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.config.MuleProperties;
-import org.mule.api.processor.DynamicPipelineException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.transform.ApikitResponseTransformer;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -123,7 +124,10 @@ public class Configuration extends AbstractConfiguration
                 restFlowMap.put(mapping.getAction() + ":" + mapping.getResource(), mapping.getFlow());
             }
 
-            addResponseTransformers(restFlowMap.values());
+            if (RuntimeCapabilities.supportsDinamicPipeline())
+            {
+                addResponseTransformers(restFlowMap.values());
+            }
 
             if (logger.isDebugEnabled())
             {
@@ -144,13 +148,27 @@ public class Configuration extends AbstractConfiguration
         {
             try
             {
-                flow.dynamicPipeline(null).injectAfter(new ApikitResponseTransformer()).resetAndUpdate();
+                Method dynamicPipeline = Flow.class.getDeclaredMethod("dynamicPipeline", String.class);
+                Object dynamicPipelineBuilder = dynamicPipeline.invoke(flow, (String) null);
+                Method injectAfter = dynamicPipelineBuilder.getClass().getDeclaredMethod("injectAfter", MessageProcessor[].class);
+                injectAfter.setAccessible(true);
+                injectAfter.invoke(dynamicPipelineBuilder, (Object) new MessageProcessor[] {new ApikitResponseTransformer()});
+                Method resetAndUpdate = dynamicPipelineBuilder.getClass().getMethod("resetAndUpdate");
+                resetAndUpdate.setAccessible(true);
+                resetAndUpdate.invoke(dynamicPipelineBuilder);
             }
-            catch (DynamicPipelineException e)
+            catch (InvocationTargetException e)
             {
-                //ignore, transformer already added
+                if (e.getTargetException().getClass().getName().contains("DynamicPipelineException"))
+                {
+                    //ignore, transformer already added
+                }
+                else
+                {
+                    throw new ApikitRuntimeException(e);
+                }
             }
-            catch (MuleException e)
+            catch (Exception e)
             {
                 throw new ApikitRuntimeException(e);
             }

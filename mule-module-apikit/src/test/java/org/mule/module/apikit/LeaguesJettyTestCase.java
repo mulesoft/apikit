@@ -8,8 +8,10 @@ package org.mule.module.apikit;
 
 import org.mule.tck.junit4.rule.SystemProperty;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 
+@Ignore //works since mule 3.5.0+
 public class LeaguesJettyTestCase extends LeaguesTestCase
 {
 
@@ -27,9 +29,9 @@ public class LeaguesJettyTestCase extends LeaguesTestCase
     public SystemProperty p6 = new SystemProperty("mule.transport.jetty.defaultJettyConnectorClass", "org.eclipse.jetty.server.nio.BlockingChannelConnector");
 
     @Override
-    protected String[] getConfigFiles()
+    protected String getConfigResources()
     {
-        return new String[] {"org/mule/module/apikit/leagues/leagues-base-flow-config.xml", "org/mule/module/apikit/leagues/leagues-jetty-flow-config.xml"};
+        return "org/mule/module/apikit/leagues/leagues-base-flow-config.xml, org/mule/module/apikit/leagues/leagues-jetty-flow-config.xml";
     }
 
 }

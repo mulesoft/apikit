@@ -44,7 +44,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigFile()
+    protected String getConfigResources()
     {
         return "org/mule/module/apikit/console/standalone-console-config.xml";
     }
