@@ -6,8 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
-
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -18,11 +16,9 @@ import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.config.i18n.MessageFactory;
-import org.mule.transport.http.HttpConstants;
 
 import java.util.Collection;
 
-import org.raml.model.ActionType;
 import org.raml.model.Raml;
 
 public class Console implements MessageProcessor, Initialisable, MuleContextAware, FlowConstructAware
@@ -32,6 +28,7 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
     private MuleContext muleContext;
     private ConsoleHandler consoleHandler;
     private FlowConstruct flowConstruct;
+    protected RamlDescriptorHandler ramlHandler;
 
     @Override
     public void setMuleContext(MuleContext context)
@@ -79,6 +76,7 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
         }
         consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct), "");
         config.addConsoleUrl(consoleHandler.getConsoleUrl());
+        ramlHandler = new RamlDescriptorHandler(config);
     }
 
     @Override
@@ -86,19 +84,10 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
     {
         HttpRestRequest request = new HttpRestRouterRequest(event, getConfig());
 
-        String path = request.getResourcePath();
-
         //check for raml descriptor request
-        if ((path.isEmpty() || path.equals("/")) &&
-            ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
-            request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML))
+        if (ramlHandler.handles(request))
         {
-            String raml = config.getApikitRaml(event);
-            event.getMessage().setPayload(raml);
-            event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
-            event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, raml.length());
-            event.getMessage().setOutboundProperty("Access-Control-Allow-Origin", "*");
-            return event;
+            return ramlHandler.process(event);
         }
 
         return consoleHandler.process(event);

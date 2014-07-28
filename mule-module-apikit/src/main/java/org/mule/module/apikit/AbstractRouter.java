@@ -6,8 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.module.apikit.AbstractConfiguration.APPLICATION_RAML;
-
 import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
@@ -22,14 +20,12 @@ import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
-import org.mule.transport.http.HttpConstants;
 
 import com.google.common.cache.LoadingCache;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import org.raml.model.ActionType;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.model.parameter.UriParameter;
@@ -39,17 +35,18 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractRouter implements ApiRouter
 {
 
-
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MuleContext muleContext;
     protected FlowConstruct flowConstruct;
     protected AbstractConfiguration config;
+    protected RamlDescriptorHandler ramlHandler;
 
     @Override
     public void start() throws MuleException
     {
         startConfiguration();
+        ramlHandler = new RamlDescriptorHandler(config);
         config.publishConsoleUrls(muleContext.getConfiguration().getWorkingDirectory());
     }
 
@@ -86,16 +83,9 @@ public abstract class AbstractRouter implements ApiRouter
         }
 
         //check for raml descriptor request
-        if (path.equals(getApi().getUri()) &&
-            ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
-            request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML))
+        if (ramlHandler.handles(request))
         {
-            String raml = config.getApikitRaml(event);
-            event.getMessage().setPayload(raml);
-            event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
-            event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, raml.length());
-            event.getMessage().setOutboundProperty("Access-Control-Allow-Origin", "*");
-            return event;
+            return ramlHandler.process(event);
         }
 
         URIPattern uriPattern;

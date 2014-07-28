@@ -143,6 +143,10 @@ public class ConsoleHandler
                                                          String.valueOf(HttpConstants.SC_OK));
             resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, mimetype);
             resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length);
+            if (mimetype.equals(MimeTypes.HTML))
+            {
+                resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_EXPIRES, -1); //avoid IE ajax response caching
+            }
         }
         catch (IOException e)
         {
