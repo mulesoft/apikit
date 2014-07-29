@@ -6,9 +6,6 @@
  */
 package org.mule.module.apikit.validation.cache;
 
-import org.mule.api.MuleContext;
-import org.mule.module.apikit.validation.io.SchemaResourceLoader;
-
 import com.google.common.cache.CacheLoader;
 
 import java.io.ByteArrayInputStream;
@@ -21,37 +18,22 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.raml.model.Raml;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.xml.sax.SAXException;
 
 public class XmlSchemaCacheLoader extends CacheLoader<String, Schema>
 {
 
-    private ResourceLoader resourceLoader;
     private Raml api;
 
-    public XmlSchemaCacheLoader(MuleContext muleContext, Raml api)
+    public XmlSchemaCacheLoader(Raml api)
     {
         this.api = api;
-        this.resourceLoader = new SchemaResourceLoader(muleContext.getExecutionClassLoader());
     }
 
     @Override
     public Schema load(String schemaLocation) throws IOException, SAXException
     {
-        InputStream is;
-
-        if (schemaLocation.startsWith("/"))
-        {
-            //inline schema definition
-            is = new ByteArrayInputStream(SchemaCacheUtils.resolveSchema(schemaLocation, api).getBytes());
-        }
-        else
-        {
-            Resource schemaResource = resourceLoader.getResource(schemaLocation);
-            is = schemaResource.getInputStream();
-        }
+        InputStream is = new ByteArrayInputStream(SchemaCacheUtils.resolveSchema(schemaLocation, api).getBytes());
         return compileSchema(is);
     }
 

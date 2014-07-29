@@ -25,7 +25,7 @@ public final class JsonSchemaCache
         {
             LoadingCache<String, JsonSchemaAndNode> transformerCache = CacheBuilder.newBuilder()
                     .maximumSize(1000)
-                    .build(new JsonSchemaCacheLoader(muleContext, api));
+                    .build(new JsonSchemaCacheLoader(api));
 
             muleContext.getRegistry().registerObject(REGISTRY_JSON_SCHEMA_CACHE_KEY, transformerCache);
         }

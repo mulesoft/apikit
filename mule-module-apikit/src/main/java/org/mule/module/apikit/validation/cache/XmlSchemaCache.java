@@ -27,7 +27,7 @@ public final class XmlSchemaCache
         {
             LoadingCache<String, Schema> transformerCache = CacheBuilder.newBuilder()
                     .maximumSize(1000)
-                    .build(new XmlSchemaCacheLoader(muleContext, api));
+                    .build(new XmlSchemaCacheLoader(api));
 
             muleContext.getRegistry().registerObject(REGISTRY_JSON_SCHEMA_CACHE_KEY, transformerCache);
         }
