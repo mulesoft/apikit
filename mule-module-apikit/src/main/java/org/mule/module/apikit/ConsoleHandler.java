@@ -40,8 +40,10 @@ public class ConsoleHandler
     public static final String MIME_TYPE_JAVASCRIPT = "application/x-javascript";
     public static final String MIME_TYPE_PNG = "image/png";
     public static final String MIME_TYPE_GIF = "image/gif";
+    public static final String MIME_TYPE_SVG = "image/svg+xml";
     public static final String MIME_TYPE_CSS = "text/css";
-    private static final String RESOURCE_BASE = "/console";
+    private static final String RESOURCE_BASE = System.getProperty("apikit.console.beta") != null ? "/console2" : "/console";
+
     private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
     private String consolePath;
     private String baseSchemeHostPort;
@@ -52,7 +54,7 @@ public class ConsoleHandler
     public ConsoleHandler(String ramlUri, String consolePath)
     {
         this.consolePath = sanitize(consolePath);
-        String indexHtml = IOUtils.toString(getClass().getResourceAsStream("/console/index.html"));
+        String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
         this.ramlUri = ramlUri.endsWith("/") ? ramlUri : ramlUri + "/";
         String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
                                                      "<raml-console src=\"" + this.ramlUri + "\"");
@@ -190,6 +192,10 @@ public class ConsoleHandler
         else if (FilenameUtils.getExtension(path).equals("gif"))
         {
             mimeType = MIME_TYPE_GIF;
+        }
+        else if (FilenameUtils.getExtension(path).equals("svg"))
+        {
+            mimeType = MIME_TYPE_SVG;
         }
         else if (FilenameUtils.getExtension(path).equals("css"))
         {
