@@ -41,7 +41,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
     }
 
     @Override
-    public void validate(String schemaPath, MuleEvent muleEvent, Raml api) throws BadRequestException
+    public void validate(String configId, String schemaPath, MuleEvent muleEvent, Raml api) throws BadRequestException
     {
         try
         {
@@ -67,7 +67,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
                 throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
             }
 
-            Schema schema = XmlSchemaCache.getXmlSchemaCache(muleContext, api).get(schemaPath);
+            Schema schema = XmlSchemaCache.getXmlSchemaCache(muleContext, configId, api).get(schemaPath);
             Validator validator = schema.newValidator();
             validator.validate(new DOMSource(data.getDocumentElement()));
         }

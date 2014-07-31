@@ -354,7 +354,7 @@ public abstract class HttpRestRequest
     {
         SchemaType schemaType = mimeTypeName.contains("json") ? SchemaType.JSONSchema : SchemaType.XMLSchema;
         RestSchemaValidator validator = RestSchemaValidatorFactory.getInstance().createValidator(schemaType, requestEvent.getMuleContext());
-        validator.validate(SchemaCacheUtils.getSchemaCacheKey(config.getName(), action, mimeTypeName), requestEvent, config.getApi());
+        validator.validate(config.getName(), SchemaCacheUtils.getSchemaCacheKey(action, mimeTypeName), requestEvent, config.getApi());
     }
 
     private String negotiateOutputRepresentation(List<MimeType> mimeTypes) throws MuleRestException

@@ -40,7 +40,7 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
     }
 
     @Override
-    public void validate(String schemaPath, MuleEvent muleEvent, Raml api) throws BadRequestException
+    public void validate(String configId, String schemaPath, MuleEvent muleEvent, Raml api) throws BadRequestException
     {
         try
         {
@@ -65,7 +65,7 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
                 throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
             }
 
-            JsonSchemaAndNode schema = JsonSchemaCache.getJsonSchemaCache(muleContext, api).get(schemaPath);
+            JsonSchemaAndNode schema = JsonSchemaCache.getJsonSchemaCache(muleContext, configId, api).get(schemaPath);
 
             ValidationReport report = schema.getJsonSchema().validate(data);
 

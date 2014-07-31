@@ -7,14 +7,12 @@
 package org.mule.module.apikit.schema;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -51,7 +49,7 @@ public class SchemaCachingTestCase extends FunctionalTestCase
             .when().put("/cam/currentuser");
 
         given()
-            .body("{\"name\":\"gbs\"}").contentType("application/json")
+            .body("{\"id\":\"gbs\"}").contentType("application/json")
             .expect().statusCode(204)
             .when().put("/peaks/currentuser");
     }

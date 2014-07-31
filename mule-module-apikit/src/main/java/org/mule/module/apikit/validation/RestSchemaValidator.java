@@ -14,5 +14,5 @@ import org.raml.model.Raml;
 public interface RestSchemaValidator
 {
 
-    void validate(String schemaPath, MuleEvent muleEvent, Raml api) throws BadRequestException;
+    void validate(String configId, String schemaPath, MuleEvent muleEvent, Raml api) throws BadRequestException;
 }

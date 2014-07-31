@@ -19,19 +19,20 @@ import org.raml.model.Raml;
 public final class XmlSchemaCache
 {
 
-    private static final String REGISTRY_JSON_SCHEMA_CACHE_KEY = "__restRouterXmlSchemaCache";
+    private static final String REGISTRY_XML_SCHEMA_CACHE_KEY_PREFIX = "__restRouterXmlSchemaCache__";
 
-    public static LoadingCache<String, Schema> getXmlSchemaCache(MuleContext muleContext, Raml api) throws RegistrationException
+    public static LoadingCache<String, Schema> getXmlSchemaCache(MuleContext muleContext, String configId, Raml api) throws RegistrationException
     {
-        if (muleContext.getRegistry().get(REGISTRY_JSON_SCHEMA_CACHE_KEY) == null)
+        String cacheKey = REGISTRY_XML_SCHEMA_CACHE_KEY_PREFIX + configId;
+        if (muleContext.getRegistry().get(cacheKey) == null)
         {
             LoadingCache<String, Schema> transformerCache = CacheBuilder.newBuilder()
                     .maximumSize(1000)
                     .build(new XmlSchemaCacheLoader(api));
 
-            muleContext.getRegistry().registerObject(REGISTRY_JSON_SCHEMA_CACHE_KEY, transformerCache);
+            muleContext.getRegistry().registerObject(cacheKey, transformerCache);
         }
 
-        return muleContext.getRegistry().get(REGISTRY_JSON_SCHEMA_CACHE_KEY);
+        return muleContext.getRegistry().get(cacheKey);
     }
 }
