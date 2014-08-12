@@ -88,44 +88,10 @@ public class PathlessEndpointStandaloneTestCase extends FunctionalTestCase
     }
 
     @Test
-    @Ignore //works since mule 3.5.0+
-    public void ramlEmptyPath() throws Exception
-    {
-        RestAssured.port = serverPortEmptyPath.getNumber();
-        raml("");
-    }
-
-    @Test
-    @Ignore //works since mule 3.5.0+
-    public void baseuriEmptyPath() throws Exception
-    {
-        int port = serverPortEmptyPath.getNumber();
-        RestAssured.port = port;
-        baseUri("", "http://localhost:" + port);
-    }
-
-    @Test
     public void consoleSlashPath() throws Exception
     {
         RestAssured.port = serverPortSlashPath.getNumber();
         console("");
-    }
-
-    @Test
-    @Ignore //works since mule 3.5.0+
-    public void ramlSlashPath() throws Exception
-    {
-        RestAssured.port = serverPortSlashPath.getNumber();
-        raml("");
-    }
-
-    @Test
-    @Ignore //works since mule 3.5.0+
-    public void baseuriSlashPath() throws Exception
-    {
-        int port = serverPortSlashPath.getNumber();
-        RestAssured.port = port;
-        baseUri("", "http://localhost:" + port);
     }
 
     @Test

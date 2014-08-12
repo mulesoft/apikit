@@ -366,17 +366,6 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO enable when cascade is released
-    public void putMultiPartFormData() throws Exception
-    {
-        given().multiPart("description", "Barcelona Badge")
-                .multiPart("image", "bbva.jpg", this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/leagues/bbva.jpg"))
-               .expect().statusCode(200)
-                .body("upload", is("OK"))
-               .when().put("/api/leagues/liga-bbva/badge");
-    }
-
-    @Test
     public void getAnyResponse() throws Exception
     {
         given().header("Accept", "application/json")

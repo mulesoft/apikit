@@ -4,10 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit;
+package org.mule.module.apikit.latestruntime;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -19,9 +18,12 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class PathlessEndpointTestCase extends FunctionalTestCase
+//TODO merge with PathlessEndpointStandaloneTestCase when minimum version supported is 3.5
+public class PathlessEndpointStandaloneMule35TestCase extends FunctionalTestCase
 {
 
+    @Rule
+    public DynamicPort serverPortNoRouter = new DynamicPort("serverPortNoRouter");
     @Rule
     public DynamicPort serverPortPathless = new DynamicPort("serverPortPathless");
     @Rule
@@ -40,75 +42,37 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/pathless/pathless-config.xml";
+        return "org/mule/module/apikit/pathless/pathless-standalone-config.xml";
     }
 
     @Test
-    public void consolePathless() throws Exception
+    public void ramlEmptyPath() throws Exception
     {
-        RestAssured.port = serverPortPathless.getNumber();
-        console("");
-    }
-
-    @Test
-    public void ramlPathless() throws Exception
-    {
-        RestAssured.port = serverPortPathless.getNumber();
+        RestAssured.port = serverPortEmptyPath.getNumber();
         raml("");
     }
 
     @Test
-    public void baseuriPathless() throws Exception
+    public void baseuriEmptyPath() throws Exception
     {
-        int port = serverPortPathless.getNumber();
+        int port = serverPortEmptyPath.getNumber();
         RestAssured.port = port;
         baseUri("", "http://localhost:" + port);
     }
 
     @Test
-    public void consoleEmptyPath() throws Exception
-    {
-        RestAssured.port = serverPortEmptyPath.getNumber();
-        console("");
-    }
-
-    @Test
-    public void consoleSlashPath() throws Exception
+    public void ramlSlashPath() throws Exception
     {
         RestAssured.port = serverPortSlashPath.getNumber();
-        console("");
+        raml("");
     }
 
     @Test
-    public void consoleAddressSlashPath() throws Exception
+    public void baseuriSlashPath() throws Exception
     {
-        RestAssured.port = serverPortAddressSlashPath.getNumber();
-        console("/api/");
-    }
-
-    @Test
-    public void ramlAddressSlashPath() throws Exception
-    {
-        RestAssured.port = serverPortAddressSlashPath.getNumber();
-        raml("/api/");
-    }
-
-    @Test
-    public void baseuriAddressSlashPath() throws Exception
-    {
-        int port = serverPortAddressSlashPath.getNumber();
+        int port = serverPortSlashPath.getNumber();
         RestAssured.port = port;
-        baseUri("/api", "http://localhost:" + port + "/api");
-    }
-
-    private void console(String path)
-    {
-        given().header("Accept", "text/html")
-                .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + path)))
-                .header("Content-type", "text/html").statusCode(200)
-                .when().get((path.endsWith("/") ? path.substring(0, path.length() - 1) : path) + "/console/index.html");
+        baseUri("", "http://localhost:" + port);
     }
 
     private void raml(String path)
@@ -125,7 +89,7 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     {
         given().header("Accept", "application/raml+yaml")
                 .expect()
-                .response().body(containsString("baseUri: \"" + expectedBaseUri + "\""))
+                .response().body(containsString("baseUri: \"" + expectedBaseUri + "/api\""))
                 .statusCode(200)
                 .when().get(path + "/");
     }

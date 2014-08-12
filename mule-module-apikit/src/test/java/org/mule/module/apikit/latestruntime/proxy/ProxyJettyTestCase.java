@@ -4,11 +4,10 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.proxy;
+package org.mule.module.apikit.latestruntime.proxy;
 
-import org.junit.Ignore;
+import org.mule.module.apikit.proxy.ProxyTestCase;
 
-@Ignore //works since mule 3.5.0+
 public class ProxyJettyTestCase extends ProxyTestCase
 {
 

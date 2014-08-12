@@ -35,6 +35,31 @@
         </plugins>
     </build>
 
+    <profiles>
+        <profile>
+            <id>mule34</id>
+            <activation>
+                <property>
+                    <name>mule.version</name>
+                    <value>3.4.0</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/latestruntime/**</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <dependencies>
 
         <dependency>
