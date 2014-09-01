@@ -8,9 +8,9 @@ package org.mule.module.apikit.validation.cache;
 
 import com.google.common.cache.CacheLoader;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 
 import javax.xml.XMLConstants;
 import javax.xml.transform.stream.StreamSource;
@@ -33,14 +33,14 @@ public class XmlSchemaCacheLoader extends CacheLoader<String, Schema>
     @Override
     public Schema load(String schemaLocation) throws IOException, SAXException
     {
-        InputStream is = new ByteArrayInputStream(SchemaCacheUtils.resolveSchema(schemaLocation, api).getBytes());
-        return compileSchema(is);
+        Reader reader = new StringReader(SchemaCacheUtils.resolveSchema(schemaLocation, api));
+        return compileSchema(reader);
     }
 
-    private static Schema compileSchema(InputStream inputStream) throws SAXException
+    private static Schema compileSchema(Reader reader) throws SAXException
     {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-        return factory.newSchema(new StreamSource(inputStream));
+        return factory.newSchema(new StreamSource(reader));
     }
 }

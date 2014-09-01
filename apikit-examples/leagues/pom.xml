@@ -236,6 +236,12 @@
             <artifactId>mule-core</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Xml configuration -->
         <dependency>

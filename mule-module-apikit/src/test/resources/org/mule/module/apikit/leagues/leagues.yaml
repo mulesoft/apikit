@@ -16,7 +16,7 @@ documentation:
 
 schemas:
     - league-json: !include league.json
-    - league-xml: !include league.xsd
+    - league-xml: !include league16.xsd
 
 resourceTypes:
     - collection:
