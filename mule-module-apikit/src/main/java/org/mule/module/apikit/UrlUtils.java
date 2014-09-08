@@ -17,7 +17,16 @@ public class UrlUtils
 
     public static String getBaseSchemeHostPort(MuleEvent event)
     {
-        String host = event.getMessage().getInboundProperty("host");
+        String host;
+        String chHost = System.getProperty("fullDomain");
+        if (chHost != null)
+        {
+            host = chHost;
+        }
+        else
+        {
+            host = event.getMessage().getInboundProperty("host");
+        }
         String endpoint = event.getMessage().getInboundProperty("http.context.uri");
         String scheme;
         if (endpoint.startsWith("http:"))
