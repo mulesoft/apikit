@@ -29,6 +29,10 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     public DynamicPort serverPort = new DynamicPort("serverPort");
     @Rule
     public DynamicPort serverPort2 = new DynamicPort("serverPort2");
+    @Rule
+    public DynamicPort serverPort3 = new DynamicPort("serverPort3");
+    @Rule
+    public DynamicPort serverPort4 = new DynamicPort("serverPort4");
 
     @Override
     public int getTestTimeoutSecs()
@@ -99,7 +103,18 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
         RestAssured.port = serverPort2.getNumber();
         given().header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(containsString("baseUri: \"http://localhost:" + port + "/api\""))
+                .response().body(containsString("baseUri: \"http://localhost:" + serverPort.getNumber() + "/api\""))
+                .header("Content-type", APPLICATION_RAML).statusCode(200)
+                .when().get("/");
+    }
+
+    @Test
+    public void getRamlConsoleBindAllInterfaces() throws Exception
+    {
+        RestAssured.port = serverPort4.getNumber();
+        given().header("Accept", APPLICATION_RAML)
+                .expect()
+                .response().body(containsString("baseUri: \"http://localhost:" + serverPort3.getNumber() + "/api\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/");
     }

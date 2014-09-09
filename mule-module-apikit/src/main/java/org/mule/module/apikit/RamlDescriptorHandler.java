@@ -33,9 +33,18 @@ public class RamlDescriptorHandler
                 request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML));
     }
 
-    public MuleEvent process(MuleEvent event) throws MuleException
+    public MuleEvent processConsoleRequest(MuleEvent event) throws MuleException
     {
-        String raml = config.getApikitRaml(event);
+        return process(event, config.getApikitRamlConsole(event));
+    }
+
+    public MuleEvent processRouterRequest(MuleEvent event) throws MuleException
+    {
+        return process(event, config.getApikitRaml(event));
+    }
+
+    private MuleEvent process(MuleEvent event, String raml) throws MuleException
+    {
         event.getMessage().setPayload(raml);
         event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
         event.getMessage().setOutboundProperty(HttpConstants.HEADER_EXPIRES, -1); //avoid IE ajax response caching

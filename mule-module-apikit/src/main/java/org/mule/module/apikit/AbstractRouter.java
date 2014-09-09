@@ -85,7 +85,7 @@ public abstract class AbstractRouter implements ApiRouter
         //check for raml descriptor request
         if (ramlHandler.handles(request))
         {
-            return ramlHandler.process(event);
+            return ramlHandler.processRouterRequest(event);
         }
 
         URIPattern uriPattern;

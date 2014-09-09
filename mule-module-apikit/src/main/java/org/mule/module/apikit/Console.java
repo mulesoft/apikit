@@ -87,7 +87,7 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
         //check for raml descriptor request
         if (ramlHandler.handles(request))
         {
-            return ramlHandler.process(event);
+            return ramlHandler.processConsoleRequest(event);
         }
 
         return consoleHandler.process(event);

@@ -32,23 +32,37 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config raml="org/mule/module/apikit/console/console.raml" consoleEnabled="false"/>
+    <apikit:config name="localhost" raml="org/mule/module/apikit/console/console.raml" consoleEnabled="false"/>
+
+    <apikit:config name="bindAll" raml="org/mule/module/apikit/console/console.raml" consoleEnabled="false"/>
 
     <flow name="router">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
         <cors:validate publicResource="true" />
-        <apikit:router/>
+        <apikit:router config-ref="localhost"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
     <flow name="console">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="konsole"/>
-        <apikit:console/>
+        <apikit:console config-ref="localhost"/>
     </flow>
 
     <flow name="consoleNoPath">
         <http:inbound-endpoint port="${serverPort2}" host="localhost"/>
-        <apikit:console/>
+        <apikit:console config-ref="localhost"/>
+    </flow>
+
+    <flow name="routerBindAll">
+        <http:inbound-endpoint port="${serverPort3}" host="0.0.0.0" path="api"/>
+        <cors:validate publicResource="true" />
+        <apikit:router config-ref="bindAll"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
+    <flow name="consoleBindAll">
+        <http:inbound-endpoint port="${serverPort4}" host="0.0.0.0"/>
+        <apikit:console config-ref="bindAll"/>
     </flow>
 
     <flow name="get:/user">

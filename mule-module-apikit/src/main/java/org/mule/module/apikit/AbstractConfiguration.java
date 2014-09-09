@@ -36,6 +36,8 @@ import com.google.common.cache.LoadingCache;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -311,6 +313,31 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     public String getApikitRaml(MuleEvent event)
     {
         return getApikitRaml(getBaseSchemeHostPort(event));
+    }
+
+    /**
+     * returns the raml descriptor using the host from the console request event
+     * only when the bind to all interfaces ip (0.0.0.0) is used for the router endpoint.
+     * Otherwise it uses the router endpoint address as it is
+     */
+    public String getApikitRamlConsole(MuleEvent event)
+    {
+        String schemeHostPort = baseSchemeHostPort;
+        String bindAllInterfaces = "0.0.0.0";
+        if (schemeHostPort.contains(bindAllInterfaces))
+        {
+            try
+            {
+                URL url = new URL(getBaseSchemeHostPort(event));
+                schemeHostPort = schemeHostPort.replace(bindAllInterfaces, url.getHost());
+
+            }
+            catch (MalformedURLException e)
+            {
+                throw new ApikitRuntimeException(e);
+            }
+        }
+        return getApikitRaml(schemeHostPort);
     }
 
     private Raml deepCloneRaml(Raml source)
