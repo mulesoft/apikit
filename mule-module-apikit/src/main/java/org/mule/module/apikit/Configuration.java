@@ -26,11 +26,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.raml.model.Action;
+import org.raml.model.Resource;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
-import org.raml.parser.rule.NodeRuleFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,12 +96,6 @@ public class Configuration extends AbstractConfiguration
         return loader;
     }
 
-    @Override
-    protected NodeRuleFactory getValidatorNodeRuleFactory()
-    {
-        return new NodeRuleFactory(new ActionImplementedRuleExtension(restFlowMap));
-    }
-
     protected void initializeRestFlowMap()
     {
         if (restFlowMap == null)
@@ -121,7 +116,7 @@ public class Configuration extends AbstractConfiguration
             //init flow mappings
             for (FlowMapping mapping : getFlowMappings())
             {
-                restFlowMap.put(mapping.getAction() + ":" + mapping.getResource(), mapping.getFlow());
+                restFlowMap.put(mapping.getKey(), mapping.getFlow());
             }
 
             if (RuntimeCapabilities.supportsDinamicPipeline())
@@ -129,16 +124,56 @@ public class Configuration extends AbstractConfiguration
                 addResponseTransformers(restFlowMap.values());
             }
 
-            if (logger.isDebugEnabled())
-            {
-                logger.debug("==== RestFlows defined:");
-                for (String key : restFlowMap.keySet())
-                {
-                    logger.debug("\t\t" + key);
-                }
-            }
+            logMissingMappings();
 
             restFlowMapUnwrapped = new HashMap<String, Flow>(restFlowMap);
+        }
+    }
+
+    private void logMissingMappings()
+    {
+        logMissingMappings(getApi().getResources(), "");
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("==== RestFlows defined:");
+            for (String key : restFlowMap.keySet())
+            {
+                logger.debug("\t\t" + key);
+            }
+        }
+    }
+
+    private void logMissingMappings(Map<String, Resource> resources, String baseResource)
+    {
+        for (Map.Entry<String, Resource> resourceEntry : resources.entrySet())
+        {
+            String fullResource = baseResource + resourceEntry.getKey();
+            for (Action action : resourceEntry.getValue().getActions().values())
+            {
+                String method = action.getType().name().toLowerCase();
+                String key = method + ":" + fullResource;
+                if (restFlowMap.get(key) != null)
+                {
+                    continue;
+                }
+                if (action.hasBody())
+                {
+                    for (String contentType : action.getBody().keySet())
+                    {
+                        if (restFlowMap.get(key + ":" + contentType) == null)
+                        {
+                            logger.warn(String.format("Action-Resource-ContentType triplet has no implementation -> %s:%s:%s ",
+                                                      method, fullResource, contentType));
+                        }
+                    }
+                }
+                else
+                {
+                    logger.warn(String.format("Action-Resource pair has no implementation -> %s:%s ",
+                                              method, fullResource));
+                }
+            }
+            logMissingMappings(resourceEntry.getValue().getResources(), fullResource);
         }
     }
 
@@ -194,19 +229,73 @@ public class Configuration extends AbstractConfiguration
         return restFlowMap;
     }
 
+    /**
+     * validates if name is a valid router flow name according to the following pattern:
+     *  method:/resource[:content-type][:config-name]
+     *
+     * @param name to be validated
+     * @return the name with the config-name stripped or null if it is not a router flow
+     */
     private String getRestFlowKey(String name)
     {
         String[] coords = name.split(":");
         String[] methods = {"get", "put", "post", "delete", "head", "patch", "options"};
-        if (coords.length < 2 || !Arrays.asList(methods).contains(coords[0]))
+        if (coords.length < 2 || coords.length > 4 ||
+            !Arrays.asList(methods).contains(coords[0]) ||
+            !coords[1].startsWith("/"))
         {
             return null;
         }
-        if (coords.length == 3 && !coords[2].equals(getName()))
+        if (coords.length == 4)
         {
+            if (coords[3].equals(getName()))
+            {
+                return validateRestFlowKeyAgainstApi(coords[0], coords[1], coords[2]);
+            }
             return null;
         }
-        return coords[0] + ":" + coords[1];
+        if (coords.length == 3)
+        {
+            if (coords[2].equals(getName()))
+            {
+                return validateRestFlowKeyAgainstApi(coords[0], coords[1]);
+            }
+            return validateRestFlowKeyAgainstApi(coords[0], coords[1], coords[2]);
+        }
+        return validateRestFlowKeyAgainstApi(coords[0], coords[1]);
+    }
+
+    private String validateRestFlowKeyAgainstApi(String... coords)
+    {
+        String method = coords[0];
+        String resource = coords[1];
+        String type = coords.length == 3 ? coords[2] : null;
+        String key = String.format("%s:%s", method, resource);
+        if (type != null)
+        {
+            key = key + ":" + type;
+        }
+        Resource apiResource = getApi().getResource(resource);
+        if (apiResource != null)
+        {
+            Action action = apiResource.getAction(method);
+            if (action != null)
+            {
+                if (type == null)
+                {
+                    return key;
+                }
+                else
+                {
+                    if (action.hasBody() && action.getBody().get(type) != null)
+                    {
+                        return key;
+                    }
+                }
+            }
+        }
+        logger.warn(String.format("Flow named \"%s\" does not match any RAML descriptor resource", key));
+        return null;
     }
 
     @Override

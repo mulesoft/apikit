@@ -13,6 +13,8 @@ import org.mule.api.registry.RegistrationException;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
 
+import java.util.Map;
+
 import org.raml.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,10 +69,23 @@ public class Router extends AbstractRouter
         return null;
     }
 
+    /**
+     * Returns the flow that handles the request or null if there is none.
+     * First tries to match a flow by method, resource and content type,
+     * if there is no match it retries using method and resource only.
+     */
     @Override
-    protected Flow getFlow(Resource resource, String method)
+    protected Flow getFlow(Resource resource, HttpRestRequest request)
     {
-        return ((Configuration) config).getRawRestFlowMap().get(method + ":" + resource.getUri());
+        String baseKey = request.getMethod() + ":" + resource.getUri();
+        String contentType = request.getContentType();
+        Map<String, Flow> rawRestFlowMap = ((Configuration) config).getRawRestFlowMap();
+        Flow flow = rawRestFlowMap.get(baseKey + ":" + contentType);
+        if (flow == null)
+        {
+            flow = rawRestFlowMap.get(baseKey);
+        }
+        return flow;
     }
 
 }

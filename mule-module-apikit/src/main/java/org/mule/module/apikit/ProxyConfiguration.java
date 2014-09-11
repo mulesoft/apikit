@@ -22,7 +22,6 @@ import java.util.Collections;
 import org.raml.parser.loader.ClassPathResourceLoader;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
-import org.raml.parser.rule.NodeRuleFactory;
 
 public class ProxyConfiguration extends AbstractConfiguration
 {
@@ -43,12 +42,6 @@ public class ProxyConfiguration extends AbstractConfiguration
     protected HttpRestRequest getHttpRestRequest(MuleEvent event)
     {
         return new HttpRestProxyRequest(event, this);
-    }
-
-    @Override
-    protected NodeRuleFactory getValidatorNodeRuleFactory()
-    {
-        return new NodeRuleFactory();
     }
 
     @Override

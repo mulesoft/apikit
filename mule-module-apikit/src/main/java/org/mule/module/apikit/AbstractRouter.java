@@ -115,7 +115,7 @@ public abstract class AbstractRouter implements ApiRouter
 
         processUriParameters(resolvedVariables, resource, event);
 
-        Flow flow = getFlow(resource, request.getMethod());
+        Flow flow = getFlow(resource, request);
         if (flow == null)
         {
             throw new ApikitRuntimeException("Flow not found for resource: " + resource);
@@ -176,6 +176,6 @@ public abstract class AbstractRouter implements ApiRouter
         }
     }
 
-    protected abstract Flow getFlow(Resource resource, String method);
+    protected abstract Flow getFlow(Resource resource, HttpRestRequest request);
 
 }

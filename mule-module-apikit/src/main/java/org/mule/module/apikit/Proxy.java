@@ -179,9 +179,9 @@ public class Proxy extends AbstractInterceptingMessageProcessor implements ApiRo
         }
 
         @Override
-        protected Flow getFlow(Resource resource, String method)
+        protected Flow getFlow(Resource resource, HttpRestRequest request)
         {
-            FlowResolver flowResolver = config.getRestFlowMap().get(method + ":" + resource.getUri());
+            FlowResolver flowResolver = config.getRestFlowMap().get(request.getMethod() + ":" + resource.getUri());
             Flow rawFlow = ((ProxyConfiguration.ProxyFlowResolver) flowResolver).getRawFlow();
             if (rawFlow == null)
             {
