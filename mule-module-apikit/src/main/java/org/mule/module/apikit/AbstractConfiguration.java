@@ -55,7 +55,6 @@ import org.raml.model.ActionType;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.parser.loader.ResourceLoader;
-import org.raml.parser.rule.NodeRuleFactory;
 import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 import org.raml.parser.visitor.RamlValidationService;
@@ -96,12 +95,12 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         }
 
         ResourceLoader loader = getRamlResourceLoader();
-        initializeRestFlowMap();
         validateRaml(loader);
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
         api = builder.build(raml);
         cleanBaseUriParameters(api);
         baseSchemeHostPort = getBaseSchemeHostPort(api.getBaseUri());
+        initializeRestFlowMap();
         initializeRestFlowMapWrapper();
         loadRoutingTable();
         buildResourcePatternCaches();
@@ -193,8 +192,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     protected void validateRaml(ResourceLoader resourceLoader)
     {
-        NodeRuleFactory ruleFactory = getValidatorNodeRuleFactory();
-        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader, ruleFactory).validate(raml);
+        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader).validate(raml);
         List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
         if (!errors.isEmpty())
         {
@@ -226,8 +224,6 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         }
         return sb.toString();
     }
-
-    protected abstract NodeRuleFactory getValidatorNodeRuleFactory();
 
     public abstract ResourceLoader getRamlResourceLoader();
 

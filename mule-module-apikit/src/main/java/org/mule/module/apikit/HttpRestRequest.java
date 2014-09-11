@@ -87,6 +87,11 @@ public abstract class HttpRestRequest
         return adapter.getMethod().toLowerCase();
     }
 
+    public String getContentType()
+    {
+        return adapter.getRequestMediaType();
+    }
+
     public MuleEvent process(Flow flow, Action action) throws MuleException
     {
         this.action = action;
