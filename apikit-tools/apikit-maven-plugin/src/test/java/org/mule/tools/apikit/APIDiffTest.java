@@ -10,7 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
-import org.mule.tools.apikit.model.ResourceActionPair;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.input.APIDiff;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
@@ -35,7 +35,7 @@ public class APIDiffTest {
         this.apiFactory = new APIFactory();
     }
 
-    private Set<ResourceActionPair> computeDifferenceSetHelper(HashSet<ResourceActionPair> a, HashSet<ResourceActionPair> b) {
+    private Set<ResourceActionMimeTypeTriplet> computeDifferenceSetHelper(HashSet<ResourceActionMimeTypeTriplet> a, HashSet<ResourceActionMimeTypeTriplet> b) {
         RAMLFilesParser RAMLFilesParser = mock(RAMLFilesParser.class);
         when(RAMLFilesParser.getEntries()).thenReturn(a);
 
@@ -48,10 +48,10 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifferenceEmpty() throws Exception {
-        HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
-        HashSet<ResourceActionPair> b = new HashSet<ResourceActionPair>();
+        HashSet<ResourceActionMimeTypeTriplet> a = new HashSet<ResourceActionMimeTypeTriplet>();
+        HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
 
-        Set<ResourceActionPair> heavenFlowEntries = computeDifferenceSetHelper(a, b);
+        Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
 
         assertNotNull(heavenFlowEntries);
         assertTrue(heavenFlowEntries.isEmpty());
@@ -61,16 +61,16 @@ public class APIDiffTest {
     public void testComputeDifference() throws Exception {
         API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
 
-        HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
-        ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "a", "b");
+        HashSet<ResourceActionMimeTypeTriplet> a = new HashSet<ResourceActionMimeTypeTriplet>();
+        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b");
         a.add(fab);
 
-        HashSet<ResourceActionPair> b = new HashSet<ResourceActionPair>();
-        ResourceActionPair feb = new ResourceActionPair(fromYAMLFile, "a", "b");
+        HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
+        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b");
         b.add(feb);
 
 
-        Set<ResourceActionPair> heavenFlowEntries = computeDifferenceSetHelper(a, b);
+        Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
 
         assertEquals(feb, fab);
         assertNotNull(heavenFlowEntries);
@@ -81,16 +81,16 @@ public class APIDiffTest {
     public void testComputeDifferenceMismatching() throws Exception {
         API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
 
-        HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
-        ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "b", "b");
+        HashSet<ResourceActionMimeTypeTriplet> a = new HashSet<ResourceActionMimeTypeTriplet>();
+        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromYAMLFile, "b", "b");
         a.add(fab);
-        a.add(new ResourceActionPair(fromYAMLFile, "a", "b"));
+        a.add(new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b"));
 
-        HashSet<ResourceActionPair> b = new HashSet<ResourceActionPair>();
-        ResourceActionPair feb = new ResourceActionPair(fromYAMLFile, "a", "b");
+        HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
+        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b");
         b.add(feb);
 
-        Set<ResourceActionPair> heavenFlowEntries = computeDifferenceSetHelper(a, b);
+        Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
 
         assertNotNull(heavenFlowEntries);
         assertEquals(1, heavenFlowEntries.size());
@@ -101,15 +101,15 @@ public class APIDiffTest {
     public void testComputeDifferenceAsymetric() throws Exception {
         API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
 
-        HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
-        ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "b", "b");
+        HashSet<ResourceActionMimeTypeTriplet> a = new HashSet<ResourceActionMimeTypeTriplet>();
+        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromYAMLFile, "b", "b");
         a.add(fab);
 
-        HashSet<ResourceActionPair> b = new HashSet<ResourceActionPair>();
-        ResourceActionPair feb = new ResourceActionPair(fromYAMLFile, "a", "b");
+        HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
+        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b");
         b.add(feb);
 
-        Set<ResourceActionPair> heavenFlowEntries = computeDifferenceSetHelper(a, b);
+        Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
 
         assertNotNull(heavenFlowEntries);
         assertEquals(1, heavenFlowEntries.size());

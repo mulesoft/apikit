@@ -11,9 +11,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.mule.tools.apikit.model.APIFactory;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.output.GenerationStrategy;
 import org.mule.tools.apikit.model.API;
-import org.mule.tools.apikit.model.ResourceActionPair;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 
@@ -38,7 +38,7 @@ public class GenerationStrategyTest {
 
     @Test
     public void testAllEmptyGenerate() throws Exception {
-        Set<ResourceActionPair> generate = generationStrategy.generate(mock(RAMLFilesParser.class),
+        Set<ResourceActionMimeTypeTriplet> generate = generationStrategy.generate(mock(RAMLFilesParser.class),
                 mock(MuleConfigParser.class));
         assertEquals(0, generate.size());
     }
@@ -49,11 +49,11 @@ public class GenerationStrategyTest {
         RAMLFilesParser yaml = mock(RAMLFilesParser.class);
         MuleConfigParser mule = mock(MuleConfigParser.class);
 
-        when(yaml.getEntries()).thenReturn(new HashSet<ResourceActionPair>() {{
-            this.add(new ResourceActionPair(fromYAMLFile, "pet", "post"));
+        when(yaml.getEntries()).thenReturn(new HashSet<ResourceActionMimeTypeTriplet>() {{
+            this.add(new ResourceActionMimeTypeTriplet(fromYAMLFile, "pet", "post"));
         }});
 
-        Set<ResourceActionPair> generate = generationStrategy.generate(yaml, mule);
+        Set<ResourceActionMimeTypeTriplet> generate = generationStrategy.generate(yaml, mule);
         assertEquals(1, generate.size());
     }
 
@@ -68,17 +68,17 @@ public class GenerationStrategyTest {
             this.add(api);
         }});
 
-        when(mule.getEntries()).thenReturn(new HashSet<ResourceActionPair>() {{
-            this.add(new ResourceActionPair(api, "/pet", "GET"));
+        when(mule.getEntries()).thenReturn(new HashSet<ResourceActionMimeTypeTriplet>() {{
+            this.add(new ResourceActionMimeTypeTriplet(api, "/pet", "GET"));
         }});
 
-        when(yaml.getEntries()).thenReturn(new HashSet<ResourceActionPair>() {{
-            this.add(new ResourceActionPair(apiFactory.createAPIBinding(
+        when(yaml.getEntries()).thenReturn(new HashSet<ResourceActionMimeTypeTriplet>() {{
+            this.add(new ResourceActionMimeTypeTriplet(apiFactory.createAPIBinding(
                     new File("sample.yaml"), null, "http://localhost/"),
                     "/pet", "GET"));
         }});
 
-        Set<ResourceActionPair> generate = generationStrategy.generate(yaml, mule);
+        Set<ResourceActionMimeTypeTriplet> generate = generationStrategy.generate(yaml, mule);
         assertEquals(0, generate.size());
     }
 
@@ -93,17 +93,17 @@ public class GenerationStrategyTest {
             this.add(api);
         }});
 
-        when(mule.getEntries()).thenReturn(new HashSet<ResourceActionPair>() {{
-            this.add(new ResourceActionPair(api, "/pet", "GET"));
+        when(mule.getEntries()).thenReturn(new HashSet<ResourceActionMimeTypeTriplet>() {{
+            this.add(new ResourceActionMimeTypeTriplet(api, "/pet", "GET"));
         }});
 
-        when(yaml.getEntries()).thenReturn(new HashSet<ResourceActionPair>() {{
+        when(yaml.getEntries()).thenReturn(new HashSet<ResourceActionMimeTypeTriplet>() {{
             API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "http://localhost/");
-            this.add(new ResourceActionPair(fromYAMLFile, "/pet", "GET"));
-            this.add(new ResourceActionPair(fromYAMLFile, "/pet", "POST"));
+            this.add(new ResourceActionMimeTypeTriplet(fromYAMLFile, "/pet", "GET"));
+            this.add(new ResourceActionMimeTypeTriplet(fromYAMLFile, "/pet", "POST"));
         }});
 
-        Set<ResourceActionPair> generate = generationStrategy.generate(yaml, mule);
+        Set<ResourceActionMimeTypeTriplet> generate = generationStrategy.generate(yaml, mule);
         assertEquals(1, generate.size());
     }
 }

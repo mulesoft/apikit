@@ -7,15 +7,20 @@
 package org.mule.tools.apikit.model;
 
 import org.apache.commons.lang.Validate;
+import org.raml.model.MimeType;
 
-import java.io.File;
-
-public class ResourceActionPair {
+public class ResourceActionMimeTypeTriplet {
     private final API api;
     private final String uri;
     private final String verb;
+    private final String mimeType;
 
-    public ResourceActionPair(API api, String uri, String verb) {
+
+    public ResourceActionMimeTypeTriplet(API api, String uri, String verb) {
+        this(api, uri, verb, null);
+    }
+
+    public ResourceActionMimeTypeTriplet(API api, String uri, String verb, String mimeType) {
         Validate.notNull(api);
         Validate.notNull(uri);
         Validate.notNull(verb);
@@ -23,6 +28,7 @@ public class ResourceActionPair {
         this.uri = uri;
         this.verb = verb.toUpperCase();
         this.api = api;
+        this.mimeType = mimeType;
     }
 
     @Override
@@ -30,20 +36,22 @@ public class ResourceActionPair {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ResourceActionPair that = (ResourceActionPair) o;
+        ResourceActionMimeTypeTriplet that = (ResourceActionMimeTypeTriplet) o;
 
         if (!api.equals(that.api)) return false;
         if (!uri.equals(that.uri)) return false;
         if (!verb.equals(that.verb)) return false;
+        if (mimeType != null && !mimeType.equals(that.mimeType)) return false;
 
         return true;
     }
 
     @Override
     public String toString() {
-        return "ResourceActionPair{" +
+        return "ResourceActionMimeTypeTriplet{" +
                 "uri='" + uri + '\'' +
                 ", verb='" + verb + '\'' +
+                ", mimeType='" + mimeType + '\'' +
                 '}';
     }
 
@@ -52,6 +60,9 @@ public class ResourceActionPair {
         int result = api.hashCode();
         result = 31 * result + uri.hashCode();
         result = 31 * result + verb.hashCode();
+        if (mimeType != null) {
+            result = 31 * result + mimeType.hashCode();
+        }
         return result;
     }
 }

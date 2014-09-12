@@ -15,7 +15,7 @@ import org.mule.tools.apikit.output.GenerationModelProvider;
 import org.mule.tools.apikit.output.GenerationStrategy;
 import org.mule.tools.apikit.output.MuleConfigGenerator;
 import org.mule.tools.apikit.misc.FileListUtils;
-import org.mule.tools.apikit.model.ResourceActionPair;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 
@@ -44,7 +44,7 @@ public class Scaffolder {
         RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, generationModelProvider, yamls, apiFactory);
         MuleConfigParser muleConfigParser = new MuleConfigParser(log, yamls.keySet(), xmls, apiFactory);
 
-        Set<ResourceActionPair> generate = new GenerationStrategy(log)
+        Set<ResourceActionMimeTypeTriplet> generate = new GenerationStrategy(log)
                 .generate(RAMLFilesParser, muleConfigParser);
         List<GenerationModel> generationModels = generationModelProvider.generate(generate);
         muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels);

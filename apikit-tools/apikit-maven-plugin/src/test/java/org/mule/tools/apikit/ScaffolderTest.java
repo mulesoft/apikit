@@ -93,6 +93,23 @@ public class ScaffolderTest {
         // TODO Add assertions
     }
 
+    @Test
+    public void testMultipleMimeTypes() throws Exception {
+        File muleXmlSimple = simpleGeneration("multipleMimeTypes");
+        assertTrue(muleXmlSimple.exists());
+
+        String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertTrue(s.contains("post:/pet:application/json:multipleMimeTypes-config"));
+        assertTrue(s.contains("post:/pet:text/xml:multipleMimeTypes-config"));
+        assertTrue(s.contains("post:/pet:application/x-www-form-urlencoded:multipleMimeTypes-config"));
+        assertTrue(s.contains("post:/pet:multipleMimeTypes-config"));
+        assertTrue(!s.contains("post:/pet:application/xml:multipleMimeTypes-config"));
+
+        assertTrue(s.contains("post:/vet:multipleMimeTypes-config"));
+        assertTrue(!s.contains("post:/vet:application/xml:multipleMimeTypes-config"));
+
+    }
+
     private Scaffolder createScaffolder(List<File> yamls, List<File> xmls, File muleXmlOut)
             throws MojoExecutionException {
         Log log = mock(Log.class);

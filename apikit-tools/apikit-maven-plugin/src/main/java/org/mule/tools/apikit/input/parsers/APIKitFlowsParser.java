@@ -11,11 +11,8 @@ import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
-import org.mule.tools.apikit.model.ResourceActionPair;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +35,8 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
     }
 
     @Override
-    public Set<ResourceActionPair> parse(Document document)  {
-        Set<ResourceActionPair> entries = new HashSet<ResourceActionPair>();
+    public Set<ResourceActionMimeTypeTriplet> parse(Document document)  {
+        Set<ResourceActionMimeTypeTriplet> entries = new HashSet<ResourceActionMimeTypeTriplet>();
         XPathExpression<Element> xp = XPathFactory.instance().compile("//*/*[local-name()='flow']",
                                                                       Filters.element(XMLNS_NAMESPACE.getNamespace()));
         List<Element> elements = xp.evaluate(document);
@@ -47,7 +44,7 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
             String name = element.getAttributeValue("name");
             APIKitFlow flow;
             try {
-                flow = APIKitFlow.buildFromName(name);
+                flow = APIKitFlow.buildFromName(name, includedApis.keySet());
             } catch(IllegalArgumentException iae) {
                 LOGGER.info("Flow named '" + name + "' is not an APIKit Flow because it does not follow APIKit naming convention." );
                 continue;
@@ -65,7 +62,7 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
                     throw new IllegalStateException("Inbound-endpoint Address URI is invalid");
                 }
 
-                entries.add(new ResourceActionPair(api, path + resource, flow.getAction()));
+                entries.add(new ResourceActionMimeTypeTriplet(api, path + resource, flow.getAction(), flow.getMimeType()));
             } else {
                 throw new IllegalStateException("No APIKit entries found in Mule config");
             }
