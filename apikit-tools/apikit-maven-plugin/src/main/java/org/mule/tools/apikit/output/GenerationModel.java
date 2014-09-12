@@ -24,10 +24,13 @@ public class GenerationModel implements Comparable<GenerationModel> {
     private final String verb;
     private Action action;
     private Resource resource;
+    private String mimeType;
     private List<String> splitPath;
     private API api;
 
-    public GenerationModel(API api, Resource resource, Action action) {
+    public GenerationModel(API api, Resource resource, Action action) { this(api, resource, action, null); }
+
+    public GenerationModel(API api, Resource resource, Action action, String mimeType) {
         this.api = api;
         Validate.notNull(api);
         Validate.notNull(action);
@@ -38,6 +41,7 @@ public class GenerationModel implements Comparable<GenerationModel> {
         this.action = action;
         this.splitPath = new ArrayList<String>(Arrays.asList(this.resource.getUri().split("/")));
         this.verb = action.getType().toString();
+        this.mimeType = mimeType;
         if(!splitPath.isEmpty()) {
             splitPath.remove(0);
             splitPath.remove(0);
@@ -118,20 +122,25 @@ public class GenerationModel implements Comparable<GenerationModel> {
     public String getName() {
         StringBuilder name = new StringBuilder();
         name.append(this.getStringFromActionType());
-        String name1 = this.resource.getDisplayName();
+        String resourceName = this.resource.getDisplayName();
 
-        if (name1 == null) {
+        if (resourceName == null) {
             StringBuffer buff = new StringBuffer();
-
             for (String i : this.splitPath) {
                 buff.append(StringUtils.capitalize(i));
             }
-
-            name1 = buff.toString();
-
+            resourceName = buff.toString();
         }
 
-        name.append(name1);
+        name.append(resourceName);
+
+        if (this.mimeType != null) {
+            StringBuffer buff = new StringBuffer();
+            for (String part : mimeType.split("/")) {
+                buff.append(StringUtils.capitalize(part));
+            }
+            name.append(buff.toString());
+        }
 
         return name.toString().replace(" ", "");
     }
@@ -164,6 +173,13 @@ public class GenerationModel implements Comparable<GenerationModel> {
         flowName.append(action.getType().toString().toLowerCase())
                 .append(FLOW_NAME_SEPARATOR)
                 .append(resource.getUri());
+
+        if (mimeType != null)
+        {
+            flowName.append(FLOW_NAME_SEPARATOR)
+                .append(mimeType);
+        }
+
 
         if(api.getConfig() != null && !StringUtils.isEmpty(api.getConfig().getName())) {
             flowName.append(FLOW_NAME_SEPARATOR)

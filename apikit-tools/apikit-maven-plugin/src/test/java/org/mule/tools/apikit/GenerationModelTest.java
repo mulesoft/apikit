@@ -15,6 +15,7 @@ import org.raml.model.*;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -146,6 +147,20 @@ public class GenerationModelTest {
         when(resource.getUri()).thenReturn("/api/pet");
         API api = mock(API.class);
         assertEquals("retrieveAnimal", new GenerationModel(api, resource, action).getName());
+    }
+
+    @Test
+    public void testGetMadeUpNameWithMimeTypes() throws Exception {
+        Action action = mock(Action.class);
+        when(action.getType()).thenReturn(ActionType.POST);
+        Resource resource = mock(Resource.class);
+        when(resource.getUri()).thenReturn("/api/pet");
+        API api = mock(API.class);
+        GenerationModel model1 = new GenerationModel(api, resource, action, "text/xml");
+        GenerationModel model2 = new GenerationModel(api, resource, action, "application/json");
+        assertTrue(model1.compareTo(model2) != 0);
+        assertEquals("updatePetTextXml", model1.getName());
+        assertEquals("updatePetApplicationJson", model2.getName());
     }
 
     @Test

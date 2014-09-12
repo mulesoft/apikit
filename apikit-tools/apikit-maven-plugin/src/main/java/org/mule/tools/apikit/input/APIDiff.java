@@ -6,29 +6,29 @@
  */
 package org.mule.tools.apikit.input;
 
-import org.mule.tools.apikit.model.ResourceActionPair;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class APIDiff {
-    private final Set<ResourceActionPair> yamlEntries;
-    private final Set<ResourceActionPair> muleFlowEntries;
-    private final Set<ResourceActionPair> difference;
+    private final Set<ResourceActionMimeTypeTriplet> yamlEntries;
+    private final Set<ResourceActionMimeTypeTriplet> muleFlowEntries;
+    private final Set<ResourceActionMimeTypeTriplet> difference;
 
-    public APIDiff(Set<ResourceActionPair> yamlEntries, Set<ResourceActionPair> muleFlowEntries) {
+    public APIDiff(Set<ResourceActionMimeTypeTriplet> yamlEntries, Set<ResourceActionMimeTypeTriplet> muleFlowEntries) {
         this.yamlEntries = yamlEntries;
         this.muleFlowEntries = muleFlowEntries;
-        this.difference = computeDifference(yamlEntries, muleFlowEntries);
+        this.difference = computeDifference(this.yamlEntries, this.muleFlowEntries);
     }
 
-    public Set<ResourceActionPair> getEntries() {
+    public Set<ResourceActionMimeTypeTriplet> getEntries() {
         return difference;
     }
 
-    private Set<ResourceActionPair> computeDifference(Set<ResourceActionPair> yamlEntries,
-                                                   Set<ResourceActionPair> flowEntries) {
-        Set<ResourceActionPair> differenceToAdd = new HashSet<ResourceActionPair>(yamlEntries);
+    private Set<ResourceActionMimeTypeTriplet> computeDifference(Set<ResourceActionMimeTypeTriplet> yamlEntries,
+                                                   Set<ResourceActionMimeTypeTriplet> flowEntries) {
+        Set<ResourceActionMimeTypeTriplet> differenceToAdd = new HashSet<ResourceActionMimeTypeTriplet>(yamlEntries);
         differenceToAdd.removeAll(flowEntries);
         return differenceToAdd;
     }

@@ -93,8 +93,7 @@ public class MuleConfigGeneratorTest {
         Document doc = new Document();
         Element mule = new Element("mule");
         doc.setContent(mule);
-
-        doc.getRootElement().setContent(new APIKitFlowScope(flowEntry).generate());
+        mule.addContent(new APIKitFlowScope(flowEntry).generate());
 
         String s = Helper.nonSpaceOutput(doc);
 

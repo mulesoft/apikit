@@ -9,7 +9,7 @@ package org.mule.tools.apikit.output;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.input.APIDiff;
-import org.mule.tools.apikit.model.ResourceActionPair;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 
@@ -25,8 +25,8 @@ public class GenerationStrategy {
     public List<GenerationModel> generate(RAMLFilesParser RAMLFilesParser,
                                   MuleConfigParser muleConfigParser) {
         Set<API> apisInMuleConfigs = muleConfigParser.getIncludedApis();
-        Set<ResourceActionPair> yamlEntries = RAMLFilesParser.getEntries().keySet();
-        Set<ResourceActionPair> muleFlowEntries = muleConfigParser.getEntries();
+        Set<ResourceActionMimeTypeTriplet> yamlEntries = RAMLFilesParser.getEntries().keySet();
+        Set<ResourceActionMimeTypeTriplet> muleFlowEntries = muleConfigParser.getEntries();
         List<GenerationModel> generationModels = new ArrayList<GenerationModel>();
 
         if (apisInMuleConfigs.isEmpty()) {
@@ -44,10 +44,10 @@ public class GenerationStrategy {
 
                 generationModels.addAll(RAMLFilesParser.getEntries().values());
             } else {
-                Set<ResourceActionPair> diffPairs = new APIDiff(yamlEntries, muleFlowEntries).getEntries();
-                log.info("Adding new apikit:flows to existing files for the following operations: " + diffPairs);
+                Set<ResourceActionMimeTypeTriplet> diffTriplets = new APIDiff(yamlEntries, muleFlowEntries).getEntries();
+                log.info("Adding new apikit:flows to existing files for the following operations: " + diffTriplets);
 
-                for (ResourceActionPair entry : diffPairs) {
+                for (ResourceActionMimeTypeTriplet entry : diffTriplets) {
                     if (RAMLFilesParser.getEntries().containsKey(entry)) {
                         generationModels.add(RAMLFilesParser.getEntries().get(entry));
                     }
