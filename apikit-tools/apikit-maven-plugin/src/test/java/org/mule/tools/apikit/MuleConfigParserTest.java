@@ -41,7 +41,7 @@ public class MuleConfigParserTest {
                 new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
         Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
         assertNotNull(set);
-        assertEquals(5, set.size());
+        assertEquals(6, set.size());
 
         Set<API> apis = muleConfigParser.getIncludedApis();
         assertNotNull(apis);
@@ -67,7 +67,7 @@ public class MuleConfigParserTest {
                 new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
         Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
         assertNotNull(set);
-        assertEquals(5, set.size());
+        assertEquals(6, set.size());
 
         Set<API> apis = muleConfigParser.getIncludedApis();
         assertNotNull(apis);
@@ -83,5 +83,4 @@ public class MuleConfigParserTest {
         assertEquals(APIKitConfig.DEFAULT_CONSOLE_PATH, leaguesConfig.getConsolePath());
 
     }
-
 }

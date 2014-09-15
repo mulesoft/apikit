@@ -123,20 +123,25 @@ public class GenerationModel implements Comparable<GenerationModel> {
     public String getName() {
         StringBuilder name = new StringBuilder();
         name.append(this.getStringFromActionType());
-        String name1 = this.resource.getDisplayName();
+        String resourceName = this.resource.getDisplayName();
 
-        if (name1 == null) {
+        if (resourceName == null) {
             StringBuffer buff = new StringBuffer();
-
             for (String i : this.splitPath) {
                 buff.append(StringUtils.capitalize(i));
             }
-
-            name1 = buff.toString();
-
+            resourceName = buff.toString();
         }
 
-        name.append(name1);
+        name.append(resourceName);
+
+        if (this.mimeType != null) {
+            StringBuffer buff = new StringBuffer();
+            for (String part : mimeType.split("/")) {
+                buff.append(StringUtils.capitalize(part));
+            }
+            name.append(buff.toString());
+        }
 
         return name.toString().replace(" ", "");
     }

@@ -41,6 +41,15 @@ public class APIKitFlowTest {
         assertEquals(CONFIG_REF, flow.getConfigRef());
     }
 
+    @Test
+    public void testAPIKitFlowNameWithContentTypeNoConfigRef() {
+        APIKitFlow flow = APIKitFlow.buildFromName(buildName(ActionType.GET.toString(), RESOURCE, MIME_TYPE, null), Arrays.asList( new String[] {CONFIG_REF}));
+        assertEquals(ActionType.GET.toString().toLowerCase(), flow.getAction());
+        assertEquals(RESOURCE, flow.getResource());
+        assertEquals(MIME_TYPE, flow.getMimeType());
+        assertEquals(null, flow.getConfigRef());
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testAPIKitFlowNameInvalidAction() {
         APIKitFlow.buildFromName(buildName(INVALID_ACTION, RESOURCE, null, CONFIG_REF), Arrays.asList( new String[] {CONFIG_REF}));
