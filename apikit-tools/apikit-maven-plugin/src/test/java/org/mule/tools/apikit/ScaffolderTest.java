@@ -7,6 +7,7 @@
 package org.mule.tools.apikit;
 
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -17,6 +18,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mule.tools.apikit.misc.FileListUtils;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -94,8 +96,36 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testMultipleMimeTypesWithoutNamedConfig() throws Exception {
+        List<File> yamls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.yaml"));
+        File muleXmlOut = folder.newFolder("scaffolder");
+        List<File> xmls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.xml"));
+
+        createScaffolder(yamls, xmls, muleXmlOut).run();
+
+        File muleXmlSimple = new File(muleXmlOut, "multipleMimeTypes.xml");
+        assertTrue(muleXmlSimple.exists());
+
+        String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertTrue(s.contains("post:/pet:application/json"));
+        assertTrue(s.contains("post:/pet:text/xml"));
+        assertTrue(s.contains("post:/pet:application/x-www-form-urlencoded"));
+        assertTrue(s.contains("post:/pet"));
+        assertTrue(!s.contains("post:/pet:application/xml"));
+
+        assertTrue(s.contains("post:/vet"));
+        assertTrue(!s.contains("post:/vet:application/xml"));
+
+    }
+
+    @Test
     public void testMultipleMimeTypes() throws Exception {
-        File muleXmlSimple = simpleGeneration("multipleMimeTypes");
+        List<File> yamls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.yaml"));
+        File muleXmlOut = folder.newFolder("scaffolder");
+
+        createScaffolder(yamls, new ArrayList<File>(), muleXmlOut).run();
+
+        File muleXmlSimple = new File(muleXmlOut, "multipleMimeTypes.xml");
         assertTrue(muleXmlSimple.exists());
 
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
@@ -107,7 +137,6 @@ public class ScaffolderTest {
 
         assertTrue(s.contains("post:/vet:multipleMimeTypes-config"));
         assertTrue(!s.contains("post:/vet:application/xml:multipleMimeTypes-config"));
-
     }
 
     private Scaffolder createScaffolder(List<File> yamls, List<File> xmls, File muleXmlOut)

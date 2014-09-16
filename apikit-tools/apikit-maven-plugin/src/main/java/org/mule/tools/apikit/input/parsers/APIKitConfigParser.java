@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit.input.parsers;
 
+import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.APIKitConfig;
 
@@ -50,7 +51,8 @@ public class APIKitConfigParser implements MuleConfigFileParser {
             }
 
             APIKitConfig config = configBuilder.build();
-            apikitConfigs.put(config.getName(), config);
+            String configId = config.getName() != null ? config.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
+            apikitConfigs.put(configId, config);
         }
 
         return apikitConfigs;

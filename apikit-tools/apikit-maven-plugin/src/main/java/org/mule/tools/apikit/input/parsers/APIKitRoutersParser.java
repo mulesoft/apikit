@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit.input.parsers;
 
+import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
@@ -49,11 +50,8 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
                                                                       Filters.element(APIKitTools.API_KIT_NAMESPACE.getNamespace()));
         List<Element> elements = xp.evaluate(document);
         for (Element element : elements) {
-            String configId = null;
             Attribute configRef = element.getAttribute("config-ref");
-            if(configRef != null) {
-                configId = configRef.getValue();
-            }
+            String configId = configRef != null ? configRef.getValue() : APIKitFlow.UNNAMED_CONFIG_NAME;
 
             APIKitConfig config = apikitConfigs.get(configId);
             if(config == null) {
@@ -87,7 +85,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
                         path = "/" + path;
                     }
 
-                    includedApis.put(config.getName(), apiFactory.createAPIBinding(yamlPath, file, path, config));
+                    includedApis.put(configId, apiFactory.createAPIBinding(yamlPath, file, path, config));
                 }
             }
         }

@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
+import org.mule.tools.apikit.model.APIKitConfig;
 import org.raml.model.ActionType;
 
 import java.util.Arrays;
@@ -47,7 +48,7 @@ public class APIKitFlowTest {
         assertEquals(ActionType.GET.toString().toLowerCase(), flow.getAction());
         assertEquals(RESOURCE, flow.getResource());
         assertEquals(MIME_TYPE, flow.getMimeType());
-        assertEquals(null, flow.getConfigRef());
+        assertEquals(APIKitFlow.UNNAMED_CONFIG_NAME, flow.getConfigRef());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -70,7 +71,7 @@ public class APIKitFlowTest {
         APIKitFlow flow = APIKitFlow.buildFromName(buildName(ActionType.GET.toString(), RESOURCE, null, null), Arrays.asList( new String[] {CONFIG_REF}));
         assertEquals(ActionType.GET.toString().toLowerCase(), flow.getAction());
         assertEquals(RESOURCE, flow.getResource());
-        assertNull(flow.getConfigRef());
+        assertEquals(APIKitFlow.UNNAMED_CONFIG_NAME, flow.getConfigRef());
     }
 
     private String buildName(String action, String resource, String mimeType, String config) {

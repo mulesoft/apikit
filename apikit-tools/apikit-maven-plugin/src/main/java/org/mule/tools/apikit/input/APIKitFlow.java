@@ -11,10 +11,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.mule.tools.apikit.model.APIKitConfig;
 import org.raml.model.ActionType;
 
 public class APIKitFlow {
 
+    public static final String UNNAMED_CONFIG_NAME = "noNameConfig";
     private final String action;
     private final String resource;
     private final String configRef;
@@ -30,7 +32,7 @@ public class APIKitFlow {
         this.action = action;
         this.resource = resource;
         this.mimeType = mimeType;
-        this.configRef = configRef;
+        this.configRef = configRef != null ? configRef : UNNAMED_CONFIG_NAME;
     }
 
     public String getAction() {
