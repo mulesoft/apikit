@@ -17,7 +17,7 @@ import org.mule.tools.apikit.input.parsers.APIKitRoutersParser;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
-import org.mule.tools.apikit.model.ResourceActionPair;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +28,7 @@ import static java.util.Map.Entry;
 
 public class MuleConfigParser {
 
-    private Set<ResourceActionPair> entries = new HashSet<ResourceActionPair>();
+    private Set<ResourceActionMimeTypeTriplet> entries = new HashSet<ResourceActionMimeTypeTriplet>();
     private Map<String, API> includedApis = new HashMap<String, API>();
     private Map<String, APIKitConfig> apikitConfigs = new HashMap<String, APIKitConfig>();
     private final APIFactory apiFactory;
@@ -61,7 +61,7 @@ public class MuleConfigParser {
         return apikitConfigs;
     }
 
-    public Set<ResourceActionPair> getEntries() {
+    public Set<ResourceActionMimeTypeTriplet> getEntries() {
         return entries;
     }
 

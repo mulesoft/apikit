@@ -76,7 +76,7 @@ public class MuleConfigGenerator {
             }
 
             // Generate each of the APIKit flows
-            new APIKitFlowScope(flowEntry, doc.getRootElement()).generate();
+            doc.getRootElement().addContent(new APIKitFlowScope(flowEntry).generate());
         }
 
         // Write everything to files

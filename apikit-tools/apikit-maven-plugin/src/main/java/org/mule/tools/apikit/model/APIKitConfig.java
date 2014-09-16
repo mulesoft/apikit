@@ -18,6 +18,7 @@ public class APIKitConfig {
     public static final String DEFAULT_CONSOLE_PATH = "console";
     public static final String DEFAULT_CONFIG_NAME = "config";
 
+
     private String name;
     private String raml;
     private boolean consoleEnabled;

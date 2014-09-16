@@ -7,7 +7,7 @@
 package org.mule.tools.apikit.output;
 
 import org.mule.tools.apikit.model.API;
-import org.mule.tools.apikit.model.ResourceActionPair;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.raml.model.Action;
 import org.raml.model.Resource;
 
@@ -20,12 +20,12 @@ import java.util.Map;
 import java.util.Set;
 
 public class GenerationModelProvider {
-    private Map<ResourceActionPair, GenerationModel> map = new HashMap<ResourceActionPair, GenerationModel>();
+    private Map<ResourceActionMimeTypeTriplet, GenerationModel> map = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
 
-    public List<GenerationModel> generate(Set<ResourceActionPair> generate) {
+    public List<GenerationModel> generate(Set<ResourceActionMimeTypeTriplet> generate) {
         Set<GenerationModel> generationModels = new HashSet<GenerationModel>();
-        for (ResourceActionPair resourceActionPair : generate) {
-            GenerationModel generationModel = map.get(resourceActionPair);
+        for (ResourceActionMimeTypeTriplet resourceActionPair : generate) {
+            GenerationModel  generationModel = map.get(resourceActionPair);
             if (generationModel != null) {
                 generationModels.add(generationModel);
             }
@@ -35,8 +35,8 @@ public class GenerationModelProvider {
         return models;
     }
 
-    public void add(API api, ResourceActionPair entry, Resource resource, Action action) {
-        GenerationModel generationModel = new GenerationModel(api, resource, action);
+    public void add(API api, ResourceActionMimeTypeTriplet entry, Resource resource, Action action, String mimeType) {
+        GenerationModel generationModel = new GenerationModel(api, resource, action, mimeType);
         this.map.put(entry, generationModel);
     }
 

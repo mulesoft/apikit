@@ -7,12 +7,11 @@
 package org.mule.tools.apikit;
 
 import org.apache.maven.plugin.logging.Log;
-import org.junit.Assert;
 import org.junit.Test;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
-import org.mule.tools.apikit.model.ResourceActionPair;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.input.MuleConfigParser;
 
 import java.io.File;
@@ -40,9 +39,9 @@ public class MuleConfigParserTest {
 
         MuleConfigParser muleConfigParser =
                 new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
-        Set<ResourceActionPair> set = muleConfigParser.getEntries();
+        Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
         assertNotNull(set);
-        assertEquals(5, set.size());
+        assertEquals(6, set.size());
 
         Set<API> apis = muleConfigParser.getIncludedApis();
         assertNotNull(apis);
@@ -66,9 +65,9 @@ public class MuleConfigParserTest {
 
         MuleConfigParser muleConfigParser =
                 new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
-        Set<ResourceActionPair> set = muleConfigParser.getEntries();
+        Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
         assertNotNull(set);
-        assertEquals(5, set.size());
+        assertEquals(6, set.size());
 
         Set<API> apis = muleConfigParser.getIncludedApis();
         assertNotNull(apis);
@@ -84,5 +83,4 @@ public class MuleConfigParserTest {
         assertEquals(APIKitConfig.DEFAULT_CONSOLE_PATH, leaguesConfig.getConsolePath());
 
     }
-
 }
