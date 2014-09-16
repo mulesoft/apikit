@@ -13,6 +13,7 @@ public class FlowMapping
 
     private String resource;
     private String action;
+    private String contentType;
     private Flow flow;
 
     public String getResource()
@@ -35,6 +36,16 @@ public class FlowMapping
         this.action = action;
     }
 
+    public String getContentType()
+    {
+        return contentType;
+    }
+
+    public void setContentType(String contentType)
+    {
+        this.contentType = contentType;
+    }
+
     public Flow getFlow()
     {
         return flow;
@@ -43,5 +54,15 @@ public class FlowMapping
     public void setFlow(Flow flow)
     {
         this.flow = flow;
+    }
+
+    public String getKey()
+    {
+        String key = action + ":" + resource;
+        if (contentType != null)
+        {
+            key += ":" + contentType;
+        }
+        return key;
     }
 }
