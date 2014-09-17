@@ -19,11 +19,8 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
 import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
-import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
-import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
-import org.mule.tools.apikit.output.scopes.ExceptionStrategyScope;
+import org.mule.tools.apikit.output.scopes.*;
 import org.mule.tools.apikit.output.scopes.FlowScope;
-import org.mule.tools.apikit.output.scopes.MuleScope;
 import org.mule.tools.apikit.model.API;
 
 import java.io.*;
@@ -125,7 +122,7 @@ public class MuleConfigGenerator {
         if (!xmlFile.exists() || xmlFile.length() == 0) {
             xmlFile.getParentFile().mkdirs();
             doc = new Document();
-            new MuleScope(doc).generate();
+            doc.setRootElement(new MuleScope().generate());
         } else {
             InputStream xmlInputStream = new FileInputStream(xmlFile);
             doc = saxBuilder.build(xmlInputStream);

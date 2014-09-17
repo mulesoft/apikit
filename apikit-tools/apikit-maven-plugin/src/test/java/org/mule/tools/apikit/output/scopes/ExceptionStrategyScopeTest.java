@@ -22,7 +22,8 @@ public class ExceptionStrategyScopeTest {
     @Test
     public void testGenerate() throws Exception {
         Document document = new Document();
-        Element mule = new MuleScope(document).generate();
+        Element mule = new MuleScope().generate();
+        document.setRootElement(mule);
         new ExceptionStrategyScope(mule, API_ID).generate();
 
         String s = Helper.nonSpaceOutput(mule);

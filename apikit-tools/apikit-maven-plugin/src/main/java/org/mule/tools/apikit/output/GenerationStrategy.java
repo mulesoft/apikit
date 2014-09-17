@@ -44,10 +44,10 @@ public class GenerationStrategy {
 
                 generationModels.addAll(RAMLFilesParser.getEntries().values());
             } else {
-                Set<ResourceActionPair> flowEntries1 = new APIDiff(yamlEntries, muleFlowEntries).getEntries();
-                log.info("Adding new apikit:flows to existing files for the following operations: " + flowEntries1);
+                Set<ResourceActionPair> diffPairs = new APIDiff(yamlEntries, muleFlowEntries).getEntries();
+                log.info("Adding new apikit:flows to existing files for the following operations: " + diffPairs);
 
-                for (ResourceActionPair entry : flowEntries1) {
+                for (ResourceActionPair entry : diffPairs) {
                     if (RAMLFilesParser.getEntries().containsKey(entry)) {
                         generationModels.add(RAMLFilesParser.getEntries().get(entry));
                     }

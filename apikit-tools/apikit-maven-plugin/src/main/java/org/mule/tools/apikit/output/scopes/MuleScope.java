@@ -30,7 +30,7 @@ public class MuleScope implements Scope {
                 .append(" ");
     }
 
-    public MuleScope(Document doc)  {
+    public MuleScope()  {
         mule = new Element("mule");
         StringBuilder stringBuilder = new StringBuilder();
 
@@ -51,7 +51,6 @@ public class MuleScope implements Scope {
         mule.setAttribute("schemaLocation", stringBuilder.toString(),
                 XSI_NAMESPACE.getNamespace());
 
-        doc.setRootElement(mule);
     }
 
     @Override
