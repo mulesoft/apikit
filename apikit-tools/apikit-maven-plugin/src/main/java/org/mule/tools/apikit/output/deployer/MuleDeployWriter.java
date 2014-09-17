@@ -73,17 +73,11 @@ public class MuleDeployWriter {
     private List<String> getConfigNames(Collection<File> muleFiles) {
         List<String> configNames = new ArrayList<String>();
 
-        if(hasMuleConfigs(muleFiles)) {
+        if(muleFiles != null && !muleFiles.isEmpty()) {
             for(File configFile : muleFiles) {
                 configNames.add(configFile.getName());
             }
         }
         return configNames;
     }
-
-    private boolean hasMuleConfigs(Collection<File> muleFiles) {
-        return muleFiles != null && !muleFiles.isEmpty();
-    }
-
-
 }

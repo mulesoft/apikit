@@ -16,7 +16,7 @@ import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 public class APIKitFlowScope implements Scope {
     private final Element flow;
 
-    public APIKitFlowScope(GenerationModel flowEntry, Element mule) {
+    public APIKitFlowScope(GenerationModel flowEntry) {
         flow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
         flow.setAttribute("name", flowEntry.getFlowName());
 
@@ -30,7 +30,6 @@ public class APIKitFlowScope implements Scope {
         Element example = new Element("set-payload", XMLNS_NAMESPACE.getNamespace());
         example.setAttribute("value", flowEntry.getExample().trim());
         flow.addContent(example);
-        mule.addContent(flow);
     }
 
     @Override
