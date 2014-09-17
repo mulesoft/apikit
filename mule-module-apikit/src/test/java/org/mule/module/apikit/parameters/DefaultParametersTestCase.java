@@ -55,7 +55,7 @@ public class DefaultParametersTestCase extends FunctionalTestCase
     {
         given().header("Accept", "text/plain")
                 .expect()
-                .response().header("first", "1").statusCode(200)
+                .response().header("default", "1").statusCode(200)
                 .when().get("/api/queryParams");
     }
 

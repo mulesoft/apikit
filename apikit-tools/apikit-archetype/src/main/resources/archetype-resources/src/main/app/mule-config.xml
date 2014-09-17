@@ -43,7 +43,7 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <flow name="main">
+    <flow name="api-main">
         <http:inbound-endpoint address="http://localhost:${http.port}/api"/>
         <apikit:router config-ref="apiConfig" />
         <exception-strategy ref="apiKitGlobalExceptionMapping" />

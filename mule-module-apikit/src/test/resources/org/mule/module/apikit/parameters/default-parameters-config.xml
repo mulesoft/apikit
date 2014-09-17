@@ -47,7 +47,7 @@
     </flow>
 
     <flow name="get:/queryParams">
-        <set-property propertyName="first" value="#[message.inboundProperties.first]"/>
+        <set-property propertyName="default" value="#[message.inboundProperties.first]"/>
     </flow>
 
     <flow name="post:/url-encoded">
