@@ -30,7 +30,7 @@ public class APIKitFlowScopeTest {
         Document doc = new Document();
         Element mule = new Element("mule");
 
-        new APIKitFlowScope(flowEntry, mule);
+        mule.addContent(new APIKitFlowScope(flowEntry).generate());
         doc.setContent(mule);
 
         String s = Helper.nonSpaceOutput(doc);

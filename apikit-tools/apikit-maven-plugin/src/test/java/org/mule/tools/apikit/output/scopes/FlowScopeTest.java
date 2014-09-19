@@ -23,7 +23,8 @@ public class FlowScopeTest {
     @Test
     public void testGenerate() throws Exception {
         Document document = new Document();
-        Element mule = new MuleScope(document).generate();
+        Element mule =new MuleScope().generate();
+        document.setRootElement(mule);
         APIKitConfig config = new APIKitConfig.Builder("path/to/file.yaml").build();
         new APIKitConfigScope(config, mule).generate();
         API api = mock(API.class);

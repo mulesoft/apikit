@@ -21,8 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mule.tools.apikit.Helper.*;
 
 public class ScaffolderTest {
 
@@ -42,7 +44,8 @@ public class ScaffolderTest {
         File muleXmlSimple = simpleGeneration("simple");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-        // TODO Add assertions
+
+        assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
     }
 
 
@@ -51,7 +54,12 @@ public class ScaffolderTest {
         File muleXmlSimple = simpleGeneration("two");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-        // TODO Add assertions
+
+        assertEquals(1, countOccurences(s, "get:/pet:two-config"));
+        assertEquals(1, countOccurences(s, "post:/pet:two-config"));
+
+        assertEquals(1, countOccurences(s, "get:/car:two-config"));
+        assertEquals(1, countOccurences(s, "post:/car:two-config"));
     }
 
     @Test
@@ -59,7 +67,13 @@ public class ScaffolderTest {
         File muleXmlSimple = simpleGeneration("nested");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-        // TODO Add assertions
+
+        assertEquals(1, countOccurences(s, "get:/pet:nested-config"));
+        assertEquals(1, countOccurences(s, "post:/pet:nested-config"));
+        assertEquals(1, countOccurences(s, "get:/pet/owner:nested-config"));
+
+        assertEquals(1, countOccurences(s, "get:/car:nested-config"));
+        assertEquals(1, countOccurences(s, "post:/car:nested-config"));
     }
 
     @Test
@@ -75,7 +89,9 @@ public class ScaffolderTest {
         File muleXmlSimple = simpleGeneration("example");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-        // TODO Add assertions
+
+        // TODO Verify this assertion
+        //assertEquals(1, countOccurences(s.replaceAll("\\s+", " "), "{ \"name\": \"Bobby\", \"food\": \"Ice Cream\"}"));
     }
 
     @Test
@@ -90,7 +106,9 @@ public class ScaffolderTest {
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        // TODO Add assertions
+
+        assertEquals(1, countOccurences(s, "get:/pet"));
+        assertEquals(1, countOccurences(s, "post:/pet"));
     }
 
     private Scaffolder createScaffolder(List<File> yamls, List<File> xmls, File muleXmlOut)

@@ -22,10 +22,6 @@ public class APIDiff {
         this.difference = computeDifference(yamlEntries, muleFlowEntries);
     }
 
-    public APIDiff(RAMLFilesParser RAMLFilesParser, MuleConfigParser muleConfigParser) {
-        this(RAMLFilesParser.getEntries(), muleConfigParser.getEntries());
-    }
-
     public Set<ResourceActionPair> getEntries() {
         return difference;
     }

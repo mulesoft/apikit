@@ -14,8 +14,10 @@ import org.mule.tools.apikit.model.ResourceActionPair;
 import org.mule.tools.apikit.input.APIDiff;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
+import org.mule.tools.apikit.output.GenerationModel;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -35,20 +37,19 @@ public class APIDiffTest {
         this.apiFactory = new APIFactory();
     }
 
-    private Set<ResourceActionPair> computeDifferenceSetHelper(HashSet<ResourceActionPair> a, HashSet<ResourceActionPair> b) {
+    private Set<ResourceActionPair> computeDifferenceSetHelper(HashMap<ResourceActionPair, GenerationModel> a, HashSet<ResourceActionPair> b) {
         RAMLFilesParser RAMLFilesParser = mock(RAMLFilesParser.class);
         when(RAMLFilesParser.getEntries()).thenReturn(a);
 
         MuleConfigParser muleConfigParser = mock(MuleConfigParser.class);
         when(muleConfigParser.getEntries()).thenReturn(b);
 
-        return new APIDiff(RAMLFilesParser, muleConfigParser).getEntries();
-
+        return new APIDiff(RAMLFilesParser.getEntries().keySet(), muleConfigParser.getEntries()).getEntries();
     }
 
     @Test
     public void testComputeDifferenceEmpty() throws Exception {
-        HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
+        HashMap<ResourceActionPair, GenerationModel> a = new HashMap<ResourceActionPair, GenerationModel>();
         HashSet<ResourceActionPair> b = new HashSet<ResourceActionPair>();
 
         Set<ResourceActionPair> heavenFlowEntries = computeDifferenceSetHelper(a, b);
@@ -61,9 +62,9 @@ public class APIDiffTest {
     public void testComputeDifference() throws Exception {
         API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
 
-        HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
+        HashMap<ResourceActionPair, GenerationModel> a = new HashMap<ResourceActionPair, GenerationModel>();
         ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "a", "b");
-        a.add(fab);
+        a.put(fab, mock(GenerationModel.class));
 
         HashSet<ResourceActionPair> b = new HashSet<ResourceActionPair>();
         ResourceActionPair feb = new ResourceActionPair(fromYAMLFile, "a", "b");
@@ -81,10 +82,10 @@ public class APIDiffTest {
     public void testComputeDifferenceMismatching() throws Exception {
         API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
 
-        HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
+        HashMap<ResourceActionPair, GenerationModel> a = new HashMap<ResourceActionPair, GenerationModel>();
         ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "b", "b");
-        a.add(fab);
-        a.add(new ResourceActionPair(fromYAMLFile, "a", "b"));
+        a.put(fab, mock(GenerationModel.class));
+        a.put(new ResourceActionPair(fromYAMLFile, "a", "b"), mock(GenerationModel.class));
 
         HashSet<ResourceActionPair> b = new HashSet<ResourceActionPair>();
         ResourceActionPair feb = new ResourceActionPair(fromYAMLFile, "a", "b");
@@ -101,9 +102,9 @@ public class APIDiffTest {
     public void testComputeDifferenceAsymetric() throws Exception {
         API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
 
-        HashSet<ResourceActionPair> a = new HashSet<ResourceActionPair>();
+        HashMap<ResourceActionPair, GenerationModel> a = new HashMap<ResourceActionPair, GenerationModel>();
         ResourceActionPair fab = new ResourceActionPair(fromYAMLFile, "b", "b");
-        a.add(fab);
+        a.put(fab, mock(GenerationModel.class));
 
         HashSet<ResourceActionPair> b = new HashSet<ResourceActionPair>();
         ResourceActionPair feb = new ResourceActionPair(fromYAMLFile, "a", "b");

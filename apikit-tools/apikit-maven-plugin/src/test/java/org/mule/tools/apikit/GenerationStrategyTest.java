@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import org.mule.tools.apikit.model.APIFactory;
+import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationStrategy;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.ResourceActionPair;
@@ -18,8 +19,7 @@ import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 
 import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -38,7 +38,7 @@ public class GenerationStrategyTest {
 
     @Test
     public void testAllEmptyGenerate() throws Exception {
-        Set<ResourceActionPair> generate = generationStrategy.generate(mock(RAMLFilesParser.class),
+        List<GenerationModel> generate = generationStrategy.generate(mock(RAMLFilesParser.class),
                 mock(MuleConfigParser.class));
         assertEquals(0, generate.size());
     }
@@ -49,11 +49,12 @@ public class GenerationStrategyTest {
         RAMLFilesParser yaml = mock(RAMLFilesParser.class);
         MuleConfigParser mule = mock(MuleConfigParser.class);
 
-        when(yaml.getEntries()).thenReturn(new HashSet<ResourceActionPair>() {{
-            this.add(new ResourceActionPair(fromYAMLFile, "pet", "post"));
-        }});
+        final Map<ResourceActionPair, GenerationModel> yamlEntries = new HashMap<ResourceActionPair, GenerationModel>();
+        yamlEntries.put(new ResourceActionPair(fromYAMLFile, "pet", "post"), mock(GenerationModel.class));
 
-        Set<ResourceActionPair> generate = generationStrategy.generate(yaml, mule);
+        when(yaml.getEntries()).thenReturn(yamlEntries);
+
+        List<GenerationModel> generate = generationStrategy.generate(yaml, mule);
         assertEquals(1, generate.size());
     }
 
@@ -72,13 +73,13 @@ public class GenerationStrategyTest {
             this.add(new ResourceActionPair(api, "/pet", "GET"));
         }});
 
-        when(yaml.getEntries()).thenReturn(new HashSet<ResourceActionPair>() {{
-            this.add(new ResourceActionPair(apiFactory.createAPIBinding(
-                    new File("sample.yaml"), null, "http://localhost/"),
-                    "/pet", "GET"));
-        }});
+        final Map<ResourceActionPair, GenerationModel> yamlEntries = new HashMap<ResourceActionPair, GenerationModel>();
+        yamlEntries.put(new ResourceActionPair(api, "/pet", "GET"), mock(GenerationModel.class));
 
-        Set<ResourceActionPair> generate = generationStrategy.generate(yaml, mule);
+        when(yaml.getEntries()).thenReturn(yamlEntries);
+
+        List<GenerationModel> generate = generationStrategy.generate(yaml, mule);
+
         assertEquals(0, generate.size());
     }
 
@@ -97,13 +98,15 @@ public class GenerationStrategyTest {
             this.add(new ResourceActionPair(api, "/pet", "GET"));
         }});
 
-        when(yaml.getEntries()).thenReturn(new HashSet<ResourceActionPair>() {{
-            API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "http://localhost/");
-            this.add(new ResourceActionPair(fromYAMLFile, "/pet", "GET"));
-            this.add(new ResourceActionPair(fromYAMLFile, "/pet", "POST"));
-        }});
+        API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "http://localhost/");
+        final Map<ResourceActionPair, GenerationModel> yamlEntries = new HashMap<ResourceActionPair, GenerationModel>();
+        yamlEntries.put(new ResourceActionPair(fromYAMLFile, "/pet", "GET"), mock(GenerationModel.class));
+        yamlEntries.put(new ResourceActionPair(fromYAMLFile, "/pet", "POST"), mock(GenerationModel.class));
 
-        Set<ResourceActionPair> generate = generationStrategy.generate(yaml, mule);
+        when(yaml.getEntries()).thenReturn(yamlEntries);
+
+        List<GenerationModel> generate = generationStrategy.generate(yaml, mule);
+
         assertEquals(1, generate.size());
     }
 }

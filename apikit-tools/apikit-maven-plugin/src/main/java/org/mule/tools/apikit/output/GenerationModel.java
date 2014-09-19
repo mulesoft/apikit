@@ -33,7 +33,6 @@ public class GenerationModel implements Comparable<GenerationModel> {
         Validate.notNull(action);
         Validate.notNull(action.getType());
         Validate.notNull(resource.getUri());
-        Validate.notNull(action.getType());
 
         this.resource = resource;
         this.action = action;

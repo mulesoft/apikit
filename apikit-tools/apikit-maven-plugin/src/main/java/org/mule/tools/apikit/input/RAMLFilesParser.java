@@ -9,11 +9,7 @@ package org.mule.tools.apikit.input;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
@@ -21,7 +17,7 @@ import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionPair;
-import org.mule.tools.apikit.output.GenerationModelProvider;
+import org.mule.tools.apikit.output.GenerationModel;
 import org.raml.model.Action;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
@@ -35,14 +31,13 @@ import org.raml.parser.visitor.RamlValidationService;
 
 public class RAMLFilesParser
 {
-
-    private final GenerationModelProvider generationModelProvider;
-    private Set<ResourceActionPair> entries = new HashSet<ResourceActionPair>();
+    private Map<ResourceActionPair, GenerationModel> entries = new HashMap<ResourceActionPair, GenerationModel>();
     private final APIFactory apiFactory;
+    private final Log log;
 
-    public RAMLFilesParser(Log log, GenerationModelProvider generationModelProvider, Map<File, InputStream> fileStreams, APIFactory apiFactory)
+    public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory)
     {
-        this.generationModelProvider = generationModelProvider;
+        this.log = log;
         this.apiFactory = apiFactory;
         List<File> processedFiles = new ArrayList<File>();
         for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet())
@@ -67,7 +62,7 @@ public class RAMLFilesParser
                 try
                 {
                     Raml raml = builderNodeHandler.build(content, ramlFile.getName());
-                    collectResources(ramlFile, entries, raml.getResources(), API.DEFAULT_BASE_URI);
+                    collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);
                     processedFiles.add(ramlFile);
                 }
                 catch (Exception e)
@@ -106,7 +101,7 @@ public class RAMLFilesParser
         return true;
     }
 
-    void collectResources(File filename, Set<ResourceActionPair> resources, Map<String, Resource> resourceMap, String baseUri)
+    void collectResources(File filename, Map<String, Resource> resourceMap, String baseUri)
     {
         for (Resource resource : resourceMap.values())
         {
@@ -114,17 +109,20 @@ public class RAMLFilesParser
             {
                 API api = apiFactory.createAPIBinding(filename, null, baseUri, null);
                 String path = APIKitTools.getPathFromUri(baseUri);
-                ResourceActionPair resourceActionPair = new ResourceActionPair(api, path + resource.getUri(),
-                                                                               action.getType().toString());
-                generationModelProvider.add(api, resourceActionPair, resource, action);
-                resources.add(resourceActionPair);
+                addEntry(api, resource, action, path);
             }
 
-            collectResources(filename, resources, resource.getResources(), baseUri);
+            collectResources(filename, resource.getResources(), baseUri);
         }
     }
 
-    public Set<ResourceActionPair> getEntries()
+    void addEntry(API api, Resource resource, Action action, String path) {
+        ResourceActionPair resourceActionPair = new ResourceActionPair(api, path + resource.getUri(),
+                action.getType().toString());
+        entries.put(resourceActionPair, new GenerationModel(api, resource, action));
+    }
+
+    public Map<ResourceActionPair, GenerationModel> getEntries()
     {
         return entries;
     }

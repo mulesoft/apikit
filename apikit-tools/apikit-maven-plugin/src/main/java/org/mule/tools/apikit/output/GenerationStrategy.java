@@ -13,7 +13,7 @@ import org.mule.tools.apikit.model.ResourceActionPair;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 
-import java.util.Set;
+import java.util.*;
 
 public class GenerationStrategy {
     private Log log;
@@ -22,31 +22,40 @@ public class GenerationStrategy {
         this.log = log;
     }
 
-    public Set<ResourceActionPair> generate(RAMLFilesParser RAMLFilesParser,
+    public List<GenerationModel> generate(RAMLFilesParser RAMLFilesParser,
                                   MuleConfigParser muleConfigParser) {
         Set<API> apisInMuleConfigs = muleConfigParser.getIncludedApis();
-        Set<ResourceActionPair> yamlEntries = RAMLFilesParser.getEntries();
+        Set<ResourceActionPair> yamlEntries = RAMLFilesParser.getEntries().keySet();
         Set<ResourceActionPair> muleFlowEntries = muleConfigParser.getEntries();
+        List<GenerationModel> generationModels = new ArrayList<GenerationModel>();
+
         if (apisInMuleConfigs.isEmpty()) {
             if (yamlEntries.isEmpty()) {
                 // No APIs No Flow APIs
                 log.info("No APIs or APIKit flows found.");
-                return yamlEntries;
             } else {
                 log.info("Generating apikit:flows for the following operations: " + yamlEntries);
-                return yamlEntries;
             }
+            generationModels.addAll(RAMLFilesParser.getEntries().values());
         } else {
             if (yamlEntries.isEmpty()) {
                 // there are implemented APIs without a YAML file. NOMB.
                 log.warn("The following apikit:flows do not match any RAML API binding: " + apisInMuleConfigs);
-                return yamlEntries;
-            } else {
-                Set<ResourceActionPair> flowEntries1 = new APIDiff(yamlEntries, muleFlowEntries).getEntries();
-                log.info("Adding new apikit:flows to existing files for the following operations: " + flowEntries1);
-                return flowEntries1;
 
+                generationModels.addAll(RAMLFilesParser.getEntries().values());
+            } else {
+                Set<ResourceActionPair> diffPairs = new APIDiff(yamlEntries, muleFlowEntries).getEntries();
+                log.info("Adding new apikit:flows to existing files for the following operations: " + diffPairs);
+
+                for (ResourceActionPair entry : diffPairs) {
+                    if (RAMLFilesParser.getEntries().containsKey(entry)) {
+                        generationModels.add(RAMLFilesParser.getEntries().get(entry));
+                    }
+                }
             }
         }
+
+        Collections.sort(generationModels);
+        return generationModels;
     }
 }

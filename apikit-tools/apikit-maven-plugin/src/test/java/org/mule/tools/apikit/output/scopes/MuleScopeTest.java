@@ -20,7 +20,8 @@ public class MuleScopeTest {
     public void testGenerate() throws Exception {
         Document doc = new Document();
 
-        Element mule = new MuleScope(doc).generate();
+        Element mule = new MuleScope().generate();
+        doc.setRootElement(mule);
 
         String s = Helper.nonSpaceOutput(mule);
 

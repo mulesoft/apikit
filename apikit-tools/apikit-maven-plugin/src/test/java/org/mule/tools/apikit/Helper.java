@@ -51,4 +51,17 @@ public class Helper {
         XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
         return xout.outputString(doc.getRootElement().getChildren());
     }
+
+    public static int countOccurences(String str, String substring) {
+        int lastIndex = 0;
+        int count = 0;
+        while (lastIndex >= 0) {
+            lastIndex = str.indexOf(substring, lastIndex);
+            if (lastIndex >= 0) {
+                count++;
+                lastIndex += substring.length();
+            }
+        }
+        return count;
+    }
 }
