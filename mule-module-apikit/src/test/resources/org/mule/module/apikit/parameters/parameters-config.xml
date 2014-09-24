@@ -43,6 +43,14 @@
         <logger level="INFO" message="siamo qui"/>
     </flow>
 
+    <flow name="get:/resources/{id}">
+        <logger level="INFO" message="siamo qui"/>
+    </flow>
+
+    <flow name="get:/resources/{id}/{id2}">
+        <logger level="INFO" message="siamo qui"/>
+    </flow>
+
     <flow name="get:/repeat">
         <logger level="INFO" message="status: #[message.inboundProperties.status]"/>
     </flow>

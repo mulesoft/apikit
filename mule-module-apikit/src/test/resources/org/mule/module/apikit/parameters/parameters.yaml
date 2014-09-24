@@ -34,6 +34,12 @@ title: Parameters API
         maximum: 5
     get:
 
+    /{id2}:
+      uriParameters:
+        id2:
+          enum: [one, two, three]
+      get:
+
 /repeat:
     get:
         queryParameters:

@@ -157,14 +157,14 @@ public abstract class AbstractRouter implements ApiRouter
 
         if (!config.isDisableValidations())
         {
-            for (String key : resource.getUriParameters().keySet())
+            for (Map.Entry<String, UriParameter> entry : resource.getResolvedUriParameters().entrySet())
             {
-                String value = (String) resolvedVariables.get(key);
-                UriParameter uriParameter = resource.getUriParameters().get(key);
+                String value = (String) resolvedVariables.get(entry.getKey());
+                UriParameter uriParameter = entry.getValue();
                 if (!uriParameter.validate(value))
                 {
                     String msg = String.format("Invalid value '%s' for uri parameter %s. %s",
-                                               value, key, uriParameter.message(value));
+                                               value, entry.getKey(), uriParameter.message(value));
                     throw new InvalidUriParameterException(msg);
                 }
 

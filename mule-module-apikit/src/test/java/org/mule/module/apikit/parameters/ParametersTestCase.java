@@ -124,6 +124,31 @@ public class ParametersTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void validSingleUriParamType() throws Exception
+    {
+        given().header("one", "foo").queryParam("first", "fi")
+                .expect().response().statusCode(200)
+                .when().get("/api/resources/4");
+    }
+
+    @Test
+    public void validMultipleUriParamType() throws Exception
+    {
+        given().header("one", "foo").queryParam("first", "fi")
+                .expect().response().statusCode(200)
+                .when().get("/api/resources/4/one");
+    }
+
+    @Test
+    public void invalidParentUriParamType() throws Exception
+    {
+        given().header("one", "foo").queryParam("first", "fi")
+                .expect().response().statusCode(400)
+                .body(is("Invalid value '0' for uri parameter id. Value is below the minimum 1"))
+                .when().get("/api/resources/0/one");
+    }
+
+    @Test
     public void invalidUriParamType() throws Exception
     {
         given().header("one", "foo").queryParam("first", "fi")
