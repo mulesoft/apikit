@@ -8,6 +8,8 @@ package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.port;
+import static com.jayway.restassured.config.RedirectConfig.redirectConfig;
+import static com.jayway.restassured.config.RestAssuredConfig.config;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
@@ -33,6 +35,8 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     public DynamicPort serverPort3 = new DynamicPort("serverPort3");
     @Rule
     public DynamicPort serverPort4 = new DynamicPort("serverPort4");
+    @Rule
+    public DynamicPort serverPort5 = new DynamicPort("serverPort5");
 
     @Override
     public int getTestTimeoutSecs()
@@ -117,6 +121,18 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
                 .response().body(containsString("baseUri: \"http://localhost:" + serverPort3.getNumber() + "/api\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/");
+    }
+
+    @Test
+    public void consoleEmbeddedNoPath() throws Exception
+    {
+        RestAssured.config = config().redirect(redirectConfig().followRedirects(false));
+        RestAssured.port = serverPort5.getNumber();
+
+        given().header("Accept", "text/html")
+                .expect()
+                .response().statusCode(301)
+                .when().get("/console");
     }
 
 }

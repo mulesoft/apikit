@@ -3,7 +3,7 @@
 
     <apikit:config raml="org/mule/module/apikit/resource/root-resource.raml" consoleEnabled="true" consolePath="console" />
 
-    <flow name="main" doc:name="main">
+    <flow name="main">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
         <apikit:router />
         <exception-strategy ref="apiKitGlobalExceptionMapping"/>

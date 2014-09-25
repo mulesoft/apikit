@@ -47,9 +47,16 @@ public class ConsoleHandler
     private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
     private String consolePath;
     private String baseSchemeHostPort;
+    private boolean standalone;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private String ramlUri;
+
+    public ConsoleHandler(String ramlUri)
+    {
+        this(ramlUri, "");
+        standalone = true;
+    }
 
     public ConsoleHandler(String ramlUri, String consolePath)
     {
@@ -97,7 +104,7 @@ public class ConsoleHandler
         InputStream in = null;
         try
         {
-            if (path.equals(consolePath) && !contextPath.endsWith("/"))
+            if (path.equals(consolePath) && !(contextPath.endsWith("/") && standalone))
             {
                 // client redirect
                 event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,

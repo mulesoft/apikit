@@ -9,38 +9,16 @@
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
         http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd">
 
-    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
-        <apikit:mapping statusCode="404">
-            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
-            <set-payload value="resource not found"/>
-        </apikit:mapping>
-        <apikit:mapping statusCode="405">
-            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
-            <set-payload value="method not allowed"/>
-        </apikit:mapping>
-        <apikit:mapping statusCode="415">
-            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException"/>
-            <set-payload value="unsupported media type"/>
-        </apikit:mapping>
-        <apikit:mapping statusCode="406">
-            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>
-            <set-payload value="not acceptable"/>
-        </apikit:mapping>
-        <apikit:mapping statusCode="400">
-            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException"/>
-            <set-payload value="bad request"/>
-        </apikit:mapping>
-    </apikit:mapping-exception-strategy>
-
     <apikit:config name="localhost" raml="org/mule/module/apikit/console/console.raml" consoleEnabled="false"/>
 
     <apikit:config name="bindAll" raml="org/mule/module/apikit/console/console.raml" consoleEnabled="false"/>
+
+    <apikit:config name="embedded" raml="org/mule/module/apikit/console/console.raml" consoleEnabled="true" />
 
     <flow name="router">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
         <cors:validate publicResource="true" />
         <apikit:router config-ref="localhost"/>
-        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
     <flow name="console">
@@ -57,12 +35,16 @@
         <http:inbound-endpoint port="${serverPort3}" host="0.0.0.0" path="api"/>
         <cors:validate publicResource="true" />
         <apikit:router config-ref="bindAll"/>
-        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
     <flow name="consoleBindAll">
         <http:inbound-endpoint port="${serverPort4}" host="0.0.0.0"/>
         <apikit:console config-ref="bindAll"/>
+    </flow>
+
+    <flow name="routerEmbedded">
+        <http:inbound-endpoint port="${serverPort5}" host="localhost"/>
+        <apikit:router config-ref="embedded"/>
     </flow>
 
     <flow name="get:/user">
