@@ -25,6 +25,14 @@
         <set-payload value="supported by console?" />
     </flow>
 
+    <flow name="get:/flat">
+        <set-payload value="flat" />
+    </flow>
+
+    <flow name="get:/flat/child">
+        <set-payload value="flat-child" />
+    </flow>
+
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />

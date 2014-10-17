@@ -47,6 +47,7 @@ public class Configuration extends AbstractConfiguration
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private Map<String, Flow> restFlowMap;
     private Map<String, Flow> restFlowMapUnwrapped;
+    private Map<String, Resource> flatResourceTree = new HashMap<String, Resource>();
 
     public boolean isConsoleEnabled()
     {
@@ -98,6 +99,8 @@ public class Configuration extends AbstractConfiguration
 
     protected void initializeRestFlowMap()
     {
+        flattenResourceTree(getApi().getResources());
+
         if (restFlowMap == null)
         {
             restFlowMap = new HashMap<String, Flow>();
@@ -130,25 +133,24 @@ public class Configuration extends AbstractConfiguration
         }
     }
 
-    private void logMissingMappings()
+    private void flattenResourceTree(Map<String, Resource> resources)
     {
-        logMissingMappings(getApi().getResources(), "");
-        if (logger.isDebugEnabled())
+        for (Resource resource : resources.values())
         {
-            logger.debug("==== RestFlows defined:");
-            for (String key : restFlowMap.keySet())
+            flatResourceTree.put(resource.getUri(), resource);
+            if (resource.getResources() != null)
             {
-                logger.debug("\t\t" + key);
+                flattenResourceTree(resource.getResources());
             }
         }
     }
 
-    private void logMissingMappings(Map<String, Resource> resources, String baseResource)
+    private void logMissingMappings()
     {
-        for (Map.Entry<String, Resource> resourceEntry : resources.entrySet())
+        for (Resource resource : flatResourceTree.values())
         {
-            String fullResource = baseResource + resourceEntry.getKey();
-            for (Action action : resourceEntry.getValue().getActions().values())
+            String fullResource = resource.getUri();
+            for (Action action : resource.getActions().values())
             {
                 String method = action.getType().name().toLowerCase();
                 String key = method + ":" + fullResource;
@@ -173,7 +175,15 @@ public class Configuration extends AbstractConfiguration
                                               method, fullResource));
                 }
             }
-            logMissingMappings(resourceEntry.getValue().getResources(), fullResource);
+        }
+
+        if (logger.isDebugEnabled())
+        {
+            logger.debug("==== RestFlows defined:");
+            for (String key : restFlowMap.keySet())
+            {
+                logger.debug("\t\t" + key);
+            }
         }
     }
 
@@ -275,7 +285,7 @@ public class Configuration extends AbstractConfiguration
         {
             key = key + ":" + type;
         }
-        Resource apiResource = getApi().getResource(resource);
+        Resource apiResource = flatResourceTree.get(resource);
         if (apiResource != null)
         {
             Action action = apiResource.getAction(method);

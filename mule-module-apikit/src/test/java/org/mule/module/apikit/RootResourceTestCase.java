@@ -92,5 +92,15 @@ public class RootResourceTestCase extends FunctionalTestCase
                 .when().get("/api/level");
     }
 
+    @Test
+    public void getFlatChildResource() throws Exception
+    {
+        given().header("Accept", "text/plain")
+                .expect()
+                .response().body(containsString("flat-child"))
+                .header("Content-type", "text/plain").statusCode(200)
+                .when().get("/api/flat/child");
+    }
+
 
 }
