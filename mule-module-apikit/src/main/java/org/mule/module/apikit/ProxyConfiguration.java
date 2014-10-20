@@ -15,8 +15,8 @@ import org.mule.construct.Flow;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collections;
 
 import org.raml.parser.loader.ClassPathResourceLoader;
@@ -60,7 +60,7 @@ public class ProxyConfiguration extends AbstractConfiguration
             try
             {
                 URL url = new URL(resourceName);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                URLConnection connection = url.openConnection();
                 connection.setRequestProperty("Accept", APPLICATION_RAML + ", */*");
                 inputStream = new BufferedInputStream(connection.getInputStream());
             }
