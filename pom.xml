@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>apikit-parent</artifactId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.5.1</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
@@ -26,7 +26,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>
-                <version>0.9-SNAPSHOT</version>
+                <version>0.8.10</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
