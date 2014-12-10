@@ -4,13 +4,15 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.latestruntime.proxy;
+package org.mule.module.apikit.mule35.proxy;
 
 import org.mule.module.apikit.LeaguesTestCase;
 import org.mule.tck.junit4.rule.SystemProperty;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 
+@Ignore //MULE-8123
 public class LeaguesJettyTestCase extends LeaguesTestCase
 {
 

@@ -15,7 +15,6 @@ import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.context.MuleContextAware;
-import org.mule.api.endpoint.ImmutableEndpoint;
 import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
 import org.mule.construct.Flow;
@@ -258,10 +257,10 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     public String getEndpointAddress(FlowConstruct flowConstruct)
     {
-        ImmutableEndpoint endpoint = (ImmutableEndpoint) ((Flow) flowConstruct).getMessageSource();
-        String address = endpoint.getAddress();
-        String path = endpoint.getEndpointURI().getPath();
-        String scheme = endpoint.getEndpointURI().getScheme();
+        MessageSourceAdapter adapter = new MessageSourceAdapter(((Flow) flowConstruct).getMessageSource());
+        String address = adapter.getAddress();
+        String path = adapter.getPath();
+        String scheme = adapter.getScheme();
         String chAddress = System.getProperty("fullDomain");
         String chBaseUri = scheme + "://" + chAddress + path;
         if (logger.isDebugEnabled())

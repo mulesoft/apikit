@@ -21,7 +21,7 @@ import java.util.Map;
 public class HttpProtocolAdapter
 {
 
-    private URI baseURI;
+    private String basePath;
     private URI resourceURI;
     private String method;
     private String acceptableResponseMediaTypes;
@@ -31,52 +31,29 @@ public class HttpProtocolAdapter
     public HttpProtocolAdapter(MuleEvent event)
     {
         MuleMessage message = event.getMessage();
-        this.baseURI = event.getMessageSourceURI();
-        if (message.getInboundProperty("host") != null)
+        this.basePath = UrlUtils.getBasePath(message);
+        String hostHeader = message.getInboundProperty("host");
+        if (hostHeader == null)
         {
-            String hostHeader = message.getInboundProperty("host");
-            if (hostHeader.indexOf(':') != -1)
-            {
-                String host = hostHeader.substring(0, hostHeader.indexOf(':'));
-                int port = Integer.parseInt(hostHeader.substring(hostHeader.indexOf(':') + 1));
-                try
-                {
-                    String requestPath;
-                    requestPath = message.getInboundProperty(HTTP_REQUEST_PATH_PROPERTY);
-                    this.resourceURI = new URI("http", null, host, port, requestPath, null, null);
-                }
-                catch (URISyntaxException e)
-                {
-                    throw new IllegalArgumentException("Cannot parse URI", e);
-                }
-            }
-            else
-            {
-                try
-                {
-                    String requestPath;
-                    requestPath = message.getInboundProperty(HTTP_REQUEST_PATH_PROPERTY);
-                    this.resourceURI = new URI("http", null, (String) message.getInboundProperty("host"), 80,
-                                               requestPath, null, null);
-                }
-                catch (URISyntaxException e)
-                {
-                    throw new IllegalArgumentException("Cannot parse URI", e);
-                }
-            }
+            throw new IllegalArgumentException("host header cannot be null");
         }
-        else
+        String host = hostHeader;
+        int port = 80;
+        String requestPath = message.getInboundProperty(HTTP_REQUEST_PATH_PROPERTY);
+        if (hostHeader.contains(":"))
         {
-            try
-            {
-                this.resourceURI = new URI("http", null, baseURI.getHost(), baseURI.getPort(),
-                                           (String) message.getInboundProperty(HTTP_REQUEST_PATH_PROPERTY), null, null);
-            }
-            catch (URISyntaxException e)
-            {
-                throw new IllegalArgumentException("Cannot parse URI", e);
-            }
+            host = hostHeader.substring(0, hostHeader.indexOf(':'));
+            port = Integer.parseInt(hostHeader.substring(hostHeader.indexOf(':') + 1));
         }
+        try
+        {
+            this.resourceURI = new URI("http", null, host, port, requestPath, null, null);
+        }
+        catch (URISyntaxException e)
+        {
+            throw new IllegalArgumentException("Cannot parse URI", e);
+        }
+
         method = message.getInboundProperty(HTTP_METHOD_PROPERTY);
 
         if (!StringUtils.isBlank((String) message.getInboundProperty("accept")))
@@ -97,9 +74,9 @@ public class HttpProtocolAdapter
         this.queryParams = message.getInboundProperty(HTTP_QUERY_PARAMS);
     }
 
-    public URI getBaseURI()
+    public String getBasePath()
     {
-        return baseURI;
+        return basePath;
     }
 
     public URI getResourceURI()

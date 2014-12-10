@@ -6,7 +6,11 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.transport.http.HttpConnector.HTTP_CONTEXT_PATH_PROPERTY;
+import static org.mule.transport.http.HttpConnector.HTTP_REQUEST_PATH_PROPERTY;
+
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleMessage;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 
 import java.net.MalformedURLException;
@@ -17,31 +21,39 @@ public class UrlUtils
 
     public static String getBaseSchemeHostPort(MuleEvent event)
     {
-        String host;
+        String host = event.getMessage().getInboundProperty("host");
         String chHost = System.getProperty("fullDomain");
         if (chHost != null)
         {
             host = chHost;
         }
-        else
+        return getScheme(event.getMessage()) + "://" + host;
+    }
+
+    public static String getScheme(MuleMessage message)
+    {
+        String scheme = message.getInboundProperty("http.scheme");
+        if (scheme == null)
         {
-            host = event.getMessage().getInboundProperty("host");
+            String endpoint = message.getInboundProperty("http.context.uri");
+            if (endpoint == null)
+            {
+                throw new ApikitRuntimeException("Cannot figure out the request scheme");
+            }
+            if (endpoint.startsWith("http:"))
+            {
+                scheme = "http";
+            }
+            else if (endpoint.startsWith("https:"))
+            {
+                scheme = "https";
+            }
+            else
+            {
+                throw new ApikitRuntimeException("Unsupported scheme: " + endpoint);
+            }
         }
-        String endpoint = event.getMessage().getInboundProperty("http.context.uri");
-        String scheme;
-        if (endpoint.startsWith("http:"))
-        {
-            scheme = "http";
-        }
-        else if (endpoint.startsWith("https:"))
-        {
-            scheme = "https";
-        }
-        else
-        {
-            throw new ApikitRuntimeException("Unsupported scheme: " + endpoint);
-        }
-        return scheme + "://" + host;
+        return scheme;
     }
 
     public static String getBaseSchemeHostPort(String baseUri)
@@ -57,4 +69,35 @@ public class UrlUtils
         }
         return url.getProtocol() + "://" + url.getAuthority();
     }
+
+    public static String getResourceRelativePath(MuleMessage message)
+    {
+        String path = message.getInboundProperty(HTTP_REQUEST_PATH_PROPERTY);
+        String basePath = getBasePath(message);
+        path = path.substring(basePath.length());
+        if (!path.startsWith("/") && !path.isEmpty())
+        {
+            path = "/" + path;
+        }
+        return path;
+    }
+
+    public static String getBasePath(MuleMessage message)
+    {
+        String path = message.getInboundProperty(HTTP_CONTEXT_PATH_PROPERTY);
+        if (path == null)
+        {
+            path = message.getInboundProperty("http.listener.path");
+            if (path != null && path.endsWith("/*"))
+            {
+                path = path.substring(0, path.length() - 2);
+            }
+            if (path == null)
+            {
+                throw new IllegalArgumentException("Cannot resolve request base path");
+            }
+        }
+        return path;
+    }
+
 }

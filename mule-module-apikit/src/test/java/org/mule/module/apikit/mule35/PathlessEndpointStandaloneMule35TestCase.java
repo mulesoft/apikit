@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.latestruntime;
+package org.mule.module.apikit.mule35;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.allOf;
@@ -18,10 +18,12 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-//TODO merge with PathlessEndpointTestCase when minimum version supported is 3.5
-public class PathlessEndpointMule35TestCase extends FunctionalTestCase
+//TODO merge with PathlessEndpointStandaloneTestCase when minimum version supported is 3.5
+public class PathlessEndpointStandaloneMule35TestCase extends FunctionalTestCase
 {
 
+    @Rule
+    public DynamicPort serverPortNoRouter = new DynamicPort("serverPortNoRouter");
     @Rule
     public DynamicPort serverPortPathless = new DynamicPort("serverPortPathless");
     @Rule
@@ -40,7 +42,7 @@ public class PathlessEndpointMule35TestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/pathless/pathless-config.xml";
+        return "org/mule/module/apikit/pathless/pathless-standalone-config.xml";
     }
 
     @Test
@@ -87,7 +89,7 @@ public class PathlessEndpointMule35TestCase extends FunctionalTestCase
     {
         given().header("Accept", "application/raml+yaml")
                 .expect()
-                .response().body(containsString("baseUri: \"" + expectedBaseUri + "\""))
+                .response().body(containsString("baseUri: \"" + expectedBaseUri + "/api\""))
                 .statusCode(200)
                 .when().get(path + "/");
     }

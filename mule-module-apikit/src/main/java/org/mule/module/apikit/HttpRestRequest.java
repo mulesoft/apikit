@@ -12,6 +12,7 @@ import static org.mule.module.apikit.transform.ApikitResponseTransformer.CONTRAC
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.MuleMessage;
 import org.mule.api.routing.filter.FilterUnacceptedException;
 import org.mule.api.transformer.TransformerException;
 import org.mule.api.transport.PropertyScope;
@@ -76,7 +77,7 @@ public abstract class HttpRestRequest
     public String getResourcePath()
     {
         String path = adapter.getResourceURI().getPath();
-        String basePath = adapter.getBaseURI().getPath();
+        String basePath = adapter.getBasePath();
         int start = basePath.endsWith("/") ? basePath.length() - 1 : basePath.length();
         int end = path.endsWith("/") ? path.length() - 1 : path.length();
         return URICoder.decode(path.substring(start, end));
@@ -160,7 +161,11 @@ public abstract class HttpRestRequest
 
     private void setQueryParameter(String key, String value)
     {
-        requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
+        if (requestEvent.getMessage().getInboundProperty("http.headers") == null)
+        {
+            //TODO MULE-8131
+            requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
+        }
         requestEvent.getMessage().<Map<String, String>>getInboundProperty("http.query.params").put(key, value);
     }
 
@@ -171,7 +176,7 @@ public abstract class HttpRestRequest
         for (String expectedKey : action.getHeaders().keySet())
         {
             Header expected = action.getHeaders().get(expectedKey);
-            Map<String, String> incomingHeaders = new CaseInsensitiveHashMap(requestEvent.getMessage().<Map>getInboundProperty("http.headers"));
+            Map<String, String> incomingHeaders = getIncomingHeaders(requestEvent.getMessage());
 
             if (expectedKey.contains("{?}"))
             {
@@ -211,10 +216,35 @@ public abstract class HttpRestRequest
         }
     }
 
+    private Map<String,String> getIncomingHeaders(MuleMessage message)
+    {
+
+        Map<String, String> incomingHeaders = new CaseInsensitiveHashMap();
+        if (message.getInboundProperty("http.headers") != null)
+        {
+            incomingHeaders = new CaseInsensitiveHashMap(message.<Map>getInboundProperty("http.headers"));
+        }
+        else
+        {
+            for (String key : message.getInboundPropertyNames())
+            {
+                if (!key.startsWith("http.")) //TODO MULE-8131
+                {
+                    incomingHeaders.put(key, String.valueOf(message.getInboundProperty(key)));
+                }
+            }
+        }
+        return incomingHeaders;
+    }
+
     private void setHeader(String key, String value)
     {
         requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
-        requestEvent.getMessage().<Map<String, String>>getInboundProperty("http.headers").put(key, value);
+        if (requestEvent.getMessage().getInboundProperty("http.headers") != null)
+        {
+            //TODO MULE-8131
+            requestEvent.getMessage().<Map<String, String>>getInboundProperty("http.headers").put(key, value);
+        }
     }
 
     private void negotiateInputRepresentation() throws MuleRestException

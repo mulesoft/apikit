@@ -85,16 +85,8 @@ public class ConsoleHandler
     public MuleEvent process(MuleEvent event) throws MuleException
     {
 
-        String path = event.getMessage().getInboundProperty(HttpConnector.HTTP_REQUEST_PATH_PROPERTY);
-        String contextPath = event.getMessage().getInboundProperty(HttpConnector.HTTP_CONTEXT_PATH_PROPERTY);
-
-        // Remove the contextPath from the endpoint from the request as this isn't
-        // part of the path.
-        path = path.substring(contextPath.length());
-        if (!path.startsWith("/") && !path.isEmpty())
-        {
-            path = "/" + path;
-        }
+        String path = UrlUtils.getResourceRelativePath(event.getMessage());
+        String contextPath = UrlUtils.getBasePath(event.getMessage());
 
         if (logger.isDebugEnabled())
         {
@@ -109,11 +101,10 @@ public class ConsoleHandler
                 // client redirect
                 event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
                                                        String.valueOf(HttpConstants.SC_MOVED_PERMANENTLY));
-                String context = event.getMessage().getInboundProperty("http.context.uri");
-                String scheme = context.substring(0, context.indexOf("/"));
+                String scheme = UrlUtils.getScheme(event.getMessage());
                 String host = event.getMessage().getInboundProperty("Host");
                 String requestPath = event.getMessage().getInboundProperty("http.request.path");
-                String redirectLocation = scheme + "//" + host + requestPath + "/";
+                String redirectLocation = scheme + "://" + host + requestPath + "/";
                 String queryString = event.getMessage().getInboundProperty("http.query.string");
                 if (StringUtils.isNotEmpty(queryString))
                 {
