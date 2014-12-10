@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit;
+package org.mule.module.apikit.leagues;
 
 import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
@@ -23,7 +23,6 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -231,6 +230,16 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .statusCode(400)
                 .body(is(""))
             .when().put("/api/leagues/liga-bbva");
+    }
+
+    @Test
+    public void putMultiPartFormData() throws Exception
+    {
+        given().multiPart("description", "Barcelona Badge")
+                .multiPart("image", "bbva.jpg", this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/leagues/bbva.jpg"))
+                .expect().statusCode(200)
+                .body("upload", is("OK"))
+                .when().put("/api/leagues/liga-bbva/badge");
     }
 
     @Test

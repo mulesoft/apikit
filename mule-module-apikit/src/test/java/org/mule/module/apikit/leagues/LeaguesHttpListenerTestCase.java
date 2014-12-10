@@ -4,25 +4,16 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.mule35;
+package org.mule.module.apikit.leagues;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
-import org.mule.tck.junit4.FunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-
-import com.jayway.restassured.RestAssured;
-
-import org.junit.Rule;
+import org.junit.Ignore;
 import org.junit.Test;
 
-//TODO merge with LeaguesTestCase when minimum version supported is 3.5
-public class LeaguesMule35TestCase extends FunctionalTestCase
+public class LeaguesHttpListenerTestCase extends LeaguesTestCase
 {
-
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
 
     @Override
     public int getTestTimeoutSecs()
@@ -31,26 +22,19 @@ public class LeaguesMule35TestCase extends FunctionalTestCase
     }
 
     @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
-
-    @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/leagues/leagues-base-flow-config.xml, org/mule/module/apikit/leagues/leagues-http-flow-config.xml";
+        return "org/mule/module/apikit/leagues/leagues-base-flow-config.xml, org/mule/module/apikit/leagues/leagues-http-listener-flow-config.xml";
     }
 
-    @Test
+    @Test @Ignore //MULE-8142
     public void putMultiPartFormData() throws Exception
     {
         given().multiPart("description", "Barcelona Badge")
                 .multiPart("image", "bbva.jpg", this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/leagues/bbva.jpg"))
-               .expect().statusCode(200)
+                .expect().statusCode(200)
                 .body("upload", is("OK"))
-               .when().put("/api/leagues/liga-bbva/badge");
+                .when().put("/api/leagues/liga-bbva/badge");
     }
 
 }

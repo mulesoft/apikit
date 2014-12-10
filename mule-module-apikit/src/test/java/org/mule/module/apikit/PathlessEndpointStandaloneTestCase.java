@@ -16,7 +16,6 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -44,18 +43,6 @@ public class PathlessEndpointStandaloneTestCase extends FunctionalTestCase
     protected String getConfigResources()
     {
         return "org/mule/module/apikit/pathless/pathless-standalone-config.xml";
-    }
-
-    @Test
-    @Ignore //TODO reenable after refactoring standalone console
-    public void consoleWithoutRouter()
-    {
-        RestAssured.port = serverPortNoRouter.getNumber();
-        given().header("Accept", "text/html")
-                .expect()
-                .response().body(containsString("API not initialized. Probably there is no APIkit Router associated to the Configuration"))
-                .header("Content-type", "text/plain").statusCode(500)
-                .when().get("/index.html");
     }
 
     @Test
@@ -88,10 +75,40 @@ public class PathlessEndpointStandaloneTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void ramlEmptyPath() throws Exception
+    {
+        RestAssured.port = serverPortEmptyPath.getNumber();
+        raml("");
+    }
+
+    @Test
+    public void baseuriEmptyPath() throws Exception
+    {
+        int port = serverPortEmptyPath.getNumber();
+        RestAssured.port = port;
+        baseUri("", "http://localhost:" + port);
+    }
+
+    @Test
     public void consoleSlashPath() throws Exception
     {
         RestAssured.port = serverPortSlashPath.getNumber();
         console("");
+    }
+
+    @Test
+    public void ramlSlashPath() throws Exception
+    {
+        RestAssured.port = serverPortSlashPath.getNumber();
+        raml("");
+    }
+
+    @Test
+    public void baseuriSlashPath() throws Exception
+    {
+        int port = serverPortSlashPath.getNumber();
+        RestAssured.port = port;
+        baseUri("", "http://localhost:" + port);
     }
 
     @Test

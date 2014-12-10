@@ -73,10 +73,40 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void ramlEmptyPath() throws Exception
+    {
+        RestAssured.port = serverPortEmptyPath.getNumber();
+        raml("");
+    }
+
+    @Test
+    public void baseuriEmptyPath() throws Exception
+    {
+        int port = serverPortEmptyPath.getNumber();
+        RestAssured.port = port;
+        baseUri("", "http://localhost:" + port);
+    }
+
+    @Test
     public void consoleSlashPath() throws Exception
     {
         RestAssured.port = serverPortSlashPath.getNumber();
         console("");
+    }
+
+    @Test
+    public void ramlSlashPath() throws Exception
+    {
+        RestAssured.port = serverPortSlashPath.getNumber();
+        raml("");
+    }
+
+    @Test
+    public void baseuriSlashPath() throws Exception
+    {
+        int port = serverPortSlashPath.getNumber();
+        RestAssured.port = port;
+        baseUri("", "http://localhost:" + port);
     }
 
     @Test
