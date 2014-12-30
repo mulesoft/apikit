@@ -15,6 +15,10 @@
 
     <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" />
 
+#if( $listener == "true" ||  $listener == "y" ||  $listener == "yes")
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="${http.port}"/>
+
+#end
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
@@ -44,7 +48,11 @@
     </apikit:mapping-exception-strategy>
 
     <flow name="api-main">
+#if( $listener == "true" ||  $listener == "y" ||  $listener == "yes")
+        <http:listener config-ref="HTTP_Listener_Configuration" path="api"/>
+#else
         <http:inbound-endpoint address="http://localhost:${http.port}/api"/>
+#end
         <apikit:router config-ref="apiConfig" />
         <exception-strategy ref="apiKitGlobalExceptionMapping" />
     </flow>
