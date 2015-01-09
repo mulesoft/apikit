@@ -32,7 +32,7 @@
     <apikit:config raml="multipleMimeTypes.yaml" />
 
     <flow name="main">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <http:listener path="api"/>
         <apikit:router />
         <exception-strategy ref="apiKitGlobalExceptionMapping"/>
     </flow>
