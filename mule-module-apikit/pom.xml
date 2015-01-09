@@ -174,15 +174,6 @@
             <artifactId>rest-assured</artifactId>
             <version>${rest.assured.version}</version>
             <scope>test</scope>
-            <!-- include for 3.4, 3.5 -->
-            <!--
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
-                </exclusion>
-            </exclusions>
-            -->
         </dependency>
         <dependency>
             <groupId>org.mule.tests</groupId>
