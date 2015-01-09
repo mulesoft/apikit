@@ -14,9 +14,11 @@ import org.jdom2.input.sax.XMLReaders;
 import org.mule.tools.apikit.input.parsers.APIKitConfigParser;
 import org.mule.tools.apikit.input.parsers.APIKitFlowsParser;
 import org.mule.tools.apikit.input.parsers.APIKitRoutersParser;
+import org.mule.tools.apikit.input.parsers.HttpListenerConfigParser;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
+import org.mule.tools.apikit.model.HttpListenerConfig;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 import java.io.File;
@@ -30,6 +32,7 @@ public class MuleConfigParser {
 
     private Set<ResourceActionMimeTypeTriplet> entries = new HashSet<ResourceActionMimeTypeTriplet>();
     private Map<String, API> includedApis = new HashMap<String, API>();
+    private Map<String, HttpListenerConfig> httpListenerConfigs = new HashMap<String, HttpListenerConfig>();
     private Map<String, APIKitConfig> apikitConfigs = new HashMap<String, APIKitConfig>();
     private final APIFactory apiFactory;
 
@@ -53,7 +56,9 @@ public class MuleConfigParser {
         Document document = saxBuilder.build(stream);
 
         apikitConfigs = new APIKitConfigParser().parse(document);
-        includedApis = new APIKitRoutersParser(apikitConfigs, yamlPaths, file, apiFactory).parse(document);
+        httpListenerConfigs = new HttpListenerConfigParser().parse(document);
+        includedApis = new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, yamlPaths, file, apiFactory).parse(document);
+
         entries = new APIKitFlowsParser(includedApis).parse(document);
     }
 

@@ -13,9 +13,9 @@ import java.util.*;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
+import org.mule.tools.apikit.model.HttpListenerConfig;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
@@ -64,7 +64,7 @@ public class RAMLFilesParser
                 try
                 {
                     Raml raml = builderNodeHandler.build(content, ramlFile.getName());
-                    collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);
+                    collectResources(ramlFile, raml.getResources(), HttpListenerConfig.DEFAULT_HOST, HttpListenerConfig.DEFAULT_PORT, HttpListenerConfig.DEFAULT_BASE_PATH, "/api");
                     processedFiles.add(ramlFile);
                 }
                 catch (Exception e)
@@ -103,14 +103,13 @@ public class RAMLFilesParser
         return true;
     }
 
-    void collectResources(File filename, Map<String, Resource> resourceMap, String baseUri)
+    void collectResources(File filename, Map<String, Resource> resourceMap, String host, String port, String basePath, String path)
     {
         for (Resource resource : resourceMap.values())
         {
             for (Action action : resource.getActions().values())
             {
-                API api = apiFactory.createAPIBinding(filename, null, baseUri, null);
-                String path = APIKitTools.getPathFromUri(baseUri);
+                API api = apiFactory.createAPIBinding(filename, null, null, new HttpListenerConfig.Builder(HttpListenerConfig.DEFAULT_CONFIG_NAME, host, port, basePath).build(), path);
 
                 Map<String, MimeType> mimeTypes = action.getBody();
                 boolean addGenericAction = false;
@@ -132,7 +131,7 @@ public class RAMLFilesParser
                 }
             }
 
-            collectResources(filename, resource.getResources(), baseUri);
+            collectResources(filename, resource.getResources(), host, port, basePath, path);
         }
     }
 
