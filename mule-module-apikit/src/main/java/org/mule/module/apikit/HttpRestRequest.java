@@ -30,6 +30,7 @@ import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
 import org.mule.module.apikit.validation.SchemaType;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
+import org.mule.module.http.internal.ParameterMap;
 import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
 
@@ -38,6 +39,7 @@ import com.google.common.net.MediaType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -161,12 +163,19 @@ public abstract class HttpRestRequest
 
     private void setQueryParameter(String key, String value)
     {
-        if (requestEvent.getMessage().getInboundProperty("http.headers") == null)
+        if (requestEvent.getMessage().getInboundProperty("http.headers") != null)
         {
-            //TODO MULE-8131
+            //only set query param as top-level inbound property when using endpoints instead of listeners
             requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
         }
-        requestEvent.getMessage().<Map<String, String>>getInboundProperty("http.query.params").put(key, value);
+        Map<String, String> queryParamMap = requestEvent.getMessage().getInboundProperty("http.query.params");
+        if (queryParamMap instanceof ParameterMap)
+        {
+            //overwrite the query-param map with a mutable instance
+            queryParamMap = new HashMap<String, String>(queryParamMap);
+            requestEvent.getMessage().setProperty("http.query.params", queryParamMap, PropertyScope.INBOUND);
+        }
+        queryParamMap.put(key, value);
     }
 
 
