@@ -10,13 +10,12 @@ import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.config.MuleProperties;
+import org.mule.api.processor.DynamicPipelineException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.transform.ApikitResponseTransformer;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -191,29 +190,16 @@ public class Configuration extends AbstractConfiguration
     {
         for (Flow flow : flows)
         {
+
             try
             {
-                Method dynamicPipeline = Flow.class.getDeclaredMethod("dynamicPipeline", String.class);
-                Object dynamicPipelineBuilder = dynamicPipeline.invoke(flow, (String) null);
-                Method injectAfter = dynamicPipelineBuilder.getClass().getDeclaredMethod("injectAfter", MessageProcessor[].class);
-                injectAfter.setAccessible(true);
-                injectAfter.invoke(dynamicPipelineBuilder, (Object) new MessageProcessor[] {new ApikitResponseTransformer()});
-                Method resetAndUpdate = dynamicPipelineBuilder.getClass().getMethod("resetAndUpdate");
-                resetAndUpdate.setAccessible(true);
-                resetAndUpdate.invoke(dynamicPipelineBuilder);
+                flow.dynamicPipeline(null).injectAfter(new ApikitResponseTransformer()).resetAndUpdate();
             }
-            catch (InvocationTargetException e)
+            catch (DynamicPipelineException e)
             {
-                if (e.getTargetException().getClass().getName().contains("DynamicPipelineException"))
-                {
-                    //ignore, transformer already added
-                }
-                else
-                {
-                    throw new ApikitRuntimeException(e);
-                }
+                //ignore, transformer already added
             }
-            catch (Exception e)
+            catch (MuleException e)
             {
                 throw new ApikitRuntimeException(e);
             }
