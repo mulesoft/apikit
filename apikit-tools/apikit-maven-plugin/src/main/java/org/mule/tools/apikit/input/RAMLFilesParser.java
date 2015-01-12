@@ -11,11 +11,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
+import org.mule.tools.apikit.model.HttpListenerConfig;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
@@ -64,7 +66,18 @@ public class RAMLFilesParser
                 try
                 {
                     Raml raml = builderNodeHandler.build(content, ramlFile.getName());
-                    collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);
+                    String host = APIKitTools.getHostFromUri(raml.getBaseUri());
+                    if (host == "")
+                    {
+                        host = HttpListenerConfig.DEFAULT_HOST;
+                    }
+                    String port = APIKitTools.getPortFromUri(raml.getBaseUri());
+                    if (port == "")
+                    {
+                        port = HttpListenerConfig.DEFAULT_PORT;
+                    }
+                    String path = APIKitTools.getPathFromUri(raml.getBaseUri());
+                    collectResources(ramlFile, raml.getResources(), host, port, HttpListenerConfig.DEFAULT_BASE_PATH, path);
                     processedFiles.add(ramlFile);
                 }
                 catch (Exception e)
@@ -103,14 +116,16 @@ public class RAMLFilesParser
         return true;
     }
 
-    void collectResources(File filename, Map<String, Resource> resourceMap, String baseUri)
+    void collectResources(File filename, Map<String, Resource> resourceMap, String host, String port, String basePath, String path)
     {
         for (Resource resource : resourceMap.values())
         {
             for (Action action : resource.getActions().values())
             {
-                API api = apiFactory.createAPIBinding(filename, null, baseUri, null);
-                String path = APIKitTools.getPathFromUri(baseUri);
+                String id = FilenameUtils.removeExtension(filename.getName()).trim();
+                String httpListenerConfigName = id == null? HttpListenerConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListenerConfig.DEFAULT_CONFIG_NAME;
+
+                API api = apiFactory.createAPIBinding(filename, null, null, new HttpListenerConfig.Builder(httpListenerConfigName, host, port, basePath).build(), path);
 
                 Map<String, MimeType> mimeTypes = action.getBody();
                 boolean addGenericAction = false;
@@ -120,7 +135,7 @@ public class RAMLFilesParser
                     {
                         if (mimeType.getSchema() != null || mimeType.getFormParameters() != null)
                         {
-                            addResource(api, resource, action, path, mimeType.getType());
+                            addResource(api, resource, action, mimeType.getType());
                         }
                         else { addGenericAction = true; }
                     }
@@ -128,16 +143,17 @@ public class RAMLFilesParser
                 else { addGenericAction = true; }
 
                 if (addGenericAction) {
-                    addResource(api, resource, action, path, null);
+                    addResource(api, resource, action, null);
                 }
             }
 
-            collectResources(filename, resource.getResources(), baseUri);
+            collectResources(filename, resource.getResources(), host, port, basePath, path);
         }
     }
 
-    void addResource(API api, Resource resource, Action action, String path, String mimeType) {
-        ResourceActionMimeTypeTriplet resourceActionTriplet = new ResourceActionMimeTypeTriplet(api, path + resource.getUri(),
+    void addResource(API api, Resource resource, Action action, String mimeType) {
+        String completePath = APIKitTools.getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
+        ResourceActionMimeTypeTriplet resourceActionTriplet = new ResourceActionMimeTypeTriplet(api, completePath + resource.getUri(),
                 action.getType().toString(), mimeType);
         entries.put(resourceActionTriplet, new GenerationModel(api, resource, action, mimeType));
     }

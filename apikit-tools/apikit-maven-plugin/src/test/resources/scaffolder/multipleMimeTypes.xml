@@ -5,7 +5,7 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
                http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
-
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="${serverPort}"/>
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
@@ -32,7 +32,7 @@
     <apikit:config raml="multipleMimeTypes.yaml" />
 
     <flow name="main">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*"/>
         <apikit:router />
         <exception-strategy ref="apiKitGlobalExceptionMapping"/>
     </flow>
