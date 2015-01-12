@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit;
 
+import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -50,6 +51,15 @@ public class SalesTestCase extends FunctionalTestCase
                 .response().body(containsString("hello"))
                 .header("Content-type", "application/json").statusCode(200)
                 .when().get("/api/presentations");
+    }
+
+    @Test
+    public void explicitFlowRefToApikitFlow() throws Exception
+    {
+        expect()
+                .response().body(containsString("hello"))
+                .statusCode(200)
+                .when().get("/non-apikit");
     }
 
 }

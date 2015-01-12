@@ -41,6 +41,11 @@
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
+    <flow name="non-apikit">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="non-apikit"/>
+        <flow-ref name="get:/presentations"/>
+    </flow>
+
     <flow name="get:/presentations">
         <set-payload value="hello"/>
     </flow>

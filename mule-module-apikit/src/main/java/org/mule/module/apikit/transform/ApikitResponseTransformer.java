@@ -24,10 +24,16 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
 
     public static final String BEST_MATCH_REPRESENTATION = "_ApikitResponseTransformer_bestMatchRepresentation";
     public static final String CONTRACT_MIME_TYPES = "_ApikitResponseTransformer_contractMimeTypes";
+    public static final String APIKIT_ROUTER_REQUEST = "_ApikitResponseTransformer_apikitRouterRequest";
 
     @Override
     public Object transformMessage(MuleMessage message, String encoding) throws TransformerException
     {
+        if (message.getInvocationProperty(APIKIT_ROUTER_REQUEST) == null)
+        {
+            // request not originated from an apikit router
+            return message;
+        }
         String responseRepresentation = message.getInvocationProperty(BEST_MATCH_REPRESENTATION);
         List<MimeType> responseMimeTypes = message.getInvocationProperty(CONTRACT_MIME_TYPES);
         if (responseRepresentation == null)
