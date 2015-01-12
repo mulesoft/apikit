@@ -6,10 +6,14 @@
  */
 package org.mule.module.apikit.validation.cache;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import org.mule.module.apikit.exception.ApikitRuntimeException;
 
-import org.eel.kitchen.jsonschema.main.JsonSchema;
-import org.eel.kitchen.jsonschema.main.JsonSchemaFactory;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.SchemaVersion;
+import com.github.fge.jsonschema.cfg.ValidationConfiguration;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 
 public final class JsonSchemaAndNode
 {
@@ -20,7 +24,16 @@ public final class JsonSchemaAndNode
     public JsonSchemaAndNode(JsonNode jsonNode)
     {
         this.jsonNode = jsonNode;
-        this.jsonSchema = JsonSchemaFactory.defaultFactory().fromSchema(jsonNode);
+        try
+        {
+            ValidationConfiguration validationCfg = ValidationConfiguration.newBuilder().setDefaultVersion(SchemaVersion.DRAFTV3).freeze();
+            JsonSchemaFactory jsonSchemaFactory = JsonSchemaFactory.newBuilder().setValidationConfiguration(validationCfg).freeze();
+            this.jsonSchema = jsonSchemaFactory.getJsonSchema(jsonNode);
+        }
+        catch (ProcessingException e)
+        {
+            throw new ApikitRuntimeException(e);
+        }
     }
 
     public JsonSchema getJsonSchema()

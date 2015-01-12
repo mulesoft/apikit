@@ -9,10 +9,14 @@ package org.mule.module.apikit.validation;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.registry.RegistrationException;
+import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.cache.JsonSchemaAndNode;
 import org.mule.module.apikit.validation.cache.JsonSchemaCache;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -21,17 +25,14 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.concurrent.ExecutionException;
 
-import org.mule.module.apikit.exception.BadRequestException;
-
 import org.apache.commons.io.IOUtils;
-import org.eel.kitchen.jsonschema.report.ValidationReport;
-import org.eel.kitchen.jsonschema.util.JsonLoader;
 import org.raml.model.Raml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
 {
+
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public RestJsonSchemaValidator(MuleContext muleContext)
@@ -66,12 +67,10 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             }
 
             JsonSchemaAndNode schema = JsonSchemaCache.getJsonSchemaCache(muleContext, configId, api).get(schemaPath);
-
-            ValidationReport report = schema.getJsonSchema().validate(data);
-
+            ProcessingReport report = schema.getJsonSchema().validate(data);
             if (!report.isSuccess())
             {
-                String message = report.getMessages().get(0);
+                String message = report.iterator().hasNext() ? report.iterator().next().getMessage() : "no message";
                 logger.info("Schema validation failed: " + message);
                 throw new BadRequestException(message);
             }
@@ -85,6 +84,10 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             throw new BadRequestException(e);
         }
         catch (IOException e)
+        {
+            throw new BadRequestException(e);
+        }
+        catch (ProcessingException e)
         {
             throw new BadRequestException(e);
         }

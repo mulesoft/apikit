@@ -6,23 +6,21 @@
                       "properties": {
                           "homeCity": {
                               "description": "Name of the city to which this team belongs",
-                              "type": "string"
+                              "type": "string",
+                              "required": true
                           },
                           "id": {
                               "description": "A three-letter code that identifies the team id",
                               "maxLength": 3,
                               "minLength": 3,
-                              "type": "string"
+                              "type": "string",
+                              "required": true
                           },
                           "name": {
                               "description": "Name of the team",
-                              "type": "string"
+                              "type": "string",
+                              "required": true
                           },
-                          "required": [
-                              "id",
-                              "name",
-                              "homeCity"
-                          ],
                           "stadium": {
                               "description": "Name of the stadium",
                               "type": "string"

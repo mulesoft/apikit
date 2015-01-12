@@ -9,11 +9,11 @@ package org.mule.module.apikit.validation.cache;
 import static org.mule.module.apikit.validation.cache.SchemaCacheUtils.resolveSchema;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jackson.JsonLoader;
 import com.google.common.cache.CacheLoader;
 
 import java.io.IOException;
 
-import org.eel.kitchen.jsonschema.util.JsonLoader;
 import org.raml.model.Raml;
 
 public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchemaAndNode>
