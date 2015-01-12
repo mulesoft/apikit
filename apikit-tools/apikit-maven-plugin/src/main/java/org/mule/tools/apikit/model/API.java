@@ -6,30 +6,38 @@
  */
 package org.mule.tools.apikit.model;
 
+import org.mule.tools.apikit.misc.APIKitTools;
+
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.apache.commons.io.FilenameUtils;
 
 public class API {
 
-    public static final int DEFAULT_PORT = 8081;
-    public static final String DEFAULT_BASE_URI = "http://localhost:" + DEFAULT_PORT + "/api";
+    public static final String DEFAULT_PATH = "/api/*";
 
-    private String baseUri;
     private APIKitConfig config;
+    private HttpListenerConfig httpListenerConfig;
     private File xmlFile;
     private File yamlFile;
     private String id;
+    private String path;
 
-    public API(File yamlFile, File xmlFile, String baseUri) {
-        this.baseUri = baseUri;
+
+    public API(File yamlFile, File xmlFile, HttpListenerConfig httpListenerConfig, String path) {
+        this.httpListenerConfig = httpListenerConfig;
         this.yamlFile = yamlFile;
         this.xmlFile = xmlFile;
+        this.path = path;
         id = FilenameUtils.removeExtension(yamlFile.getName()).trim();
     }
 
-    public API(File yamlFile, File xmlFile, String baseUri, APIKitConfig config) {
-        this(yamlFile, xmlFile, baseUri);
+    public API(File yamlFile, File xmlFile, APIKitConfig config, String host, String port, String basePath, String path){
+        this(yamlFile, xmlFile, null, path);
+        String httpListenerConfigName = id == null? HttpListenerConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListenerConfig.DEFAULT_CONFIG_NAME;
+        this.httpListenerConfig = new HttpListenerConfig.Builder(httpListenerConfigName,host,port,basePath).build();
         this.config = config;
     }
 
@@ -55,8 +63,18 @@ public class API {
         return yamlFile;
     }
 
-    public String getBaseUri() {
-        return baseUri;
+    public String getPath()
+    {
+        return path;
+    }
+
+    public void setPath(String path)
+    {
+        this.path = path;
+    }
+
+    public HttpListenerConfig getHttpListenerConfig() {
+        return httpListenerConfig;
     }
 
     public APIKitConfig getConfig() {
@@ -67,8 +85,16 @@ public class API {
         this.config = config;
     }
 
+    public void setHttpListenerConfig(HttpListenerConfig httpListenerConfig) {
+        this.httpListenerConfig = httpListenerConfig;
+    }
+
     public void setDefaultConfig() {
         config = new APIKitConfig.Builder(yamlFile.getName()).setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME).build();
+    }
+
+    public void setDefaultHttpListenerConfig() {
+        httpListenerConfig = new HttpListenerConfig(HttpListenerConfig.DEFAULT_CONFIG_NAME, HttpListenerConfig.DEFAULT_HOST, HttpListenerConfig.DEFAULT_PORT, HttpListenerConfig.DEFAULT_BASE_PATH);
     }
 
     @Override
@@ -91,4 +117,5 @@ public class API {
     public String getId() {
         return id;
     }
+
 }

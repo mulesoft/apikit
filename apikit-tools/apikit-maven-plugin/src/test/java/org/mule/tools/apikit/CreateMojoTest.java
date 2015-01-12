@@ -90,6 +90,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     public void testExecute() throws  Exception {
         setVariableValueToObject(mojo, "muleXmlDirectory", app);
         setVariableValueToObject(mojo, "specDirectory", project);
+        setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
 
         IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.yaml"),
                 new FileOutputStream(apiFile));
