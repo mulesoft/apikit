@@ -47,7 +47,6 @@ public class MuleConfigParserTest {
         assertNotNull(apis);
         assertEquals(1, apis.size());
         assertEquals("leagues.yaml", apis.iterator().next().getYamlFile().getName());
-
     }
 
     @Test
@@ -81,6 +80,5 @@ public class MuleConfigParserTest {
         assertEquals("leagues.yaml", leaguesConfig.getRaml());
         assertTrue(leaguesConfig.isConsoleEnabled());
         assertEquals(APIKitConfig.DEFAULT_CONSOLE_PATH, leaguesConfig.getConsolePath());
-
     }
 }

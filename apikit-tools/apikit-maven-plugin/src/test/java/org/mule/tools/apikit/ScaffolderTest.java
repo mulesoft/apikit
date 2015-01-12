@@ -6,8 +6,6 @@
  */
 package org.mule.tools.apikit;
 
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
