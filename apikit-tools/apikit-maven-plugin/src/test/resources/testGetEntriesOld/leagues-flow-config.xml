@@ -33,7 +33,7 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config raml="leagues.yaml" />
+    <apikit:config raml="leagues.raml" />
 
     <flow name="doorway">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>

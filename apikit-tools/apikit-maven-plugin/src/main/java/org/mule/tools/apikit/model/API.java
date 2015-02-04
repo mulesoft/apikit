@@ -92,8 +92,14 @@ public class API {
         this.useInboundEndpoint = false;
     }
 
-    public void setDefaultConfig() {
+    public void setDefaultAPIKitConfig() {
         config = new APIKitConfig.Builder(ramlFile.getName()).setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME).build();
+    }
+
+    public void setDefaultHttpListenerConfig()
+    {
+        String httpListenerConfigName = id == null? HttpListenerConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListenerConfig.DEFAULT_CONFIG_NAME;
+        httpListenerConfig = new HttpListenerConfig.Builder(httpListenerConfigName, API.DEFAULT_BASE_URI).build();
     }
 
     public Boolean useInboundEndpoint()

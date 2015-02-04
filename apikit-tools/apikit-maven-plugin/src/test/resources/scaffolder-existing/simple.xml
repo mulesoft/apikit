@@ -31,7 +31,7 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config raml="simple.yaml" />
+    <apikit:config raml="simple.raml" />
 
     <flow name="main">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*"/>

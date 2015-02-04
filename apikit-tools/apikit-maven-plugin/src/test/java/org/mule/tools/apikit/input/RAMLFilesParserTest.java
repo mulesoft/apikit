@@ -33,11 +33,11 @@ public class RAMLFilesParserTest
     {
         final InputStream resourceAsStream =
                 RAMLFilesParserTest.class.getClassLoader().getResourceAsStream(
-                        "create-mojo/simple.yaml");
+                        "create-mojo/simple.raml");
         Log log = mock(Log.class);
 
-        HashSet<File> yamlPaths = new HashSet<File>();
-        yamlPaths.add(new File("leagues.yaml"));
+        HashSet<File> ramlPaths = new HashSet<File>();
+        ramlPaths.add(new File("leagues.raml"));
 
         HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
         streams.put(new File("hello"), resourceAsStream);
@@ -47,8 +47,8 @@ public class RAMLFilesParserTest
         Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
         assertNotNull(entries);
         assertEquals(1, entries.size());
-        Set<ResourceActionMimeTypeTriplet> yamlEntries = entries.keySet();
-        ResourceActionMimeTypeTriplet triplet = yamlEntries.iterator().next();
+        Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
+        ResourceActionMimeTypeTriplet triplet = ramlEntries.iterator().next();
         Assert.assertEquals("/api/pet", triplet.getUri());
         Assert.assertEquals("GET", triplet.getVerb());
         Assert.assertEquals("/api",triplet.getApi().getPath());

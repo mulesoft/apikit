@@ -33,7 +33,7 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config name="leagues-config" raml="leagues.yaml" />
+    <apikit:config name="leagues-config" raml="leagues.raml" />
 
     <flow name="doorway">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*"/>

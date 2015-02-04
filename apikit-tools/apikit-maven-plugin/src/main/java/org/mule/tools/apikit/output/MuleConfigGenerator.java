@@ -108,9 +108,16 @@ public class MuleConfigGenerator {
             doc = docs.get(api);
         } else {
             doc = getDocument(api);
-            if(api.getConfig() == null) {
-                api.setDefaultConfig();
-                generateAPIKitConfig(api, doc);
+            if(api.getConfig() == null || api.getHttpListenerConfig() == null) {
+                if (api.getConfig() == null)
+                {
+                    api.setDefaultAPIKitConfig();
+                }
+                if (!api.useInboundEndpoint() && api.getHttpListenerConfig() == null)
+                {
+                    api.setDefaultHttpListenerConfig();
+                }
+                generateAPIKitAndListenerConfig(api, doc);
             }
             docs.put(api, doc);
         }
@@ -132,17 +139,13 @@ public class MuleConfigGenerator {
         return doc;
     }
 
-    private void generateAPIKitConfig(API api, Document doc) {
+    private void generateAPIKitAndListenerConfig(API api, Document doc) {
         XPathExpression muleExp = XPathFactory.instance().compile("//*[local-name()='mule']");
         List<Element> mules = muleExp.evaluate(doc);
         Element mule = mules.get(0);
         String listenerConfigRef = null;
         if (!api.useInboundEndpoint())
         {
-            if (api.getHttpListenerConfig() == null)
-            {
-                api.setHttpListenerConfig(new HttpListenerConfig.Builder(HttpListenerConfig.DEFAULT_CONFIG_NAME, API.DEFAULT_BASE_URI).build());
-            }
             new HttpListenerConfigScope(api,mule).generate();
             listenerConfigRef = api.getHttpListenerConfig().getName();
             api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));

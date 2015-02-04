@@ -29,7 +29,7 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config raml="multipleMimeTypes.yaml" />
+    <apikit:config raml="multipleMimeTypes.raml" />
 
     <flow name="main">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*"/>

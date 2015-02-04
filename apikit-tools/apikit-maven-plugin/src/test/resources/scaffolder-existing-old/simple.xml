@@ -29,7 +29,7 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
             <set-payload value="bad request"/>
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
-    <apikit:config raml="simple.yaml"/>
+    <apikit:config raml="simple.raml"/>
     <flow name="main">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
         <apikit:router/>

@@ -44,27 +44,27 @@ public class GenerationStrategyTest {
     }
 
     @Test
-    public void testNotEmptyYamlGenerate() throws Exception {
-        final API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "http://localhost:8080", "/api/*",  null);
+    public void testNotEmptyRamlGenerate() throws Exception {
+        final API fromRAMLFile = apiFactory.createAPIBinding(new File("sample.raml"), null, "http://localhost:8080", "/api/*",  null);
 
-        RAMLFilesParser yaml = mock(RAMLFilesParser.class);
+        RAMLFilesParser raml = mock(RAMLFilesParser.class);
         MuleConfigParser mule = mock(MuleConfigParser.class);
 
-        final Map<ResourceActionMimeTypeTriplet, GenerationModel> yamlEntries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        yamlEntries.put(new ResourceActionMimeTypeTriplet(fromYAMLFile, "pet", "post"), mock(GenerationModel.class));
+        final Map<ResourceActionMimeTypeTriplet, GenerationModel> ramlEntries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+        ramlEntries.put(new ResourceActionMimeTypeTriplet(fromRAMLFile, "pet", "post"), mock(GenerationModel.class));
 
-        when(yaml.getEntries()).thenReturn(yamlEntries);
+        when(raml.getEntries()).thenReturn(ramlEntries);
 
-        List<GenerationModel> generate = generationStrategy.generate(yaml, mule);
+        List<GenerationModel> generate = generationStrategy.generate(raml, mule);
         assertEquals(1, generate.size());
     }
 
     @Test
     public void testExistingAPIKitFlow() throws Exception {
-        RAMLFilesParser yaml = mock(RAMLFilesParser.class);
+        RAMLFilesParser raml = mock(RAMLFilesParser.class);
         MuleConfigParser mule = mock(MuleConfigParser.class);
         final API api =
-                apiFactory.createAPIBinding(new File("sample.yaml"), new File("sample.xml"), "http://localhost:8080", "/api/*",  null);
+                apiFactory.createAPIBinding(new File("sample.raml"), new File("sample.xml"), "http://localhost:8080", "/api/*",  null);
 
         when(mule.getIncludedApis()).thenReturn(new HashSet<API>() {{
             this.add(api);
@@ -74,21 +74,21 @@ public class GenerationStrategyTest {
             this.add(new ResourceActionMimeTypeTriplet(api, "/pet", "GET"));
         }});
 
-        final Map<ResourceActionMimeTypeTriplet, GenerationModel> yamlEntries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        yamlEntries.put(new ResourceActionMimeTypeTriplet(api, "/pet", "GET"), mock(GenerationModel.class));
+        final Map<ResourceActionMimeTypeTriplet, GenerationModel> ramlEntries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+        ramlEntries.put(new ResourceActionMimeTypeTriplet(api, "/pet", "GET"), mock(GenerationModel.class));
 
-        when(yaml.getEntries()).thenReturn(yamlEntries);
+        when(raml.getEntries()).thenReturn(ramlEntries);
 
-        List<GenerationModel> generate = generationStrategy.generate(yaml, mule);
+        List<GenerationModel> generate = generationStrategy.generate(raml, mule);
         assertEquals(0, generate.size());
     }
 
     @Test
     public void testNonExistingAPIKitFlow() throws Exception {
-        RAMLFilesParser yaml = mock(RAMLFilesParser.class);
+        RAMLFilesParser raml = mock(RAMLFilesParser.class);
         MuleConfigParser mule = mock(MuleConfigParser.class);
         final API api =
-                apiFactory.createAPIBinding(new File("sample.yaml"), null, "http://localhost:8080", "/api/*",  null);
+                apiFactory.createAPIBinding(new File("sample.raml"), null, "http://localhost:8080", "/api/*",  null);
 
         when(mule.getIncludedApis()).thenReturn(new HashSet<API>() {{
             this.add(api);
@@ -97,15 +97,15 @@ public class GenerationStrategyTest {
         when(mule.getEntries()).thenReturn(new HashSet<ResourceActionMimeTypeTriplet>() {{
             this.add(new ResourceActionMimeTypeTriplet(api, "/pet", "GET"));
         }});
-        API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "http://localhost:8080", "/api/*",  null);
+        API fromRAMLFile = apiFactory.createAPIBinding(new File("sample.raml"), null, "http://localhost:8080", "/api/*",  null);
 
-        final Map<ResourceActionMimeTypeTriplet, GenerationModel> yamlEntries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        yamlEntries.put(new ResourceActionMimeTypeTriplet(fromYAMLFile, "/pet", "GET"), mock(GenerationModel.class));
-        yamlEntries.put(new ResourceActionMimeTypeTriplet(fromYAMLFile, "/pet", "POST"), mock(GenerationModel.class));
+        final Map<ResourceActionMimeTypeTriplet, GenerationModel> ramlEntries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+        ramlEntries.put(new ResourceActionMimeTypeTriplet(fromRAMLFile, "/pet", "GET"), mock(GenerationModel.class));
+        ramlEntries.put(new ResourceActionMimeTypeTriplet(fromRAMLFile, "/pet", "POST"), mock(GenerationModel.class));
 
-        when(yaml.getEntries()).thenReturn(yamlEntries);
+        when(raml.getEntries()).thenReturn(ramlEntries);
 
-        List<GenerationModel> generate = generationStrategy.generate(yaml, mule);
+        List<GenerationModel> generate = generationStrategy.generate(raml, mule);
         assertEquals(1, generate.size());
     }
 }

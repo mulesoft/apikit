@@ -33,14 +33,14 @@ public class MuleConfigParserTest {
                         "testGetEntries/leagues-flow-config.xml");
         Log log = mock(Log.class);
 
-        HashSet<File> yamlPaths = new HashSet<File>();
-        yamlPaths.add(new File("leagues.yaml"));
+        HashSet<File> ramlPaths = new HashSet<File>();
+        ramlPaths.add(new File("leagues.raml"));
 
         HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
         streams.put(new File(""), resourceAsStream);
 
         MuleConfigParser muleConfigParser =
-                new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
+                new MuleConfigParser(log, ramlPaths, streams, new APIFactory());
         Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
         assertNotNull(set);
         assertEquals(6, set.size());
@@ -49,7 +49,7 @@ public class MuleConfigParserTest {
         assertNotNull(apis);
         assertEquals(1, apis.size());
         API api = apis.iterator().next();
-        assertEquals("leagues.yaml", api.getRamlFile().getName());
+        assertEquals("leagues.raml", api.getRamlFile().getName());
         assertEquals("leagues", api.getId());
         assertNotNull(api.getHttpListenerConfig());
         assertEquals("/", api.getHttpListenerConfig().getBasePath());
@@ -66,14 +66,14 @@ public class MuleConfigParserTest {
                         "testGetEntriesOld/leagues-flow-config.xml");
         Log log = mock(Log.class);
 
-        HashSet<File> yamlPaths = new HashSet<File>();
-        yamlPaths.add(new File("leagues.yaml"));
+        HashSet<File> ramlPaths = new HashSet<File>();
+        ramlPaths.add(new File("leagues.raml"));
 
         HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
         streams.put(new File(""), resourceAsStream);
 
         MuleConfigParser muleConfigParser =
-                new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
+                new MuleConfigParser(log, ramlPaths, streams, new APIFactory());
         Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
         assertNotNull(set);
         assertEquals(6, set.size());
@@ -82,7 +82,7 @@ public class MuleConfigParserTest {
         assertNotNull(apis);
         assertEquals(1, apis.size());
         API api = apis.iterator().next();
-        assertEquals("leagues.yaml", api.getRamlFile().getName());
+        assertEquals("leagues.raml", api.getRamlFile().getName());
         assertEquals("leagues", api.getId());
         assertNull(api.getHttpListenerConfig());
         assertEquals("/api", api.getPath());
@@ -95,14 +95,14 @@ public class MuleConfigParserTest {
                         "testGetEntries/leagues-flow-with-config-config.xml");
         Log log = mock(Log.class);
 
-        HashSet<File> yamlPaths = new HashSet<File>();
-        yamlPaths.add(new File("leagues.yaml"));
+        HashSet<File> ramlPaths = new HashSet<File>();
+        ramlPaths.add(new File("leagues.raml"));
 
         HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
         streams.put(new File(""), resourceAsStream);
 
         MuleConfigParser muleConfigParser =
-                new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
+                new MuleConfigParser(log, ramlPaths, streams, new APIFactory());
         Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
         assertNotNull(set);
         assertEquals(6, set.size());
@@ -111,7 +111,7 @@ public class MuleConfigParserTest {
         assertNotNull(apis);
         assertEquals(1, apis.size());
         API api = apis.iterator().next();
-        assertEquals("leagues.yaml", api.getRamlFile().getName());
+        assertEquals("leagues.raml", api.getRamlFile().getName());
         assertEquals("leagues", api.getId());
         assertNotNull(api.getHttpListenerConfig());
         assertEquals("/", api.getHttpListenerConfig().getBasePath());
@@ -124,7 +124,7 @@ public class MuleConfigParserTest {
         APIKitConfig leaguesConfig = configs.get("leagues-config");
         assertNotNull(leaguesConfig);
         assertEquals("leagues-config", leaguesConfig.getName());
-        assertEquals("leagues.yaml", leaguesConfig.getRaml());
+        assertEquals("leagues.raml", leaguesConfig.getRaml());
         assertTrue(leaguesConfig.isConsoleEnabled());
         assertEquals(APIKitConfig.DEFAULT_CONSOLE_PATH, leaguesConfig.getConsolePath());
     }
@@ -136,14 +136,14 @@ public class MuleConfigParserTest {
                         "testGetEntriesOld/leagues-flow-with-config-config.xml");
         Log log = mock(Log.class);
 
-        HashSet<File> yamlPaths = new HashSet<File>();
-        yamlPaths.add(new File("leagues.yaml"));
+        HashSet<File> ramlPaths = new HashSet<File>();
+        ramlPaths.add(new File("leagues.raml"));
 
         HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
         streams.put(new File(""), resourceAsStream);
 
         MuleConfigParser muleConfigParser =
-                new MuleConfigParser(log, yamlPaths, streams, new APIFactory());
+                new MuleConfigParser(log, ramlPaths, streams, new APIFactory());
         Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
         assertNotNull(set);
         assertEquals(6, set.size());
@@ -151,13 +151,13 @@ public class MuleConfigParserTest {
         Set<API> apis = muleConfigParser.getIncludedApis();
         assertNotNull(apis);
         assertEquals(1, apis.size());
-        assertEquals("leagues.yaml", apis.iterator().next().getRamlFile().getName());
+        assertEquals("leagues.raml", apis.iterator().next().getRamlFile().getName());
 
         Map<String, APIKitConfig> configs = muleConfigParser.getApikitConfigs();
         APIKitConfig leaguesConfig = configs.get("leagues-config");
         assertNotNull(leaguesConfig);
         assertEquals("leagues-config", leaguesConfig.getName());
-        assertEquals("leagues.yaml", leaguesConfig.getRaml());
+        assertEquals("leagues.raml", leaguesConfig.getRaml());
         assertTrue(leaguesConfig.isConsoleEnabled());
         assertEquals(APIKitConfig.DEFAULT_CONSOLE_PATH, leaguesConfig.getConsolePath());
     }

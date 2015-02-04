@@ -26,7 +26,7 @@ public class FlowScopeTest {
         Document document = new Document();
         Element mule =new MuleScope().generate();
         document.setRootElement(mule);
-        APIKitConfig config = new APIKitConfig.Builder("path/to/file.yaml").build();
+        APIKitConfig config = new APIKitConfig.Builder("path/to/file.raml").build();
         new APIKitConfigScope(config, mule).generate();
         API api = mock(API.class);
         HttpListenerConfig listenerConfig = new HttpListenerConfig.Builder("HTTP_Listener_Configuration","localhost","7777","").build();
@@ -51,7 +51,7 @@ public class FlowScopeTest {
                 "        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd\n" +
                 "        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd\">" +
                 "<http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"7777\"/>" +
-                "<apikit:config raml=\"path/to/file.yaml\" consoleEnabled=\"true\" consolePath=\"console\" />" +
+                "<apikit:config raml=\"path/to/file.raml\" consoleEnabled=\"true\" consolePath=\"console\" />" +
                 "<flow name=\"file-main\">" +
                 "<http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\"/>" +
                 "<apikit:router />" +
