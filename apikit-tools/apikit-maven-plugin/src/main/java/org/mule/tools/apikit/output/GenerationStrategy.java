@@ -25,26 +25,26 @@ public class GenerationStrategy {
     public List<GenerationModel> generate(RAMLFilesParser RAMLFilesParser,
                                   MuleConfigParser muleConfigParser) {
         Set<API> apisInMuleConfigs = muleConfigParser.getIncludedApis();
-        Set<ResourceActionMimeTypeTriplet> yamlEntries = RAMLFilesParser.getEntries().keySet();
+        Set<ResourceActionMimeTypeTriplet> ramlEntries = RAMLFilesParser.getEntries().keySet();
         Set<ResourceActionMimeTypeTriplet> muleFlowEntries = muleConfigParser.getEntries();
         List<GenerationModel> generationModels = new ArrayList<GenerationModel>();
 
         if (apisInMuleConfigs.isEmpty()) {
-            if (yamlEntries.isEmpty()) {
+            if (ramlEntries.isEmpty()) {
                 // No APIs No Flow APIs
                 log.info("No APIs or APIKit flows found.");
             } else {
-                log.info("Generating apikit:flows for the following operations: " + yamlEntries);
+                log.info("Generating apikit:flows for the following operations: " + ramlEntries);
             }
             generationModels.addAll(RAMLFilesParser.getEntries().values());
         } else {
-            if (yamlEntries.isEmpty()) {
-                // there are implemented APIs without a YAML file. NOMB.
+            if (ramlEntries.isEmpty()) {
+                // there are implemented APIs without a RAML file. NOMB.
                 log.warn("The following apikit:flows do not match any RAML API binding: " + apisInMuleConfigs);
 
                 generationModels.addAll(RAMLFilesParser.getEntries().values());
             } else {
-                Set<ResourceActionMimeTypeTriplet> diffTriplets = new APIDiff(yamlEntries, muleFlowEntries).getEntries();
+                Set<ResourceActionMimeTypeTriplet> diffTriplets = new APIDiff(ramlEntries, muleFlowEntries).getEntries();
                 log.info("Adding new apikit:flows to existing files for the following operations: " + diffTriplets);
 
                 for (ResourceActionMimeTypeTriplet entry : diffTriplets) {

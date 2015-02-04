@@ -11,9 +11,31 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd ">
 
-    <context:property-placeholder location="api.properties" />
+#set ($muleVersion = $muleVersion.toUpperCase())
+#set ($muleVersion = $muleVersion.replace(".",""))
+#set ($muleVersion = $muleVersion.replace("-",""))
+#set ($muleVersion = $muleVersion.replace("SNAPSHOT",""))
+#set ($listenerVersion = "360")
+#set ($Integer = 0)
+#set ($zeros = "0")
+#set ($repeated = $muleVersion.length() - $listenerVersion.length() )
+#if ( $repeated >0)
+#set ($zeros = $zeros.repeat($repeated))
+#set ($listenerVersion = $listenerVersion.concat($zeros))
+#end
+#set ($repeated = $listenerVersion.length() - $muleVersion.length())
+#if ( $repeated >0)
+#set ($zeros = "0")
+#set ($zeros = $zeros.repeat($repeated))
+#set ($muleVersion = $muleVersion.concat($zeros))
+#end
+#if( $Integer.parseInt($muleVersion)>=$Integer.parseInt($listenerVersion ) )
+    <http:listener-config name="httpListenerConfig" host="localhost" port="${http.port}"/>
 
+#end
     <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" />
+
+    <context:property-placeholder location="api.properties" />
 
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
@@ -44,7 +66,11 @@
     </apikit:mapping-exception-strategy>
 
     <flow name="api-main">
+#if( $Integer.parseInt($muleVersion)>=$Integer.parseInt($listenerVersion ) )
+        <http:listener config-ref="httpListenerConfig" path="/api/*"/>
+#else
         <http:inbound-endpoint address="http://localhost:${http.port}/api"/>
+#end
         <apikit:router config-ref="apiConfig" />
         <exception-strategy ref="apiKitGlobalExceptionMapping" />
     </flow>

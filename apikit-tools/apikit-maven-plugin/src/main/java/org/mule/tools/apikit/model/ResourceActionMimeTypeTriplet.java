@@ -65,4 +65,24 @@ public class ResourceActionMimeTypeTriplet {
         }
         return result;
     }
+
+    public API getApi()
+    {
+        return api;
+    }
+
+    public String getUri()
+    {
+        return uri;
+    }
+
+    public String getVerb()
+    {
+        return verb;
+    }
+
+    public String getMimeType()
+    {
+        return mimeType;
+    }
 }

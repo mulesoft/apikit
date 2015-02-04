@@ -14,9 +14,11 @@ import org.jdom2.input.sax.XMLReaders;
 import org.mule.tools.apikit.input.parsers.APIKitConfigParser;
 import org.mule.tools.apikit.input.parsers.APIKitFlowsParser;
 import org.mule.tools.apikit.input.parsers.APIKitRoutersParser;
+import org.mule.tools.apikit.input.parsers.HttpListenerConfigParser;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
+import org.mule.tools.apikit.model.HttpListenerConfig;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 import java.io.File;
@@ -30,16 +32,17 @@ public class MuleConfigParser {
 
     private Set<ResourceActionMimeTypeTriplet> entries = new HashSet<ResourceActionMimeTypeTriplet>();
     private Map<String, API> includedApis = new HashMap<String, API>();
+    private Map<String, HttpListenerConfig> httpListenerConfigs = new HashMap<String, HttpListenerConfig>();
     private Map<String, APIKitConfig> apikitConfigs = new HashMap<String, APIKitConfig>();
     private final APIFactory apiFactory;
 
-    public MuleConfigParser(Log log, Set<File> yamlPaths, Map<File, InputStream> streams, APIFactory apiFactory) {
+    public MuleConfigParser(Log log, Set<File> ramlPaths, Map<File, InputStream> streams, APIFactory apiFactory) {
         this.apiFactory = apiFactory;
         for (Entry<File, InputStream> fileStreamEntry : streams.entrySet()) {
             InputStream stream = fileStreamEntry.getValue();
             File file = fileStreamEntry.getKey();
             try {
-                parseMuleConfigFile(file, stream, yamlPaths);
+                parseMuleConfigFile(file, stream, ramlPaths);
                 stream.close();
             } catch (Exception e) {
                 log.error("Error parsing Mule xml config file: [" + file + "]. Reason: " + e.getMessage());
@@ -48,12 +51,14 @@ public class MuleConfigParser {
         }
     }
 
-    private void parseMuleConfigFile(File file, InputStream stream, Set<File> yamlPaths) throws JDOMException, IOException {
+    private void parseMuleConfigFile(File file, InputStream stream, Set<File> ramlPaths) throws JDOMException, IOException {
         SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
         Document document = saxBuilder.build(stream);
 
         apikitConfigs = new APIKitConfigParser().parse(document);
-        includedApis = new APIKitRoutersParser(apikitConfigs, yamlPaths, file, apiFactory).parse(document);
+        httpListenerConfigs = new HttpListenerConfigParser().parse(document);
+        includedApis = new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document);
+
         entries = new APIKitFlowsParser(includedApis).parse(document);
     }
 

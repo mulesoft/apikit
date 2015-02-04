@@ -18,6 +18,8 @@ import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import org.mule.tools.apikit.misc.APIKitTools;
+import org.mule.tools.apikit.model.HttpListenerConfig;
 import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
 import org.mule.tools.apikit.output.scopes.*;
 import org.mule.tools.apikit.output.scopes.FlowScope;
@@ -68,7 +70,7 @@ public class MuleConfigGenerator {
             try {
                 doc = getOrCreateDocument(docs, api);
             } catch (Exception e) {
-                log.error("Error generating xml for file: [" + api.getYamlFile() + "]", e);
+                log.error("Error generating xml for file: [" + api.getRamlFile() + "]", e);
                 continue;
             }
 
@@ -77,14 +79,14 @@ public class MuleConfigGenerator {
         }
 
         // Write everything to files
-        for (Map.Entry<API, Document> yamlFileDescriptorDocumentEntry : docs.entrySet()) {
+        for (Map.Entry<API, Document> ramlFileDescriptorDocumentEntry : docs.entrySet()) {
             Format prettyFormat = Format.getPrettyFormat();
             prettyFormat.setIndent(INDENTATION);
             prettyFormat.setLineSeparator(System.getProperty("line.separator"));
             prettyFormat.setEncoding("UTF-8");
             XMLOutputter xout = new XMLOutputter(prettyFormat);
-            Document doc = yamlFileDescriptorDocumentEntry.getValue();
-            File xmlFile = yamlFileDescriptorDocumentEntry.getKey().getXmlFile(rootDirectory);
+            Document doc = ramlFileDescriptorDocumentEntry.getValue();
+            File xmlFile = ramlFileDescriptorDocumentEntry.getKey().getXmlFile(rootDirectory);
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(xmlFile);
                 xout.output(doc, fileOutputStream);
@@ -134,11 +136,23 @@ public class MuleConfigGenerator {
         XPathExpression muleExp = XPathFactory.instance().compile("//*[local-name()='mule']");
         List<Element> mules = muleExp.evaluate(doc);
         Element mule = mules.get(0);
+        String listenerConfigRef = null;
+        if (!api.useInboundEndpoint())
+        {
+            if (api.getHttpListenerConfig() == null)
+            {
+                api.setHttpListenerConfig(new HttpListenerConfig.Builder(HttpListenerConfig.DEFAULT_CONFIG_NAME, API.DEFAULT_BASE_URI).build());
+            }
+            new HttpListenerConfigScope(api,mule).generate();
+            listenerConfigRef = api.getHttpListenerConfig().getName();
+            api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
+        }
         new APIKitConfigScope(api.getConfig(), mule).generate();
         Element exceptionStrategy = new ExceptionStrategyScope(mule, api.getId()).generate();
         String configRef = api.getConfig() != null? api.getConfig().getName() : null;
+
         new FlowScope(mule, exceptionStrategy.getAttribute("name").getValue(),
-                      api, configRef).generate();
+                      api, configRef, listenerConfigRef).generate();
     }
 
 }
