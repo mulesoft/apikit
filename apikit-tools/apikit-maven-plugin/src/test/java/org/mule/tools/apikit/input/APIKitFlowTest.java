@@ -6,12 +6,10 @@
  */
 package org.mule.tools.apikit.input;
 
-import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Test;
-import org.mule.tools.apikit.model.APIKitConfig;
 import org.raml.model.ActionType;
 
 import java.util.Arrays;

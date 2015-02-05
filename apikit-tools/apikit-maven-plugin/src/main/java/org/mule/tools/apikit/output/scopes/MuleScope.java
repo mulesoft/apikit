@@ -6,7 +6,6 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import org.jdom2.Document;
 import org.jdom2.Element;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.output.NamespaceWithLocation;

@@ -12,23 +12,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class APIDiff {
-    private final Set<ResourceActionMimeTypeTriplet> yamlEntries;
+    private final Set<ResourceActionMimeTypeTriplet> ramlEntries;
     private final Set<ResourceActionMimeTypeTriplet> muleFlowEntries;
     private final Set<ResourceActionMimeTypeTriplet> difference;
 
-    public APIDiff(Set<ResourceActionMimeTypeTriplet> yamlEntries, Set<ResourceActionMimeTypeTriplet> muleFlowEntries) {
-        this.yamlEntries = yamlEntries;
+    public APIDiff(Set<ResourceActionMimeTypeTriplet> ramlEntries, Set<ResourceActionMimeTypeTriplet> muleFlowEntries) {
+        this.ramlEntries = ramlEntries;
         this.muleFlowEntries = muleFlowEntries;
-        this.difference = computeDifference(this.yamlEntries, this.muleFlowEntries);
+        this.difference = computeDifference(this.ramlEntries, this.muleFlowEntries);
     }
 
     public Set<ResourceActionMimeTypeTriplet> getEntries() {
         return difference;
     }
 
-    private Set<ResourceActionMimeTypeTriplet> computeDifference(Set<ResourceActionMimeTypeTriplet> yamlEntries,
+    private Set<ResourceActionMimeTypeTriplet> computeDifference(Set<ResourceActionMimeTypeTriplet> ramlEntries,
                                                    Set<ResourceActionMimeTypeTriplet> flowEntries) {
-        Set<ResourceActionMimeTypeTriplet> differenceToAdd = new HashSet<ResourceActionMimeTypeTriplet>(yamlEntries);
+        Set<ResourceActionMimeTypeTriplet> differenceToAdd = new HashSet<ResourceActionMimeTypeTriplet>(ramlEntries);
         differenceToAdd.removeAll(flowEntries);
         return differenceToAdd;
     }

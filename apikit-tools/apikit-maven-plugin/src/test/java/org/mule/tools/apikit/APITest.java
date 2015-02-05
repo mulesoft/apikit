@@ -29,8 +29,9 @@ public class APITest {
         return file;
     }
 
-    public static API createAPIBinding(File a, File b) {
-        return new APIFactory().createAPIBinding(a,b,"/api");
+    public static API createAPIBinding(File a, File b)
+   {
+       return new APIFactory().createAPIBinding(a, b, "http://localhost:80", "/api/*", null);
     }
 
     @Test

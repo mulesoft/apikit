@@ -6,30 +6,40 @@
  */
 package org.mule.tools.apikit.model;
 
+import org.mule.tools.apikit.misc.APIKitTools;
+
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import org.apache.commons.io.FilenameUtils;
 
 public class API {
-
     public static final int DEFAULT_PORT = 8081;
     public static final String DEFAULT_BASE_URI = "http://localhost:" + DEFAULT_PORT + "/api";
+    public static final String DEFAULT_BASE_PATH = "/";
+
+    private APIKitConfig config;
+    private HttpListenerConfig httpListenerConfig;
+    private String path;
 
     private String baseUri;
-    private APIKitConfig config;
     private File xmlFile;
-    private File yamlFile;
+    private File ramlFile;
     private String id;
+    private Boolean useInboundEndpoint;
 
-    public API(File yamlFile, File xmlFile, String baseUri) {
-        this.baseUri = baseUri;
-        this.yamlFile = yamlFile;
+
+    public API(File ramlFile, File xmlFile, String baseUri, String path) {
+        this.path = path;
+        this.ramlFile = ramlFile;
         this.xmlFile = xmlFile;
-        id = FilenameUtils.removeExtension(yamlFile.getName()).trim();
+        this.baseUri = baseUri;
+        id = FilenameUtils.removeExtension(ramlFile.getName()).trim();
     }
 
-    public API(File yamlFile, File xmlFile, String baseUri, APIKitConfig config) {
-        this(yamlFile, xmlFile, baseUri);
+    public API(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config) {
+        this(ramlFile, xmlFile, baseUri, path);
         this.config = config;
     }
 
@@ -46,17 +56,27 @@ public class API {
         if (xmlFile == null) {
             xmlFile = new File(rootDirectory,
                     FilenameUtils.getBaseName(
-                            yamlFile.getAbsolutePath()) + ".xml");
+                            ramlFile.getAbsolutePath()) + ".xml");
         }
         return xmlFile;
     }
 
-    public File getYamlFile() {
-        return yamlFile;
+    public File getRamlFile() {
+        return ramlFile;
     }
 
-    public String getBaseUri() {
-        return baseUri;
+    public String getPath()
+    {
+        return path;
+    }
+
+    public void setPath(String path)
+    {
+        this.path = path;
+    }
+
+    public HttpListenerConfig getHttpListenerConfig() {
+        return httpListenerConfig;
     }
 
     public APIKitConfig getConfig() {
@@ -67,8 +87,36 @@ public class API {
         this.config = config;
     }
 
-    public void setDefaultConfig() {
-        config = new APIKitConfig.Builder(yamlFile.getName()).setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME).build();
+    public void setHttpListenerConfig(HttpListenerConfig httpListenerConfig) {
+        this.httpListenerConfig = httpListenerConfig;
+    }
+
+    public void setDefaultAPIKitConfig() {
+        config = new APIKitConfig.Builder(ramlFile.getName()).setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME).build();
+    }
+
+    public void setDefaultHttpListenerConfig()
+    {
+        String httpListenerConfigName = id == null? HttpListenerConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListenerConfig.DEFAULT_CONFIG_NAME;
+        httpListenerConfig = new HttpListenerConfig.Builder(httpListenerConfigName, API.DEFAULT_BASE_URI).build();
+    }
+
+    public Boolean useInboundEndpoint()
+    {
+        return useInboundEndpoint;
+    }
+    public boolean setUseInboundEndpoint(Boolean useInboundEndpoint)
+    {
+        return this.useInboundEndpoint = useInboundEndpoint;
+    }
+    public String getBaseUri()
+    {
+        return baseUri;
+    }
+
+    public void setBaseUri(String baseUri)
+    {
+        this.baseUri = baseUri;
     }
 
     @Override
@@ -78,17 +126,18 @@ public class API {
 
         API api = (API) o;
 
-        if (!yamlFile.equals(api.yamlFile)) return false;
+        if (!ramlFile.equals(api.ramlFile)) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        return yamlFile.hashCode();
+        return ramlFile.hashCode();
     }
 
     public String getId() {
         return id;
     }
+
 }
