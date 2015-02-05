@@ -2,7 +2,12 @@
 <archetype-descriptor xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0 http://maven.apache.org/xsd/archetype-descriptor-1.0.0.xsd" name="mule-apikit-example"
     xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <fileSets>
+    <requiredProperties>
+        <requiredProperty key="muleVersion">
+            <defaultValue>3.6.0</defaultValue>
+        </requiredProperty>
+    </requiredProperties>
+    <fileSets>
     <fileSet filtered="true" encoding="UTF-8">
       <directory>src/main/java</directory>
       <includes>
