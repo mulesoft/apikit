@@ -6,8 +6,6 @@
  */
 package org.mule.tools.apikit;
 
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -39,6 +37,9 @@ public class ScaffolderTest {
     public void setUp() {
         folder.newFolder("scaffolder");
         folder.newFolder("scaffolder-existing");
+        folder.newFolder("scaffolder-existing-old");
+        folder.newFolder("scaffolder-existing-old-address");
+
     }
 
     @Test
@@ -83,7 +84,8 @@ public class ScaffolderTest {
         File muleXmlSimple = simpleGeneration("no-name");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-        // TODO Add assertions
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"no-name-httpListenerConfig\" host=\"localhost\" port=\"8081\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"no-name-httpListenerConfig\" path=\"/api/*\""));
     }
 
     @Test
@@ -92,34 +94,97 @@ public class ScaffolderTest {
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
 
-        // TODO Verify this assertion
-        //assertEquals(1, countOccurences(s.replaceAll("\\s+", " "), "{ \"name\": \"Bobby\", \"food\": \"Ice Cream\"}"));
+        assertEquals(1, countOccurences(s, "{&#xA;    &quot;name&quot;: &quot;Bobby&quot;,&#xA;    &quot;food&quot;: &quot;Ice Cream&quot;&#xA;}"));
     }
 
     @Test
     public void testAlreadyExistsGenerate() throws Exception {
-        List<File> yamls = Arrays.asList(getFile("scaffolder-existing/simple.yaml"));
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing/simple.raml"));
         File xmlFile = getFile("scaffolder-existing/simple.xml");
         List<File> xmls = Arrays.asList(xmlFile);
         File muleXmlOut = folder.newFolder("mule-xml-out");
 
-        Scaffolder scaffolder = createScaffolder(yamls, xmls, muleXmlOut);
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
         scaffolder.run();
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "get:/pet"));
+        assertEquals(1, countOccurences(s, "post:/pet"));
+    }
+
+
+    @Test
+    public void testAlreadyExistsOldGenerate() throws Exception {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing-old/simple.raml"));
+        File xmlFile = getFile("scaffolder-existing-old/simple.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
+        scaffolder.run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(0, countOccurences(s, "http:listener-config"));
+        assertEquals(0, countOccurences(s, "http:listener"));
+        assertEquals(1, countOccurences(s, "http:inbound-endpoint port=\"${serverPort}\" host=\"localhost\" path=\"api\""));
+
 
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));
     }
 
     @Test
+    public void testAlreadyExistsOldWithAddressGenerate() throws Exception {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing-old-address/complex.raml"));
+        File xmlFile = getFile("scaffolder-existing-old-address/complex.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
+        scaffolder.run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(0, countOccurences(s, "http:listener-config"));
+        assertEquals(0, countOccurences(s, "http:listener"));
+        assertEquals(1, countOccurences(s, "http:inbound-endpoint address"));
+
+        assertEquals(1, countOccurences(s, "put:/clients/{clientId}:complex-config"));
+        assertEquals(1, countOccurences(s, "put:/invoices/{invoiceId}:complex-config"));
+        assertEquals(1, countOccurences(s, "put:/items/{itemId}:application/json:complex-config"));
+        assertEquals(1, countOccurences(s, "put:/providers/{providerId}:complex-config"));
+        assertEquals(1, countOccurences(s, "delete:/clients/{clientId}:complex-config"));
+        assertEquals(1, countOccurences(s, "delete:/invoices/{invoiceId}:complex-config"));
+        assertEquals(1, countOccurences(s, "delete:/items/{itemId}:multipart/form-data:complex-config"));
+        assertEquals(1, countOccurences(s, "delete:/providers/{providerId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/clients/{clientId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/clients:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/invoices/{invoiceId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/invoices:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/items/{itemId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/items:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/providers/{providerId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/providers:complex-config"));
+        assertEquals(1, countOccurences(s, "post:/clients:complex-config"));
+        assertEquals(1, countOccurences(s, "post:/invoices:complex-config"));
+        assertEquals(1, countOccurences(s, "post:/items:application/json:complex-config"));
+        assertEquals(1, countOccurences(s, "post:/providers:complex-config"));
+
+    }
+
+    @Test
     public void testMultipleMimeTypesWithoutNamedConfig() throws Exception {
-        List<File> yamls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.yaml"));
+        List<File> ramls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.raml"));
         File muleXmlOut = folder.newFolder("scaffolder");
         List<File> xmls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.xml"));
 
-        createScaffolder(yamls, xmls, muleXmlOut).run();
+        createScaffolder(ramls, xmls, muleXmlOut).run();
 
         File muleXmlSimple = new File(muleXmlOut, "multipleMimeTypes.xml");
         assertTrue(muleXmlSimple.exists());
@@ -138,10 +203,10 @@ public class ScaffolderTest {
 
     @Test
     public void testMultipleMimeTypes() throws Exception {
-        List<File> yamls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.yaml"));
+        List<File> ramls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.raml"));
         File muleXmlOut = folder.newFolder("scaffolder");
 
-        createScaffolder(yamls, new ArrayList<File>(), muleXmlOut).run();
+        createScaffolder(ramls, new ArrayList<File>(), muleXmlOut).run();
 
         File muleXmlSimple = new File(muleXmlOut, "multipleMimeTypes.xml");
         assertTrue(muleXmlSimple.exists());
@@ -157,18 +222,18 @@ public class ScaffolderTest {
         assertTrue(!s.contains("post:/vet:application/xml:multipleMimeTypes-config"));
     }
 
-    private Scaffolder createScaffolder(List<File> yamls, List<File> xmls, File muleXmlOut)
+    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
             throws MojoExecutionException {
         Log log = mock(Log.class);
 
-        Map<File, InputStream> yamlMap = getFileInputStreamMap(yamls);
+        Map<File, InputStream> ramlMap = getFileInputStreamMap(ramls);
         Map<File, InputStream> xmlMap = getFileInputStreamMap(xmls);
 
-        return new Scaffolder(log, muleXmlOut, yamlMap, xmlMap);
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap);
     }
 
-    private Map<File, InputStream> getFileInputStreamMap(List<File> yamls) {
-        return fileListUtils.toStreamFromFiles(yamls);
+    private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
+        return fileListUtils.toStreamFromFiles(ramls);
     }
 
     private File getFile(String s) throws  Exception {
@@ -181,11 +246,11 @@ public class ScaffolderTest {
     }
 
     private File simpleGeneration(String name) throws Exception {
-        List<File> yamls = Arrays.asList(getFile("scaffolder/" + name + ".yaml"));
+        List<File> ramls = Arrays.asList(getFile("scaffolder/" + name + ".raml"));
         List<File> xmls = Arrays.asList();
         File muleXmlOut = folder.newFolder("mule-xml-out");
 
-        Scaffolder scaffolder = createScaffolder(yamls, xmls, muleXmlOut);
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
         scaffolder.run();
 
         return new File(muleXmlOut, name + ".xml");

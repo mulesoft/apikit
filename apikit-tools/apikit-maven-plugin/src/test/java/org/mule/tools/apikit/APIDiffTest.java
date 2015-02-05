@@ -60,14 +60,14 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifference() throws Exception {
-        API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
+        API fromRAMLFile = apiFactory.createAPIBinding(new File("sample.raml"), null, "http://localhost:8080", "/api/*",  null);
 
         HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b");
+        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
         a.put(fab, mock(GenerationModel.class));
 
         HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
-        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b");
+        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
         b.add(feb);
 
         Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
@@ -79,15 +79,15 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifferenceMismatching() throws Exception {
-        API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
+        API fromRAMLFile = apiFactory.createAPIBinding(new File("sample.raml"), null, "http://localhost:8080", "/api/*",  null);
 
         HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromYAMLFile, "b", "b");
+        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromRAMLFile, "b", "b");
         a.put(fab, mock(GenerationModel.class));
-        a.put(new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b"), mock(GenerationModel.class));
+        a.put(new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b"), mock(GenerationModel.class));
 
         HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
-        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b");
+        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
         b.add(feb);
 
         Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
@@ -99,14 +99,14 @@ public class APIDiffTest {
 
     @Test
     public void testComputeDifferenceAsymetric() throws Exception {
-        API fromYAMLFile = apiFactory.createAPIBinding(new File("sample.yaml"), null, "https://localhost/api");
+        API fromRAMLFile = apiFactory.createAPIBinding(new File("sample.raml"), null, "http://localhost:8080", "/api/*",  null);
 
         HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromYAMLFile, "b", "b");
+        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromRAMLFile, "b", "b");
         a.put(fab, mock(GenerationModel.class));
 
         HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
-        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromYAMLFile, "a", "b");
+        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
         b.add(feb);
 
         Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);

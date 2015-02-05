@@ -11,7 +11,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.mule.tools.apikit.model.APIKitConfig;
 import org.raml.model.ActionType;
 
 public class APIKitFlow {
@@ -23,10 +22,6 @@ public class APIKitFlow {
     private final String mimeType;
 
     public static final String APIKIT_FLOW_NAME_FORMAT = "^([^:]+):(/[^:]+)(:([^:]+))?(:(.*))?$";
-
-//    public APIKitFlow(final String action, final String resource) {
-//        this(action, resource, null, null);
-//    }
 
     public APIKitFlow(final String action, final String resource, final String mimeType, String configRef) {
         this.action = action;

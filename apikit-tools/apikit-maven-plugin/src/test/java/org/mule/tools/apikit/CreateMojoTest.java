@@ -22,10 +22,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
 
 @RunWith(JUnit4.class)
 public class CreateMojoTest extends AbstractMojoTestCase {
@@ -60,13 +59,13 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         lala.mkdirs();
 
         // Do
-        apiFile = new File(api, "hello.yaml");
+        apiFile = new File(api, "hello.raml");
         apiFile.createNewFile();
         new File(api, "bye.yml").createNewFile();
-        new File(lala, "wow.yaml").createNewFile();
+        new File(lala, "wow.raml").createNewFile();
 
         // Don't
-        new File(main, "dont-read.yaml").createNewFile();
+        new File(main, "dont-read.raml").createNewFile();
 
         // TODO mock properties like this:
         setVariableValueToObject(mojo, "buildContext", new DefaultBuildContext());
@@ -75,14 +74,14 @@ public class CreateMojoTest extends AbstractMojoTestCase {
 
     @Test
     public void testGetIncludedFiles() throws Exception {
-        List<String> files = mojo.getIncludedFiles(project, new String[]{"src/main/api/**/*.yaml", "src/main/**/*.yml"},
+        List<String> files = mojo.getIncludedFiles(project, new String[]{"src/main/api/**/*.raml", "src/main/**/*.yml"},
                 new String[]{});
         HashSet<String> set = new HashSet<String>(files);
 
-        assertTrue(set.contains(new File(project, "src/main/api/hello.yaml").getAbsolutePath()));
+        assertTrue(set.contains(new File(project, "src/main/api/hello.raml").getAbsolutePath()));
         assertTrue(set.contains(new File(project, "src/main/api/bye.yml").getAbsolutePath()));
-        assertTrue(set.contains(new File(project, "src/main/api/lala/wow.yaml").getAbsolutePath()));
-        assertFalse(set.contains(new File(project, "src/main/dont-read.yaml").getAbsolutePath()));
+        assertTrue(set.contains(new File(project, "src/main/api/lala/wow.raml").getAbsolutePath()));
+        assertFalse(set.contains(new File(project, "src/main/dont-read.raml").getAbsolutePath()));
         assertEquals(3, files.size());
     }
 
@@ -90,19 +89,28 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     public void testExecute() throws  Exception {
         setVariableValueToObject(mojo, "muleXmlDirectory", app);
         setVariableValueToObject(mojo, "specDirectory", project);
+        setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
 
-        IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.yaml"),
+        IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
                 new FileOutputStream(apiFile));
 
         mojo.execute();
 
         assertTrue(apiFile.exists());
         FileInputStream input = new FileInputStream(apiFile);
-        String s = IOUtils.toString(input);
+        String ramlFileContent = IOUtils.toString(input);
         input.close();
 
-        assertTrue(s.length() > 0);
-        //TODO Assert content
-    }
+        assertTrue(ramlFileContent.length() > 0);
+        File muleConfigFile = new File (project.getPath() + "/src/main/app/hello.xml");
+        assertTrue(muleConfigFile.exists());
 
+        input = new FileInputStream(muleConfigFile);
+        String muleConfigContent = IOUtils.toString(input);
+        input.close();
+
+        assertTrue(muleConfigContent.length() > 0);
+        assertTrue(muleConfigContent.contains("listener"));
+
+    }
 }
