@@ -89,7 +89,6 @@ public class API {
 
     public void setHttpListenerConfig(HttpListenerConfig httpListenerConfig) {
         this.httpListenerConfig = httpListenerConfig;
-        this.useInboundEndpoint = false;
     }
 
     public void setDefaultAPIKitConfig() {

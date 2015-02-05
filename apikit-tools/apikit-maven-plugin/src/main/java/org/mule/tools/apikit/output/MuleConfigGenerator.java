@@ -108,7 +108,7 @@ public class MuleConfigGenerator {
             doc = docs.get(api);
         } else {
             doc = getDocument(api);
-            if(api.getConfig() == null || api.getHttpListenerConfig() == null) {
+            if(api.getConfig() == null || (!api.useInboundEndpoint() && api.getHttpListenerConfig() == null)) {
                 if (api.getConfig() == null)
                 {
                     api.setDefaultAPIKitConfig();

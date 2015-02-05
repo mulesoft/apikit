@@ -139,7 +139,7 @@ public class RAMLFilesParser
 
     void addResource(API api, Resource resource, Action action, String mimeType) {
         String completePath;
-        if (api.getHttpListenerConfig() != null)
+        if (!api.useInboundEndpoint() && api.getHttpListenerConfig() != null)
         {
             completePath = APIKitTools.getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
         }

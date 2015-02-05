@@ -38,6 +38,8 @@ public class ScaffolderTest {
         folder.newFolder("scaffolder");
         folder.newFolder("scaffolder-existing");
         folder.newFolder("scaffolder-existing-old");
+        folder.newFolder("scaffolder-existing-old-address");
+
     }
 
     @Test
@@ -109,7 +111,7 @@ public class ScaffolderTest {
         String s = IOUtils.toString(new FileInputStream(xmlFile));
         assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
         assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
-        assertEquals(0, countOccurences(s, "http:inbound-endpoint port=\"${serverPort}\" host=\"localhost\" path=\"api\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));
     }
@@ -127,13 +129,53 @@ public class ScaffolderTest {
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(0, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
-        assertEquals(0, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:listener-config"));
+        assertEquals(0, countOccurences(s, "http:listener"));
         assertEquals(1, countOccurences(s, "http:inbound-endpoint port=\"${serverPort}\" host=\"localhost\" path=\"api\""));
 
 
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));
+    }
+
+    @Test
+    public void testAlreadyExistsOldWithAddressGenerate() throws Exception {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing-old-address/complex.raml"));
+        File xmlFile = getFile("scaffolder-existing-old-address/complex.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
+        scaffolder.run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(0, countOccurences(s, "http:listener-config"));
+        assertEquals(0, countOccurences(s, "http:listener"));
+        assertEquals(1, countOccurences(s, "http:inbound-endpoint address"));
+
+        assertEquals(1, countOccurences(s, "put:/clients/{clientId}:complex-config"));
+        assertEquals(1, countOccurences(s, "put:/invoices/{invoiceId}:complex-config"));
+        assertEquals(1, countOccurences(s, "put:/items/{itemId}:application/json:complex-config"));
+        assertEquals(1, countOccurences(s, "put:/providers/{providerId}:complex-config"));
+        assertEquals(1, countOccurences(s, "delete:/clients/{clientId}:complex-config"));
+        assertEquals(1, countOccurences(s, "delete:/invoices/{invoiceId}:complex-config"));
+        assertEquals(1, countOccurences(s, "delete:/items/{itemId}:multipart/form-data:complex-config"));
+        assertEquals(1, countOccurences(s, "delete:/providers/{providerId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/clients/{clientId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/clients:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/invoices/{invoiceId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/invoices:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/items/{itemId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/items:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/providers/{providerId}:complex-config"));
+        assertEquals(1, countOccurences(s, "get:/providers:complex-config"));
+        assertEquals(1, countOccurences(s, "post:/clients:complex-config"));
+        assertEquals(1, countOccurences(s, "post:/invoices:complex-config"));
+        assertEquals(1, countOccurences(s, "post:/items:application/json:complex-config"));
+        assertEquals(1, countOccurences(s, "post:/providers:complex-config"));
+
     }
 
     @Test
