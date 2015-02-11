@@ -36,6 +36,7 @@
                         <xsd:complexType>
                             <xsd:attribute name="resource" use="required" type="mule:nonBlankString" />
                             <xsd:attribute name="action" use="required" type="mule:nonBlankString" />
+                            <xsd:attribute name="content-type" use="optional" type="mule:nonBlankString" />
                             <xsd:attribute name="flow-ref" use="required" type="mule:nonBlankString" />
                         </xsd:complexType>
                     </xsd:element>
