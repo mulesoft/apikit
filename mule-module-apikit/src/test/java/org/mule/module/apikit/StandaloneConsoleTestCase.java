@@ -8,8 +8,6 @@ package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.port;
-import static com.jayway.restassured.config.RedirectConfig.redirectConfig;
-import static com.jayway.restassured.config.RestAssuredConfig.config;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
@@ -91,11 +89,10 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     @Test
     public void consoleNoPath() throws Exception
     {
-        RestAssured.port = serverPort2.getNumber();
-        given().header("Accept", "text/html")
+        given().port(serverPort2.getNumber()).header("Accept", "text/html")
                 .expect()
                 .response().body(allOf(containsString("<title>api:Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + "/\"")))
+                                       containsString("src=\"http://localhost:" + serverPort2.getNumber() + "/\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/index.html");
     }
@@ -104,8 +101,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     @Test
     public void getRamlConsoleNoPath() throws Exception
     {
-        RestAssured.port = serverPort2.getNumber();
-        given().header("Accept", APPLICATION_RAML)
+        given().port(serverPort2.getNumber()).header("Accept", APPLICATION_RAML)
                 .expect()
                 .response().body(containsString("baseUri: \"http://localhost:" + serverPort.getNumber() + "/api\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
@@ -115,8 +111,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     @Test
     public void getRamlConsoleBindAllInterfaces() throws Exception
     {
-        RestAssured.port = serverPort4.getNumber();
-        given().header("Accept", APPLICATION_RAML)
+        given().port(serverPort4.getNumber()).header("Accept", APPLICATION_RAML)
                 .expect()
                 .response().body(containsString("baseUri: \"http://localhost:" + serverPort3.getNumber() + "/api\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
@@ -126,10 +121,8 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     @Test
     public void consoleEmbeddedNoPath() throws Exception
     {
-        RestAssured.config = config().redirect(redirectConfig().followRedirects(false));
-        RestAssured.port = serverPort5.getNumber();
-
-        given().header("Accept", "text/html")
+        given().port(serverPort5.getNumber()).redirects().follow(false)
+                .header("Accept", "text/html")
                 .expect()
                 .response().statusCode(301)
                 .when().get("/console");

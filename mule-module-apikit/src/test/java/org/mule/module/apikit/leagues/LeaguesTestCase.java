@@ -366,11 +366,10 @@ public class LeaguesTestCase extends FunctionalTestCase
     @Test
     public void consoleDirectoryNoSlash() throws Exception
     {
-        given().header("Accept", "text/html")
+        given().redirects().follow(false).header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
-                                       matches("(?s).*src=\"http://[localhost0-9.]+:" + port + "/api/\".*")))
-                .header("Content-type", "text/html").statusCode(200)
+                .response().statusCode(301)
+                .header("Location", "http://localhost:" + serverPort.getValue() + "/api/console/")
             .when().get("/api/console");
     }
 

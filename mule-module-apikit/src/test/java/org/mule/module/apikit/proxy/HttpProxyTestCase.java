@@ -58,7 +58,7 @@ public class HttpProxyTestCase extends FunctionalTestCase
     @Test
     public void getConsole() throws Exception
     {
-        given().header("Accept", "text/html")
+        given().redirects().follow(true).header("Accept", "text/html")
                 .expect().log().everything()
                 .response().body(containsString("raml-console src=\"http://localhost:" + proxyPort.getValue() + "/console/\""))
                 .statusCode(200)
