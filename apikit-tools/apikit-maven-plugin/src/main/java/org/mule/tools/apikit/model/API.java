@@ -103,6 +103,10 @@ public class API {
 
     public Boolean useInboundEndpoint()
     {
+        if (APIKitTools.isForcedToUseInboundEndpoint())
+        {
+            return true;
+        }
         return useInboundEndpoint;
     }
     public boolean setUseInboundEndpoint(Boolean useInboundEndpoint)

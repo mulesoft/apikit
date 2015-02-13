@@ -9,6 +9,7 @@ package org.mule.tools.apikit;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
+import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationStrategy;
@@ -25,18 +26,31 @@ public class Scaffolder {
     private final MuleConfigGenerator muleConfigGenerator;
 
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory,
-                                   List<String> specFiles, List<String> muleXmlFiles)
+                                              List<String> specFiles, List<String> muleXmlFiles)
+            throws MojoExecutionException
+    {
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, null);
+    }
+
+    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory,
+                                   List<String> specFiles, List<String> muleXmlFiles, String muleVersion)
             throws MojoExecutionException {
         FileListUtils fileUtils = new FileListUtils(log);
 
         Map<File, InputStream> fileInputStreamMap = fileUtils.toStreamsOrFail(specFiles);
         Map<File, InputStream> streams = fileUtils.toStreamsOrFail(muleXmlFiles);
 
-        return new Scaffolder(log, muleXmlOutputDirectory, fileInputStreamMap, streams);
+        return new Scaffolder(log, muleXmlOutputDirectory, fileInputStreamMap, streams, muleVersion);
     }
 
     public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> ramls,
                       Map<File, InputStream> xmls)  {
+        this(log,muleXmlOutputDirectory,ramls, xmls, null);
+    }
+
+    public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> ramls,
+                      Map<File, InputStream> xmls, String muleVersion)  {
+        APIKitTools.chooseInboundCreation(muleVersion);
         APIFactory apiFactory = new APIFactory();
         RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
         MuleConfigParser muleConfigParser = new MuleConfigParser(log, ramls.keySet(), xmls, apiFactory);
