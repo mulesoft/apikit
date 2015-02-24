@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 
-import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
@@ -20,7 +19,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ConfigurationTestCase extends FunctionalTestCase
+public class ConfigurationTestCase extends FunctionalOldConsoleTestCase
 {
 
     @Rule

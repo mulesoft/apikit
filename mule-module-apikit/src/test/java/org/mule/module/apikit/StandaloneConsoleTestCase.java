@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
 
-import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
@@ -20,7 +19,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class StandaloneConsoleTestCase extends FunctionalTestCase
+public class StandaloneConsoleTestCase extends FunctionalOldConsoleTestCase
 {
 
     private static final String CONSOLE_PATH = "/konsole";

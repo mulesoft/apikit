@@ -42,7 +42,7 @@ public class ConsoleHandler
     public static final String MIME_TYPE_GIF = "image/gif";
     public static final String MIME_TYPE_SVG = "image/svg+xml";
     public static final String MIME_TYPE_CSS = "text/css";
-    private static final String RESOURCE_BASE = System.getProperty("apikit.console.beta") != null ? "/console2" : "/console";
+    private static final String RESOURCE_BASE = System.getProperty("apikit.console.old") != null ? "/console" : "/console2";
 
     private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
     private String consolePath;

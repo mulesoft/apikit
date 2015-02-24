@@ -19,7 +19,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ArchetypeConfigTestCase extends FunctionalTestCase
+public class ArchetypeConfigTestCase extends FunctionalOldConsoleTestCase
 {
 
     @Rule
