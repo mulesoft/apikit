@@ -11,7 +11,6 @@ import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 
-import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
@@ -19,7 +18,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class PathlessEndpointStandaloneTestCase extends FunctionalTestCase
+public class PathlessEndpointStandaloneTestCase extends FunctionalOldConsoleTestCase
 {
 
     @Rule

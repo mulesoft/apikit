@@ -18,7 +18,7 @@ import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
 import static org.mule.module.apikit.util.RegexMatcher.matches;
 
-import org.mule.tck.junit4.FunctionalTestCase;
+import org.mule.module.apikit.FunctionalOldConsoleTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
@@ -26,7 +26,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class LeaguesTestCase extends FunctionalTestCase
+public class LeaguesTestCase extends FunctionalOldConsoleTestCase
 {
 
     @Rule
