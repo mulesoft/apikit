@@ -19,7 +19,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class PathlessEndpointTestCase extends FunctionalTestCase
+public class PathlessEndpointTestCase extends FunctionalOldConsoleTestCase
 {
 
     @Rule

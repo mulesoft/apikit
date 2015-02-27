@@ -20,7 +20,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ConfigurationTestCase extends FunctionalTestCase
+public class ConfigurationTestCase extends FunctionalOldConsoleTestCase
 {
 
     @Rule

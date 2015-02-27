@@ -22,7 +22,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class StandaloneConsoleTestCase extends FunctionalTestCase
+public class StandaloneConsoleTestCase extends FunctionalOldConsoleTestCase
 {
 
     private static final String CONSOLE_PATH = "/konsole";

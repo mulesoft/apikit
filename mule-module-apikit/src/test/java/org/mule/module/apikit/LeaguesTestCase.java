@@ -27,7 +27,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class LeaguesTestCase extends FunctionalTestCase
+public class LeaguesTestCase extends FunctionalOldConsoleTestCase
 {
 
     @Rule

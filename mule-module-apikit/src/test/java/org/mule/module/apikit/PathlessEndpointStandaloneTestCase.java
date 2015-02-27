@@ -20,7 +20,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class PathlessEndpointStandaloneTestCase extends FunctionalTestCase
+public class PathlessEndpointStandaloneTestCase extends FunctionalOldConsoleTestCase
 {
 
     @Rule
