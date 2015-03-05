@@ -11,7 +11,7 @@ import org.mule.tck.junit4.FunctionalTestCase;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-public class FunctionalOldConsoleTestCase extends FunctionalTestCase
+public abstract class FunctionalOldConsoleTestCase extends FunctionalTestCase
 {
     @BeforeClass
     public static void setUp()
