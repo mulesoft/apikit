@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 
+import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
@@ -19,7 +20,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ConfigurationTestCase extends FunctionalOldConsoleTestCase
+public class ConfigurationTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -62,7 +63,7 @@ public class ConfigurationTestCase extends FunctionalOldConsoleTestCase
         RestAssured.port = serverPortDefault.getNumber();
         given().header("Accept", "text/html")
                 .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
+                .response().body(allOf(containsString("<title>API Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/default/\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/default/console/");
@@ -74,9 +75,9 @@ public class ConfigurationTestCase extends FunctionalOldConsoleTestCase
         RestAssured.port = serverPortDefault.getNumber();
         given().header("Accept", "text/css")
                 .expect()
-                .response().body(containsString("#raml-console-unembedded"))
+                .response().body(containsString(".CodeMirror"))
                 .header("Content-type", "text/css").statusCode(200)
-                .when().get("/default/console/styles/app.css");
+                .when().get("/default/console/styles/api-console-light-theme.css");
     }
 
     @Test
@@ -107,7 +108,7 @@ public class ConfigurationTestCase extends FunctionalOldConsoleTestCase
         RestAssured.port = serverPortCustom.getNumber();
         given().header("Accept", "text/html")
                 .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
+                .response().body(allOf(containsString("<title>API Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/custom/\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/custom/custom/");
@@ -119,9 +120,9 @@ public class ConfigurationTestCase extends FunctionalOldConsoleTestCase
         RestAssured.port = serverPortCustom.getNumber();
         given().header("Accept", "text/css")
                 .expect()
-                .response().body(containsString("#raml-console-unembedded"))
+                .response().body(containsString(".CodeMirror"))
                 .header("Content-type", "text/css").statusCode(200)
-                .when().get("/custom/custom/styles/app.css");
+                .when().get("/custom/custom/styles/api-console-light-theme.css");
     }
 
     @Test

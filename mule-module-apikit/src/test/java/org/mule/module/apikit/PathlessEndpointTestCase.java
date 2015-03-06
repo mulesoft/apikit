@@ -11,6 +11,7 @@ import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 
+import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
@@ -18,7 +19,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class PathlessEndpointTestCase extends FunctionalOldConsoleTestCase
+public class PathlessEndpointTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -134,7 +135,7 @@ public class PathlessEndpointTestCase extends FunctionalOldConsoleTestCase
     {
         given().header("Accept", "text/html")
                 .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
+                .response().body(allOf(containsString("<title>API Console</title>"),
                                        containsString("src=\"http://localhost:" + port + path)))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get((path.endsWith("/") ? path.substring(0, path.length() - 1) : path) + "/console/index.html");

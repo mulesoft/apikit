@@ -42,7 +42,8 @@ public class ConsoleHandler
     public static final String MIME_TYPE_GIF = "image/gif";
     public static final String MIME_TYPE_SVG = "image/svg+xml";
     public static final String MIME_TYPE_CSS = "text/css";
-    private final String resourceBase;
+    private static final String RESOURCE_BASE = System.getProperty("apikit.console.old") != null ? "/console" : "/console2";
+
     private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
     private String consolePath;
     private String baseSchemeHostPort;
@@ -59,9 +60,8 @@ public class ConsoleHandler
 
     public ConsoleHandler(String ramlUri, String consolePath)
     {
-        resourceBase = System.getProperty("apikit.console.old") != null ? "/console" : "/console2";
         this.consolePath = sanitize(consolePath);
-        String indexHtml = IOUtils.toString(getClass().getResourceAsStream(resourceBase + "/index.html"));
+        String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
         this.ramlUri = ramlUri.endsWith("/") ? ramlUri : ramlUri + "/";
         String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
                                                      "<raml-console src=\"" + this.ramlUri + "\"");
@@ -115,12 +115,12 @@ public class ConsoleHandler
             }
             if (path.equals(consolePath) || path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
             {
-                path = resourceBase + "/index.html";
+                path = RESOURCE_BASE + "/index.html";
                 in = new ByteArrayInputStream(getHomePage(getBaseSchemeHostPort(event)).getBytes());
             }
             else if (path.startsWith(consolePath))
             {
-                in = getClass().getResourceAsStream(resourceBase + path.substring(consolePath.length()));
+                in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(consolePath.length()));
             }
             if (in == null)
             {
@@ -150,7 +150,7 @@ public class ConsoleHandler
         }
         catch (IOException e)
         {
-            throw new ResourceNotFoundException(HttpMessages.fileNotFound(resourceBase + path), event);
+            throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path), event);
         }
 
         return resultEvent;

@@ -19,7 +19,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ArchetypeConfigTestCase extends FunctionalOldConsoleTestCase
+public class ArchetypeConfigTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -49,7 +49,7 @@ public class ArchetypeConfigTestCase extends FunctionalOldConsoleTestCase
     {
         given().header("Accept", "text/html")
                 .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
+                .response().body(allOf(containsString("<title>API Console</title>"),
                                        containsString("src=\"http://localhost:" + port + "/api/\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/api/console/index.html");

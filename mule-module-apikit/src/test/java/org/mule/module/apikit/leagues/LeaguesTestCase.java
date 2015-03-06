@@ -18,7 +18,7 @@ import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
 import static org.mule.module.apikit.util.RegexMatcher.matches;
 
-import org.mule.module.apikit.FunctionalOldConsoleTestCase;
+import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
@@ -26,7 +26,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class LeaguesTestCase extends FunctionalOldConsoleTestCase
+public class LeaguesTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -346,7 +346,7 @@ public class LeaguesTestCase extends FunctionalOldConsoleTestCase
     {
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
+                .response().body(allOf(containsString("<title>API Console</title>"),
                                        matches("(?s).*src=\"http://[localhost0-9.]+:" + port + "/api/\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/index.html");
@@ -357,7 +357,7 @@ public class LeaguesTestCase extends FunctionalOldConsoleTestCase
     {
         given().header("Accept", "text/html")
             .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
+                .response().body(allOf(containsString("<title>API Console</title>"),
                                        matches("(?s).*src=\"http://[localhost0-9.]+:" + port + "/api/\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/");
