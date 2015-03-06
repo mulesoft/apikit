@@ -20,7 +20,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class PathlessEndpointStandaloneTestCase extends FunctionalOldConsoleTestCase
+public class PathlessEndpointStandaloneTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -120,7 +120,7 @@ public class PathlessEndpointStandaloneTestCase extends FunctionalOldConsoleTest
     {
         given().header("Accept", "text/html")
                 .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
+                .response().body(allOf(containsString("<title>API Console</title>"),
                                        containsString("src=\"http://localhost:" + port + path)))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get(path + "/index.html");

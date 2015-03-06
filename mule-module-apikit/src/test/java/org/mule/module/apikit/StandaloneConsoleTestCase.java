@@ -20,7 +20,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class StandaloneConsoleTestCase extends FunctionalOldConsoleTestCase
+public class StandaloneConsoleTestCase extends FunctionalTestCase
 {
 
     private static final String CONSOLE_PATH = "/konsole";
@@ -60,7 +60,7 @@ public class StandaloneConsoleTestCase extends FunctionalOldConsoleTestCase
     {
         given().header("Accept", "text/html")
                 .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
+                .response().body(allOf(containsString("<title>API Console</title>"),
                                        containsString("src=\"http://localhost:" + port + CONSOLE_PATH + "/\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get(CONSOLE_PATH + "/index.html");
@@ -71,9 +71,9 @@ public class StandaloneConsoleTestCase extends FunctionalOldConsoleTestCase
     {
         given().header("Accept", "text/css")
                 .expect()
-                .response().body(containsString("#raml-console-unembedded"))
+                .response().body(containsString(".CodeMirror"))
                 .header("Content-type", "text/css").statusCode(200)
-                .when().get(CONSOLE_PATH + "/styles/app.css");
+                .when().get(CONSOLE_PATH + "/styles/api-console-light-theme.css");
     }
 
     @Test
@@ -91,7 +91,7 @@ public class StandaloneConsoleTestCase extends FunctionalOldConsoleTestCase
     {
         given().port(serverPort2.getNumber()).header("Accept", "text/html")
                 .expect()
-                .response().body(allOf(containsString("<title>api:Console</title>"),
+                .response().body(allOf(containsString("<title>API Console</title>"),
                                        containsString("src=\"http://localhost:" + serverPort2.getNumber() + "/\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/index.html");
