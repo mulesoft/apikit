@@ -13,10 +13,12 @@ import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleException;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.context.MuleContextAware;
 import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
+import org.mule.api.lifecycle.Startable;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.NotFoundException;
@@ -60,7 +62,7 @@ import org.raml.parser.visitor.RamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractConfiguration implements Initialisable, MuleContextAware
+public abstract class AbstractConfiguration implements Initialisable, MuleContextAware, Startable
 {
 
     public static final String APPLICATION_RAML = "application/raml+yaml";
@@ -103,6 +105,12 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         initializeRestFlowMapWrapper();
         loadRoutingTable();
         buildResourcePatternCaches();
+    }
+
+    @Override
+    public void start() throws MuleException
+    {
+
     }
 
     private void loadRoutingTable()

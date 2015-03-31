@@ -121,11 +121,6 @@ public class Configuration extends AbstractConfiguration
                 restFlowMap.put(mapping.getKey(), mapping.getFlow());
             }
 
-            if (RuntimeCapabilities.supportsDinamicPipeline())
-            {
-                addResponseTransformers(restFlowMap.values());
-            }
-
             logMissingMappings();
 
             restFlowMapUnwrapped = new HashMap<String, Flow>(restFlowMap);
@@ -360,6 +355,15 @@ public class Configuration extends AbstractConfiguration
                 throw new RuntimeException("Error registering flow " + flowName, e);
             }
             return wrapper;
+        }
+    }
+
+    @Override
+    public void start() throws MuleException
+    {
+        if (RuntimeCapabilities.supportsDinamicPipeline())
+        {
+            addResponseTransformers(restFlowMap.values());
         }
     }
 }
