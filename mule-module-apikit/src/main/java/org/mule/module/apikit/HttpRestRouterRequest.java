@@ -13,8 +13,6 @@ import org.mule.api.routing.filter.FilterUnacceptedException;
 import org.mule.api.transformer.TransformerException;
 import org.mule.config.i18n.CoreMessages;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.module.apikit.transform.ApikitResponseTransformer;
-import org.mule.transport.NullPayload;
 
 import java.util.List;
 
@@ -23,16 +21,9 @@ import org.raml.model.MimeType;
 public class HttpRestRouterRequest extends HttpRestRequest
 {
 
-    private ApikitResponseTransformer responseTransformer;
-
     public HttpRestRouterRequest(MuleEvent event, AbstractConfiguration config)
     {
         super(event, config);
-        if (!RuntimeCapabilities.supportsDinamicPipeline())
-        {
-            responseTransformer = new ApikitResponseTransformer();
-            responseTransformer.setMuleContext(requestEvent.getMuleContext());
-        }
     }
 
     @Override
@@ -43,23 +34,6 @@ public class HttpRestRouterRequest extends HttpRestRequest
             throw new FilterUnacceptedException(CoreMessages.messageRejectedByFilter(), requestEvent);
         }
         MuleMessage message = responseEvent.getMessage();
-
-        if (responseTransformer != null)
-        {
-            if (responseRepresentation != null)
-            {
-                Object newPayload = responseTransformer.transformToExpectedContentType(message, responseRepresentation, responseMimeTypes);
-                if (!message.getPayload().equals(newPayload))
-                {
-                    message.setPayload(newPayload);
-                }
-            }
-            else
-            {
-                //sent empty response body when no response mime-type is defined
-                message.setPayload(NullPayload.getInstance());
-            }
-        }
 
         //set success status
         if (message.getOutboundProperty("http.status") == null)

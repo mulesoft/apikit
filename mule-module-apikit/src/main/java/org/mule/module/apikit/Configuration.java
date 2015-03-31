@@ -361,9 +361,6 @@ public class Configuration extends AbstractConfiguration
     @Override
     public void start() throws MuleException
     {
-        if (RuntimeCapabilities.supportsDinamicPipeline())
-        {
-            addResponseTransformers(restFlowMap.values());
-        }
+        addResponseTransformers(restFlowMap.values());
     }
 }
