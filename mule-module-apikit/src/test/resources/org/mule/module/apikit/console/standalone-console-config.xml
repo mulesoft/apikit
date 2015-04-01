@@ -15,9 +15,11 @@
 
     <apikit:config name="embedded" raml="org/mule/module/apikit/console/console.raml" consoleEnabled="true" />
 
+    <cors:config name="defaultConfig"/>
+
     <flow name="router">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
-        <cors:validate publicResource="true" />
+        <cors:validate publicResource="true" config-ref="defaultConfig" />
         <apikit:router config-ref="localhost"/>
     </flow>
 
@@ -33,7 +35,7 @@
 
     <flow name="routerBindAll">
         <http:inbound-endpoint port="${serverPort3}" host="0.0.0.0" path="api"/>
-        <cors:validate publicResource="true" />
+        <cors:validate publicResource="true" config-ref="defaultConfig" />
         <apikit:router config-ref="bindAll"/>
     </flow>
 

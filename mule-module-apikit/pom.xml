@@ -71,6 +71,11 @@
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-devkit-support</artifactId>
+            <version>${mule.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-cors</artifactId>
             <version>${cors.module.version}</version>
         </dependency>

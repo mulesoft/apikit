@@ -36,9 +36,11 @@
 
     <apikit:config name="proxiedApi" raml="proxied.yaml" consoleEnabled="false"/>
 
+    <cors:config name="defaultConfig"/>
+
     <flow name="doorway">
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
-        <cors:validate publicResource="true" />
+        <cors:validate publicResource="true" config-ref="defaultConfig" />
         <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>

@@ -12,9 +12,11 @@
         http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd">
 
 
+    <cors:config name="defaultConfig"/>
+
     <flow name="doorway">
         <jetty:inbound-endpoint address="http://localhost:${serverPort}/api" exchange-pattern="request-response"/>
-        <cors:validate publicResource="true" />
+        <cors:validate publicResource="true" config-ref="defaultConfig" />
         <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
