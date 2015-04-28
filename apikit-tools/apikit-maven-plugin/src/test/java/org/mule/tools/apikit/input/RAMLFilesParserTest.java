@@ -10,10 +10,6 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import org.mule.tools.apikit.model.APIFactory;
-import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-import org.mule.tools.apikit.output.GenerationModel;
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -22,8 +18,12 @@ import java.util.Map;
 import java.util.Set;
 
 import junit.framework.Assert;
+
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
+import org.mule.tools.apikit.model.APIFactory;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
+import org.mule.tools.apikit.output.GenerationModel;
 
 public class RAMLFilesParserTest
 {
@@ -58,4 +58,26 @@ public class RAMLFilesParserTest
         Assert.assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
         Assert.assertEquals("hello-httpListenerConfig",triplet.getApi().getHttpListenerConfig().getName());
     }
+    
+    @Test
+    public void apiWithWarningsShouldBeValid()
+    {
+        final InputStream resourceAsStream =
+                RAMLFilesParserTest.class.getClassLoader().getResourceAsStream(
+                        "scaffolder/apiWithWarnings.raml");
+        
+        Log log = mock(Log.class);
+
+        HashSet<File> ramlPaths = new HashSet<File>();
+        ramlPaths.add(new File("leagues.raml"));
+
+        HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
+        streams.put(new File("hello"), resourceAsStream);
+
+        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory());
+
+        Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
+        assertNotNull(entries);
+        assertEquals(1, entries.size());
+    } 
 }
