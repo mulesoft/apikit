@@ -1,0 +1,31 @@
+#%RAML 0.8
+---
+title: Sample API
+version: v0.1
+protocols: [HTTP]
+baseUri: http://localhost:9090/api/{version}
+/items:
+  displayName: Items
+  get:
+    description: Get a list of all the available items. 
+    queryParameters:
+      size:
+        displayName: Size
+        description: |
+          Size of the item. 
+        enum: [ small, medium, large ]
+        required: false
+        default: ""
+      color:
+        displayName: Color
+        description: |
+          Color of the item. 
+        enum: [ blue, yellow ]
+        required: false
+        default: ""
+    responses:
+            200:
+                body:
+                    application/json: !!null
+                    text/xml: !!null
+                    
