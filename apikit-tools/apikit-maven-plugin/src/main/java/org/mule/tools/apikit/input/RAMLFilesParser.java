@@ -9,16 +9,18 @@ package org.mule.tools.apikit.input;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
-import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-
+import org.mule.tools.apikit.output.GenerationModel;
 import org.raml.model.Action;
 import org.raml.model.MimeType;
 import org.raml.model.Raml;
@@ -28,6 +30,7 @@ import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
+import org.raml.parser.rule.ValidationResult.Level;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 import org.raml.parser.visitor.RamlValidationService;
 
@@ -91,16 +94,28 @@ public class RAMLFilesParser
         List<ValidationResult> validationResults = RamlValidationService.createDefault(resourceLoader).validate(content, fileName);
         if (validationResults != null && !validationResults.isEmpty())
         {
-            log.info("File '" + fileName + "' is not a valid root RAML file. See following error(s): ");
-            int errorCount = 1;
-            for (ValidationResult validationResult : validationResults)
-            {
-                log.info("Error " + errorCount + ": " + validationResult.toString());
-                errorCount++;
+            log.info("File '" + fileName + "' is not a valid root RAML file. It contains some errors/warnings. See below: ");
+            int errorsFound = findProblems(fileName, validationResults, Level.ERROR);
+            //log warnings
+            findProblems(fileName, validationResults, Level.WARN);
+            if (errorsFound > 0) {
+                return false;
             }
-            return false;
         }
         return true;
+    }
+
+    private int findProblems(String fileName, List<ValidationResult> validationResults, Level problemLevel)
+    {
+        int problemCount = 0;
+        for (ValidationResult validationResult : validationResults)
+        {
+            if (validationResult.getLevel() == problemLevel)
+            {
+                log.info(problemLevel.name() + " " + (++problemCount) + ": " + validationResult.toString());
+            } 
+        }
+        return problemCount;
     }
 
     void collectResources(File filename, Map<String, Resource> resourceMap, String baseUri)
