@@ -47,7 +47,12 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
     public Object transformToExpectedContentType(MuleMessage message, String responseRepresentation, List<MimeType> responseMimeTypes) throws TransformerException
     {
         Object payload = message.getPayload();
-        String msgMimeType = message.getDataType() != null ? message.getDataType().getMimeType() : null;
+        String msgMimeType = null;
+        DataType<?> dataType = message.getDataType();
+        if (dataType != null && dataType.getMimeType() != null && dataType.getEncoding() != null)
+        {
+            msgMimeType = dataType.getMimeType() + ";charset=" + dataType.getEncoding();
+        }
         String msgContentType = message.getOutboundProperty("Content-Type");
 
         // user is in charge of setting content-type when using */*
