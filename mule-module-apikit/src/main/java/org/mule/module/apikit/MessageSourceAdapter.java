@@ -12,9 +12,6 @@ import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.http.internal.listener.DefaultHttpListener;
 import org.mule.module.http.internal.listener.DefaultHttpListenerConfig;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 public class MessageSourceAdapter
 {
 
@@ -109,59 +106,8 @@ public class MessageSourceAdapter
         @Override
         public String getPath()
         {
-            String path = getFullListenerPath();
+            String path = listener.getPath();
             return path.endsWith("/*") ? path.substring(0, path.length() - 2) : path;
-        }
-
-        private String getFullListenerPath()
-        {
-            // Mule 3.6.1-
-            //return config.resolvePath(listener.getPath());
-
-            // Mule 3.6.2+
-            //ListenerPath listenerPath = config.getFullListenerPath(listener.getPath());
-            //return listenerPath.getResolvedPath();
-
-            String fullPath = null;
-            try
-            {
-                // Mule 3.6.2+ way
-                Method getFullListenerPath = DefaultHttpListenerConfig.class.getDeclaredMethod("getFullListenerPath", String.class);
-                Object listenerPath = getFullListenerPath.invoke(config, listener.getPath());
-                Method getResolvedPath = listenerPath.getClass().getDeclaredMethod("getResolvedPath");
-                fullPath = (String) getResolvedPath.invoke(listenerPath);
-            }
-            catch (NoSuchMethodException e)
-            {
-                // Mule 3.6.1- way
-                try
-                {
-                    Method resolvePath = DefaultHttpListenerConfig.class.getDeclaredMethod("resolvePath", String.class);
-                    fullPath = (String) resolvePath.invoke(config, listener.getPath());
-                }
-                catch (NoSuchMethodException e1)
-                {
-                    throw new ApikitRuntimeException(e1);
-                }
-                catch (InvocationTargetException e1)
-                {
-                    throw new ApikitRuntimeException(e1);
-                }
-                catch (IllegalAccessException e1)
-                {
-                    throw new ApikitRuntimeException(e1);
-                }
-            }
-            catch (InvocationTargetException e)
-            {
-                throw new ApikitRuntimeException(e);
-            }
-            catch (IllegalAccessException e)
-            {
-                throw new ApikitRuntimeException(e);
-            }
-
-            return fullPath;
         }
 
         @Override
