@@ -422,6 +422,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     {
         if (StringUtils.isNotBlank(url))
         {
+            url = url.replace("0.0.0.0", "127.0.0.1");
             consoleUrls.add(url);
         }
     }
