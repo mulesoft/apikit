@@ -14,10 +14,8 @@ import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
-import org.mule.api.routing.filter.FilterUnacceptedException;
 import org.mule.api.transformer.TransformerException;
 import org.mule.api.transport.PropertyScope;
-import org.mule.construct.Flow;
 import org.mule.message.ds.StringDataSource;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.exception.InvalidFormParameterException;
@@ -55,7 +53,7 @@ import org.raml.model.parameter.QueryParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class HttpRestRequest
+public class HttpRestRequest
 {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -96,7 +94,15 @@ public abstract class HttpRestRequest
         return adapter.getRequestMediaType();
     }
 
-    public MuleEvent process(Flow flow, Action action) throws MuleException
+    /**
+     * Validates the request against the RAML and negotiates the response representation.
+     * The resulting event is only updated when default values are applied.
+     *
+     * @param action Raml action to be invoked
+     * @return the updated Mule Event
+     * @throws MuleException
+     */
+    public MuleEvent validate(Action action) throws MuleException
     {
         this.action = action;
         if (!config.isDisableValidations())
@@ -117,13 +123,8 @@ public abstract class HttpRestRequest
             requestEvent.getMessage().setInvocationProperty(BEST_MATCH_REPRESENTATION, responseRepresentation);
         }
         requestEvent.getMessage().setInvocationProperty(APIKIT_ROUTER_REQUEST, "yes");
-
-        MuleEvent responseEvent = flow.process(requestEvent);
-
-        return processResponse(responseEvent, responseMimeTypes, responseRepresentation);
+        return requestEvent;
     }
-
-    protected abstract MuleEvent processResponse(MuleEvent responseEvent, List<MimeType> responseMimeTypes, String responseRepresentation) throws TransformerException, FilterUnacceptedException;
 
     private void processQueryParameters() throws InvalidQueryParameterException
     {

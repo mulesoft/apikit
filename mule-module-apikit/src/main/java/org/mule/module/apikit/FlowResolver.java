@@ -8,6 +8,9 @@ package org.mule.module.apikit;
 
 import org.mule.construct.Flow;
 
+/**
+ * Allows the wrapping of flows on demand in order to inject custom logic.
+ */
 public interface FlowResolver
 {
 

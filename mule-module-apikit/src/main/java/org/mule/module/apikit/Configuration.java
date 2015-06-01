@@ -81,7 +81,7 @@ public class Configuration extends AbstractConfiguration
     @Override
     protected HttpRestRequest getHttpRestRequest(MuleEvent event)
     {
-        return new HttpRestRouterRequest(event, this);
+        return new HttpRestRequest(event, this);
     }
 
     @Override

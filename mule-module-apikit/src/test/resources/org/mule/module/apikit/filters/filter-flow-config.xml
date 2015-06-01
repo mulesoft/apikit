@@ -43,4 +43,11 @@
         <set-payload value="not filtered"/>
     </flow>
 
+    <flow name="put:/throw">
+        <message-filter throwOnUnaccepted="true">
+            <regex-filter pattern="x"/>
+        </message-filter>
+        <set-payload value="not filtered"/>
+    </flow>
+
 </mule>

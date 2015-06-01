@@ -16,7 +16,7 @@
         <rest.assured.version>1.7.2</rest.assured.version>
         <guava.version>18.0</guava.version>
         <jackson2.version>2.4.3</jackson2.version>
-        <muleTestsInfrastructure.version>3.5.0</muleTestsInfrastructure.version>
+        <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
     </properties>
 
     <build>

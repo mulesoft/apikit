@@ -82,7 +82,7 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
     @Override
     public MuleEvent process(MuleEvent event) throws MuleException
     {
-        HttpRestRequest request = new HttpRestRouterRequest(event, getConfig());
+        HttpRestRequest request = new HttpRestRequest(event, getConfig());
 
         //check for raml descriptor request
         if (ramlHandler.handles(request))

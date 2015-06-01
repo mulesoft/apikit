@@ -6,12 +6,18 @@
  */
 package org.mule.module.apikit;
 
+import org.mule.DefaultMuleEvent;
+import org.mule.NonBlockingVoidMuleEvent;
+import org.mule.OptimizedRequestContext;
+import org.mule.VoidMuleEvent;
 import org.mule.api.DefaultMuleException;
-import org.mule.api.MuleContext;
+import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.MuleMessage;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.lifecycle.StartException;
+import org.mule.api.transport.ReplyToHandler;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
@@ -20,6 +26,7 @@ import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
+import org.mule.processor.AbstractRequestResponseMessageProcessor;
 
 import com.google.common.cache.LoadingCache;
 
@@ -32,12 +39,11 @@ import org.raml.model.parameter.UriParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractRouter implements ApiRouter
+public abstract class AbstractRouter extends AbstractRequestResponseMessageProcessor implements ApiRouter
 {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected MuleContext muleContext;
     protected FlowConstruct flowConstruct;
     protected AbstractConfiguration config;
     protected RamlDescriptorHandler ramlHandler;
@@ -58,19 +64,67 @@ public abstract class AbstractRouter implements ApiRouter
     }
 
     @Override
-    public void setMuleContext(MuleContext context)
-    {
-        this.muleContext = context;
-    }
-
-    @Override
     public void setFlowConstruct(FlowConstruct flowConstruct)
     {
         this.flowConstruct = flowConstruct;
     }
 
+    protected MuleEvent processBlocking(MuleEvent event) throws MuleException
+    {
+        RouterRequest result = processRouterRequest(event);
+        event = result.getEvent();
+        if (result.getFlow() != null)
+        {
+            event = result.getFlow().process(event);
+        }
+        return processRouterResponse(event, result.getSuccessStatus());
+    }
+
     @Override
-    public MuleEvent process(MuleEvent event) throws MuleException
+    protected MuleEvent processNonBlocking(MuleEvent event) throws MuleException
+    {
+        final RouterRequest result = processRouterRequest(event);
+
+        event = result.getEvent();
+
+        final ReplyToHandler originalReplyToHandler = event.getReplyToHandler();
+        event = new DefaultMuleEvent(event, new ReplyToHandler()
+        {
+            @Override
+            public void processReplyTo(MuleEvent event, MuleMessage returnMessage, Object replyTo) throws MuleException
+            {
+                MuleEvent response = processRouterResponse(new DefaultMuleEvent(event, originalReplyToHandler), result.getSuccessStatus());
+                // Update RequestContext ThreadLocal for backwards compatibility
+                OptimizedRequestContext.unsafeSetEvent(response);
+                if (!NonBlockingVoidMuleEvent.getInstance().equals(response))
+                {
+                    originalReplyToHandler.processReplyTo(response, null, null);
+                }
+                processFinally(event, null);
+            }
+
+            @Override
+            public void processExceptionReplyTo(MessagingException exception, Object replyTo)
+            {
+                originalReplyToHandler.processExceptionReplyTo(exception, replyTo);
+                processFinally(exception.getEvent(), exception);
+            }
+        });
+        // Update RequestContext ThreadLocal for backwards compatibility
+        OptimizedRequestContext.unsafeSetEvent(event);
+
+        if (result.getFlow() != null)
+        {
+            event = result.getFlow().process(event);
+        }
+        if (!(event instanceof NonBlockingVoidMuleEvent))
+        {
+            return processRouterResponse(event, result.getSuccessStatus());
+        }
+        return event;
+    }
+
+    protected RouterRequest processRouterRequest(MuleEvent event) throws MuleException
     {
         HttpRestRequest request = getHttpRestRequest(event);
 
@@ -79,13 +133,13 @@ public abstract class AbstractRouter implements ApiRouter
         MuleEvent handled = handleEvent(event, path);
         if (handled != null)
         {
-            return handled;
+            return new RouterRequest(handled);
         }
 
         //check for raml descriptor request
         if (ramlHandler.handles(request))
         {
-            return ramlHandler.processRouterRequest(event);
+            return new RouterRequest(ramlHandler.processRouterRequest(event));
         }
 
         URIPattern uriPattern;
@@ -120,7 +174,39 @@ public abstract class AbstractRouter implements ApiRouter
         {
             throw new ApikitRuntimeException("Flow not found for resource: " + resource);
         }
-        return request.process(flow, resource.getAction(request.getMethod()));
+
+        MuleEvent validatedEvent = request.validate(resource.getAction(request.getMethod()));
+
+        return new RouterRequest(validatedEvent, flow, request.getSuccessStatus());
+    }
+
+    private MuleEvent processRouterResponse(MuleEvent event, Integer successStatus)
+    {
+        if (event == null || VoidMuleEvent.getInstance().equals(event))
+        {
+            return event;
+        }
+        return doProcessRouterResponse(event, successStatus);
+    }
+
+    protected abstract MuleEvent doProcessRouterResponse(MuleEvent event, Integer successStatus);
+
+    @Override
+    protected MuleEvent processRequest(MuleEvent event) throws MuleException
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected MuleEvent processNext(MuleEvent event) throws MuleException
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected MuleEvent processResponse(MuleEvent event) throws MuleException
+    {
+        throw new UnsupportedOperationException();
     }
 
     private Map<URIPattern, Resource> getRoutingTable()
@@ -178,4 +264,38 @@ public abstract class AbstractRouter implements ApiRouter
 
     protected abstract Flow getFlow(Resource resource, HttpRestRequest request);
 
+    private static class RouterRequest
+    {
+
+        private MuleEvent event;
+        private Flow flow;
+        private Integer successStatus;
+
+        public RouterRequest(MuleEvent event)
+        {
+            this(event, null, null);
+        }
+
+        public RouterRequest(MuleEvent event, Flow flow, Integer successStatus)
+        {
+            this.event = event;
+            this.flow = flow;
+            this.successStatus = successStatus;
+        }
+
+        public MuleEvent getEvent()
+        {
+            return event;
+        }
+
+        public Flow getFlow()
+        {
+            return flow;
+        }
+
+        public Integer getSuccessStatus()
+        {
+            return successStatus;
+        }
+    }
 }

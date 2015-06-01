@@ -7,14 +7,8 @@
 package org.mule.module.apikit;
 
 import org.mule.api.MuleEvent;
-import org.mule.api.routing.filter.FilterUnacceptedException;
-import org.mule.api.transformer.TransformerException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
-
-import java.util.List;
-
-import org.raml.model.MimeType;
 
 public class HttpRestProxyRequest extends HttpRestRequest
 {
@@ -22,13 +16,6 @@ public class HttpRestProxyRequest extends HttpRestRequest
     public HttpRestProxyRequest(MuleEvent event, AbstractConfiguration config)
     {
         super(event, config);
-    }
-
-    @Override
-    protected MuleEvent processResponse(MuleEvent responseEvent, List<MimeType> responseMimeTypes, String responseRepresentation) throws TransformerException, FilterUnacceptedException
-    {
-        Proxy.copyProperties(responseEvent, Proxy.MULE_RESPONSE_HEADERS);
-        return responseEvent;
     }
 
     @Override

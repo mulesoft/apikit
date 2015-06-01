@@ -88,4 +88,14 @@ public class Router extends AbstractRouter
         return flow;
     }
 
+    @Override
+    protected MuleEvent doProcessRouterResponse(MuleEvent event, Integer successStatus)
+    {
+        if (event.getMessage().getOutboundProperty("http.status") == null)
+        {
+            event.getMessage().setOutboundProperty("http.status", successStatus);
+        }
+        return event;
+    }
+
 }

@@ -119,6 +119,10 @@ public class ProxyConfiguration extends AbstractConfiguration
             return wrapperFlow;
         }
 
+        /**
+         * Does not wrap the flow eagerly.
+         * @return the wrapper flow or null if the flow was not wrapped
+         */
         protected Flow getRawFlow()
         {
             return wrapperFlow;

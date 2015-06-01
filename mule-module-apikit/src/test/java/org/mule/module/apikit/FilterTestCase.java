@@ -47,7 +47,8 @@ public class FilterTestCase extends FunctionalTestCase
     {
         given().body("plastic").contentType("text/plain")
                 .expect()
-                .statusCode(406) //mapped by mule: META-INF/services/org/mule/config/http-exception-mappings.properties
+                .statusCode(200) //success but emtpy body
+                .body(is(""))
                 .when().put("/api/some");
     }
 
@@ -59,6 +60,25 @@ public class FilterTestCase extends FunctionalTestCase
                 .statusCode(200)
                 .body(is("not filtered"))
                 .when().put("/api/some");
+    }
+
+    @Test
+    public void filterThrowRequest() throws Exception
+    {
+        given().body("plastic").contentType("text/plain")
+                .expect()
+                .statusCode(406) //mapped by mule: META-INF/services/org/mule/config/http-exception-mappings.properties
+                .when().put("/api/throw");
+    }
+
+    @Test
+    public void passThrowRequest() throws Exception
+    {
+        given().body("toxic").contentType("text/plain")
+                .expect()
+                .statusCode(200)
+                .body(is("not filtered"))
+                .when().put("/api/throw");
     }
 
 }

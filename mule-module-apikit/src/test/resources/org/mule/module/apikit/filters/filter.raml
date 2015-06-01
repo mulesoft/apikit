@@ -1,10 +1,12 @@
 #%RAML 0.8
 title: filter api
 /some:
-    put:
+    put: &a
         body:
             text/plain: ~
         responses:
             200:
                 body:
                     application/xml: ~
+/throw:
+    put: *a

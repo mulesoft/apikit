@@ -4,12 +4,14 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit;
+package org.mule.module.apikit.proxy;
 
-import org.mule.api.construct.FlowConstructAware;
-import org.mule.api.lifecycle.Startable;
-
-public interface ApiRouter extends Startable, FlowConstructAware
+public class ProxyNonBlockingTestCase extends ProxyTestCase
 {
+
+    protected String getProxyAppFolder()
+    {
+        return "org/mule/module/apikit/proxy/app-nb";
+    }
 
 }
