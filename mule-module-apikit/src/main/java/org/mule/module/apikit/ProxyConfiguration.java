@@ -137,7 +137,10 @@ public class ProxyConfiguration extends AbstractConfiguration
             try
             {
                 muleContext.getRegistry().registerFlowConstruct(wrapper);
-                wrapper.start();
+                if (!wrapper.isStarted())
+                {
+                    wrapper.start();
+                }
             }
             catch (MuleException e)
             {
