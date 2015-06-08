@@ -40,19 +40,29 @@ public class Proxy extends AbstractRouter
                         "http.context.path",
                         "http.context.uri",
                         "http.headers",
+                        "http.listener.path",
                         "http.method",
                         "http.query.params",
                         "http.query.string",
                         "http.relative.path",
+                        "http.remote.address",
                         "http.request",
                         "http.request.path",
+                        "http.request.uri",
+                        "http.scheme",
                         "http.status",
+                        "http.uri.params",
                         "http.version",
                         "server",
                         "x-mule_encoding",
                         "x-mule_session",
-                        "MULE_ORIGINATING_ENDPOINT",
-                        "MULE_REMOTE_CLIENT_ADDRESS"
+                        "mule_originating_endpoint",
+                        "mule_remote_client_address",
+                        "host",
+                        "content-length",
+                        "connection",
+                        "transfer-encoding",
+                        "server"
                 };
         MULE_RESPONSE_HEADERS = new HashSet<>(Arrays.asList(headers));
         MULE_RESPONSE_HEADERS.remove("http.status");
@@ -139,17 +149,17 @@ public class Proxy extends AbstractRouter
         Set<String> inboundPropertyNames = message.getInboundPropertyNames();
         for (String name : inboundPropertyNames)
         {
-            if (!skip.contains(name))
+            if (!skip.contains(name.toLowerCase()))
             {
                 if (LOGGER.isDebugEnabled())
                 {
-                    LOGGER.debug(String.format(">>>>>>>  copying header %s -> %s", name, message.getInboundProperty(name)));
+                    LOGGER.debug(String.format("+++  copying header %s -> %s", name, message.getInboundProperty(name)));
                 }
                 message.setOutboundProperty(name, message.getInboundProperty(name));
             }
             else
             {
-                LOGGER.debug(String.format("/////// skipping header %s -> %s", name, message.getInboundProperty(name)));
+                LOGGER.debug(String.format("--- skipping header %s -> %s", name, message.getInboundProperty(name)));
             }
         }
     }
