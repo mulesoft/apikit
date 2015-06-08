@@ -52,6 +52,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
                                              DataType resultDataType) throws MuleException
     {
         if (sourceDataType.getMimeType().equals(MimeTypes.JSON)
+            || sourceDataType.getMimeType().equals(MimeTypes.APPLICATION_JSON)
             || sourceDataType.getMimeType().endsWith("+json"))
         {
             JsonToObject jto = new JsonToObject();
@@ -61,6 +62,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
             return jto;
         }
         else if (resultDataType.getMimeType().equals(MimeTypes.JSON)
+                 || resultDataType.getMimeType().equals(MimeTypes.APPLICATION_JSON)
                  || resultDataType.getMimeType().endsWith("+json"))
         {
             ObjectToJson otj = new ObjectToJson();
@@ -71,6 +73,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
             return otj;
         }
         else if (sourceDataType.getMimeType().equals(MimeTypes.XML)
+                 || sourceDataType.getMimeType().equals(MimeTypes.APPLICATION_XML)
                  || sourceDataType.getMimeType().endsWith("+xml"))
         {
             try
@@ -86,6 +89,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
             }
         }
         else if (resultDataType.getMimeType().equals(MimeTypes.XML)
+                 || resultDataType.getMimeType().equals(MimeTypes.APPLICATION_XML)
                  || resultDataType.getMimeType().endsWith("+xml"))
         {
             try
