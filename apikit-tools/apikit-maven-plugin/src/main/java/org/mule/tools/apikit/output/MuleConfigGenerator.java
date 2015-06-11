@@ -6,6 +6,25 @@
  */
 package org.mule.tools.apikit.output;
 
+import org.mule.tools.apikit.misc.APIKitTools;
+import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
+import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
+import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
+import org.mule.tools.apikit.output.scopes.ExceptionStrategyScope;
+import org.mule.tools.apikit.output.scopes.FlowScope;
+import org.mule.tools.apikit.output.scopes.HttpListenerConfigScope;
+import org.mule.tools.apikit.output.scopes.MuleScope;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -17,18 +36,6 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-
-import org.mule.tools.apikit.misc.APIKitTools;
-import org.mule.tools.apikit.model.HttpListenerConfig;
-import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
-import org.mule.tools.apikit.output.scopes.*;
-import org.mule.tools.apikit.output.scopes.FlowScope;
-import org.mule.tools.apikit.model.API;
-
-import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MuleConfigGenerator {
     public static final NamespaceWithLocation XMLNS_NAMESPACE = new NamespaceWithLocation(
@@ -74,8 +81,9 @@ public class MuleConfigGenerator {
                 continue;
             }
 
-            // Generate each of the APIKit flows
-            doc.getRootElement().addContent(new APIKitFlowScope(flowEntry).generate());
+            // Generate each of the APIKit flows and insert them before the exception strategy
+            int index = doc.getRootElement().getContentSize() - 1;
+            doc.getRootElement().addContent(index, new APIKitFlowScope(flowEntry).generate());
         }
 
         // Write everything to files
@@ -151,11 +159,12 @@ public class MuleConfigGenerator {
             api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
         }
         new APIKitConfigScope(api.getConfig(), mule).generate();
-        Element exceptionStrategy = new ExceptionStrategyScope(mule, api.getId()).generate();
+        Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
         String configRef = api.getConfig() != null? api.getConfig().getName() : null;
 
         new FlowScope(mule, exceptionStrategy.getAttribute("name").getValue(),
                       api, configRef, listenerConfigRef).generate();
+        mule.addContent(exceptionStrategy);
     }
 
 }

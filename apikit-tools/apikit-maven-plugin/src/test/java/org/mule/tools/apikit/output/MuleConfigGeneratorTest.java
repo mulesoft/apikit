@@ -6,6 +6,26 @@
  */
 package org.mule.tools.apikit.output;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import org.mule.tools.apikit.Helper;
+import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.HttpListenerConfig;
+import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.custommonkey.xmlunit.Diff;
@@ -15,28 +35,9 @@ import org.jdom2.Element;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mule.tools.apikit.Helper;
-import org.mule.tools.apikit.model.APIKitConfig;
-import org.mule.tools.apikit.model.HttpListenerConfig;
-import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
-import org.mule.tools.apikit.model.API;
 import org.raml.model.Action;
 import org.raml.model.ActionType;
 import org.raml.model.Resource;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
 
 public class MuleConfigGeneratorTest {
 
@@ -134,11 +135,8 @@ public class MuleConfigGeneratorTest {
         assertEquals("mule", rootElement.getName());
         Element xmlListenerConfig = rootElement.getChildren().get(0);
         assertEquals("listener-config",xmlListenerConfig.getName());
-        Element globalExceptionStrategy = rootElement.getChildren().get(1);
-        assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
-        assertEquals("hello-apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
 
-        Element mainFlow = rootElement.getChildren().get(2);
+        Element mainFlow = rootElement.getChildren().get(1);
 
         assertEquals("flow", mainFlow.getName());
         assertEquals("hello-main", mainFlow.getAttribute("name").getValue());
@@ -147,6 +145,10 @@ public class MuleConfigGeneratorTest {
 
         Element apikitConfig = mainFlow.getChildren().get(1);
         assertEquals(0, apikitConfig.getChildren().size());
+
+        Element globalExceptionStrategy = rootElement.getChildren().get(2);
+        assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
+        assertEquals("hello-apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
 
     }
 }

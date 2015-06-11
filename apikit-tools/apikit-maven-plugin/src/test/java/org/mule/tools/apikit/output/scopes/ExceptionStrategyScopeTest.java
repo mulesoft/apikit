@@ -6,14 +6,15 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
+import static org.junit.Assert.assertTrue;
+
+import org.mule.tools.apikit.Helper;
+
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.junit.Test;
-import org.mule.tools.apikit.Helper;
-
-import static org.junit.Assert.assertTrue;
 
 public class ExceptionStrategyScopeTest {
 
@@ -24,7 +25,7 @@ public class ExceptionStrategyScopeTest {
         Document document = new Document();
         Element mule = new MuleScope().generate();
         document.setRootElement(mule);
-        new ExceptionStrategyScope(mule, API_ID).generate();
+        mule.addContent(new ExceptionStrategyScope(API_ID).generate());
 
         String s = Helper.nonSpaceOutput(mule);
 

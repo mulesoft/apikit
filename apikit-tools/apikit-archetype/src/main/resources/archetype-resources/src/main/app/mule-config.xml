@@ -37,6 +37,16 @@
 
     <context:property-placeholder location="api.properties" />
 
+    <flow name="api-main">
+#if( $Integer.parseInt($muleVersion)>=$Integer.parseInt($listenerVersion ) )
+        <http:listener config-ref="httpListenerConfig" path="/api/*"/>
+#else
+        <http:inbound-endpoint address="http://localhost:${http.port}/api"/>
+#end
+        <apikit:router config-ref="apiConfig" />
+        <exception-strategy ref="apiKitGlobalExceptionMapping" />
+    </flow>
+
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
@@ -64,15 +74,5 @@
             <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" />
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
-
-    <flow name="api-main">
-#if( $Integer.parseInt($muleVersion)>=$Integer.parseInt($listenerVersion ) )
-        <http:listener config-ref="httpListenerConfig" path="/api/*"/>
-#else
-        <http:inbound-endpoint address="http://localhost:${http.port}/api"/>
-#end
-        <apikit:router config-ref="apiConfig" />
-        <exception-strategy ref="apiKitGlobalExceptionMapping" />
-    </flow>
 
 </mule>

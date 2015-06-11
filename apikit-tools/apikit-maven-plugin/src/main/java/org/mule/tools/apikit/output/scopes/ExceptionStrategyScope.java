@@ -6,15 +6,14 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import org.jdom2.Element;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 
 import org.mule.tools.apikit.misc.APIKitTools;
-import org.mule.tools.apikit.model.API;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
+import org.jdom2.Element;
 
 public class ExceptionStrategyScope implements Scope {
     private final Element exceptionStrategy;
@@ -44,7 +43,7 @@ public class ExceptionStrategyScope implements Scope {
         }
     }
 
-    public ExceptionStrategyScope(Element mule, String apiId) {
+    public ExceptionStrategyScope(String apiId) {
         List<StatusCodeMapping> statusCodeMappings = Arrays.asList(
                 new StatusCodeMapping(404, "org.mule.module.apikit.exception.NotFoundException", "{ \"message\": \"Resource not found\" }"),
                 new StatusCodeMapping(405, "org.mule.module.apikit.exception.MethodNotAllowedException", "{ \"message\": \"Method not allowed\" }"),
@@ -79,8 +78,6 @@ public class ExceptionStrategyScope implements Scope {
 
             exceptionStrategy.addContent(mapping);
         }
-
-        mule.addContent(exceptionStrategy);
     }
 
     @Override
