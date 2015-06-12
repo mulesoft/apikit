@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.plugin.logging.Log;
+import org.jdom2.Content;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -81,8 +82,8 @@ public class MuleConfigGenerator {
                 continue;
             }
 
-            // Generate each of the APIKit flows and insert them before the exception strategy
-            int index = doc.getRootElement().getContentSize() - 1;
+            // Generate each of the APIKit flows and insert them after the last flow
+            int index = getLastFlowIndex(doc) + 1;
             doc.getRootElement().addContent(index, new APIKitFlowScope(flowEntry).generate());
         }
 
@@ -107,6 +108,20 @@ public class MuleConfigGenerator {
 
         // Generate mule deploy properties file
         new MuleDeployWriter(rootDirectory).generate();
+    }
+
+    private int getLastFlowIndex(Document doc)
+    {
+        int lastFlowIndex = 0;
+        for (int i = 0; i<doc.getRootElement().getContentSize(); i++)
+        {
+            Content content = doc.getRootElement().getContent(i);
+            if (content instanceof Element && "flow".equals(((Element) content).getName()))
+            {
+                lastFlowIndex = i;
+            }
+        }
+        return lastFlowIndex;
     }
 
     Document getOrCreateDocument(Map<API, Document> docs, API api)
