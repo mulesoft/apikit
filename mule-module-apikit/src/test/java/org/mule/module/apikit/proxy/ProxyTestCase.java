@@ -7,6 +7,7 @@
 package org.mule.module.apikit.proxy;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
@@ -64,7 +65,7 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
         given().header("Accept", "application/json")
                 .expect()
                 .response().body("name", hasItems("Liga BBVA", "Premiere League"))
-                .header("Content-type", "application/json").statusCode(200)
+                .header("Content-type", containsString("application/json")).statusCode(200)
                 .when().get("/proxy/leagues");
     }
 
@@ -73,7 +74,7 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
         given().header("Accept", "application/json")
                 .expect()
                 .response().body("name", is("Liga BBVA"))
-                .header("Content-type", "application/json").statusCode(200)
+                .header("Content-type", containsString("application/json")).statusCode(200)
                 .when().get("/proxy/leagues/1");
     }
 
@@ -112,7 +113,7 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
                 .queryParam("limit", "5")
                 .expect()
                 .response().body("name", hasItems("Atleti", "Elche"))
-                .header("Content-type", "application/json").statusCode(200)
+                .header("Content-type", containsString("application/json")).statusCode(200)
                 .when().get("/proxy/leagues/1/teams");
     }
 
