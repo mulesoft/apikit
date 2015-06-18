@@ -49,9 +49,9 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         Object payload = message.getPayload();
         String msgMimeType = null;
         DataType<?> dataType = message.getDataType();
-        if (dataType != null && dataType.getMimeType() != null && dataType.getEncoding() != null)
+        if (dataType != null && dataType.getMimeType() != null)
         {
-            msgMimeType = dataType.getMimeType() + ";charset=" + dataType.getEncoding();
+            msgMimeType = dataType.getMimeType() + ";charset=" + message.getEncoding();
         }
         String msgContentType = message.getOutboundProperty("Content-Type");
 
