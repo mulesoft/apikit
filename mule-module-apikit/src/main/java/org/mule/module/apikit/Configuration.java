@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class Configuration extends AbstractConfiguration
 {
 
-    public static final String DEFAULT_CONSOLE_PATH = "console2";
+    public static final String DEFAULT_CONSOLE_PATH = "console";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
