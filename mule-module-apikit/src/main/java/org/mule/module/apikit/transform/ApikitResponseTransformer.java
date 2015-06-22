@@ -38,7 +38,11 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         List<MimeType> responseMimeTypes = message.getInvocationProperty(CONTRACT_MIME_TYPES);
         if (responseRepresentation == null)
         {
-            message.setPayload(NullPayload.getInstance());
+            // clear response payload unless response status is manually set
+            if (message.getOutboundProperty("http.status") == null)
+            {
+                message.setPayload(NullPayload.getInstance());
+            }
             return message;
         }
         return transformToExpectedContentType(message, responseRepresentation, responseMimeTypes);
