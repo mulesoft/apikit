@@ -16,7 +16,7 @@ import org.apache.commons.io.FilenameUtils;
 
 public class API {
     public static final int DEFAULT_PORT = 8081;
-    public static final String DEFAULT_BASE_URI = "http://localhost:" + DEFAULT_PORT + "/api";
+    public static final String DEFAULT_BASE_URI = "http://0.0.0.0:" + DEFAULT_PORT + "/api";
     public static final String DEFAULT_BASE_PATH = "/";
 
     private APIKitConfig config;
