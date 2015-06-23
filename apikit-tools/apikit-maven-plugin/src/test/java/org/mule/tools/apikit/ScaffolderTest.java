@@ -47,7 +47,7 @@ public class ScaffolderTest {
         File muleXmlSimple = simpleGeneration("simple");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-
+        assertEquals(1, countOccurences(s, "get:/:simple-config"));
         assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
     }
 
@@ -114,6 +114,8 @@ public class ScaffolderTest {
         assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));
+        assertEquals(1, countOccurences(s, "get:/\""));
+
     }
 
 
