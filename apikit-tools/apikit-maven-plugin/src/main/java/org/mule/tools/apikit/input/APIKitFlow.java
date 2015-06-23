@@ -21,7 +21,7 @@ public class APIKitFlow {
     private final String configRef;
     private final String mimeType;
 
-    public static final String APIKIT_FLOW_NAME_FORMAT = "^([^:]+):(/[^:]+)(:([^:]+))?(:(.*))?$";
+    public static final String APIKIT_FLOW_NAME_FORMAT = "^([^:]+):(/[^:]*)(:([^:]+))?(:(.*))?$";
 
     public APIKitFlow(final String action, final String resource, final String mimeType, String configRef) {
         this.action = action;
