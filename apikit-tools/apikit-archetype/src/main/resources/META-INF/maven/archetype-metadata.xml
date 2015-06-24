@@ -4,7 +4,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <requiredProperties>
         <requiredProperty key="muleVersion">
-            <defaultValue>3.7.0</defaultValue>
+            <defaultValue>3.6.0</defaultValue>
         </requiredProperty>
     </requiredProperties>
     <fileSets>
