@@ -53,4 +53,8 @@
         <set-property propertyName="Content-Type" value="text/html;charset=utf-8"/>
     </flow>
 
+    <flow name="post:/test">
+        <set-payload value="#[payload]"/>
+    </flow>
+
 </mule>

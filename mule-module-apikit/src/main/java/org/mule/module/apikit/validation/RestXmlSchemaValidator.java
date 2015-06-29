@@ -50,7 +50,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             Object input = muleEvent.getMessage().getPayload();
             if (input instanceof InputStream)
             {
-                input = IOUtils.toString((InputStream) input);
+                input = IOUtils.toString((InputStream) input, muleEvent.getMessage().getEncoding());
                 logger.debug("transforming payload to perform XSD validation");
                 muleEvent.getMessage().setPayload(input);
             }

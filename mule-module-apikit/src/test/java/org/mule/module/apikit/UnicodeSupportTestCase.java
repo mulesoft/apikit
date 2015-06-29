@@ -16,8 +16,12 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.EncoderConfig;
 import com.jayway.restassured.config.RestAssuredConfig;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.junit.Rule;
 import org.junit.Test;
+import org.raml.parser.utils.StreamUtils;
 
 public class UnicodeSupportTestCase extends FunctionalTestCase
 {
@@ -61,4 +65,27 @@ public class UnicodeSupportTestCase extends FunctionalTestCase
                 .when().get("/api/pingüino/frío");
     }
 
+    @Test
+    public void jsonBodyUtf8() throws IOException
+    {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/unicode/diacritics-utf8.json");
+        String body = StreamUtils.toString(inputStream);
+        given().body(body)
+                .contentType("application/json")
+                .expect().statusCode(200)
+                .body(is(body))
+                .when().post("/api/test");
+    }
+
+    @Test
+    public void jsonBodyUtf16BE() throws IOException
+    {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/unicode/diacritics-utf16be.json");
+        String body = StreamUtils.toString(inputStream); //removes BOM
+        given().body(body)
+                .contentType("application/json")
+                .expect().statusCode(200)
+                .body(is(body))
+                .when().post("/api/test");
+    }
 }

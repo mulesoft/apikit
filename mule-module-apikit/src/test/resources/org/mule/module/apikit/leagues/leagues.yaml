@@ -49,6 +49,8 @@ traits:
         responses:
             201:
                 description: league created
+                body:
+                    text/plain: ~
     /{leagueId}:
         uriParameters:
             leagueId:

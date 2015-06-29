@@ -25,8 +25,8 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.io.IOUtils;
 import org.raml.model.Raml;
+import org.raml.parser.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             Object input = muleEvent.getMessage().getPayload();
             if (input instanceof InputStream)
             {
-                input = IOUtils.toString((InputStream) input);
+                input = StreamUtils.toString((InputStream) input);
                 logger.debug("transforming payload to perform JSON Schema validation");
                 muleEvent.getMessage().setPayload(input);
             }

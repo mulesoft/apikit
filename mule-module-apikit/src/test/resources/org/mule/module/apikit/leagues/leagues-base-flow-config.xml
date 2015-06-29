@@ -56,7 +56,7 @@
                     payload.id = message.inboundProperties.get('Location');
                     app.registry['list-of-leagues'].getLeagues().add(payload);
                 </expression-component>
-                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+                <set-payload value="#[payload.description]" mimeType="text/plain" encoding="windows-1252"/>
             </otherwise>
         </choice>
     </flow>
