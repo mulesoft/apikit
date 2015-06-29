@@ -26,6 +26,7 @@ public class League
 
     private String id;
     private String name;
+    private String description;
     private List<Team> teams;
     private Federation federation;
 
@@ -60,6 +61,18 @@ public class League
     public void setName(String name)
     {
         this.name = name;
+    }
+
+    @JsonProperty
+    @XmlElement(required = false, namespace = "http://mulesoft.com/schemas/soccer")
+    public String getDescription()
+    {
+        return description;
+    }
+
+    public void setDescription(String description)
+    {
+        this.description = description;
     }
 
     @XmlTransient

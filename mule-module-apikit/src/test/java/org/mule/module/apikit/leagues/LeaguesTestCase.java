@@ -20,8 +20,13 @@ import static org.mule.module.apikit.util.RegexMatcher.matches;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
+import org.mule.util.IOUtils;
 
 import com.jayway.restassured.RestAssured;
+
+import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -154,6 +159,23 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect().statusCode(201)
                 .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/4")
             .when().post("/api/leagues");
+    }
+
+    @Test
+    public void postOnLeaguesXmlWindows1252() throws Exception
+    {
+        InputStream inputStrem = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/leagues/league-windows1252.xml");
+        String body = IOUtils.toString(inputStrem, "windows-1252");
+        Matcher matcher = Pattern.compile(".*<description>(.*)</description>.*").matcher(body);
+        matcher.find();
+        String responseBody = matcher.group(1);
+        given().body(body)
+                .contentType("text/xml;charset=windows-1252")
+                .header("Accept", "text/plain")
+            .expect().statusCode(201)
+                .body(is(responseBody))
+                .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/4")
+                .when().post("/api/leagues");
     }
 
     @Test

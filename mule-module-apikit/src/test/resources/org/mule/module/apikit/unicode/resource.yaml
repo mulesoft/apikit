@@ -1,5 +1,6 @@
 #%RAML 0.8
 title: unicode
+
 /pingüino:
     get: &basic
         responses:
@@ -9,3 +10,23 @@ title: unicode
                     text/html:
     /{id}:
         get: *basic
+
+/testUtf8: &postUtf
+    post:
+        body:
+            application/json:
+                schema: |
+                  {
+                    "$schema": "http://json-schema.org/schema",
+                    "type": "object",
+                    "properties":
+                      {
+                        "content": { "type": "string" }
+                      }
+                  }
+        responses:
+            200:
+                description: Return the iput
+                body:
+                    application/json: ~
+/testUtf16: *postUtf
