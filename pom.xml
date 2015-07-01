@@ -15,7 +15,7 @@
     </modules>
 
     <properties>
-        <mule.version>3.7.0-SNAPSHOT</mule.version>
+        <mule.version>3.7.0</mule.version>
         <cors.module.version>2.0-SNAPSHOT</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
