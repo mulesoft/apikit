@@ -356,16 +356,6 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
         <repository>
-            <id>codehaus-snaphosts</id>
-            <name>Codehaus Snapshots</name>
-            <url>http://snapshots.repository.codehaus.org/</url>
-        </repository>
-        <repository>
-            <id>codehaus-releases</id>
-            <name>CodeHaus Releases</name>
-            <url>http://repository.codehaus.org/</url>
-        </repository>
-        <repository>
             <id>mulesoft-snapshots</id>
             <name>MuleSoft Snapshots Repository</name>
             <url>http://repository.mulesoft.org/snapshots/</url>
