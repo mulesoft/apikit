@@ -259,7 +259,14 @@ public class URICoder
                 {
                     String hex = String.copyValueOf(new char[] {s.charAt(++i), s.charAt(++i)});
                     char x = (char) Integer.parseInt(hex, 16);
-                    sb.append(x);
+                    if(x != '/')
+                    {
+                        sb.append(x);
+                    }
+                    else
+                    {
+                        sb.append("%2F");
+                    }
                 }
                 // TODO: handle error condition
             }
@@ -287,7 +294,14 @@ public class URICoder
                 {
                     String hex = "" + s.charAt(++i) + s.charAt(++i);
                     byte b = (byte) (Integer.parseInt(hex, 16));
-                    bb.put(b);
+                    if(b != '/')
+                    {
+                        bb.put(b);
+                    }
+                    else
+                    {
+                        bb.put("%2F".getBytes());
+                    }
                 }
             }
             else
