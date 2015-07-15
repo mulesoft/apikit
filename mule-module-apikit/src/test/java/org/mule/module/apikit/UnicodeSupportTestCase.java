@@ -8,6 +8,7 @@ package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -16,8 +17,12 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.EncoderConfig;
 import com.jayway.restassured.config.RestAssuredConfig;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,6 +68,18 @@ public class UnicodeSupportTestCase extends FunctionalTestCase
                 .expect().response().statusCode(200)
                 .body(is("my name is frío"))
                 .when().get("/api/pingüino/frío");
+    }
+
+    @Test
+    public void templateEncodedSlashUnicodeUri() throws Exception
+    {
+        URL url = new URL(RestAssured.baseURI + ":" + serverPort.getNumber() + "/api/ping%C3%BCino/%2F");
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        BufferedReader br = new BufferedReader(new InputStreamReader(
+                (conn.getInputStream())));
+        String result = br.readLine();
+        assertThat(result, is("my name is %2F"));
     }
 
     @Test
