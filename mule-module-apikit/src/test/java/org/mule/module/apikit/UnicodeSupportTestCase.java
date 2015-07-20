@@ -62,15 +62,6 @@ public class UnicodeSupportTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void template() throws Exception
-    {
-        given()
-                .expect().response().statusCode(200)
-                .body(is("my name is frío"))
-                .when().get("/api/pingüino/frío");
-    }
-
-    @Test
     public void templateEncodedSlash() throws Exception
     {
         URL url = new URL(RestAssured.baseURI + ":" + serverPort.getNumber() + "/api/pingüino/%2F");
