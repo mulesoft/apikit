@@ -62,15 +62,12 @@ public class UnicodeSupportTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void templateEncodedSlash() throws Exception
+    public void template() throws Exception
     {
-        URL url = new URL(RestAssured.baseURI + ":" + serverPort.getNumber() + "/api/pingüino/%2F");
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        BufferedReader br = new BufferedReader(new InputStreamReader(
-                (conn.getInputStream())));
-        String result = br.readLine();
-        assertThat(result, is("my name is %2F"));
+        given()
+                .expect().response().statusCode(200)
+                .body(is("my name is frío"))
+                .when().get("/api/pingüino/frío");
     }
 
     @Test
