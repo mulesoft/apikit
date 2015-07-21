@@ -13,19 +13,36 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
+@RunWith(Parameterized.class)
 public class FormParametersTestCase extends FunctionalTestCase
 {
 
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
 
+    private final String configFile;
+
     @Override
     public int getTestTimeoutSecs()
     {
         return 6000;
+    }
+
+    @Parameterized.Parameters
+    public static Collection<Object[]> parameters()
+    {
+        return Arrays.asList(new Object[][] {
+                {"org/mule/module/apikit/parameters/form-parameters-endpoint-config.xml"},
+                {"org/mule/module/apikit/parameters/form-parameters-config.xml"}
+        });
     }
 
     @Override
@@ -36,9 +53,14 @@ public class FormParametersTestCase extends FunctionalTestCase
     }
 
     @Override
-    protected String getConfigResources()
+    protected String getConfigFile()
     {
-        return "org/mule/module/apikit/parameters/form-parameters-config.xml";
+        return configFile;
+    }
+
+    public FormParametersTestCase(String configFile)
+    {
+        this.configFile = configFile;
     }
 
     @Test

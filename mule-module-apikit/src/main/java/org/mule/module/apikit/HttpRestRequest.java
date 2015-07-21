@@ -326,7 +326,14 @@ public abstract class HttpRestRequest
         Map<String, String> paramMap;
         try
         {
-            paramMap = (Map) new FormTransformer().transformMessage(requestEvent.getMessage(), requestEvent.getEncoding());
+            if (requestEvent.getMessage().getPayload() instanceof Map)
+            {
+                paramMap = (Map<String, String>) requestEvent.getMessage().getPayload();
+            }
+            else
+            {
+                paramMap = (Map) new FormTransformer().transformMessage(requestEvent.getMessage(), requestEvent.getEncoding());
+            }
         }
         catch (TransformerException e)
         {
