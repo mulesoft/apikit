@@ -7,12 +7,14 @@
         http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
 
-    <http:listener-config name="httpListenerConfig" host="localhost" port="${serverPort}" />
+    <http:connector name="httpConnector">
+        <service-overrides messageFactory="org.mule.transport.http.HttpMultipartMuleMessageFactory"/>
+    </http:connector>
 
     <apikit:config raml="org/mule/module/apikit/parameters/form-parameters.yaml"/>
 
     <flow name="doorwayPathless">
-        <http:listener config-ref="httpListenerConfig" path="/api/*"/>
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
         <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
