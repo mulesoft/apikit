@@ -11,6 +11,7 @@ import static org.mule.module.apikit.AbstractConfiguration.APPLICATION_RAML;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.http.HttpConstants;
 
 import org.raml.model.ActionType;
@@ -45,7 +46,7 @@ public class RamlDescriptorHandler
 
     private MuleEvent process(MuleEvent event, String raml) throws MuleException
     {
-        event.getMessage().setPayload(raml);
+        event.getMessage().setPayload(raml, DataTypeFactory.create(String.class, APPLICATION_RAML));
         event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, APPLICATION_RAML);
         event.getMessage().setOutboundProperty(HttpConstants.HEADER_EXPIRES, -1); //avoid IE ajax response caching
         event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, raml.length());

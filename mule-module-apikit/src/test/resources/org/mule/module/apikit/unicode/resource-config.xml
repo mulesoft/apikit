@@ -54,7 +54,7 @@
     </flow>
 
     <flow name="post:/test">
-        <set-payload value="#[payload]" mimeType="application/json" encoding="UTF-8"/>
+        <set-payload value="#[payload]"/>
     </flow>
 
 </mule>

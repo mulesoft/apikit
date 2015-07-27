@@ -8,7 +8,9 @@ package org.mule.module.apikit.validation;
 
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
+import org.mule.api.transformer.DataType;
 import org.mule.module.apikit.validation.cache.XmlSchemaCache;
+import org.mule.transformer.types.DataTypeFactory;
 import org.mule.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -52,7 +54,8 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             {
                 input = IOUtils.toString((InputStream) input, muleEvent.getMessage().getEncoding());
                 logger.debug("transforming payload to perform XSD validation");
-                muleEvent.getMessage().setPayload(input);
+                DataType<String> dataType = DataTypeFactory.create(String.class, muleEvent.getMessage().getDataType().getMimeType());
+                muleEvent.getMessage().setPayload(input, dataType);
             }
             if (input instanceof String)
             {

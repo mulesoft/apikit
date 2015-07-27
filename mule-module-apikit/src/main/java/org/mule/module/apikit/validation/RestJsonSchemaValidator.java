@@ -9,9 +9,11 @@ package org.mule.module.apikit.validation;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.registry.RegistrationException;
+import org.mule.api.transformer.DataType;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.cache.JsonSchemaAndNode;
 import org.mule.module.apikit.validation.cache.JsonSchemaCache;
+import org.mule.transformer.types.DataTypeFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
@@ -51,7 +53,8 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             {
                 input = StreamUtils.toString((InputStream) input);
                 logger.debug("transforming payload to perform JSON Schema validation");
-                muleEvent.getMessage().setPayload(input);
+                DataType<String> dataType = DataTypeFactory.create(String.class, muleEvent.getMessage().getDataType().getMimeType());
+                muleEvent.getMessage().setPayload(input, dataType);
             }
             if (input instanceof String)
             {
