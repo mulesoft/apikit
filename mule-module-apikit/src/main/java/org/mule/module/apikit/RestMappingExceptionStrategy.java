@@ -9,13 +9,15 @@ package org.mule.module.apikit;
 import org.mule.api.GlobalNameableObject;
 import org.mule.api.MuleEvent;
 import org.mule.api.exception.MessagingExceptionHandlerAcceptor;
+import org.mule.api.processor.MessageProcessorContainer;
+import org.mule.api.processor.MessageProcessorPathElement;
 import org.mule.message.DefaultExceptionPayload;
 import org.mule.processor.AbstractMuleObjectOwner;
 
 import java.util.List;
 
 public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<MappingExceptionListener>
-        implements MessagingExceptionHandlerAcceptor, GlobalNameableObject
+        implements MessagingExceptionHandlerAcceptor, GlobalNameableObject, MessageProcessorContainer
 {
 
     private List<MappingExceptionListener> exceptionListeners;
@@ -72,6 +74,22 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
     protected List<MappingExceptionListener> getOwnedObjects()
     {
         return exceptionListeners;
+    }
+
+    @Override
+    public void addMessageProcessorPathElements(MessageProcessorPathElement pathElement)
+    {
+        int idx = 0;
+        for (MessagingExceptionHandlerAcceptor listener : exceptionListeners)
+        {
+            if (listener instanceof MessageProcessorContainer)
+            {
+                MessageProcessorPathElement exceptionListener = pathElement.addChild(String.valueOf(idx));
+                ((MessageProcessorContainer) listener).addMessageProcessorPathElements(exceptionListener);
+            }
+            idx++;
+        }
+
     }
 
 }
