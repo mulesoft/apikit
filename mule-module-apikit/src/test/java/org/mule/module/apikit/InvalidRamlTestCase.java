@@ -36,4 +36,22 @@ public class InvalidRamlTestCase
         }
     }
 
+    @Test
+    public void invalidRamlLocation() throws Exception
+    {
+
+        Router router = new Router();
+        router.setConfig(new Configuration());
+        router.getConfig().setRaml("invalidRamlLocation.raml");
+        try
+        {
+            router.getConfig().validateRaml(new DefaultResourceLoader());
+            fail();
+        }
+        catch (ApikitRuntimeException e)
+        {
+            assertThat(e.getMessage(), containsString("errors found: 1"));
+            assertThat(e.getMessage(), containsString("Raml resource not found  --  file: invalidRamlLocation.raml"));
+        }
+    }
 }
