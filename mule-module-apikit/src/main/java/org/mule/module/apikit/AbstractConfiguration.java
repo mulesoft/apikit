@@ -37,6 +37,7 @@ import com.google.common.cache.LoadingCache;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -199,7 +200,16 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     protected void validateRaml(ResourceLoader resourceLoader)
     {
-        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader).validate(raml);
+        List<ValidationResult> results = new ArrayList<ValidationResult>();
+        InputStream content = resourceLoader.fetchResource(raml);
+        if (content != null)
+        {
+            results = RamlValidationService.createDefault(resourceLoader).validate(raml);
+        }
+        else
+        {
+            results.add(ValidationResult.createErrorResult("Raml resource not found "));
+        }
         List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
         if (!errors.isEmpty())
         {
