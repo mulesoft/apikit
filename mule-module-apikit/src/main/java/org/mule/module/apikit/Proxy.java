@@ -59,7 +59,6 @@ public class Proxy extends AbstractRouter
                         "mule_originating_endpoint",
                         "mule_remote_client_address",
                         "host",
-                        "content-length",
                         "connection",
                         "transfer-encoding",
                         "server"
