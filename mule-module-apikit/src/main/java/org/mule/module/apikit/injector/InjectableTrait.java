@@ -87,8 +87,12 @@ public class InjectableTrait extends InjectableRamlFeature
 
     private <K, V> void putAllSkipExisting(Map<K, V> to, Map<K, V> from)
     {
-        if(from != null)
+        if (from != null)
         {
+            if (to == null)
+            {
+                to = from;
+            }
             for (Map.Entry<K, V> entry : from.entrySet())
             {
                 if (!to.containsKey(entry.getKey()))
