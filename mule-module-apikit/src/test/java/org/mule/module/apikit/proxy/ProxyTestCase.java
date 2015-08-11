@@ -16,6 +16,7 @@ import org.mule.test.infrastructure.deployment.AbstractFakeMuleServerTestCase;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Headers;
+import com.jayway.restassured.response.Response;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -122,12 +123,15 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
 
     private void checkContentLengthIsNotFiltered() throws Exception
     {
-        Headers headers = given().header("", "application/json")
+        Response response = given().header("", "application/json")
                 .expect()
                 .response().body("name", hasItems("Liga BBVA", "Premiere League"))
                 .header("Content-type", containsString("application/json")).statusCode(200)
-                .when().get("/proxy/leagues").getHeaders();
-        Assert.assertEquals("56", headers.getValue("Content-Length"));
+                .when().get("/proxy/leagues");
+
+        String expectedBody = "[{ \"name\": \"Liga BBVA\" }, { \"name\": \"Premiere League\" }]";
+        Assert.assertEquals(expectedBody, response.getBody().print());
+        Assert.assertEquals(String.valueOf(expectedBody.length()), response.getHeaders().getValue("Content-Length"));
     }
 
 }
