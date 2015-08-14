@@ -21,6 +21,7 @@ public class API {
 
     private APIKitConfig config;
     private HttpListenerConfig httpListenerConfig;
+    private Boolean createListenerConfig;
     private String path;
 
     private String baseUri;
@@ -87,8 +88,14 @@ public class API {
         this.config = config;
     }
 
-    public void setHttpListenerConfig(HttpListenerConfig httpListenerConfig) {
+    public void setHttpListenerConfig(HttpListenerConfig httpListenerConfig, Boolean createListenerConfig) {
         this.httpListenerConfig = httpListenerConfig;
+        this.createListenerConfig = createListenerConfig;
+    }
+
+    public Boolean hasToCreateListenerConfig()
+    {
+        return createListenerConfig;
     }
 
     public void setDefaultAPIKitConfig() {

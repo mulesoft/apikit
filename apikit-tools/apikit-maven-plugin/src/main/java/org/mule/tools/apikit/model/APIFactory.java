@@ -6,10 +6,7 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.mule.tools.apikit.misc.APIKitTools;
-
 import java.io.File;
-import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +15,17 @@ import org.apache.commons.lang.Validate;
 
 public class APIFactory
 {
+    private String customListenerConfigRef;
+
+    public APIFactory (String customListenerConfigRef)
+    {
+        this.customListenerConfigRef = customListenerConfigRef;
+    }
+
+    public APIFactory ()
+    {
+    }
+
     private Map<File, API> apis = new HashMap<File, API>();
 
 
@@ -33,6 +41,7 @@ public class APIFactory
 
     public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config, HttpListenerConfig httpListenerConfig, Boolean useInboundEndpoint)
     {
+        Boolean hasCustomHttpListenerConfig = (customListenerConfigRef != null);
         Validate.notNull(ramlFile);
         if(apis.containsKey(ramlFile))
         {
@@ -46,7 +55,7 @@ public class APIFactory
             {
                httpListenerConfig = createHttpListenerConfig(ramlFile, baseUri);
             }
-            api.setHttpListenerConfig(httpListenerConfig);
+            api.setHttpListenerConfig(httpListenerConfig, !hasCustomHttpListenerConfig);
 
             api.setConfig(config);
 
@@ -58,7 +67,7 @@ public class APIFactory
         {
             httpListenerConfig = createHttpListenerConfig(ramlFile, baseUri);
         }
-        api.setHttpListenerConfig(httpListenerConfig);
+        api.setHttpListenerConfig(httpListenerConfig, !hasCustomHttpListenerConfig);
         apis.put(ramlFile, api);
         return api;
     }
@@ -66,10 +75,16 @@ public class APIFactory
 
     private HttpListenerConfig createHttpListenerConfig(File ramlFile, String baseUri)
     {
-        String id = FilenameUtils.removeExtension(ramlFile.getName()).trim();
-        String httpListenerConfigName = id == null? HttpListenerConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListenerConfig.DEFAULT_CONFIG_NAME;
-        return new HttpListenerConfig.Builder(httpListenerConfigName, baseUri).build();
-
+        if (customListenerConfigRef != null)
+        {
+            return new HttpListenerConfig(customListenerConfigRef, null, null, null);
+        }
+        else
+        {
+            String id = FilenameUtils.removeExtension(ramlFile.getName()).trim();
+            String httpListenerConfigName = id == null ? HttpListenerConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListenerConfig.DEFAULT_CONFIG_NAME;
+            return new HttpListenerConfig.Builder(httpListenerConfigName, baseUri).build();
+        }
     }
 
 }

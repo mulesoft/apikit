@@ -36,13 +36,17 @@ public class MuleConfigParser {
     private Map<String, APIKitConfig> apikitConfigs = new HashMap<String, APIKitConfig>();
     private final APIFactory apiFactory;
 
-    public MuleConfigParser(Log log, Set<File> ramlPaths, Map<File, InputStream> streams, APIFactory apiFactory) {
+    public MuleConfigParser(Log log, Set<File> ramlPaths, Map<File, InputStream> streams, APIFactory apiFactory){
+        this(log, ramlPaths, streams, apiFactory, null);
+    }
+
+    public MuleConfigParser(Log log, Set<File> ramlPaths, Map<File, InputStream> streams, APIFactory apiFactory, String listenerConfigRef) {
         this.apiFactory = apiFactory;
         for (Entry<File, InputStream> fileStreamEntry : streams.entrySet()) {
             InputStream stream = fileStreamEntry.getValue();
             File file = fileStreamEntry.getKey();
             try {
-                parseMuleConfigFile(file, stream, ramlPaths);
+                parseMuleConfigFile(file, stream, ramlPaths, listenerConfigRef);
                 stream.close();
             } catch (Exception e) {
                 log.error("Error parsing Mule xml config file: [" + file + "]. Reason: " + e.getMessage());
@@ -51,12 +55,16 @@ public class MuleConfigParser {
         }
     }
 
-    private void parseMuleConfigFile(File file, InputStream stream, Set<File> ramlPaths) throws JDOMException, IOException {
+    private void parseMuleConfigFile(File file, InputStream stream, Set<File> ramlPaths, String listenerConfigRef) throws JDOMException, IOException {
         SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
         Document document = saxBuilder.build(stream);
 
         apikitConfigs = new APIKitConfigParser().parse(document);
         httpListenerConfigs = new HttpListenerConfigParser().parse(document);
+        if (listenerConfigRef != null)
+        {
+            httpListenerConfigs.put(listenerConfigRef, null);
+        }
         includedApis = new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document);
 
         entries = new APIKitFlowsParser(includedApis).parse(document);
