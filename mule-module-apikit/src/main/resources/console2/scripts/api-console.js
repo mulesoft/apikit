@@ -159,6 +159,12 @@
           $scope.currentStatusCode = $scope.methodInfo.responseCodes[0];
         }
 
+        $scope.$on('resetData', function() {
+          if ($scope.methodInfo.responseCodes && $scope.methodInfo.responseCodes.length > 0) {
+            $scope.currentStatusCode = $scope.methodInfo.responseCodes[0];
+          }
+        });
+
         function beautify(body, contentType) {
           if(contentType.indexOf('json')) {
             body = vkbeautify.json(body, 2);
@@ -219,7 +225,7 @@
                 result += 'one of ';
               }
 
-              result += '(' + enumValues.join(', ') + ')';
+              result += '(' + enumValues.filter(function (value) { return value !== ''; }).join(', ') + ')';
 
             } else {
               result += parameter.type || '';
@@ -360,7 +366,7 @@
       restrict: 'E',
       templateUrl: 'directives/method-list.tpl.html',
       replace: true,
-      controller: function($scope, $location, $anchorScroll, $rootScope) {
+      controller: function($scope, $timeout, $rootScope) {
         function loadExamples () {
           $scope.context.uriParameters.reset($scope.resource.uriParametersForDocumentation);
           $scope.context.queryParameters.reset($scope.methodInfo.queryParameters);
@@ -517,8 +523,12 @@
             jQuery($this).addClass('raml-console-is-active');
             $scope.showPanel = true;
 
-            $location.hash(hash);
-            $anchorScroll();
+            $timeout(function () {
+              jQuery('html, body').animate({
+                scrollTop: jQuery('#'+hash).offset().top + 'px'
+              }, 'fast');
+            }, 10);
+
           } else if (jQuery($this).hasClass('raml-console-is-active')) {
             $scope.showPanel = false;
             $inactiveElements.removeClass('raml-console-is-active');
@@ -838,7 +848,7 @@
       restrict: 'E',
       templateUrl: 'directives/root-documentation.tpl.html',
       replace: true,
-      controller: function($scope, $location) {
+      controller: function($scope, $timeout) {
         $scope.markedOptions = RAML.Settings.marked;
         $scope.selectedSection = 'all';
 
@@ -863,7 +873,11 @@
 
           $el[!$scope.documentationEnabled ? 'removeClass' : 'addClass']('raml-console-documentation-active');
 
-          $location.hash($scope.generateDocId(section));
+          $timeout(function () {
+            jQuery('html, body').animate({
+              scrollTop: jQuery('#'+$scope.generateDocId(section)).offset().top + 'px'
+            }, 'fast');
+          }, 10);
         };
 
         $scope.closeDocumentation = function ($event) {
@@ -943,7 +957,7 @@
       restrict: 'E',
       templateUrl: 'directives/sidebar.tpl.html',
       replace: true,
-      controller: function ($scope, $location, $anchorScroll) {
+      controller: function ($scope, $timeout) {
         var defaultSchemaKey = Object.keys($scope.securitySchemes).sort()[0];
         var defaultSchema    = $scope.securitySchemes[defaultSchemaKey];
 
@@ -956,6 +970,10 @@
         function readCustomSchemeInfo (name) {
           if (!$scope.methodInfo.headers.plain) {
             $scope.methodInfo.headers.plain = {};
+          }
+
+          if (!$scope.methodInfo.queryParameters) {
+            $scope.methodInfo.queryParameters = {};
           }
 
           updateContextData('headers', name, $scope.methodInfo.headers.plain, $scope.context.headers);
@@ -1035,10 +1053,6 @@
           $scope.showSpinner     = false;
           $scope.responseDetails = true;
 
-          var hash = 'request_' + $scope.generateId($scope.resource.pathSegments);
-          $location.hash(hash);
-          $anchorScroll();
-
           // If the response fails because of CORS, responseText is null
           var editorHeight = 50;
 
@@ -1052,6 +1066,14 @@
           };
 
           apply();
+
+          var hash = 'request_' + $scope.generateId($scope.resource.pathSegments);
+
+          $timeout(function () {
+            jQuery('html, body').animate({
+              scrollTop: jQuery('#'+hash).offset().top + 'px'
+            }, 'fast');
+          }, 10);
         }
 
         function resolveSegementContexts(pathSegments, uriParameters) {
@@ -1136,8 +1158,7 @@
           $scope.currentProtocol             = $scope.raml.protocols[0];
           $scope.documentationSchemeSelected = defaultSchema;
           $scope.responseDetails             = null;
-          // removeCustomSchemeData($scope.context.headers);
-          // removeCustomSchemeData($scope.context.queryParameters);
+
           cleanSchemeMetadata($scope.methodInfo.headers.plain, $scope.context.headers);
           cleanSchemeMetadata($scope.methodInfo.queryParameters, $scope.context.queryParameters);
         });
@@ -3442,6 +3463,21 @@ RAML.Inspector = (function() {
   var NamedParameters = function(plain, parameterized) {
     this.plain = copy(plain);
     this.parameterized = parameterized;
+    Object.keys(this.plain).map(function (key) {
+      var data = this.plain[key].definitions[0];
+
+      if (typeof data.enum !== 'undefined') {
+        if (!data.required) {
+          var temp = [''];
+          data.enum = temp.concat(data.enum);
+        }
+      }
+
+      if (key.charAt(0) === '$') {
+        var tempKey = '&#36;' + key.substring(1);
+        this.plain[tempKey] = this.plain[key];
+      }
+    }.bind(this));
 
     Object.keys(parameterized || {}).forEach(function(key) {
       parameterized[key].created = [];
@@ -5119,14 +5155,14 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "  <div id=\"request-documentation\" class=\"raml-console-resource-panel-primary-row raml-console-resource-panel-content raml-console-is-active\" ng-class=\"{'raml-console-is-active':showRequestDocumentation}\">\n" +
     "    <h3 class=\"raml-console-resource-heading-a\">Description</h3>\n" +
     "\n" +
-    "    <p marked=\"methodInfo.description\" opts=\"markedOptions\"></p>\n" +
+    "    <p marked=\"methodInfo.description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "\n" +
     "    <section class=\"raml-console-resource-section\" id=\"docs-uri-parameters\" ng-if=\"resource.uriParametersForDocumentation\">\n" +
     "      <h3 class=\"raml-console-resource-heading-a\">URI Parameters</h3>\n" +
     "\n" +
     "      <div class=\"raml-console-resource-param\" id=\"docs-uri-parameters-{{uriParam[0].displayName}}\" ng-repeat=\"uriParam in resource.uriParametersForDocumentation\">\n" +
     "        <h4 class=\"raml-console-resource-param-heading\">{{uriParam[0].displayName}}<span class=\"raml-console-resource-param-instructional\">{{parameterDocumentation(uriParam[0])}}</span></h4>\n" +
-    "        <p marked=\"uriParam[0].description\" opts=\"markedOptions\"></p>\n" +
+    "        <p marked=\"uriParam[0].description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "\n" +
     "        <p ng-if=\"uriParam[0].example\">\n" +
     "          <span class=\"raml-console-resource-param-example\"><b>Example:</b> {{uriParam[0].example}}</span>\n" +
@@ -5140,7 +5176,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <div class=\"raml-console-resource-param\" ng-repeat=\"header in methodInfo.headers.plain\" ng-if=\"!header[0].isFromSecurityScheme\">\n" +
     "        <h4 class=\"raml-console-resource-param-heading\">{{header[0].displayName}}<span class=\"raml-console-resource-param-instructional\">{{parameterDocumentation(header[0])}}</span></h4>\n" +
     "\n" +
-    "        <p marked=\"header[0].description\" opts=\"markedOptions\"></p>\n" +
+    "        <p marked=\"header[0].description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "\n" +
     "        <p ng-if=\"header[0].example\">\n" +
     "          <span class=\"raml-console-resource-param-example\"><b>Example:</b> {{header[0].example}}</span>\n" +
@@ -5154,7 +5190,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <div class=\"raml-console-resource-param\" ng-repeat=\"queryParam in methodInfo.queryParameters\" ng-if=\"!queryParam[0].isFromSecurityScheme\">\n" +
     "        <h4 class=\"raml-console-resource-param-heading\">{{queryParam[0].displayName}}<span class=\"raml-console-resource-param-instructional\">{{parameterDocumentation(queryParam[0])}}</span></h4>\n" +
     "\n" +
-    "        <p marked=\"queryParam[0].description\" opts=\"markedOptions\"></p>\n" +
+    "        <p marked=\"queryParam[0].description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "\n" +
     "        <p ng-if=\"queryParam[0].example\">\n" +
     "          <span class=\"raml-console-resource-param-example\"><b>Example:</b> {{queryParam[0].example}}</span>\n" +
@@ -5168,7 +5204,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <li class=\"raml-console-documentation-scheme\" ng-class=\"{'raml-console-is-active':isSchemeSelected(value)}\" ng-click=\"selectDocumentationScheme(value)\" ng-repeat=\"(key, value) in securitySchemes\">{{value.name}}</li>\n" +
     "      </ol>\n" +
     "\n" +
-    "      <p ng-if\"documentationSchemeSelected.description\" marked=\"documentationSchemeSelected.description\" opts=\"markedOptions\"></p>\n" +
+    "      <p ng-if\"documentationSchemeSelected.description\" marked=\"documentationSchemeSelected.description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "\n" +
     "      <section class=\"raml-console-resource-section raml-console-scheme-headers\" ng-if=\"documentationSchemeSelected.describedBy.headers\">\n" +
     "        <h4 class=\"raml-console-resource-heading-a\">Headers</h4>\n" +
@@ -5176,7 +5212,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <div class=\"raml-console-resource-param\" ng-repeat=\"(key, header) in documentationSchemeSelected.describedBy.headers\">\n" +
     "          <h4 class=\"raml-console-resource-param-heading\">{{key}}<span class=\"raml-console-resource-param-instructional\">{{parameterDocumentation(header)}}</span></h4>\n" +
     "\n" +
-    "          <p marked=\"header.description\" opts=\"markedOptions\"></p>\n" +
+    "          <p marked=\"header.description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "\n" +
     "          <p ng-if=\"header.example\">\n" +
     "            <span class=\"raml-console-resource-param-example\"><b>Example:</b> {{header.example}}</span>\n" +
@@ -5190,7 +5226,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <div class=\"raml-console-resource-param\" ng-repeat=\"(key, queryParameter) in documentationSchemeSelected.describedBy.queryParameters\">\n" +
     "          <h4 class=\"raml-console-resource-param-heading\">{{key}}<span class=\"raml-console-resource-param-instructional\">{{parameterDocumentation(queryParameter)}}</span></h4>\n" +
     "\n" +
-    "          <p marked=\"queryParameter.description\" opts=\"markedOptions\"></p>\n" +
+    "          <p marked=\"queryParameter.description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "\n" +
     "          <p ng-if=\"queryParameter.example\">\n" +
     "            <span class=\"raml-console-resource-param-example\"><b>Example:</b> {{queryParameter.example}}</span>\n" +
@@ -5203,7 +5239,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "        <div class=\"raml-console-resource-param\" ng-repeat=\"(code, info) in documentationSchemeSelected.describedBy.responses\">\n" +
     "          <h4 class=\"raml-console-resource-param-heading\">{{code}}</h4>\n" +
-    "          <p marked=\"info.description\" opts=\"markedOptions\"></p>\n" +
+    "          <p marked=\"info.description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "        </div>\n" +
     "      </section>\n" +
     "\n" +
@@ -5231,7 +5267,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "         <div class=\"raml-console-resource-param\" ng-repeat=\"formParam in methodInfo.body[currentBodySelected].formParameters\">\n" +
     "          <h4 class=\"raml-console-resource-param-heading\">{{formParam[0].displayName}}<span class=\"raml-console-resource-param-instructional\">{{parameterDocumentation(formParam[0])}}</span></h4>\n" +
     "\n" +
-    "          <p marked=\"formParam[0].description\" opts=\"markedOptions\"></p>\n" +
+    "          <p marked=\"formParam[0].description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "\n" +
     "          <p ng-if=\"formParam[0].example\">\n" +
     "            <span class=\"raml-console-resource-param-example\"><b>Example:</b> {{formParam[0].example}}</span>\n" +
@@ -5273,7 +5309,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <h3 class=\"raml-console-resource-heading-a\">Status {{code}}</h3>\n" +
     "\n" +
     "        <div class=\"raml-console-resource-response\">\n" +
-    "          <p marked=\"methodInfo.responses[code].description\" opts=\"markedOptions\"></p>\n" +
+    "          <p marked=\"methodInfo.responses[code].description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "        </div>\n" +
     "\n" +
     "        <div class=\"raml-console-resource-response\" ng-if=\"methodInfo.responses[code].headers\">\n" +
@@ -5282,7 +5318,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "          <div class=\"raml-console-resource-param\" ng-repeat=\"header in methodInfo.responses[code].headers\">\n" +
     "            <h4 class=\"raml-console-resource-param-heading\">{{header[0].displayName}} <span class=\"raml-console-resource-param-instructional\">{{header[0].type}}</span></h4>\n" +
     "\n" +
-    "            <p marked=\"header[0].description\" opts=\"markedOptions\"></p>\n" +
+    "            <p marked=\"header[0].description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></p>\n" +
     "          </div>\n" +
     "        </div>\n" +
     "\n" +
@@ -5348,7 +5384,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <span class=\"raml-console-sidebar-input-tooltip-container\" ng-if=\"param.definitions[0].description\">\n" +
     "        <button tabindex=\"-1\" class=\"raml-console-sidebar-input-tooltip\"><span class=\"raml-console-visuallyhidden\">Show documentation</span></button>\n" +
     "        <span class=\"raml-console-sidebar-tooltip-flyout\">\n" +
-    "          <span marked=\"param.definitions[0].description\" opts=\"markedOptions\"></span>\n" +
+    "          <span marked=\"param.definitions[0].description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></span>\n" +
     "        </span>\n" +
     "      </span>\n" +
     "\n" +
@@ -5467,12 +5503,15 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
   $templateCache.put('directives/resource-panel.tpl.html',
     "<div class=\"raml-console-resource-panel\" ng-if=\"showPanel\" ng-class=\"{ 'raml-console-has-sidebar-collapsed': singleView }\">\n" +
+    "  <div class=\"raml-console-resource-no-baseuri\" ng-hide=\"raml.baseUri\">\n" +
+    "    <strong>Try-it</strong> is disabled because <strong>baseUri</strong> is not present\n" +
+    "  </div>\n" +
     "  <div class=\"raml-console-resource-panel-wrapper\">\n" +
     "    <documentation></documentation>\n" +
     "\n" +
-    "    <sidebar></sidebar>\n" +
+    "    <sidebar ng-show=\"raml.baseUri\"></sidebar>\n" +
     "\n" +
-    "    <div class=\"raml-console-sidebar-controls raml-console-sidebar-controls-collapse\" ng-click=\"collapseSidebar($event)\" style=\"right: -1px; position: absolute;\">\n" +
+    "    <div class=\"raml-console-sidebar-controls raml-console-sidebar-controls-collapse\" ng-click=\"collapseSidebar($event)\" style=\"right: -1px; position: absolute;\"ng-hide=\"!raml.baseUri\">\n" +
     "      <button class=\"raml-console-collapse\">\n" +
     "        <svg style=\"transform: rotate(-180deg);\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 612 792\" enable-background=\"new 0 0 612 792\" xml:space=\"preserve\">\n" +
     "          <g id=\"Layer_3\">\n" +
@@ -5531,7 +5570,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "      <div class=\"raml-console-resource-panel raml-console-documentation-content\" ng-if=\"documentationEnabled\">\n" +
     "        <div class=\"raml-console-resource-panel-wrapper\">\n" +
-    "          <div class=\"raml-console-documentation-section-content\" marked=\"getDocumentationContent(doc.content, selectedDocumentSection)\" opts=\"markedOptions\"></div>\n" +
+    "          <div class=\"raml-console-documentation-section-content raml-console-marked-content\" marked=\"getDocumentationContent(doc.content, selectedDocumentSection)\" opts=\"markedOptions\"></div>\n" +
     "        </div>\n" +
     "      </div>\n" +
     "\n" +
@@ -5638,7 +5677,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "                  <span class=\"raml-console-sidebar-input-tooltip-container\" ng-if=\"param.definitions[0].description\">\n" +
     "                    <button tabindex=\"-1\" class=\"raml-console-sidebar-input-tooltip\"><span class=\"raml-console-visuallyhidden\">Show documentation</span></button>\n" +
     "                    <span class=\"raml-console-sidebar-tooltip-flyout\">\n" +
-    "                      <span marked=\"param.definitions[0].description\" opts=\"markedOptions\"></span>\n" +
+    "                      <span marked=\"param.definitions[0].description\" opts=\"markedOptions\" class=\"raml-console-marked-content\"></span>\n" +
     "                    </span>\n" +
     "                  </span>\n" +
     "\n" +
@@ -5675,8 +5714,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "                  <div ng-if=\"requestOptions.url\">\n" +
     "                    <h3 class=\"raml-console-sidebar-response-head raml-console-sidebar-response-head-pre\">Request URL</h3>\n" +
     "                    <div class=\"raml-console-sidebar-response-item\">\n" +
-    "                      <p class=\"raml-console-sidebar-response-metadata raml-console-sidebar-request-url\">{{requestOptions.baseUrl}}<span ng-repeat=\"(key, value) in parameters\"><span ng-hide=\"$first\">&amp;</span><b>{{key}}</b>=<i>{{value[0]}}</i></span>\n" +
-    "                      </p>\n" +
+    "                      <p class=\"raml-console-sidebar-response-metadata raml-console-sidebar-request-url\">{{requestOptions.url}}</p>\n" +
     "                    </div>\n" +
     "                  </div>\n" +
     "\n" +
@@ -5820,7 +5858,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "            <span ng-hide=\"methodInfo.is\" ng-if=\"resource.traits\" class=\"raml-console-flag raml-console-resource-heading-flag\"><b>Traits:</b> {{readResourceTraits(resource.traits)}}</span>\n" +
     "\n" +
-    "            <span class=\"raml-console-resource-level-description\" marked=\"resource.description\" opts=\"markedOptions\"></span>\n" +
+    "            <span class=\"raml-console-resource-level-description raml-console-marked-content\" marked=\"resource.description\" opts=\"markedOptions\"></span>\n" +
     "\n" +
     "          </div>\n" +
     "          <method-list></method-list>\n" +
@@ -5844,7 +5882,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "                <span ng-hide=\"methodInfo.is\" ng-if=\"resource.traits\" class=\"raml-console-flag raml-console-resource-heading-flag\"><b>Traits:</b> {{readResourceTraits(resource.traits)}}</span>\n" +
     "\n" +
-    "                <span class=\"raml-console-resource-level-description\" marked=\"resource.description\" opts=\"markedOptions\"></span>\n" +
+    "                <span class=\"raml-console-resource-level-description raml-console-marked-content\" marked=\"resource.description\" opts=\"markedOptions\"></span>\n" +
     "              </div>\n" +
     "\n" +
     "              <method-list></method-list>\n" +
