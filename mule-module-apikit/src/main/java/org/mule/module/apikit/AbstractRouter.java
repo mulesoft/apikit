@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.module.http.api.HttpConstants.RequestProperties.HTTP_URI_PARAMS;
+
 import org.mule.api.DefaultMuleException;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
@@ -23,6 +25,7 @@ import org.mule.module.apikit.uri.URIResolver;
 
 import com.google.common.cache.LoadingCache;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -170,9 +173,16 @@ public abstract class AbstractRouter implements ApiRouter
 
             }
         }
+        Map uriParams = new HashMap();
         for (String name : resolvedVariables.names())
         {
-            event.getMessage().setInvocationProperty(name, resolvedVariables.get(name));
+            String value = String.valueOf(resolvedVariables.get(name));
+            event.getMessage().setInvocationProperty(name, value);
+            uriParams.put(name, value);
+        }
+        if (event.getMessage().getInboundProperty(HTTP_URI_PARAMS) != null)
+        {
+            event.getMessage().<Map>getInboundProperty(HTTP_URI_PARAMS).putAll(uriParams);
         }
     }
 

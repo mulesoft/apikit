@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+    <apikit:config raml="org/mule/module/apikit/leagues/listener.yaml"/>
+
+    <http:listener-config name="httpConfig" host="0.0.0.0" port="${serverPort}" />
+
+    <flow name="doorway">
+        <http:listener config-ref="httpConfig" path="/api/*" />
+        <apikit:router/>
+    </flow>
+
+    <flow name="get:/leagues/{leagueId}">
+        <!-- using inboung property http.uri.params -->
+        <set-payload value="{ &quot;id&quot;: &quot;#[message.inboundProperties['http.uri.params']['leagueId']]&quot;, &quot;name&quot;: &quot;Liga BBVA&quot; }"/>
+
+        <!-- using flow variable -->
+        <!--<set-payload value="{ &quot;id&quot;: &quot;#[leagueId]&quot;, &quot;name&quot;: &quot;Liga BBVA&quot; }"/>-->
+    </flow>
+
+</mule>
