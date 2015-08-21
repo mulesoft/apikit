@@ -35,6 +35,7 @@ public class API {
         this.path = path;
         this.ramlFile = ramlFile;
         this.xmlFile = xmlFile;
+        this.createListenerConfig = true;
         this.baseUri = baseUri;
         id = FilenameUtils.removeExtension(ramlFile.getName()).trim();
     }

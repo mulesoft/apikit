@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <http:listener-config name="HTTP_Listener_Configuration" host="localhost" port="${serverPort}"/>
+    <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-payload value="resource not found"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
+            <set-payload value="method not allowed"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException"/>
+            <set-payload value="unsupported media type"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>
+            <set-payload value="not acceptable"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException"/>
+            <set-payload value="bad request"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+    <apikit:config raml="leagues-custom-normal-lc.raml" />
+
+    <flow name="otherFlow">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api2/*"/>
+        <set-payload value="test"/>
+    </flow>
+
+    <flow name="doorway">
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*"/>
+        <apikit:router />
+        <exception-strategy ref="apiKitGlobalExceptionMapping"/>
+    </flow>
+
+    <flow name="get:/leagues">
+        <set-payload value="#[registry:list-of-leagues]"/>
+    </flow>
+
+    <flow name="post:/leagues">
+        <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
+                            returnClass="org.mule.module.apikit.leagues.League"/>
+        <choice>
+            <when expression="#[!payload.name.matches('[\\w ]+')]">
+                <set-property propertyName="http.status" value="400"/>
+                <set-payload value="Invalid League Name"/>
+            </when>
+            <otherwise>
+                <set-property propertyName="Location" value="http://localhost:${serverPort}/api/leagues/#[app.registry['list-of-leagues'].getLeagues().size() + 1]"/>
+                <expression-component>
+                    payload.id = message.inboundProperties.get('Location');
+                    app.registry['list-of-leagues'].getLeagues().add(payload);
+                </expression-component>
+                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+            </otherwise>
+        </choice>
+    </flow>
+
+    <flow name="put:/leagues/{leagueId}:application/json">
+        <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
+                            returnClass="org.mule.module.apikit.leagues.League"/>
+        <choice>
+            <when expression="#[!payload.name.matches('[\\w ]+')]">
+                <logger level="WARN" message="invalid name returning 400"/>
+                <set-property propertyName="http.status" value="400"/>
+                <set-payload value="Invalid League Name"/>
+            </when>
+            <otherwise>
+                <expression-component>
+                    league = app.registry['list-of-leagues'].getLeague(leagueId);
+                    league.name = payload.name;
+                </expression-component>
+                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+            </otherwise>
+        </choice>
+    </flow>
+
+    <flow name="put:/leagues/{leagueId}:application/xml">
+        <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
+                            returnClass="org.mule.module.apikit.leagues.League"/>
+        <choice>
+            <when expression="#[!payload.name.matches('[\\w ]+')]">
+                <logger level="WARN" message="invalid name returning 400"/>
+                <set-property propertyName="http.status" value="400"/>
+                <set-payload value="Invalid League Name"/>
+            </when>
+            <otherwise>
+                <expression-component>
+                    league = app.registry['list-of-leagues'].getLeague(leagueId);
+                    league.name = payload.name;
+                </expression-component>
+                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+            </otherwise>
+        </choice>
+    </flow>
+
+    <flow name="delete:/leagues/{leagueId}">
+        <expression-component>
+            app.registry['list-of-leagues'].deleteLeague(leagueId)
+        </expression-component>
+    </flow>
+
+    <spring:beans>
+        <spring:bean id="liga-bbva" class="org.mule.module.apikit.leagues.League">
+            <spring:property name="id" value="liga-bbva"/>
+            <spring:property name="name" value="Liga BBVA"/>
+            <spring:property name="federation" ref="spanish-federation"/>
+            <spring:property name="teams">
+                <spring:list>
+                    <spring:ref bean="real-madrid"/>
+                    <spring:ref bean="barcelona"/>
+                    <spring:ref bean="valencia"/>
+                    <spring:ref bean="athletic-bilbao"/>
+                    <spring:ref bean="atletico-madrid"/>
+                </spring:list>
+            </spring:property>
+        </spring:bean>
+        <spring:bean id="spanish-federation" class="org.mule.module.apikit.leagues.Federation">
+            <spring:property name="name" value="Real Federacion Espanola de Futbol"/>
+            <spring:property name="year" value="1909"/>
+        </spring:bean>
+        <spring:bean id="premier-league" class="org.mule.module.apikit.leagues.League">
+            <spring:property name="id" value="premier-league"/>
+            <spring:property name="name" value="Premier League"/>
+            <spring:property name="federation" ref="english-federation"/>
+            <spring:property name="teams">
+                <spring:list>
+                    <spring:ref bean="man-united"/>
+                    <spring:ref bean="man-city"/>
+                </spring:list>
+            </spring:property>
+        </spring:bean>
+        <spring:bean id="english-federation" class="org.mule.module.apikit.leagues.Federation">
+            <spring:property name="name" value="Football Association"/>
+            <spring:property name="year" value="1863"/>
+        </spring:bean>
+        <spring:bean id="list-of-leagues" class="org.mule.module.apikit.leagues.Leagues">
+            <spring:property name="leagues">
+                <spring:list>
+                    <spring:ref bean="liga-bbva"/>
+                    <spring:ref bean="premier-league"/>
+                </spring:list>
+            </spring:property>
+        </spring:bean>
+        <spring:bean id="real-madrid" class="org.mule.module.apikit.leagues.Team">
+            <spring:property name="id" value="real-madrid"/>
+            <spring:property name="name" value="Real Madrid"/>
+        </spring:bean>
+        <spring:bean id="barcelona" class="org.mule.module.apikit.leagues.Team">
+            <spring:property name="id" value="barcelona"/>
+            <spring:property name="name" value="Barcelona"/>
+        </spring:bean>
+        <spring:bean id="valencia" class="org.mule.module.apikit.leagues.Team">
+            <spring:property name="id" value="valencia"/>
+            <spring:property name="name" value="Valencia"/>
+        </spring:bean>
+        <spring:bean id="athletic-bilbao" class="org.mule.module.apikit.leagues.Team">
+            <spring:property name="id" value="athletic-bilbao"/>
+            <spring:property name="name" value="Athletic Bilbao"/>
+        </spring:bean>
+        <spring:bean id="atletico-madrid" class="org.mule.module.apikit.leagues.Team">
+            <spring:property name="id" value="atletico-madrid"/>
+            <spring:property name="name" value="Atletico Madrid"/>
+        </spring:bean>
+        <spring:bean id="man-united" class="org.mule.module.apikit.leagues.Team">
+            <spring:property name="id" value="man-united"/>
+            <spring:property name="name" value="Manchester United"/>
+        </spring:bean>
+        <spring:bean id="man-city" class="org.mule.module.apikit.leagues.Team">
+            <spring:property name="id" value="man-city"/>
+            <spring:property name="name" value="Manchester City"/>
+        </spring:bean>
+    </spring:beans>
+
+</mule>

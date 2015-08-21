@@ -72,7 +72,7 @@ public class MuleConfigGeneratorTest {
         when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
 
         entries.addAll(Arrays.asList(new GenerationModel(api, resource, action),
-                new GenerationModel(api, resource, postAction)));
+                                     new GenerationModel(api, resource, postAction)));
 
 
         Log mock = mock(Log.class);
@@ -102,11 +102,11 @@ public class MuleConfigGeneratorTest {
         String s = Helper.nonSpaceOutput(doc);
 
         Diff diff = XMLUnit.compareXML("<flow " +
-                "xmlns='http://www.mulesoft.org/schema/mule/core' " +
-                "name='get:/pet'>" +
-                "<set-property propertyName='Content-Type' value='application/json'/>" +
-                "<set-payload " +
-                "value='{\"name\": \"John\", \"kind\": \"dog\"}' /></flow>", s);
+                                       "xmlns='http://www.mulesoft.org/schema/mule/core' " +
+                                       "name='get:/pet'>" +
+                                       "<set-property propertyName='Content-Type' value='application/json'/>" +
+                                       "<set-payload " +
+                                       "value='{\"name\": \"John\", \"kind\": \"dog\"}' /></flow>", s);
 
         assertTrue(diff.toString(), diff.similar());
     }
@@ -118,7 +118,7 @@ public class MuleConfigGeneratorTest {
         API api = mock(API.class);
         when(api.getPath()).thenReturn("/api/*");
         when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
-
+        when(api.hasToCreateListenerConfig()).thenReturn(true);
         File raml = mock(File.class);
         when(raml.getName()).thenReturn("hello.raml");
         when(api.getRamlFile()).thenReturn(raml);

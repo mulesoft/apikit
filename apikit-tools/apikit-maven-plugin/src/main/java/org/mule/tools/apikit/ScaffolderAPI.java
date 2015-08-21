@@ -41,7 +41,7 @@ public class ScaffolderAPI {
      *
      * @param ramlFiles the ramlFiles to which the scaffolder will be run on
      * @param appDir the directory which contained the generated Mule config files
-     * @param listenerConfigRef reference to a specific listener-config
+     * @param listenerConfigRef name of a specific listener-config
      */
     public void run(List<File> ramlFiles, File appDir, String listenerConfigRef) {
         List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);

@@ -40,6 +40,7 @@ public class ScaffolderTest {
         folder.newFolder("scaffolder-existing-custom-lc");
         folder.newFolder("scaffolder-existing-old");
         folder.newFolder("scaffolder-existing-old-address");
+        folder.newFolder("scaffolder-existing-custom-and-normal-lc");
     }
 
     @Test
@@ -147,6 +148,26 @@ public class ScaffolderTest {
         assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
+    }
+
+    @Test
+    public void testAlreadyExistsGenerateWithCustomAndNormalLC() throws Exception {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.raml"));
+        File xmlFile = getFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut,"http-lc-0.0.0.0-8081");
+        scaffolder.run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(1, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "get:/leagues/{leagueId}"));
+        assertEquals(1, countOccurences(s, "<http:listener config-ref=\"HTTP_Listener_Configuration\""));
+        assertEquals(1, countOccurences(s, "<http:listener config-ref=\"http-lc-0.0.0.0-8081\""));
     }
 
 

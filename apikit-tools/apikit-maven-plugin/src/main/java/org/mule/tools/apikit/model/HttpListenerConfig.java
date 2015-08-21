@@ -87,7 +87,15 @@ public class HttpListenerConfig
         {
             this.name = DEFAULT_CONFIG_NAME;
             this.host = APIKitTools.getHostFromUri(API.DEFAULT_BASE_URI);
-            this.port = APIKitTools.getPortFromUri(API.DEFAULT_BASE_URI);;
+            this.port = APIKitTools.getPortFromUri(API.DEFAULT_BASE_URI);
+            this.basePath = API.DEFAULT_BASE_PATH;
+        }
+
+        public Builder(String listenerConfigName)
+        {
+            this.name = listenerConfigName;
+            this.host = APIKitTools.getHostFromUri(API.DEFAULT_BASE_URI);
+            this.port = APIKitTools.getPortFromUri(API.DEFAULT_BASE_URI);
             this.basePath = API.DEFAULT_BASE_PATH;
         }
 

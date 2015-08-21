@@ -15,11 +15,13 @@ import org.apache.commons.lang.Validate;
 
 public class APIFactory
 {
-    private String customListenerConfigRef;
+    private HttpListenerConfig customListenerConfig;
 
     public APIFactory (String customListenerConfigRef)
     {
-        this.customListenerConfigRef = customListenerConfigRef;
+        if (customListenerConfigRef != null) {
+            this.customListenerConfig = new HttpListenerConfig.Builder(customListenerConfigRef).build();
+        }
     }
 
     public APIFactory ()
@@ -41,7 +43,9 @@ public class APIFactory
 
     public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config, HttpListenerConfig httpListenerConfig, Boolean useInboundEndpoint)
     {
-        Boolean hasCustomHttpListenerConfig = (customListenerConfigRef != null);
+        Boolean createListenerConfigInOutput = !useInboundEndpoint && (customListenerConfig == null ||
+                                                                       (httpListenerConfig != null && customListenerConfig != null && httpListenerConfig.getName() != customListenerConfig.getName()));
+
         Validate.notNull(ramlFile);
         if(apis.containsKey(ramlFile))
         {
@@ -53,9 +57,9 @@ public class APIFactory
             api.setUseInboundEndpoint(useInboundEndpoint);
             if (httpListenerConfig == null && !useInboundEndpoint)
             {
-               httpListenerConfig = createHttpListenerConfig(ramlFile, baseUri);
+                httpListenerConfig = createHttpListenerConfig(ramlFile, baseUri);
             }
-            api.setHttpListenerConfig(httpListenerConfig, !hasCustomHttpListenerConfig);
+            api.setHttpListenerConfig(httpListenerConfig, createListenerConfigInOutput);
 
             api.setConfig(config);
 
@@ -67,7 +71,7 @@ public class APIFactory
         {
             httpListenerConfig = createHttpListenerConfig(ramlFile, baseUri);
         }
-        api.setHttpListenerConfig(httpListenerConfig, !hasCustomHttpListenerConfig);
+        api.setHttpListenerConfig(httpListenerConfig, createListenerConfigInOutput);
         apis.put(ramlFile, api);
         return api;
     }
@@ -75,9 +79,9 @@ public class APIFactory
 
     private HttpListenerConfig createHttpListenerConfig(File ramlFile, String baseUri)
     {
-        if (customListenerConfigRef != null)
+        if (customListenerConfig != null)
         {
-            return new HttpListenerConfig(customListenerConfigRef, null, null, null);
+            return customListenerConfig;
         }
         else
         {
@@ -85,6 +89,11 @@ public class APIFactory
             String httpListenerConfigName = id == null ? HttpListenerConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListenerConfig.DEFAULT_CONFIG_NAME;
             return new HttpListenerConfig.Builder(httpListenerConfigName, baseUri).build();
         }
+    }
+
+    public HttpListenerConfig getCustomListenerConfig()
+    {
+        return customListenerConfig;
     }
 
 }
