@@ -169,7 +169,10 @@ public class MuleConfigGenerator {
         String listenerConfigRef = null;
         if (!api.useInboundEndpoint())
         {
-            new HttpListenerConfigScope(api,mule).generate();
+            if (api.hasToCreateListenerConfig())
+            {
+                new HttpListenerConfigScope(api, mule).generate();
+            }
             listenerConfigRef = api.getHttpListenerConfig().getName();
             api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
         }

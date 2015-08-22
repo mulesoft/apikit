@@ -27,17 +27,23 @@ public class Scaffolder {
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory,
                                    List<String> specFiles, List<String> muleXmlFiles)
             throws MojoExecutionException {
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, null);
+    }
+
+    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory,
+                                              List<String> specFiles, List<String> muleXmlFiles, String customListenerConfigRef)
+            throws MojoExecutionException {
         FileListUtils fileUtils = new FileListUtils(log);
 
         Map<File, InputStream> fileInputStreamMap = fileUtils.toStreamsOrFail(specFiles);
         Map<File, InputStream> streams = fileUtils.toStreamsOrFail(muleXmlFiles);
 
-        return new Scaffolder(log, muleXmlOutputDirectory, fileInputStreamMap, streams);
+        return new Scaffolder(log, muleXmlOutputDirectory, fileInputStreamMap, streams, customListenerConfigRef);
     }
 
     public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> ramls,
-                      Map<File, InputStream> xmls)  {
-        APIFactory apiFactory = new APIFactory();
+                      Map<File, InputStream> xmls, String customListenerConfigRef)  {
+        APIFactory apiFactory = new APIFactory(customListenerConfigRef);
         RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
         MuleConfigParser muleConfigParser = new MuleConfigParser(log, ramls.keySet(), xmls, apiFactory);
         List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);

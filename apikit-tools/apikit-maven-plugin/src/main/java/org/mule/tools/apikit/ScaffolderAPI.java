@@ -29,12 +29,26 @@ public class ScaffolderAPI {
      * @param ramlFiles the ramlFiles to which the scaffolder will be run on
      * @param appDir the directory which contained the generated Mule config files
      */
-    public void run(List<File> ramlFiles, File appDir) {
+
+    public void run(List<File> ramlFiles, File appDir)
+    {
+        run(ramlFiles, appDir, null);
+    }
+
+    /**
+     * Modifies or creates the Mule config files which are contained in the appDir directory
+     * by running the scaffolder on the ramlFiles passed as parameter.
+     *
+     * @param ramlFiles the ramlFiles to which the scaffolder will be run on
+     * @param appDir the directory which contained the generated Mule config files
+     * @param listenerConfigRef name of a specific listener-config
+     */
+    public void run(List<File> ramlFiles, File appDir, String listenerConfigRef) {
         List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
         Scaffolder scaffolder;
         try {
-            scaffolder = Scaffolder.createScaffolder(new SystemStreamLog(), appDir, ramlFilePaths, muleXmlFiles);
+            scaffolder = Scaffolder.createScaffolder(new SystemStreamLog(), appDir, ramlFilePaths, muleXmlFiles, listenerConfigRef);
         } catch(Exception e) {
             throw new RuntimeException("Error executing scaffolder", e);
         }

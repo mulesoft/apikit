@@ -42,7 +42,7 @@ public class MuleConfigParser {
             InputStream stream = fileStreamEntry.getValue();
             File file = fileStreamEntry.getKey();
             try {
-                parseMuleConfigFile(file, stream, ramlPaths);
+                parseMuleConfigFile(file, stream, ramlPaths, apiFactory.getCustomListenerConfig());
                 stream.close();
             } catch (Exception e) {
                 log.error("Error parsing Mule xml config file: [" + file + "]. Reason: " + e.getMessage());
@@ -51,12 +51,16 @@ public class MuleConfigParser {
         }
     }
 
-    private void parseMuleConfigFile(File file, InputStream stream, Set<File> ramlPaths) throws JDOMException, IOException {
+    private void parseMuleConfigFile(File file, InputStream stream, Set<File> ramlPaths, HttpListenerConfig customListenerConfig) throws JDOMException, IOException {
         SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
         Document document = saxBuilder.build(stream);
 
         apikitConfigs = new APIKitConfigParser().parse(document);
         httpListenerConfigs = new HttpListenerConfigParser().parse(document);
+        if (customListenerConfig != null)
+        {
+            httpListenerConfigs.put(customListenerConfig.getName(), customListenerConfig);
+        }
         includedApis = new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document);
 
         entries = new APIKitFlowsParser(includedApis).parse(document);

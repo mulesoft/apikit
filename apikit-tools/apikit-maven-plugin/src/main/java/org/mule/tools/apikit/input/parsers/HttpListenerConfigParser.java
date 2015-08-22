@@ -56,5 +56,4 @@ public class HttpListenerConfigParser implements MuleConfigFileParser
         }
         return httpListenerConfigMap;
     }
-
 }
