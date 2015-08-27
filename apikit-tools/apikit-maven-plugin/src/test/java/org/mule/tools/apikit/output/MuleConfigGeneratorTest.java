@@ -72,11 +72,11 @@ public class MuleConfigGeneratorTest {
         when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
 
         entries.addAll(Arrays.asList(new GenerationModel(api, resource, action),
-                new GenerationModel(api, resource, postAction)));
+                                     new GenerationModel(api, resource, postAction)));
 
 
         Log mock = mock(Log.class);
-        MuleConfigGenerator muleConfigGenerator = new MuleConfigGenerator(mock, new File(""), entries);
+        MuleConfigGenerator muleConfigGenerator = new MuleConfigGenerator(mock, new File(""), entries, new HashMap<String, HttpListenerConfig>());
         muleConfigGenerator.generate();
 
         assertTrue(file.exists());
@@ -102,23 +102,22 @@ public class MuleConfigGeneratorTest {
         String s = Helper.nonSpaceOutput(doc);
 
         Diff diff = XMLUnit.compareXML("<flow " +
-                "xmlns='http://www.mulesoft.org/schema/mule/core' " +
-                "name='get:/pet'>" +
-                "<set-property propertyName='Content-Type' value='application/json'/>" +
-                "<set-payload " +
-                "value='{\"name\": \"John\", \"kind\": \"dog\"}' /></flow>", s);
+                                       "xmlns='http://www.mulesoft.org/schema/mule/core' " +
+                                       "name='get:/pet'>" +
+                                       "<set-property propertyName='Content-Type' value='application/json'/>" +
+                                       "<set-payload " +
+                                       "value='{\"name\": \"John\", \"kind\": \"dog\"}' /></flow>", s);
 
         assertTrue(diff.toString(), diff.similar());
     }
 
     @Test
-    public void blankDocument() throws Exception {
+    public void blankDocumentWithoutLCInDomain() throws Exception {
 
         HttpListenerConfig listenerConfig = new HttpListenerConfig(HttpListenerConfig.DEFAULT_CONFIG_NAME,"localhost","8080","");
         API api = mock(API.class);
         when(api.getPath()).thenReturn("/api/*");
         when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
-
         File raml = mock(File.class);
         when(raml.getName()).thenReturn("hello.raml");
         when(api.getRamlFile()).thenReturn(raml);
@@ -127,7 +126,48 @@ public class MuleConfigGeneratorTest {
         when(api.getXmlFile(any(File.class))).thenReturn(file);
 
         MuleConfigGenerator muleConfigGenerator =
-                new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>());
+                new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>(), new HashMap<String, HttpListenerConfig>());
+
+        Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
+
+        Element rootElement = document.getRootElement();
+        assertEquals("mule", rootElement.getName());
+        Element xmlListenerConfig = rootElement.getChildren().get(0);
+        assertEquals("listener-config",xmlListenerConfig.getName());
+
+        Element mainFlow = rootElement.getChildren().get(1);
+
+        assertEquals("flow", mainFlow.getName());
+        assertEquals("hello-main", mainFlow.getAttribute("name").getValue());
+        assertEquals("httpListenerConfig", mainFlow.getChildren().get(0).getAttribute("config-ref").getValue());
+        assertEquals("/api/*", mainFlow.getChildren().get(0).getAttribute("path").getValue());
+
+        Element apikitConfig = mainFlow.getChildren().get(1);
+        assertEquals(0, apikitConfig.getChildren().size());
+
+        Element globalExceptionStrategy = rootElement.getChildren().get(2);
+        assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
+        assertEquals("hello-apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
+
+    }
+
+    @Test
+    public void blankDocumentWithLCInDomain() throws Exception {
+
+        HttpListenerConfig listenerConfig = new HttpListenerConfig(HttpListenerConfig.DEFAULT_CONFIG_NAME,"localhost","8080","");
+        API api = mock(API.class);
+        when(api.getPath()).thenReturn("/api/*");
+        when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
+        File raml = mock(File.class);
+        when(raml.getName()).thenReturn("hello.raml");
+        when(api.getRamlFile()).thenReturn(raml);
+        when(api.getId()).thenReturn("hello");
+        File file = folder.newFile("hello.xml");
+        when(api.getXmlFile(any(File.class))).thenReturn(file);
+
+
+        MuleConfigGenerator muleConfigGenerator =
+                new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>(), new HashMap<String, HttpListenerConfig>());
 
         Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 

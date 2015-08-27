@@ -13,11 +13,15 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.misc.FileListUtils;
+import org.mule.tools.apikit.model.HttpListenerConfig;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,9 +41,13 @@ public class ScaffolderTest {
     public void setUp() {
         folder.newFolder("scaffolder");
         folder.newFolder("scaffolder-existing");
+        folder.newFolder("scaffolder-existing-custom-lc");
         folder.newFolder("scaffolder-existing-old");
         folder.newFolder("scaffolder-existing-old-address");
-
+        folder.newFolder("scaffolder-existing-custom-and-normal-lc");
+        folder.newFolder("custom-domain");
+        folder.newFolder("empty-domain");
+        folder.newFolder("custom-domain-multiple-lc");
     }
 
     @Test
@@ -47,10 +55,42 @@ public class ScaffolderTest {
         File muleXmlSimple = simpleGeneration("simple");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<http:listener-config"));
         assertEquals(1, countOccurences(s, "get:/:simple-config"));
         assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
     }
 
+    @Test
+    public void testSimpleGenerateWithCustomDomain() throws Exception {
+        File muleXmlSimple = simpleGeneration("simple", "custom-domain/mule-domain-config.xml");
+        assertTrue(muleXmlSimple.exists());
+        String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(0, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8081\""));
+        assertEquals(1, countOccurences(s, "get:/:simple-config"));
+        assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    }
+
+    @Test
+    public void testSimpleGenerateWithCustomDomainWithMultipleLC() throws Exception {
+        File muleXmlSimple = simpleGeneration("simple", "custom-domain-multiple-lc/mule-domain-config.xml");
+        assertTrue(muleXmlSimple.exists());
+        String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(0, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8080\""));
+        assertEquals(1, countOccurences(s, "get:/:simple-config"));
+        assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    }
+
+    @Test
+    public void testSimpleGenerateWithEmptyDomain() throws Exception {
+        File muleXmlSimple = simpleGeneration("simple", "empty-domain/mule-domain-config.xml");
+        assertTrue(muleXmlSimple.exists());
+        String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "get:/:simple-config"));
+        assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    }
 
     @Test
     public void testTwoResourceGenerate() throws Exception {
@@ -116,6 +156,47 @@ public class ScaffolderTest {
         assertEquals(1, countOccurences(s, "post:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
 
+    }
+
+    @Test
+    public void testAlreadyExistsGenerateWithCustomDomain() throws Exception {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing-custom-lc/simple.raml"));
+        File xmlFile = getFile("scaffolder-existing-custom-lc/simple.xml");
+        File domainFile = getFile("custom-domain/mule-domain-config.xml");
+
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut,domainFile);
+        scaffolder.run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(0, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "get:/pet"));
+        assertEquals(1, countOccurences(s, "get:/\""));
+    }
+
+    @Test
+    public void testAlreadyExistsGenerateWithCustomAndNormalLC() throws Exception {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.raml"));
+        File xmlFile = getFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File domainFile = getFile("custom-domain/mule-domain-config.xml");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, domainFile);
+        scaffolder.run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(1, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "get:/leagues/{leagueId}"));
+        assertEquals(1, countOccurences(s, "<http:listener config-ref=\"HTTP_Listener_Configuration\""));
+        assertEquals(1, countOccurences(s, "<http:listener config-ref=\"http-lc-0.0.0.0-8081\""));
     }
 
 
@@ -186,7 +267,7 @@ public class ScaffolderTest {
         File muleXmlOut = folder.newFolder("scaffolder");
         List<File> xmls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.xml"));
 
-        createScaffolder(ramls, xmls, muleXmlOut).run();
+        createScaffolder(ramls, xmls, muleXmlOut, null).run();
 
         File muleXmlSimple = new File(muleXmlOut, "multipleMimeTypes.xml");
         assertTrue(muleXmlSimple.exists());
@@ -225,13 +306,24 @@ public class ScaffolderTest {
     }
 
     private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
-            throws MojoExecutionException {
+            throws MojoExecutionException, FileNotFoundException
+    {
+        return createScaffolder(ramls, xmls, muleXmlOut, null);
+    }
+
+    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile)
+            throws MojoExecutionException, FileNotFoundException {
         Log log = mock(Log.class);
 
         Map<File, InputStream> ramlMap = getFileInputStreamMap(ramls);
         Map<File, InputStream> xmlMap = getFileInputStreamMap(xmls);
 
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap);
+        InputStream domainStream = null;
+        if (domainFile != null)
+        {
+            domainStream = new FileInputStream(domainFile);
+        }
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream);
     }
 
     private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
@@ -258,4 +350,16 @@ public class ScaffolderTest {
         return new File(muleXmlOut, name + ".xml");
     }
 
+    private File simpleGeneration(String name, String domainPath) throws Exception {
+        List<File> ramls = Arrays.asList(getFile("scaffolder/" + name + ".raml"));
+        File domainFile = getFile(domainPath);
+
+        List<File> xmls = Arrays.asList();
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, domainFile);
+        scaffolder.run();
+
+        return new File(muleXmlOut, name + ".xml");
+    }
 }

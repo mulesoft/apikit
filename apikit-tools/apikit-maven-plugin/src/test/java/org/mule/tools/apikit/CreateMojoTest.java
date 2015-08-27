@@ -33,6 +33,10 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    @Rule
+    public TemporaryFolder domainFolder = new TemporaryFolder();
+    private File domainProject;
+    private File domainFile;
     private File src;
     private File main;
     private File app;
@@ -86,7 +90,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     }
 
     @Test
-    public void testExecute() throws  Exception {
+    public void testExecuteWithoutDomain() throws  Exception {
         setVariableValueToObject(mojo, "muleXmlDirectory", app);
         setVariableValueToObject(mojo, "specDirectory", project);
         setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
@@ -94,6 +98,101 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
                 new FileOutputStream(apiFile));
 
+        mojo.execute();
+
+        assertTrue(apiFile.exists());
+        FileInputStream input = new FileInputStream(apiFile);
+        String ramlFileContent = IOUtils.toString(input);
+        input.close();
+
+        assertTrue(ramlFileContent.length() > 0);
+        File muleConfigFile = new File (project.getPath() + "/src/main/app/hello.xml");
+        assertTrue(muleConfigFile.exists());
+
+        input = new FileInputStream(muleConfigFile);
+        String muleConfigContent = IOUtils.toString(input);
+        input.close();
+
+        assertTrue(muleConfigContent.length() > 0);
+        assertTrue(muleConfigContent.contains("listener"));
+
+    }
+
+    @Test
+    public void testExecuteWithCustomDomain() throws  Exception {
+        domainProject = domainFolder.newFolder("my-domain");
+        domainFile = new File(domainProject, "mule-domain-config.xml");
+        setVariableValueToObject(mojo, "muleXmlDirectory", app);
+        setVariableValueToObject(mojo, "specDirectory", project);
+        setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
+        setVariableValueToObject(mojo, "domainDirectory", domainProject);
+
+        domainFile.createNewFile();
+        IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("custom-domain/mule-domain-config.xml"),
+                     new FileOutputStream(domainFile));
+        IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
+                     new FileOutputStream(apiFile));
+
+        mojo.execute();
+
+        assertTrue(apiFile.exists());
+        FileInputStream input = new FileInputStream(apiFile);
+        String ramlFileContent = IOUtils.toString(input);
+        input.close();
+
+        assertTrue(ramlFileContent.length() > 0);
+        File muleConfigFile = new File (project.getPath() + "/src/main/app/hello.xml");
+        assertTrue(muleConfigFile.exists());
+
+        input = new FileInputStream(muleConfigFile);
+        String muleConfigContent = IOUtils.toString(input);
+        input.close();
+
+        assertTrue(muleConfigContent.length() > 0);
+        assertTrue(muleConfigContent.contains("listener"));
+
+    }
+
+    @Test
+    public void testExecuteWithEmptyDomain() throws  Exception {
+        domainProject = domainFolder.newFolder("my-domain");
+        domainFile = new File(domainProject, "mule-domain.xml");
+        setVariableValueToObject(mojo, "muleXmlDirectory", app);
+        setVariableValueToObject(mojo, "specDirectory", project);
+        setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
+        setVariableValueToObject(mojo, "domainDirectory", domainProject);
+        IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
+                     new FileOutputStream(apiFile));
+
+        mojo.execute();
+
+        assertTrue(apiFile.exists());
+        FileInputStream input = new FileInputStream(apiFile);
+        String ramlFileContent = IOUtils.toString(input);
+        input.close();
+
+        assertTrue(ramlFileContent.length() > 0);
+        File muleConfigFile = new File (project.getPath() + "/src/main/app/hello.xml");
+        assertTrue(muleConfigFile.exists());
+
+        input = new FileInputStream(muleConfigFile);
+        String muleConfigContent = IOUtils.toString(input);
+        input.close();
+
+        assertTrue(muleConfigContent.length() > 0);
+        assertTrue(muleConfigContent.contains("listener"));
+
+    }
+
+    @Test
+    public void testExecuteWithDefaultDomain() throws  Exception {
+        domainProject = domainFolder.newFolder("my-domain");
+        setVariableValueToObject(mojo, "muleXmlDirectory", app);
+        setVariableValueToObject(mojo, "specDirectory", project);
+        setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
+        setVariableValueToObject(mojo, "domainDirectory", domainProject);
+        IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
+                     new FileOutputStream(apiFile));
         mojo.execute();
 
         assertTrue(apiFile.exists());
