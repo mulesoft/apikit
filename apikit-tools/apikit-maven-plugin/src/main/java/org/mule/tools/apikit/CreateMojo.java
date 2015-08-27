@@ -71,6 +71,12 @@ public class CreateMojo
     @Parameter(defaultValue = "${basedir}/src/main/app")
     private File muleXmlOutputDirectory;
 
+    /**
+     * Spec source directory to use as root of muleDomain.
+     */
+    @Parameter
+    private File domainDirectory;
+
     private Log log;
 
     List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {
@@ -97,11 +103,19 @@ public class CreateMojo
 
         List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
         List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
-
+        String domainFile = null;
+        if (domainDirectory != null)
+        {
+            List<String> domainFiles = getIncludedFiles(domainDirectory, muleXmlIncludes, muleXmlExcludes);
+            if (domainFiles.size() > 0)
+            {
+                domainFile = domainFiles.get(0);
+            }
+        }
         log.info("Processing the following RAML files: " + specFiles);
         log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
 
-        Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles);
+        Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles,domainFile);
         scaffolder.run();
     }
 

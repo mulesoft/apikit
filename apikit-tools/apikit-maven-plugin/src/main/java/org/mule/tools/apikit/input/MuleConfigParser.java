@@ -36,8 +36,9 @@ public class MuleConfigParser {
     private Map<String, APIKitConfig> apikitConfigs = new HashMap<String, APIKitConfig>();
     private final APIFactory apiFactory;
 
-    public MuleConfigParser(Log log, Set<File> ramlPaths, Map<File, InputStream> streams, APIFactory apiFactory) {
+    public MuleConfigParser(Log log, Set<File> ramlPaths, Map<File, InputStream> streams, Map<String, HttpListenerConfig> httpListenerConfigs, APIFactory apiFactory) {
         this.apiFactory = apiFactory;
+        this.httpListenerConfigs.putAll(httpListenerConfigs);
         for (Entry<File, InputStream> fileStreamEntry : streams.entrySet()) {
             InputStream stream = fileStreamEntry.getValue();
             File file = fileStreamEntry.getKey();
@@ -56,7 +57,7 @@ public class MuleConfigParser {
         Document document = saxBuilder.build(stream);
 
         apikitConfigs = new APIKitConfigParser().parse(document);
-        httpListenerConfigs = new HttpListenerConfigParser().parse(document);
+        httpListenerConfigs.putAll(new HttpListenerConfigParser().parse(document));
         includedApis = new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document);
 
         entries = new APIKitFlowsParser(includedApis).parse(document);

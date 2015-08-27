@@ -29,12 +29,35 @@ public class ScaffolderAPI {
      * @param ramlFiles the ramlFiles to which the scaffolder will be run on
      * @param appDir the directory which contained the generated Mule config files
      */
-    public void run(List<File> ramlFiles, File appDir) {
+
+    public void run(List<File> ramlFiles, File appDir)
+    {
+        run(ramlFiles, appDir, null);
+    }
+
+    /**
+     * Modifies or creates the Mule config files which are contained in the appDir directory
+     * by running the scaffolder on the ramlFiles passed as parameter.
+     *
+     * @param ramlFiles the ramlFiles to which the scaffolder will be run on
+     * @param appDir the directory which contained the generated Mule config files
+     * @param domainDir the directory which contained the domain used by the mule config files
+     */
+    public void run(List<File> ramlFiles, File appDir, File domainDir) {
         List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
+        String domain = null;
+        if (domainDir != null)
+        {
+            List<String> domainFiles = retrieveFilePaths(domainDir,appExtensions);
+            if (domainFiles.size() > 0)
+            {
+                domain = domainFiles.get(0);
+            }
+        }
         Scaffolder scaffolder;
         try {
-            scaffolder = Scaffolder.createScaffolder(new SystemStreamLog(), appDir, ramlFilePaths, muleXmlFiles);
+            scaffolder = Scaffolder.createScaffolder(new SystemStreamLog(), appDir, ramlFilePaths, muleXmlFiles, domain);
         } catch(Exception e) {
             throw new RuntimeException("Error executing scaffolder", e);
         }

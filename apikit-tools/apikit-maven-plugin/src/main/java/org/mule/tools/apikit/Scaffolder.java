@@ -9,6 +9,7 @@ package org.mule.tools.apikit;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
+import org.mule.tools.apikit.input.MuleDomainParser;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationStrategy;
@@ -18,6 +19,8 @@ import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
 
@@ -27,21 +30,52 @@ public class Scaffolder {
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory,
                                    List<String> specFiles, List<String> muleXmlFiles)
             throws MojoExecutionException {
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, null);
+    }
+
+    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory,
+                                              List<String> specFiles, List<String> muleXmlFiles, String domainFile)
+            throws MojoExecutionException {
         FileListUtils fileUtils = new FileListUtils(log);
 
         Map<File, InputStream> fileInputStreamMap = fileUtils.toStreamsOrFail(specFiles);
         Map<File, InputStream> streams = fileUtils.toStreamsOrFail(muleXmlFiles);
-
-        return new Scaffolder(log, muleXmlOutputDirectory, fileInputStreamMap, streams);
+        InputStream domainStream = getDomainStream(log, domainFile);
+        return new Scaffolder(log, muleXmlOutputDirectory, fileInputStreamMap, streams, domainStream);
     }
 
     public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> ramls,
-                      Map<File, InputStream> xmls)  {
-        APIFactory apiFactory = new APIFactory();
+                      Map<File, InputStream> xmls, InputStream domainStream)  {
+        MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
+        APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
+        MuleConfigParser muleConfigParser = new MuleConfigParser(log, ramls.keySet(), xmls,muleDomainParser.getHttpListenerConfigs(), apiFactory);
         RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
-        MuleConfigParser muleConfigParser = new MuleConfigParser(log, ramls.keySet(), xmls, apiFactory);
         List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
-        muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels);
+        muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs());
+    }
+
+    private static InputStream getDomainStream(Log log, String domainPath)
+    {
+        InputStream domainStream = null;
+        if (domainPath != null)
+        {
+            try
+            {
+                File domain = new File(domainPath);
+                domainStream = new FileInputStream(domain);
+            } catch (FileNotFoundException e)
+            {
+                if (log != null)
+                {
+                    log.error("Error opening the domain file", e);
+                }
+                else
+                {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return domainStream;
     }
 
     public void run() {

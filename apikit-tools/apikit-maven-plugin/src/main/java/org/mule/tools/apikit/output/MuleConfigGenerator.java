@@ -8,6 +8,7 @@ package org.mule.tools.apikit.output;
 
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.HttpListenerConfig;
 import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
 import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
 import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
@@ -61,11 +62,13 @@ public class MuleConfigGenerator {
     private final List<GenerationModel> flowEntries;
     private final Log log;
     private final File rootDirectory;
+    private final Map<String, HttpListenerConfig> domainHttpListenerConfigs;
 
-    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries) {
+    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListenerConfig> domainHttpListenerConfigs) {
         this.log = log;
         this.flowEntries = flowEntries;
         this.rootDirectory = muleConfigOutputDirectory;
+        this.domainHttpListenerConfigs = domainHttpListenerConfigs;
     }
 
     public void generate() {
@@ -136,10 +139,6 @@ public class MuleConfigGenerator {
                 {
                     api.setDefaultAPIKitConfig();
                 }
-                if (!api.useInboundEndpoint() && api.getHttpListenerConfig() == null)
-                {
-                    api.setDefaultHttpListenerConfig();
-                }
                 generateAPIKitAndListenerConfig(api, doc);
             }
             docs.put(api, doc);
@@ -169,9 +168,16 @@ public class MuleConfigGenerator {
         String listenerConfigRef = null;
         if (!api.useInboundEndpoint())
         {
-            new HttpListenerConfigScope(api,mule).generate();
+            if (!domainHttpListenerConfigs.containsKey(api.getHttpListenerConfig().getName()))
+            {
+                new HttpListenerConfigScope(api, mule).generate();
+            }
             listenerConfigRef = api.getHttpListenerConfig().getName();
             api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
+        }
+        else
+        {
+            api.setBaseUri(API.DEFAULT_BASE_URI);
         }
         new APIKitConfigScope(api.getConfig(), mule).generate();
         Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
