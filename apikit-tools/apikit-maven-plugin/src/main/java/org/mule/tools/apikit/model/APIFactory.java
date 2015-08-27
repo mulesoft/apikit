@@ -71,4 +71,8 @@ public class APIFactory
         apis.put(ramlFile, api);
         return api;
     }
+
+    public Map<String, HttpListenerConfig> getDomainHttpListenerConfigs() {
+        return domainHttpListenerConfigs;
+    }
 }

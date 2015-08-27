@@ -175,10 +175,6 @@ public class MuleConfigGenerator {
             listenerConfigRef = api.getHttpListenerConfig().getName();
             api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
         }
-        else
-        {
-            api.setBaseUri(API.DEFAULT_BASE_URI);
-        }
         new APIKitConfigScope(api.getConfig(), mule).generate();
         Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
         String configRef = api.getConfig() != null? api.getConfig().getName() : null;

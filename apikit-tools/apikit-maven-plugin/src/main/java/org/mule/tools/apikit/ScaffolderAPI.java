@@ -46,6 +46,7 @@ public class ScaffolderAPI {
     public void run(List<File> ramlFiles, File appDir, File domainDir) {
         List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
+        SystemStreamLog log = new SystemStreamLog();
         String domain = null;
         if (domainDir != null)
         {
@@ -53,11 +54,15 @@ public class ScaffolderAPI {
             if (domainFiles.size() > 0)
             {
                 domain = domainFiles.get(0);
+                if (domainFiles.size() > 1)
+                {
+                    log.info("There is more than one domain file inside of the domain folder. The domain: " + domain + " will be used.");
+                }
             }
         }
         Scaffolder scaffolder;
         try {
-            scaffolder = Scaffolder.createScaffolder(new SystemStreamLog(), appDir, ramlFilePaths, muleXmlFiles, domain);
+            scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain);
         } catch(Exception e) {
             throw new RuntimeException("Error executing scaffolder", e);
         }

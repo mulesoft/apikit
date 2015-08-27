@@ -48,7 +48,7 @@ public class Scaffolder {
                       Map<File, InputStream> xmls, InputStream domainStream)  {
         MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
         APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
-        MuleConfigParser muleConfigParser = new MuleConfigParser(log, ramls.keySet(), xmls,muleDomainParser.getHttpListenerConfigs(), apiFactory);
+        MuleConfigParser muleConfigParser = new MuleConfigParser(log, ramls.keySet(), xmls, apiFactory);
         RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
         List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
         muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs());
@@ -59,15 +59,16 @@ public class Scaffolder {
         InputStream domainStream = null;
         if (domainPath != null)
         {
+            File domain = null;
             try
             {
-                File domain = new File(domainPath);
+                domain = new File(domainPath);
                 domainStream = new FileInputStream(domain);
             } catch (FileNotFoundException e)
             {
                 if (log != null)
                 {
-                    log.error("Error opening the domain file", e);
+                    log.error("Error opening file [" + domain + "] file", e);
                 }
                 else
                 {

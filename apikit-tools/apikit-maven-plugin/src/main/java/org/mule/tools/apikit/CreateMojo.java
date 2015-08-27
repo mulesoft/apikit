@@ -110,6 +110,9 @@ public class CreateMojo
             if (domainFiles.size() > 0)
             {
                 domainFile = domainFiles.get(0);
+                if (domainFiles.size() > 1) {
+                    log.info("There is more than one domain file inside of the domain folder. The domain: " + domainFile + " will be used.");
+                }
             }
         }
         log.info("Processing the following RAML files: " + specFiles);
