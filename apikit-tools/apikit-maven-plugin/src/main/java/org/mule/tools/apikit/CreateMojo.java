@@ -74,7 +74,7 @@ public class CreateMojo
     /**
      * Spec source directory to use as root of muleDomain.
      */
-    @Parameter
+    @Parameter (property = "domainDirectory")
     private File domainDirectory;
 
     private Log log;
@@ -84,6 +84,7 @@ public class CreateMojo
         scanner.setIncludes(includes);
         scanner.setExcludes(excludes);
         scanner.scan();
+
         String[] includedFiles = scanner.getIncludedFiles();
         for (int i = 0; i < includedFiles.length; i++) {
             includedFiles[i] = new File(scanner.getBasedir(), includedFiles[i]).getAbsolutePath();
@@ -104,9 +105,10 @@ public class CreateMojo
         List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
         List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
         String domainFile = null;
+
         if (domainDirectory != null)
         {
-            List<String> domainFiles = getIncludedFiles(domainDirectory, muleXmlIncludes, muleXmlExcludes);
+            List<String> domainFiles = getIncludedFiles(domainDirectory, new String[]{"*.xml"}, new String[]{});
             if (domainFiles.size() > 0)
             {
                 domainFile = domainFiles.get(0);
@@ -114,6 +116,14 @@ public class CreateMojo
                     log.info("There is more than one domain file inside of the domain folder. The domain: " + domainFile + " will be used.");
                 }
             }
+            else
+            {
+                log.error("The specified domain directory [" + domainDirectory + "] does not contain any xml file.");
+            }
+        }
+        else
+        {
+            log.info("No domain was provided. To send it, use -DdomainDirectory.");
         }
         log.info("Processing the following RAML files: " + specFiles);
         log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
