@@ -101,7 +101,7 @@ public class Proxy extends AbstractRouter
 
     private Flow buildBasicFlow()
     {
-        String flowName = "__intercepted_chain_flow";
+        String flowName = "__intercepted_chain_flow_" + config.getName();
         Flow wrapper = new Flow(flowName, muleContext);
         wrapper.setMessageProcessors(Collections.singletonList(next));
         try
