@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -18,6 +19,7 @@ import org.mule.tools.apikit.misc.FileListUtils;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -118,7 +120,6 @@ public class ScaffolderTest {
 
     }
 
-
     @Test
     public void testAlreadyExistsOldGenerate() throws Exception {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-old/simple.raml"));
@@ -138,6 +139,29 @@ public class ScaffolderTest {
 
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));
+    }
+
+    @Test
+    public void testAlreadyExistingMuleConfigWithRouter() throws Exception {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing/simple.raml"));
+        File xmlFile = getFile("scaffolder-existing/mule-config-no-api-flows.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
+        scaffolder.run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(1, countOccurences(s, "<apikit:router config-ref=\"apikit-config\" />"));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "get:/pet"));
+        assertEquals(1, countOccurences(s, "post:/pet"));
+        assertEquals(1, countOccurences(s, "get:/:"));
+        Collection<File> newXmlConfigs = FileUtils.listFiles(muleXmlOut, new String[] {"xml"}, true);
+        assertEquals(0, newXmlConfigs.size());
     }
 
     @Test
