@@ -123,7 +123,7 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
 
     private void checkContentLengthIsNotFiltered() throws Exception
     {
-        Response response = given().header("Accept", "application/json")
+        Response response = given().header("", "application/json")
                 .expect()
                 .response().body("name", hasItems("Liga BBVA", "Premiere League"))
                 .header("Content-type", containsString("application/json")).statusCode(200)
