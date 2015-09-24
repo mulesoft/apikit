@@ -15,10 +15,7 @@ import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.infrastructure.deployment.AbstractFakeMuleServerTestCase;
 
 import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Headers;
-import com.jayway.restassured.response.Response;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -56,7 +53,6 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
         notFound();
         methodNotAllowed();
         getWithRequiredQueryParam();
-        checkContentLengthIsNotFiltered();
     }
 
     protected String getProxyAppFolder()
@@ -119,19 +115,6 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
                 .response().body("name", hasItems("Atleti", "Elche"))
                 .header("Content-type", containsString("application/json")).statusCode(200)
                 .when().get("/proxy/leagues/1/teams");
-    }
-
-    private void checkContentLengthIsNotFiltered() throws Exception
-    {
-        Response response = given().header("", "application/json")
-                .expect()
-                .response().body("name", hasItems("Liga BBVA", "Premiere League"))
-                .header("Content-type", containsString("application/json")).statusCode(200)
-                .when().get("/proxy/leagues");
-
-        String expectedBody = "[{ \"name\": \"Liga BBVA\" }, { \"name\": \"Premiere League\" }]";
-        Assert.assertEquals(expectedBody, response.getBody().print());
-        Assert.assertEquals(String.valueOf(expectedBody.length()), response.getHeaders().getValue("Content-Length"));
     }
 
 }
