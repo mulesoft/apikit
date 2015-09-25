@@ -40,9 +40,9 @@ public class LeagueAPI {
         league.deleteTeam(teamId);
     }
 
-    public Teams getTeams(String orderByCity) {
+    public Teams getTeams(String city) {
         List<Team> teamsList = new ArrayList<Team>();
-        List<org.mule.examples.leagues.model.Team> teams = league.getTeams(orderByCity);
+        List<org.mule.examples.leagues.model.Team> teams = league.getTeams(city);
         for(org.mule.examples.leagues.model.Team team : teams) {
             Team teamResp = new Team();
             teamResp.setId(team.getId());
