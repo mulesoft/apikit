@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
 public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
 {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected static final Logger logger = LoggerFactory.getLogger(RestXmlSchemaValidator.class);
 
     public RestXmlSchemaValidator(MuleContext muleContext)
     {
@@ -91,6 +91,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
     public static Document loadDocument(InputStream inputStream) throws IOException
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        setFeatures(factory);
         factory.setNamespaceAware(true);
         try
         {
@@ -104,6 +105,39 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
         catch (SAXException e)
         {
             throw new IOException("An internal operation failed.", e);
+        }
+    }
+
+    /*
+     * Prevent XXE attacks
+     * <code>https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing</code>
+     */
+    private static void setFeatures(DocumentBuilderFactory dbf)
+    {
+        String feature = null;
+        try
+        {
+
+            // This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all XML entity attacks are prevented
+            //feature  = "http://apache.org/xml/features/disallow-doctype-decl";
+            //dbf.setFeature(feature, true);
+
+            // If you can't completely disable DTDs, then at least do the following:
+            feature = "http://xml.org/sax/features/external-general-entities";
+            dbf.setFeature(feature, false);
+
+            feature = "http://xml.org/sax/features/external-parameter-entities";
+            dbf.setFeature(feature, false);
+
+            // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks" (see reference below)
+            dbf.setXIncludeAware(false);
+            dbf.setExpandEntityReferences(false);
+
+        }
+        catch (ParserConfigurationException e)
+        {
+            logger.info("ParserConfigurationException was thrown. The feature '" + feature +
+                        "' is probably not supported by your XML processor.");
         }
     }
 }
