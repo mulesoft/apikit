@@ -1,0 +1,19 @@
+#%RAML 0.8
+title: XXE attack
+version: 1.0
+baseUri: http://localhost:8081/api
+
+/test:
+  description: test for xxe attack testing
+  post:
+    body:
+      application/xml:
+        schema: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+            <xs:element name="a" type="xs:int"/>
+          </xs:schema>
+    responses:
+      200:
+        body:
+          application/xml:
