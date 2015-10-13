@@ -1,0 +1,63 @@
+{
+  "entities": [
+    {
+      "entity": {
+        "name": "entityA",
+        "remoteName": "entity_A",
+        "properties": [
+          {
+            "field": {
+              "name": "id",
+              "sample": "12",
+              "description": "12",
+              "length": 4,
+              "nullable": false,
+              "key": true
+            }
+          },
+          {
+            "field": {
+              "name": "name",
+              "type": "string",
+              "sample": "Pretty Entity",
+              "description": "12",
+              "length": 40,
+              "nullable": true,
+              "key": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "name": "entityB",
+        "remoteName": "entity_B",
+        "properties": [
+          {
+            "field": {
+              "name": "id",
+              "type": "integer",
+              "sample": "12",
+              "description": "12",
+              "length": 4,
+              "nullable": false,
+              "key": true
+            }
+          },
+          {
+            "field": {
+              "name": "description",
+              "type": "string",
+              "sample": "Pretty Entity",
+              "description": "12",
+              "length": 40,
+              "nullable": true,
+              "key": false
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

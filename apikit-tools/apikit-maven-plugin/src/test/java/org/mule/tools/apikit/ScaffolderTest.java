@@ -6,7 +6,6 @@
  */
 package org.mule.tools.apikit;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -15,12 +14,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.misc.FileListUtils;
+import org.mule.tools.apikit.model.HttpListenerConfig;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -197,6 +198,7 @@ public class ScaffolderTest {
         assertEquals(1, countOccurences(s, "<http:listener config-ref=\"HTTP_Listener_Configuration\""));
         assertEquals(1, countOccurences(s, "<http:listener config-ref=\"http-lc-0.0.0.0-8081\""));
     }
+
 
     @Test
     public void testAlreadyExistsOldGenerate() throws Exception {

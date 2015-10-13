@@ -42,6 +42,7 @@ public class Configuration extends AbstractConfiguration
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private boolean consoleEnabled = true;
+    private boolean extensionEnabled = false;
     private String consolePath = DEFAULT_CONSOLE_PATH;
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private Map<String, Flow> restFlowMap;

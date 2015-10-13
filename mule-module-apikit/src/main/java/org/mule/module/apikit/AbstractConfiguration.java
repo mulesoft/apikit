@@ -7,6 +7,7 @@
 package org.mule.module.apikit;
 
 import static org.mule.module.apikit.UrlUtils.getBaseSchemeHostPort;
+import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 import static org.raml.parser.rule.ValidationResult.Level.ERROR;
 import static org.raml.parser.rule.ValidationResult.Level.WARN;
 import static org.raml.parser.rule.ValidationResult.UNKNOWN;
@@ -63,6 +64,10 @@ import org.raml.parser.visitor.RamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
 public abstract class AbstractConfiguration implements Initialisable, MuleContextAware, Startable
 {
 
@@ -87,7 +92,10 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     protected LoadingCache<String, URIPattern> uriPatternCache;
     private List<String> consoleUrls = new ArrayList<String>();
     private boolean started;
-
+    protected boolean extensionEnabled = false; 
+    private Service extensionService = null;
+    
+    
     @Override
     public void initialise() throws InitialisationException
     {
@@ -574,5 +582,29 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
             }
         }
         return actionRefs;
+    }
+    
+    public boolean isExtensionEnabled()
+    {
+        return extensionEnabled;
+    }
+
+	public void setExtensionEnabled(boolean extensionEnabled) 
+	{
+		if (extensionEnabled) 
+		{
+			ServiceFinder<Service> loader = ServiceFinder.find(Service.class);
+			Iterator<Service> it = loader.iterator();
+			if (it.hasNext()) 
+			{
+				this.extensionEnabled = true;
+				extensionService = it.next();
+			}
+		}
+	}
+    
+    public Service getExtensionService()
+    {
+    	return this.extensionService;
     }
 }

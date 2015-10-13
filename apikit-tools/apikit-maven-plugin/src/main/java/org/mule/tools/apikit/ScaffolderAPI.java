@@ -7,16 +7,20 @@
 package org.mule.tools.apikit;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.mule.tools.apikit.model.manager.CustomRamlGenerator;
+import org.mule.tools.apikit.model.manager.FileUtils;
 
 public class ScaffolderAPI {
 
     private final static List<String> apiExtensions = Arrays.asList(".yaml", ".raml", ".yml");
     private final static List<String> appExtensions = Arrays.asList(".xml");
+    private final static List<String> dataModelExtensions = Arrays.asList(".json");
 
     public ScaffolderAPI() {
         
@@ -44,7 +48,9 @@ public class ScaffolderAPI {
      * @param domainDir the directory which contained the domain used by the mule config files
      */
     public void run(List<File> ramlFiles, File appDir, File domainDir) {
-        List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
+	
+	List<String> ramlFilePaths = processDataModelFiles(ramlFiles, dataModelExtensions);
+	ramlFilePaths.addAll(retrieveFilePaths(ramlFiles, apiExtensions));
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
         SystemStreamLog log = new SystemStreamLog();
         String domain = null;
@@ -95,5 +101,42 @@ public class ScaffolderAPI {
             }
         }
         return false;
+    }
+
+    private List<String> processDataModelFiles(List<File> files, List<String> extensions) {
+        List<String> ramlFilePaths = new ArrayList<String>();
+        if(files != null) {
+            for(File file : files) {
+                if (containsValidExtension(file, extensions) && isValidDataModel(file)) {
+                    ramlFilePaths.add(generateRamlFromDataModel(file).getAbsolutePath());
+                }
+            }
+        }
+        return ramlFilePaths;
+    }
+    
+    private File generateRamlFromDataModel(File model) {
+	CustomRamlGenerator ramlGenerator = new CustomRamlGenerator();
+	File raml = null;
+
+	try {
+	    String ramlContents = ramlGenerator.generate(new FileInputStream(model));
+	    String path = model.getCanonicalPath().replace(".json", ".raml");
+	    raml = FileUtils.stringToFile(path, ramlContents);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+
+	return raml;
+    }
+    
+    private boolean isValidDataModel(File file) {
+	CustomRamlGenerator ramlGenerator = new CustomRamlGenerator();
+	try {
+	    return ramlGenerator.isModelValid(new FileInputStream(file));
+	} catch (Exception e) {
+	    return false;
+	}
+	
     }
 }

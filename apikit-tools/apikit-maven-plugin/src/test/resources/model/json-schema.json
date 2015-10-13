@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "/",
+  "type": "object",
+  "properties": {
+    "entities": {
+      "id": "entities",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "entity": {
+            "id": "entity",
+            "type": "object",
+            "properties": {
+              "name": {
+                "id": "name",
+                "type": "string"
+              },
+              "remoteName": {
+                "id": "remoteName",
+                "type": "string"
+              },
+              "properties": {
+                "id": "properties",
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "field": {
+                      "id": "field",
+                      "type": "object",
+                      "properties": {
+                       "name": {
+                          "id": "name",
+                          "type": "string"
+                        },
+                        "type": {
+                          "id": "type",
+                          "type": "string"
+                        },
+                        "sample": {
+                          "id": "sample",
+                          "type": "string"
+                        },
+                        "length": {
+                          "id": "length",
+                          "type": "integer"
+                        },
+                        "nullable": {
+                          "id": "nullable",
+                          "type": "boolean"
+                        },
+                        "key": {
+                          "id": "key",
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "type",
+                        "length",
+                        "nullable",
+                        "key"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "name",
+              "remoteName",
+              "properties"
+            ]
+          }
+        },
+        "required": [
+          "entity"
+        ]
+      }
+    }
+  },
+  "required": [
+    "entities"
+  ]
+}
