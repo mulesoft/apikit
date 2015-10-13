@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>apikit-examples</artifactId>
-        <version>1.8-BETA</version>
+        <version>1.8.0-BETA</version>
     </parent>
 
     <artifactId>apikit-example</artifactId>

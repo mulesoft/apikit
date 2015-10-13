@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>apikit-parent</artifactId>
-    <version>1.8-BETA</version>
+    <version>1.8.0-BETA</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
