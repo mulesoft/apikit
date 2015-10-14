@@ -43,12 +43,10 @@ traits:
           description: Collection of filters
           type: string
 schemas: 
-- entityA: |
-     {"$schema":"http://json-schema.org/draft-04/schema#","additionalProperties":false,"remoteName":"entity_A","properties":{"id":{"maxLength":4,"nullable":false,"type":"integer","key":true,"sample":"12"},"name":{"maxLength":40,"nullable":true,"type":"string","key":false,"sample":"Pretty Entity"}}}
-- entityB: |
-     {"$schema":"http://json-schema.org/draft-04/schema#","additionalProperties":false,"remoteName":"entity_B","properties":{"id":{"maxLength":4,"nullable":false,"type":"integer","key":true,"sample":"12"},"description":{"maxLength":40,"nullable":true,"type":"string","key":false,"sample":"Pretty Entity"}}}
-/entityA: 
-    displayName: entityA
+- MyEntity: |
+     {"$schema":"http://json-schema.org/draft-04/schema#","edm.remoteName":"RemoteEntity","additionalProperties":false,"properties":{"MyField":{"edm.precision":2,"edm.key":true,"edm.type":"Edm.Decimal","edm.nullable":false,"type":"string","edm.name":"MyField"}},"required":["MyField"],"type":"object","edm.name":"MyEntity"}
+/MyEntity: 
+    displayName: MyEntity
     is: [orderby, top, skip, filter, expand, format, select, inlinecount]
     get: 
         description: Read
@@ -64,49 +62,8 @@ schemas:
           body:
              application/json: ~
              application/xml: ~
-    /{entityAId}: 
-        displayName: entityA Id
-        is: [filter, expand, format, select]
-        get: 
-            description: Read
-            responses:
-             200:
-              body:
-               application/json: ~
-               application/xml: ~
-        delete: 
-            description: Delete
-            responses:
-             200:
-              body:
-               application/json: ~
-               application/xml: ~
-        put: 
-            description: Update
-            responses:
-             200:
-              body:
-               application/json: ~
-               application/xml: ~
-/entityB: 
-    displayName: entityB
-    is: [orderby, top, skip, filter, expand, format, select, inlinecount]
-    get: 
-        description: Read
-        responses:
-         200:
-          body:
-            application/json: ~
-            application/xml: ~
-    post: 
-        description: Create
-        responses:
-         200:
-          body:
-             application/json: ~
-             application/xml: ~
-    /{entityBId}: 
-        displayName: entityB Id
+    /{MyEntityId}: 
+        displayName: MyEntity Id
         is: [filter, expand, format, select]
         get: 
             description: Read

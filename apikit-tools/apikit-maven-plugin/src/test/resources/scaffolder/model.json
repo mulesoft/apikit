@@ -2,11 +2,11 @@
   "entities": [
     {
       "entity": {
-        "name": "entityA",
-        "remoteName": "entity_A",
+        "name": "orders",
+        "remoteName": "orders_tbl",
         "properties": [
           {
-            "field": {
+            "id": {
               "name": "id",
               "type": "Edm.Int32",
               "sample": "12",
@@ -15,14 +15,14 @@
             }
           },
           {
-            "field": {
+            "name": {
               "name": "name",
               "type": "Edm.String",
               "sample": "Pretty Entity",
-              "nullable": false,
-              "key": true,
-              "maxLength": 200,
-              "fixedLength": true
+              "nullable": true,
+              "key": false,
+              "maxLength": 40,
+              "fixedLength": false
             }
           }
         ]
@@ -30,11 +30,11 @@
     },
     {
       "entity": {
-        "name": "entityB",
-        "remoteName": "entity_B",
+        "name": "customers",
+        "remoteName": "customer_tbl",
         "properties": [
           {
-            "field": {
+            "id": {
               "name": "id",
               "type": "Edm.Int32",
               "sample": "12",
@@ -43,25 +43,14 @@
             }
           },
           {
-            "field": {
+            "description": {
               "name": "description",
               "type": "Edm.String",
               "sample": "Pretty Entity",
               "nullable": true,
               "key": false,
-              "maxLength": 200,
-              "fixedLength": true
-            }
-          },
-          {
-            "field": {
-              "name": "name",
-              "type": "Edm.String",
-              "sample": "Pretty Entity",
-              "nullable": false,
-              "key": true,
-              "maxLength": 200,
-              "fixedLength": true
+              "maxLength": 40,
+              "fixedLength": false
             }
           }
         ]

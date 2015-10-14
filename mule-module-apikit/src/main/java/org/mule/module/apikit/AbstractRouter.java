@@ -80,7 +80,7 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
 		}
 	}
 	
-	protected MuleEvent processBlockingRequest(MuleEvent event) throws MuleException {			
+	public MuleEvent processBlockingRequest(MuleEvent event) throws MuleException {
 		RouterRequest result = processRouterRequest(event);
 		event = result.getEvent();
 		if (result.getFlow() != null)

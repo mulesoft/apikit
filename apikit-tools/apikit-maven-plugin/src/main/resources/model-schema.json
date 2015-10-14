@@ -1,71 +1,255 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "id": "/",
   "type": "object",
   "properties": {
     "entities": {
-      "id": "entities",
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
           "entity": {
-            "id": "entity",
             "type": "object",
             "properties": {
               "name": {
-                "id": "name",
                 "type": "string"
               },
               "remoteName": {
-                "id": "remoteName",
                 "type": "string"
               },
               "properties": {
-                "id": "properties",
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
                     "field": {
-                      "id": "field",
                       "type": "object",
-                      "properties": {
-                       "name": {
-                          "id": "name",
-                          "type": "string"
+                      "oneOf": [
+                        {
+                          "properties": {
+                            "type": {
+                              "enum": [
+                                "Edm.Binary"
+                              ]
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "sample": {
+                              "type": "string"
+                            },
+                            "nullable": {
+                              "type": "boolean"
+                            },
+                            "key": {
+                              "type": "boolean"
+                            },
+                            "readOnly": {
+                              "type": "boolean"
+                            },
+                            "defaultValue": {
+                              "type": "string"
+                            },
+                            "maxLength": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "fixedLength": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "type",
+                            "nullable",
+                            "key"
+                          ],
+                          "additionalProperties": false
                         },
-                        "fieldName": {
-                          "id": "fieldName",
-                          "type": "string"
+                        {
+                          "properties": {
+                            "type": {
+                              "enum": [
+                                "Edm.DateTime",
+                                "Edm.Time",
+                                "Edm.DateTimeOffset"
+                              ]
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "sample": {
+                              "type": "string"
+                            },
+                            "nullable": {
+                              "type": "boolean"
+                            },
+                            "key": {
+                              "type": "boolean"
+                            },
+                            "readOnly": {
+                              "type": "boolean"
+                            },
+                            "defaultValue": {
+                              "type": "string"
+                            },
+                            "precision": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "type",
+                            "nullable",
+                            "key"
+                          ],
+                          "additionalProperties": false
                         },
-                        "type": {
-                          "id": "type",
-                          "type": "string"
+                        {
+                          "properties": {
+                            "type": {
+                              "enum": [
+                                "Edm.Decimal"
+                              ]
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "sample": {
+                              "type": "string"
+                            },
+                            "nullable": {
+                              "type": "boolean"
+                            },
+                            "key": {
+                              "type": "boolean"
+                            },
+                            "readOnly": {
+                              "type": "boolean"
+                            },
+                            "defaultValue": {
+                              "type": "string"
+                            },
+                            "precision": {
+                              "type": "integer"
+                            },
+                            "scale": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "type",
+                            "nullable",
+                            "key"
+                          ],
+                          "additionalProperties": false
                         },
-                        "sample": {
-                          "id": "sample",
-                          "type": "string"
+                        {
+                          "properties": {
+                            "type": {
+                              "enum": [
+                                "Edm.String"
+                              ]
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "sample": {
+                              "type": "string"
+                            },
+                            "nullable": {
+                              "type": "boolean"
+                            },
+                            "key": {
+                              "type": "boolean"
+                            },
+                            "readOnly": {
+                              "type": "boolean"
+                            },
+                            "defaultValue": {
+                              "type": "string"
+                            },
+                            "maxLength": {
+                              "type": "integer",
+                              "minimum": 1
+                            },
+                            "fixedLength": {
+                              "type": "boolean"
+                            },
+                            "collation": {
+                              "type": "string"
+                            },
+                            "unicode": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "type",
+                            "nullable",
+                            "key",
+                            "maxLength",
+                            "fixedLength"
+                          ],
+                          "additionalProperties": false
                         },
-                        "length": {
-                          "id": "length",
-                          "type": "integer"
-                        },
-                        "nullable": {
-                          "id": "nullable",
-                          "type": "boolean"
-                        },
-                        "key": {
-                          "id": "key",
-                          "type": "boolean"
+                        {
+                          "properties": {
+                            "type": {
+                              "enum": [
+                                "Edm.Boolean",
+                                "Edm.Byte",
+                                "Edm.Double",
+                                "Edm.Single",
+                                "Edm.Guid",
+                                "Edm.Int16",
+                                "Edm.Int32",
+                                "Edm.Int64",
+                                "Edm.SByte"
+                              ]
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": "string"
+                            },
+                            "sample": {
+                              "type": "string"
+                            },
+                            "nullable": {
+                              "type": "boolean"
+                            },
+                            "key": {
+                              "type": "boolean"
+                            },
+                            "readOnly": {
+                              "type": "boolean"
+                            },
+                            "defaultValue": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "type",
+                            "nullable",
+                            "key"
+                          ],
+                          "additionalProperties": false
                         }
-                      },
-                      "required": [
-                        "name",
-                        "type",
-                        "length",
-                        "nullable",
-                        "key"
                       ]
                     }
                   }

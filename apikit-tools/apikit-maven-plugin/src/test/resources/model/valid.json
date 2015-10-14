@@ -2,59 +2,19 @@
   "entities": [
     {
       "entity": {
-        "name": "entityA",
-        "remoteName": "entity_A",
+        "name": "MyEntity",
+        "remoteName": "RemoteEntity",
         "properties": [
           {
             "field": {
-              "name": "id",
-              "type": "integer",
-              "sample": "12",
-              "description": "12",
-              "length": 4,
+              "name": "MyField",
+              "type": "Edm.Decimal",
               "nullable": false,
-              "key": true
-            }
-          },
-          {
-            "field": {
-              "name": "name",
-              "type": "string",
-              "sample": "Pretty Entity",
-              "description": "12",
-              "length": 40,
-              "nullable": true,
-              "key": false
-            }
-          }
-        ]
-      }
-    },
-    {
-      "entity": {
-        "name": "entityB",
-        "remoteName": "entity_B",
-        "properties": [
-          {
-            "field": {
-              "name": "id",
-              "type": "integer",
-              "sample": "12",
-              "description": "12",
-              "length": 4,
-              "nullable": false,
-              "key": true
-            }
-          },
-          {
-            "field": {
-              "name": "description",
-              "type": "string",
-              "sample": "Pretty Entity",
-              "description": "12",
-              "length": 40,
-              "nullable": true,
-              "key": false
+              "key": true,
+              "description": "This is my field",
+              "precision": 2,
+              "scale": 2,
+              "sample": "22"
             }
           }
         ]

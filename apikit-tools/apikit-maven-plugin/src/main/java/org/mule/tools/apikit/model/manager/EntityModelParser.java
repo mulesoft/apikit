@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit.model.manager;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.mule.tools.apikit.model.manager.exception.EntityModelParsingException;
 
@@ -34,26 +36,38 @@ import com.github.fge.jsonschema.main.JsonSchemaFactory;
  */
 public class EntityModelParser {
 
-    private static final String SAMPLE_PROPERTY_TEXT = "sample";
-    private static final String TYPE_PROPERTY_TEXT = "type";
-    private static final String NULLABLE_PROPERTY_TEXT = "nullable";
-    private static final String LENGTH_PROPERTY_TEXT = "length";
-    private static final String KEY_PROPERTY_TEXT = "key";
-
+	private static final String[] FIELD_PROPERTIES = { "name", "type", "nullable", "key", "defaultValue", "maxLength", "fixedLength", "collation", "unicode", "precision" };
     private static final String DEFAULT_JSON_SCHEMA = "model-schema.json";
     
     public EntityModelParser() {
 
     }
-    
-    protected ProcessingReport validateJson(JSONObject obj)
+
+    public List<Map<String, Object>> getEntities(InputStream input)
+	    throws JSONException, FileNotFoundException, IOException,
+	    ProcessingException, EntityModelParsingException {
+	JSONObject obj = new JSONObject(FileUtils.readFromFile(input));
+	return getEntities(obj);
+    }
+
+    public List<Map<String, Object>> getEntities(String path)
+	    throws JSONException, FileNotFoundException, IOException,
+	    ProcessingException, EntityModelParsingException {
+	JSONObject obj = new JSONObject(FileUtils.readFromFile(path));
+	return getEntities(obj);
+    }
+
+    public ProcessingReport validateJson(JSONObject obj)
 	    throws JsonProcessingException, IOException, ProcessingException {
 	// Validate json data against json schema
 	ObjectMapper m = new ObjectMapper();
-	JsonNode fstabSchema = m.readTree(getClass().getClassLoader().getResource(DEFAULT_JSON_SCHEMA));
+	JsonNode fstabSchema = m.readTree(Thread.currentThread()
+		.getContextClassLoader().getResource(DEFAULT_JSON_SCHEMA));
 
 	JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
+
 	JsonSchema schema = factory.getJsonSchema(fstabSchema);
+
 	JsonNode good = JsonLoader.fromString(obj.toString());
 
 	return schema.validate(good);
@@ -79,8 +93,9 @@ public class EntityModelParser {
 	List<Map<String, Object>> entitySet = new ArrayList<Map<String, Object>>();
 
 	JSONArray schemas = obj.getJSONArray("entities");
-	for (int i = 0; i < schemas.length(); i++) {	
-	    JSONObject entityJson = (JSONObject) ((JSONObject) schemas.get(i)).get("entity");
+	for (int i = 0; i < schemas.length(); i++) {
+	    JSONObject entityJson = (JSONObject) ((JSONObject) schemas.get(i))
+		    .get("entity");
 	    String entityName = entityJson.getString("name");
 	    String remoteName = entityJson.getString("remoteName");
 
@@ -102,25 +117,70 @@ public class EntityModelParser {
 	JSONObject jsonSchema = new JSONObject();
 
 	jsonSchema.put("properties", generateJsonSchemaProperties(entityJson.getJSONArray("properties")));
-	jsonSchema.put("remoteName", entityJson.getString("remoteName"));
+	jsonSchema.put("edm.name", entityJson.getString("name"));
+	jsonSchema.put("edm.remoteName", entityJson.getString("remoteName"));
 	jsonSchema.put("$schema", "http://json-schema.org/draft-04/schema#");
+	jsonSchema.put("type", "object");
+	jsonSchema.put("required", generateJsonSchemaRequiredProperties(entityJson.getJSONArray("properties")));
 	jsonSchema.put("additionalProperties", false);
 
 	return jsonSchema;
+    }
+    
+    private JSONArray generateJsonSchemaRequiredProperties(JSONArray properties) {
+    	JSONArray required = new JSONArray();
+    	
+    	for (int i = 0; i < properties.length(); i++) {
+    		String name = (String) properties.getJSONObject(i).getJSONObject("field").get("name");
+    		required.put(name);
+    	}
+    	
+    	return required;
     }
 
     private JSONObject generateJsonSchemaProperties(JSONArray jsonArray) {
 	JSONObject jsonProperties = new JSONObject();
 
 	for (int i = 0; i < jsonArray.length(); i++) {
-	    JSONObject jsonProperty = jsonArray.getJSONObject(i).getJSONObject("field");
+	    JSONObject jsonProperty = jsonArray.getJSONObject(i).getJSONObject(
+		    "field");
 	    JSONObject jsonStructure = new JSONObject();
-
-	    jsonStructure.put("type", jsonProperty.get(TYPE_PROPERTY_TEXT));
-	    jsonStructure.put("sample", jsonProperty.get(SAMPLE_PROPERTY_TEXT));
-	    jsonStructure.put("maxLength", jsonProperty.get(LENGTH_PROPERTY_TEXT));
-	    jsonStructure.put("nullable", jsonProperty.get(NULLABLE_PROPERTY_TEXT));
-	    jsonStructure.put("key", jsonProperty.get(KEY_PROPERTY_TEXT));
+	    
+	    
+	    for (String prop: FIELD_PROPERTIES) {
+	    	try {
+	    		jsonStructure.put("edm." + prop, jsonProperty.get(prop));
+	    	} catch (Exception e) {
+	    		// ignore missing property
+	    	}
+	    }
+	    
+	    // infer json schema type from edm.type
+	    String type = (String) jsonProperty.get("type");
+	    String schemaType = "string";
+	    switch (type) {
+		    case "Boolean":
+		    	schemaType = "boolean";
+		    	break;
+		    case "Binary":
+		    case "Decimal":
+		    case "Double":
+		    case "Single":
+		    case "Guid":
+		    case "Int16":
+		    case "Int32":
+		    case "Int64":
+		    case "SByte":
+		    	schemaType = "string";
+		    	break;
+		    case "DateTime":
+		    case "String":
+		    case "Time":
+		    case "DateTimeOffset":
+		    	schemaType = "number";
+		    	break;
+	    }
+	    jsonStructure.put("type", schemaType);
 
 	    jsonProperties.put(jsonProperty.getString("name"), jsonStructure);
 	}
@@ -129,7 +189,7 @@ public class EntityModelParser {
     }
 
     /**
-     * This method returns a map with two keys: 'Properties' and 'Keys'.
+     * This method return a map with two keys: 'Properties' and 'Keys'.
      * Properties is instance of List<Map<String, Object>>
      * Keys is instance of List<String>
      * @param properties
@@ -148,40 +208,24 @@ public class EntityModelParser {
 		JSONObject propertyJson = properties.getJSONObject(j)
 			.getJSONObject("field");
 
-		String propertyName = propertyJson.getString("name");
-
-		String sample = String.valueOf(propertyJson.get(SAMPLE_PROPERTY_TEXT));
-		checkFieldNotNull("Sample", sample);
-		String type = String.valueOf(propertyJson.get(TYPE_PROPERTY_TEXT));
-		checkFieldNotNull("Type", type);
-		Boolean nullable = Boolean.valueOf(String.valueOf(propertyJson.get(NULLABLE_PROPERTY_TEXT)));
-		checkFieldNotNull("Nullable", nullable);
-		Integer length = Integer.valueOf(String.valueOf(propertyJson.get(LENGTH_PROPERTY_TEXT)));
-		checkFieldNotNull("Length", length);
-		Boolean key = false;
-		if (propertyJson.has(KEY_PROPERTY_TEXT)) {
-		    key = Boolean.valueOf(String.valueOf(propertyJson.get(KEY_PROPERTY_TEXT)));
-		    checkFieldNotNull("Key", key);
-		    if(key) keys.add(propertyName);
-		}
 		Map<String, Object> property = new HashMap<String, Object>();
-		property.put("name", propertyName);
-		property.put(SAMPLE_PROPERTY_TEXT, sample);
-		property.put(TYPE_PROPERTY_TEXT, type);
-		property.put(NULLABLE_PROPERTY_TEXT, nullable);
-		property.put(LENGTH_PROPERTY_TEXT, length);
-		property.put(KEY_PROPERTY_TEXT, key);
+		
+		for (String prop: FIELD_PROPERTIES) {
+	    	try {
+	    		property.put(prop, propertyJson.get(prop));
+	    	} catch (Exception e) {
+	    		// ignore missing property
+	    	}
+		}
+		
+		boolean isKey = (Boolean) propertyJson.get("key");
+		if (isKey) {
+			keys.add((String) propertyJson.get("name"));
+		}
+		
 		entityProperties.add(property);
 	    }
 	}
 	return ret;
     }
-
-    private void checkFieldNotNull(String expected, Object actual)
-	    throws NullPointerException {
-	if (actual == null) {
-	    throw new NullPointerException(expected + " not found.");
-	}
-    }
-
 }
