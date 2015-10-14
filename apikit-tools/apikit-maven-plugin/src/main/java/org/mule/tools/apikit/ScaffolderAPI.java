@@ -125,6 +125,7 @@ public class ScaffolderAPI {
 	    raml = FileUtils.stringToFile(path, ramlContents);
 	} catch (Exception e) {
 	    e.printStackTrace();
+	    throw new RuntimeException("Error parsing data model file", e);
 	}
 
 	return raml;

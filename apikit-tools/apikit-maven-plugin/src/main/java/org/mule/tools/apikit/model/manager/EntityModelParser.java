@@ -43,26 +43,11 @@ public class EntityModelParser {
 
     }
 
-    public List<Map<String, Object>> getEntities(InputStream input)
-	    throws JSONException, FileNotFoundException, IOException,
-	    ProcessingException, EntityModelParsingException {
-	JSONObject obj = new JSONObject(FileUtils.readFromFile(input));
-	return getEntities(obj);
-    }
-
-    public List<Map<String, Object>> getEntities(String path)
-	    throws JSONException, FileNotFoundException, IOException,
-	    ProcessingException, EntityModelParsingException {
-	JSONObject obj = new JSONObject(FileUtils.readFromFile(path));
-	return getEntities(obj);
-    }
-
     public ProcessingReport validateJson(JSONObject obj)
 	    throws JsonProcessingException, IOException, ProcessingException {
 	// Validate json data against json schema
 	ObjectMapper m = new ObjectMapper();
-	JsonNode fstabSchema = m.readTree(Thread.currentThread()
-		.getContextClassLoader().getResource(DEFAULT_JSON_SCHEMA));
+	JsonNode fstabSchema = m.readTree(getClass().getClassLoader().getResource(DEFAULT_JSON_SCHEMA));
 
 	JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 
