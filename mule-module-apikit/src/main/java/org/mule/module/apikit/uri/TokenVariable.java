@@ -95,7 +95,7 @@ public class TokenVariable extends TokenBase implements Token, Matchable
      */
     public boolean resolve(String expanded, Map<Variable, Object> values)
     {
-        values.put(this._var, URICoder.decode(expanded));
+        values.put(this._var, URICoder.decode(expanded).replaceAll("%2F", "/"));
         return true;
     }
 
