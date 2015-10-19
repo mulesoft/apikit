@@ -24,12 +24,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.glassfish.grizzly.utils.ServiceFinder;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -90,7 +90,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private List<String> consoleUrls = new ArrayList<String>();
     private boolean started;
     protected boolean extensionEnabled = false; 
-    private Service extensionService = null;
+    private Service routerExtension = null;
     
     
     @Override
@@ -590,18 +590,18 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 	{
 		if (extensionEnabled) 
 		{
-			ServiceFinder<Service> loader = ServiceFinder.find(Service.class);
+			ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
 			Iterator<Service> it = loader.iterator();
 			if (it.hasNext()) 
 			{
 				this.extensionEnabled = true;
-				extensionService = it.next();
+				routerExtension = it.next();
 			}
 		}
 	}
     
-    public Service getExtensionService()
+    public Service getRouterExtension()
     {
-    	return this.extensionService;
+    	return this.routerExtension;
     }
 }

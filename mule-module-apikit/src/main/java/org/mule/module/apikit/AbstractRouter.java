@@ -73,8 +73,8 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
     }
 
     protected MuleEvent processBlocking(MuleEvent event) throws MuleException {
-		if (config.isExtensionEnabled() && config.getExtensionService().isExecutable(event)) {
-			return config.getExtensionService().processBlockingRequest(event, this); 
+		if (config.isExtensionEnabled() && config.getRouterExtension().isExecutable(event)) {
+			return config.getRouterExtension().processBlockingRequest(event, this); 
 		} else {
 			return processBlockingRequest(event);
 		}
