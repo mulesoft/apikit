@@ -106,6 +106,7 @@ public class CustomRamlGenerator {
 	    resource.put("name", entity.get("name"));
 	    resource.put("displayName", entity.get("name"));
 	    resource.put("key", buildKeyForResource(entity));
+	    resource.put("properties", buildPropertiesForResource(entity));
 	    resources.add(resource);
 	}
 	raml.put("resources", resources);
@@ -139,5 +140,21 @@ public class CustomRamlGenerator {
 	}
 	return ret;
     }
-
+    
+    private List<Map<String, String>> buildPropertiesForResource(Map<String, Object> entity) {
+    	// parsed properties
+    	List<Map<String, Object>> entityProperties = (List<Map<String, Object>>)entity.get("properties");
+    	// properties list
+    	List<Map<String, String>> properties = new ArrayList<Map<String, String>>();
+    	for(Map<String, Object> entityProperty: entityProperties) {
+    		// build schema property
+    		Map<String, String> property = new HashMap<String, String>();
+    		property.put("name", (String)entityProperty.get("name"));
+    		property.put("type", EntityModelParser.getSchemaTypeFromEdmType((String)entityProperty.get("type")));
+    		// add to list
+    		properties.add(property);
+    	}
+    	// return properties list
+    	return properties;
+    }
 }

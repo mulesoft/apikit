@@ -142,35 +142,42 @@ public class EntityModelParser {
 	    
 	    // infer json schema type from edm.type
 	    String type = (String) jsonProperty.get("type");
-	    String schemaType = "string";
-	    switch (type) {
-		    case "Boolean":
-		    	schemaType = "boolean";
-		    	break;
-		    case "Binary":
-		    case "Decimal":
-		    case "Double":
-		    case "Single":
-		    case "Guid":
-		    case "Int16":
-		    case "Int32":
-		    case "Int64":
-		    case "SByte":
-		    	schemaType = "string";
-		    	break;
-		    case "DateTime":
-		    case "String":
-		    case "Time":
-		    case "DateTimeOffset":
-		    	schemaType = "number";
-		    	break;
-	    }
-	    jsonStructure.put("type", schemaType);
+	    
+	    jsonStructure.put("type", getSchemaTypeFromEdmType(type));
 
 	    jsonProperties.put(jsonProperty.getString("name"), jsonStructure);
 	}
 
 	return jsonProperties;
+    }
+    
+    public static String getSchemaTypeFromEdmType (String edmType) {
+    	String schemaType = "string";
+	    switch (edmType) {
+		    case "Edm.Boolean":
+		    	schemaType = "boolean";
+		    	break;
+		    case "Edm.Decimal":
+		    case "Edm.Double":
+		    case "Edm.Single":
+		    	schemaType = "number";
+		    	break;	    	
+		    case "Edm.Int16":
+		    case "Edm.Int32":
+		    case "Edm.Int64":
+		    case "Edm.SByte":
+		    	schemaType = "integer";
+		    	break;
+		    case "Edm.Guid":
+		    case "Edm.Binary":
+		    case "Edm.DateTime":
+		    case "Edm.String":
+		    case "Edm.Time":
+		    case "Edm.DateTimeOffset":
+		    	schemaType = "string";
+		    	break;
+	    }
+	    return schemaType;
     }
 
     /**
