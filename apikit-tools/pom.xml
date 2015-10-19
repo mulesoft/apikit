@@ -15,6 +15,7 @@
     </properties>
 
     <modules>
+        <module>apikit-scaffolder</module>
         <module>apikit-maven-plugin</module>
         <module>apikit-archetype</module>
     </modules>
