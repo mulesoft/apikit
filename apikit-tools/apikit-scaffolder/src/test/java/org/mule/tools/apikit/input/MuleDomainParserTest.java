@@ -34,10 +34,10 @@ public class MuleDomainParserTest
         String expectedKey = "http-lc-0.0.0.0-8081";
         HttpListenerConfig value = httpListenerConfigs.get(expectedKey);
         Assert.assertNotNull(value);
-        assertEquals("http-lc-0.0.0.0-8081", value.getName());
-        assertEquals("0.0.0.0", value.getHost());
-        assertEquals("8081", value.getPort());
-        assertEquals("/", value.getBasePath());
+        Assert.assertEquals("http-lc-0.0.0.0-8081", value.getName());
+        Assert.assertEquals("0.0.0.0", value.getHost());
+        Assert.assertEquals("8081", value.getPort());
+        Assert.assertEquals("/", value.getBasePath());
     }
 
     @Test
@@ -55,35 +55,35 @@ public class MuleDomainParserTest
         String expectedKey = "abcd";
         HttpListenerConfig value = httpListenerConfigs.get(expectedKey);
         Assert.assertNotNull(value);
-        assertEquals("abcd", value.getName());
-        assertEquals("localhost", value.getHost());
-        assertEquals("7001", value.getPort());
-        assertEquals("/", value.getBasePath());
+        Assert.assertEquals("abcd", value.getName());
+        Assert.assertEquals("localhost", value.getHost());
+        Assert.assertEquals("7001", value.getPort());
+        Assert.assertEquals("/", value.getBasePath());
 
         String expectedKey2 = "http-lc-0.0.0.0-8083";
         HttpListenerConfig value2 = httpListenerConfigs.get(expectedKey2);
         Assert.assertNotNull(value2);
-        assertEquals("http-lc-0.0.0.0-8083", value2.getName());
-        assertEquals("0.0.0.0", value2.getHost());
-        assertEquals("8083", value2.getPort());
-        assertEquals("/test", value2.getBasePath());
+        Assert.assertEquals("http-lc-0.0.0.0-8083", value2.getName());
+        Assert.assertEquals("0.0.0.0", value2.getHost());
+        Assert.assertEquals("8083", value2.getPort());
+        Assert.assertEquals("/test", value2.getBasePath());
 
         String expectedKey3 = "http-lc-0.0.0.0-8080";
         HttpListenerConfig value3 = httpListenerConfigs.get(expectedKey3);
         Assert.assertNotNull(value3);
-        assertEquals("http-lc-0.0.0.0-8080", value3.getName());
-        assertEquals("localhost", value3.getHost());
-        assertEquals("8080", value3.getPort());
-        assertEquals("/", value3.getBasePath());
+        Assert.assertEquals("http-lc-0.0.0.0-8080", value3.getName());
+        Assert.assertEquals("localhost", value3.getHost());
+        Assert.assertEquals("8080", value3.getPort());
+        Assert.assertEquals("/", value3.getBasePath());
 
 
         String expectedKey4 = "https-lc-0.0.0.0-8082";
         HttpListenerConfig value4 = httpListenerConfigs.get(expectedKey4);
         Assert.assertNotNull(value4);
-        assertEquals("https-lc-0.0.0.0-8082", value4.getName());
-        assertEquals("0.0.0.0", value4.getHost());
-        assertEquals("8082", value4.getPort());
-        assertEquals("/", value4.getBasePath());
+        Assert.assertEquals("https-lc-0.0.0.0-8082", value4.getName());
+        Assert.assertEquals("0.0.0.0", value4.getHost());
+        Assert.assertEquals("8082", value4.getPort());
+        Assert.assertEquals("/", value4.getBasePath());
     }
 
 

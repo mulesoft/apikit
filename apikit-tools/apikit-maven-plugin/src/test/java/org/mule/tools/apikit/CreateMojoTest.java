@@ -79,7 +79,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     @Test
     public void testGetIncludedFiles() throws Exception {
         List<String> files = mojo.getIncludedFiles(project, new String[]{"src/main/api/**/*.raml", "src/main/**/*.yml"},
-                new String[]{});
+                        new String[]{});
         HashSet<String> set = new HashSet<String>(files);
 
         assertTrue(set.contains(new File(project, "src/main/api/hello.raml").getAbsolutePath()));

@@ -37,4 +37,16 @@ public class APIKitToolsTest
         Assert.assertEquals("/path/path2/", APIKitTools.getPathFromUri(uri,false));
 
     }
+
+    @Test
+    public void isInboundEndpointDefault()
+    {
+        Assert.assertTrue(APIKitTools.defaultIsInboundEndpoint("3.5.0"));
+        Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint("3.6.0"));
+        Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint("3.7.0"));
+        Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint("invalid"));
+        Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint(""));
+        Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint(null));
+
+    }
 }

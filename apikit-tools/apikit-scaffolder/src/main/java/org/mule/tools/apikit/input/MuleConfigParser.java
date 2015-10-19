@@ -6,10 +6,7 @@
  */
 package org.mule.tools.apikit.input;
 
-import org.apache.maven.plugin.logging.Log;
-import org.jdom2.*;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaders;
+import static java.util.Map.Entry;
 
 import org.mule.tools.apikit.input.parsers.APIKitConfigParser;
 import org.mule.tools.apikit.input.parsers.APIKitFlowsParser;
@@ -24,9 +21,16 @@ import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import static java.util.Map.Entry;
+import org.apache.maven.plugin.logging.Log;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 
 public class MuleConfigParser {
 

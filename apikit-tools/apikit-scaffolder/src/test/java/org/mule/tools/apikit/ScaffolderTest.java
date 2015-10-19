@@ -8,7 +8,6 @@ package org.mule.tools.apikit;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Rule;
@@ -58,6 +57,47 @@ public class ScaffolderTest {
         assertEquals(1, countOccurences(s, "get:/:simple-config"));
         assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
     }
+
+    @Test
+    public void testSimpleGenerateWithInboundEndpoint() throws Exception {
+        //File muleXmlSimple = simpleGeneration("simple");
+        List<File> ramls = Arrays.asList(getFile("scaffolder/simple.raml"));
+        List<File> xmls = Arrays.asList();
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, "3.5.0");
+        scaffolder.run();
+
+        File xmlOut = new File(muleXmlOut, "simple.xml");
+
+        assertTrue(xmlOut.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertEquals(0, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "<http:inbound"));
+        assertEquals(1, countOccurences(s, "get:/:simple-config"));
+        assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    }
+
+    @Test
+    public void testSimpleGenerateWithListener() throws Exception {
+        //File muleXmlSimple = simpleGeneration("simple");
+        List<File> ramls = Arrays.asList(getFile("scaffolder/simple.raml"));
+        List<File> xmls = Arrays.asList();
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, "3.6.0");
+        scaffolder.run();
+
+        File xmlOut = new File(muleXmlOut, "simple.xml");
+
+        assertTrue(xmlOut.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertEquals(1, countOccurences(s, "<http:listener-config"));
+        assertEquals(0, countOccurences(s, "<http:inbound"));
+        assertEquals(1, countOccurences(s, "get:/:simple-config"));
+        assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    }
+
 
     @Test
     public void testSimpleGenerateWithCustomDomain() throws Exception {
@@ -327,13 +367,15 @@ public class ScaffolderTest {
     }
 
     private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
-            throws MojoExecutionException, FileNotFoundException
+            throws FileNotFoundException
     {
-        return createScaffolder(ramls, xmls, muleXmlOut, null);
+        return createScaffolder(ramls, xmls, muleXmlOut, null, null);
     }
-
-    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile)
-            throws MojoExecutionException, FileNotFoundException {
+    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile) throws FileNotFoundException {
+        return createScaffolder(ramls, xmls, muleXmlOut, domainFile, null);
+    }
+    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, String muleVersion)
+            throws FileNotFoundException {
         Log log = mock(Log.class);
 
         Map<File, InputStream> ramlMap = getFileInputStreamMap(ramls);
@@ -344,7 +386,7 @@ public class ScaffolderTest {
         {
             domainStream = new FileInputStream(domainFile);
         }
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream);
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, muleVersion);
     }
 
     private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {

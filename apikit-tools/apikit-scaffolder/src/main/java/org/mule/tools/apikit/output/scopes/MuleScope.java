@@ -6,17 +6,18 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import org.jdom2.Element;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.SPRING_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
+
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.output.NamespaceWithLocation;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.SPRING_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
+import org.jdom2.Element;
 
 public class MuleScope implements Scope {
     private final Element mule;

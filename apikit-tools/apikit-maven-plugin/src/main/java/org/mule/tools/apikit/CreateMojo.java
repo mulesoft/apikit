@@ -29,6 +29,8 @@ public class CreateMojo
     @Component
     private BuildContext buildContext;
 
+    private final static String DEFAULT_MULE_VERSION = "3.7.0";
+
     /**
      * Pattern of where to find the spec .raml, .yaml or .yml files.
      */
@@ -77,6 +79,12 @@ public class CreateMojo
     @Parameter (property = "domainDirectory")
     private File domainDirectory;
 
+    /**
+     * Mule version that is being used.
+     */
+    @Parameter (property = "muleVersion")
+    private String muleVersion;
+
     private Log log;
 
     List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {
@@ -104,6 +112,24 @@ public class CreateMojo
 
         List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
         List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
+        String domainFile = processDomain();
+        processMuleVersion();
+        log.info("Processing the following RAML files: " + specFiles);
+        log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
+
+        try
+        {
+            Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, muleVersion);
+            scaffolder.run();
+        }
+        catch (IOException e)
+        {
+            throw new MojoExecutionException(e.getMessage());
+        }
+    }
+
+    private String processDomain()
+    {
         String domainFile = null;
 
         if (domainDirectory != null)
@@ -125,11 +151,19 @@ public class CreateMojo
         {
             log.info("No domain was provided. To send it, use -DdomainDirectory.");
         }
-        log.info("Processing the following RAML files: " + specFiles);
-        log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
+        return domainFile;
+    }
 
-        Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles,domainFile);
-        scaffolder.run();
+    private void processMuleVersion()
+    {
+        if (muleVersion != null)
+        {
+            log.info("Mule version provided: " + muleVersion);
+        }
+        else
+        {
+            log.info("Mule version was not provided. " + DEFAULT_MULE_VERSION + " will be used as default when generating a new xml file (if is not provided). To send the mule version, use -DmuleVersion.");
+        }
     }
 
 }

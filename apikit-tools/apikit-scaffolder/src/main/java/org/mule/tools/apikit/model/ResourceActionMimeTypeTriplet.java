@@ -7,7 +7,6 @@
 package org.mule.tools.apikit.model;
 
 import org.apache.commons.lang.Validate;
-import org.raml.model.MimeType;
 
 public class ResourceActionMimeTypeTriplet {
     private final API api;
