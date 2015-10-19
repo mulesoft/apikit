@@ -8,6 +8,7 @@ package org.mule.tools.apikit;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,7 @@ public class ScaffolderAPI {
     private final static List<String> apiExtensions = Arrays.asList(".yaml", ".raml", ".yml");
     private final static List<String> appExtensions = Arrays.asList(".xml");
     private final static List<String> dataModelExtensions = Arrays.asList(".json");
+    private final static String apiDirectory = "./api";
 
     public ScaffolderAPI() {
         
@@ -93,6 +95,15 @@ public class ScaffolderAPI {
         }
         return filePaths;
     }
+    
+    private boolean isModelJson(File file) {
+    	try {
+    		String path = file.getCanonicalPath();
+    		return path.contains("api" + File.separator + "model.json");
+    	} catch (IOException e) {
+    		throw new RuntimeException(e);
+    	}
+    }
 
     private boolean containsValidExtension(File file, List<String> extensions) {
         for (String extension : extensions) {
@@ -107,8 +118,8 @@ public class ScaffolderAPI {
         List<String> ramlFilePaths = new ArrayList<String>();
         if(files != null) {
             for(File file : files) {
-                if (containsValidExtension(file, extensions) && isValidDataModel(file)) {
-                    ramlFilePaths.add(generateRamlFromDataModel(file).getAbsolutePath());
+                if (isModelJson(file)){
+                	ramlFilePaths.add(generateRamlFromDataModel(file).getAbsolutePath());
                 }
             }
         }
@@ -116,28 +127,30 @@ public class ScaffolderAPI {
     }
     
     private File generateRamlFromDataModel(File model) {
-	CustomRamlGenerator ramlGenerator = new CustomRamlGenerator();
-	File raml = null;
-
-	try {
-	    String ramlContents = ramlGenerator.generate(new FileInputStream(model));
-	    String path = model.getCanonicalPath().replace(".json", ".raml");
-	    raml = FileUtils.stringToFile(path, ramlContents);
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    throw new RuntimeException("Error parsing data model file", e);
-	}
-
-	return raml;
+		CustomRamlGenerator ramlGenerator = new CustomRamlGenerator();
+		File raml = null;
+		
+		try {
+		    String ramlContents = ramlGenerator.generate(new FileInputStream(model));
+		    String path = model.getCanonicalPath().replace("model.json", "api.raml");
+		    raml = FileUtils.stringToFile(path, ramlContents);
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    SystemStreamLog log = new SystemStreamLog();
+		    log.error("Error: " + e.getMessage());
+		    throw new RuntimeException("Error: " + e.getMessage());
+		}
+	
+		return raml;
     }
     
-    private boolean isValidDataModel(File file) {
-	CustomRamlGenerator ramlGenerator = new CustomRamlGenerator();
-	try {
-	    return ramlGenerator.isModelValid(new FileInputStream(file));
-	} catch (Exception e) {
-	    return false;
+	private void validateDataModel(File file) {
+		CustomRamlGenerator ramlGenerator = new CustomRamlGenerator();
+		try {
+			ramlGenerator.isModelValid(new FileInputStream(file));
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
 	}
-	
-    }
 }
