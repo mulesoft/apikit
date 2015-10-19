@@ -1,47 +1,55 @@
 #%RAML 0.8
-title: Auto-generated RAML for DataGateway
+title: Auto-generated RAML
 version: 0.1
 traits: 
 - orderby:
       queryParameters:
-        parms:
-          description: The number of pages to return
+        orderby:
+          description: Expression for determining what values are used to order the collection of Entries
           type: string
+          required: false
 - top:
       queryParameters:
-        parms:
-          description: The number of pages to return
+        top:
+          description: Identifies a subset formed by selecting only the first N items of the set, where N is a positive integer specified by this query option
           type: number
+          required: false
 - skip:
       queryParameters:
-        parms:
-          description: The number of pages to return
+        skip:
+          description: Identifies a subset defined by seeking N Entries into the Collection and selecting only the remaining Entries (starting with Entry N+1)
           type: number
+          required: false
 - filter:
       queryParameters:
-        parms:
-          description: Collection of filters
+        filter:
+          description: Identifies a subset determined by selecting only the Entries that satisfy the predicate expression specified by the query option
           type: string
+          required: false
 - expand:
       queryParameters:
-        parms:
-          description: Collection of filters
+        expand:
+          description: A URI with a expand System Query Option indicates that Entries associated with the Entry or Collection of Entries identified by the Resource Path section of the URI must be represented inline
           type: string
+          required: false
 - format:
       queryParameters:
-        parms:
-          description: Collection of filters
+        format:
+          description: If the format query option is present in a request URI it takes precedence over the value(s) specified in the Accept request header. Valid values for the $format query string option are listed in the following table.
           type: string
+          required: false
 - select:
       queryParameters:
-        parms:
-          description: Collection of filters
+        select:
+          description: Specifies that a response from an OData service should return a subset of the Properties which would have been returned had the URI not included a select query option.
           type: string
+          required: false
 - inlinecount:
       queryParameters:
-        parms:
-          description: Collection of filters
+        inlinecount:
+          description: Specifies that the response to the request includes a count of the number of Entries in the Collection
           type: string
+          required: false
 schemas: 
 - MyEntity: |
      {"$schema":"http://json-schema.org/draft-04/schema#","edm.remoteName":"RemoteEntity","additionalProperties":false,"properties":{"MyField":{"edm.precision":2,"edm.key":true,"edm.type":"Edm.Decimal","edm.nullable":false,"type":"string","edm.name":"MyField"}},"required":["MyField"],"type":"object","edm.name":"MyEntity"}
@@ -54,16 +62,14 @@ schemas:
          200:
           body:
             application/json: ~
-            application/xml: ~
     post: 
         description: Create
         responses:
          200:
           body:
              application/json: ~
-             application/xml: ~
     /{MyEntityId}: 
-        displayName: MyEntity Id
+        displayName: MyEntity id
         is: [filter, expand, format, select]
         get: 
             description: Read
@@ -71,18 +77,15 @@ schemas:
              200:
               body:
                application/json: ~
-               application/xml: ~
         delete: 
             description: Delete
             responses:
              200:
               body:
                application/json: ~
-               application/xml: ~
         put: 
             description: Update
             responses:
              200:
               body:
                application/json: ~
-               application/xml: ~

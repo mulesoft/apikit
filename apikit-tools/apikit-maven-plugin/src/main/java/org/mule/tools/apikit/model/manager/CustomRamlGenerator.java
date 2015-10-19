@@ -94,7 +94,7 @@ public class CustomRamlGenerator {
 	Configuration cfg = getConfiguration();
 
 	// modify the raml object
-	raml.put("title", "Auto-generated RAML for DataGateway");
+	raml.put("title", "Auto-generated RAML");
 	raml.put("version", "0.1");
 	raml.put("ramlVersion", "0.8");
 	raml.put("schemas", entitySet);
