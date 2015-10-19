@@ -52,7 +52,7 @@ public class RAMLFilesParserTest
         Assert.assertEquals("/api/pet", triplet.getUri());
         Assert.assertEquals("GET", triplet.getVerb());
         Assert.assertEquals("/api",triplet.getApi().getPath());
-        Assert.assertNotNull(triplet.getApi().getHttpListenerConfig());
+        assertNotNull(triplet.getApi().getHttpListenerConfig());
         Assert.assertEquals("0.0.0.0", triplet.getApi().getHttpListenerConfig().getHost());
         Assert.assertEquals("8081", triplet.getApi().getHttpListenerConfig().getPort());
         Assert.assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
