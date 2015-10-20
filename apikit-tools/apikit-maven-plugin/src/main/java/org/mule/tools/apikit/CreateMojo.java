@@ -77,6 +77,13 @@ public class CreateMojo
     @Parameter (property = "domainDirectory")
     private File domainDirectory;
 
+    /**
+     * Mule version that is being used.
+     */
+    private final static String MULE_VERSION = "3.7.0";
+    @Parameter (property = "muleVersion")
+    private String muleVersion = MULE_VERSION;
+
     private Log log;
 
     List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {
@@ -95,8 +102,8 @@ public class CreateMojo
         return Arrays.asList(result);
     }
 
-    public void execute()
-            throws MojoExecutionException {
+    public void execute() throws MojoExecutionException
+    {
         Validate.notNull(muleXmlDirectory, "Error: muleXmlDirectory parameter cannot be null");
         Validate.notNull(specDirectory, "Error: specDirectory parameter cannot be null");
 
@@ -128,8 +135,15 @@ public class CreateMojo
         log.info("Processing the following RAML files: " + specFiles);
         log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
 
-        Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles,domainFile);
-        scaffolder.run();
+        try
+        {
+            Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile);
+            scaffolder.run();
+        }
+        catch (Exception e)
+        {
+            throw new MojoExecutionException(e.getMessage());
+        }
     }
 
 }

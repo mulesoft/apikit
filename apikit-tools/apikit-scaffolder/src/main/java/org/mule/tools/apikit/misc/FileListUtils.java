@@ -6,12 +6,12 @@
  */
 package org.mule.tools.apikit.misc;
 
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -29,13 +29,13 @@ public class FileListUtils {
         this.log = null;
     }
 
-    public Map<File,InputStream> toStreamsOrFail(List<String> absolutePaths)
-            throws MojoExecutionException {
+    public Map<File,InputStream> toStreamsOrFail(List<String> absolutePaths) throws IOException
+    {
         Map<File,InputStream> streams = toFiles(absolutePaths);
 
         // If none of the absolutePaths could be processed throw an exception and abort execution
         if ((streams == null || streams.size() == 0) && absolutePaths.size() > 0) {
-            throw new MojoExecutionException("Error: None of the following files could be parsed: " + absolutePaths);
+            throw new IOException("Error: None of the following files could be parsed: " + absolutePaths);
         }
 
         return streams;
