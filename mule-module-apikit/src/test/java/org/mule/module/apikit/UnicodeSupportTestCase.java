@@ -79,7 +79,7 @@ public class UnicodeSupportTestCase extends FunctionalTestCase
         BufferedReader br = new BufferedReader(new InputStreamReader(
                 (conn.getInputStream())));
         String result = br.readLine();
-        assertThat(result, is("my name is %2F"));
+        assertThat(result, is("my name is /"));
     }
 
     @Test
