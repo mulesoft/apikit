@@ -74,31 +74,12 @@ public class Main
         log = new SystemStreamLog();
 
         main.process(log, specDirectory, domainDirectory, muleXmlDirectory, muleXmlOutputDirectory);
-        //String domainFile = null;
-
-        //if (domainDirectory != null)
-        //{
-        //    List<String> domainFiles = main.getIncludedFiles(domainDirectory, new String[] {"*.xml"}, new String[] {});
-        //    if (domainFiles.size() > 0)
-        //    {
-        //        domainFile = domainFiles.get(0);
-        //        if (domainFiles.size() > 1) {
-        //            log.info("There is more than one domain file inside of the domain folder. The domain: " + domainFile + " will be used.");
-        //        }
-        //    }
-        //    else
-        //    {
-        //        log.error("The specified domain directory [" + domainDirectory + "] does not contain any xml file.");
-        //    }
-        //}
-        //else
-        //{
-        //    log.info("No domain was provided. To send it, use -DdomainDirectory.");
-        //}
     }
 
     public void process(Log log, File specDirectory, File domainDirectory, File muleXmlDirectory, File muleXmlOutputDirectory) throws IOException
     {
+        Validate.notNull(muleXmlDirectory, "Error: muleXmlDirectory parameter cannot be null");
+        Validate.notNull(specDirectory, "Error: specDirectory parameter cannot be null");
 
         String domainFile = checkDomainDirectory (log, domainDirectory);
         List<String> specFiles = getSpecFiles(log, specDirectory);
@@ -128,7 +109,6 @@ public class Main
 
         if (domainDirectory != null)
         {
-            //Main main = new Main();
             List<String> domainFiles = getIncludedFiles(domainDirectory, new String[] {"*.xml"}, new String[] {});
             if (domainFiles.size() > 0)
             {
@@ -184,9 +164,6 @@ public class Main
                 }
             }
         }
-        Validate.notNull(muleXmlDirectory, "Error: muleXmlDirectory parameter cannot be null");
-        Validate.notNull(specDirectory, "Error: specDirectory parameter cannot be null");
-
     }
 
     protected List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {

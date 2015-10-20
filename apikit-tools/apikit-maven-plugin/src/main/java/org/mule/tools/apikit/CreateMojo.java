@@ -65,9 +65,6 @@ public class CreateMojo
 
     public void execute() throws MojoExecutionException
     {
-        Validate.notNull(muleXmlDirectory, "Error: muleXmlDirectory parameter cannot be null");
-        Validate.notNull(specDirectory, "Error: specDirectory parameter cannot be null");
-
         log = getLog();
 
         Main main = new Main();
