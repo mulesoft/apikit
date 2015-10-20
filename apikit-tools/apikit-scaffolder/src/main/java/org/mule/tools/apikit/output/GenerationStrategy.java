@@ -40,7 +40,13 @@ public class GenerationStrategy {
         } else {
             if (ramlEntries.isEmpty()) {
                 // there are implemented APIs without a RAML file. NOMB.
-                log.warn("The following apikit:flows do not match any RAML API binding: " + apisInMuleConfigs);
+                String xmlFilesWithoutRaml = "";
+
+                for (API api : apisInMuleConfigs)
+                {
+                    xmlFilesWithoutRaml = xmlFilesWithoutRaml + " " + api.getXmlFile().getAbsolutePath();
+                }
+                log.warn("The following apikit:flows do not match any RAML API binding: " + xmlFilesWithoutRaml);
 
                 generationModels.addAll(RAMLFilesParser.getEntries().values());
             } else {

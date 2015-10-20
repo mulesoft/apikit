@@ -167,8 +167,8 @@ public class Main
     }
 
     protected List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {
-        DirectoryScanner scanner = new DirectoryScanner();//buildContext.newScanner(sourceDirectory, true);
-        scanner.setBasedir(sourceDirectory);
+        DirectoryScanner scanner = new DirectoryScanner();
+        scanner.setBasedir(sourceDirectory.getAbsolutePath());
         scanner.setIncludes(includes);
         scanner.setExcludes(excludes);
         scanner.scan();

@@ -27,6 +27,9 @@ import java.util.*;
 @Mojo(name = "create")
 public class CreateMojo
         extends AbstractMojo {
+
+    private final static String DEFAULT_MULE_VERSION = "3.7.0";
+
     @Component
     private BuildContext buildContext;
 
@@ -57,9 +60,8 @@ public class CreateMojo
     /**
      * Mule version that is being used.
      */
-    private final static String MULE_VERSION = "3.7.0";
     @Parameter (property = "muleVersion")
-    private String muleVersion = MULE_VERSION;
+    private String muleVersion = DEFAULT_MULE_VERSION;
 
     private Log log;
 
