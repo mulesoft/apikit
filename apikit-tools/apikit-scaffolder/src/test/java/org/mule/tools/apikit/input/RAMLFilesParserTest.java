@@ -33,7 +33,7 @@ public class RAMLFilesParserTest
     {
         final InputStream resourceAsStream =
                 RAMLFilesParserTest.class.getClassLoader().getResourceAsStream(
-                        "create-mojo/simple.raml");
+                        "scaffolder/simple.raml");
         Log log = mock(Log.class);
 
         HashSet<File> ramlPaths = new HashSet<File>();
@@ -42,11 +42,11 @@ public class RAMLFilesParserTest
         HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
         streams.put(new File("hello"), resourceAsStream);
 
-        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory());
+        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory(), null);
 
         Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
         assertNotNull(entries);
-        assertEquals(1, entries.size());
+        assertEquals(2, entries.size());
         Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
         ResourceActionMimeTypeTriplet triplet = ramlEntries.iterator().next();
         Assert.assertEquals("/api/pet", triplet.getUri());
@@ -58,14 +58,14 @@ public class RAMLFilesParserTest
         Assert.assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
         Assert.assertEquals("hello-httpListenerConfig",triplet.getApi().getHttpListenerConfig().getName());
     }
-    
+
     @Test
     public void apiWithWarningsShouldBeValid()
     {
         final InputStream resourceAsStream =
                 RAMLFilesParserTest.class.getClassLoader().getResourceAsStream(
                         "scaffolder/apiWithWarnings.raml");
-        
+
         Log log = mock(Log.class);
 
         HashSet<File> ramlPaths = new HashSet<File>();
@@ -74,10 +74,10 @@ public class RAMLFilesParserTest
         HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
         streams.put(new File("hello"), resourceAsStream);
 
-        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory());
+        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory(), null);
 
         Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
         assertNotNull(entries);
         assertEquals(1, entries.size());
-    } 
+    }
 }

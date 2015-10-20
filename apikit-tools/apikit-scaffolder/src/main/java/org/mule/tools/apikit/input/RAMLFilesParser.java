@@ -39,11 +39,13 @@ public class RAMLFilesParser
     private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
     private final APIFactory apiFactory;
     private final Log log;
+    private final String muleVersion;
 
-    public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory)
+    public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory, String muleVersion)
     {
         this.log = log;
         this.apiFactory = apiFactory;
+        this.muleVersion = muleVersion;
         List<File> processedFiles = new ArrayList<File>();
         for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet())
         {
@@ -82,7 +84,7 @@ public class RAMLFilesParser
         if (processedFiles.size() > 0)
         {
             this.log.info("The following RAML files were parsed correctly: " +
-                     processedFiles);
+                          processedFiles);
         }
         else
         {
@@ -114,7 +116,7 @@ public class RAMLFilesParser
             if (validationResult.getLevel() == problemLevel)
             {
                 log.info(problemLevel.name() + " " + (++problemCount) + ": " + validationResult.toString());
-            } 
+            }
         }
         return problemCount;
     }
@@ -126,7 +128,7 @@ public class RAMLFilesParser
             for (Action action : resource.getActions().values())
             {
 
-                API api = apiFactory.createAPIBinding(filename,null, baseUri, APIKitTools.getPathFromUri(baseUri,false), null, null, false);
+                API api = apiFactory.createAPIBinding(filename,null, baseUri, APIKitTools.getPathFromUri(baseUri,false), null, null, APIKitTools.defaultIsInboundEndpoint(muleVersion));
 
                 Map<String, MimeType> mimeTypes = action.getBody();
                 boolean addGenericAction = false;
@@ -163,7 +165,7 @@ public class RAMLFilesParser
             completePath = api.getPath();
         }
         ResourceActionMimeTypeTriplet resourceActionTriplet = new ResourceActionMimeTypeTriplet(api, completePath + resource.getUri(),
-            action.getType().toString(), mimeType);
+                                                                                                action.getType().toString(), mimeType);
         entries.put(resourceActionTriplet, new GenerationModel(api, resource, action, mimeType));
     }
 
@@ -171,4 +173,5 @@ public class RAMLFilesParser
     {
         return entries;
     }
+
 }
