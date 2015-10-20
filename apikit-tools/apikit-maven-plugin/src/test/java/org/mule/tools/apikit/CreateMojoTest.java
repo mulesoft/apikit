@@ -77,19 +77,6 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     }
 
     @Test
-    public void testGetIncludedFiles() throws Exception {
-        List<String> files = mojo.getIncludedFiles(project, new String[]{"src/main/api/**/*.raml", "src/main/**/*.yml"},
-                new String[]{});
-        HashSet<String> set = new HashSet<String>(files);
-
-        assertTrue(set.contains(new File(project, "src/main/api/hello.raml").getAbsolutePath()));
-        assertTrue(set.contains(new File(project, "src/main/api/bye.yml").getAbsolutePath()));
-        assertTrue(set.contains(new File(project, "src/main/api/lala/wow.raml").getAbsolutePath()));
-        assertFalse(set.contains(new File(project, "src/main/dont-read.raml").getAbsolutePath()));
-        assertEquals(3, files.size());
-    }
-
-    @Test
     public void testExecuteWithoutDomain() throws  Exception {
         setVariableValueToObject(mojo, "muleXmlDirectory", app);
         setVariableValueToObject(mojo, "specDirectory", project);
