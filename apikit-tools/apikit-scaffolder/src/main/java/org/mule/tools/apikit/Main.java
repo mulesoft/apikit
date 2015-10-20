@@ -31,7 +31,6 @@ public class Main
     /**
      * Spec source directory to use as root of specInclude and specExclude patterns.
      */
-    //    @Parameter(defaultValue = "${basedir}")
     private static File specDirectory = new File("");
 
     /**
@@ -47,19 +46,16 @@ public class Main
     /**
      * Spec source directory to use as root of muleInclude and muleExclude patterns.
      */
-    //    @Parameter(defaultValue = "${basedir}")
     private static File muleXmlDirectory = new File("");
 
     /**
      * Where to output the generated mule config files.
      */
-    //    @Parameter(defaultValue = "${basedir}/src/main/app")
     private static File muleXmlOutputDirectory = new File("src/main/app");
 
     /**
      * Spec source directory to use as root of muleDomain.
      */
-    //    @Parameter (property = "domainDirectory")
     private static File domainDirectory;
 
     private static String muleVersion = "3.7.0";
@@ -67,7 +63,6 @@ public class Main
     private static Log log;
     public Main()
     {
-        //buildContext = new ThreadBuildContext();
     }
 
     public static void main(String[] args) throws IOException
@@ -76,18 +71,65 @@ public class Main
 
         main.readProperties(args);
 
-        Validate.notNull(muleXmlDirectory, "Error: muleXmlDirectory parameter cannot be null");
-        Validate.notNull(specDirectory, "Error: specDirectory parameter cannot be null");
-
         log = new SystemStreamLog();
-        System.out.println( "spec " + specDirectory);
-        List<String> specFiles = main.getIncludedFiles(specDirectory, specIncludes, specExcludes);
-        List<String> muleXmlFiles = main.getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
+
+        main.process(log, specDirectory, domainDirectory, muleXmlDirectory, muleXmlOutputDirectory);
+        //String domainFile = null;
+
+        //if (domainDirectory != null)
+        //{
+        //    List<String> domainFiles = main.getIncludedFiles(domainDirectory, new String[] {"*.xml"}, new String[] {});
+        //    if (domainFiles.size() > 0)
+        //    {
+        //        domainFile = domainFiles.get(0);
+        //        if (domainFiles.size() > 1) {
+        //            log.info("There is more than one domain file inside of the domain folder. The domain: " + domainFile + " will be used.");
+        //        }
+        //    }
+        //    else
+        //    {
+        //        log.error("The specified domain directory [" + domainDirectory + "] does not contain any xml file.");
+        //    }
+        //}
+        //else
+        //{
+        //    log.info("No domain was provided. To send it, use -DdomainDirectory.");
+        //}
+    }
+
+    public void process(Log log, File specDirectory, File domainDirectory, File muleXmlDirectory, File muleXmlOutputDirectory) throws IOException
+    {
+
+        String domainFile = checkDomainDirectory (log, domainDirectory);
+        List<String> specFiles = getSpecFiles(log, specDirectory);
+        List<String> muleXmlFiles = getMuleXmlFiles(log, muleXmlDirectory);
+
+        Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles,domainFile);
+        scaffolder.run();
+    }
+
+    public List<String> getSpecFiles(Log log, File specDirectory)
+    {
+        List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
+        log.info("Processing the following RAML files: " + specFiles);
+        return specFiles;
+    }
+
+    public List<String> getMuleXmlFiles(Log log, File muleXmlDirectory)
+    {
+        List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
+        log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
+        return muleXmlFiles;
+    }
+
+    public String checkDomainDirectory (Log log, File domainDirectory)
+    {
         String domainFile = null;
 
         if (domainDirectory != null)
         {
-            List<String> domainFiles = main.getIncludedFiles(domainDirectory, new String[] {"*.xml"}, new String[] {});
+            //Main main = new Main();
+            List<String> domainFiles = getIncludedFiles(domainDirectory, new String[] {"*.xml"}, new String[] {});
             if (domainFiles.size() > 0)
             {
                 domainFile = domainFiles.get(0);
@@ -104,19 +146,12 @@ public class Main
         {
             log.info("No domain was provided. To send it, use -DdomainDirectory.");
         }
-        log.info("Processing the following RAML files: " + specFiles);
-        log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
-
-        Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles,domainFile);
-        scaffolder.run();
+        return domainFile;
     }
-
-
-
 
     private void readProperties(String[] args)
     {
-        for ( String arg : args)
+        for (String arg : args)
         {
             if (arg.startsWith("-D"))
             {
@@ -149,9 +184,12 @@ public class Main
                 }
             }
         }
+        Validate.notNull(muleXmlDirectory, "Error: muleXmlDirectory parameter cannot be null");
+        Validate.notNull(specDirectory, "Error: specDirectory parameter cannot be null");
+
     }
 
-    private List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {
+    protected List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {
         DirectoryScanner scanner = new DirectoryScanner();//buildContext.newScanner(sourceDirectory, true);
         scanner.setBasedir(sourceDirectory);
         scanner.setIncludes(includes);
