@@ -7,22 +7,16 @@
 package org.mule.tools.apikit;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.mule.tools.apikit.model.manager.CustomRamlGenerator;
-import org.mule.tools.apikit.model.manager.FileUtils;
 
 public class ScaffolderAPI {
 
     private final static List<String> apiExtensions = Arrays.asList(".yaml", ".raml", ".yml");
     private final static List<String> appExtensions = Arrays.asList(".xml");
-    private final static List<String> dataModelExtensions = Arrays.asList(".json");
-    private final static String apiDirectory = "./api";
 
     public ScaffolderAPI() {
         
@@ -42,17 +36,31 @@ public class ScaffolderAPI {
     }
 
     /**
-     * Modifies or creates the Mule config files which are contained in the appDir directory
-     * by running the scaffolder on the ramlFiles passed as parameter.
+     * Looks for an extension point and executes it, relying on the execute method otherwise.
      *
      * @param ramlFiles the ramlFiles to which the scaffolder will be run on
      * @param appDir the directory which contained the generated Mule config files
      * @param domainDir the directory which contained the domain used by the mule config files
      */
     public void run(List<File> ramlFiles, File appDir, File domainDir) {
+	if (ExtensionManager.isScaffolderExtensionEnabled()) {
+	    ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir);
+	} else {
+	    execute(ramlFiles, appDir, domainDir);
+	}
 	
-	List<String> ramlFilePaths = processDataModelFiles(ramlFiles, dataModelExtensions);
-	ramlFilePaths.addAll(retrieveFilePaths(ramlFiles, apiExtensions));
+    }
+    
+    /**
+     * Modifies or creates the Mule config files which are contained in the appDir directory
+     * by running the scaffolder on the ramlFiles passed as parameter.
+     *
+     * @param ramlFiles the ramlFiles to which the scaffolder will be run on
+     * @param appDir the directory which contained the generated Mule config files
+     * @param domainDir the directory which contained the domain used by the mule config files
+     */    
+   public void execute(List<File> ramlFiles, File appDir, File domainDir) {
+        List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
         SystemStreamLog log = new SystemStreamLog();
         String domain = null;
@@ -95,15 +103,6 @@ public class ScaffolderAPI {
         }
         return filePaths;
     }
-    
-    private boolean isModelJson(File file) {
-    	try {
-    		String path = file.getCanonicalPath();
-    		return path.contains("api" + File.separator + "model.json");
-    	} catch (IOException e) {
-    		throw new RuntimeException(e);
-    	}
-    }
 
     private boolean containsValidExtension(File file, List<String> extensions) {
         for (String extension : extensions) {
@@ -113,44 +112,4 @@ public class ScaffolderAPI {
         }
         return false;
     }
-
-    private List<String> processDataModelFiles(List<File> files, List<String> extensions) {
-        List<String> ramlFilePaths = new ArrayList<String>();
-        if(files != null) {
-            for(File file : files) {
-                if (isModelJson(file)){
-                	ramlFilePaths.add(generateRamlFromDataModel(file).getAbsolutePath());
-                }
-            }
-        }
-        return ramlFilePaths;
-    }
-    
-    private File generateRamlFromDataModel(File model) {
-		CustomRamlGenerator ramlGenerator = new CustomRamlGenerator();
-		File raml = null;
-		
-		try {
-		    String ramlContents = ramlGenerator.generate(new FileInputStream(model));
-		    String path = model.getCanonicalPath().replace("model.json", "api.raml");
-		    raml = FileUtils.stringToFile(path, ramlContents);
-		} catch (Exception e) {
-		    e.printStackTrace();
-		    SystemStreamLog log = new SystemStreamLog();
-		    log.error("Error: " + e.getMessage());
-		    throw new RuntimeException("Error: " + e.getMessage());
-		}
-	
-		return raml;
-    }
-    
-	private void validateDataModel(File file) {
-		CustomRamlGenerator ramlGenerator = new CustomRamlGenerator();
-		try {
-			ramlGenerator.isModelValid(new FileInputStream(file));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-	}
 }

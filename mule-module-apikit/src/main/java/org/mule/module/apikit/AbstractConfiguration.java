@@ -42,7 +42,7 @@ import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.injector.RamlUpdater;
-import org.mule.module.apikit.spi.Service;
+import org.mule.module.apikit.spi.RouterService;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.util.BeanUtils;
@@ -90,7 +90,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private List<String> consoleUrls = new ArrayList<String>();
     private boolean started;
     protected boolean extensionEnabled = false; 
-    private Service routerExtension = null;
+    private RouterService routerExtension = null;
     
     
     @Override
@@ -590,8 +590,8 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 	{
 		if (extensionEnabled) 
 		{
-			ServiceLoader<Service> loader = ServiceLoader.load(Service.class);
-			Iterator<Service> it = loader.iterator();
+			ServiceLoader<RouterService> loader = ServiceLoader.load(RouterService.class);
+			Iterator<RouterService> it = loader.iterator();
 			if (it.hasNext()) 
 			{
 				this.extensionEnabled = true;
@@ -600,7 +600,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 		}
 	}
     
-    public Service getRouterExtension()
+    public RouterService getRouterExtension()
     {
     	return this.routerExtension;
     }
