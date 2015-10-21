@@ -17,7 +17,6 @@
         <guava.version>18.0</guava.version>
         <jackson2.version>2.4.3</jackson2.version>
         <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
-        <apikit.spi.version>1.0.0</apikit.spi.version>
     </properties>
 
     <build>
@@ -232,7 +231,7 @@
 		<dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-apikit-spi</artifactId>
-            <version>${apikit.spi.version}</version>	
+            <version>${project.version}</version>
 		</dependency>	        
     </dependencies>
 
