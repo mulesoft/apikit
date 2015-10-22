@@ -11,7 +11,6 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-current.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd ">
 
-    <http:listener-config name="httpListenerConfig" host="0.0.0.0" port="${http.port}" />
     <apikit:config name="leaguesApi" raml="leagues.raml" consoleEnabled="false"/>
     <spring:bean id="league-api" class="org.mule.examples.leagues.LeagueAPI" init-method="initialize"/>
     <context:property-placeholder location="leagues.properties" />
@@ -49,13 +48,13 @@
     </apikit:mapping-exception-strategy>
 
     <flow name="main">
-        <http:listener config-ref="httpListenerConfig" path="/api/*" />
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*" />
         <apikit:router config-ref="leaguesApi"/>
         <exception-strategy ref="apiKitGlobalExceptionMapping" />
     </flow>
 
     <flow name="console">
-        <http:listener config-ref="httpListenerConfig" path="/console/*" />
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/console/*" />
         <apikit:console config-ref="leaguesApi"/>
     </flow>
 
