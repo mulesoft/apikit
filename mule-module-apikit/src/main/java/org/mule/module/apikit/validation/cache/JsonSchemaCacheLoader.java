@@ -29,7 +29,7 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchemaAndNode
     @Override
     public JsonSchemaAndNode load(String schemaLocation) throws IOException
     {
-        JsonNode schemaNode = JsonLoader.fromString(resolveSchema(schemaLocation, api));
+        JsonNode schemaNode = JsonLoader.fromString((String) resolveSchema(schemaLocation, api));
         return new JsonSchemaAndNode(schemaNode);
     }
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+        targetNamespace="http://www.example.org/simple"
+        elementFormDefault="unqualified"
+        xmlns="http://www.example.org/simple">
+    <xs:include schemaLocation="refs/xsd-include.xsd"></xs:include>
+    <xs:element name="message" type="Message"></xs:element>
+    <!--<xs:complexType name="Message">-->
+        <!--<xs:attribute name="item" type="xs:string"></xs:attribute>-->
+    <!--</xs:complexType>-->
+</xs:schema>

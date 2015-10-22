@@ -23,15 +23,37 @@ public class SchemaCacheUtils
         return key.toString();
     }
 
-    public static String resolveSchema(String schemaCacheKey, Raml api)
+    /**
+     * The schema value may be the schema itself or a key of a global schema.
+     * If the schema has a compiled representation it is returned.
+     * Otherwise the string representation is returned.
+     *
+     * @param schemaCacheKey
+     * @param api
+     * @return
+     */
+    public static Object resolveSchema(String schemaCacheKey, Raml api)
     {
         String[] path = schemaCacheKey.split(SEPARATOR);
         Action action = api.getResource(path[0]).getAction(path[1]);
         MimeType mimeType = action.getBody().get(path[2]);
+
+        //Implemented for XSDs only
+        Object compiledSchema = mimeType.getCompiledSchema();
+        if (compiledSchema != null)
+        {
+            return compiledSchema;
+        }
+
         String schema = mimeType.getSchema();
         //check global schemas
         if (api.getConsolidatedSchemas().containsKey(schema))
         {
+            compiledSchema = api.getCompiledSchemas().get(schema);
+            if (compiledSchema != null)
+            {
+                return compiledSchema;
+            }
             schema = api.getConsolidatedSchemas().get(schema);
         }
         return schema;
