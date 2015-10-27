@@ -130,7 +130,7 @@ public class APIKitTools {
         }
         int major = Integer.parseInt(versionParts[0]);
         int minor = Integer.parseInt(versionParts[1]);
-        if (major <= 3 && minor < 6)
+        if (major == 3 && minor < 6)
         {
             return true;
         }

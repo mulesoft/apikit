@@ -6,7 +6,6 @@
  */
 package org.mule.tools.apikit.input;
 
-import junit.framework.Assert;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
 import org.mule.tools.apikit.model.API;
@@ -14,7 +13,6 @@ import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.model.HttpListenerConfig;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-import org.mule.tools.apikit.input.MuleConfigParser;
 
 import java.io.File;
 import java.io.InputStream;

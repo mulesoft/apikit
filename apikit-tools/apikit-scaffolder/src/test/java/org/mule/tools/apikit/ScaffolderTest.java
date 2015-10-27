@@ -58,9 +58,6 @@ public class ScaffolderTest {
         assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
     }
 
-
-
-
     @Test
     public void testSimpleGenerateWithInboundEndpoint() throws Exception {
         //File muleXmlSimple = simpleGeneration("simple");
@@ -401,7 +398,7 @@ public class ScaffolderTest {
         file.createNewFile();
         InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
         IOUtils.copy(resourceAsStream,
-                     new FileOutputStream(file));
+                new FileOutputStream(file));
         return file;
     }
 
