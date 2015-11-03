@@ -27,6 +27,10 @@ public class MessageSourceAdapter
         {
             delegate = new MessageSourceListenerAdapter((DefaultHttpListener) messageSource);
         }
+        else if (messageSource == null)
+        {
+            throw new ApikitRuntimeException("Flow endpoint is null, APIKIT requires a listener ref in each of it' flows");
+        }
         else
         {
             throw new ApikitRuntimeException("Message Source Type NOT SUPPORTED: " + messageSource.getClass());
