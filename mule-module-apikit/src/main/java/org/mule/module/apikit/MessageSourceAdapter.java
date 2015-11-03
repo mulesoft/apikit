@@ -29,7 +29,7 @@ public class MessageSourceAdapter
         }
         else if (messageSource == null)
         {
-            throw new ApikitRuntimeException("Flow endpoint is null, APIKIT requires a listener ref in each of it' flows");
+            throw new ApikitRuntimeException("Flow endpoint is null, APIKIT requires a listener ref in each of it's flows");
         }
         else
         {

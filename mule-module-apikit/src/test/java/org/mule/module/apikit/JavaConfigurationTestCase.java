@@ -83,7 +83,7 @@ public class JavaConfigurationTestCase extends AbstractMuleTestCase
         catch (Exception e)
         {
             assertThat(e, IsInstanceOf.instanceOf(RuntimeException.class));
-            assertThat(e.getMessage(), is("org.mule.api.lifecycle.LifecycleException: Flow endpoint is null, APIKIT requires a listener ref in each of it' flows"));
+            assertThat(e.getMessage(), is("org.mule.api.lifecycle.LifecycleException: Flow endpoint is null, APIKIT requires a listener ref in each of it's flows"));
         }
     }
 
