@@ -11,12 +11,17 @@ import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
 import org.mule.api.lifecycle.StartException;
 import org.mule.api.registry.RegistrationException;
+import org.mule.api.transport.PropertyScope;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
+import org.mule.util.WildcardAttributeEvaluator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.raml.model.Resource;
@@ -32,6 +37,8 @@ public class Proxy extends AbstractRouter
     protected static final Logger LOGGER = LoggerFactory.getLogger(Proxy.class);
 
     private Flow basicFlow;
+
+    private static final String REMOVE_HEADERS_VARIABLE_NAME = "_headersToIgnore";
 
     static
     {
@@ -145,11 +152,17 @@ public class Proxy extends AbstractRouter
 
     public static void copyProperties(MuleEvent event, Set<String> skip)
     {
+        List<String> headersToIgnore = new ArrayList<>();
         MuleMessage message = event.getMessage();
         Set<String> inboundPropertyNames = message.getInboundPropertyNames();
+        List<String> candidatesToIgnore =  (ArrayList<String>)message.removeProperty(REMOVE_HEADERS_VARIABLE_NAME, PropertyScope.INVOCATION);
+        if (candidatesToIgnore != null)
+        {
+            headersToIgnore = wildcardsEvaluation(candidatesToIgnore, message.getPropertyNames(PropertyScope.INBOUND));
+        }
         for (String name : inboundPropertyNames)
         {
-            if (!skip.contains(name.toLowerCase()))
+            if (!skip.contains(name.toLowerCase()) && !headersToIgnore.contains(name.toLowerCase()))
             {
                 if (LOGGER.isDebugEnabled())
                 {
@@ -162,6 +175,31 @@ public class Proxy extends AbstractRouter
                 LOGGER.debug(String.format("--- skipping header %s -> %s", name, message.getInboundProperty(name)));
             }
         }
+    }
+
+    private static List<String> wildcardsEvaluation (List<String> candidatesToIgnore, Collection<String> affectedProperties)
+    {
+        final List<String> headersToIgnore = new ArrayList<>();
+        for (final String property : candidatesToIgnore)
+        {
+            WildcardAttributeEvaluator wildcardAttributeEvaluator = new WildcardAttributeEvaluator(property);
+            if (wildcardAttributeEvaluator.hasWildcards())
+            {
+                wildcardAttributeEvaluator.processValues(affectedProperties, new WildcardAttributeEvaluator.MatchCallback()
+                {
+                    @Override
+                    public void processMatch(String matchedValue)
+                    {
+                        headersToIgnore.add(matchedValue.toLowerCase());
+                    }
+                });
+            }
+            else
+            {
+                headersToIgnore.add(property.toLowerCase());
+            }
+        }
+        return headersToIgnore;
     }
 
 }
