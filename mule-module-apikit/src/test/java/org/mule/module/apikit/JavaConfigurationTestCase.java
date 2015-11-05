@@ -7,6 +7,8 @@
 package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.*;
 
 import org.mule.api.MuleContext;
 import org.mule.api.endpoint.InboundEndpoint;
@@ -26,7 +28,9 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.hamcrest.CoreMatchers;
+import org.hamcrest.core.IsInstanceOf;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -60,7 +64,7 @@ public class JavaConfigurationTestCase extends AbstractMuleTestCase
     @Test
     public void runJavaConfig()
     {
-        buildJavaConfig();
+        buildJavaConfig(createEndpoint());
         given().header("Accept", "*/*")
                 .expect()
                 .response().body(CoreMatchers.containsString("/api/leagues"))
@@ -68,17 +72,30 @@ public class JavaConfigurationTestCase extends AbstractMuleTestCase
                 .when().get("/api/leagues");
     }
 
-    private void buildJavaConfig()
+    @Test
+    public void runJavaConfigNoEndpoint()
     {
-        String host = "localhost";
-        String path = "api";
+        try
+        {
+            buildJavaConfig(null);
+            assertTrue("Expected exception org.mule.api.lifecycle.LifecycleException was not thrown", false);
+        }
+        catch (Exception e)
+        {
+            assertThat(e, IsInstanceOf.instanceOf(RuntimeException.class));
+            assertThat(e.getMessage(), is("org.mule.api.lifecycle.LifecycleException: Flow endpoint is null, APIKIT requires a listener ref in each of it's flows"));
+        }
+    }
+
+    private void buildJavaConfig(InboundEndpoint inboundEndpoint)
+    {
         try
         {
             //http endpoint
-            EndpointURIEndpointBuilder endpointURIEndpointBuilder = new EndpointURIEndpointBuilder(
-                    "http://" + host + ":" + serverPort.getValue() + "/" + path, muleContext);
-            InboundEndpoint inboundEndpoint = endpointURIEndpointBuilder.buildInboundEndpoint();
-            muleContext.getRegistry().registerEndpoint(inboundEndpoint);
+            if (inboundEndpoint != null)
+            {
+                muleContext.getRegistry().registerEndpoint(inboundEndpoint);
+            }
 
             //action-resource flow
             final Flow flow = new Flow("get:/leagues", muleContext);
@@ -100,10 +117,26 @@ public class JavaConfigurationTestCase extends AbstractMuleTestCase
         catch (Exception e)
         {
             throw new RuntimeException(e);
-
         }
     }
 
+    private InboundEndpoint createEndpoint()
+    {
+        String host = "localhost";
+        String path = "api";
+
+        EndpointURIEndpointBuilder endpointURIEndpointBuilder = new EndpointURIEndpointBuilder(
+                "http://" + host + ":" + serverPort.getValue() + "/" + path, muleContext);
+        try
+        {
+            return endpointURIEndpointBuilder.buildInboundEndpoint();
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+
+    }
     private Router configureApikitRouter(MuleContext muleContext) throws IllegalAccessException, InvocationTargetException, InitialisationException
     {
         final Router apikitRouter = new Router();
