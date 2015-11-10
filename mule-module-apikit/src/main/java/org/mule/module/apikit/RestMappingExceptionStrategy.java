@@ -23,6 +23,8 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
     private List<MappingExceptionListener> exceptionListeners;
 
     protected String globalName;
+    private boolean enableNotifications;
+    private String logException;
 
     @Override
     public MuleEvent handleException(Exception exception, MuleEvent event)
@@ -55,6 +57,14 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
 
     public void setExceptionListeners(List<MappingExceptionListener> exceptionListeners)
     {
+        for (MappingExceptionListener exceptionListener : exceptionListeners)
+        {
+            exceptionListener.setEnableNotifications(enableNotifications);
+            if (logException != null)
+            {
+                exceptionListener.setLogException(logException);
+            }
+        }
         this.exceptionListeners = exceptionListeners;
     }
 
@@ -90,6 +100,16 @@ public class RestMappingExceptionStrategy extends AbstractMuleObjectOwner<Mappin
             idx++;
         }
 
+    }
+
+    public void setEnableNotifications(boolean enableNotifications)
+    {
+        this.enableNotifications = enableNotifications;
+    }
+
+    public void setLogException(String logException)
+    {
+        this.logException = logException;
     }
 
 }

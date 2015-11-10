@@ -13,6 +13,7 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.util.NotificationUtils;
 
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -43,8 +44,10 @@ public class MessageProcessorNotificationPathTestCase extends FunctionalTestCase
         FlowConstruct flow = getFlowConstruct(unescape(flowName));
         DefaultMessageProcessorPathElement flowElement = new DefaultMessageProcessorPathElement(null, flowName);
         ((Pipeline) flow).addMessageProcessorPathElements(flowElement);
-        Map<MessageProcessor, String> messageProcessorPaths = NotificationUtils.buildPaths(flowElement);
+        Map<MessageProcessor, String> messageProcessorPaths = NotificationUtils.buildPaths(flowElement).getFlowMap();
         String[] flowPaths = messageProcessorPaths.values().toArray(new String[]{});
+        Arrays.sort(expectedPaths);
+        Arrays.sort(flowPaths);
         Assert.assertArrayEquals(expectedPaths, flowPaths);
     }
 

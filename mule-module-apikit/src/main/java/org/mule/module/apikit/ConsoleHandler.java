@@ -13,6 +13,7 @@ import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.processor.MessageProcessor;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
@@ -33,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConsoleHandler
+public class ConsoleHandler implements MessageProcessor
 {
 
     public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
@@ -150,7 +151,7 @@ public class ConsoleHandler
         }
         catch (IOException e)
         {
-            throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path), event);
+            throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path), event, this);
         }
 
         return resultEvent;
