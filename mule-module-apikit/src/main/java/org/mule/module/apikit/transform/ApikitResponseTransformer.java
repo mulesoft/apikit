@@ -10,11 +10,17 @@ import org.mule.api.MuleMessage;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.api.transformer.TransformerException;
+import org.mule.module.apikit.RestContentTypeParser;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.transformer.AbstractMessageTransformer;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.net.MediaType;
+import java.util.Collection;
 import java.util.List;
 
 import org.raml.model.MimeType;
@@ -25,6 +31,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
     public static final String BEST_MATCH_REPRESENTATION = "_ApikitResponseTransformer_bestMatchRepresentation";
     public static final String CONTRACT_MIME_TYPES = "_ApikitResponseTransformer_contractMimeTypes";
     public static final String APIKIT_ROUTER_REQUEST = "_ApikitResponseTransformer_apikitRouterRequest";
+    public static final String ACCEPT_HEADER = "_ApikitResponseTransformer_AcceptedHeaders";
 
     @Override
     public Object transformMessage(MuleMessage message, String encoding) throws TransformerException
@@ -36,6 +43,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         }
         String responseRepresentation = message.getInvocationProperty(BEST_MATCH_REPRESENTATION);
         List<MimeType> responseMimeTypes = message.getInvocationProperty(CONTRACT_MIME_TYPES);
+        String acceptedHeader = message.getInvocationProperty(ACCEPT_HEADER);
         if (responseRepresentation == null)
         {
             // clear response payload unless response status is manually set
@@ -45,10 +53,11 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
             }
             return message;
         }
-        return transformToExpectedContentType(message, responseRepresentation, responseMimeTypes);
+        return transformToExpectedContentType(message, responseRepresentation, responseMimeTypes, acceptedHeader);
     }
 
-    public Object transformToExpectedContentType(MuleMessage message, String responseRepresentation, List<MimeType> responseMimeTypes) throws TransformerException
+    public Object transformToExpectedContentType(MuleMessage message, String responseRepresentation, List<MimeType> responseMimeTypes,
+                                                 String acceptedHeader) throws TransformerException
     {
         Object payload = message.getPayload();
         String msgMimeType = null;
@@ -78,7 +87,8 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
             return payload;
         }
 
-        String msgAcceptedContentType = acceptedContentType(msgMimeType, msgContentType, responseMimeTypes);
+        Collection<MimeType> conjunctionTypes = getBestMatchMediaTypes(responseMimeTypes, acceptedHeader);
+        String msgAcceptedContentType = acceptedContentType(msgMimeType, msgContentType, conjunctionTypes);
         if (msgAcceptedContentType != null)
         {
             message.setOutboundProperty("Content-Type", msgAcceptedContentType);
@@ -115,20 +125,62 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
 
     }
 
+    private Collection<MimeType> getBestMatchMediaTypes(List<MimeType> responseMimeTypes, String acceptedHeader)
+    {
+        if(acceptedHeader.contains("*/*"))
+        {
+            return responseMimeTypes;
+        }
+        final Collection<String> acceptedTypes = transformAcceptedTypes(acceptedHeader);
+
+        return filterAccepted(responseMimeTypes, acceptedTypes);
+    }
+
+    private Collection<MimeType> filterAccepted(List<MimeType> responseMimeTypes, final Collection<String> acceptedTypes)
+    {
+        return Collections2.filter(
+                responseMimeTypes, new Predicate<MimeType>()
+                {
+                    @Override
+                    public boolean apply(MimeType m)
+                    {
+                        return acceptedTypes.contains(m.getType());
+                    }
+                }
+        );
+    }
+
+    private Collection<String> transformAcceptedTypes(String acceptedHeader)
+    {
+        List<MediaType> acceptedMediaTypes = RestContentTypeParser.parseMediaTypes(acceptedHeader);
+
+        return Collections2.transform(acceptedMediaTypes, new Function<MediaType, String>()
+        {
+            @Override
+            public String apply(MediaType mediaType)
+            {
+                return mediaType.type() + "/" + mediaType.subtype();
+            }
+        });
+    }
+
     /**
      * checks if the current payload type is any of the accepted ones.
      *
      * @return null if it is not
      */
-    private String acceptedContentType(String msgMimeType, String msgContentType, List<MimeType> responseMimeTypes)
+    private String acceptedContentType(String msgMimeType, String msgContentType, Collection<MimeType> conjunctionTypes)
     {
-        for (MimeType responseMimeType : responseMimeTypes)
+        for (MimeType acceptedMediaType : conjunctionTypes)
         {
-            if (msgMimeType != null && msgMimeType.contains(responseMimeType.getType()))
+            if(msgMimeType != null && msgMimeType.contains(acceptedMediaType.getType()))
             {
                 return msgMimeType;
             }
-            if (msgContentType != null && msgContentType.contains(responseMimeType.getType()))
+        }
+        for (MimeType acceptedMediaType : conjunctionTypes)
+        {
+            if(msgContentType != null && msgContentType.contains(acceptedMediaType.getType()))
             {
                 return msgContentType;
             }

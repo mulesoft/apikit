@@ -6,8 +6,10 @@
  */
 package org.mule.module.apikit;
 
+import com.google.common.collect.Lists;
 import com.google.common.net.MediaType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -300,5 +302,16 @@ public final class RestContentTypeParser
     
     // hidden
     private RestContentTypeParser() {
+    }
+
+    public static List<MediaType> parseMediaTypes (String mediaTypes)
+    {
+        List<MediaType> parsedMediaTypes = Lists.newArrayList();
+        for (String r : StringUtils.split(mediaTypes, ','))
+        {
+            parsedMediaTypes.add(MediaType.parse(r));
+        }
+
+        return parsedMediaTypes;
     }
 }
