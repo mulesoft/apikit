@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.module.apikit.transform.ApikitResponseTransformer.ACCEPT_HEADER;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.APIKIT_ROUTER_REQUEST;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.BEST_MATCH_REPRESENTATION;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.CONTRACT_MIME_TYPES;
@@ -117,7 +118,7 @@ public abstract class HttpRestRequest
             requestEvent.getMessage().setInvocationProperty(BEST_MATCH_REPRESENTATION, responseRepresentation);
         }
         requestEvent.getMessage().setInvocationProperty(APIKIT_ROUTER_REQUEST, "yes");
-
+        requestEvent.getMessage().setInvocationProperty(ACCEPT_HEADER, adapter.getAcceptableResponseMediaTypes());
         MuleEvent responseEvent = flow.process(requestEvent);
 
         return processResponse(responseEvent, responseMimeTypes, responseRepresentation);
