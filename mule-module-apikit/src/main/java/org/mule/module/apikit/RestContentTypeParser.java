@@ -9,7 +9,6 @@ package org.mule.module.apikit;
 import com.google.common.collect.Lists;
 import com.google.common.net.MediaType;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -20,6 +19,8 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.raml.model.MimeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * MIME-Type Parser
@@ -36,6 +37,7 @@ import org.raml.model.MimeType;
  */
 public final class RestContentTypeParser
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestContentTypeParser.class);
 
     /**
      * Parse results container
@@ -298,18 +300,25 @@ public final class RestContentTypeParser
         return false;
     }
 
-    
-    
+
+
     // hidden
     private RestContentTypeParser() {
     }
 
-    public static List<MediaType> parseMediaTypes (String mediaTypes)
+    public static List<MediaType> parseMediaTypes(String mediaTypes)
     {
         List<MediaType> parsedMediaTypes = Lists.newArrayList();
         for (String r : StringUtils.split(mediaTypes, ','))
         {
-            parsedMediaTypes.add(MediaType.parse(r));
+            try
+            {
+                parsedMediaTypes.add(MediaType.parse(StringUtils.trim(r)));
+            }
+            catch (IllegalArgumentException e)
+            {
+                LOGGER.warn("Unable to parse", e);
+            }
         }
 
         return parsedMediaTypes;
