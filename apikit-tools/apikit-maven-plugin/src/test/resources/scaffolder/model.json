@@ -1,0 +1,60 @@
+{
+  "entities": [
+    {
+      "entity": {
+        "name": "orders",
+        "remoteName": "orders_tbl",
+        "properties": [
+          {
+            "id": {
+              "name": "id",
+              "type": "Edm.Int32",
+              "sample": "12",
+              "nullable": false,
+              "key": true
+            }
+          },
+          {
+            "name": {
+              "name": "name",
+              "type": "Edm.String",
+              "sample": "Pretty Entity",
+              "nullable": true,
+              "key": false,
+              "maxLength": 40,
+              "fixedLength": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "entity": {
+        "name": "customers",
+        "remoteName": "customer_tbl",
+        "properties": [
+          {
+            "id": {
+              "name": "id",
+              "type": "Edm.Int32",
+              "sample": "12",
+              "nullable": false,
+              "key": true
+            }
+          },
+          {
+            "description": {
+              "name": "description",
+              "type": "Edm.String",
+              "sample": "Pretty Entity",
+              "nullable": true,
+              "key": false,
+              "maxLength": 40,
+              "fixedLength": false
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

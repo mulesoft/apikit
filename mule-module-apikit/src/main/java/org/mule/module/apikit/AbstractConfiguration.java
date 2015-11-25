@@ -7,10 +7,29 @@
 package org.mule.module.apikit;
 
 import static org.mule.module.apikit.UrlUtils.getBaseSchemeHostPort;
+import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 import static org.raml.parser.rule.ValidationResult.Level.ERROR;
 import static org.raml.parser.rule.ValidationResult.Level.WARN;
-import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.commons.lang.SerializationUtils;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -23,34 +42,13 @@ import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.injector.RamlUpdater;
+import org.mule.module.apikit.spi.RouterService;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.util.BeanUtils;
 import org.mule.util.IOUtils;
 import org.mule.util.StringMessageUtils;
 import org.mule.util.StringUtils;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-
-import org.apache.commons.lang.SerializationUtils;
 import org.raml.emitter.RamlEmitter;
 import org.raml.model.Action;
 import org.raml.model.ActionType;
@@ -62,6 +60,10 @@ import org.raml.parser.visitor.RamlDocumentBuilder;
 import org.raml.parser.visitor.RamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 public abstract class AbstractConfiguration implements Initialisable, MuleContextAware, Startable
 {
@@ -87,7 +89,10 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     protected LoadingCache<String, URIPattern> uriPatternCache;
     private List<String> consoleUrls = new ArrayList<String>();
     private boolean started;
-
+    protected boolean extensionEnabled = false; 
+    private RouterService routerExtension = null;
+    
+    
     @Override
     public void initialise() throws InitialisationException
     {
@@ -581,5 +586,29 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
             }
         }
         return actionRefs;
+    }
+    
+    public boolean isExtensionEnabled()
+    {
+        return extensionEnabled;
+    }
+
+	public void setExtensionEnabled(boolean extensionEnabled) 
+	{
+		if (extensionEnabled) 
+		{
+			ServiceLoader<RouterService> loader = ServiceLoader.load(RouterService.class);
+			Iterator<RouterService> it = loader.iterator();
+			if (it.hasNext()) 
+			{
+				this.extensionEnabled = true;
+				routerExtension = it.next();
+			}
+		}
+	}
+    
+    public RouterService getRouterExtension()
+    {
+    	return this.routerExtension;
     }
 }
