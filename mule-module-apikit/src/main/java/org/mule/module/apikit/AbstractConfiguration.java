@@ -33,6 +33,7 @@ import org.mule.util.StringUtils;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Sets;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -555,7 +556,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     public static Collection<AbstractConfiguration> getAllConfigurations(MuleContext muleContext)
     {
-        Collection<AbstractConfiguration> configurations = new ArrayList<AbstractConfiguration>();
+        Collection<AbstractConfiguration> configurations = Sets.newHashSet();
         configurations.addAll(muleContext.getRegistry().lookupObjects(Configuration.class));
         configurations.addAll(muleContext.getRegistry().lookupObjects(ProxyConfiguration.class));
         return configurations;
