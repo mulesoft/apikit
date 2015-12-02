@@ -54,6 +54,13 @@
             <artifactId>apikit-scaffolder</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-apikit-spi</artifactId>
+            <version>${project.version}</version>
+		</dependency>	
+
     </dependencies>
 
     <build>

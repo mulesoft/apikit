@@ -8,6 +8,7 @@
     <name>APIKit parent</name>
 
     <modules>
+        <module>apikit-spi</module>
         <module>mule-module-apikit</module>
         <module>distribution</module>
         <module>apikit-tools</module>
@@ -80,6 +81,7 @@
                         <exclude>**/*.css</exclude>
                         <exclude>**/*.js</exclude>
                         <exclude>**/*.groovy</exclude>
+                        <exclude>**/*.ftl</exclude>
                         <exclude>**/build-number.txt</exclude>
                     </excludes>
                     <mapping>
