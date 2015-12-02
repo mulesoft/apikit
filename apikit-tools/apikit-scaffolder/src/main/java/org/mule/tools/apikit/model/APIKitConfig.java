@@ -14,6 +14,7 @@ public class APIKitConfig {
     public static final String NAME_ATTRIBUTE = "name";
     public static final String RAML_ATTRIBUTE = "raml";
     public static final String CONSOLE_ENABLED_ATTRIBUTE = "consoleEnabled";
+    public static final String EXTENSION_ENABLED_ATTRIBUTE = "extensionEnabled";
     public static final String CONSOLE_PATH_ATTRIBUTE = "consolePath";
     public static final String DEFAULT_CONSOLE_PATH = "console";
     public static final String DEFAULT_CONFIG_NAME = "config";
@@ -22,12 +23,14 @@ public class APIKitConfig {
     private String name;
     private String raml;
     private boolean consoleEnabled;
+    private boolean extensionEnabled;
     private String consolePath;
 
     public static class Builder {
         private String name;
         private final String raml;
         private boolean consoleEnabled = true;
+        private boolean extensionEnabled = false;
         private String consolePath;
 
         public Builder(final String raml) {
@@ -47,23 +50,30 @@ public class APIKitConfig {
             return this;
         }
 
+        public Builder setExtensionEnabled(boolean extensionEnabled) {
+            this.extensionEnabled = extensionEnabled;
+            return this;
+        }
+
         public Builder setConsolePath(String consolePath) {
             this.consolePath = consolePath;
             return this;
         }
 
         public APIKitConfig build() {
-            return new APIKitConfig(this.name, this.raml, this.consoleEnabled, this.consolePath != null? this.consolePath : DEFAULT_CONSOLE_PATH);
+            return new APIKitConfig(this.name, this.raml, this.consoleEnabled, this.extensionEnabled, this.consolePath != null? this.consolePath : DEFAULT_CONSOLE_PATH);
         }
     }
 
     private APIKitConfig(final String name,
                          final String raml,
                          final boolean consoleEnabled,
+                         final boolean extensionEnabled,
                          final String consolePath) {
         this.name = name;
         this.raml = raml;
         this.consoleEnabled = consoleEnabled;
+        this.extensionEnabled = extensionEnabled;
         this.consolePath = consolePath;
     }
 
@@ -77,6 +87,10 @@ public class APIKitConfig {
 
     public boolean isConsoleEnabled() {
         return consoleEnabled;
+    }
+
+    public boolean isExtensionEnabled() {
+        return extensionEnabled;
     }
 
     public String getConsolePath() {

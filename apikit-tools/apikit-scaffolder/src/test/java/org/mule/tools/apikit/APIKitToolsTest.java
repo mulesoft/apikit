@@ -6,11 +6,18 @@
  */
 package org.mule.tools.apikit;
 
+import static org.mockito.Mockito.when;
+
+import org.mule.module.apikit.spi.ScaffolderService;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 
+import java.lang.reflect.Field;
+
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 public class APIKitToolsTest
 {
@@ -44,9 +51,42 @@ public class APIKitToolsTest
         Assert.assertTrue(APIKitTools.defaultIsInboundEndpoint("3.5.0"));
         Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint("3.6.0"));
         Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint("3.7.0"));
+        Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint("4.0.0"));
         Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint("invalid"));
         Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint(""));
         Assert.assertFalse(APIKitTools.defaultIsInboundEndpoint(null));
+    }
 
+    @Test
+    public void canExtensionsBeEnabled() throws NoSuchFieldException, IllegalAccessException
+    {
+        mockExtensionService();
+        Assert.assertTrue(APIKitTools.canExtensionsBeEnabled("4.0.0"));
+        Assert.assertTrue(APIKitTools.canExtensionsBeEnabled("3.7.3"));
+        Assert.assertTrue(APIKitTools.canExtensionsBeEnabled("3.7.3-SNAPSHOT"));
+        Assert.assertTrue(APIKitTools.canExtensionsBeEnabled("3.7.0"));
+        Assert.assertFalse(APIKitTools.canExtensionsBeEnabled("3.6.0"));
+        Assert.assertFalse(APIKitTools.canExtensionsBeEnabled("3.5.0"));
+        Assert.assertFalse(APIKitTools.canExtensionsBeEnabled("invalid"));
+        Assert.assertFalse(APIKitTools.canExtensionsBeEnabled(""));
+        Assert.assertFalse(APIKitTools.canExtensionsBeEnabled(null));
+    }
+
+    private void mockExtensionService() throws NoSuchFieldException, IllegalAccessException
+    {
+        ScaffolderServiceLoader mockedLoader = Mockito.mock(ScaffolderServiceLoader.class);
+        ScaffolderService mockedService = Mockito.mock(ScaffolderService.class);
+        when(mockedLoader.loadService()).thenReturn(mockedService);
+        Field loadService = ExtensionManager.class.getDeclaredField("serviceLoader");
+        loadService.setAccessible(true);
+        loadService.set(loadService, mockedLoader);
+    }
+
+    @After
+    public void after() throws NoSuchFieldException, IllegalAccessException
+    {
+        Field loadService = ExtensionManager.class.getDeclaredField("serviceLoader");
+        loadService.set(loadService, new ScaffolderServiceLoader());
+        loadService.setAccessible(false);
     }
 }
