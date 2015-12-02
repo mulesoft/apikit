@@ -6,18 +6,28 @@
  */
 package org.mule.module.apikit.validation.cache;
 
-import static org.mule.module.apikit.validation.cache.SchemaCacheUtils.resolveSchema;
+import static org.mule.module.apikit.validation.cache.SchemaCacheUtils.resolveJsonSchema;
+
+import org.mule.module.apikit.exception.ApikitRuntimeException;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
+import com.github.fge.jsonschema.SchemaVersion;
+import com.github.fge.jsonschema.cfg.ValidationConfiguration;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
+import com.github.fge.jsonschema.core.load.configuration.LoadingConfiguration;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.common.cache.CacheLoader;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.raml.model.Raml;
 
-public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchemaAndNode>
+public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
 {
+
+    private static final String RESOURCE_PREFIX = "resource:/";
 
     private Raml api;
 
@@ -27,10 +37,61 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchemaAndNode
     }
 
     @Override
-    public JsonSchemaAndNode load(String schemaLocation) throws IOException
+    public JsonSchema load(String schemaLocation) throws IOException
     {
-        JsonNode schemaNode = JsonLoader.fromString((String) resolveSchema(schemaLocation, api));
-        return new JsonSchemaAndNode(schemaNode);
+        Object pathOrSchema = resolveJsonSchema(schemaLocation, api);
+        if (pathOrSchema instanceof String)
+        {
+            return parseSchema(formatUri((String) pathOrSchema));
+
+        }
+        return parseSchema((JsonNode) pathOrSchema);
     }
 
+    private String formatUri(String location)
+    {
+        URI uri = URI.create(location);
+
+        if (uri.getScheme() == null)
+        {
+            if (location.charAt(0) == '/')
+            {
+                location = location.substring(1);
+            }
+
+            location = RESOURCE_PREFIX + location;
+        }
+
+        return location;
+    }
+
+    private JsonSchema parseSchema(JsonNode jsonNode)
+    {
+        try
+        {
+            return getSchemaFactory().getJsonSchema(jsonNode);
+        }
+        catch (ProcessingException e)
+        {
+            throw new ApikitRuntimeException(e);
+        }
+    }
+
+    private JsonSchema parseSchema(String uri)
+    {
+        try
+        {
+            return getSchemaFactory().getJsonSchema(uri);
+        }
+        catch (ProcessingException e)
+        {
+            throw new ApikitRuntimeException(e);
+        }
+    }
+
+    private JsonSchemaFactory getSchemaFactory()
+    {
+        ValidationConfiguration validationCfg = ValidationConfiguration.newBuilder().setDefaultVersion(SchemaVersion.DRAFTV3).freeze();
+        return JsonSchemaFactory.newBuilder().setLoadingConfiguration(LoadingConfiguration.byDefault()).setValidationConfiguration(validationCfg).freeze();
+    }
 }

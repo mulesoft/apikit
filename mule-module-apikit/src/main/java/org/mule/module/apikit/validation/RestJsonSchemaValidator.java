@@ -11,7 +11,6 @@ import org.mule.api.MuleEvent;
 import org.mule.api.registry.RegistrationException;
 import org.mule.api.transformer.DataType;
 import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.validation.cache.JsonSchemaAndNode;
 import org.mule.module.apikit.validation.cache.JsonSchemaCache;
 import org.mule.transformer.types.DataTypeFactory;
 
@@ -19,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchema;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -69,8 +69,8 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
                 throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
             }
 
-            JsonSchemaAndNode schema = JsonSchemaCache.getJsonSchemaCache(muleContext, configId, api).get(schemaPath);
-            ProcessingReport report = schema.getJsonSchema().validate(data);
+            JsonSchema schema = JsonSchemaCache.getJsonSchemaCache(muleContext, configId, api).get(schemaPath);
+            ProcessingReport report = schema.validate(data);
             if (!report.isSuccess())
             {
                 String message = report.iterator().hasNext() ? report.iterator().next().getMessage() : "no message";

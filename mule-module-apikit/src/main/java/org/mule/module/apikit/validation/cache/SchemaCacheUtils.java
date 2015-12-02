@@ -6,6 +6,14 @@
  */
 package org.mule.module.apikit.validation.cache;
 
+import org.mule.module.apikit.exception.ApikitRuntimeException;
+
+import com.github.fge.jackson.JsonLoader;
+
+import java.io.IOException;
+
+import javax.xml.validation.Schema;
+
 import org.raml.model.Action;
 import org.raml.model.MimeType;
 import org.raml.model.Raml;
@@ -24,38 +32,72 @@ public class SchemaCacheUtils
     }
 
     /**
-     * The schema value may be the schema itself or a key of a global schema.
-     * If the schema has a compiled representation it is returned.
-     * Otherwise the string representation is returned.
-     *
-     * @param schemaCacheKey
-     * @param api
-     * @return
+     * Returns the compiled representation of an XML schema.
      */
-    public static Object resolveSchema(String schemaCacheKey, Raml api)
+    public static Schema resolveXmlSchema(String schemaCacheKey, Raml api)
     {
-        String[] path = schemaCacheKey.split(SEPARATOR);
-        Action action = api.getResource(path[0]).getAction(path[1]);
-        MimeType mimeType = action.getBody().get(path[2]);
+        MimeType mimeType = getMimeType(schemaCacheKey, api);
 
-        //Implemented for XSDs only
         Object compiledSchema = mimeType.getCompiledSchema();
-        if (compiledSchema != null)
+        if (compiledSchema != null && compiledSchema instanceof Schema)
         {
-            return compiledSchema;
+            return (Schema) compiledSchema;
         }
 
         String schema = mimeType.getSchema();
+
         //check global schemas
         if (api.getConsolidatedSchemas().containsKey(schema))
         {
             compiledSchema = api.getCompiledSchemas().get(schema);
-            if (compiledSchema != null)
+            if (compiledSchema != null && compiledSchema instanceof Schema)
             {
-                return compiledSchema;
+                return (Schema) compiledSchema;
             }
-            schema = api.getConsolidatedSchemas().get(schema);
         }
-        return schema;
+        throw new ApikitRuntimeException("XML Schema could not be resolved for key: " + schemaCacheKey);
     }
+
+    private static MimeType getMimeType(String schemaCacheKey, Raml api)
+    {
+        String[] path = schemaCacheKey.split(SEPARATOR);
+        Action action = api.getResource(path[0]).getAction(path[1]);
+        return action.getBody().get(path[2]);
+    }
+
+    /**
+     * may return either a string representing the path to the schema
+     * or a JsonNode for inline schema definitions
+     */
+    public static Object resolveJsonSchema(String schemaCacheKey, Raml api)
+    {
+        MimeType mimeType = getMimeType(schemaCacheKey, api);
+        String path = (String) mimeType.getCompiledSchema();
+        String schemaOrGlobalReference = mimeType.getSchema();
+
+        try
+        {
+            //check global schemas
+            if (api.getConsolidatedSchemas().containsKey(schemaOrGlobalReference))
+            {
+                path = (String) api.getCompiledSchemas().get(schemaOrGlobalReference);
+                if (path != null)
+                {
+                    return path;
+                }
+                return JsonLoader.fromString(api.getConsolidatedSchemas().get(schemaOrGlobalReference));
+            }
+
+            if (path != null)
+            {
+                return path;
+            }
+            return JsonLoader.fromString(schemaOrGlobalReference);
+        }
+        catch (IOException e)
+        {
+            throw new ApikitRuntimeException("Json Schema could not be resolved for key: " + schemaCacheKey, e);
+        }
+    }
+
 }
