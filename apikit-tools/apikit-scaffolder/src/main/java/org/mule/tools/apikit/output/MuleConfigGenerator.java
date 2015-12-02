@@ -63,12 +63,14 @@ public class MuleConfigGenerator {
     private final Log log;
     private final File rootDirectory;
     private final Map<String, HttpListenerConfig> domainHttpListenerConfigs;
+    private final String muleVersion;
 
-    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListenerConfig> domainHttpListenerConfigs) {
+    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListenerConfig> domainHttpListenerConfigs, String muleVersion) {
         this.log = log;
         this.flowEntries = flowEntries;
         this.rootDirectory = muleConfigOutputDirectory;
         this.domainHttpListenerConfigs = domainHttpListenerConfigs;
+        this.muleVersion = muleVersion;
     }
 
     public void generate() {
@@ -175,7 +177,7 @@ public class MuleConfigGenerator {
             listenerConfigRef = api.getHttpListenerConfig().getName();
             api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
         }
-        new APIKitConfigScope(api.getConfig(), mule).generate();
+        new APIKitConfigScope(api.getConfig(), mule, muleVersion).generate();
         Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
         String configRef = api.getConfig() != null? api.getConfig().getName() : null;
 

@@ -74,6 +74,18 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
 
     protected MuleEvent processBlocking(MuleEvent event) throws MuleException
     {
+        if (config.isExtensionEnabled() && config.getRouterExtension().isExecutable(event))
+        {
+            return config.getRouterExtension().processBlockingRequest(event, this);
+        }
+        else
+        {
+            return processBlockingRequest(event);
+        }
+    }
+
+    public MuleEvent processBlockingRequest(MuleEvent event) throws MuleException
+    {
         RouterRequest result = processRouterRequest(event);
         event = result.getEvent();
         if (result.getFlow() != null)

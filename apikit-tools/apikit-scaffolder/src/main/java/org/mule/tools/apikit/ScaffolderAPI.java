@@ -6,6 +6,8 @@
  */
 package org.mule.tools.apikit;
 
+import org.mule.tools.apikit.misc.APIKitTools;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,10 +45,29 @@ public class ScaffolderAPI {
      * @param appDir the directory which contained the generated Mule config files
      * @param domainDir the directory which contained the domain used by the mule config files
      */
-
     public void run(List<File> ramlFiles, File appDir, File domainDir)
     {
-        run(ramlFiles, appDir, domainDir, null);
+          run(ramlFiles, appDir, domainDir, null);
+    }
+
+    /**
+     * Looks for an extension point and executes it, relying on the execute method otherwise.
+     *
+     * @param ramlFiles the ramlFiles to which the scaffolder will be run on
+     * @param appDir the directory which contained the generated Mule config files
+     * @param domainDir the directory which contained the domain used by the mule config files
+     * @param muleVersion used to know which type of endpoint (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
+     */
+    public void run(List<File> ramlFiles, File appDir, File domainDir, String muleVersion)
+    {
+        if (APIKitTools.canExtensionsBeEnabled(muleVersion))
+        {
+            ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, muleVersion);
+        }
+        else
+        {
+            execute(ramlFiles, appDir, domainDir, muleVersion);
+        }
     }
 
     /**
@@ -58,7 +79,7 @@ public class ScaffolderAPI {
      * @param domainDir the directory which contained the domain used by the mule config files
      * @param muleVersion used to know which type of endpoint (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
      */
-    public void run(List<File> ramlFiles, File appDir, File domainDir, String muleVersion) {
+    public void execute(List<File> ramlFiles, File appDir, File domainDir, String muleVersion) {
         List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
         SystemStreamLog log = new SystemStreamLog();

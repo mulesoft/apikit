@@ -33,6 +33,7 @@ public class APIKitConfigParser implements MuleConfigFileParser {
             Attribute name = element.getAttribute(APIKitConfig.NAME_ATTRIBUTE);
             Attribute raml = element.getAttribute(APIKitConfig.RAML_ATTRIBUTE);
             Attribute consoleEnabled = element.getAttribute(APIKitConfig.CONSOLE_ENABLED_ATTRIBUTE);
+            Attribute extensionEnabled = element.getAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE);
             Attribute consolePath = element.getAttribute(APIKitConfig.CONSOLE_PATH_ATTRIBUTE);
 
             if(raml == null) {
@@ -45,6 +46,9 @@ public class APIKitConfigParser implements MuleConfigFileParser {
             }
             if(consoleEnabled != null) {
                 configBuilder.setConsoleEnabled(Boolean.valueOf(consoleEnabled.getValue()));
+            }
+            if(extensionEnabled != null) {
+                configBuilder.setExtensionEnabled(Boolean.valueOf(extensionEnabled.getValue()));
             }
             if(consolePath != null) {
                 configBuilder.setConsolePath(consolePath.getValue());

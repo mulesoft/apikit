@@ -76,7 +76,7 @@ public class MuleConfigGeneratorTest {
 
 
         Log mock = mock(Log.class);
-        MuleConfigGenerator muleConfigGenerator = new MuleConfigGenerator(mock, new File(""), entries, new HashMap<String, HttpListenerConfig>());
+        MuleConfigGenerator muleConfigGenerator = new MuleConfigGenerator(mock, new File(""), entries, new HashMap<String, HttpListenerConfig>(), null);
         muleConfigGenerator.generate();
 
         assertTrue(file.exists());
@@ -126,7 +126,7 @@ public class MuleConfigGeneratorTest {
         when(api.getXmlFile(any(File.class))).thenReturn(file);
 
         MuleConfigGenerator muleConfigGenerator =
-                new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>(), new HashMap<String, HttpListenerConfig>());
+                new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>(), new HashMap<String, HttpListenerConfig>(), null);
 
         Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 
@@ -167,7 +167,7 @@ public class MuleConfigGeneratorTest {
 
 
         MuleConfigGenerator muleConfigGenerator =
-                new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>(), new HashMap<String, HttpListenerConfig>());
+                new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>(), new HashMap<String, HttpListenerConfig>(), null);
 
         Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 

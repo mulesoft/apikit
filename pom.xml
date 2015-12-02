@@ -8,6 +8,7 @@
     <name>APIKit parent</name>
 
     <modules>
+        <module>apikit-spi</module>
         <module>mule-module-apikit</module>
         <module>distribution</module>
         <module>apikit-tools</module>

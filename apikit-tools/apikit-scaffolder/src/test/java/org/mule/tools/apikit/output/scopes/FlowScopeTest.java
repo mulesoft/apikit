@@ -10,8 +10,14 @@ import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.junit.After;
 import org.junit.Test;
+import org.mockito.Mockito;
+
+import org.mule.module.apikit.spi.ScaffolderService;
+import org.mule.tools.apikit.ExtensionManager;
 import org.mule.tools.apikit.Helper;
+import org.mule.tools.apikit.ScaffolderServiceLoader;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.model.HttpListenerConfig;
@@ -20,6 +26,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
+
 public class FlowScopeTest {
     @Test
     public void testGenerate() throws Exception {
@@ -27,7 +35,7 @@ public class FlowScopeTest {
         Element mule =new MuleScope().generate();
         document.setRootElement(mule);
         APIKitConfig config = new APIKitConfig.Builder("path/to/file.raml").build();
-        new APIKitConfigScope(config, mule).generate();
+        new APIKitConfigScope(config, mule,"3.7.3").generate();
         API api = mock(API.class);
         HttpListenerConfig listenerConfig = new HttpListenerConfig.Builder("HTTP_Listener_Configuration","localhost","7777","").build();
 

@@ -8,14 +8,9 @@ package org.mule.tools.apikit.misc;
 
 import org.jdom2.Namespace;
 
+import org.mule.tools.apikit.ExtensionManager;
 import org.mule.tools.apikit.model.API;
-import org.mule.tools.apikit.model.HttpListenerConfig;
 import org.mule.tools.apikit.output.NamespaceWithLocation;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class APIKitTools {
     public static final NamespaceWithLocation API_KIT_NAMESPACE = new NamespaceWithLocation(
@@ -131,6 +126,26 @@ public class APIKitTools {
         int major = Integer.parseInt(versionParts[0]);
         int minor = Integer.parseInt(versionParts[1]);
         if (major == 3 && minor < 6)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean canExtensionsBeEnabled(String candidateVersion)
+    {
+        if (candidateVersion == null || !ExtensionManager.isScaffolderExtensionEnabled())
+        {
+            return false;
+        }
+        String[] versionParts = candidateVersion.split("\\.");
+        if (versionParts.length < 2)
+        {
+            return false;
+        }
+        int major = Integer.parseInt(versionParts[0]);
+        int minor = Integer.parseInt(versionParts[1]);
+        if (major > 3 || (major == 3 && minor >= 7))
         {
             return true;
         }
