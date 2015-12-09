@@ -21,6 +21,7 @@ import com.google.common.cache.CacheLoader;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URL;
 
 import org.raml.model.Raml;
 
@@ -42,12 +43,16 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
         Object pathOrSchema = resolveJsonSchema(schemaLocation, api);
         if (pathOrSchema instanceof String)
         {
-            return parseSchema(formatUri((String) pathOrSchema));
+            return parseSchema(resolveLocationIfNecessary(formatUri((String) pathOrSchema)));
 
         }
         return parseSchema((JsonNode) pathOrSchema);
     }
 
+    /*
+     * make the location json schema validator friendly appending
+     *  resource:/ if necessary
+     */
     private String formatUri(String location)
     {
         URI uri = URI.create(location);
@@ -63,6 +68,33 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
         }
 
         return location;
+    }
+
+    /*
+     * in order to find the resource in the application classpath
+     *  the reseource:/ url is translated to a file:/ url
+     */
+    private String resolveLocationIfNecessary(String path)
+    {
+        URI uri = URI.create(path);
+
+        String scheme = uri.getScheme();
+        if (scheme == null || "resource".equals(scheme))
+        {
+            return openSchema(uri.getPath()).toString();
+        }
+        return path;
+    }
+
+    private URL openSchema(String path)
+    {
+        URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+        if (url == null && path.startsWith("/"))
+        {
+            return openSchema(path.substring(1));
+        }
+
+        return url;
     }
 
     private JsonSchema parseSchema(JsonNode jsonNode)
