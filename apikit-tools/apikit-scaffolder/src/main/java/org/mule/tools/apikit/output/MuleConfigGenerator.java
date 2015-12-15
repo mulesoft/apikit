@@ -25,6 +25,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Content;
@@ -64,13 +66,22 @@ public class MuleConfigGenerator {
     private final File rootDirectory;
     private final Map<String, HttpListenerConfig> domainHttpListenerConfigs;
     private final String muleVersion;
+    private final Set<File> ramlsWithExtensionEnabled;
 
-    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListenerConfig> domainHttpListenerConfigs, String muleVersion) {
+    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListenerConfig> domainHttpListenerConfigs, String muleVersion, Set<File> ramlsWithExtensionEnabled) {
         this.log = log;
         this.flowEntries = flowEntries;
         this.rootDirectory = muleConfigOutputDirectory;
         this.domainHttpListenerConfigs = domainHttpListenerConfigs;
         this.muleVersion = muleVersion;
+        if (ramlsWithExtensionEnabled == null)
+        {
+            this.ramlsWithExtensionEnabled = new TreeSet<>();
+        }
+        else
+        {
+            this.ramlsWithExtensionEnabled = ramlsWithExtensionEnabled;
+        }
     }
 
     public void generate() {
@@ -140,6 +151,10 @@ public class MuleConfigGenerator {
                 if (api.getConfig() == null)
                 {
                     api.setDefaultAPIKitConfig();
+                }
+                if (ramlsWithExtensionEnabled.contains(api.getRamlFile()))
+                {
+                    api.getConfig().setExtensionEnabled(true);
                 }
                 generateAPIKitAndListenerConfig(api, doc);
             }

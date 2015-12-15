@@ -6,8 +6,12 @@
  */
 package org.mule.tools.apikit.input;
 
-import org.apache.maven.plugin.logging.Log;
-import org.junit.Test;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
+
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
@@ -16,13 +20,13 @@ import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-import static junit.framework.Assert.assertNotNull;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.Test;
 
 public class MuleConfigParserTest {
     @Test

@@ -6,11 +6,7 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.mule.tools.apikit.misc.APIKitTools;
-
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.apache.commons.io.FilenameUtils;
 

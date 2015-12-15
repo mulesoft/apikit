@@ -36,7 +36,7 @@ public class APIKitConfigScope implements Scope {
             }
 
             config.setAttribute(APIKitConfig.RAML_ATTRIBUTE, this.config.getRaml());
-            if (APIKitTools.canExtensionsBeEnabled(muleVersion))
+            if (this.config.isExtensionEnabled() != null && APIKitTools.canExtensionsBeEnabled(muleVersion))
             {
                 config.setAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE, String.valueOf(this.config.isExtensionEnabled()));
             }

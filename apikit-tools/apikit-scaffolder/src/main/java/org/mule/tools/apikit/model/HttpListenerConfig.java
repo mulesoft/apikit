@@ -6,11 +6,9 @@
  */
 package org.mule.tools.apikit.model;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import org.mule.tools.apikit.misc.APIKitTools;
 
 import org.apache.commons.lang.StringUtils;
-import org.mule.tools.apikit.misc.APIKitTools;
 
 public class HttpListenerConfig
 {

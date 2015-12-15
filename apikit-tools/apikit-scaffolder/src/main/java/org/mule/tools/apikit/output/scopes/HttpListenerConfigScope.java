@@ -11,7 +11,6 @@ import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListenerConfig;
 
-import org.apache.commons.lang.StringUtils;
 import org.jdom2.Element;
 
 public class HttpListenerConfigScope implements Scope

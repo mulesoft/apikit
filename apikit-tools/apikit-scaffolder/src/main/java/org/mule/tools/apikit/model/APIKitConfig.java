@@ -23,14 +23,14 @@ public class APIKitConfig {
     private String name;
     private String raml;
     private boolean consoleEnabled;
-    private boolean extensionEnabled;
+    private Boolean extensionEnabled;
     private String consolePath;
 
     public static class Builder {
         private String name;
         private final String raml;
         private boolean consoleEnabled = true;
-        private boolean extensionEnabled = false;
+        private Boolean extensionEnabled = null;
         private String consolePath;
 
         public Builder(final String raml) {
@@ -68,7 +68,7 @@ public class APIKitConfig {
     private APIKitConfig(final String name,
                          final String raml,
                          final boolean consoleEnabled,
-                         final boolean extensionEnabled,
+                         final Boolean extensionEnabled,
                          final String consolePath) {
         this.name = name;
         this.raml = raml;
@@ -89,8 +89,13 @@ public class APIKitConfig {
         return consoleEnabled;
     }
 
-    public boolean isExtensionEnabled() {
+    public Boolean isExtensionEnabled() {
         return extensionEnabled;
+    }
+
+    public void setExtensionEnabled(Boolean enabled)
+    {
+        this.extensionEnabled = enabled;
     }
 
     public String getConsolePath() {

@@ -134,7 +134,7 @@ public class APIKitTools {
 
     public static boolean canExtensionsBeEnabled(String candidateVersion)
     {
-        if (candidateVersion == null || !ExtensionManager.isScaffolderExtensionEnabled())
+        if (candidateVersion == null)
         {
             return false;
         }

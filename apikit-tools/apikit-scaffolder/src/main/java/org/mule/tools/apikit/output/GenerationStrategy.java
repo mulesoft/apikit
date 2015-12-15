@@ -6,14 +6,18 @@
  */
 package org.mule.tools.apikit.output;
 
-import org.apache.maven.plugin.logging.Log;
-import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.input.APIDiff;
-import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
+import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.maven.plugin.logging.Log;
 
 public class GenerationStrategy {
     private Log log;

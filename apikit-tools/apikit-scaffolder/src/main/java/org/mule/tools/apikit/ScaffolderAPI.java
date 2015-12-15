@@ -60,7 +60,7 @@ public class ScaffolderAPI {
      */
     public void run(List<File> ramlFiles, File appDir, File domainDir, String muleVersion)
     {
-        if (APIKitTools.canExtensionsBeEnabled(muleVersion))
+        if (APIKitTools.canExtensionsBeEnabled(muleVersion) && ExtensionManager.isScaffolderExtensionEnabled())
         {
             ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, muleVersion);
         }

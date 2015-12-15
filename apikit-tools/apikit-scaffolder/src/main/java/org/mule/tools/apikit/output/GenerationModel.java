@@ -6,15 +6,19 @@
  */
 package org.mule.tools.apikit.output;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
 import org.mule.tools.apikit.model.API;
-import org.raml.model.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.raml.model.Action;
+import org.raml.model.MimeType;
+import org.raml.model.Resource;
+import org.raml.model.Response;
 
 public class GenerationModel implements Comparable<GenerationModel> {
 

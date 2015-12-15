@@ -33,7 +33,7 @@
     <http:listener-config name="httpListenerConfig" host="0.0.0.0" port="${http.port}"/>
 
 #end
-    <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" extensionsEnabled="false" consolePath="console" />
+    <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" />
 
     <context:property-placeholder location="api.properties" />
 
