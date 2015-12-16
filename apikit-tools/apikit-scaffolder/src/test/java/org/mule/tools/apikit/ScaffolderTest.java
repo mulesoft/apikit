@@ -45,6 +45,7 @@ public class ScaffolderTest {
     public void setUp() {
         folder.newFolder("scaffolder");
         folder.newFolder("scaffolder-existing");
+        folder.newFolder("scaffolder-existing-extension");
         folder.newFolder("scaffolder-existing-custom-lc");
         folder.newFolder("scaffolder-existing-old");
         folder.newFolder("scaffolder-existing-old-address");
@@ -215,6 +216,75 @@ public class ScaffolderTest {
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
 
         assertEquals(1, countOccurences(s, "{&#xA;    &quot;name&quot;: &quot;Bobby&quot;,&#xA;    &quot;food&quot;: &quot;Ice Cream&quot;&#xA;}"));
+    }
+
+    @Test
+    public void testAlreadyExistsWithExtensionDisabled() throws Exception
+    {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing-extension/simple.raml"));
+        File xmlFile = getFile("scaffolder-existing-extension/simple-extension-disabled.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Set<File> ramlwithEE = new TreeSet<>();
+        ramlwithEE.add(getFile("scaffolder-existing-extension/simple.raml"));
+        createScaffolder(ramls, xmls, muleXmlOut, null, "3.7.3", ramlwithEE).run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "get:/pet"));
+        assertEquals(1, countOccurences(s, "post:/pet"));
+        assertEquals(1, countOccurences(s, "get:/\""));
+        assertEquals(1, countOccurences(s, "extensionEnabled=\"false\""));
+    }
+
+    @Test
+    public void testAlreadyExistsWithExtensionEnabled() throws Exception
+    {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing-extension/simple.raml"));
+        File xmlFile = getFile("scaffolder-existing-extension/simple-extension-enabled.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Set<File> ramlwithEE = new TreeSet<>();
+        ramlwithEE.add(getFile("scaffolder-existing-extension/simple.raml"));
+        createScaffolder(ramls, xmls, muleXmlOut, null, "3.7.3", ramlwithEE).run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "get:/pet"));
+        assertEquals(1, countOccurences(s, "post:/pet"));
+        assertEquals(1, countOccurences(s, "get:/\""));
+        assertEquals(1, countOccurences(s, "extensionEnabled=\"true\""));
+    }
+
+    @Test
+    public void testAlreadyExistsWithExtensionNotPresent() throws Exception
+    {
+        List<File> ramls = Arrays.asList(getFile("scaffolder-existing-extension/simple.raml"));
+        File xmlFile = getFile("scaffolder-existing-extension/simple-extension-not-present.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Set<File> ramlwithEE = new TreeSet<>();
+        ramlwithEE.add(getFile("scaffolder-existing-extension/simple.raml"));
+        createScaffolder(ramls, xmls, muleXmlOut, null, "3.7.3", ramlwithEE).run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "get:/pet"));
+        assertEquals(1, countOccurences(s, "post:/pet"));
+        assertEquals(1, countOccurences(s, "get:/\""));
+        assertEquals(0, countOccurences(s, "extensionEnabled"));
     }
 
     @Test
