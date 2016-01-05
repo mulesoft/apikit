@@ -6,6 +6,12 @@
         <requiredProperty key="muleVersion">
             <defaultValue>3.7.0</defaultValue>
         </requiredProperty>
+        <requiredProperty key="sharedHttpListener">
+            <defaultValue>empty</defaultValue>
+        </requiredProperty>
+        <requiredProperty key="domainName">
+            <defaultValue>default</defaultValue>
+        </requiredProperty>
     </requiredProperties>
     <fileSets>
     <fileSet filtered="true" encoding="UTF-8">

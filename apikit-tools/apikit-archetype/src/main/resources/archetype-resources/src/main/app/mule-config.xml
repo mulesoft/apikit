@@ -16,22 +16,22 @@
 #set ($muleVersion = $muleVersion.replace("-",""))
 #set ($muleVersion = $muleVersion.replace("SNAPSHOT",""))
 #set ($listenerVersion = "360")
+#set ($useSharedHttpListener = !($sharedHttpListener.isEmpty() || $sharedHttpListener.equals("empty")))
 #set ($Integer = 0)
 #set ($zeros = "0")
 #set ($repeated = $muleVersion.length() - $listenerVersion.length() )
-#if ( $repeated >0)
+#if ($repeated >0)
 #set ($zeros = $zeros.repeat($repeated))
 #set ($listenerVersion = $listenerVersion.concat($zeros))
 #end
 #set ($repeated = $listenerVersion.length() - $muleVersion.length())
-#if ( $repeated >0)
+#if ($repeated >0)
 #set ($zeros = "0")
 #set ($zeros = $zeros.repeat($repeated))
 #set ($muleVersion = $muleVersion.concat($zeros))
 #end
-#if( $Integer.parseInt($muleVersion)>=$Integer.parseInt($listenerVersion ) )
+#if( $Integer.parseInt($muleVersion)>=$Integer.parseInt($listenerVersion) && !$useSharedHttpListener )
     <http:listener-config name="httpListenerConfig" host="0.0.0.0" port="${http.port}"/>
-
 #end
     <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" />
 
@@ -39,7 +39,11 @@
 
     <flow name="api-main">
 #if( $Integer.parseInt($muleVersion)>=$Integer.parseInt($listenerVersion ) )
+#if( $useSharedHttpListener )
+        <http:listener config-ref="$sharedHttpListener" path="/api/*"/>
+#else
         <http:listener config-ref="httpListenerConfig" path="/api/*"/>
+#end
 #else
         <http:inbound-endpoint address="http://0.0.0.0:${http.port}/api"/>
 #end
@@ -74,5 +78,4 @@
             <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" />
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
-
 </mule>

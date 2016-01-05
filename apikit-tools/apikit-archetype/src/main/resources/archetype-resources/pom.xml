@@ -14,7 +14,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <mule.version>$muleVersion</mule.version>
-        <mule.appkit.version>3.4</mule.appkit.version>
+        <mule.app.maven.version>1.1</mule.app.maven.version>
         <eclipsePluginVersion>2.8</eclipsePluginVersion>
         <vmtype>org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType</vmtype>
         <jdkName>JavaSE-1.6</jdkName>
@@ -55,9 +55,9 @@
                             <pluginExecutions>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>org.mule.tools.appkit</groupId>
-                                        <artifactId>mule-appkit-maven-plugin</artifactId>
-                                        <versionRange>[3.3,)</versionRange>
+                                        <groupId>org.mule.tools.maven</groupId>
+                                        <artifactId>mule-app-maven-plugin</artifactId>
+                                        <version>${mule.app.maven.version}</version>
                                         <goals>
                                             <goal>attach-test-resources</goal>
                                             <goal>filter-resources</goal>
@@ -75,9 +75,9 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>org.mule.tools.appkit</groupId>
-                <artifactId>mule-appkit-maven-plugin</artifactId>
-                <version>${mule.appkit.version}</version>
+                <groupId>org.mule.tools.maven</groupId>
+                <artifactId>mule-app-maven-plugin</artifactId>
+                <version>${mule.app.maven.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <copyToAppsDirectory>true</copyToAppsDirectory>
