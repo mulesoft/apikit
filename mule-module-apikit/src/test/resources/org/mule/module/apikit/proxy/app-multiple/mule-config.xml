@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+    <apikit:proxy-config name="proxy-config1" raml="http://localhost:${serverPort}/api" disableValidations="true"/>
+    <apikit:proxy-config name="proxy-config2" raml="http://localhost:${serverPort}/api" disableValidations="true"/>
+
+    <flow name="proxy1">
+        <http:inbound-endpoint port="${proxyPort}" host="localhost" path="proxy1"/>
+        <apikit:proxy config-ref="proxy-config1"/>
+        <http:outbound-endpoint host="localhost" port="${serverPort}" path="api/#[message.inboundProperties['http.relative.path']]?#[message.inboundProperties['http.query.string']]"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy1"/>
+    </flow>
+
+    <flow name="proxy2">
+        <http:inbound-endpoint port="${proxyPort}" host="localhost" path="proxy2"/>
+        <apikit:proxy config-ref="proxy-config2"/>
+        <http:outbound-endpoint host="localhost" port="${serverPort}" path="api/#[message.inboundProperties['http.relative.path']]?#[message.inboundProperties['http.query.string']]"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy2"/>
+    </flow>
+
+    <flow name="proxyConsole1">
+        <http:inbound-endpoint port="${proxyPort}" host="localhost" path="proxyConsole1"/>
+        <apikit:console config-ref="proxy-config1" />
+    </flow>
+
+    <flow name="proxyConsole2">
+        <http:inbound-endpoint port="${proxyPort}" host="localhost" path="proxyConsole2"/>
+        <apikit:console config-ref="proxy-config2" />
+    </flow>
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy1">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-payload value="resource not found"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
+            <set-payload value="method not allowed"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy2">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-payload value="resource not found"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
+            <set-payload value="method not allowed"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+</mule>
