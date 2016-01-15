@@ -44,7 +44,7 @@ public class MessageProcessorNotificationPathTestCase extends FunctionalTestCase
         FlowConstruct flow = getFlowConstruct(unescape(flowName));
         DefaultMessageProcessorPathElement flowElement = new DefaultMessageProcessorPathElement(null, flowName);
         ((Pipeline) flow).addMessageProcessorPathElements(flowElement);
-        Map<MessageProcessor, String> messageProcessorPaths = NotificationUtils.buildPaths(flowElement).getFlowMap();
+        Map<MessageProcessor, String> messageProcessorPaths = NotificationUtils.buildPathResolver(flowElement).getFlowMap();
         String[] flowPaths = messageProcessorPaths.values().toArray(new String[]{});
         Arrays.sort(expectedPaths);
         Arrays.sort(flowPaths);
