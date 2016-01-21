@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>apikit-parent</artifactId>
-    <version>1.7.3-SNAPSHOT</version>
+    <version>1.7.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
@@ -17,7 +17,7 @@
 
     <properties>
         <mule.version>3.7.0</mule.version>
-        <cors.module.version>2.1</cors.module.version>
+        <cors.module.version>2.1.1</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
