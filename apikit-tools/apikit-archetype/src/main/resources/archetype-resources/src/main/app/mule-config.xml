@@ -15,6 +15,7 @@
 #set ($muleVersion = $muleVersion.replace(".",""))
 #set ($muleVersion = $muleVersion.replace("-",""))
 #set ($muleVersion = $muleVersion.replace("SNAPSHOT",""))
+#set ($muleVersion = $muleVersion.replace("M1",""))
 #set ($listenerVersion = "360")
 #set ($useSharedHttpListener = !($sharedHttpListener.isEmpty() || $sharedHttpListener.equals("empty")))
 #set ($Integer = 0)
