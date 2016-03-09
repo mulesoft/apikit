@@ -14,6 +14,7 @@ import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.config.MuleProperties;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.context.MuleContextAware;
 import org.mule.api.lifecycle.Initialisable;
@@ -27,6 +28,7 @@ import org.mule.module.apikit.spi.RouterService;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.util.BeanUtils;
+import org.mule.util.FileUtils;
 import org.mule.util.IOUtils;
 import org.mule.util.StringMessageUtils;
 import org.mule.util.StringUtils;
@@ -42,6 +44,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -80,6 +83,8 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     protected MuleContext muleContext;
     private String name;
     protected String raml;
+    protected String ramlApiPath;
+    protected String ramlApiUriPath;
     private Raml baseApi; //original raml
     protected Raml api; //current raml
     private String baseSchemeHostPort;
@@ -105,6 +110,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         ResourceLoader loader = getRamlResourceLoader();
         validateRaml(loader);
         RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
+        this.ramlApiPath =  muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
         api = builder.build(raml);
         cleanBaseUriParameters(api);
         baseSchemeHostPort = getBaseSchemeHostPort(api.getBaseUri());
@@ -339,7 +345,64 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
      * only when the bind to all interfaces ip (0.0.0.0) is used for the router endpoint.
      * Otherwise it uses the router endpoint address as it is
      */
-    public String getApikitRamlConsole(MuleEvent event)
+    public String getApikitRamlResource(MuleEvent event)
+    {
+        String resourcePath = getResourcePath(event);
+        if(resourcePath != null)
+        {
+            return getRamlResource(resourcePath);
+        }
+        else
+        {
+            return getRootRaml(event);
+        }
+    }
+
+    private String getRamlResource(String resourcePath)
+    {
+        if(apikitRaml.containsKey(resourcePath))
+        {
+            return apikitRaml.get(resourcePath);
+        }
+        else
+        {
+            try
+            {
+                File resourceFile = new File(ramlApiPath + "/api/" + resourcePath);
+                if(!resourceFile.exists())
+                {
+                    throw new ApikitRuntimeException("RAML resource: " + resourcePath + " does not exist");
+                }
+                String ramlResource = FileUtils.readFileToString(resourceFile, Charset.forName("UTF-8"));
+                apikitRaml.put(resourcePath, ramlResource);
+                return ramlResource;
+            }
+            catch (IOException e)
+            {
+                throw new ApikitRuntimeException(e);
+            }
+        }
+    }
+
+    private String getResourcePath(MuleEvent event)
+    {
+        String resourcePath = null;
+        if(event.getMessage() != null && event.getMessage().getInboundProperty("http.request.uri") != null)
+        {
+            String requestUri = event.getMessage().getInboundProperty("http.request.uri");
+            if(requestUri.startsWith(ramlApiUriPath))
+            {
+                resourcePath = org.apache.commons.lang.StringUtils.substringAfter(requestUri, ramlApiUriPath);
+                if(org.apache.commons.lang.StringUtils.isEmpty(resourcePath) || "/".equals(resourcePath))
+                {
+                    resourcePath = raml;
+                }
+            }
+        }
+        return resourcePath;
+    }
+
+    private String getRootRaml(MuleEvent event)
     {
         String schemeHostPort = baseSchemeHostPort;
         String bindAllInterfaces = "0.0.0.0";
@@ -612,4 +675,5 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     {
         return this.routerExtension;
     }
+
 }
