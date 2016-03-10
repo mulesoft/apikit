@@ -6,10 +6,18 @@
  */
 package org.mule.tools.apikit.model;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Ordering;
+
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
+import org.apache.commons.collections.comparators.ComparableComparator;
 import org.apache.commons.lang.Validate;
 
 public class APIFactory
@@ -55,7 +63,7 @@ public class APIFactory
             {
                 if (domainHttpListenerConfigs.size() >0)
                 {
-                    api.setHttpListenerConfig(domainHttpListenerConfigs.values().iterator().next());
+                    api.setHttpListenerConfig(getListenerConfig());
                 }
                 else
                 {
@@ -70,6 +78,18 @@ public class APIFactory
         api.setConfig(config);
         apis.put(ramlFile, api);
         return api;
+    }
+
+    private HttpListenerConfig getListenerConfig()
+    {
+        return Ordering.natural().onResultOf(new Function<HttpListenerConfig, Integer>()
+        {
+            @Override
+            public Integer apply(@Nullable HttpListenerConfig httpListenerConfig)
+            {
+                return Integer.valueOf(httpListenerConfig.getPort());
+            }
+        }).nullsLast().immutableSortedCopy(domainHttpListenerConfigs.values()).get(0);
     }
 
     public Map<String, HttpListenerConfig> getDomainHttpListenerConfigs() {

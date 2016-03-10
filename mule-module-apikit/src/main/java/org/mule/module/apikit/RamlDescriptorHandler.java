@@ -32,7 +32,7 @@ public class RamlDescriptorHandler
         return (path.equals(config.getApi().getUri()) &&
                 ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
                 request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML)) ||
-                request.getAdapter().getResourceURI().getPath().startsWith(((Configuration)config).getRamlApiUriPath());
+               (config instanceof Configuration && request.getAdapter().getResourceURI().getPath().startsWith(((Configuration) config).getRamlApiUriPath()));
     }
 
     public MuleEvent processConsoleRequest(MuleEvent event) throws MuleException

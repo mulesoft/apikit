@@ -57,7 +57,7 @@ public class MuleDomainParserTest
         Assert.assertNotNull(value);
         Assert.assertEquals("abcd", value.getName());
         Assert.assertEquals("localhost", value.getHost());
-        Assert.assertEquals("7001", value.getPort());
+        Assert.assertEquals("9001", value.getPort());
         Assert.assertEquals("/", value.getBasePath());
 
         String expectedKey2 = "http-lc-0.0.0.0-8083";

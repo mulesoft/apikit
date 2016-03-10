@@ -22,6 +22,7 @@ import org.mule.api.lifecycle.InitialisationException;
 import org.mule.api.lifecycle.Startable;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.module.apikit.spi.RouterService;
@@ -368,6 +369,10 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         {
             try
             {
+                if(resourcePath.contains(".."))
+                {
+                    throw new InvalidQueryParameterException("Resource path: " + resourcePath + "is invalid. Can't query for a resource outside the api folder");
+                }
                 File resourceFile = new File(ramlApiPath + "/api/" + resourcePath);
                 if(!resourceFile.exists())
                 {
@@ -377,7 +382,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
                 apikitRaml.put(resourcePath, ramlResource);
                 return ramlResource;
             }
-            catch (IOException e)
+            catch (IOException | InvalidQueryParameterException e)
             {
                 throw new ApikitRuntimeException(e);
             }
