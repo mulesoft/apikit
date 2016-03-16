@@ -128,7 +128,6 @@ public class ScaffolderTest {
         assertEquals(1, countOccurences(s, "extensionEnabled"));
     }
 
-
     @Test
     public void testSimpleGenerateWithCustomDomain() throws Exception {
         File muleXmlSimple = simpleGeneration("simple", "custom-domain/mule-domain-config.xml",null);

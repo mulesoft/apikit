@@ -31,12 +31,13 @@ public class RamlDescriptorHandler
         String path = request.getResourcePath();
         return (path.equals(config.getApi().getUri()) &&
                 ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
-                request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML));
+                request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML)) ||
+               (config instanceof Configuration && request.getAdapter().getResourceURI().getPath().startsWith(((Configuration) config).getRamlApiUriPath()));
     }
 
     public MuleEvent processConsoleRequest(MuleEvent event) throws MuleException
     {
-        return process(event, config.getApikitRamlConsole(event));
+        return process(event, config.getApikitRamlResource(event));
     }
 
     public MuleEvent processRouterRequest(MuleEvent event) throws MuleException

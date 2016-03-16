@@ -68,6 +68,15 @@ public class Configuration extends AbstractConfiguration
         this.consolePath = consolePath;
     }
 
+    public String getRamlApiUriPath()
+    {
+        if(this.ramlApiUriPath == null)
+        {
+            ramlApiUriPath = "/" + consolePath + "/api";
+        }
+        return ramlApiUriPath;
+    }
+
     public List<FlowMapping> getFlowMappings()
     {
         return flowMappings;

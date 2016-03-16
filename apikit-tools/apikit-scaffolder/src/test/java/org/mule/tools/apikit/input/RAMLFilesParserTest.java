@@ -12,6 +12,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,6 +25,12 @@ import org.junit.Test;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.output.GenerationModel;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+
+import javax.annotation.Nullable;
 
 public class RAMLFilesParserTest
 {
@@ -47,9 +54,15 @@ public class RAMLFilesParserTest
         Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
         assertNotNull(entries);
         assertEquals(2, entries.size());
-        Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
-        ResourceActionMimeTypeTriplet triplet = ramlEntries.iterator().next();
-        Assert.assertEquals("/api/pet", triplet.getUri());
+        final ResourceActionMimeTypeTriplet triplet = Iterables.find(entries.keySet(), new Predicate<ResourceActionMimeTypeTriplet>() {
+
+            @Override
+            public boolean apply(@Nullable ResourceActionMimeTypeTriplet resourceActionMimeTypeTriplet)
+            {
+                return resourceActionMimeTypeTriplet.getUri().equals("/api/pet");
+            }
+        });
+        Assert.assertNotNull(triplet);
         Assert.assertEquals("GET", triplet.getVerb());
         Assert.assertEquals("/api",triplet.getApi().getPath());
         Assert.assertNotNull(triplet.getApi().getHttpListenerConfig());
