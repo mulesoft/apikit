@@ -9,7 +9,6 @@ package org.mule.module.apikit;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.api.config.MuleProperties;
 import org.mule.api.processor.DynamicPipelineException;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
@@ -88,7 +87,7 @@ public class Configuration extends AbstractConfiguration
     public ResourceLoader getRamlResourceLoader()
     {
         ResourceLoader loader = new DefaultResourceLoader();
-        String appHome = muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
+        String appHome = getAppHome();
         if (appHome != null)
         {
             loader = new CompositeResourceLoader(new FileResourceLoader(appHome), loader);

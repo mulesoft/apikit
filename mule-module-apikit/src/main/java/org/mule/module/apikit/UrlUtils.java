@@ -12,6 +12,7 @@ import static org.mule.transport.http.HttpConnector.HTTP_REQUEST_PATH_PROPERTY;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.util.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -100,4 +101,22 @@ public class UrlUtils
         return path;
     }
 
+    public static String getQueryString(MuleMessage message)
+    {
+        String queryString = message.getInboundProperty("http.query.string");
+        return queryString == null ? "" : queryString;
+    }
+
+    public static String rewriteBaseUri(String raml, String baseSchemeHostPort)
+    {
+        String[] split = raml.split("\n");
+        for (int i=0; i<split.length; i++)
+        {
+            if (split[i].startsWith("baseUri: "))
+            {
+                split[i] = split[i].replaceFirst("https?://[^/]*", baseSchemeHostPort);
+            }
+        }
+        return StringUtils.join(split, "\n");
+    }
 }

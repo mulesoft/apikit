@@ -14,6 +14,7 @@ import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
+import org.mule.api.config.MuleProperties;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.context.MuleContextAware;
 import org.mule.api.lifecycle.Initialisable;
@@ -62,6 +63,7 @@ import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
+import org.raml.parser.utils.StreamUtils;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 import org.raml.parser.visitor.RamlValidationService;
 import org.slf4j.Logger;
@@ -73,6 +75,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     public static final String APPLICATION_RAML = "application/raml+yaml";
     private static final String CONSOLE_URL_FILE = "consoleurl";
     private static final int URI_CACHE_SIZE = 1000;
+    private static final String PARSER_V2_PROPERTY = "apikit.raml.parser.v2";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -93,6 +96,8 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private boolean started;
     protected boolean extensionEnabled = false;
     private RouterService routerExtension = null;
+    private Boolean parserV2;
+    private String appHome;
 
     @Override
     public void initialise() throws InitialisationException
@@ -112,6 +117,36 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         initializeRestFlowMapWrapper();
         loadRoutingTable();
         buildResourcePatternCaches();
+    }
+
+    public boolean isParserV2()
+    {
+        if (parserV2 != null)
+        {
+            return parserV2;
+        }
+        String property = System.getProperty(PARSER_V2_PROPERTY);
+        if (property != null && Boolean.valueOf(property))
+        {
+            parserV2 = true;
+        }
+        else
+        {
+            String dump = StreamUtils.toString(getRamlResourceLoader().fetchResource(raml));
+            parserV2 = dump.startsWith("#%RAML 1.0");
+        }
+        logger.debug("Using parser " + (parserV2 ? "V2" : "V1"));
+        return parserV2;
+    }
+
+    public String getAppHome()
+    {
+        if (appHome != null)
+        {
+            return appHome;
+        }
+        appHome = muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
+        return appHome;
     }
 
     @Override
@@ -198,8 +233,18 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     private void resetRamlMap()
     {
-        apikitRaml = new ConcurrentHashMap<String, String>();
-        apikitRaml.put(baseSchemeHostPort, new RamlEmitter().dump(api));
+        apikitRaml = new ConcurrentHashMap<>();
+        String dump;
+        if (isParserV2())
+        {
+            dump = StreamUtils.toString(getRamlResourceLoader().fetchResource(raml));
+            dump = UrlUtils.rewriteBaseUri(dump, baseSchemeHostPort);
+        }
+        else
+        {
+            dump = new RamlEmitter().dump(api);
+        }
+        apikitRaml.put(baseSchemeHostPort, dump);
     }
 
     protected abstract void initializeRestFlowMap();
@@ -321,9 +366,16 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         String hostRaml = apikitRaml.get(schemeHostPort);
         if (hostRaml == null)
         {
-            Raml clone = shallowCloneRaml(api);
-            clone.setBaseUri(api.getBaseUri().replace(baseSchemeHostPort, schemeHostPort));
-            hostRaml = new RamlEmitter().dump(clone);
+            if (isParserV2())
+            {
+                hostRaml = UrlUtils.rewriteBaseUri(apikitRaml.get(baseSchemeHostPort), schemeHostPort);
+            }
+            else
+            {
+                Raml clone = shallowCloneRaml(api);
+                clone.setBaseUri(api.getBaseUri().replace(baseSchemeHostPort, schemeHostPort));
+                hostRaml = new RamlEmitter().dump(clone);
+            }
             apikitRaml.put(schemeHostPort, hostRaml);
         }
         return hostRaml;
@@ -569,6 +621,10 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     public RamlUpdater getRamlUpdater()
     {
+        if (isParserV2())
+        {
+            throw new UnsupportedOperationException("RAML 1.0 is read only");
+        }
         if (baseApi == null)
         {
             baseApi = deepCloneRaml(api);

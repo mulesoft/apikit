@@ -29,7 +29,7 @@ public class RamlDescriptorHandler
     public boolean handles(HttpRestRequest request)
     {
         String path = request.getResourcePath();
-        return (path.equals(config.getApi().getUri()) &&
+        return (!config.isParserV2() && path.equals(config.getApi().getUri()) &&
                 ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
                 request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML));
     }

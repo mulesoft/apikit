@@ -26,6 +26,8 @@ import org.mule.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -44,30 +46,49 @@ public class ConsoleHandler implements MessageProcessor
     public static final String MIME_TYPE_SVG = "image/svg+xml";
     public static final String MIME_TYPE_CSS = "text/css";
     private static final String RESOURCE_BASE = System.getProperty("apikit.console.old") != null ? "/console" : "/console2";
+    private static final String API_RESOURCES_PATH = "/api/";
+    private static final String RAML_QUERY_STRING = "raml";
 
     private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
     private String consolePath;
     private String baseSchemeHostPort;
     private boolean standalone;
+    private AbstractConfiguration configuration;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private String consoleBaseUri;
     private String ramlUri;
 
-    public ConsoleHandler(String ramlUri)
+    public ConsoleHandler(String consoleBaseUri, AbstractConfiguration configuration)
     {
-        this(ramlUri, "");
+        this(consoleBaseUri, "", configuration);
         standalone = true;
     }
 
-    public ConsoleHandler(String ramlUri, String consolePath)
+    public ConsoleHandler(String consoleBaseUri, String consolePath, AbstractConfiguration configuration)
     {
+        this.configuration = configuration;
         this.consolePath = sanitize(consolePath);
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
-        this.ramlUri = ramlUri.endsWith("/") ? ramlUri : ramlUri + "/";
+        this.consoleBaseUri = consoleBaseUri;
+        this.ramlUri = calculateRamlUri(consoleBaseUri);
         String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
                                                      "<raml-console src=\"" + this.ramlUri + "\"");
         baseSchemeHostPort = getBaseSchemeHostPort(this.ramlUri);
         homePage.put(baseSchemeHostPort, baseHomePage);
+    }
+
+    private String calculateRamlUri(String consoleBaseUri)
+    {
+        if (configuration.isParserV2())
+        {
+            if (consoleBaseUri.endsWith("/"))
+            {
+                consoleBaseUri = consoleBaseUri.substring(0, consoleBaseUri.length() - 1);
+            }
+            return consoleBaseUri + consolePath + API_RESOURCES_PATH;
+        }
+        return consoleBaseUri.endsWith("/") ? consoleBaseUri : consoleBaseUri + "/";
     }
 
     private String sanitize(String consolePath)
@@ -88,6 +109,7 @@ public class ConsoleHandler implements MessageProcessor
 
         String path = UrlUtils.getResourceRelativePath(event.getMessage());
         String contextPath = UrlUtils.getBasePath(event.getMessage());
+        String queryString = UrlUtils.getQueryString(event.getMessage());
 
         if (logger.isDebugEnabled())
         {
@@ -106,7 +128,6 @@ public class ConsoleHandler implements MessageProcessor
                 String host = event.getMessage().getInboundProperty("Host");
                 String requestPath = event.getMessage().getInboundProperty("http.request.path");
                 String redirectLocation = scheme + "://" + host + requestPath + "/";
-                String queryString = event.getMessage().getInboundProperty("http.query.string");
                 if (StringUtils.isNotEmpty(queryString))
                 {
                     redirectLocation += "?" + queryString;
@@ -118,6 +139,21 @@ public class ConsoleHandler implements MessageProcessor
             {
                 path = RESOURCE_BASE + "/index.html";
                 in = new ByteArrayInputStream(getHomePage(getBaseSchemeHostPort(event)).getBytes());
+            }
+            else if (path.startsWith(consolePath + API_RESOURCES_PATH))
+            {
+                // check for root raml
+                if (path.equals(consolePath + API_RESOURCES_PATH) && queryString.equals(RAML_QUERY_STRING))
+                {
+                    path += ".raml"; // to set raml mime type
+                    in = new ByteArrayInputStream(configuration.getApikitRaml(event).getBytes());
+                }
+                else
+                {
+                    String resourcePath = API_RESOURCES_PATH + path.substring((consolePath + API_RESOURCES_PATH).length());
+                    File apiResource = new File(configuration.getAppHome(), resourcePath);
+                    in = new FileInputStream(apiResource);
+                }
             }
             else if (path.startsWith(consolePath))
             {
@@ -200,6 +236,10 @@ public class ConsoleHandler implements MessageProcessor
         {
             mimeType = MIME_TYPE_CSS;
         }
+        else if (FilenameUtils.getExtension(path).equals("raml"))
+        {
+            mimeType = AbstractConfiguration.APPLICATION_RAML;
+        }
         return mimeType;
     }
 
@@ -210,7 +250,7 @@ public class ConsoleHandler implements MessageProcessor
         {
             path = consolePath.substring(1, consolePath.length());
         }
-        return ramlUri + path;
+        return consoleBaseUri + path;
     }
 
 }
