@@ -8,20 +8,19 @@ package org.mule.module.apikit.validation.cache;
 
 import org.mule.api.MuleContext;
 import org.mule.api.registry.RegistrationException;
+import org.mule.raml.interfaces.model.IRaml;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 
 import javax.xml.validation.Schema;
 
-import org.raml.model.Raml;
-
 public final class XmlSchemaCache
 {
 
     private static final String REGISTRY_XML_SCHEMA_CACHE_KEY_PREFIX = "__restRouterXmlSchemaCache__";
 
-    public static LoadingCache<String, Schema> getXmlSchemaCache(MuleContext muleContext, String configId, Raml api) throws RegistrationException
+    public static LoadingCache<String, Schema> getXmlSchemaCache(MuleContext muleContext, String configId, IRaml api) throws RegistrationException
     {
         String cacheKey = REGISTRY_XML_SCHEMA_CACHE_KEY_PREFIX + configId;
         if (muleContext.getRegistry().get(cacheKey) == null)

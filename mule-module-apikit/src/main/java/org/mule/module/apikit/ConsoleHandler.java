@@ -69,8 +69,12 @@ public class ConsoleHandler implements MessageProcessor
     {
         this.configuration = configuration;
         this.consolePath = sanitize(consolePath);
-        String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
         this.consoleBaseUri = consoleBaseUri;
+    }
+
+    public void updateRamlUri()
+    {
+        String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
         this.ramlUri = calculateRamlUri(consoleBaseUri);
         String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
                                                      "<raml-console src=\"" + this.ramlUri + "\"");

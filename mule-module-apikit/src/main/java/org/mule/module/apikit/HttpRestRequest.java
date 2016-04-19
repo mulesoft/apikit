@@ -31,6 +31,10 @@ import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
 import org.mule.module.apikit.validation.SchemaType;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
 import org.mule.module.http.internal.ParameterMap;
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IResponse;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
 
@@ -45,12 +49,6 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
-import org.raml.model.Action;
-import org.raml.model.MimeType;
-import org.raml.model.Response;
-import org.raml.model.parameter.FormParameter;
-import org.raml.model.parameter.Header;
-import org.raml.model.parameter.QueryParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +59,7 @@ public class HttpRestRequest
 
     protected MuleEvent requestEvent;
     protected AbstractConfiguration config;
-    protected Action action;
+    protected IAction action;
     protected HttpProtocolAdapter adapter;
 
     public HttpRestRequest(MuleEvent event, AbstractConfiguration config)
@@ -103,16 +101,16 @@ public class HttpRestRequest
      * @return the updated Mule Event
      * @throws MuleException
      */
-    public MuleEvent validate(Action action) throws MuleException
+    public MuleEvent validate(IAction action) throws MuleException
     {
         this.action = action;
-        if (!config.isDisableValidations())
+        if (!config.isDisableValidations() && !config.isParserV2()) //TODO implement validations for parser v2
         {
             processQueryParameters();
             processHeaders();
         }
         negotiateInputRepresentation();
-        List<MimeType> responseMimeTypes = getResponseMimeTypes();
+        List<IMimeType> responseMimeTypes = getResponseMimeTypes();
         String responseRepresentation = negotiateOutputRepresentation(responseMimeTypes);
 
         if (responseMimeTypes != null)
@@ -132,7 +130,7 @@ public class HttpRestRequest
     {
         for (String expectedKey : action.getQueryParameters().keySet())
         {
-            QueryParameter expected = action.getQueryParameters().get(expectedKey);
+            IParameter expected = action.getQueryParameters().get(expectedKey);
             Object actual = ((Map) requestEvent.getMessage().getInboundProperty("http.query.params")).get(expectedKey);
             if (actual == null && expected.isRequired())
             {
@@ -189,7 +187,7 @@ public class HttpRestRequest
     {
         for (String expectedKey : action.getHeaders().keySet())
         {
-            Header expected = action.getHeaders().get(expectedKey);
+            IParameter expected = action.getHeaders().get(expectedKey);
             Map<String, String> incomingHeaders = getIncomingHeaders(requestEvent.getMessage());
 
             if (expectedKey.contains("{?}"))
@@ -284,7 +282,7 @@ public class HttpRestRequest
             if (mimeTypeName.equals(requestMimeTypeName))
             {
                 found = true;
-                if (!config.isDisableValidations())
+                if (!config.isDisableValidations() && !config.isParserV2()) //TODO implement validations for parser v2
                 {
                     valideateBody(mimeTypeName);
                 }
@@ -304,7 +302,7 @@ public class HttpRestRequest
 
     private void valideateBody(String mimeTypeName) throws MuleRestException
     {
-        MimeType actionMimeType = action.getBody().get(mimeTypeName);
+        IMimeType actionMimeType = action.getBody().get(mimeTypeName);
         if (actionMimeType.getSchema() != null &&
             (mimeTypeName.contains("xml") ||
              mimeTypeName.contains("json")))
@@ -324,7 +322,7 @@ public class HttpRestRequest
     }
 
     @SuppressWarnings("unchecked")
-    private void validateUrlencodedForm(Map<String, List<FormParameter>> formParameters) throws BadRequestException
+    private void validateUrlencodedForm(Map<String, List<IParameter>> formParameters) throws BadRequestException
     {
         Map<String, String> paramMap;
         try
@@ -352,7 +350,7 @@ public class HttpRestRequest
                 continue;
             }
 
-            FormParameter expected = formParameters.get(expectedKey).get(0);
+            IParameter expected = formParameters.get(expectedKey).get(0);
             Object actual = paramMap.get(expectedKey);
             if (actual == null && expected.isRequired())
             {
@@ -375,7 +373,7 @@ public class HttpRestRequest
         requestEvent.getMessage().setPayload(paramMap);
     }
 
-    private void validateMultipartForm(Map<String, List<FormParameter>> formParameters) throws BadRequestException
+    private void validateMultipartForm(Map<String, List<IParameter>> formParameters) throws BadRequestException
     {
         for (String expectedKey : formParameters.keySet())
         {
@@ -384,7 +382,7 @@ public class HttpRestRequest
                 //do not perform validation when multi-type parameters are used
                 continue;
             }
-            FormParameter expected = formParameters.get(expectedKey).get(0);
+            IParameter expected = formParameters.get(expectedKey).get(0);
             DataHandler dataHandler = requestEvent.getMessage().getInboundAttachment(expectedKey);
             if (dataHandler == null && expected.isRequired())
             {
@@ -413,7 +411,7 @@ public class HttpRestRequest
         validator.validate(config.getName(), SchemaCacheUtils.getSchemaCacheKey(action, mimeTypeName), requestEvent, config.getApi());
     }
 
-    private String negotiateOutputRepresentation(List<MimeType> mimeTypes) throws MuleRestException
+    private String negotiateOutputRepresentation(List<IMimeType> mimeTypes) throws MuleRestException
     {
         if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
         {
@@ -426,7 +424,7 @@ public class HttpRestRequest
             return handleNotAcceptable();
         }
         logger.debug("=== negotiated response content-type: " + bestMatch.toString());
-        for (MimeType representation : mimeTypes)
+        for (IMimeType representation : mimeTypes)
         {
             if (representation.getType().equals(bestMatch.withoutParameters().toString()))
             {
@@ -441,16 +439,16 @@ public class HttpRestRequest
         throw new NotAcceptableException();
     }
 
-    private List<MimeType> getResponseMimeTypes()
+    private List<IMimeType> getResponseMimeTypes()
     {
-        List<MimeType> mimeTypes = new ArrayList<MimeType>();
+        List<IMimeType> mimeTypes = new ArrayList<>();
         int status = getSuccessStatus();
         if (status != -1)
         {
-            Response response = action.getResponses().get(String.valueOf(status));
+            IResponse response = action.getResponses().get(String.valueOf(status));
             if (response != null && response.hasBody())
             {
-                Collection<MimeType> types = response.getBody().values();
+                Collection<IMimeType> types = response.getBody().values();
                 logger.debug(String.format("=== adding response mimeTypes for status %d : %s", status, types));
                 mimeTypes.addAll(types);
             }

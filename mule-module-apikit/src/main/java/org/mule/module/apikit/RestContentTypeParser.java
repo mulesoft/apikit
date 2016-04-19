@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit;
 
+import org.mule.raml.interfaces.model.IMimeType;
+
 import com.google.common.collect.Lists;
 import com.google.common.net.MediaType;
 
@@ -18,7 +20,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
-import org.raml.model.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -261,14 +262,14 @@ public final class RestContentTypeParser
      * @param header
      * @return
      */
-    public static MediaType bestMatch(List<MimeType> supportedRepresentations, String header) {
+    public static MediaType bestMatch(List<IMimeType> supportedRepresentations, String header) {
         List<ParseResults> parseResults = new LinkedList<ParseResults>();
         for (String r : StringUtils.split(header, ','))
                     parseResults.add(parseMediaRange(r));
 
         List<FitnessAndQuality> weightedMatches = new LinkedList<FitnessAndQuality>();
         String quality = "1"; //first representation defined
-        for (MimeType representation : supportedRepresentations) {
+        for (IMimeType representation : supportedRepresentations) {
             String mediaType = representation.getType();
             FitnessAndQuality fitnessAndQuality = fitnessAndQualityParsed(mediaType + ";q=" + quality, parseResults);
             fitnessAndQuality.mimeType = mediaType;
@@ -282,7 +283,7 @@ public final class RestContentTypeParser
     }
 
     @Deprecated
-    private static MediaType getMediaType(MimeType mimeType)
+    private static MediaType getMediaType(IMimeType mimeType)
     {
         MediaType mediaType = MediaType.parse(mimeType.getType());
         return mediaType.withParameter("q", "1");

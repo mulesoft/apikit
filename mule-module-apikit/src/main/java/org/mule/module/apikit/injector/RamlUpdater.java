@@ -8,6 +8,7 @@ package org.mule.module.apikit.injector;
 
 import org.mule.module.apikit.AbstractConfiguration;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.raml.implv1.model.RamlImplV1;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +60,7 @@ public class RamlUpdater
 
     public void resetAndUpdate()
     {
-        config.updateApi(raml);
+        config.updateApi(new RamlImplV1(raml));
     }
 
     public void reset()

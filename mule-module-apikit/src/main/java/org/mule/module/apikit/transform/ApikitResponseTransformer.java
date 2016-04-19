@@ -12,6 +12,7 @@ import org.mule.api.transformer.Transformer;
 import org.mule.api.transformer.TransformerException;
 import org.mule.module.apikit.RestContentTypeParser;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.transformer.AbstractMessageTransformer;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
@@ -20,10 +21,9 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.net.MediaType;
+
 import java.util.Collection;
 import java.util.List;
-
-import org.raml.model.MimeType;
 
 public class ApikitResponseTransformer extends AbstractMessageTransformer
 {
@@ -42,7 +42,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
             return message;
         }
         String responseRepresentation = message.getInvocationProperty(BEST_MATCH_REPRESENTATION);
-        List<MimeType> responseMimeTypes = message.getInvocationProperty(CONTRACT_MIME_TYPES);
+        List<IMimeType> responseMimeTypes = message.getInvocationProperty(CONTRACT_MIME_TYPES);
         String acceptedHeader = message.getInvocationProperty(ACCEPT_HEADER);
         if (responseRepresentation == null)
         {
@@ -56,7 +56,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         return transformToExpectedContentType(message, responseRepresentation, responseMimeTypes, acceptedHeader);
     }
 
-    public Object transformToExpectedContentType(MuleMessage message, String responseRepresentation, List<MimeType> responseMimeTypes,
+    public Object transformToExpectedContentType(MuleMessage message, String responseRepresentation, List<IMimeType> responseMimeTypes,
                                                  String acceptedHeader) throws TransformerException
     {
         Object payload = message.getPayload();
@@ -87,7 +87,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
             return payload;
         }
 
-        Collection<MimeType> conjunctionTypes = getBestMatchMediaTypes(responseMimeTypes, acceptedHeader);
+        Collection<IMimeType> conjunctionTypes = getBestMatchMediaTypes(responseMimeTypes, acceptedHeader);
         String msgAcceptedContentType = acceptedContentType(msgMimeType, msgContentType, conjunctionTypes);
         if (msgAcceptedContentType != null)
         {
@@ -125,7 +125,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
 
     }
 
-    private Collection<MimeType> getBestMatchMediaTypes(List<MimeType> responseMimeTypes, String acceptedHeader)
+    private Collection<IMimeType> getBestMatchMediaTypes(List<IMimeType> responseMimeTypes, String acceptedHeader)
     {
         if(acceptedHeader.contains("*/*"))
         {
@@ -136,13 +136,13 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         return filterAccepted(responseMimeTypes, acceptedTypes);
     }
 
-    private Collection<MimeType> filterAccepted(List<MimeType> responseMimeTypes, final Collection<String> acceptedTypes)
+    private Collection<IMimeType> filterAccepted(List<IMimeType> responseMimeTypes, final Collection<String> acceptedTypes)
     {
         return Collections2.filter(
-                responseMimeTypes, new Predicate<MimeType>()
+                responseMimeTypes, new Predicate<IMimeType>()
                 {
                     @Override
-                    public boolean apply(MimeType m)
+                    public boolean apply(IMimeType m)
                     {
                         return acceptedTypes.contains(m.getType());
                     }
@@ -169,16 +169,16 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
      *
      * @return null if it is not
      */
-    private String acceptedContentType(String msgMimeType, String msgContentType, Collection<MimeType> conjunctionTypes)
+    private String acceptedContentType(String msgMimeType, String msgContentType, Collection<IMimeType> conjunctionTypes)
     {
-        for (MimeType acceptedMediaType : conjunctionTypes)
+        for (IMimeType acceptedMediaType : conjunctionTypes)
         {
             if(msgMimeType != null && msgMimeType.contains(acceptedMediaType.getType()))
             {
                 return msgMimeType;
             }
         }
-        for (MimeType acceptedMediaType : conjunctionTypes)
+        for (IMimeType acceptedMediaType : conjunctionTypes)
         {
             if(msgContentType != null && msgContentType.contains(acceptedMediaType.getType()))
             {

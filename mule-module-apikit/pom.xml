@@ -39,8 +39,20 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.raml</groupId>
-            <artifactId>raml-parser</artifactId>
+            <groupId>org.mule.raml</groupId>
+            <artifactId>parser-interface-impl-v1</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.raml</groupId>
+            <artifactId>parser-interface-impl-v2</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-apikit-spi</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -227,11 +239,6 @@
             <artifactId>jsonassert</artifactId>
             <version>1.2.0</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-apikit-spi</artifactId>
-            <version>${project.version}</version>
         </dependency>
     </dependencies>
 

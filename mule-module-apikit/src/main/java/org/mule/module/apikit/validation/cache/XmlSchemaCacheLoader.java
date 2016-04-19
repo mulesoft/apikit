@@ -6,21 +6,22 @@
  */
 package org.mule.module.apikit.validation.cache;
 
+import org.mule.raml.interfaces.model.IRaml;
+
 import com.google.common.cache.CacheLoader;
 
 import java.io.IOException;
 
 import javax.xml.validation.Schema;
 
-import org.raml.model.Raml;
 import org.xml.sax.SAXException;
 
 public class XmlSchemaCacheLoader extends CacheLoader<String, Schema>
 {
 
-    private Raml api;
+    private IRaml api;
 
-    public XmlSchemaCacheLoader(Raml api)
+    public XmlSchemaCacheLoader(IRaml api)
     {
         this.api = api;
     }

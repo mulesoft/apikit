@@ -9,7 +9,9 @@ package org.mule.module.apikit.validation;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.transformer.DataType;
+import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.cache.XmlSchemaCache;
+import org.mule.raml.interfaces.model.IRaml;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.util.IOUtils;
 
@@ -24,8 +26,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
-import org.mule.module.apikit.exception.BadRequestException;
-import org.raml.model.Raml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -43,7 +43,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
     }
 
     @Override
-    public void validate(String configId, String schemaPath, MuleEvent muleEvent, Raml api) throws BadRequestException
+    public void validate(String configId, String schemaPath, MuleEvent muleEvent, IRaml api) throws BadRequestException
     {
         try
         {

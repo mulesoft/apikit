@@ -14,6 +14,8 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.transform.ApikitResponseTransformer;
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IResource;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,12 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.raml.model.Action;
-import org.raml.model.Resource;
-import org.raml.parser.loader.CompositeResourceLoader;
-import org.raml.parser.loader.DefaultResourceLoader;
-import org.raml.parser.loader.FileResourceLoader;
-import org.raml.parser.loader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +41,7 @@ public class Configuration extends AbstractConfiguration
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private Map<String, Flow> restFlowMap;
     private Map<String, Flow> restFlowMapUnwrapped;
-    private Map<String, Resource> flatResourceTree = new HashMap<String, Resource>();
+    private Map<String, IResource> flatResourceTree = new HashMap<>();
 
     public boolean isConsoleEnabled()
     {
@@ -83,25 +79,13 @@ public class Configuration extends AbstractConfiguration
         return new HttpRestRequest(event, this);
     }
 
-    @Override
-    public ResourceLoader getRamlResourceLoader()
-    {
-        ResourceLoader loader = new DefaultResourceLoader();
-        String appHome = getAppHome();
-        if (appHome != null)
-        {
-            loader = new CompositeResourceLoader(new FileResourceLoader(appHome), loader);
-        }
-        return loader;
-    }
-
     protected void initializeRestFlowMap()
     {
         flattenResourceTree(getApi().getResources());
 
         if (restFlowMap == null)
         {
-            restFlowMap = new HashMap<String, Flow>();
+            restFlowMap = new HashMap<>();
 
             //init flows by convention
             Collection<Flow> flows = muleContext.getRegistry().lookupObjects(Flow.class);
@@ -122,13 +106,13 @@ public class Configuration extends AbstractConfiguration
 
             logMissingMappings();
 
-            restFlowMapUnwrapped = new HashMap<String, Flow>(restFlowMap);
+            restFlowMapUnwrapped = new HashMap<>(restFlowMap);
         }
     }
 
-    private void flattenResourceTree(Map<String, Resource> resources)
+    private void flattenResourceTree(Map<String, IResource> resources)
     {
-        for (Resource resource : resources.values())
+        for (IResource resource : resources.values())
         {
             flatResourceTree.put(resource.getUri(), resource);
             if (resource.getResources() != null)
@@ -140,10 +124,10 @@ public class Configuration extends AbstractConfiguration
 
     private void logMissingMappings()
     {
-        for (Resource resource : flatResourceTree.values())
+        for (IResource resource : flatResourceTree.values())
         {
             String fullResource = resource.getUri();
-            for (Action action : resource.getActions().values())
+            for (IAction action : resource.getActions().values())
             {
                 String method = action.getType().name().toLowerCase();
                 String key = method + ":" + fullResource;
@@ -265,10 +249,10 @@ public class Configuration extends AbstractConfiguration
         {
             key = key + ":" + type;
         }
-        Resource apiResource = flatResourceTree.get(resource);
+        IResource apiResource = flatResourceTree.get(resource);
         if (apiResource != null)
         {
-            Action action = apiResource.getAction(method);
+            IAction action = apiResource.getAction(method);
             if (action != null)
             {
                 if (type == null)

@@ -8,19 +8,18 @@ package org.mule.module.apikit.validation.cache;
 
 import org.mule.api.MuleContext;
 import org.mule.api.registry.RegistrationException;
+import org.mule.raml.interfaces.model.IRaml;
 
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
-
-import org.raml.model.Raml;
 
 public final class JsonSchemaCache
 {
 
     private static final String REGISTRY_JSON_SCHEMA_CACHE_KEY_PREFIX = "__restRouterJsonSchemaCache__";
 
-    public static LoadingCache<String, JsonSchema> getJsonSchemaCache(MuleContext muleContext, String configId, Raml api) throws RegistrationException
+    public static LoadingCache<String, JsonSchema> getJsonSchemaCache(MuleContext muleContext, String configId, IRaml api) throws RegistrationException
     {
         String cacheKey = REGISTRY_JSON_SCHEMA_CACHE_KEY_PREFIX + configId;
         if (muleContext.getRegistry().get(cacheKey) == null)

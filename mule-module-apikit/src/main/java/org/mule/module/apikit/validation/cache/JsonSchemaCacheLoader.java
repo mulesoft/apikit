@@ -9,6 +9,7 @@ package org.mule.module.apikit.validation.cache;
 import static org.mule.module.apikit.validation.cache.SchemaCacheUtils.resolveJsonSchema;
 
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.raml.interfaces.model.IRaml;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.SchemaVersion;
@@ -23,16 +24,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 
-import org.raml.model.Raml;
-
 public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
 {
 
     private static final String RESOURCE_PREFIX = "resource:/";
 
-    private Raml api;
+    private IRaml api;
 
-    public JsonSchemaCacheLoader(Raml api)
+    public JsonSchemaCacheLoader(IRaml api)
     {
         this.api = api;
     }

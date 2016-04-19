@@ -1,0 +1,18 @@
+#%RAML 1.0
+---
+title: Parser compatibility API
+version: v1
+baseUri: http://localhost/api
+
+/world:
+    displayName: World
+
+    /user:
+        displayName: User
+        get:
+            responses:
+                200:
+                    body:
+                        application/json:
+                            example: |
+                                {"name":"jane"}

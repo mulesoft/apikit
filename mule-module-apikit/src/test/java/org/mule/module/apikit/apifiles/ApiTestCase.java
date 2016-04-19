@@ -23,7 +23,6 @@ import org.junit.Test;
 
 public class ApiTestCase extends FunctionalAppDeployTestCase
 {
-    private static final String CONSOLE_PATH = "/konsole";
 
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");

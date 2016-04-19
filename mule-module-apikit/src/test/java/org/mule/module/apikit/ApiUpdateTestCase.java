@@ -8,15 +8,20 @@ package org.mule.module.apikit;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import org.mule.api.lifecycle.InitialisationException;
+import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.uri.URIPattern;
+import org.mule.module.http.internal.listener.DefaultHttpListener;
+import org.mule.module.http.internal.listener.DefaultHttpListenerConfig;
+import org.mule.raml.interfaces.model.IAction;
 import org.mule.tck.junit4.AbstractMuleContextTestCase;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.raml.model.Action;
 
 public class ApiUpdateTestCase extends AbstractMuleContextTestCase
 {
@@ -43,10 +48,21 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
 
     private void setupConfig(String yamlPath) throws InitialisationException
     {
+        DefaultHttpListenerConfig listenerConfig = mock(DefaultHttpListenerConfig.class);
+        when(listenerConfig.getHost()).thenReturn("localhost");
+        when(listenerConfig.getPort()).thenReturn(8080);
+        when(listenerConfig.getTlsContext()).thenReturn(null);
+        DefaultHttpListener listener = mock(DefaultHttpListener.class);
+        when(listener.getConfig()).thenReturn(listenerConfig);
+        when(listener.getPath()).thenReturn("api");
+        Flow flow = mock(Flow.class);
+        when(flow.getMessageSource()).thenReturn(listener);
+
         config = new Configuration();
         config.setMuleContext(muleContext);
         config.setRaml("org/mule/module/apikit/" + yamlPath);
         config.initialise();
+        config.loadApiDefinition(flow);
     }
 
     @Before
@@ -75,7 +91,7 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
         assertInitialStateWithTraits();
     }
 
-    private void assertTraitInjected(Action action)
+    private void assertTraitInjected(IAction action)
     {
         assertThat(action.getIs().size(), is(1));
         assertThat(action.getIs().get(0), is(traitName));
@@ -148,7 +164,7 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
         assertInitialStateWithTraits();
     }
 
-    private void assertSecuritySchemeInjected(Action action, String name)
+    private void assertSecuritySchemeInjected(IAction action, String name)
     {
         assertThat(action.getSecuredBy().size(), is(1));
         assertThat(action.getSecuredBy().get(0).getName(), is(name));
@@ -176,7 +192,7 @@ public class ApiUpdateTestCase extends AbstractMuleContextTestCase
     {
         assertThat(config.getApi().getTraits().size(), is(traits));
         assertThat(config.getApi().getSecuritySchemes().size(), is(0));
-        Action action = config.getApi().getResource(resource).getAction(METHOD_GET);
+        IAction action = config.getApi().getResource(resource).getAction(METHOD_GET);
         assertThat(action.getIs().size(), is(0));
         assertThat(action.getHeaders().size(), is(0));
         assertThat(action.getQueryParameters().size(), is(0));

@@ -14,6 +14,7 @@ import org.mule.api.registry.RegistrationException;
 import org.mule.api.transport.PropertyScope;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
+import org.mule.raml.interfaces.model.IResource;
 import org.mule.util.WildcardAttributeEvaluator;
 
 import java.util.ArrayList;
@@ -24,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.raml.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,7 +141,7 @@ public class Proxy extends AbstractRouter
     }
 
     @Override
-    protected Flow getFlow(Resource resource, HttpRestRequest request)
+    protected Flow getFlow(IResource resource, HttpRestRequest request)
     {
         FlowResolver flowResolver = config.getRestFlowMap().get(request.getMethod() + ":" + resource.getUri());
         Flow rawFlow = ((ProxyConfiguration.ProxyFlowResolver) flowResolver).getRawFlow();

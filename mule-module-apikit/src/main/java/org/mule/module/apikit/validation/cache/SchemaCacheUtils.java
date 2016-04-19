@@ -7,6 +7,9 @@
 package org.mule.module.apikit.validation.cache;
 
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IRaml;
 
 import com.github.fge.jackson.JsonLoader;
 
@@ -14,16 +17,12 @@ import java.io.IOException;
 
 import javax.xml.validation.Schema;
 
-import org.raml.model.Action;
-import org.raml.model.MimeType;
-import org.raml.model.Raml;
-
 public class SchemaCacheUtils
 {
 
     private static final String SEPARATOR = ",";
 
-    public static String getSchemaCacheKey(Action action, String mimeTypeName)
+    public static String getSchemaCacheKey(IAction action, String mimeTypeName)
     {
         StringBuilder key = new StringBuilder(action.getResource().getUri());
         key.append(SEPARATOR).append(action.getType());
@@ -34,9 +33,9 @@ public class SchemaCacheUtils
     /**
      * Returns the compiled representation of an XML schema.
      */
-    public static Schema resolveXmlSchema(String schemaCacheKey, Raml api)
+    public static Schema resolveXmlSchema(String schemaCacheKey, IRaml api)
     {
-        MimeType mimeType = getMimeType(schemaCacheKey, api);
+        IMimeType mimeType = getMimeType(schemaCacheKey, api);
 
         Object compiledSchema = mimeType.getCompiledSchema();
         if (compiledSchema != null && compiledSchema instanceof Schema)
@@ -58,10 +57,10 @@ public class SchemaCacheUtils
         throw new ApikitRuntimeException("XML Schema could not be resolved for key: " + schemaCacheKey);
     }
 
-    private static MimeType getMimeType(String schemaCacheKey, Raml api)
+    private static IMimeType getMimeType(String schemaCacheKey, IRaml api)
     {
         String[] path = schemaCacheKey.split(SEPARATOR);
-        Action action = api.getResource(path[0]).getAction(path[1]);
+        IAction action = api.getResource(path[0]).getAction(path[1]);
         return action.getBody().get(path[2]);
     }
 
@@ -69,9 +68,9 @@ public class SchemaCacheUtils
      * may return either a string representing the path to the schema
      * or a JsonNode for inline schema definitions
      */
-    public static Object resolveJsonSchema(String schemaCacheKey, Raml api)
+    public static Object resolveJsonSchema(String schemaCacheKey, IRaml api)
     {
-        MimeType mimeType = getMimeType(schemaCacheKey, api);
+        IMimeType mimeType = getMimeType(schemaCacheKey, api);
         String path = (String) mimeType.getCompiledSchema();
         String schemaOrGlobalReference = mimeType.getSchema();
 

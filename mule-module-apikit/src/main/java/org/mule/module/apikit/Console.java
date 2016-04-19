@@ -14,14 +14,13 @@ import org.mule.api.construct.FlowConstructAware;
 import org.mule.api.context.MuleContextAware;
 import org.mule.api.lifecycle.Initialisable;
 import org.mule.api.lifecycle.InitialisationException;
+import org.mule.api.lifecycle.Startable;
 import org.mule.api.processor.MessageProcessor;
 import org.mule.config.i18n.MessageFactory;
 
 import java.util.Collection;
 
-import org.raml.model.Raml;
-
-public class Console implements MessageProcessor, Initialisable, MuleContextAware, FlowConstructAware
+public class Console implements MessageProcessor, Initialisable, Startable, MuleContextAware, FlowConstructAware
 {
 
     private AbstractConfiguration config;
@@ -52,11 +51,6 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
         return config;
     }
 
-    private Raml getApi()
-    {
-        return getConfig().getApi();
-    }
-
     @Override
     public void initialise() throws InitialisationException
     {
@@ -77,6 +71,12 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
         consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct), config);
         config.addConsoleUrl(consoleHandler.getConsoleUrl());
         ramlHandler = new RamlDescriptorHandler(config);
+    }
+
+    @Override
+    public void start() throws MuleException
+    {
+        consoleHandler.updateRamlUri();
     }
 
     @Override

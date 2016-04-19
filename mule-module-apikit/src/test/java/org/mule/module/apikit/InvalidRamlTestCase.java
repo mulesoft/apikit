@@ -10,24 +10,21 @@ import static junit.framework.Assert.fail;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 
+import org.mule.api.lifecycle.InitialisationException;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.tck.junit4.AbstractMuleContextTestCase;
 
 import org.junit.Test;
-import org.raml.parser.loader.DefaultResourceLoader;
 
-public class InvalidRamlTestCase
+public class InvalidRamlTestCase extends AbstractMuleContextTestCase
 {
 
     @Test
     public void invalidRaml() throws Exception
     {
-
-        Router router = new Router();
-        router.setConfig(new Configuration());
-        router.getConfig().setRaml("org/mule/module/apikit/invalid-config.yaml");
         try
         {
-            router.getConfig().validateRaml(new DefaultResourceLoader());
+            validateRaml("org/mule/module/apikit/invalid-config.yaml");
             fail();
         }
         catch (ApikitRuntimeException e)
@@ -36,16 +33,24 @@ public class InvalidRamlTestCase
         }
     }
 
+    private Router validateRaml(String ramlPath) throws InitialisationException
+    {
+        Configuration config = new Configuration();
+        config.setMuleContext(muleContext);
+        config.setRaml(ramlPath);
+        config.initialise();
+
+        Router router = new Router();
+        router.setConfig(config);
+        return router;
+    }
+
     @Test
     public void invalidRamlLocation() throws Exception
     {
-
-        Router router = new Router();
-        router.setConfig(new Configuration());
-        router.getConfig().setRaml("invalidRamlLocation.raml");
         try
         {
-            router.getConfig().validateRaml(new DefaultResourceLoader());
+            validateRaml("invalidRamlLocation.raml");
             fail();
         }
         catch (ApikitRuntimeException e)

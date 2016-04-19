@@ -12,6 +12,7 @@ import org.mule.api.registry.RegistrationException;
 import org.mule.api.transformer.DataType;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.cache.JsonSchemaCache;
+import org.mule.raml.interfaces.model.IRaml;
 import org.mule.transformer.types.DataTypeFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -27,7 +28,6 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.concurrent.ExecutionException;
 
-import org.raml.model.Raml;
 import org.raml.parser.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
     }
 
     @Override
-    public void validate(String configId, String schemaPath, MuleEvent muleEvent, Raml api) throws BadRequestException
+    public void validate(String configId, String schemaPath, MuleEvent muleEvent, IRaml api) throws BadRequestException
     {
         try
         {

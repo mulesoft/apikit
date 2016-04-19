@@ -7,9 +7,6 @@
 package org.mule.module.apikit;
 
 import static org.mule.module.apikit.UrlUtils.getBaseSchemeHostPort;
-import static org.raml.parser.rule.ValidationResult.Level.ERROR;
-import static org.raml.parser.rule.ValidationResult.Level.WARN;
-import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
@@ -27,7 +24,10 @@ import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.module.apikit.spi.RouterService;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
-import org.mule.util.BeanUtils;
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IActionType;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.IResource;
 import org.mule.util.IOUtils;
 import org.mule.util.StringMessageUtils;
 import org.mule.util.StringUtils;
@@ -40,7 +40,6 @@ import com.google.common.collect.Sets;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -55,17 +54,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.lang.SerializationUtils;
-import org.raml.emitter.RamlEmitter;
-import org.raml.model.Action;
-import org.raml.model.ActionType;
-import org.raml.model.Raml;
-import org.raml.model.Resource;
-import org.raml.parser.loader.ResourceLoader;
-import org.raml.parser.rule.ValidationResult;
-import org.raml.parser.utils.StreamUtils;
-import org.raml.parser.visitor.RamlDocumentBuilder;
-import org.raml.parser.visitor.RamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +63,6 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     public static final String APPLICATION_RAML = "application/raml+yaml";
     private static final String CONSOLE_URL_FILE = "consoleurl";
     private static final int URI_CACHE_SIZE = 1000;
-    private static final String PARSER_V2_PROPERTY = "apikit.raml.parser.v2";
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -83,21 +70,20 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     protected MuleContext muleContext;
     private String name;
     protected String raml;
-    private Raml baseApi; //original raml
-    protected Raml api; //current raml
+    protected IRaml api;
     private String baseSchemeHostPort;
     private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
     private boolean disableValidations;
     protected Map<String, FlowResolver> restFlowMapWrapper;
-    protected Map<URIPattern, Resource> routingTable;
+    protected Map<URIPattern, IResource> routingTable;
     protected LoadingCache<String, URIResolver> uriResolverCache;
     protected LoadingCache<String, URIPattern> uriPatternCache;
     private List<String> consoleUrls = new ArrayList<String>();
     private boolean started;
     protected boolean extensionEnabled = false;
     private RouterService routerExtension = null;
-    private Boolean parserV2;
     private String appHome;
+    private ParserService parserService;
 
     @Override
     public void initialise() throws InitialisationException
@@ -107,12 +93,10 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
             return;
         }
 
-        ResourceLoader loader = getRamlResourceLoader();
-        validateRaml(loader);
-        RamlDocumentBuilder builder = new RamlDocumentBuilder(loader);
-        api = builder.build(raml);
-        cleanBaseUriParameters(api);
-        baseSchemeHostPort = getBaseSchemeHostPort(api.getBaseUri());
+        parserService = new ParserService(raml, getAppHome());
+        parserService.validateRaml();
+        api = parserService.build();
+
         initializeRestFlowMap();
         initializeRestFlowMapWrapper();
         loadRoutingTable();
@@ -121,22 +105,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     public boolean isParserV2()
     {
-        if (parserV2 != null)
-        {
-            return parserV2;
-        }
-        String property = System.getProperty(PARSER_V2_PROPERTY);
-        if (property != null && Boolean.valueOf(property))
-        {
-            parserV2 = true;
-        }
-        else
-        {
-            String dump = StreamUtils.toString(getRamlResourceLoader().fetchResource(raml));
-            parserV2 = dump.startsWith("#%RAML 1.0");
-        }
-        logger.debug("Using parser " + (parserV2 ? "V2" : "V1"));
-        return parserV2;
+        return parserService.isParserV2();
     }
 
     public String getAppHome()
@@ -159,7 +128,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     {
         if (routingTable == null)
         {
-            routingTable = new ConcurrentHashMap<URIPattern, Resource>();
+            routingTable = new ConcurrentHashMap<>();
         }
         buildRoutingTable(getApi().getResources());
     }
@@ -198,9 +167,9 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
                         });
     }
 
-    private void buildRoutingTable(Map<String, Resource> resources)
+    private void buildRoutingTable(Map<String, IResource> resources)
     {
-        for (Resource resource : resources.values())
+        for (IResource resource : resources.values())
         {
             String parentUri = resource.getParentUri();
             if (parentUri.contains("{version}"))
@@ -224,7 +193,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         resetRamlMap();
     }
 
-    public void updateApi(Raml newApi)
+    public void updateApi(IRaml newApi)
     {
         api = newApi;
         loadRoutingTable();
@@ -234,94 +203,16 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private void resetRamlMap()
     {
         apikitRaml = new ConcurrentHashMap<>();
-        String dump;
-        if (isParserV2())
-        {
-            dump = StreamUtils.toString(getRamlResourceLoader().fetchResource(raml));
-            dump = UrlUtils.rewriteBaseUri(dump, baseSchemeHostPort);
-        }
-        else
-        {
-            dump = new RamlEmitter().dump(api);
-        }
-        apikitRaml.put(baseSchemeHostPort, dump);
+        apikitRaml.put(baseSchemeHostPort, parserService.dumpRaml(api, baseSchemeHostPort, baseSchemeHostPort));
     }
 
     protected abstract void initializeRestFlowMap();
 
-    protected void validateRaml(ResourceLoader resourceLoader)
-    {
-        List<ValidationResult> results = new ArrayList<ValidationResult>();
-        InputStream content = resourceLoader.fetchResource(raml);
-        if (content != null)
-        {
-            results = RamlValidationService.createDefault(resourceLoader).validate(raml);
-        }
-        else
-        {
-            results.add(ValidationResult.createErrorResult("Raml resource not found "));
-        }
-        List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
-        if (!errors.isEmpty())
-        {
-            String msg = aggregateMessages(errors, "Invalid API descriptor -- errors found: ");
-            throw new ApikitRuntimeException(msg);
-        }
-        List<ValidationResult> warnings = ValidationResult.getLevel(WARN, results);
-        if (!warnings.isEmpty())
-        {
-            logger.warn(aggregateMessages(warnings, "API descriptor Warnings -- warnings found: "));
-        }
-    }
-
-    private String aggregateMessages(List<ValidationResult> results, String header)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.append(header).append(results.size()).append("\n\n");
-        for (ValidationResult result : results)
-        {
-            sb.append(result.getMessage()).append(" -- ");
-            sb.append(" file: ");
-            sb.append(result.getIncludeName() != null ? result.getIncludeName() : raml);
-            if (result.getLine() != UNKNOWN)
-            {
-                sb.append(" -- line ");
-                sb.append(result.getLine());
-            }
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
-
-    public abstract ResourceLoader getRamlResourceLoader();
-
-    private void injectEndpointUri(Raml ramlApi)
+    private void injectEndpointUri(IRaml ramlApi)
     {
         String address = getEndpointAddress(flowConstruct);
-        ramlApi.setBaseUri(address);
+        parserService.updateBaseUri(ramlApi, address);
         baseSchemeHostPort = getBaseSchemeHostPort(address);
-    }
-
-    private void cleanBaseUriParameters(Raml ramlApi)
-    {
-        ramlApi.getBaseUriParameters().clear();
-        cleanBaseUriParameters(ramlApi.getResources());
-    }
-
-    private void cleanBaseUriParameters(Map<String, Resource> resources)
-    {
-        for (Resource resource : resources.values())
-        {
-            resource.getBaseUriParameters().clear();
-            for (Action action : resource.getActions().values())
-            {
-                action.getBaseUriParameters().clear();
-            }
-            if (!resource.getResources().isEmpty())
-            {
-                cleanBaseUriParameters(resource.getResources());
-            }
-        }
     }
 
     public String getEndpointAddress(FlowConstruct flowConstruct)
@@ -366,16 +257,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         String hostRaml = apikitRaml.get(schemeHostPort);
         if (hostRaml == null)
         {
-            if (isParserV2())
-            {
-                hostRaml = UrlUtils.rewriteBaseUri(apikitRaml.get(baseSchemeHostPort), schemeHostPort);
-            }
-            else
-            {
-                Raml clone = shallowCloneRaml(api);
-                clone.setBaseUri(api.getBaseUri().replace(baseSchemeHostPort, schemeHostPort));
-                hostRaml = new RamlEmitter().dump(clone);
-            }
+            hostRaml = parserService.dumpRaml(api, baseSchemeHostPort, schemeHostPort);
             apikitRaml.put(schemeHostPort, hostRaml);
         }
         return hostRaml;
@@ -411,30 +293,6 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         return getApikitRaml(schemeHostPort);
     }
 
-    private Raml deepCloneRaml(Raml source)
-    {
-        Raml target = (Raml) SerializationUtils.deserialize(SerializationUtils.serialize(source));
-        copyCompiledSchemas(source, target);
-        return target;
-    }
-
-    private void copyCompiledSchemas(Raml source, Raml target)
-    {
-        target.setCompiledSchemas(source.getCompiledSchemas());
-    }
-
-    private Raml shallowCloneRaml(Raml source)
-    {
-        try
-        {
-            return (Raml) BeanUtils.cloneBean(source);
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
     public boolean isDisableValidations()
     {
         return disableValidations;
@@ -445,7 +303,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         this.disableValidations = disableValidations;
     }
 
-    public Raml getApi()
+    public IRaml getApi()
     {
         return api;
     }
@@ -477,12 +335,12 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         return map;
     }
 
-    private void populateMapKeys(Map<String, FlowResolver> wrapperFlowMap, Map<String, Resource> resources)
+    private void populateMapKeys(Map<String, FlowResolver> wrapperFlowMap, Map<String, IResource> resources)
     {
-        for (Map.Entry<String, Resource> resourceEntry : resources.entrySet())
+        for (Map.Entry<String, IResource> resourceEntry : resources.entrySet())
         {
             String resource = resourceEntry.getValue().getUri();
-            for (Map.Entry<ActionType, Action> actionEntry : resourceEntry.getValue().getActions().entrySet())
+            for (Map.Entry<IActionType, IAction> actionEntry : resourceEntry.getValue().getActions().entrySet())
             {
                 String key = actionEntry.getKey().name().toLowerCase() + ":" + resource;
                 wrapperFlowMap.put(key, getFlowResolver(this, key));
@@ -592,7 +450,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         this.raml = raml;
     }
 
-    public Action getEventAction(MuleEvent event)
+    public IAction getEventAction(MuleEvent event)
     {
         HttpRestRequest request = getHttpRestRequest(event);
         String path = request.getResourcePath();
@@ -605,7 +463,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         {
             return null;
         }
-        Resource resource = routingTable.get(uriPattern);
+        IResource resource = routingTable.get(uriPattern);
         return resource.getAction(request.getMethod());
     }
 
@@ -621,15 +479,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     public RamlUpdater getRamlUpdater()
     {
-        if (isParserV2())
-        {
-            throw new UnsupportedOperationException("RAML 1.0 is read only");
-        }
-        if (baseApi == null)
-        {
-            baseApi = deepCloneRaml(api);
-        }
-        return new RamlUpdater(deepCloneRaml(baseApi), this);
+        return parserService.getRamlUpdater(api, this);
     }
 
     public Set<String> getFlowActionRefs(Flow flow)

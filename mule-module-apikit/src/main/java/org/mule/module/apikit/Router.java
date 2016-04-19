@@ -12,10 +12,10 @@ import org.mule.api.lifecycle.StartException;
 import org.mule.api.registry.RegistrationException;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
+import org.mule.raml.interfaces.model.IResource;
 
 import java.util.Map;
 
-import org.raml.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +53,8 @@ public class Router extends AbstractRouter
         config.loadApiDefinition(flowConstruct);
         if (getConfig().isConsoleEnabled())
         {
-            consoleHandler = new ConsoleHandler(getApi().getBaseUri(), getConfig().getConsolePath(), config);
+            consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct), getConfig().getConsolePath(), config);
+            consoleHandler.updateRamlUri();
             getConfig().addConsoleUrl(consoleHandler.getConsoleUrl());
         }
     }
@@ -62,7 +63,7 @@ public class Router extends AbstractRouter
     protected MuleEvent handleEvent(MuleEvent event, String path) throws MuleException
     {
         //check for console request
-        if (getConfig().isConsoleEnabled() && path.startsWith(getApi().getUri() + "/" + getConfig().getConsolePath()))
+        if (getConfig().isConsoleEnabled() && path.startsWith("/" + getConfig().getConsolePath()))
         {
             return consoleHandler.process(event);
         }
@@ -75,7 +76,7 @@ public class Router extends AbstractRouter
      * if there is no match it retries using method and resource only.
      */
     @Override
-    protected Flow getFlow(Resource resource, HttpRestRequest request)
+    protected Flow getFlow(IResource resource, HttpRestRequest request)
     {
         String baseKey = request.getMethod() + ":" + resource.getUri();
         String contentType = request.getContentType();
