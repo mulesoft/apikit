@@ -28,6 +28,10 @@ import org.raml.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * This class will be removed on the next major version
+ */
+@Deprecated
 public class Proxy extends AbstractRouter
 {
 
@@ -75,6 +79,11 @@ public class Proxy extends AbstractRouter
         MULE_RESPONSE_HEADERS.remove("http.status");
         MULE_REQUEST_HEADERS = new HashSet<>(MULE_RESPONSE_HEADERS);
         MULE_REQUEST_HEADERS.remove("http.method");
+    }
+
+    public Proxy()
+    {
+        LOGGER.warn("Proxy class is deprecated and will be removed on the next major version");
     }
 
     public ProxyConfiguration getConfig()

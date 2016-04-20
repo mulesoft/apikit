@@ -22,10 +22,15 @@ import java.util.Collections;
 import org.raml.parser.loader.ClassPathResourceLoader;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+/**
+ * This class will be removed on the next major version
+ */
+@Deprecated
 public class ProxyConfiguration extends AbstractConfiguration
 {
-
     private MessageProcessor chain;
 
     public void setChain(MessageProcessor chain)
