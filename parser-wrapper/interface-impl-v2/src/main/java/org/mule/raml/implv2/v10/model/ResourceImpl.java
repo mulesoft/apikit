@@ -83,6 +83,12 @@ public class ResourceImpl implements IResource
     }
 
     @Override
+    public String getDisplayName()
+    {
+        return resource.displayName();
+    }
+
+    @Override
     public Map<String, IParameter> getResolvedUriParameters()
     {
         throw new UnsupportedOperationException();
@@ -96,12 +102,6 @@ public class ResourceImpl implements IResource
 
     @Override
     public Map<String, List<IParameter>> getBaseUriParameters()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getDisplayName()
     {
         throw new UnsupportedOperationException();
     }

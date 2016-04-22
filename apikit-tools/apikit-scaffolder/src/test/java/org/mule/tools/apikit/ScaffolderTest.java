@@ -57,19 +57,30 @@ public class ScaffolderTest {
     }
 
     @Test
-    public void testSimpleGenerate() throws Exception {
-        File muleXmlSimple = simpleGeneration("simple", null, "3.7.0");
+    public void testSimpleGenerateV08() throws Exception
+    {
+        testSimpleGenerate("simple");
+    }
+
+    @Test
+    public void testSimpleGenerateV10() throws Exception
+    {
+        testSimpleGenerate("simpleV10");
+    }
+
+    public void testSimpleGenerate(String name) throws Exception {
+        File muleXmlSimple = simpleGeneration(name, null, "3.8.0");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
         assertEquals(1, countOccurences(s, "<http:listener-config"));
-        assertEquals(1, countOccurences(s, "get:/:simple-config"));
-        assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+        assertEquals(1, countOccurences(s, "get:/:" + name + "-config"));
+        assertEquals(1, countOccurences(s, "get:/pet:" + name + "-config"));
         assertEquals(0, countOccurences(s, "extensionEnabled"));
     }
 
     @Test
     public void testSimpleGenerateWithExtension() throws Exception {
-        File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", "simple", null, "3.7.0");
+        File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", "simple", null, "3.8.0");
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
@@ -81,7 +92,7 @@ public class ScaffolderTest {
 
     @Test
     public void testSimpleGenerateWithExtensionInNull() throws Exception {
-        File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", null, null, "3.7.0");
+        File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", null, null, "3.8.0");
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
@@ -117,7 +128,7 @@ public class ScaffolderTest {
 
     @Test
     public void testSimpleGenerateWithListenerAndExtension() throws Exception {
-        File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", "simple", null, "3.7.0");
+        File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", "simple", null, "3.8.0");
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
@@ -143,7 +154,7 @@ public class ScaffolderTest {
 
     @Test
     public void testSimpleGenerateWithCustomDomainAndExtension() throws Exception {
-        File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", "simple", "custom-domain/mule-domain-config.xml", "3.7.0");
+        File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", "simple", "custom-domain/mule-domain-config.xml", "3.8.0");
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
@@ -458,22 +469,38 @@ public class ScaffolderTest {
 
     @Test
     public void testMultipleMimeTypes() throws Exception {
-        List<File> ramls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.raml"));
+        testMultipleMimeTypes("multipleMimeTypes");
+    }
+
+    @Test
+    public void testMultipleMimeTypesV10() throws Exception {
+        testMultipleMimeTypes("multipleMimeTypesV10");
+    }
+
+    private void testMultipleMimeTypes(String name) throws Exception {
+        List<File> ramls = Arrays.asList(getFile("scaffolder/" + name + ".raml"));
         File muleXmlOut = folder.newFolder("scaffolder");
 
         createScaffolder(ramls, new ArrayList<File>(), muleXmlOut).run();
 
-        File muleXmlSimple = new File(muleXmlOut, "multipleMimeTypes.xml");
+        File muleXmlSimple = new File(muleXmlOut, name + ".xml");
         assertTrue(muleXmlSimple.exists());
 
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-        assertTrue(s.contains("post:/pet:application/json:multipleMimeTypes-config"));
-        assertTrue(s.contains("post:/pet:text/xml:multipleMimeTypes-config"));
-        assertTrue(s.contains("post:/pet:application/x-www-form-urlencoded:multipleMimeTypes-config"));
-        assertTrue(s.contains("post:/pet:multipleMimeTypes-config"));
-        assertTrue(!s.contains("post:/pet:application/xml:multipleMimeTypes-config"));
-        assertTrue(s.contains("post:/vet:multipleMimeTypes-config"));
-        assertTrue(!s.contains("post:/vet:application/xml:multipleMimeTypes-config"));
+        assertTrue(s.contains("post:/pet:application/json:" + name + "-config"));
+        assertTrue(s.contains("post:/pet:text/xml:" + name + "-config"));
+        if (name.endsWith("V10"))
+        {
+            assertTrue(s.contains("post:/pet:" + name + "-config"));
+        }
+        else
+        {
+            assertTrue(s.contains("post:/pet:application/x-www-form-urlencoded:" + name + "-config"));
+        }
+        assertTrue(s.contains("post:/pet:" + name + "-config"));
+        assertTrue(!s.contains("post:/pet:application/xml:" + name + "-config"));
+        assertTrue(s.contains("post:/vet:" + name + "-config"));
+        assertTrue(!s.contains("post:/vet:application/xml:" + name + "-config"));
         assertEquals(0, countOccurences(s, "extensionEnabled"));
     }
 

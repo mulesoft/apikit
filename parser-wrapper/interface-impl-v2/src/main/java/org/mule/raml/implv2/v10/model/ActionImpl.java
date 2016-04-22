@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.raml.v2.model.v10.bodies.Response;
+import org.raml.v2.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.model.v10.methods.Method;
 
 public class ActionImpl implements IAction
@@ -63,7 +64,12 @@ public class ActionImpl implements IAction
     @Override
     public Map<String, IMimeType> getBody()
     {
-        throw new UnsupportedOperationException();
+        Map<String, IMimeType> result = new LinkedHashMap<>();
+        for (TypeDeclaration typeDeclaration : method.body())
+        {
+            result.put(typeDeclaration.name(),  new MimeTypeImpl(typeDeclaration));
+        }
+        return result;
     }
 
     @Override

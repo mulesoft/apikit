@@ -106,6 +106,7 @@ public class RAMLFilesParser
             {
                 log.info("ERROR " + (++problemCount) + ": " + error.getErrorMessage());
             }
+            return false;
         }
         return true;
     }

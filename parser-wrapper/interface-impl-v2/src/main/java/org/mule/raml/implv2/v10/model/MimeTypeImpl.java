@@ -9,9 +9,11 @@ package org.mule.raml.implv2.v10.model;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.raml.v2.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.model.v10.datamodel.TypeDeclaration;
 
 public class MimeTypeImpl implements IMimeType
@@ -31,25 +33,49 @@ public class MimeTypeImpl implements IMimeType
     }
 
     @Override
-    public Object getCompiledSchema()
+    public String getExample()
     {
-        throw new UnsupportedOperationException();
+        ExampleSpec example = typeDeclaration.example();
+        if (example != null && example.value() != null)
+        {
+            return example.value();
+        }
+        List<ExampleSpec> examples = typeDeclaration.examples();
+        if (examples != null && !examples.isEmpty())
+        {
+            if (examples.get(0).value() != null)
+            {
+                return examples.get(0).value();
+            }
+        }
+        return null;
     }
 
     @Override
     public String getSchema()
     {
-        throw new UnsupportedOperationException();
+        String schema = typeDeclaration.schema();
+        if (schema != null)
+        {
+            return schema;
+        }
+        List<String> type = typeDeclaration.type();
+        if (type != null && !type.isEmpty())
+        {
+            return type.get(0);
+        }
+        return null;
     }
 
     @Override
     public Map<String, List<IParameter>> getFormParameters()
     {
-        throw new UnsupportedOperationException();
+        // no longer supported in RAML 1.0
+        return new HashMap<>();
     }
 
     @Override
-    public String getExample()
+    public Object getCompiledSchema()
     {
         throw new UnsupportedOperationException();
     }

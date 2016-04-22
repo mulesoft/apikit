@@ -16,7 +16,6 @@ import java.util.Map;
 
 import org.raml.v2.model.v08.bodies.BodyLike;
 import org.raml.v2.model.v08.parameters.Parameter;
-import org.raml.v2.model.v10.datamodel.TypeDeclaration;
 
 public class MimeTypeImpl implements IMimeType
 {
@@ -41,12 +40,6 @@ public class MimeTypeImpl implements IMimeType
     }
 
     @Override
-    public Object getCompiledSchema()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getSchema()
     {
         return bodyLike.schema() != null ? bodyLike.schema().value() : null;
@@ -63,6 +56,12 @@ public class MimeTypeImpl implements IMimeType
             result.put(parameter.name(), list);
         }
         return result;
+    }
+
+    @Override
+    public Object getCompiledSchema()
+    {
+        throw new UnsupportedOperationException();
     }
 
     @Override
