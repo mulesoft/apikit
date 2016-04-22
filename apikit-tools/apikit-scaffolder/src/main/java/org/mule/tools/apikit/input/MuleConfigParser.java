@@ -34,15 +34,17 @@ import org.jdom2.input.sax.XMLReaders;
 
 public class MuleConfigParser {
 
-    private Set<ResourceActionMimeTypeTriplet> entries = new HashSet<ResourceActionMimeTypeTriplet>();
-    private Map<String, API> includedApis = new HashMap<String, API>();
-    private Map<String, HttpListenerConfig> httpListenerConfigs = new HashMap<String, HttpListenerConfig>();
-    private Map<String, APIKitConfig> apikitConfigs = new HashMap<String, APIKitConfig>();
+    private Set<ResourceActionMimeTypeTriplet> entries = new HashSet<>();
+    private Map<String, API> includedApis = new HashMap<>();
+    private Map<String, HttpListenerConfig> httpListenerConfigs = new HashMap<>();
+    private Map<String, APIKitConfig> apikitConfigs = new HashMap<>();
     private final APIFactory apiFactory;
+    private final Log log;
 
     public MuleConfigParser(Log log, Set<File> ramlPaths, Map<File, InputStream> streams, APIFactory apiFactory) {
         this.apiFactory = apiFactory;
         this.httpListenerConfigs.putAll(apiFactory.getDomainHttpListenerConfigs());
+        this.log = log;
         for (Entry<File, InputStream> fileStreamEntry : streams.entrySet()) {
             InputStream stream = fileStreamEntry.getValue();
             File file = fileStreamEntry.getKey();
@@ -64,7 +66,7 @@ public class MuleConfigParser {
         httpListenerConfigs.putAll(new HttpListenerConfigParser().parse(document));
         includedApis = new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document);
 
-        entries = new APIKitFlowsParser(includedApis).parse(document);
+        entries = new APIKitFlowsParser(log, includedApis).parse(document);
     }
 
     public Map<String, APIKitConfig> getApikitConfigs() {

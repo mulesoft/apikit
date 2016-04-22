@@ -15,8 +15,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.raml</groupId>
-            <artifactId>raml-parser</artifactId>
+            <groupId>org.mule.raml</groupId>
+            <artifactId>parser-interface-impl-v2</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>

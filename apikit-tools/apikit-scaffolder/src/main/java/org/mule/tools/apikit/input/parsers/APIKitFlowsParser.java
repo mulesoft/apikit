@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
+import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
@@ -27,16 +27,17 @@ import org.jdom2.xpath.XPathFactory;
 
 public class APIKitFlowsParser implements MuleConfigFileParser {
 
-    private static final Logger LOGGER = Logger.getLogger(APIKitFlowsParser.class);
+    private final Log log;
     private final Map<String, API> includedApis;
 
-    public APIKitFlowsParser(final Map<String, API> includedApis) {
+    public APIKitFlowsParser(Log log, final Map<String, API> includedApis) {
+        this.log = log;
         this.includedApis = includedApis;
     }
 
     @Override
     public Set<ResourceActionMimeTypeTriplet> parse(Document document)  {
-        Set<ResourceActionMimeTypeTriplet> entries = new HashSet<ResourceActionMimeTypeTriplet>();
+        Set<ResourceActionMimeTypeTriplet> entries = new HashSet<>();
         XPathExpression<Element> xp = XPathFactory.instance().compile("//*/*[local-name()='flow']",
                                                                       Filters.element(XMLNS_NAMESPACE.getNamespace()));
         List<Element> elements = xp.evaluate(document);
@@ -46,7 +47,7 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
             try {
                 flow = APIKitFlow.buildFromName(name, includedApis.keySet());
             } catch(IllegalArgumentException iae) {
-                LOGGER.info("Flow named '" + name + "' is not an APIKit Flow because it does not follow APIKit naming convention." );
+                log.info("Flow named '" + name + "' is not an APIKit Flow because it does not follow APIKit naming convention." );
                 continue;
             }
 

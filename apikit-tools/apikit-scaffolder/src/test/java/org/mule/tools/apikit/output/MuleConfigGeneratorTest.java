@@ -14,6 +14,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IActionType;
+import org.mule.raml.interfaces.model.IResource;
 import org.mule.tools.apikit.Helper;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListenerConfig;
@@ -35,9 +38,6 @@ import org.jdom2.Element;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.raml.model.Action;
-import org.raml.model.ActionType;
-import org.raml.model.Resource;
 
 public class MuleConfigGeneratorTest {
 
@@ -48,17 +48,17 @@ public class MuleConfigGeneratorTest {
     public void testGenerate() throws Exception {
         List<GenerationModel> entries = new ArrayList<GenerationModel>();
 
-        Resource resource = mock(Resource.class);
+        IResource resource = mock(IResource.class);
 
         when(resource.getUri()).thenReturn("/api/pet");
 
-        Action action = mock(Action.class);
+        IAction action = mock(IAction.class);
 
-        when(action.getType()).thenReturn(ActionType.GET);
+        when(action.getType()).thenReturn(IActionType.GET);
 
-        Action postAction = mock(Action.class);
+        IAction postAction = mock(IAction.class);
 
-        when(postAction.getType()).thenReturn(ActionType.POST);
+        when(postAction.getType()).thenReturn(IActionType.POST);
 
         API api = mock(API.class);
         File raml = mock(File.class);

@@ -12,10 +12,12 @@ import org.mule.raml.interfaces.model.ISecurityScheme;
 import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.raml.v2.model.v08.api.Api;
+import org.raml.v2.model.v08.resources.Resource;
 
 public class RamlImpl08V2 implements IRaml
 {
@@ -24,6 +26,18 @@ public class RamlImpl08V2 implements IRaml
     public RamlImpl08V2(Api api)
     {
         this.api = api;
+    }
+
+    @Override
+    public Map<String, IResource> getResources()
+    {
+        Map<String, IResource> map = new LinkedHashMap<>();
+        List<Resource> resources = api.resources();
+        for (Resource resource : resources)
+        {
+            map.put(resource.relativeUri().value(), new ResourceImpl(resource));
+        }
+        return map;
     }
 
     @Override
@@ -46,12 +60,6 @@ public class RamlImpl08V2 implements IRaml
 
     @Override
     public String getBaseUri()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Map<String, IResource> getResources()
     {
         throw new UnsupportedOperationException();
     }

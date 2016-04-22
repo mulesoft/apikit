@@ -10,18 +10,13 @@ import org.mule.module.apikit.AbstractConfiguration;
 import org.mule.module.apikit.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
-import org.mule.raml.implv2.v08.model.RamlImpl08V2;
-import org.mule.raml.implv2.v10.model.RamlImpl10V2;
+import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
 
 import java.io.InputStream;
 import java.util.List;
 
 import org.raml.v2.RamlBuilder;
-import org.raml.v2.impl.commons.RamlHeader;
-import org.raml.v2.impl.commons.RamlVersion;
-import org.raml.v2.impl.commons.model.builder.ModelBuilder;
-import org.raml.v2.impl.commons.nodes.RamlDocumentNode;
 import org.raml.v2.loader.CompositeResourceLoader;
 import org.raml.v2.loader.DefaultResourceLoader;
 import org.raml.v2.loader.FileResourceLoader;
@@ -108,32 +103,7 @@ public class ParserWrapperV2 implements ParserWrapper
     @Override
     public IRaml build()
     {
-        InputStream contentStream = resourceLoader.fetchResource(ramlPath);
-        if (contentStream != null)
-        {
-            String contentString = StreamUtils.toString(contentStream);
-            try
-            {
-                RamlHeader header = RamlHeader.parse(contentString);
-                RamlBuilder builder = new RamlBuilder();
-                RamlDocumentNode ramlNode = (RamlDocumentNode) builder.build(contentString, resourceLoader, ramlPath);
-                if (header.getVersion() == RamlVersion.RAML_10)
-                {
-                    org.raml.v2.model.v10.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.model.v10.api.Api.class, ramlNode);
-                    return new RamlImpl10V2(ramlV2);
-                }
-                else
-                {
-                    org.raml.v2.model.v08.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.model.v08.api.Api.class, ramlNode);
-                    return new RamlImpl08V2(ramlV2);
-                }
-            }
-            catch (RamlHeader.InvalidHeaderException e)
-            {
-                //throw exception
-            }
-        }
-        throw new ApikitRuntimeException("Invalid RAML descriptor.");
+        return ParserV2Utils.build(resourceLoader, ramlPath);
     }
 
     @Override

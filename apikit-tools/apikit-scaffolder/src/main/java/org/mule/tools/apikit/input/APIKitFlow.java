@@ -6,12 +6,13 @@
  */
 package org.mule.tools.apikit.input;
 
+import org.mule.raml.interfaces.model.IActionType;
+
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.raml.model.ActionType;
 
 public class APIKitFlow {
 
@@ -85,8 +86,8 @@ public class APIKitFlow {
     }
 
     private static boolean isValidAction(String name) {
-        for(ActionType actionType : ActionType.values()) {
-            if(actionType.toString().toLowerCase().equals(name.toLowerCase())) {
+        for(IActionType actionType : IActionType.values()) {
+            if(actionType.toString().equals(name.toUpperCase())) {
                 return true;
             }
         }

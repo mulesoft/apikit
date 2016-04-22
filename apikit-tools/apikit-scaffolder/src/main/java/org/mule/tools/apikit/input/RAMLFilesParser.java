@@ -6,6 +6,11 @@
  */
 package org.mule.tools.apikit.input;
 
+import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.IResource;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
@@ -22,18 +27,13 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.raml.model.Action;
-import org.raml.model.MimeType;
-import org.raml.model.Raml;
-import org.raml.model.Resource;
-import org.raml.parser.loader.CompositeResourceLoader;
-import org.raml.parser.loader.DefaultResourceLoader;
-import org.raml.parser.loader.FileResourceLoader;
-import org.raml.parser.loader.ResourceLoader;
-import org.raml.parser.rule.ValidationResult;
-import org.raml.parser.rule.ValidationResult.Level;
-import org.raml.parser.visitor.RamlDocumentBuilder;
-import org.raml.parser.visitor.RamlValidationService;
+import org.raml.v2.RamlBuilder;
+import org.raml.v2.loader.CompositeResourceLoader;
+import org.raml.v2.loader.DefaultResourceLoader;
+import org.raml.v2.loader.FileResourceLoader;
+import org.raml.v2.loader.ResourceLoader;
+import org.raml.v2.nodes.ErrorNode;
+import org.raml.v2.nodes.Node;
 
 public class RAMLFilesParser
 {
@@ -47,7 +47,7 @@ public class RAMLFilesParser
         this.log = log;
         this.apiFactory = apiFactory;
         this.muleVersion = muleVersion;
-        List<File> processedFiles = new ArrayList<File>();
+        List<File> processedFiles = new ArrayList<>();
         for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet())
         {
             String content;
@@ -66,10 +66,9 @@ public class RAMLFilesParser
 
             if (isValidRaml(ramlFile.getName(), content, resourceLoader))
             {
-                RamlDocumentBuilder builderNodeHandler = new RamlDocumentBuilder(resourceLoader);
                 try
                 {
-                    Raml raml = builderNodeHandler.build(content, ramlFile.getName());
+                    IRaml raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
 
                     collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);
                     processedFiles.add(ramlFile);
@@ -95,49 +94,38 @@ public class RAMLFilesParser
 
     private boolean isValidRaml(String fileName, String content, ResourceLoader resourceLoader)
     {
-        List<ValidationResult> validationResults = RamlValidationService.createDefault(resourceLoader).validate(content, fileName);
-        if (validationResults != null && !validationResults.isEmpty())
+
+        RamlBuilder builder = new RamlBuilder();
+        Node raml = builder.build(content, resourceLoader, fileName);
+        List<ErrorNode> errors = raml.findDescendantsWith(ErrorNode.class);
+        if (!errors.isEmpty())
         {
             log.info("File '" + fileName + "' is not a valid root RAML file. It contains some errors/warnings. See below: ");
-            int errorsFound = findProblems(fileName, validationResults, Level.ERROR);
-            //log warnings
-            findProblems(fileName, validationResults, Level.WARN);
-            if (errorsFound > 0) {
-                return false;
+            int problemCount = 0;
+            for (ErrorNode error : errors)
+            {
+                log.info("ERROR " + (++problemCount) + ": " + error.getErrorMessage());
             }
         }
         return true;
     }
 
-    private int findProblems(String fileName, List<ValidationResult> validationResults, Level problemLevel)
+    void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri)
     {
-        int problemCount = 0;
-        for (ValidationResult validationResult : validationResults)
+        for (IResource resource : resourceMap.values())
         {
-            if (validationResult.getLevel() == problemLevel)
-            {
-                log.info(problemLevel.name() + " " + (++problemCount) + ": " + validationResult.toString());
-            }
-        }
-        return problemCount;
-    }
-
-    void collectResources(File filename, Map<String, Resource> resourceMap, String baseUri)
-    {
-        for (Resource resource : resourceMap.values())
-        {
-            for (Action action : resource.getActions().values())
+            for (IAction action : resource.getActions().values())
             {
 
                 API api = apiFactory.createAPIBinding(filename,null, baseUri, APIKitTools.getPathFromUri(baseUri,false), null, null, APIKitTools.defaultIsInboundEndpoint(muleVersion));
 
-                Map<String, MimeType> mimeTypes = action.getBody();
+                Map<String, IMimeType> mimeTypes = action.getBody();
                 boolean addGenericAction = false;
-                if (mimeTypes != null)
+                if (mimeTypes != null && !mimeTypes.isEmpty())
                 {
-                    for (MimeType mimeType : mimeTypes.values())
+                    for (IMimeType mimeType : mimeTypes.values())
                     {
-                        if (mimeType.getSchema() != null || mimeType.getFormParameters() != null)
+                        if (mimeType.getSchema() != null || (mimeType.getFormParameters() != null && !mimeType.getFormParameters().isEmpty()))
                         {
                             addResource(api, resource, action, mimeType.getType());
                         }
@@ -155,7 +143,7 @@ public class RAMLFilesParser
         }
     }
 
-    void addResource(API api, Resource resource, Action action, String mimeType) {
+    void addResource(API api, IResource resource, IAction action, String mimeType) {
         String completePath;
         if (!api.useInboundEndpoint() && api.getHttpListenerConfig() != null)
         {
