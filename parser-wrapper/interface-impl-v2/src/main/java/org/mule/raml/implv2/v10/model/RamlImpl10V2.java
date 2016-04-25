@@ -12,11 +12,13 @@ import org.mule.raml.interfaces.model.ISecurityScheme;
 import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.raml.v2.model.v10.api.Api;
+import org.raml.v2.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.model.v10.resources.Resource;
 
 public class RamlImpl10V2 implements IRaml
@@ -48,6 +50,45 @@ public class RamlImpl10V2 implements IRaml
     }
 
     @Override
+    public String getVersion()
+    {
+        return api.version();
+    }
+
+    @Override
+    public List<Map<String, String>> getSchemas()
+    {
+        Map<String, String> map = new LinkedHashMap<>();
+        List<TypeDeclaration> types = api.types();
+        if (types.isEmpty())
+        {
+            types = api.schemas();
+        }
+        for (TypeDeclaration typeDeclaration : types)
+        {
+            map.put(typeDeclaration.name(), getTypeAsString(typeDeclaration));
+        }
+        List<Map<String, String>> result = new ArrayList<>();
+        result.add(map);
+        return result;
+    }
+
+    private String getTypeAsString(TypeDeclaration typeDeclaration)
+    {
+        String schema = typeDeclaration.schema();
+        if (schema != null)
+        {
+            return schema;
+        }
+        List<String> type = typeDeclaration.type();
+        if (type != null && !type.isEmpty())
+        {
+            return type.get(0);
+        }
+        return null;
+    }
+
+    @Override
     public IResource getResource(String path)
     {
         throw new UnsupportedOperationException();
@@ -61,12 +102,6 @@ public class RamlImpl10V2 implements IRaml
 
     @Override
     public Map<String, Object> getCompiledSchemas()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getVersion()
     {
         throw new UnsupportedOperationException();
     }
@@ -91,12 +126,6 @@ public class RamlImpl10V2 implements IRaml
 
     @Override
     public String getUri()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<Map<String, String>> getSchemas()
     {
         throw new UnsupportedOperationException();
     }

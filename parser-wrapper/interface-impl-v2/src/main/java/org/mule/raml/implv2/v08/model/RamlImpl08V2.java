@@ -12,11 +12,13 @@ import org.mule.raml.interfaces.model.ISecurityScheme;
 import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.raml.v2.model.v08.api.Api;
+import org.raml.v2.model.v08.api.GlobalSchema;
 import org.raml.v2.model.v08.resources.Resource;
 
 public class RamlImpl08V2 implements IRaml
@@ -41,6 +43,12 @@ public class RamlImpl08V2 implements IRaml
     }
 
     @Override
+    public String getVersion()
+    {
+        return api.version();
+    }
+
+    @Override
     public IResource getResource(String path)
     {
         throw new UnsupportedOperationException();
@@ -60,12 +68,6 @@ public class RamlImpl08V2 implements IRaml
 
     @Override
     public String getBaseUri()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getVersion()
     {
         throw new UnsupportedOperationException();
     }
@@ -97,7 +99,15 @@ public class RamlImpl08V2 implements IRaml
     @Override
     public List<Map<String, String>> getSchemas()
     {
-        throw new UnsupportedOperationException();
+        Map<String, String> map = new LinkedHashMap<>();
+        List<GlobalSchema> schemas = api.schemas();
+        for (GlobalSchema schema : schemas)
+        {
+            map.put(schema.key(), schema.value() != null ? schema.value().value() : null);
+        }
+        List<Map<String, String>> result = new ArrayList<>();
+        result.add(map);
+        return result;
     }
 
     @Override

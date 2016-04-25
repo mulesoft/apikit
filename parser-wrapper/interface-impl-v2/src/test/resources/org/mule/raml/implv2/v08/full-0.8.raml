@@ -1,0 +1,20 @@
+#%RAML 0.8
+
+title: full api
+version: 1.0
+
+schemas:
+    UserJson: |
+          {
+             "$schema": "http://json-schema.org/draft-04/schema",
+             "type": "object",
+             "properties": {
+               "firstname":  { "type": "string" },
+               "lastname":  { "type": "string" },
+               "age":  { "type": "integer" }
+             },
+             "required": [ "firstname", "lastname" ]
+          }
+
+    UserXml: |
+        TODO provide proper xml schema
