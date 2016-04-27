@@ -35,7 +35,7 @@ traits:
             200:
                 body:
                     application/json:
-                        example: '.'
+                        example: '{}'
                     text/xml:
                         example: '.'
     post:
@@ -85,7 +85,7 @@ traits:
                     200:
                         body:
                             application/json:
-                                example: '.'
+                                example: '{}'
             get:
                 responses:
                     200:
@@ -120,6 +120,6 @@ traits:
                     200:
                         body:
                             application/json:
-                                example: '.'
+                                example: '{}'
             /leader:
                 get: ~

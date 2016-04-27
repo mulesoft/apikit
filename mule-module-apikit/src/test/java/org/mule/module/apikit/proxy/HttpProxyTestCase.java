@@ -60,7 +60,7 @@ public class HttpProxyTestCase extends FunctionalTestCase
     {
         given().redirects().follow(true).header("Accept", "text/html")
                 .expect().log().everything()
-                .response().body(containsString("raml-console src=\"http://localhost:" + proxyPort.getValue() + "/console/\""))
+                .response().body(containsString("raml-console-loader src=\"http://localhost:" + proxyPort.getValue() + "/console/\""))
                 .statusCode(200)
                 .when().get("/console");
     }
@@ -70,7 +70,7 @@ public class HttpProxyTestCase extends FunctionalTestCase
     {
         given().header("Accept", "text/html")
                 .expect().log().everything()
-                .response().body(containsString("raml-console src=\"http://localhost:" + proxyPort.getValue() + "/console/\""))
+                .response().body(containsString("raml-console-loader src=\"http://localhost:" + proxyPort.getValue() + "/console/\""))
                 .statusCode(200)
                 .when().get("/console/");
     }

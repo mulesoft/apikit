@@ -51,6 +51,7 @@ public class ApiTestCase extends FunctionalAppDeployTestCase
         deploymentService.start();
         assertApplicationDeploymentSuccess(applicationDeploymentListener, appName);
         assertRaml();
+        assertConsole();
     }
 
     private void assertRaml() throws Exception
@@ -60,6 +61,15 @@ public class ApiTestCase extends FunctionalAppDeployTestCase
                 .response().body(containsString("baseUri: http://localhost:" + port + "/api"), containsString("!include example.json"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/api/?raml");
+    }
+
+    private void assertConsole() throws Exception
+    {
+        given().header("Accept", "text/html")
+                .expect()
+                .response().body(containsString("src=\"http://localhost:" + port + "/api/?raml\""))
+                .header("Content-type", "text/html").statusCode(200)
+                .when().get("/");
     }
 
 }

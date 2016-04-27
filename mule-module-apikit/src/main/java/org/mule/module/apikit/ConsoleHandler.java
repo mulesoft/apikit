@@ -76,8 +76,8 @@ public class ConsoleHandler implements MessageProcessor
     {
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
         this.ramlUri = calculateRamlUri(consoleBaseUri);
-        String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
-                                                     "<raml-console src=\"" + this.ramlUri + "\"");
+        String baseHomePage = indexHtml.replaceFirst("<raml-console-loader src=\"[^\"]+\"",
+                                                     "<raml-console-loader src=\"" + this.ramlUri + "\"");
         baseSchemeHostPort = getBaseSchemeHostPort(this.ramlUri);
         homePage.put(baseSchemeHostPort, baseHomePage);
     }
@@ -90,7 +90,7 @@ public class ConsoleHandler implements MessageProcessor
             {
                 consoleBaseUri = consoleBaseUri.substring(0, consoleBaseUri.length() - 1);
             }
-            return consoleBaseUri + consolePath + API_RESOURCES_PATH;
+            return consoleBaseUri + consolePath + API_RESOURCES_PATH + "?" + RAML_QUERY_STRING;
         }
         return consoleBaseUri.endsWith("/") ? consoleBaseUri : consoleBaseUri + "/";
     }
