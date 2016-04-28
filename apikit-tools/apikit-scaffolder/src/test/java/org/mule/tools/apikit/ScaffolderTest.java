@@ -574,8 +574,13 @@ public class ScaffolderTest {
         return file;
     }
 
-    private File simpleGeneration(String name, String domainPath, String muleVersion) throws Exception {
-        List<File> ramls = Arrays.asList(getFile("scaffolder/" + name + ".raml"));
+    private File simpleGeneration(String name, String domainPath, String muleVersion) throws Exception
+    {
+        return simpleGeneration("scaffolder", name, domainPath, muleVersion);
+    }
+
+    private File simpleGeneration(String apiPath, String name, String domainPath, String muleVersion) throws Exception {
+        List<File> ramls = Arrays.asList(getFile(apiPath + "/" + name + ".raml"));
         File domainFile = getFile(domainPath);
 
         List<File> xmls = Arrays.asList();

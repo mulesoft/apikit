@@ -27,13 +27,10 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.raml.v2.RamlBuilder;
 import org.raml.v2.loader.CompositeResourceLoader;
 import org.raml.v2.loader.DefaultResourceLoader;
 import org.raml.v2.loader.FileResourceLoader;
 import org.raml.v2.loader.ResourceLoader;
-import org.raml.v2.nodes.ErrorNode;
-import org.raml.v2.nodes.Node;
 
 public class RAMLFilesParser
 {
@@ -94,20 +91,25 @@ public class RAMLFilesParser
 
     private boolean isValidRaml(String fileName, String content, ResourceLoader resourceLoader)
     {
-
-        RamlBuilder builder = new RamlBuilder();
-        Node raml = builder.build(content, resourceLoader, fileName);
-        List<ErrorNode> errors = raml.findDescendantsWith(ErrorNode.class);
+        List<String> errors = ParserV2Utils.validate(resourceLoader, fileName, content);
         if (!errors.isEmpty())
         {
-            log.info("File '" + fileName + "' is not a valid root RAML file. It contains some errors/warnings. See below: ");
-            int problemCount = 0;
-            for (ErrorNode error : errors)
+            if (errors.size() == 1 && ParserV2Utils.INVALID_HEADER.equals(errors.get(0)))
             {
-                log.info("ERROR " + (++problemCount) + ": " + error.getErrorMessage());
+                log.info("File '" + fileName + "' is not a root RAML file.");
+            }
+            else
+            {
+                log.info("File '" + fileName + "' is not a valid root RAML file. It contains some errors/warnings. See below: ");
+                int problemCount = 0;
+                for (String error : errors)
+                {
+                    log.info("ERROR " + (++problemCount) + ": " + error);
+                }
             }
             return false;
         }
+        log.info("File '" + fileName + "' is a VALID root RAML file.");
         return true;
     }
 
