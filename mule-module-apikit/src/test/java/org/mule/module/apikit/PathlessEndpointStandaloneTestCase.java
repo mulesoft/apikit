@@ -7,7 +7,6 @@
 package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 
@@ -138,7 +137,7 @@ public class PathlessEndpointStandaloneTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
                 .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + path)))
+                                       containsString("src=\"./?")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get(path + "/index.html");
     }

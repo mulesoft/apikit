@@ -7,7 +7,6 @@
 package org.mule.module.apikit.apifiles;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mule.module.apikit.AbstractConfiguration.APPLICATION_RAML;
 
@@ -58,7 +57,7 @@ public class ApiTestCase extends FunctionalAppDeployTestCase
     {
         given().header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(containsString("baseUri: http://localhost:" + port + "/api"), containsString("!include example.json"))
+                .response().body(containsString("baseUri: http://localhost:" + serverPort.getValue() + "/api"), containsString("!include example.json"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/api/?raml");
     }
@@ -67,7 +66,7 @@ public class ApiTestCase extends FunctionalAppDeployTestCase
     {
         given().header("Accept", "text/html")
                 .expect()
-                .response().body(containsString("src=\"http://localhost:" + port + "/api/?raml\""))
+                .response().body(containsString("src=\"api/?raml\""))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/");
     }

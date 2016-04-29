@@ -372,7 +372,8 @@
     if (exampleContainer.example) {
       return [{
         name: 'Example',
-        content: exampleContainer.example
+        content: (typeof exampleContainer.example === 'object') ?
+            JSON.stringify(exampleContainer.example) : exampleContainer.example
       }];
     } else if (exampleContainer.examples) {
       if (Array.isArray(exampleContainer.examples)) {
@@ -759,7 +760,7 @@
         };
 
         $scope.isCollapsible = function isCollapsible(property) {
-          return $scope.collapsible && !!(property.description || (property.example !== undefined) || property.properties || $scope.isSchema(property.type[0]));
+          return $scope.collapsible && !!(property.description || property.properties || $scope.isSchema(property.type[0]));
         };
 
         $scope.parameterDocumentation = function (parameter) {
@@ -924,42 +925,47 @@
           if (node.type) {
             node.type = Array.isArray(node.type) ? node.type : [node.type];
             node.type.forEach(function (aType) {
-              var isNative = RAML.Inspector.Types.isNativeType(aType);
+              if (typeof aType !== 'object') {
+                var isNative = RAML.Inspector.Types.isNativeType(aType);
 
-              if (isNative) {
-                $scope.isType = true;
-              } else {
-                var declaredType = RAML.Inspector.Types.findType(aType, $rootScope.types);
-                var declaredSchema = RAML.Inspector.Types.findSchema(aType, $rootScope.schemas);
-
-                if (declaredType) {
-                  var typeParts = declaredType.type[0].split('|');
-                  var firstType = RAML.Inspector.Types.cleanupTypeName(typeParts[0]);
-
-                  if (RAML.Inspector.Types.isNativeType(firstType) ||
-                      RAML.Inspector.Types.findType(firstType, $rootScope.types)) {
-                    $scope.isType = true;
-                  } else {
-                    $scope.isSchema = true;
-                    $scope.definition = declaredType.type[0];
-                  }
+                if (isNative) {
+                  $scope.isType = true;
                 } else {
-                  $scope.isSchema = true;
-                  if (declaredSchema) {
-                    if (declaredSchema.type) {
-                      $scope.definition = declaredSchema.type[0];
-                    } else {
-                      $scope.definition = declaredSchema;
-                    }
-                  } else {
-                    if (aType.indexOf('|') !== -1) {
-                      $scope.isSchema = false;
+                  var declaredType = RAML.Inspector.Types.findType(aType, $rootScope.types);
+                  var declaredSchema = RAML.Inspector.Types.findSchema(aType, $rootScope.schemas);
+
+                  if (declaredType) {
+                    var typeParts = declaredType.type[0].split('|');
+                    var firstType = RAML.Inspector.Types.cleanupTypeName(typeParts[0]);
+
+                    if (RAML.Inspector.Types.isNativeType(firstType) ||
+                        RAML.Inspector.Types.findType(firstType, $rootScope.types)) {
                       $scope.isType = true;
                     } else {
-                      $scope.definition = aType;
+                      $scope.isSchema = true;
+                      $scope.definition = declaredType.type[0];
+                    }
+                  } else {
+                    $scope.isSchema = true;
+                    if (declaredSchema) {
+                      if (declaredSchema.type) {
+                        $scope.definition = declaredSchema.type[0];
+                      } else {
+                        $scope.definition = declaredSchema;
+                      }
+                    } else {
+                      if (aType.indexOf('|') !== -1) {
+                        $scope.isSchema = false;
+                        $scope.isType = true;
+                      } else {
+                        $scope.definition = aType;
+                      }
                     }
                   }
                 }
+              } else {
+                $scope.isSchema = true;
+                $scope.definition = JSON.stringify(aType, null, 2);
               }
             });
           }
@@ -1169,6 +1175,7 @@
             return;
           }
           delete $scope.types;
+          delete $rootScope.types;
 
           inspectRaml(raml);
 
@@ -1221,9 +1228,11 @@
                 var usesSchemas = raml.uses[usesKey].schemas;
                 if (usesSchemas) {
                   usesSchemas.forEach(function (aSchema) {
-                    var tempSchema = {};
-                    tempSchema[usesKey + '.' + aSchema.key] = aSchema.value;
-                    result.push(tempSchema);
+                    Object.keys(aSchema).forEach(function (schemaKey) {
+                      var tempSchema = {};
+                      tempSchema[usesKey + '.' + schemaKey] = aSchema[schemaKey];
+                      result.push(tempSchema);
+                    });
                   });
                 }
               });
@@ -2660,8 +2669,20 @@
           }
         })
           .then(function (api) {
-            api = api.expand();
-            return api.toJSON();
+            var apiJSON;
+
+            api = api.expand ? api.expand() : api;
+            apiJSON = api.toJSON();
+            if (api.uses && api.uses()) {
+              apiJSON.uses = {};
+              api.uses().forEach(function (usesItem) {
+                var libraryAST = usesItem.ast();
+                libraryAST = libraryAST.expand ? libraryAST.expand() : libraryAST;
+                apiJSON.uses[usesItem.key()] = libraryAST.toJSON();
+              });
+            }
+
+            return apiJSON;
           })
         ;
 
@@ -4126,10 +4147,12 @@ RAML.Inspector = (function() {
     var resultingType = angular.copy(type);
     resultingType.type = resultingType.type || resultingType.schema;
     var properties = angular.copy(resultingType.properties || {});
+    var currentType = Array.isArray(resultingType.type) ?
+        resultingType.type[0] : resultingType.type;
 
     properties = convertProperties(resultingType);
 
-    if (!isNativeType(resultingType.type[0])) {
+    if (!isNativeType(currentType)) {
       resultingType.type.forEach(function (superType) {
         properties = getSuperTypesProperties(properties, superType, types);
       });
@@ -6512,7 +6535,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        <span class=\"raml-console-resource-param-instructional\" ng-repeat=\"typeName in type.type\">\n" +
     "          <span ng-if=\"isNativeType(typeName)\">{{typeName}}</span>\n" +
     "          <span ng-if=\"isSchema(typeName)\">Schema</span>\n" +
-    "          <span ng-if=\"!isNativeType(typeName) && !isSchema(typeName)\" style=\"position: relative;\">\n" +
+    "          <span ng-if=\"!isNativeType(typeName) && !isSchema(typeName)\">\n" +
     "            <type type-name=\"typeName\" hide-type-links=\"hideTypeLinks\"></type>\n" +
     "          </span>\n" +
     "        </span>\n" +

@@ -7,7 +7,6 @@
 package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -64,7 +63,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
                 .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + "/default/\"")))
+                                       containsString("src=\"./?\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/default/console/");
     }
@@ -109,7 +108,7 @@ public class ConfigurationTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
                 .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + "/custom/\"")))
+                                       containsString("src=\"./?\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/custom/custom/");
     }

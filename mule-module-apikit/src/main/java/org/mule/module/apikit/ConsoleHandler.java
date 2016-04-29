@@ -7,8 +7,6 @@
 
 package org.mule.module.apikit;
 
-import static org.mule.module.apikit.UrlUtils.getBaseSchemeHostPort;
-
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
@@ -30,8 +28,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,18 +42,21 @@ public class ConsoleHandler implements MessageProcessor
     public static final String MIME_TYPE_SVG = "image/svg+xml";
     public static final String MIME_TYPE_CSS = "text/css";
     private static final String RESOURCE_BASE = System.getProperty("apikit.console.old") != null ? "/console" : "/console2";
+    private static final String CONSOLE_ELEMENT = "<raml-console-loader";
+    private static final String CONSOLE_ELEMENT_OLD = "<raml-console";
+    private static final String CONSOLE_ATTRIBUTES = "options=\"{disableRamlClientGenerator: true, disableThemeSwitcher: true}\"";
+    private static final String CONSOLE_ATTRIBUTES_OLD = "disable-raml-client-generator=\"\" disable-theme-switcher=\"\"";
+    private static final String CONSOLE_ATTRIBUTES_PLACEHOLDER = "console-attributes-placeholder";
     private static final String API_RESOURCES_PATH = "/api/";
     private static final String RAML_QUERY_STRING = "raml";
 
-    private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
-    private String consolePath;
-    private String baseSchemeHostPort;
+    private String cachedIndexHtml;
+    private String embeddedConsolePath;
     private boolean standalone;
     private AbstractConfiguration configuration;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private String consoleBaseUri;
-    private String ramlUri;
 
     public ConsoleHandler(String consoleBaseUri, AbstractConfiguration configuration)
     {
@@ -65,34 +64,40 @@ public class ConsoleHandler implements MessageProcessor
         standalone = true;
     }
 
-    public ConsoleHandler(String consoleBaseUri, String consolePath, AbstractConfiguration configuration)
+    public ConsoleHandler(String consoleBaseUri, String embeddedConsolePath, AbstractConfiguration configuration)
     {
         this.configuration = configuration;
-        this.consolePath = sanitize(consolePath);
+        this.embeddedConsolePath = sanitize(embeddedConsolePath);
         this.consoleBaseUri = consoleBaseUri;
     }
 
     public void updateRamlUri()
     {
+        String consoleElement = CONSOLE_ELEMENT;
+        String consoleAttributes = CONSOLE_ATTRIBUTES;
+        if (isOldConsole())
+        {
+            consoleElement = CONSOLE_ELEMENT_OLD;
+            consoleAttributes = CONSOLE_ATTRIBUTES_OLD;
+        }
         String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
-        this.ramlUri = calculateRamlUri(consoleBaseUri);
-        String baseHomePage = indexHtml.replaceFirst("<raml-console-loader src=\"[^\"]+\"",
-                                                     "<raml-console-loader src=\"" + this.ramlUri + "\"");
-        baseSchemeHostPort = getBaseSchemeHostPort(this.ramlUri);
-        homePage.put(baseSchemeHostPort, baseHomePage);
+        indexHtml = indexHtml.replaceFirst(consoleElement + " src=\"[^\"]+\"",
+                                           consoleElement + " src=\"" + getRelativeRamlUri() + "\"");
+        cachedIndexHtml = indexHtml.replaceFirst(CONSOLE_ATTRIBUTES_PLACEHOLDER, consoleAttributes);
     }
 
-    private String calculateRamlUri(String consoleBaseUri)
+    private boolean isOldConsole()
+    {
+        return RESOURCE_BASE.equals("/console");
+    }
+
+    private String getRelativeRamlUri()
     {
         if (configuration.isParserV2())
         {
-            if (consoleBaseUri.endsWith("/"))
-            {
-                consoleBaseUri = consoleBaseUri.substring(0, consoleBaseUri.length() - 1);
-            }
-            return consoleBaseUri + consolePath + API_RESOURCES_PATH + "?" + RAML_QUERY_STRING;
+            return API_RESOURCES_PATH.substring(1) + "?" + RAML_QUERY_STRING;
         }
-        return consoleBaseUri.endsWith("/") ? consoleBaseUri : consoleBaseUri + "/";
+        return "./?";
     }
 
     private String sanitize(String consolePath)
@@ -123,7 +128,7 @@ public class ConsoleHandler implements MessageProcessor
         InputStream in = null;
         try
         {
-            if (path.equals(consolePath) && !(contextPath.endsWith("/") && standalone))
+            if (path.equals(embeddedConsolePath) && !(contextPath.endsWith("/") && standalone))
             {
                 // client redirect
                 event.getMessage().setOutboundProperty(HttpConnector.HTTP_STATUS_PROPERTY,
@@ -139,29 +144,29 @@ public class ConsoleHandler implements MessageProcessor
                 event.getMessage().setOutboundProperty(HttpConstants.HEADER_LOCATION, redirectLocation);
                 return event;
             }
-            if (path.equals(consolePath) || path.equals(consolePath + "/") || path.equals(consolePath + "/index.html"))
+            if (path.equals(embeddedConsolePath) || path.equals(embeddedConsolePath + "/") || path.equals(embeddedConsolePath + "/index.html"))
             {
                 path = RESOURCE_BASE + "/index.html";
-                in = new ByteArrayInputStream(getHomePage(getBaseSchemeHostPort(event)).getBytes());
+                in = new ByteArrayInputStream(cachedIndexHtml.getBytes());
             }
-            else if (path.startsWith(consolePath + API_RESOURCES_PATH))
+            else if (path.startsWith(embeddedConsolePath + API_RESOURCES_PATH))
             {
                 // check for root raml
-                if (path.equals(consolePath + API_RESOURCES_PATH) && queryString.equals(RAML_QUERY_STRING))
+                if (path.equals(embeddedConsolePath + API_RESOURCES_PATH) && queryString.equals(RAML_QUERY_STRING))
                 {
                     path += ".raml"; // to set raml mime type
-                    in = new ByteArrayInputStream(configuration.getApikitRaml(event).getBytes());
+                    in = new ByteArrayInputStream(configuration.getApikitRamlConsole(event).getBytes());
                 }
                 else
                 {
-                    String resourcePath = API_RESOURCES_PATH + path.substring((consolePath + API_RESOURCES_PATH).length());
+                    String resourcePath = API_RESOURCES_PATH + path.substring((embeddedConsolePath + API_RESOURCES_PATH).length());
                     File apiResource = new File(configuration.getAppHome(), resourcePath);
                     in = new FileInputStream(apiResource);
                 }
             }
-            else if (path.startsWith(consolePath))
+            else if (path.startsWith(embeddedConsolePath))
             {
-                in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(consolePath.length()));
+                in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
             }
             if (in == null)
             {
@@ -195,22 +200,6 @@ public class ConsoleHandler implements MessageProcessor
         }
 
         return resultEvent;
-    }
-
-    private String getHomePage(String schemeHostPort)
-    {
-        if (schemeHostPort == null)
-        {
-            return homePage.get(baseSchemeHostPort);
-        }
-
-        String page = homePage.get(schemeHostPort);
-        if (page == null)
-        {
-            page = homePage.get(baseSchemeHostPort).replace(baseSchemeHostPort, schemeHostPort);
-            homePage.put(schemeHostPort, page);
-        }
-        return page;
     }
 
     private String getMimeType(String path)
@@ -249,12 +238,8 @@ public class ConsoleHandler implements MessageProcessor
 
     public String getConsoleUrl()
     {
-        String path = "";
-        if (consolePath.startsWith("/"))
-        {
-            path = consolePath.substring(1, consolePath.length());
-        }
-        return consoleBaseUri + path;
+        String url = consoleBaseUri.endsWith("/") ? consoleBaseUri.substring(0, consoleBaseUri.length() - 1) : consoleBaseUri;
+        return url + embeddedConsolePath;
     }
 
 }
