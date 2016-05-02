@@ -250,7 +250,7 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
             }
         }
 
-        if (!config.isDisableValidations() && !config.isParserV2()) //TODO implement validations for parser v2
+        if (!config.isDisableValidations())
         {
             for (Map.Entry<String, IParameter> entry : resource.getResolvedUriParameters().entrySet())
             {

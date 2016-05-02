@@ -35,36 +35,50 @@ public class ParserV2Utils
 
     public static IRaml build(ResourceLoader resourceLoader, String ramlPath)
     {
-        InputStream contentStream = resourceLoader.fetchResource(ramlPath);
-        if (contentStream != null)
-        {
-            String contentString = StreamUtils.toString(contentStream);
-            return build(resourceLoader, ramlPath, contentString);
-        }
-        throw new RuntimeException("Invalid RAML descriptor.");
+        return build(resourceLoader, ramlPath, readContent(resourceLoader, ramlPath));
     }
 
     public static IRaml build(ResourceLoader resourceLoader, String ramlPath, String content)
     {
         try
         {
-            RamlHeader header = RamlHeader.parse(content);
-            RamlBuilder builder = new RamlBuilder();
-            RamlDocumentNode ramlNode = (RamlDocumentNode) builder.build(content, resourceLoader, ramlPath);
-            if (header.getVersion() == RamlVersion.RAML_10)
-            {
-                org.raml.v2.model.v10.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.model.v10.api.Api.class, ramlNode);
-                return new RamlImpl10V2(ramlV2);
-            }
-            else
-            {
-                org.raml.v2.model.v08.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.model.v08.api.Api.class, ramlNode);
-                return new RamlImpl08V2(ramlV2);
-            }
+            RamlHeader.parse(content);
+            RamlDocumentNode ramlNode = buildTree(resourceLoader, ramlPath, content);
+            return wrapTree(ramlNode);
         }
         catch (RamlHeader.InvalidHeaderException e)
         {
             throw new RuntimeException("Invalid RAML descriptor.");
+        }
+    }
+
+    private static String readContent(ResourceLoader resourceLoader, String ramlPath)
+    {
+        InputStream contentStream = resourceLoader.fetchResource(ramlPath);
+        if (contentStream != null)
+        {
+            return StreamUtils.toString(contentStream);
+        }
+        throw new RuntimeException("Invalid RAML descriptor.");
+    }
+
+    private static RamlDocumentNode buildTree(ResourceLoader resourceLoader, String ramlPath, String content)
+    {
+        RamlBuilder builder = new RamlBuilder();
+        return (RamlDocumentNode) builder.build(content, resourceLoader, ramlPath);
+    }
+
+    private static IRaml wrapTree(RamlDocumentNode ramlNode)
+    {
+        if (ramlNode.getVersion() == RamlVersion.RAML_10)
+        {
+            org.raml.v2.model.v10.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.model.v10.api.Api.class, ramlNode);
+            return new RamlImpl10V2(ramlV2);
+        }
+        else
+        {
+            org.raml.v2.model.v08.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.model.v08.api.Api.class, ramlNode);
+            return new RamlImpl08V2(ramlV2);
         }
     }
 

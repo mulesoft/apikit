@@ -14,6 +14,7 @@ import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,13 +74,18 @@ public class ActionImpl implements IAction
     }
 
     @Override
-    public Map<String, List<IParameter>> getBaseUriParameters()
+    public Map<String, IParameter> getQueryParameters()
     {
-        throw new UnsupportedOperationException();
+        Map<String, IParameter> result = new HashMap<>();
+        for (TypeDeclaration typeDeclaration : method.queryParameters())
+        {
+            result.put(typeDeclaration.name(), new ParameterImpl(typeDeclaration));
+        }
+        return result;
     }
 
     @Override
-    public Map<String, IParameter> getQueryParameters()
+    public Map<String, List<IParameter>> getBaseUriParameters()
     {
         throw new UnsupportedOperationException();
     }
@@ -87,7 +93,12 @@ public class ActionImpl implements IAction
     @Override
     public Map<String, IParameter> getHeaders()
     {
-        throw new UnsupportedOperationException();
+        Map<String, IParameter> result = new HashMap<>();
+        for (TypeDeclaration typeDeclaration : method.headers())
+        {
+            result.put(typeDeclaration.name(), new ParameterImpl(typeDeclaration));
+        }
+        return result;
     }
 
     @Override

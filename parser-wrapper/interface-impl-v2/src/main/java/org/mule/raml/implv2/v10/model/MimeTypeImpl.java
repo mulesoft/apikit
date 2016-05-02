@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.raml.v2.model.common.ValidationResult;
 import org.raml.v2.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.model.v10.datamodel.TypeDeclaration;
 
@@ -72,6 +73,11 @@ public class MimeTypeImpl implements IMimeType
     {
         // no longer supported in RAML 1.0
         return new HashMap<>();
+    }
+
+    public List<ValidationResult> validate(String payload)
+    {
+        return typeDeclaration.validate(payload);
     }
 
     @Override

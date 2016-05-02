@@ -34,9 +34,6 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <apikit:config name="leaguesApi" raml="org/mule/module/apikit/leagues/leagues.yaml" consoleEnabled="true"
-                   consolePath="console"/>
-
     <flow name="get:/leagues">
         <set-payload value="#[registry:list-of-leagues]"/>
     </flow>

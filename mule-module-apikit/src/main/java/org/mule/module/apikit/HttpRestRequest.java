@@ -15,6 +15,7 @@ import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
+import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.TransformerException;
 import org.mule.api.transport.PropertyScope;
 import org.mule.message.ds.StringDataSource;
@@ -35,11 +36,14 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
 
 import com.google.common.net.MediaType;
 
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,6 +53,8 @@ import java.util.Map;
 
 import javax.activation.DataHandler;
 
+import org.raml.v2.model.common.ValidationResult;
+import org.raml.v2.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +110,7 @@ public class HttpRestRequest
     public MuleEvent validate(IAction action) throws MuleException
     {
         this.action = action;
-        if (!config.isDisableValidations() && !config.isParserV2()) //TODO implement validations for parser v2
+        if (!config.isDisableValidations())
         {
             processQueryParameters();
             processHeaders();
@@ -282,7 +288,7 @@ public class HttpRestRequest
             if (mimeTypeName.equals(requestMimeTypeName))
             {
                 found = true;
-                if (!config.isDisableValidations() && !config.isParserV2()) //TODO implement validations for parser v2
+                if (!config.isDisableValidations())
                 {
                     valideateBody(mimeTypeName);
                 }
@@ -307,7 +313,14 @@ public class HttpRestRequest
             (mimeTypeName.contains("xml") ||
              mimeTypeName.contains("json")))
         {
-            validateSchema(mimeTypeName);
+            if (config.isParserV2())
+            {
+                validateSchemaV2(actionMimeType);
+            }
+            else
+            {
+                validateSchema(mimeTypeName);
+            }
         }
         else if (actionMimeType.getFormParameters() != null &&
                  mimeTypeName.contains("multipart/form-data"))
@@ -402,6 +415,61 @@ public class HttpRestRequest
                 }
             }
         }
+    }
+
+    private void validateSchemaV2(IMimeType mimeType) throws BadRequestException
+    {
+        String payload = getPayloadAsString(requestEvent.getMessage());
+        List<ValidationResult> validationResults;
+        if (mimeType instanceof org.mule.raml.implv2.v10.model.MimeTypeImpl)
+        {
+            validationResults = ((org.mule.raml.implv2.v10.model.MimeTypeImpl) mimeType).validate(payload);
+        }
+        else
+        {
+            // TODO implement for 08
+            // List<ValidationResult> validationResults = ((org.mule.raml.implv2.v08.model.MimeTypeImpl) mimeType).validate(payload);
+            throw new RuntimeException("not supported");
+
+        }
+        if (!validationResults.isEmpty())
+        {
+            String message = validationResults.get(0).getMessage();
+            logger.info("Schema validation failed: " + message);
+            throw new BadRequestException(message);
+        }
+    }
+
+    private String getPayloadAsString(MuleMessage message) throws BadRequestException
+    {
+        Object input = message.getPayload();
+        if (input instanceof InputStream)
+        {
+            input = StreamUtils.toString((InputStream) input);
+            logger.debug("transforming payload to perform Schema validation");
+            DataType<String> dataType = DataTypeFactory.create(String.class, message.getDataType().getMimeType());
+            message.setPayload(input, dataType);
+        }
+        else if (input instanceof byte[])
+        {
+            try
+            {
+                input = new String((byte[]) input, StreamUtils.detectEncoding((byte[]) input));
+            }
+            catch (UnsupportedEncodingException e)
+            {
+                throw new BadRequestException("Unsupported payload encoding: " + e.getMessage());
+            }
+        }
+        else if (input instanceof String)
+        {
+            // already in the right format
+        }
+        else
+        {
+            throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
+        }
+        return (String) input;
     }
 
     private void validateSchema(String mimeTypeName) throws MuleRestException

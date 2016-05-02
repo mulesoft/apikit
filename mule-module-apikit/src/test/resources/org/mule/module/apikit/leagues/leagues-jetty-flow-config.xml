@@ -14,6 +14,9 @@
 
     <cors:config name="defaultConfig"/>
 
+    <apikit:config name="leaguesApi" raml="org/mule/module/apikit/leagues/leagues.yaml" consoleEnabled="true"
+                   consolePath="console"/>
+
     <flow name="doorway">
         <jetty:inbound-endpoint address="http://localhost:${serverPort}/api" exchange-pattern="request-response"/>
         <cors:validate publicResource="true" config-ref="defaultConfig" />
