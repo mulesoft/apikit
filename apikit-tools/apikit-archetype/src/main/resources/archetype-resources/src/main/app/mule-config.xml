@@ -13,8 +13,10 @@
 
 #set ($muleVersion = $muleVersion.toUpperCase())
 #set ($muleVersion = $muleVersion.replace(".",""))
-#set ($muleVersion = $muleVersion.replace("-",""))
-#set ($muleVersion = $muleVersion.replace("SNAPSHOT",""))
+#set ($max = $muleVersion.indexOf("-"))
+#if ($max > -1)
+#set ($muleVersion = $muleVersion.substring(0, $max))
+#end
 #set ($listenerVersion = "360")
 #set ($useSharedHttpListener = !($sharedHttpListener.isEmpty() || $sharedHttpListener.equals("empty")))
 #set ($Integer = 0)
