@@ -16,8 +16,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.raml.v2.model.v08.methods.Method;
-import org.raml.v2.model.v08.resources.Resource;
+import org.raml.v2.api.model.v08.methods.Method;
+import org.raml.v2.api.model.v08.resources.Resource;
 
 public class ResourceImpl implements IResource
 {

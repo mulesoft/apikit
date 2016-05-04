@@ -13,8 +13,8 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.raml.v2.model.v08.bodies.BodyLike;
-import org.raml.v2.model.v08.bodies.Response;
+import org.raml.v2.api.model.v08.bodies.BodyLike;
+import org.raml.v2.api.model.v08.bodies.Response;
 
 public class ResponseImpl implements IResponse
 {

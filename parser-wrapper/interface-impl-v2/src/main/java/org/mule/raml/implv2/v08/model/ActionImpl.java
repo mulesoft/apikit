@@ -18,9 +18,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.raml.v2.model.v08.bodies.BodyLike;
-import org.raml.v2.model.v08.bodies.Response;
-import org.raml.v2.model.v08.methods.Method;
+import org.raml.v2.api.model.v08.bodies.BodyLike;
+import org.raml.v2.api.model.v08.bodies.Response;
+import org.raml.v2.api.model.v08.methods.Method;
 
 public class ActionImpl implements IAction
 {

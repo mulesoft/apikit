@@ -72,12 +72,12 @@ public class ParserV2Utils
     {
         if (ramlNode.getVersion() == RamlVersion.RAML_10)
         {
-            org.raml.v2.model.v10.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.model.v10.api.Api.class, ramlNode);
+            org.raml.v2.api.model.v10.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.api.model.v10.api.Api.class, ramlNode);
             return new RamlImpl10V2(ramlV2);
         }
         else
         {
-            org.raml.v2.model.v08.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.model.v08.api.Api.class, ramlNode);
+            org.raml.v2.api.model.v08.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.api.model.v08.api.Api.class, ramlNode);
             return new RamlImpl08V2(ramlV2);
         }
     }

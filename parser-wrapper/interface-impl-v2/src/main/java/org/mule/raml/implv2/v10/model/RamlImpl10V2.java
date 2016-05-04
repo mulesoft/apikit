@@ -17,9 +17,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.raml.v2.model.v10.api.Api;
-import org.raml.v2.model.v10.datamodel.TypeDeclaration;
-import org.raml.v2.model.v10.resources.Resource;
+import org.raml.v2.api.model.v10.api.Api;
+import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
+import org.raml.v2.api.model.v10.resources.Resource;
 
 public class RamlImpl10V2 implements IRaml
 {

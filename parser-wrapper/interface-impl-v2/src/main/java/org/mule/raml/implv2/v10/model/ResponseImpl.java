@@ -11,11 +11,10 @@ import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.raml.v2.model.v10.bodies.Response;
-import org.raml.v2.model.v10.datamodel.TypeDeclaration;
+import org.raml.v2.api.model.v10.bodies.Response;
+import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 
 public class ResponseImpl implements IResponse
 {

@@ -8,7 +8,7 @@ package org.mule.raml.implv2.v08.model;
 
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
-import org.raml.v2.model.v08.parameters.Parameter;
+import org.raml.v2.api.model.v08.parameters.Parameter;
 
 public class ParameterImpl implements IParameter
 {

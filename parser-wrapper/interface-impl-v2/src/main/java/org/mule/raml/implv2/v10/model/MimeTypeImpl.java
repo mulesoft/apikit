@@ -13,9 +13,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.raml.v2.model.common.ValidationResult;
-import org.raml.v2.model.v10.datamodel.ExampleSpec;
-import org.raml.v2.model.v10.datamodel.TypeDeclaration;
+import org.raml.v2.api.model.common.ValidationResult;
+import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
+import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 
 public class MimeTypeImpl implements IMimeType
 {
