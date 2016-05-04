@@ -1,3 +1,26 @@
-#%RAML 0.8
+#set ($muleVersion = $muleVersion.toUpperCase())
+#set ($muleVersion = $muleVersion.replace(".",""))
+#set ($muleVersion = $muleVersion.replace("-",""))
+#set ($muleVersion = $muleVersion.replace("SNAPSHOT",""))
+#set ($listenerVersion = "360")
+#set ($Integer = 0)
+#set ($zeros = "0")
+#set ($repeated = $muleVersion.length() - $listenerVersion.length() )
+#if ($repeated >0)
+#set ($zeros = $zeros.repeat($repeated))
+#set ($listenerVersion = $listenerVersion.concat($zeros))
+#end
+#set ($repeated = $listenerVersion.length() - $muleVersion.length())
+#if ($repeated >0)
+#set ($zeros = "0")
+#set ($zeros = $zeros.repeat($repeated))
+#set ($muleVersion = $muleVersion.concat($zeros))
+#end
+#set( $H = '#' )
+#if( $Integer.parseInt($muleVersion)>= 380 )
+$H%RAML 1.0
+#else
+$H%RAML 0.8
+#end
 title: Sample API
 
