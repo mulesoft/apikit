@@ -14,8 +14,8 @@ import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
 
 import org.junit.Test;
-import org.raml.v2.loader.DefaultResourceLoader;
-import org.raml.v2.loader.ResourceLoader;
+import org.raml.v2.api.loader.DefaultResourceLoader;
+import org.raml.v2.api.loader.ResourceLoader;
 
 public class InterfaceV10TestCase
 {

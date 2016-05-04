@@ -27,10 +27,10 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.raml.v2.loader.CompositeResourceLoader;
-import org.raml.v2.loader.DefaultResourceLoader;
-import org.raml.v2.loader.FileResourceLoader;
-import org.raml.v2.loader.ResourceLoader;
+import org.raml.v2.api.loader.CompositeResourceLoader;
+import org.raml.v2.api.loader.DefaultResourceLoader;
+import org.raml.v2.api.loader.FileResourceLoader;
+import org.raml.v2.api.loader.ResourceLoader;
 
 public class RAMLFilesParser
 {

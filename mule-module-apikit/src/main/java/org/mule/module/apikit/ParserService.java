@@ -14,11 +14,11 @@ import org.mule.raml.interfaces.model.IRaml;
 
 import java.io.InputStream;
 
-import org.raml.v2.loader.CompositeResourceLoader;
-import org.raml.v2.loader.DefaultResourceLoader;
-import org.raml.v2.loader.FileResourceLoader;
-import org.raml.v2.loader.ResourceLoader;
-import org.raml.v2.utils.StreamUtils;
+import org.raml.v2.api.loader.CompositeResourceLoader;
+import org.raml.v2.api.loader.DefaultResourceLoader;
+import org.raml.v2.api.loader.FileResourceLoader;
+import org.raml.v2.api.loader.ResourceLoader;
+import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

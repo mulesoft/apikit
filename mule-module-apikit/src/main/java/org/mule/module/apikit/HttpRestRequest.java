@@ -54,7 +54,7 @@ import java.util.Map;
 import javax.activation.DataHandler;
 
 import org.raml.v2.api.model.common.ValidationResult;
-import org.raml.v2.utils.StreamUtils;
+import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

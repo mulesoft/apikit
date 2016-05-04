@@ -6,8 +6,8 @@
  */
 package org.mule.raml.implv2;
 
-import static org.raml.v2.impl.commons.RamlVersion.RAML_08;
-import static org.raml.v2.impl.commons.RamlVersion.RAML_10;
+import static org.raml.v2.internal.impl.commons.RamlVersion.RAML_08;
+import static org.raml.v2.internal.impl.commons.RamlVersion.RAML_10;
 
 import org.mule.raml.implv2.v08.model.RamlImpl08V2;
 import org.mule.raml.implv2.v10.model.RamlImpl10V2;
@@ -17,16 +17,16 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.raml.v2.RamlBuilder;
-import org.raml.v2.impl.commons.RamlHeader;
-import org.raml.v2.impl.commons.RamlVersion;
-import org.raml.v2.impl.commons.model.builder.ModelBuilder;
-import org.raml.v2.impl.commons.nodes.RamlDocumentNode;
-import org.raml.v2.impl.v10.RamlFragment;
-import org.raml.v2.loader.ResourceLoader;
-import org.raml.v2.nodes.ErrorNode;
-import org.raml.v2.nodes.Node;
-import org.raml.v2.utils.StreamUtils;
+import org.raml.v2.internal.impl.RamlBuilder;
+import org.raml.v2.internal.impl.commons.RamlHeader;
+import org.raml.v2.internal.impl.commons.RamlVersion;
+import org.raml.v2.internal.impl.commons.model.builder.ModelBuilder;
+import org.raml.v2.internal.impl.commons.nodes.RamlDocumentNode;
+import org.raml.v2.internal.impl.v10.RamlFragment;
+import org.raml.v2.api.loader.ResourceLoader;
+import org.raml.v2.internal.framework.nodes.ErrorNode;
+import org.raml.v2.internal.framework.nodes.Node;
+import org.raml.v2.internal.utils.StreamUtils;
 
 public class ParserV2Utils
 {
