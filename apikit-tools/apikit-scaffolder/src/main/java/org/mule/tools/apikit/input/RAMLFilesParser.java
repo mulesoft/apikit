@@ -94,7 +94,7 @@ public class RAMLFilesParser
         List<String> errors = ParserV2Utils.validate(resourceLoader, fileName, content);
         if (!errors.isEmpty())
         {
-            if (errors.size() == 1 && ParserV2Utils.INVALID_HEADER.equals(errors.get(0)))
+            if (errors.size() == 1 && errors.get(0).toLowerCase().contains("root"))
             {
                 log.info("File '" + fileName + "' is not a root RAML file.");
             }

@@ -6,108 +6,60 @@
  */
 package org.mule.raml.implv2;
 
-import static org.raml.v2.internal.impl.commons.RamlVersion.RAML_08;
-import static org.raml.v2.internal.impl.commons.RamlVersion.RAML_10;
-
 import org.mule.raml.implv2.v08.model.RamlImpl08V2;
 import org.mule.raml.implv2.v10.model.RamlImpl10V2;
 import org.mule.raml.interfaces.model.IRaml;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.raml.v2.internal.impl.RamlBuilder;
-import org.raml.v2.internal.impl.commons.RamlHeader;
-import org.raml.v2.internal.impl.commons.RamlVersion;
-import org.raml.v2.internal.impl.commons.model.builder.ModelBuilder;
-import org.raml.v2.internal.impl.commons.nodes.RamlDocumentNode;
-import org.raml.v2.internal.impl.v10.RamlFragment;
+import org.raml.v2.api.RamlApiBuilder;
+import org.raml.v2.api.RamlApiResult;
 import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.v2.internal.framework.nodes.ErrorNode;
-import org.raml.v2.internal.framework.nodes.Node;
-import org.raml.v2.internal.utils.StreamUtils;
+import org.raml.v2.api.model.common.ValidationResult;
 
 public class ParserV2Utils
 {
 
-    public static final String INVALID_HEADER = "Invalid RAML header. Is not one of \"#%RAML 0.8\" or \"#%RAML 1.0\"";
-
     public static IRaml build(ResourceLoader resourceLoader, String ramlPath)
     {
-        return build(resourceLoader, ramlPath, readContent(resourceLoader, ramlPath));
+        RamlApiResult ramlApiResult = new RamlApiBuilder(resourceLoader).buildApi(ramlPath);
+        return wrapApiModel(ramlApiResult);
     }
 
     public static IRaml build(ResourceLoader resourceLoader, String ramlPath, String content)
     {
-        try
-        {
-            RamlHeader.parse(content);
-            RamlDocumentNode ramlNode = buildTree(resourceLoader, ramlPath, content);
-            return wrapTree(ramlNode);
-        }
-        catch (RamlHeader.InvalidHeaderException e)
+        RamlApiResult ramlApiResult = new RamlApiBuilder(resourceLoader).buildApi(content, ramlPath);
+        return wrapApiModel(ramlApiResult);
+    }
+
+    private static IRaml wrapApiModel(RamlApiResult ramlApiResult)
+    {
+        if (ramlApiResult.hasErrors())
         {
             throw new RuntimeException("Invalid RAML descriptor.");
         }
-    }
-
-    private static String readContent(ResourceLoader resourceLoader, String ramlPath)
-    {
-        InputStream contentStream = resourceLoader.fetchResource(ramlPath);
-        if (contentStream != null)
+        if (ramlApiResult.isVersion08())
         {
-            return StreamUtils.toString(contentStream);
+            return new RamlImpl08V2(ramlApiResult.getApiV08());
         }
-        throw new RuntimeException("Invalid RAML descriptor.");
-    }
-
-    private static RamlDocumentNode buildTree(ResourceLoader resourceLoader, String ramlPath, String content)
-    {
-        RamlBuilder builder = new RamlBuilder();
-        return (RamlDocumentNode) builder.build(content, resourceLoader, ramlPath);
-    }
-
-    private static IRaml wrapTree(RamlDocumentNode ramlNode)
-    {
-        if (ramlNode.getVersion() == RamlVersion.RAML_10)
-        {
-            org.raml.v2.api.model.v10.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.api.model.v10.api.Api.class, ramlNode);
-            return new RamlImpl10V2(ramlV2);
-        }
-        else
-        {
-            org.raml.v2.api.model.v08.api.Api ramlV2 = ModelBuilder.createRaml(org.raml.v2.api.model.v08.api.Api.class, ramlNode);
-            return new RamlImpl08V2(ramlV2);
-        }
+        return new RamlImpl10V2(ramlApiResult.getApiV10());
     }
 
     public static List<String> validate(ResourceLoader resourceLoader, String ramlPath, String content)
     {
         List<String> result = new ArrayList<>();
-        try
+
+        RamlApiResult ramlApiResult = new RamlApiBuilder(resourceLoader).buildApi(content, ramlPath);
+        for (ValidationResult validationResult : ramlApiResult.getValidationResults())
         {
-            RamlHeader header = RamlHeader.parse(content);
-            if (header.getVersion() == RAML_08 || (header.getVersion() == RAML_10 && header.getFragment() == RamlFragment.Default))
-            {
-                RamlBuilder builder = new RamlBuilder();
-                Node node = builder.build(content, resourceLoader, ramlPath);
-                List<ErrorNode> descendantsWith = node.findDescendantsWith(ErrorNode.class);
-                for (ErrorNode errorNode : descendantsWith)
-                {
-                    result.add(errorNode.getErrorMessage());
-                }
-            }
-            else
-            {
-                result.add(INVALID_HEADER);
-            }
-        }
-        catch (RamlHeader.InvalidHeaderException e)
-        {
-            result.add(INVALID_HEADER);
+            result.add(validationResult.toString());
         }
         return result;
     }
 
+    public static List<String> validate(ResourceLoader resourceLoader, String ramlPath)
+    {
+        return validate(resourceLoader, ramlPath, null);
+    }
 }

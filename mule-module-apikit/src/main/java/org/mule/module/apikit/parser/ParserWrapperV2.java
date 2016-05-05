@@ -16,14 +16,10 @@ import org.mule.raml.interfaces.model.IRaml;
 import java.io.InputStream;
 import java.util.List;
 
-import org.raml.v2.internal.impl.RamlBuilder;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.FileResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.v2.internal.framework.nodes.ErrorNode;
-import org.raml.v2.internal.framework.nodes.Node;
-import org.raml.v2.internal.framework.nodes.Position;
 import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,52 +48,17 @@ public class ParserWrapperV2 implements ParserWrapper
     @Override
     public void validate()
     {
-        String errorMessage = null;
-        InputStream content = resourceLoader.fetchResource(ramlPath);
-        if (content != null)
+        List<String> errors = ParserV2Utils.validate(resourceLoader, ramlPath);
+        if (!errors.isEmpty())
         {
-            RamlBuilder builder = new RamlBuilder();
-            Node raml = builder.build(StreamUtils.reader(content), resourceLoader, ramlPath);
-            List<ErrorNode> errors = raml.findDescendantsWith(ErrorNode.class);
-            if (!errors.isEmpty())
+            StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
+            message.append(errors.size()).append("\n\n");
+            for (String error : errors)
             {
-                errorMessage = errorSummary(errors);
+                message.append(error).append("\n");
             }
+            throw new ApikitRuntimeException(message.toString());
         }
-        else
-        {
-            errorMessage = "Raml resource not found ";
-        }
-        if (errorMessage != null)
-        {
-            throw new ApikitRuntimeException(errorMessage);
-        }
-    }
-
-    private String errorSummary(List<ErrorNode> errors)
-    {
-        StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
-        message.append(errors.size()).append("\n\n");
-        for (ErrorNode error : errors)
-        {
-            message.append(error.getErrorMessage()).append(" -- file: ");
-            Position startPosition = error.getStartPosition();
-            if (startPosition.getResource() != null)
-            {
-                message.append(startPosition.getResource());
-            }
-            else
-            {
-                message.append(ramlPath);
-            }
-            if (startPosition.getLine() >= 0)
-            {
-                message.append(" -- line ");
-                message.append(startPosition.getLine());
-            }
-            message.append("\n");
-        }
-        return message.toString();
     }
 
     @Override
@@ -109,7 +70,12 @@ public class ParserWrapperV2 implements ParserWrapper
     @Override
     public String dump(IRaml api, String oldSchemeHostPort, String newSchemeHostPort)
     {
-        String dump = StreamUtils.toString(resourceLoader.fetchResource(ramlPath));
+        InputStream stream = resourceLoader.fetchResource(ramlPath);
+        if (stream == null)
+        {
+            throw new ApikitRuntimeException("Invalid RAML descriptor");
+        }
+        String dump = StreamUtils.toString(stream);
         dump = UrlUtils.rewriteBaseUri(dump, newSchemeHostPort);
         return dump;
     }
