@@ -167,11 +167,11 @@
         });
 
         function beautify(body, contentType) {
-          if(contentType.indexOf('json')) {
+          if(contentType.indexOf('json') !== -1) {
             body = vkbeautify.json(body, 2);
           }
 
-          if(contentType.indexOf('xml')) {
+          if(contentType.indexOf('xml') !== -1) {
             body = vkbeautify.xml(body, 2);
           }
 
@@ -182,7 +182,7 @@
           var result = value;
 
           try {
-            beautify(value, $scope.currentBodySelected);
+            result = beautify(value, $scope.currentBodySelected);
           }
           catch (e) { }
 
@@ -440,6 +440,29 @@
           $scope.context.queryParameters.reset($scope.methodInfo.queryParameters);
           $scope.context.headers.reset($scope.methodInfo.headers.plain);
 
+          function beautify(body, contentType) {
+            if(contentType.indexOf('json') !== -1) {
+              body = vkbeautify.json(body, 2);
+            }
+
+            if(contentType.indexOf('xml') !== -1) {
+              body = vkbeautify.xml(body, 2);
+            }
+
+            return body;
+          }
+
+          $scope.getBeatifiedExample = function (value) {
+            var result = value;
+
+            try {
+              result = beautify(value, $scope.currentBodySelected);
+            }
+            catch (e) { }
+
+            return result;
+          };
+
           if ($scope.context.bodyContent) {
             var definitions = $scope.context.bodyContent.definitions;
 
@@ -447,7 +470,10 @@
               if (typeof definitions[key].reset !== 'undefined') {
                 definitions[key].reset($scope.methodInfo.body[key].formParameters);
               } else {
-                definitions[key].value = definitions[key].contentType.example;
+                definitions[key].fillWithExample();
+                if (definitions[key].value) {
+                  definitions[key].value = $scope.getBeatifiedExample(definitions[key].value);
+                }
               }
             });
           }
@@ -732,6 +758,13 @@
         $scope.getType = function (type) {
           var newType = $scope.mergeType(type);
           newType.type = RAML.Inspector.Types.ensureArray(newType.type);
+
+          if (newType.type[0] === 'array') {
+            newType.type = newType.items.type.map(function (aType) {
+              return aType + '[]';
+            });
+          }
+
           return newType;
         };
 
@@ -1079,7 +1112,7 @@
         $scope.vm.loaded = false;
         $scope.vm.error  = void(0);
 
-        return ramlParser.loadPath($window.resolveUrl(url))
+        return ramlParser.loadPath($window.resolveUrl(url), null, $scope.options)
           .then(function (raml) {
             $scope.vm.raml = raml;
           })
@@ -1971,7 +2004,11 @@
 
         $scope.prefillBody = function (current) {
           var definition   = $scope.context.bodyContent.definitions[current];
-          definition.value = definition.contentType.example;
+          definition.fillWithExample();
+
+          if (definition.value) {
+            definition.value = $scope.getBeatifiedExample(definition.value);
+          }
         };
 
         $scope.clearFields = function () {
@@ -2139,6 +2176,7 @@
             var segmentContexts = resolveSegementContexts($scope.resource.pathSegments, $scope.context.uriParameters.data());
 
             $scope.showSpinner = true;
+            $scope.queryStringHasError = false;
             $scope.toggleRequestMetadata($event, true);
 
             try {
@@ -2170,7 +2208,11 @@
               try {
                 parameters = JSON.parse(context.queryString);
               } catch (e) {
-                // handle error
+                $scope.queryStringHasError = true;
+                $scope.response = {};
+
+                $scope.showSpinner = false;
+                return;
               }
               Object.keys(parameters).forEach(function (key) {
                 if (!$scope.parameters[key]) {
@@ -2228,7 +2270,10 @@
               $scope.requestOptions = request.toOptions();
             } catch (e) {
               console.error(e);
-              // custom strategies aren't supported yet.
+              $scope.customStrategyError = true;
+              $scope.response = {};
+
+              $scope.showSpinner = false;
             }
           } else {
             $scope.context.forceRequest = true;
@@ -2477,10 +2522,11 @@
       templateUrl: 'directives/type.tpl.html',
       scope: {
         typeName: '=',
-        hideTypeLinks: '='
+        hideTypeLinks: '=',
+        items: '='
       },
       controller: function ($scope, $rootScope, $timeout) {
-        $scope.typeInfo = RAML.Inspector.Types.getTypeInfo($scope.typeName);
+        $scope.typeInfo = RAML.Inspector.Types.getTypeInfo($scope.typeName, $scope.items);
 
         $scope.closePopover = function () {
           $scope.selectedType = null;
@@ -2620,17 +2666,17 @@
 
       // ---
 
-      function load(text, contentAsyncFn) {
+      function load(text, contentAsyncFn, options) {
         var virtualPath = '/' + Date.now() + '.raml';
         return loadApi(virtualPath, function contentAsync(path) {
           return (path === virtualPath) ? $q.when(text) : (contentAsyncFn ? contentAsyncFn(path) : $q.reject(new Error('ramlParser: load: contentAsync: ' + path + ': no such path')));
-        });
+        }, options);
       }
 
-      function loadPath(path, contentAsyncFn) {
+      function loadPath(path, contentAsyncFn, options) {
         return loadApi(path, function contentAsync(path) {
           return contentAsyncFn ? contentAsyncFn(path) : $q.reject(new Error('ramlParser: loadPath: contentAsync: ' + path + ': no such path'));
-        });
+        }, options);
       }
 
       // ---
@@ -2641,7 +2687,14 @@
         };
       }
 
-      function loadApi(path, contentAsyncFn) {
+      /**
+       * @param  {String}   path
+       * @param  {Function} contentAsyncFn
+       * @param  {Object}   options
+       * @param  {Boolean}  options.bypassProxy
+       */
+      function loadApi(path, contentAsyncFn, options) {
+        options = options || {};
         return RAML.Parser.loadApi(path, {
           attributeDefaults: true,
           rejectOnErrors:    true,
@@ -2651,8 +2704,9 @@
           },
           httpResolver:      {
             getResourceAsync: function getResourceAsync(url) {
-              var proxy = (($window.RAML || {}).Settings || {}).proxy || '';
-              var req = {
+              var settings = ($window.RAML || {}).Settings || {};
+              var proxy    = (options.bypassProxy ? {} : settings).proxy || '';
+              var req      = {
                 method: 'GET',
                 url: proxy + url,
                 headers: {
@@ -2769,16 +2823,32 @@
             value: 'token'
           },
           {
+            label: 'Implicit',
+            value: 'implicit'
+          },
+          {
             label: 'Authorization Code',
             value: 'code'
+          },
+          {
+            label: 'Authorization Code',
+            value: 'authorization_code'
           },
           {
             label: 'Resource Owner Password Credentials',
             value: 'owner'
           },
           {
+            label: 'Resource Owner Password Credentials',
+            value: 'password'
+          },
+          {
             label: 'Client Credentials',
             value: 'credentials'
+          },
+          {
+            label: 'Client Credentials',
+            value: 'client_credentials'
           }
         ];
 
@@ -3303,7 +3373,7 @@
     });
     var grantType = this.credentials.grant;
 
-    if (grantType === 'token' || grantType === 'code') {
+    if (grantType === 'token' || grantType === 'code' || grantType === 'authorization_code' || grantType === 'implicit') {
       window.oauth2Callback = function (uri) {
         auth[grantType].getToken(uri, function (err, user, raw) {
           if (err) {
@@ -3321,7 +3391,7 @@
       popup(auth[grantType].getUri());
     }
 
-    if (grantType === 'owner') {
+    if (grantType === 'owner' || grantType === 'password') {
       auth.owner.getToken(this.credentials.username, this.credentials.password, function (err, user, raw) {
         if (err) {
           done(raw, err);
@@ -3335,7 +3405,7 @@
       });
     }
 
-    if (grantType === 'credentials') {
+    if (grantType === 'credentials'|| grantType === 'client_credentials') {
       auth.credentials.getToken(function (err, user, raw) {
         if (err) {
           done(raw, err);
@@ -4327,7 +4397,19 @@ RAML.Inspector = (function() {
   };
 
   BodyType.prototype.fillWithExample = function() {
-    this.value = this.contentType.example;
+    var example;
+    if (this.contentType.examples) {
+      example = this.contentType.examples[0].value;
+    } else {
+      example = this.contentType.example;
+    }
+
+    if (typeof example === 'object') {
+      this.value = JSON.stringify(example);
+    } else {
+      this.value = example;
+    }
+
   };
 
   BodyType.prototype.hasExample = function() {
@@ -4882,10 +4964,10 @@ RAML.Inspector = (function() {
   function ClientOAuth2 (options) {
     this.options = options;
 
-    this.code        = new CodeFlow(this);
-    this.token       = new TokenFlow(this);
-    this.owner       = new OwnerFlow(this);
-    this.credentials = new CredentialsFlow(this);
+    this.code        = this['authorization_code'] = new CodeFlow(this);
+    this.token       = this.implicit              = new TokenFlow(this);
+    this.owner       = this.password              = new OwnerFlow(this);
+    this.credentials = this['client_credentials'] = new CredentialsFlow(this);
   }
 
   /**
@@ -6897,7 +6979,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <div class=\"raml-console-resource raml-console-clearfix raml-console-document-header\">\n" +
     "        <div class=\"raml-console-resource-path-container\" style=\"padding-top: 11px;\" ng-init=\"index=$index\">\n" +
     "          <h3 class=\"raml-console-resource-heading\">\n" +
-    "            <button class=\"raml-console-resource-root-toggle\" ng-if=\"content\" ng-click=\"toggle($event, index, documentList, 'documentationCollapsed')\" ng-class=\"{'raml-console-is-active': documentList[index]}\"></button>\n" +
+    "            <button class=\"raml-console-resource-root-toggle\" ng-if=\"content.length > 0\" ng-click=\"toggle($event, index, documentList, 'documentationCollapsed')\" ng-class=\"{'raml-console-is-active': documentList[index]}\"></button>\n" +
     "            <span class=\"raml-console-resource-path-active raml-console-document-heading\" ng-click=\"toggleSection($event, 'all', doc.title)\">{{doc.title}}</span>\n" +
     "          </h3>\n" +
     "          <select ng-if=\"content.length > 0\" ng-model=\"selectedSection\" ng-if=\"documentationEnabled\" class=\"raml-console-document-section-selector\" ng-change=\"sectionChange(selectedSection)\">\n" +
@@ -6916,7 +6998,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "        </div>\n" +
     "      </div>\n" +
     "\n" +
-    "      <ol class=\"raml-console-resource-list raml-console-documentation-contents\" ng-if=\"content\" ng-class=\"{'raml-console-is-collapsed': documentationCollapsed}\">\n" +
+    "      <ol class=\"raml-console-resource-list raml-console-documentation-contents\" ng-if=\"content.length > 0\" ng-class=\"{'raml-console-is-collapsed': documentationCollapsed}\">\n" +
     "        <li ng-repeat=\"header in content\" class=\"raml-console-resource-list-item\">\n" +
     "           <div class=\"raml-console-resource raml-console-clearfix raml-console-documentation-clearfix\">\n" +
     "            <div class=\"raml-console-resource-path-container raml-console-documentation-path-container\">\n" +
@@ -6990,10 +7072,10 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "            <header class=\"raml-console-sidebar-row raml-console-sidebar-subheader\" ng-class=\"{'raml-console-sidebar-subheader-top':raml.protocols.length == 1}\">\n" +
     "              <h4 class=\"raml-console-sidebar-subhead\">Authentication</h4>\n" +
     "            </header>\n" +
-    "\n" +
     "            <div class=\"raml-console-sidebar-row raml-console-sidebar-securty\">\n" +
     "              <div class=\"raml-console-toggle-group raml-console-sidebar-toggle-group\">\n" +
     "                <label class=\"raml-console-sidebar-label\">Security Scheme</label>\n" +
+    "                <span class=\"raml-console-resource-param-instructional\">Custom Security Schemes are not supported in Try It</span>\n" +
     "                <select ng-change=\"securitySchemeChanged(currentScheme)\" class=\"raml-console-sidebar-input\" ng-model=\"currentScheme\" style=\"margin-bottom: 0;\">\n" +
     "                 <option ng-repeat=\"(key, scheme) in securitySchemes\" value=\"{{scheme.id}}\">{{scheme.name}}</option>\n" +
     "                </select>\n" +
@@ -7019,6 +7101,12 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "            </header>\n" +
     "\n" +
     "            <div class=\"raml-console-sidebar-row\" style=\"padding-bottom: 0;\">\n" +
+    "              <div\n" +
+    "                class=\"raml-console-resource-param-instructional\"\n" +
+    "                ng-show=\"queryStringHasError\"\n" +
+    "                style=\"color: red;\">\n" +
+    "                  Query String format is invalid, JSON string expected\n" +
+    "              </div>\n" +
     "              <div\n" +
     "                class=\"raml-console-codemirror-body-editor\"\n" +
     "                ui-codemirror=\"{ lineNumbers: true, tabSize: 2, theme : 'raml-console', mode: context.bodyContent.selected }\"\n" +
@@ -7064,6 +7152,12 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "          <section>\n" +
     "            <div class=\"raml-console-sidebar-row\">\n" +
+    "              <span\n" +
+    "                class=\"raml-console-resource-param-instructional\"\n" +
+    "                ng-show=\"customStrategyError\"\n" +
+    "                style=\"color: red;\">\n" +
+    "                  Custom Security Schemes are not supported in Try It\n" +
+    "              </span>\n" +
     "              <div class=\"raml-console-sidebar-action-group\">\n" +
     "                <button ng-hide=\"showSpinner\" type=\"submit\" class=\"raml-console-sidebar-action raml-console-sidebar-action-{{methodInfo.method}}\" ng-click=\"tryIt($event)\" ng-class=\"{'raml-console-sidebar-action-force':context.forceRequest}\"><span ng-if=\"context.forceRequest\">Force</span> {{methodInfo.method.toUpperCase()}}\n" +
     "                </button>\n" +
