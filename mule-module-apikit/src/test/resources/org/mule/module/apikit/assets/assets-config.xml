@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:cors="http://www.mulesoft.org/schema/mule/cors"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+        http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd">
+
+    <apikit:config name="localhost" raml="assets/console.raml" consoleEnabled="false"/>
+
+    <cors:config name="defaultConfig"/>
+
+    <flow name="router">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="myapi"/>
+        <cors:validate publicResource="true" config-ref="defaultConfig" />
+        <apikit:router config-ref="localhost"/>
+    </flow>
+
+    <flow name="console">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="konsole"/>
+        <apikit:console config-ref="localhost"/>
+    </flow>
+
+    <flow name="consoleNoPath">
+        <http:inbound-endpoint port="${serverPort2}" host="localhost"/>
+        <apikit:console config-ref="localhost"/>
+    </flow>
+
+    <flow name="get:/user">
+        <set-property propertyName="Content-Type" value="application/json"/>
+        <set-payload value="{ &quot;name&quot;: &quot;Lisa&quot; }"/>
+    </flow>
+
+</mule>

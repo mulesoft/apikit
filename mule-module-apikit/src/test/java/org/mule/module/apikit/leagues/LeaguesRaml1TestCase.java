@@ -44,7 +44,7 @@ public class LeaguesRaml1TestCase extends LeaguesTestCase
             .expect()
                 .response().body(matches("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
-            .when().get("/api/console/api/?raml");
+            .when().get("/api/console/org/mule/module/apikit/leagues/?raml");
     }
 
     @Test
@@ -54,7 +54,7 @@ public class LeaguesRaml1TestCase extends LeaguesTestCase
                 .expect()
                 .response().body(matches("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
-                .when().get("/api/console/api/?raml");
+                .when().get("/api/console/org/mule/module/apikit/leagues/?raml");
     }
 
     //@Test
@@ -70,7 +70,7 @@ public class LeaguesRaml1TestCase extends LeaguesTestCase
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       matches("(?s).*src=\"api/\\?raml\".*")))
+                                       matches("(?s).*src=\"org/mule/module/apikit/leagues/\\?raml\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/index.html");
     }
@@ -81,7 +81,7 @@ public class LeaguesRaml1TestCase extends LeaguesTestCase
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       matches("(?s).*src=\"api/\\?raml\".*")))
+                                       matches("(?s).*src=\"org/mule/module/apikit/leagues/\\?raml\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/");
     }

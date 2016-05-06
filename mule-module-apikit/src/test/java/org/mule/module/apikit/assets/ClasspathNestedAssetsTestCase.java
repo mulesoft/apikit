@@ -4,23 +4,21 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.apifiles;
+package org.mule.module.apikit.assets;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mule.module.apikit.AbstractConfiguration.APPLICATION_RAML;
 
-import org.mule.module.apikit.util.FunctionalAppDeployTestCase;
+import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
-import java.io.File;
-
 import org.junit.Rule;
 import org.junit.Test;
 
-public class ApiTestCase extends FunctionalAppDeployTestCase
+public class ClasspathNestedAssetsTestCase extends FunctionalTestCase
 {
 
     @Rule
@@ -35,6 +33,12 @@ public class ApiTestCase extends FunctionalAppDeployTestCase
     }
 
     @Override
+    protected String getConfigFile()
+    {
+        return "org/mule/module/apikit/assets/nested-assets-config.xml";
+    }
+
+    @Override
     public void doSetUp() throws Exception
     {
         RestAssured.port = serverPort2.getNumber();
@@ -42,31 +46,21 @@ public class ApiTestCase extends FunctionalAppDeployTestCase
     }
 
     @Test
-    public void ramlApi() throws Exception
-    {
-        File appDir = new File("src/test/resources", "org/mule/module/apikit/apifiles");
-        String appName = "ramlApi";
-        deployExplodedApp(appDir, appName);
-        deploymentService.start();
-        assertApplicationDeploymentSuccess(applicationDeploymentListener, appName);
-        assertRaml();
-        assertConsole();
-    }
-
-    private void assertRaml() throws Exception
+    public void assertRaml() throws Exception
     {
         given().header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(containsString("baseUri: http://localhost:" + serverPort.getValue() + "/api"), containsString("!include example.json"))
+                .response().body(containsString("baseUri: http://localhost:" + serverPort.getValue() + "/myapi"), containsString("!include example.json"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
-                .when().get("/api/?raml");
+                .when().get("/org/mule/module/apikit/assets/api/?raml");
     }
 
-    private void assertConsole() throws Exception
+    @Test
+    public void assertConsole() throws Exception
     {
         given().header("Accept", "text/html")
                 .expect()
-                .response().body(containsString("src=\"api/?raml\""))
+                .response().body(containsString("src=\"org/mule/module/apikit/assets/api/?raml\""))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/");
     }

@@ -47,11 +47,12 @@ public class ConsoleHandler implements MessageProcessor
     private static final String CONSOLE_ATTRIBUTES = "options=\"{disableRamlClientGenerator: true, disableThemeSwitcher: true}\"";
     private static final String CONSOLE_ATTRIBUTES_OLD = "disable-raml-client-generator=\"\" disable-theme-switcher=\"\"";
     private static final String CONSOLE_ATTRIBUTES_PLACEHOLDER = "console-attributes-placeholder";
-    private static final String API_RESOURCES_PATH = "/api/";
+    private static final String DEFAULT_API_RESOURCES_PATH = "api/";
     private static final String RAML_QUERY_STRING = "raml";
 
     private String cachedIndexHtml;
     private String embeddedConsolePath;
+    private String apiResourcesRelativePath = DEFAULT_API_RESOURCES_PATH;
     private boolean standalone;
     private AbstractConfiguration configuration;
 
@@ -73,17 +74,25 @@ public class ConsoleHandler implements MessageProcessor
 
     public void updateRamlUri()
     {
-        String consoleElement = CONSOLE_ELEMENT;
-        String consoleAttributes = CONSOLE_ATTRIBUTES;
-        if (isOldConsole())
+        String relativeRamlUri = getRelativeRamlUri();
+        if (relativeRamlUri != null)
         {
-            consoleElement = CONSOLE_ELEMENT_OLD;
-            consoleAttributes = CONSOLE_ATTRIBUTES_OLD;
+            String consoleElement = CONSOLE_ELEMENT;
+            String consoleAttributes = CONSOLE_ATTRIBUTES;
+            if (isOldConsole())
+            {
+                consoleElement = CONSOLE_ELEMENT_OLD;
+                consoleAttributes = CONSOLE_ATTRIBUTES_OLD;
+            }
+            String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
+            indexHtml = indexHtml.replaceFirst(consoleElement + " src=\"[^\"]+\"",
+                                               consoleElement + " src=\"" + relativeRamlUri + "\"");
+            cachedIndexHtml = indexHtml.replaceFirst(CONSOLE_ATTRIBUTES_PLACEHOLDER, consoleAttributes);
         }
-        String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
-        indexHtml = indexHtml.replaceFirst(consoleElement + " src=\"[^\"]+\"",
-                                           consoleElement + " src=\"" + getRelativeRamlUri() + "\"");
-        cachedIndexHtml = indexHtml.replaceFirst(CONSOLE_ATTRIBUTES_PLACEHOLDER, consoleAttributes);
+        else
+        {
+            cachedIndexHtml = "RAML Console is DISABLED.";
+        }
     }
 
     private boolean isOldConsole()
@@ -95,7 +104,29 @@ public class ConsoleHandler implements MessageProcessor
     {
         if (configuration.isParserV2())
         {
-            return API_RESOURCES_PATH.substring(1) + "?" + RAML_QUERY_STRING;
+            //check if raml is in /api dir
+            String ramlLocation = configuration.getRaml();
+            if (ramlLocation.startsWith(DEFAULT_API_RESOURCES_PATH))
+            {
+                ramlLocation = ramlLocation.substring(DEFAULT_API_RESOURCES_PATH.length());
+            }
+            File apiResource = new File(configuration.getAppHome(), ramlLocation);
+            if (apiResource.isFile())
+            {
+                return DEFAULT_API_RESOURCES_PATH + "?" + RAML_QUERY_STRING;
+            }
+
+            // check if raml is in a classpath subdir
+            ramlLocation = configuration.getRaml();
+            int idx = ramlLocation.lastIndexOf("/");
+            if (idx > 0)
+            {
+                this.apiResourcesRelativePath = ramlLocation.substring(0, idx + 1);
+                return apiResourcesRelativePath + "?" + RAML_QUERY_STRING;
+            }
+
+            logger.error("RAML Console is DISABLED. RAML resources cannot be hosted in the classpath root");
+            return null;
         }
         return "./?";
     }
@@ -149,24 +180,28 @@ public class ConsoleHandler implements MessageProcessor
                 path = RESOURCE_BASE + "/index.html";
                 in = new ByteArrayInputStream(cachedIndexHtml.getBytes());
             }
-            else if (path.startsWith(embeddedConsolePath + API_RESOURCES_PATH))
+            else
             {
-                // check for root raml
-                if (path.equals(embeddedConsolePath + API_RESOURCES_PATH) && queryString.equals(RAML_QUERY_STRING))
+                String apiResourcesFullPath = embeddedConsolePath + "/" + apiResourcesRelativePath;
+                if (path.startsWith(apiResourcesFullPath))
                 {
-                    path += ".raml"; // to set raml mime type
-                    in = new ByteArrayInputStream(configuration.getApikitRamlConsole(event).getBytes());
+                    // check for root raml
+                    if (path.equals(apiResourcesFullPath) && queryString.equals(RAML_QUERY_STRING))
+                    {
+                        path += ".raml"; // to set raml mime type
+                        in = new ByteArrayInputStream(configuration.getApikitRamlConsole(event).getBytes());
+                    }
+                    else
+                    {
+                        String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
+                        File apiResource = new File(configuration.getAppHome(), resourcePath);
+                        in = new FileInputStream(apiResource);
+                    }
                 }
-                else
+                else if (path.startsWith(embeddedConsolePath))
                 {
-                    String resourcePath = API_RESOURCES_PATH + path.substring((embeddedConsolePath + API_RESOURCES_PATH).length());
-                    File apiResource = new File(configuration.getAppHome(), resourcePath);
-                    in = new FileInputStream(apiResource);
+                    in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                 }
-            }
-            else if (path.startsWith(embeddedConsolePath))
-            {
-                in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
             }
             if (in == null)
             {

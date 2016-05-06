@@ -9,7 +9,7 @@
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
         http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd">
 
-    <apikit:config name="localhost" raml="org/mule/module/apikit/apifiles/api/console.raml" consoleEnabled="false"/>
+    <apikit:config name="localhost" raml="api/console.raml" consoleEnabled="false"/>
 
     <cors:config name="defaultConfig"/>
 
