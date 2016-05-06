@@ -13,8 +13,8 @@ import org.mule.raml.interfaces.model.IRaml;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.raml.v2.api.RamlApiBuilder;
-import org.raml.v2.api.RamlApiResult;
+import org.raml.v2.api.RamlModelBuilder;
+import org.raml.v2.api.RamlModelResult;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.model.common.ValidationResult;
 
@@ -23,34 +23,34 @@ public class ParserV2Utils
 
     public static IRaml build(ResourceLoader resourceLoader, String ramlPath)
     {
-        RamlApiResult ramlApiResult = new RamlApiBuilder(resourceLoader).buildApi(ramlPath);
-        return wrapApiModel(ramlApiResult);
+        RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(ramlPath);
+        return wrapApiModel(ramlModelResult);
     }
 
     public static IRaml build(ResourceLoader resourceLoader, String ramlPath, String content)
     {
-        RamlApiResult ramlApiResult = new RamlApiBuilder(resourceLoader).buildApi(content, ramlPath);
-        return wrapApiModel(ramlApiResult);
+        RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
+        return wrapApiModel(ramlModelResult);
     }
 
-    private static IRaml wrapApiModel(RamlApiResult ramlApiResult)
+    private static IRaml wrapApiModel(RamlModelResult ramlModelResult)
     {
-        if (ramlApiResult.hasErrors())
+        if (ramlModelResult.hasErrors())
         {
             throw new RuntimeException("Invalid RAML descriptor.");
         }
-        if (ramlApiResult.isVersion08())
+        if (ramlModelResult.isVersion08())
         {
-            return new RamlImpl08V2(ramlApiResult.getApiV08());
+            return new RamlImpl08V2(ramlModelResult.getApiV08());
         }
-        return new RamlImpl10V2(ramlApiResult.getApiV10());
+        return new RamlImpl10V2(ramlModelResult.getApiV10());
     }
 
     public static List<String> validate(ResourceLoader resourceLoader, String ramlPath, String content)
     {
         List<String> result = new ArrayList<>();
 
-        RamlApiResult ramlApiResult = new RamlApiBuilder(resourceLoader).buildApi(content, ramlPath);
+        RamlModelResult ramlApiResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
         for (ValidationResult validationResult : ramlApiResult.getValidationResults())
         {
             result.add(validationResult.toString());
