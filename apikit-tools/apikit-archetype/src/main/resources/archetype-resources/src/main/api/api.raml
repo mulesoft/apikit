@@ -4,22 +4,22 @@
 #if ($max > -1)
 #set ($muleVersion = $muleVersion.substring(0, $max))
 #end
-#set ($10version = "380")
+#set ($version10 = "380")
 #set ($Integer = 0)
 #set ($zeros = "0")
-#set ($repeated = $muleVersion.length() - $10version.length() )
+#set ($repeated = $muleVersion.length() - $version10.length() )
 #if ($repeated >0)
 #set ($zeros = $zeros.repeat($repeated))
-#set ($10version = $10version.concat($zeros))
+#set ($version10 = $version10.concat($zeros))
 #end
-#set ($repeated = $10version.length() - $muleVersion.length())
+#set ($repeated = $version10.length() - $muleVersion.length())
 #if ($repeated > 0)
 #set ($zeros = "0")
 #set ($zeros = $zeros.repeat($repeated))
 #set ($muleVersion = $muleVersion.concat($zeros))
 #end
 #set( $H = '#' )
-#if( $Integer.parseInt($muleVersion)>= $Integer.parseInt($10version)
+#if( $Integer.parseInt($muleVersion)>= $Integer.parseInt($version10) )
 $H%RAML 1.0
 #else
 $H%RAML 0.8
