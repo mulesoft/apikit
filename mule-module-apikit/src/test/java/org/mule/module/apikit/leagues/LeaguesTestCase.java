@@ -344,13 +344,23 @@ public class LeaguesTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void getRaml() throws Exception
+    public void getRamlFromApi() throws Exception
     {
         given().header("Accept", APPLICATION_RAML)
             .expect()
                 .response().body(matches("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
             .when().get("/api");
+    }
+
+    @Test
+    public void getRamlFromEmbeddedConsole() throws Exception
+    {
+        given().header("Accept", APPLICATION_RAML)
+            .expect()
+                .response().body(matches("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
+                .header("Content-type", APPLICATION_RAML).statusCode(200)
+            .when().get("/api/console");
     }
 
     @Test

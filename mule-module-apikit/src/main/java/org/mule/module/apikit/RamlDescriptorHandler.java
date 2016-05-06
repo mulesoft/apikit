@@ -29,9 +29,21 @@ public class RamlDescriptorHandler
     public boolean handles(HttpRestRequest request)
     {
         String path = request.getResourcePath();
-        return (!config.isParserV2() && path.equals(config.getApi().getUri()) &&
+        return (!config.isParserV2() && isValidPath(path) &&
                 ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
                 request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML));
+    }
+
+    private boolean isValidPath(String path)
+    {
+        if (config instanceof Configuration && ((Configuration) config).isConsoleEnabled())
+        {
+            if (path.equals("/" + ((Configuration) config).getConsolePath()))
+            {
+                return true;
+            }
+        }
+        return path.equals(config.getApi().getUri());
     }
 
     public MuleEvent processConsoleRequest(MuleEvent event) throws MuleException

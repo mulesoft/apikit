@@ -139,16 +139,16 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
 
         String path = request.getResourcePath();
 
-        MuleEvent handled = handleEvent(event, path);
-        if (handled != null)
-        {
-            return new RouterRequest(handled);
-        }
-
         //check for raml descriptor request
         if (ramlHandler.handles(request))
         {
             return new RouterRequest(ramlHandler.processRouterRequest(event));
+        }
+
+        MuleEvent handled = handleEvent(event, path);
+        if (handled != null)
+        {
+            return new RouterRequest(handled);
         }
 
         URIPattern uriPattern;
