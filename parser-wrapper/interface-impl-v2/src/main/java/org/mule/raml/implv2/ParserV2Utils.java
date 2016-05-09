@@ -50,10 +50,17 @@ public class ParserV2Utils
     {
         List<String> result = new ArrayList<>();
 
-        RamlModelResult ramlApiResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
-        for (ValidationResult validationResult : ramlApiResult.getValidationResults())
+        try
         {
-            result.add(validationResult.toString());
+            RamlModelResult ramlApiResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
+            for (ValidationResult validationResult : ramlApiResult.getValidationResults())
+            {
+                result.add(validationResult.toString());
+            }
+        }
+        catch (Exception e)
+        {
+            result.add("Raml parser uncaught exception: " + e.getMessage());
         }
         return result;
     }
