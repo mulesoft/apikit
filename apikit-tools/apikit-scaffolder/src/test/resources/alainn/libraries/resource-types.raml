@@ -1,0 +1,52 @@
+#%RAML 1.0 Library
+
+uses:
+  tr: traits.raml
+  t: types.raml
+  
+resourceTypes: 
+  base: 
+    get:
+      responses:
+        200:
+          body:
+            type: t.<<typeName>>
+  read-only-collection:
+    type: { base : { typeName : <<resourcePathName | !uppercamelcase>> } }
+    get:
+      is: [tr.pageable]  
+  collection:
+    type: read-only-collection
+    post:
+      body:
+        type: <<resourcePathName | !singularize>>-request  # e.g. order
+      responses: &postResponse
+        201:
+          description: Created!
+          headers:
+            Location:
+              description: uri of new resource
+              type: string
+              required: true  
+  controller:
+    post:
+      responses:
+        204:
+          description: Done!
+  member:
+    type: { base: { typeName : <<resourcePathName | !singularize >> } }
+    put?:
+      body:
+        application/json:
+          schema: <<resourcePathName>>
+      responses:
+        204:
+          description: Modified
+    patch?:
+      body:
+        application/json:
+          schema: <<resourcePathName | !singularize>>
+    delete?:
+      responses:
+        204:
+          description: Delete

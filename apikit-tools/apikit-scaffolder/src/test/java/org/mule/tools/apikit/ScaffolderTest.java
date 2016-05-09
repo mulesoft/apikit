@@ -67,6 +67,31 @@ public class ScaffolderTest {
     {
         testSimpleGenerate("simpleV10");
     }
+    @Test
+    public void testAlainnGenerate() throws Exception {
+        List<File> ramls = new ArrayList<>();
+        ramls.add(new File (ScaffolderTest.class.getClassLoader().getResource("alainn/docs/security.raml").getFile()));
+        ramls.add(new File (ScaffolderTest.class.getClassLoader().getResource("alainn/docs/intro.raml").getFile()));
+        ramls.add(new File (ScaffolderTest.class.getClassLoader().getResource("alainn/libraries/traits.raml").getFile()));
+        ramls.add(new File (ScaffolderTest.class.getClassLoader().getResource("alainn/libraries/types.raml").getFile()));
+        ramls.add(new File (ScaffolderTest.class.getClassLoader().getResource("alainn/libraries/security.raml").getFile()));
+        ramls.add(new File (ScaffolderTest.class.getClassLoader().getResource("alainn/libraries/resource-types.raml").getFile()));
+        ramls.add(new File (ScaffolderTest.class.getClassLoader().getResource("alainn/libraries/annotations.raml").getFile()));
+        ramls.add(new File (ScaffolderTest.class.getClassLoader().getResource("alainn/api.raml").getFile()));
+
+        List<File> xmls = Arrays.asList();
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, "3.8.0", null);
+        scaffolder.run();
+        assertTrue(muleXmlOut.exists());
+        File xmlOut = new File (muleXmlOut, "api.xml");
+        String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertEquals(1, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "get:/items:api-config"));
+        assertEquals(1, countOccurences(s, "get:/items/{item}:api-config"));
+        assertEquals(0, countOccurences(s, "extensionEnabled"));
+    }
 
     public void testSimpleGenerate(String name) throws Exception {
         File muleXmlSimple = simpleGeneration(name, null, "3.8.0");

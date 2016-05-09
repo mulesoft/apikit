@@ -49,11 +49,17 @@ public class ParserV2Utils
     public static List<String> validate(ResourceLoader resourceLoader, String ramlPath, String content)
     {
         List<String> result = new ArrayList<>();
-
-        RamlModelResult ramlApiResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
-        for (ValidationResult validationResult : ramlApiResult.getValidationResults())
+        try
         {
-            result.add(validationResult.toString());
+            RamlModelResult ramlApiResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
+            for (ValidationResult validationResult : ramlApiResult.getValidationResults())
+            {
+                result.add(validationResult.toString());
+            }
+        }
+        catch (Exception ex)
+        {
+            result.add("Error validating RAML file. Exception message: " + ex.getMessage());
         }
         return result;
     }

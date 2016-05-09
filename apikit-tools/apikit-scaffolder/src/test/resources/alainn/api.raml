@@ -1,0 +1,319 @@
+#%RAML 1.0
+title: Álainn Cosmetics Mobile Orders API
+#baseUri: https://alainn-customer-mobile-v1.cloudhub.io/api
+baseUri: http://ec2-52-201-242-128.compute-1.amazonaws.com/mocks/1201bcdf-f1a0-4eb3-a002-4f6f817d44cc/api
+version: 1
+mediaType: application/json
+
+uses:
+  t: libraries/types.raml
+  r: libraries/resource-types.raml
+  tr: libraries/traits.raml
+  a: libraries/annotations.raml 
+
+(a.hypermedia-plan):
+  controls: 
+    property: links
+/items:
+  description: List of all items on sale
+  get:
+    is: [tr.searchable, tr.imageable]
+    responses:
+      200:
+        body:
+          type: t.Items
+  /{item}:
+    get:
+      is: [tr.imageable]
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                    "links": [
+                        {
+                            "href": "https://localhost:8082/omni-channel-api/v1.0/items/B0044D30Z6",
+                            "rel": "self"
+                        }
+                    ],
+                    "id": "B0044D30Z6",
+                    "type": "Chemical Hair Dyes",
+                    "name": "Garnier HerbaShine Color Creme with Bamboo Extract",
+                    "brand": "Garnier",
+                    "skus": {
+                        "size": 15,
+                        "items": [
+                            {
+                                "id": "B003JTE8JS",
+                                "name": "Garnier Herbashine Haircolor, 630 Light Golden Brown",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTE8JS",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTE8JS",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/517QdA0lU9L._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTGCRE",
+                                "name": "Garnier HerbaShine Color Creme, with Bamboo Extract, Dark Natural, Brown 400",
+                                "summary": "Used For: Hair Color",
+                                "price": 12.98,
+                                "sku": "B003JTGCRE",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTGCRE",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/610m3duxPEL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B0044B4KTI",
+                                "name": "Garnier Herbashine Haircolor, 426 Dark Burgundy",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B0044B4KTI",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B0044B4KTI",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51bmY9mcQ4L._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTA1IU",
+                                "name": "Garnier Herbashine Haircolor, 645 Copper Mahogany Brown",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTA1IU",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTA1IU",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51ZLparVUKL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTE9DS",
+                                "name": "Garnier Herbashine Haircolor, 200 Soft Black",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTE9DS",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTE9DS",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51eScnw7yvL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTGDRI",
+                                "name": "Garnier Herbashine Haircolor, 800 Medium Natural Blonde",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTGDRI",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTGDRI",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51FoXQ8NmsL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTKXI8",
+                                "name": "Garnier Herbashine Haircolor, 565 Medium Auburn Brown",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTKXI8",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTKXI8",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51xaz3QTpuL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTA108",
+                                "name": "HERBASHINE #535 MED GOLD MAHOG Size: KIT",
+                                "summary": "",
+                                "price": 15.98,
+                                "sku": "B003JTA108",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTA108",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51aDQYhAcLL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B0046HDOAQ",
+                                "name": "Garnier Herbashine Haircolor, 415 Soft Mahogany Dark Brown",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B0046HDOAQ",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B0046HDOAQ",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51Mm0-S5hkL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTGCUQ",
+                                "name": "Garnier Herbashine Haircolor, 600 Light Natural Brown",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTGCUQ",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTGCUQ",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51z9fid7g9L._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTC5F2",
+                                "name": "Garnier Herbashine Haircolor, 700 Dark Natural Blonde",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTC5F2",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTC5F2",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51w-bVxOS9L._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTC5DO",
+                                "name": "Garnier Herbashine Haircolor, 900 Light Natural Blonde",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTC5DO",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTC5DO",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/41eHG4l9lPL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTE8IE",
+                                "name": "Garnier Herbashine Haircolor 500 Medium Natural Brown",
+                                "summary": "",
+                                "price": 15.98,
+                                "sku": "B003JTE8IE",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTE8IE",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51gwe6aDeHL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTE8MA",
+                                "name": "Garnier Herbashine Haircolor, 530 Medium Golden Brown",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTE8MA",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTE8MA",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51knnh-UAeL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "B003JTC5AM",
+                                "name": "Garnier Herbashine Haircolor, 510 Medium Ash Brown",
+                                "summary": "Only 10 minutes",
+                                "price": 15.98,
+                                "sku": "B003JTC5AM",
+                                "stockQuantity": 3,
+                                "links": [
+                                    {
+                                        "href": "https://localhost:8082/omni-channel-api/v1.0/items/B003JTC5AM",
+                                        "rel": "self"
+                                    },
+                                    {
+                                        "href": "http://ecx.images-amazon.com/images/I/51NbVktFgOL._SL75_.jpg",
+                                        "rel": "SmallImage"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }

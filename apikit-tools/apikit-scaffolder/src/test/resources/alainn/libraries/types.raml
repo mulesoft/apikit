@@ -1,0 +1,71 @@
+#%RAML 1.0 Library
+
+uses:
+  a: annotations.raml
+  
+types:
+  ResourceLink:
+    (a.hypermedia-control): 
+      targetResource: <<resourcePath>>
+    properties:
+      href: string
+      rel:
+        enum: [self, next, prev]
+      method?:
+        default: get
+  ImageLink:
+    (a.hypermedia-control): 
+      follow: true
+      targetResource: External
+    properties:
+      href: string
+      rel:
+        enum: [SmallImage, MediumImage, LargeImage]
+  ItemSummary:
+    properties:
+      id: string
+      type?: string
+      name: string
+      summary?: string
+      brand?: string
+      links: ResourceLink[]
+  Sku:
+    type: ItemSummary
+    properties:
+      price: number
+      sku: string
+      stockQuantity: integer
+  Items:
+    properties:
+      links: ResourceLink[]
+      collection:
+        properties:
+          size: integer
+          items: ItemSummary[]
+    example:
+      links:
+        - href: http://
+          rel: next
+        - href: http://
+          rel: prev
+      collection:
+        size: 2
+        items:
+          - id: '1'
+            type: x 
+            name: x
+            brand: x
+            links:
+              - href: x
+                rel: self
+          - id: '1'
+            type: x 
+            name: x
+            brand: x
+            links:
+              - href: x
+                rel: self
+  Item:
+    type: ItemSummary
+    properties:
+      skus: Sku[]
