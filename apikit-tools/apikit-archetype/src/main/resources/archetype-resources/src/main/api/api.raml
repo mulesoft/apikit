@@ -1,27 +1,2 @@
-#set ($muleVersion = $muleVersion.toUpperCase())
-#set ($muleVersion = $muleVersion.replace(".",""))
-#set ($max = $muleVersion.indexOf("-"))
-#if ($max > -1)
-#set ($muleVersion = $muleVersion.substring(0, $max))
-#end
-#set ($version10 = "380")
-#set ($Integer = 0)
-#set ($zeros = "0")
-#set ($repeated = $muleVersion.length() - $version10.length() )
-#if ($repeated >0)
-#set ($zeros = $zeros.repeat($repeated))
-#set ($version10 = $version10.concat($zeros))
-#end
-#set ($repeated = $version10.length() - $muleVersion.length())
-#if ($repeated > 0)
-#set ($zeros = "0")
-#set ($zeros = $zeros.repeat($repeated))
-#set ($muleVersion = $muleVersion.concat($zeros))
-#end
-#set( $H = '#' )
-#if( $Integer.parseInt($muleVersion)>= $Integer.parseInt($version10) )
-$H%RAML 1.0
-#else
-$H%RAML 0.8
-#end
+#%RAML 0.8
 title: Sample API
