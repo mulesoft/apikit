@@ -75,7 +75,7 @@ public class RamlImpl10V2 implements IRaml
 
     private String getTypeAsString(TypeDeclaration typeDeclaration)
     {
-        String schema = typeDeclaration.schema();
+        String schema = typeDeclaration.schemaContent();
         if (schema != null)
         {
             return schema;

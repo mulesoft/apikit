@@ -55,7 +55,7 @@ public class MimeTypeImpl implements IMimeType
     @Override
     public String getSchema()
     {
-        String schema = typeDeclaration.schema();
+        String schema = typeDeclaration.schemaContent();
         if (schema != null)
         {
             return schema;
