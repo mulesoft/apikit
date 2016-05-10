@@ -110,7 +110,7 @@ public class ConsoleHandler implements MessageProcessor
             {
                 ramlLocation = ramlLocation.substring(DEFAULT_API_RESOURCES_PATH.length());
             }
-            File apiResource = new File(configuration.getAppHome(), ramlLocation);
+            File apiResource = new File(configuration.getAppHome(), "/" + DEFAULT_API_RESOURCES_PATH + ramlLocation);
             if (apiResource.isFile())
             {
                 return DEFAULT_API_RESOURCES_PATH + "?" + RAML_QUERY_STRING;
