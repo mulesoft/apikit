@@ -29,7 +29,7 @@ public class RegexMatcher extends BaseMatcher
         description.appendText("matches regex=" + regex);
     }
 
-    public static RegexMatcher matches(String regex)
+    public static RegexMatcher matchesPattern(String regex)
     {
         return new RegexMatcher(regex);
     }

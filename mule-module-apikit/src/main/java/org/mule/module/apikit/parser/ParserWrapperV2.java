@@ -68,16 +68,30 @@ public class ParserWrapperV2 implements ParserWrapper
     }
 
     @Override
-    public String dump(IRaml api, String oldSchemeHostPort, String newSchemeHostPort)
+    public String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort)
+    {
+        return UrlUtils.rewriteBaseUri(ramlContent, newSchemeHostPort);
+    }
+
+    @Override
+    public String dump(IRaml api, String newBaseUri)
+    {
+        String dump = dumpRaml(api);
+        if (newBaseUri != null)
+        {
+            dump = UrlUtils.replaceBaseUri(dump, newBaseUri);
+        }
+        return dump;
+    }
+
+    private String dumpRaml(IRaml api)
     {
         InputStream stream = resourceLoader.fetchResource(ramlPath);
         if (stream == null)
         {
             throw new ApikitRuntimeException("Invalid RAML descriptor");
         }
-        String dump = StreamUtils.toString(stream);
-        dump = UrlUtils.rewriteBaseUri(dump, newSchemeHostPort);
-        return dump;
+        return StreamUtils.toString(stream);
     }
 
     @Override

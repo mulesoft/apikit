@@ -109,12 +109,22 @@ public class UrlUtils
 
     public static String rewriteBaseUri(String raml, String baseSchemeHostPort)
     {
+        return replaceBaseUri(raml, "https?://[^/]*", baseSchemeHostPort);
+    }
+
+    public static String replaceBaseUri(String raml, String newBaseUri)
+    {
+        return replaceBaseUri(raml, "https?://.*$", newBaseUri);
+    }
+
+    private static String replaceBaseUri(String raml, String regex, String replacement)
+    {
         String[] split = raml.split("\n");
         for (int i=0; i<split.length; i++)
         {
             if (split[i].startsWith("baseUri: "))
             {
-                split[i] = split[i].replaceFirst("https?://[^/]*", baseSchemeHostPort);
+                split[i] = split[i].replaceFirst(regex, replacement);
             }
         }
         return StringUtils.join(split, "\n");

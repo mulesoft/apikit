@@ -60,6 +60,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractConfiguration implements Initialisable, MuleContextAware, Startable
 {
 
+    private static final boolean KEEP_RAML_BASEURI = Boolean.valueOf(System.getProperty("apikit.keep_raml_baseuri"));
     public static final String APPLICATION_RAML = "application/raml+yaml";
     private static final String CONSOLE_URL_FILE = "consoleurl";
     private static final int URI_CACHE_SIZE = 1000;
@@ -203,7 +204,14 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private void resetRamlMap()
     {
         apikitRaml = new ConcurrentHashMap<>();
-        apikitRaml.put(baseSchemeHostPort, parserService.dumpRaml(api, baseSchemeHostPort, baseSchemeHostPort));
+        if (KEEP_RAML_BASEURI)
+        {
+            apikitRaml.put(baseSchemeHostPort, parserService.dumpRaml(api));
+        }
+        else
+        {
+            apikitRaml.put(baseSchemeHostPort, parserService.dumpRaml(api, getEndpointAddress(flowConstruct)));
+        }
     }
 
     protected abstract void initializeRestFlowMap();
@@ -211,7 +219,10 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private void injectEndpointUri(IRaml ramlApi)
     {
         String address = getEndpointAddress(flowConstruct);
-        parserService.updateBaseUri(ramlApi, address);
+        if (!KEEP_RAML_BASEURI)
+        {
+            parserService.updateBaseUri(ramlApi, address);
+        }
         baseSchemeHostPort = getBaseSchemeHostPort(address);
     }
 
@@ -250,14 +261,15 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
      */
     public String getApikitRaml(String schemeHostPort)
     {
-        if (schemeHostPort == null)
+        String baseRaml = apikitRaml.get(baseSchemeHostPort);
+        if (schemeHostPort == null || KEEP_RAML_BASEURI)
         {
-            return apikitRaml.get(baseSchemeHostPort);
+            return baseRaml;
         }
         String hostRaml = apikitRaml.get(schemeHostPort);
         if (hostRaml == null)
         {
-            hostRaml = parserService.dumpRaml(api, baseSchemeHostPort, schemeHostPort);
+            hostRaml = parserService.dumpRaml(baseRaml, api, baseSchemeHostPort, schemeHostPort);
             apikitRaml.put(schemeHostPort, hostRaml);
         }
         return hostRaml;

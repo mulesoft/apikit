@@ -12,7 +12,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
-import static org.mule.module.apikit.util.RegexMatcher.matches;
+import static org.mule.module.apikit.util.RegexMatcher.matchesPattern;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -42,7 +42,7 @@ public class LeaguesRaml1TestCase extends LeaguesTestCase
     {
         given().header("Accept", APPLICATION_RAML)
             .expect()
-                .response().body(matches("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
+                .response().body(containsString("baseUri: http://localhost:" + port + "/api"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
             .when().get("/api/console/org/mule/module/apikit/leagues/?raml");
     }
@@ -52,7 +52,7 @@ public class LeaguesRaml1TestCase extends LeaguesTestCase
     {
         given().header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(matches("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
+                .response().body(containsString("baseUri: http://localhost:" + port + "/api"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/api/console/org/mule/module/apikit/leagues/?raml");
     }
@@ -70,7 +70,7 @@ public class LeaguesRaml1TestCase extends LeaguesTestCase
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       matches("(?s).*src=\"org/mule/module/apikit/leagues/\\?raml\".*")))
+                                       matchesPattern("(?s).*src=\"org/mule/module/apikit/leagues/\\?raml\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/index.html");
     }
@@ -81,7 +81,7 @@ public class LeaguesRaml1TestCase extends LeaguesTestCase
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       matches("(?s).*src=\"org/mule/module/apikit/leagues/\\?raml\".*")))
+                                       matchesPattern("(?s).*src=\"org/mule/module/apikit/leagues/\\?raml\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/");
     }

@@ -104,9 +104,19 @@ public class ParserService
         return parserWrapper.getRamlUpdater(api, configuration);
     }
 
-    public String dumpRaml(IRaml api, String oldSchemeHostPort, String newSchemeHostPort)
+    public String dumpRaml(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort)
     {
-        return parserWrapper.dump(api, oldSchemeHostPort, newSchemeHostPort);
+        return parserWrapper.dump(ramlContent, api, oldSchemeHostPort, newSchemeHostPort);
+    }
+
+    public String dumpRaml(IRaml api, String newBaseUri)
+    {
+        return parserWrapper.dump(api, newBaseUri);
+    }
+
+    public String dumpRaml(IRaml api)
+    {
+        return parserWrapper.dump(api, null);
     }
 
     public void updateBaseUri(IRaml api, String baseUri)

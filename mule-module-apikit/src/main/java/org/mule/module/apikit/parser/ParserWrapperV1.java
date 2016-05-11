@@ -113,13 +113,24 @@ public class ParserWrapperV1 implements ParserWrapper
     }
 
     @Override
-    public String dump(IRaml api, String oldSchemeHostPort, String newSchemeHostPort)
+    public String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort)
     {
-        Raml ramlImpl = getRamlImpl(api);
+        String newBaseUri = null;
         if (!oldSchemeHostPort.equals(newSchemeHostPort))
         {
+            newBaseUri = api.getBaseUri().replace(oldSchemeHostPort, newSchemeHostPort);
+        }
+        return dump(api, newBaseUri);
+    }
+
+    @Override
+    public String dump(IRaml api, String newBaseUri)
+    {
+        Raml ramlImpl = getRamlImpl(api);
+        if (newBaseUri != null)
+        {
             Raml clone = shallowCloneRaml(ramlImpl);
-            clone.setBaseUri(api.getBaseUri().replace(oldSchemeHostPort, newSchemeHostPort));
+            clone.setBaseUri(newBaseUri);
             ramlImpl = clone;
         }
         return new RamlEmitter().dump(ramlImpl);

@@ -16,7 +16,9 @@ public interface ParserWrapper
 
     IRaml build();
 
-    String dump(IRaml api, String oldSchemeHostPort, String newSchemeHostPort);
+    String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort);
+
+    String dump(IRaml api, String newBaseUri);
 
     RamlUpdater getRamlUpdater(IRaml api, AbstractConfiguration configuration);
 

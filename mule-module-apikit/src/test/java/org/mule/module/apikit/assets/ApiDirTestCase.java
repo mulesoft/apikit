@@ -57,7 +57,7 @@ public class ApiDirTestCase extends FunctionalAppDeployTestCase
     {
         given().header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(containsString("baseUri: http://localhost:" + serverPort.getValue() + "/myapi"), containsString("!include example.json"))
+                .response().body(containsString("baseUri: http://localhost:" + serverPort.getValue() + "/api"), containsString("!include example.json"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/api/?raml");
     }

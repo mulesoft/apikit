@@ -16,7 +16,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
-import static org.mule.module.apikit.util.RegexMatcher.matches;
+import static org.mule.module.apikit.util.RegexMatcher.matchesPattern;
 
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -348,7 +348,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         given().header("Accept", APPLICATION_RAML)
             .expect()
-                .response().body(matches("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
+                .response().body(matchesPattern("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
             .when().get("/api");
     }
@@ -358,7 +358,7 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         given().header("Accept", APPLICATION_RAML)
             .expect()
-                .response().body(matches("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
+                .response().body(matchesPattern("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
             .when().get("/api/console");
     }
@@ -379,7 +379,7 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       matches("(?s).*src=\"\\./\\?\".*")))
+                                       matchesPattern("(?s).*src=\"\\./\\?\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/index.html");
     }
@@ -390,7 +390,7 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       matches("(?s).*src=\"\\./\\?\".*")))
+                                       matchesPattern("(?s).*src=\"\\./\\?\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/");
     }
