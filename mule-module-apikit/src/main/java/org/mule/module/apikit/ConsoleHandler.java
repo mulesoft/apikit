@@ -224,6 +224,8 @@ public class ConsoleHandler implements MessageProcessor
                                                          String.valueOf(HttpConstants.SC_OK));
             resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, mimetype);
             resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length);
+            resultEvent.getMessage().setOutboundProperty("Access-Control-Allow-Origin", "*");
+
             if (mimetype.equals(MimeTypes.HTML))
             {
                 resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_EXPIRES, -1); //avoid IE ajax response caching
