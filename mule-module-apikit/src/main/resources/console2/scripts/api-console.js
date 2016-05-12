@@ -783,14 +783,7 @@
           return propertyName.match(PATTERN_PATTERN);
         };
 
-        $scope.isSchema = function (typeName) {
-          try {
-            JSON.parse(typeName);
-            return true;
-          } catch (error) {
-            return false;
-          }
-        };
+        $scope.isSchema = RAML.Inspector.Types.isSchema;
 
         $scope.isCollapsible = function isCollapsible(property) {
           return $scope.collapsible && !!(property.description || property.properties || $scope.isSchema(property.type[0]));
@@ -1259,8 +1252,17 @@
 
           function convertType(typeNode, usesKey) {
             typeNode.type = typeNode.type.map(function (typeName) {
-              if (!RAML.Inspector.Types.isNativeType(typeName)) {
-                return usesKey + '.' + typeName;
+              if (!RAML.Inspector.Types.isSchema(typeName)) {
+                var typeInfo = RAML.Inspector.Types.getTypeInfo(typeName);
+
+                typeInfo.parts = typeInfo.parts.map(function (theType) {
+                  if (!RAML.Inspector.Types.isNativeType(theType)) {
+                    return usesKey + '.' + RAML.Inspector.Types.cleanupTypeName(theType);
+                  }
+                  return theType;
+                });
+
+                return RAML.Inspector.Types.getTypeFromTypeInfo(typeInfo);
               }
               return typeName;
             });
@@ -4185,6 +4187,15 @@ RAML.Inspector = (function() {
     return nativeTypes.indexOf(typeName) !== -1;
   }
 
+  function isSchema(typeName) {
+    try {
+      JSON.parse(typeName);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   function find(name, collection) {
     return collection.find(function (item) {
       return item[name];
@@ -4264,9 +4275,9 @@ RAML.Inspector = (function() {
 
     if (types.length > 1) {
       typeInfo.type = 'union';
-      typeInfo.isArray = typeName.match(UNION_ARRAY_REGEXP);
+      typeInfo.isArray = UNION_ARRAY_REGEXP.test(typeName);
       typeInfo.parts = types.map(function (type) {
-        return type;
+        return cleanupTypeName(type);
       });
     } else if (typeName.indexOf('[]') !== -1) {
       typeInfo.type = 'array';
@@ -4279,18 +4290,36 @@ RAML.Inspector = (function() {
     return typeInfo;
   }
 
+  function getTypeFromTypeInfo(typeInfo) {
+    var type;
+    if (typeInfo.type === 'union') {
+      type = typeInfo.parts.join('|');
+      if (typeInfo.isArray) {
+        type = '(' + type + ')[]';
+      }
+
+      return type;
+    } else if (typeInfo.type === 'array') {
+      return typeInfo.parts.join('') + '[]';
+    } else {
+      return typeInfo.parts.join('');
+    }
+  }
+
   function ensureArray(type) {
     return Array.isArray(type) ? type : [type];
   }
 
   RAML.Inspector.Types = {
-    mergeType:       mergeType,
-    isNativeType:    isNativeType,
-    findType:        findType,
-    findSchema:      findSchema,
-    getTypeInfo:     getTypeInfo,
-    ensureArray:     ensureArray,
-    cleanupTypeName: cleanupTypeName
+    mergeType:           mergeType,
+    isNativeType:        isNativeType,
+    isSchema:            isSchema,
+    findType:            findType,
+    findSchema:          findSchema,
+    getTypeInfo:         getTypeInfo,
+    getTypeFromTypeInfo: getTypeFromTypeInfo,
+    ensureArray:         ensureArray,
+    cleanupTypeName:     cleanupTypeName
   };
 })();
 
@@ -6652,7 +6681,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "          <code class=\"raml-console-hljs\" hljs source=\"type.type[0]\"></code>\n" +
     "        </pre>\n" +
     "\n" +
-    "        <properties style=\"padding-left: 10px; margin-top: 11px;\" list=\"type.properties\" ng-if=\"type.properties\" is-nested-property=\"true\"></properties>\n" +
+    "        <properties style=\"padding-left: 10px; margin-top: 11px;\" list=\"type.properties\" ng-if=\"type.properties\" hide-type-links=\"hideTypeLinks\" is-nested-property=\"true\"></properties>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
