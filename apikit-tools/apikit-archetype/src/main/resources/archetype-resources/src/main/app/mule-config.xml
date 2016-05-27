@@ -35,7 +35,7 @@
 #if( $Integer.parseInt($muleVersion)>=$Integer.parseInt($listenerVersion) && !$useSharedHttpListener )
     <http:listener-config name="httpListenerConfig" host="0.0.0.0" port="${http.port}"/>
 #end
-    <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="true" consolePath="console" />
+    <apikit:config name="apiConfig" raml="api.raml" consoleEnabled="false" />
 
     <context:property-placeholder location="api.properties" />
 
@@ -51,6 +51,19 @@
 #end
         <apikit:router config-ref="apiConfig" />
         <exception-strategy ref="apiKitGlobalExceptionMapping" />
+    </flow>
+
+    <flow name="api-console">
+#if( $Integer.parseInt($muleVersion)>=$Integer.parseInt($listenerVersion ) )
+#if( $useSharedHttpListener )
+        <http:listener config-ref="$sharedHttpListener" path="/console/*"/>
+#else
+        <http:listener config-ref="httpListenerConfig" path="/console/*"/>
+#end
+#else
+        <http:inbound-endpoint address="http://0.0.0.0:${http.port}/console"/>
+#end
+        <apikit:console config-ref="apiConfig" />
     </flow>
 
     <apikit:mapping-exception-strategy name="apiKitGlobalExceptionMapping">

@@ -16,6 +16,7 @@ import org.mule.tools.apikit.output.scopes.ExceptionStrategyScope;
 import org.mule.tools.apikit.output.scopes.FlowScope;
 import org.mule.tools.apikit.output.scopes.HttpListenerConfigScope;
 import org.mule.tools.apikit.output.scopes.MuleScope;
+import org.mule.tools.apikit.output.scopes.ConsoleFlowScope;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -198,6 +199,9 @@ public class MuleConfigGenerator {
 
         new FlowScope(mule, exceptionStrategy.getAttribute("name").getValue(),
                       api, configRef, listenerConfigRef).generate();
+
+        new ConsoleFlowScope(mule, api, configRef, listenerConfigRef).generate();
+
         mule.addContent(exceptionStrategy);
     }
 

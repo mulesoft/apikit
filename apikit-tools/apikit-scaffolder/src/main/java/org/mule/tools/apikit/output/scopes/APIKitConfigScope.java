@@ -41,7 +41,10 @@ public class APIKitConfigScope implements Scope {
                 config.setAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE, String.valueOf(this.config.isExtensionEnabled()));
             }
             config.setAttribute(APIKitConfig.CONSOLE_ENABLED_ATTRIBUTE, String.valueOf(this.config.isConsoleEnabled()));
-            config.setAttribute(APIKitConfig.CONSOLE_PATH_ATTRIBUTE, this.config.getConsolePath());
+
+            if(this.config.isConsoleEnabled()) {
+                config.setAttribute(APIKitConfig.CONSOLE_PATH_ATTRIBUTE, this.config.getConsolePath());
+            }
 
             mule.addContent(config);
         }
