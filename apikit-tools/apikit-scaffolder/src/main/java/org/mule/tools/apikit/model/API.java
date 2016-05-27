@@ -14,6 +14,8 @@ public class API {
     public static final int DEFAULT_PORT = 8081;
     public static final String DEFAULT_BASE_URI = "http://0.0.0.0:" + DEFAULT_PORT + "/api";
     public static final String DEFAULT_BASE_PATH = "/";
+    public static final String DEFAULT_CONSOLE_PATH = "/console/*";
+    public static final String DEFAULT_CONSOLE_PATH_INBOUND = "http://0.0.0.0:" + DEFAULT_PORT + "/console";
 
     private APIKitConfig config;
     private HttpListenerConfig httpListenerConfig;

@@ -29,7 +29,7 @@ public class APIKitConfig {
     public static class Builder {
         private String name;
         private final String raml;
-        private boolean consoleEnabled = true;
+        private boolean consoleEnabled = false;
         private Boolean extensionEnabled = null;
         private String consolePath;
 
