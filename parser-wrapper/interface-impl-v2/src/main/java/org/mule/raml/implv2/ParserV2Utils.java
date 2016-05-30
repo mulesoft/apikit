@@ -20,6 +20,7 @@ import org.raml.v2.api.model.common.ValidationResult;
 
 public class ParserV2Utils
 {
+    public static final String PARSER_V2_PROPERTY = "apikit.raml.parser.v2";
 
     public static IRaml build(ResourceLoader resourceLoader, String ramlPath)
     {
@@ -68,5 +69,18 @@ public class ParserV2Utils
     public static List<String> validate(ResourceLoader resourceLoader, String ramlPath)
     {
         return validate(resourceLoader, ramlPath, null);
+    }
+
+    public static boolean useParserV2(String content)
+    {
+        String property = System.getProperty(PARSER_V2_PROPERTY);
+        if (property != null && Boolean.valueOf(property))
+        {
+            return true;
+        }
+        else
+        {
+            return content.startsWith("#%RAML 1.0");
+        }
     }
 }

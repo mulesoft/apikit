@@ -7,7 +7,11 @@
 package org.mule.tools.apikit.model;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.Validate;
@@ -55,7 +59,7 @@ public class APIFactory
             {
                 if (domainHttpListenerConfigs.size() >0)
                 {
-                    api.setHttpListenerConfig(domainHttpListenerConfigs.values().iterator().next());
+                    api.setHttpListenerConfig(getFirstLC());
                 }
                 else
                 {
@@ -74,5 +78,20 @@ public class APIFactory
 
     public Map<String, HttpListenerConfig> getDomainHttpListenerConfigs() {
         return domainHttpListenerConfigs;
+    }
+
+    private HttpListenerConfig getFirstLC()
+    {
+        List<Map.Entry<String,HttpListenerConfig>> list = new ArrayList<>(domainHttpListenerConfigs.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<String, HttpListenerConfig>>(){
+            @Override
+            public int compare(Map.Entry<String, HttpListenerConfig> o1, Map.Entry<String, HttpListenerConfig> o2)
+            {
+                Integer i1 = Integer.parseInt(o1.getValue().getPort());
+                Integer i2 = Integer.parseInt(o2.getValue().getPort());
+                return i1.compareTo(i2);
+            }
+        });
+        return list.get(0).getValue();
     }
 }
