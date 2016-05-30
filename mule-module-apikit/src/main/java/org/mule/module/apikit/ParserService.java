@@ -10,6 +10,7 @@ import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.module.apikit.parser.ParserWrapper;
 import org.mule.module.apikit.parser.ParserWrapperV1;
 import org.mule.module.apikit.parser.ParserWrapperV2;
+import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
 
 import java.io.InputStream;
@@ -25,7 +26,6 @@ import org.slf4j.LoggerFactory;
 public class ParserService
 {
 
-    private static final String PARSER_V2_PROPERTY = "apikit.raml.parser.v2";
     private static final Logger logger = LoggerFactory.getLogger(ParserService.class);
 
     private final String ramlPath;
@@ -60,19 +60,11 @@ public class ParserService
 
     private void checkParserVersion()
     {
-        String property = System.getProperty(PARSER_V2_PROPERTY);
-        if (property != null && Boolean.valueOf(property))
+        InputStream content = resourceLoaderV2.fetchResource(ramlPath);
+        if (content != null)
         {
-            parserV2 = true;
-        }
-        else
-        {
-            InputStream content = resourceLoaderV2.fetchResource(ramlPath);
-            if (content != null)
-            {
-                String dump = StreamUtils.toString(content);
-                parserV2 = dump.startsWith("#%RAML 1.0");
-            }
+            String dump = StreamUtils.toString(content);
+            parserV2 = ParserV2Utils.useParserV2(dump);
         }
         logger.debug("Using parser " + (parserV2 ? "V2" : "V1"));
     }

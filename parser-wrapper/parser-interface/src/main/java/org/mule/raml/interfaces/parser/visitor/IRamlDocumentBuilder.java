@@ -15,12 +15,6 @@ public interface IRamlDocumentBuilder
 
     IRaml build(String resourceLocation);
 
-    //IRamlDocumentBuilder addPathLookup(String path);
-    //
-    //IRamlDocumentBuilder addClassPathLookup();
-    //
-    //IRamlDocumentBuilder setRamlUrlLookup();
-
     IRamlDocumentBuilder addPathLookupFirst(String path);
 
     IRamlDocumentBuilder addClassPathLookup(ClassLoader customClassLoader);
