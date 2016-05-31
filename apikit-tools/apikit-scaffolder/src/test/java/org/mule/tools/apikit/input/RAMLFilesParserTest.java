@@ -19,6 +19,8 @@ import java.util.Set;
 
 import junit.framework.Assert;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
 import org.mule.tools.apikit.model.APIFactory;
@@ -48,15 +50,33 @@ public class RAMLFilesParserTest
         assertNotNull(entries);
         assertEquals(2, entries.size());
         Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
-        ResourceActionMimeTypeTriplet triplet = ramlEntries.iterator().next();
-        Assert.assertEquals("/api/pet", triplet.getUri());
-        Assert.assertEquals("GET", triplet.getVerb());
-        Assert.assertEquals("/api",triplet.getApi().getPath());
-        Assert.assertNotNull(triplet.getApi().getHttpListenerConfig());
+        ResourceActionMimeTypeTriplet triplet = (ResourceActionMimeTypeTriplet)CollectionUtils.find(ramlEntries, new Predicate()
+        {
+            @Override
+            public boolean evaluate(Object property)
+            {
+                ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet)property);
+                return "/api/".equals(triplet.getUri()) && "GET".equals(triplet.getVerb()) && "/api".equals(triplet.getApi().getPath());
+            }
+        });
         Assert.assertEquals("0.0.0.0", triplet.getApi().getHttpListenerConfig().getHost());
         Assert.assertEquals("8081", triplet.getApi().getHttpListenerConfig().getPort());
         Assert.assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
         Assert.assertEquals("hello-httpListenerConfig",triplet.getApi().getHttpListenerConfig().getName());
+        ResourceActionMimeTypeTriplet triplet2 = (ResourceActionMimeTypeTriplet)CollectionUtils.find(ramlEntries, new Predicate()
+        {
+            @Override
+            public boolean evaluate(Object property)
+            {
+                ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet)property);
+                return "/api/pet".equals(triplet.getUri()) && "GET".equals(triplet.getVerb()) && "/api".equals(triplet.getApi().getPath());
+            }
+        });
+        Assert.assertEquals("0.0.0.0", triplet2.getApi().getHttpListenerConfig().getHost());
+        Assert.assertEquals("8081", triplet2.getApi().getHttpListenerConfig().getPort());
+        Assert.assertEquals("/", triplet2.getApi().getHttpListenerConfig().getBasePath());
+        Assert.assertEquals("hello-httpListenerConfig",triplet2.getApi().getHttpListenerConfig().getName());
+
     }
 
     @Test
