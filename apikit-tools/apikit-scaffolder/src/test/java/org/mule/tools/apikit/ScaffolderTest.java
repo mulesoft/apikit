@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Helper.countOccurences;
 
+import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
 
 import java.io.File;
@@ -29,6 +30,7 @@ import java.util.TreeSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,7 +41,6 @@ public class ScaffolderTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     private FileListUtils fileListUtils = new FileListUtils();
-
 
     @Before
     public void setUp() {
@@ -79,6 +80,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testSimpleGenerateWithExtensionWithOldParser() throws Exception
+    {
+        testSimpleGenerateWithExtension();
+    }
+
+    @Test
+    public void testSimpleGenerateWithExtensionWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testSimpleGenerateWithExtension();
+    }
+
     public void testSimpleGenerateWithExtension() throws Exception {
         File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", "simple", null, "3.8.0");
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
@@ -91,6 +104,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testSimpleGenerateWithExtensionInNullWithOldParser() throws Exception
+    {
+        testSimpleGenerateWithExtension();
+    }
+
+    @Test
+    public void testSimpleGenerateWithExtensionInNullWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testSimpleGenerateWithExtension();
+    }
+
     public void testSimpleGenerateWithExtensionInNull() throws Exception {
         File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", null, null, "3.8.0");
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
@@ -103,6 +128,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testSimpleGenerateWithInboundEndpointWithOldParser() throws Exception
+    {
+        testSimpleGenerateWithInboundEndpoint();
+    }
+
+    @Test
+    public void testSimpleGenerateWithInboundEndpointWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testSimpleGenerateWithInboundEndpoint();
+    }
+
     public void testSimpleGenerateWithInboundEndpoint() throws Exception {
         File xmlOut = simpleGeneration("simple", null, "3.5.0");
         assertTrue(xmlOut.exists());
@@ -115,6 +152,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testSimpleGenerateWithListenerWithOldParser() throws Exception
+    {
+        testSimpleGenerateWithListener();
+    }
+
+    @Test
+    public void testSimpleGenerateWithListenerWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testSimpleGenerateWithListener();
+    }
+
     public void testSimpleGenerateWithListener() throws Exception {
         File xmlOut = simpleGeneration("simple", null, "3.6.0");
         assertTrue(xmlOut.exists());
@@ -127,6 +176,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testSimpleGenerateWithListenerAndExtensionWithOldParser() throws Exception
+    {
+        testSimpleGenerateWithListenerAndExtension();
+    }
+
+    @Test
+    public void testSimpleGenerateWithListenerAndExtensionWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testSimpleGenerateWithListenerAndExtension();
+    }
+
     public void testSimpleGenerateWithListenerAndExtension() throws Exception {
         File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", "simple", null, "3.8.0");
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
@@ -139,8 +200,19 @@ public class ScaffolderTest {
         assertEquals(1, countOccurences(s, "extensionEnabled"));
     }
 
+    @Test
+    public void testSimpleGenerateWithCustomDomainWithOldParser() throws Exception
+    {
+        testSimpleGenerateWithCustomDomain();
+    }
 
     @Test
+    public void testSimpleGenerateWithCustomDomainWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testSimpleGenerateWithCustomDomain();
+    }
+
     public void testSimpleGenerateWithCustomDomain() throws Exception {
         File muleXmlSimple = simpleGeneration("simple", "custom-domain/mule-domain-config.xml",null);
         assertTrue(muleXmlSimple.exists());
@@ -153,6 +225,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testSimpleGenerateWithCustomDomainAndExtensionWithOldParser() throws Exception
+    {
+        testSimpleGenerateWithCustomDomainAndExtension();
+    }
+
+    @Test
+    public void testSimpleGenerateWithCustomDomainAndExtensionWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testSimpleGenerateWithCustomDomainAndExtension();
+    }
+
     public void testSimpleGenerateWithCustomDomainAndExtension() throws Exception {
         File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", "simple", "custom-domain/mule-domain-config.xml", "3.8.0");
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
@@ -166,6 +250,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testSimpleGenerateWithCustomDomainWithMultipleLCWithOldParser() throws Exception
+    {
+        testSimpleGenerateWithCustomDomainWithMultipleLC();
+    }
+
+    @Test
+    public void testSimpleGenerateWithCustomDomainWithMultipleLCWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testSimpleGenerateWithCustomDomainWithMultipleLC();
+    }
+
     public void testSimpleGenerateWithCustomDomainWithMultipleLC() throws Exception {
         File muleXmlSimple = simpleGeneration("simple", "custom-domain-multiple-lc/mule-domain-config.xml", null);
         assertTrue(muleXmlSimple.exists());
@@ -177,6 +273,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testSimpleGenerateWithEmptyDomainWithOldParser() throws Exception
+    {
+        testSimpleGenerateWithEmptyDomain();
+    }
+
+    @Test
+    public void testSimpleGenerateWithEmptyDomainWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testSimpleGenerateWithEmptyDomain();
+    }
+
     public void testSimpleGenerateWithEmptyDomain() throws Exception {
         File muleXmlSimple = simpleGeneration("simple", "empty-domain/mule-domain-config.xml", null);
         assertTrue(muleXmlSimple.exists());
@@ -184,6 +292,19 @@ public class ScaffolderTest {
         assertEquals(1, countOccurences(s, "<http:listener-config"));
         assertEquals(1, countOccurences(s, "get:/:simple-config"));
         assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    }
+
+    @Test
+    public void testTwoResourceGenerateWithOldParser() throws Exception
+    {
+        testTwoResourceGenerate();
+    }
+
+    @Test
+    public void testTwoResourceGenerateWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testTwoResourceGenerate();
     }
 
     @Test
@@ -200,6 +321,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testNestedGenerateWithOldParser() throws Exception
+    {
+        testNestedGenerate();
+    }
+
+    @Test
+    public void testNestedGenerateWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testNestedGenerate();
+    }
+
     public void testNestedGenerate() throws Exception {
         File muleXmlSimple = simpleGeneration("nested", null, null);
         assertTrue(muleXmlSimple.exists());
@@ -212,6 +345,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testNoNameGenerateWithOldParser() throws Exception
+    {
+        testNoNameGenerate();
+    }
+
+    @Test
+    public void testNoNameGenerateWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testNoNameGenerate();
+    }
+
     public void testNoNameGenerate() throws Exception {
         File muleXmlSimple = simpleGeneration("no-name", null, null);
         assertTrue(muleXmlSimple.exists());
@@ -221,6 +366,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testExampleGenerateWithOldParser() throws Exception
+    {
+        testExampleGenerate();
+    }
+
+    @Test
+    public void testExampleGenerateWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testExampleGenerate();
+    }
+
     public void testExampleGenerate() throws Exception {
         File muleXmlSimple = simpleGeneration("example", null, null);
         assertTrue(muleXmlSimple.exists());
@@ -230,6 +387,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testAlreadyExistsWithExtensionDisabledWithOldParser() throws Exception
+    {
+        testAlreadyExistsWithExtensionDisabled();
+    }
+
+    @Test
+    public void testAlreadyExistsWithExtensionDisabledWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testAlreadyExistsWithExtensionDisabled();
+    }
+
     public void testAlreadyExistsWithExtensionDisabled() throws Exception
     {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-extension/simple.raml"));
@@ -250,6 +419,19 @@ public class ScaffolderTest {
         assertEquals(1, countOccurences(s, "post:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
         assertEquals(1, countOccurences(s, "extensionEnabled=\"false\""));
+    }
+
+    @Test
+    public void testAlreadyExistsWithExtensionEnabledWithOldParser() throws Exception
+    {
+        testAlreadyExistsWithExtensionEnabled();
+    }
+
+    @Test
+    public void testAlreadyExistsWithExtensionEnabledWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testAlreadyExistsWithExtensionEnabled();
     }
 
     @Test
@@ -276,6 +458,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testAlreadyExistsWithExtensionNotPresentWithOldParser() throws Exception
+    {
+        testAlreadyExistsWithExtensionNotPresent();
+    }
+
+    @Test
+    public void testAlreadyExistsWithExtensionNotPresentWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testAlreadyExistsWithExtensionNotPresent();
+    }
+
     public void testAlreadyExistsWithExtensionNotPresent() throws Exception
     {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-extension/simple.raml"));
@@ -299,6 +493,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testAlreadyExistsGenerateWithOldParser() throws Exception
+    {
+        testAlreadyExistsGenerate();
+    }
+
+    @Test
+    public void testAlreadyExistsGenerateWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testAlreadyExistsGenerate();
+    }
+
     public void testAlreadyExistsGenerate() throws Exception {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing/simple.raml"));
         File xmlFile = getFile("scaffolder-existing/simple.xml");
@@ -320,6 +526,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testAlreadyExistsGenerateWithCustomDomainWithOldParser() throws Exception
+    {
+        testAlreadyExistsGenerateWithCustomDomain();
+    }
+
+    @Test
+    public void testAlreadyExistsGenerateWithCustomDomainWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testAlreadyExistsGenerateWithCustomDomain();
+    }
+
     public void testAlreadyExistsGenerateWithCustomDomain() throws Exception {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-custom-lc/simple.raml"));
         File xmlFile = getFile("scaffolder-existing-custom-lc/simple.xml");
@@ -341,6 +559,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testAlreadyExistsGenerateWithCustomAndNormalLCWithOldParser() throws Exception
+    {
+        testAlreadyExistsGenerateWithCustomAndNormalLC();
+    }
+
+    @Test
+    public void testAlreadyExistsGenerateWithCustomAndNormalLCWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testAlreadyExistsGenerateWithCustomAndNormalLC();
+    }
+
     public void testAlreadyExistsGenerateWithCustomAndNormalLC() throws Exception {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.raml"));
         File xmlFile = getFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.xml");
@@ -363,6 +593,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testAlreadyExistsOldGenerateWithOldParser() throws Exception
+    {
+        testAlreadyExistsOldGenerate();
+    }
+
+    @Test
+    public void testAlreadyExistsOldGenerateWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testAlreadyExistsOldGenerate();
+    }
+
     public void testAlreadyExistsOldGenerate() throws Exception {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-old/simple.raml"));
         File xmlFile = getFile("scaffolder-existing-old/simple.xml");
@@ -383,6 +625,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testAlreadyExistingMuleConfigWithApikitRouterWithOldParser() throws Exception
+    {
+        testAlreadyExistingMuleConfigWithApikitRouter();
+    }
+
+    @Test
+    public void testAlreadyExistingMuleConfigWithApikitRouterWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testAlreadyExistingMuleConfigWithApikitRouter();
+    }
+
     public void testAlreadyExistingMuleConfigWithApikitRouter() throws Exception {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing/simple.raml"));
         File xmlFile = getFile("scaffolder-existing/mule-config-no-api-flows.xml");
@@ -404,6 +658,19 @@ public class ScaffolderTest {
         Collection<File> newXmlConfigs = FileUtils.listFiles(muleXmlOut, new String[] {"xml"}, true);
         assertEquals(0, newXmlConfigs.size());
         assertEquals(0, countOccurences(s, "extensionEnabled"));
+    }
+
+    @Test
+    public void testAlreadyExistsOldWithAddressGenerateWithOldParser() throws Exception
+    {
+        testAlreadyExistsOldWithAddressGenerate();
+    }
+
+    @Test
+    public void testAlreadyExistsOldWithAddressGenerateWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testAlreadyExistsOldWithAddressGenerate();
     }
 
     @Test
@@ -446,6 +713,18 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void testMultipleMimeTypesWithoutNamedConfigWithOldParser() throws Exception
+    {
+        testMultipleMimeTypesWithoutNamedConfig();
+    }
+
+    @Test
+    public void testMultipleMimeTypesWithoutNamedConfigWithNewParser() throws Exception
+    {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        testMultipleMimeTypesWithoutNamedConfig();
+    }
+
     public void testMultipleMimeTypesWithoutNamedConfig() throws Exception {
         List<File> ramls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.raml"));
         File muleXmlOut = folder.newFolder("scaffolder");
@@ -468,7 +747,13 @@ public class ScaffolderTest {
     }
 
     @Test
-    public void testMultipleMimeTypes() throws Exception {
+    public void testMultipleMimeTypesWithOldParser() throws Exception {
+        testMultipleMimeTypes("multipleMimeTypes");
+    }
+
+    @Test
+    public void testMultipleMimeTypesWithNewParser() throws Exception {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
         testMultipleMimeTypes("multipleMimeTypes");
     }
 
@@ -505,6 +790,16 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void doubleRootRamlWithOldParser() throws Exception {
+        doubleRootRaml();
+    }
+
+    @Test
+    public void doubleRootRamlWithNewParser() throws Exception {
+        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+        doubleRootRaml();
+    }
+
     public void doubleRootRaml() throws Exception
     {
         List<File> ramls = Arrays.asList(getFile("double-root-raml/simple.raml"), getFile("double-root-raml/two.raml"));
@@ -570,7 +865,7 @@ public class ScaffolderTest {
         file.createNewFile();
         InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
         IOUtils.copy(resourceAsStream,
-                new FileOutputStream(file));
+                     new FileOutputStream(file));
         return file;
     }
 
@@ -610,5 +905,11 @@ public class ScaffolderTest {
         scaffolder.run();
 
         return muleXmlOut;
+    }
+
+    @After
+    public void after()
+    {
+        System.clearProperty(ParserV2Utils.PARSER_V2_PROPERTY);
     }
 }

@@ -16,6 +16,11 @@
     <dependencies>
         <dependency>
             <groupId>org.mule.raml</groupId>
+            <artifactId>parser-interface-impl-v1</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.raml</groupId>
             <artifactId>parser-interface-impl-v2</artifactId>
             <version>${project.version}</version>
         </dependency>

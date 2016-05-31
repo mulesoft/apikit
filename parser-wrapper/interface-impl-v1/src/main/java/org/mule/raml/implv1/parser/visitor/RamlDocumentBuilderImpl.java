@@ -40,29 +40,6 @@ public class RamlDocumentBuilderImpl implements IRamlDocumentBuilder
         return new RamlImplV1(ramlDocumentBuilder.build(resourceLocation));
     }
 
-    //public IRamlDocumentBuilder addPathLookup(String path)
-    //{
-    //    ResourceLoader loader = ramlDocumentBuilder.getResourceLoader();
-    //    loader = new CompositeResourceLoader(loader, new FileResourceLoader(path));
-    //    ramlDocumentBuilder = new RamlDocumentBuilder(loader);
-    //    return this;
-    //}
-
-    //public IRamlDocumentBuilder addClassPathLookup()
-    //{
-    //    ResourceLoader loader = ramlDocumentBuilder.getResourceLoader();
-    //    loader = new CompositeResourceLoader(loader, new ClassPathResourceLoader());
-    //    ramlDocumentBuilder = new RamlDocumentBuilder(loader);
-    //    return this;
-    //}
-
-    //public IRamlDocumentBuilder setRamlUrlLookup()
-    //{
-    //    ResourceLoader loader = new RamlUrlResourceLoader();
-    //    ramlDocumentBuilder = new RamlDocumentBuilder(loader);
-    //    return this;
-    //}
-
     public IRamlDocumentBuilder addPathLookupFirst(String path)
     {
         ResourceLoader loader = ramlDocumentBuilder.getResourceLoader();

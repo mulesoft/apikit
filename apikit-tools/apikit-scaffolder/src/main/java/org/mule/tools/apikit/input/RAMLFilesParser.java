@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit.input;
 
+import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -59,13 +60,21 @@ public class RAMLFilesParser
                 break;
 
             }
-            ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParentFile()));
 
-            if (isValidRaml(ramlFile.getName(), content, resourceLoader))
+            if (isValidRaml(ramlFile.getName(), content, ramlFile.getPath()))
             {
                 try
                 {
-                    IRaml raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
+                    IRaml raml;
+                    if (ParserV2Utils.useParserV2(content))
+                    {
+                        ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getPath()));
+                        raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
+                    }
+                    else
+                    {
+                        raml = ParserV1Utils.build(content, ramlFile.getPath());
+                    }
 
                     collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);
                     processedFiles.add(ramlFile);
@@ -89,9 +98,18 @@ public class RAMLFilesParser
         }
     }
 
-    private boolean isValidRaml(String fileName, String content, ResourceLoader resourceLoader)
+    private boolean isValidRaml(String fileName, String content, String filePath)
     {
-        List<String> errors = ParserV2Utils.validate(resourceLoader, fileName, content);
+        List<String> errors;
+        if (ParserV2Utils.useParserV2(content))
+        {
+            ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(filePath));
+            errors = ParserV2Utils.validate(resourceLoader, fileName, content);
+        }
+        else
+        {
+            errors = ParserV1Utils.validate(filePath, fileName, content);
+        }
         if (!errors.isEmpty())
         {
             if (errors.size() == 1 && errors.get(0).toLowerCase().contains("root"))
