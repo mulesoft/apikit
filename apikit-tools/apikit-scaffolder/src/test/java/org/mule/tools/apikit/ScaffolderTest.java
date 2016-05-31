@@ -160,7 +160,7 @@ public class ScaffolderTest {
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
         assertEquals(0, countOccurences(s, "<http:listener-config"));
-        assertEquals(1, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8080\""));
+        assertEquals(1, countOccurences(s, "config-ref=\"abcd\""));
         assertEquals(1, countOccurences(s, "get:/:simple-config"));
         assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
     }
