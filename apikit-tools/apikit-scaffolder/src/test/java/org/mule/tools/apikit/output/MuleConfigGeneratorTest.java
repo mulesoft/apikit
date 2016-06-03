@@ -145,7 +145,14 @@ public class MuleConfigGeneratorTest {
         Element apikitConfig = mainFlow.getChildren().get(1);
         assertEquals(0, apikitConfig.getChildren().size());
 
-        Element globalExceptionStrategy = rootElement.getChildren().get(2);
+        Element consoleFlow = rootElement.getChildren().get(2);
+        assertEquals("flow", consoleFlow.getName());
+        assertEquals("hello-console", consoleFlow.getAttribute("name").getValue());
+        assertEquals("httpListenerConfig", consoleFlow.getChildren().get(0).getAttribute("config-ref").getValue());
+        assertEquals("/console/*", consoleFlow.getChildren().get(0).getAttribute("path").getValue());
+        assertEquals("console", consoleFlow.getChildren().get(1).getName());
+
+        Element globalExceptionStrategy = rootElement.getChildren().get(3);
         assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
         assertEquals("hello-apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
 
@@ -186,7 +193,14 @@ public class MuleConfigGeneratorTest {
         Element apikitConfig = mainFlow.getChildren().get(1);
         assertEquals(0, apikitConfig.getChildren().size());
 
-        Element globalExceptionStrategy = rootElement.getChildren().get(2);
+        Element consoleFlow = rootElement.getChildren().get(2);
+        assertEquals("flow", consoleFlow.getName());
+        assertEquals("hello-console", consoleFlow.getAttribute("name").getValue());
+        assertEquals("httpListenerConfig", consoleFlow.getChildren().get(0).getAttribute("config-ref").getValue());
+        assertEquals("/console/*", consoleFlow.getChildren().get(0).getAttribute("path").getValue());
+        assertEquals("console", consoleFlow.getChildren().get(1).getName());
+
+        Element globalExceptionStrategy = rootElement.getChildren().get(3);
         assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
         assertEquals("hello-apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
 

@@ -9,6 +9,7 @@ package org.mule.tools.apikit.input;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 
@@ -227,7 +228,7 @@ public class MuleConfigParserTest {
         assertNotNull(leaguesConfig);
         assertEquals("leagues-config", leaguesConfig.getName());
         assertEquals("leagues.raml", leaguesConfig.getRaml());
-        assertTrue(leaguesConfig.isConsoleEnabled());
+        assertFalse(leaguesConfig.isConsoleEnabled());
         assertEquals(APIKitConfig.DEFAULT_CONSOLE_PATH, leaguesConfig.getConsolePath());
     }
 
@@ -269,7 +270,7 @@ public class MuleConfigParserTest {
         assertNotNull(leaguesConfig);
         assertEquals("leagues-config", leaguesConfig.getName());
         assertEquals("leagues.raml", leaguesConfig.getRaml());
-        assertTrue(leaguesConfig.isConsoleEnabled());
+        assertFalse(leaguesConfig.isConsoleEnabled());
         assertEquals(APIKitConfig.DEFAULT_CONSOLE_PATH, leaguesConfig.getConsolePath());
     }
 
@@ -303,7 +304,7 @@ public class MuleConfigParserTest {
         assertNotNull(leaguesConfig);
         assertEquals("leagues-config", leaguesConfig.getName());
         assertEquals("leagues.raml", leaguesConfig.getRaml());
-        assertTrue(leaguesConfig.isConsoleEnabled());
+        assertFalse(leaguesConfig.isConsoleEnabled());
         assertEquals(APIKitConfig.DEFAULT_CONSOLE_PATH, leaguesConfig.getConsolePath());
     }
 }
