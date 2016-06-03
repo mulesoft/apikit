@@ -6,6 +6,8 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
+
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.raml.v2.api.model.v10.api.Api;
+import org.raml.v2.api.model.v10.datamodel.ExternalTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.resources.Resource;
 
@@ -46,13 +49,13 @@ public class RamlImpl10V2 implements IRaml
     @Override
     public String getBaseUri()
     {
-        return api.baseUri() != null ? api.baseUri().value() : null;
+        return nullSafe(api.baseUri());
     }
 
     @Override
     public String getVersion()
     {
-        return api.version();
+        return nullSafe(api.version());
     }
 
     @Override
@@ -73,17 +76,12 @@ public class RamlImpl10V2 implements IRaml
         return result;
     }
 
-    private String getTypeAsString(TypeDeclaration typeDeclaration)
+    // only returns external types
+    static String getTypeAsString(TypeDeclaration typeDeclaration)
     {
-        String schema = typeDeclaration.schemaContent();
-        if (schema != null)
+        if (typeDeclaration instanceof ExternalTypeDeclaration)
         {
-            return schema;
-        }
-        List<String> type = typeDeclaration.type();
-        if (type != null && !type.isEmpty())
-        {
-            return type.get(0);
+            return ((ExternalTypeDeclaration) typeDeclaration).schemaContent();
         }
         return null;
     }

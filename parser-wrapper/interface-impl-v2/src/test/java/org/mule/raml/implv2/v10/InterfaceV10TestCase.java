@@ -7,6 +7,7 @@
 package org.mule.raml.implv2.v10;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.containsString;
 
@@ -27,7 +28,7 @@ public class InterfaceV10TestCase
         IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v10/full-1.0.raml");
         assertThat(raml.getVersion(), is("1.0"));
         assertThat(raml.getSchemas().get(0).size(), is(2));
-        assertThat(raml.getSchemas().get(0).get("User"), is("object"));
+        assertThat(raml.getSchemas().get(0).get("User"), nullValue());
         assertThat(raml.getSchemas().get(0).get("UserJson"), containsString("firstname"));
     }
 }

@@ -6,6 +6,8 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
+
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
@@ -86,7 +88,7 @@ public class ResourceImpl implements IResource
     @Override
     public String getDisplayName()
     {
-        return resource.displayName();
+        return nullSafe(resource.displayName());
     }
 
     @Override

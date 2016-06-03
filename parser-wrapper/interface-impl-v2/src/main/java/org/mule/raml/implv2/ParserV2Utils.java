@@ -17,6 +17,7 @@ import org.raml.v2.api.RamlModelBuilder;
 import org.raml.v2.api.RamlModelResult;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.model.common.ValidationResult;
+import org.raml.v2.api.model.v10.system.types.AnnotableSimpleType;
 
 public class ParserV2Utils
 {
@@ -83,4 +84,10 @@ public class ParserV2Utils
             return content.startsWith("#%RAML 1.0");
         }
     }
+
+    public static String nullSafe(AnnotableSimpleType<?> simpleType)
+    {
+        return simpleType != null ? String.valueOf(simpleType.value()) : null;
+    }
+
 }

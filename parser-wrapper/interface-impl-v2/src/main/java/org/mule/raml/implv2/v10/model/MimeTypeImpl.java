@@ -6,6 +6,8 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import static org.mule.raml.implv2.v10.model.RamlImpl10V2.getTypeAsString;
+
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
@@ -55,17 +57,7 @@ public class MimeTypeImpl implements IMimeType
     @Override
     public String getSchema()
     {
-        String schema = typeDeclaration.schemaContent();
-        if (schema != null)
-        {
-            return schema;
-        }
-        List<String> type = typeDeclaration.type();
-        if (type != null && !type.isEmpty())
-        {
-            return type.get(0);
-        }
-        return null;
+        return getTypeAsString(typeDeclaration);
     }
 
     @Override
