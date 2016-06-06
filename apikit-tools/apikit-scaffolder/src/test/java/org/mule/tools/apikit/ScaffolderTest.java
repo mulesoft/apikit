@@ -7,6 +7,7 @@
 package org.mule.tools.apikit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Helper.countOccurences;
@@ -88,6 +89,40 @@ public class ScaffolderTest {
     }
 
     @Test
+    public void generateWithIncludes08() throws Exception {
+        String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-08/api.raml").getFile();
+        File file = new File(filepath);
+        List<File> ramls = Arrays.asList(file);
+        List<File> xmls = Arrays.asList();
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, "3.7.0", null);
+        scaffolder.run();
+        File xmlOut = new File (muleXmlOut, "api.xml");
+        assertTrue(xmlOut.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertNotNull(s);
+        assertEquals(1, countOccurences(s, "post:/Queue:application/json:api-config"));
+        assertEquals(1, countOccurences(s, "post:/Queue:text/xml:api-config"));
+    }
+
+    @Test
+    public void generateWithIncludes10() throws Exception {
+        String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-10/api.raml").getFile();
+        File file = new File(filepath);
+        List<File> ramls = Arrays.asList(file);
+        List<File> xmls = Arrays.asList();
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, "3.7.0", null);
+        scaffolder.run();
+        File xmlOut = new File (muleXmlOut, "api.xml");
+        assertTrue(xmlOut.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertNotNull(s);
+        assertEquals(1, countOccurences(s, "post:/Queue:application/json:api-config"));
+        assertEquals(1, countOccurences(s, "post:/Queue:text/xml:api-config"));
+    }
+
+    @Test
     public void testSimpleGenerateWithExtensionWithNewParser() throws Exception
     {
         System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
@@ -110,14 +145,14 @@ public class ScaffolderTest {
     @Test
     public void testSimpleGenerateWithExtensionInNullWithOldParser() throws Exception
     {
-        testSimpleGenerateWithExtension();
+        testSimpleGenerateWithExtensionInNull();
     }
 
     @Test
     public void testSimpleGenerateWithExtensionInNullWithNewParser() throws Exception
     {
         System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
-        testSimpleGenerateWithExtension();
+        testSimpleGenerateWithExtensionInNull();
     }
 
     public void testSimpleGenerateWithExtensionInNull() throws Exception {
