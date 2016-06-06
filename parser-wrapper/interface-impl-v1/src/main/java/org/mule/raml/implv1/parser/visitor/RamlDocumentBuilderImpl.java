@@ -42,9 +42,12 @@ public class RamlDocumentBuilderImpl implements IRamlDocumentBuilder
 
     public IRamlDocumentBuilder addPathLookupFirst(String path)
     {
-        ResourceLoader loader = ramlDocumentBuilder.getResourceLoader();
-        loader = new CompositeResourceLoader(new FileResourceLoader(path), loader);
-        ramlDocumentBuilder = new RamlDocumentBuilder(loader);
+        if (path != null)
+        {
+            ResourceLoader loader = ramlDocumentBuilder.getResourceLoader();
+            loader = new CompositeResourceLoader(new FileResourceLoader(path), loader);
+            ramlDocumentBuilder = new RamlDocumentBuilder(loader);
+        }
         return this;
 
     }

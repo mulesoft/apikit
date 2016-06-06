@@ -1,0 +1,37 @@
+displayName: Transaction Queue
+description: A queue that is used to push transactions onto the ESB for processing.
+post:
+  description: Add a new transaction to the queue.
+  body: 
+    application/json:
+      schema: jsonSchema 
+      example: |
+            {
+            "transaction" : [
+            {
+            "tenant" : 100,
+            "objectType" : "Business Partner",
+            "objectKey" : "12345",
+            "txnType" : "Update"
+            },
+            {
+            "tenant" : 101,
+            "objectType" : "Business Partner",
+            "objectKey" : "00000",
+            "txnType" : "Create"
+            }
+            ]
+            }
+    text/xml:
+      schema: xmlSchema
+      example: |
+        <saasTxn>
+        <tenant>100</tenant>
+        <objectType>Business Partner</objectType>
+        <objectKey>12345</objectKey>
+        <txnType>Update</txnType>
+        </saasTxn>
+  responses:
+    201:
+      description: A new transaction was created on the queue.
+      body: null

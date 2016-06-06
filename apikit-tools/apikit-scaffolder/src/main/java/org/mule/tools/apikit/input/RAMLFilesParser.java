@@ -60,20 +60,25 @@ public class RAMLFilesParser
                 break;
 
             }
-
-            if (isValidRaml(ramlFile.getName(), content, ramlFile.getPath()))
+            String rootRamlName = ramlFile.getName();
+            String ramlFolderPath = null;
+            if (ramlFile.getParentFile() != null)
+            {
+                ramlFolderPath = ramlFile.getParentFile().getPath();
+            }
+            if (isValidRaml(rootRamlName, content, ramlFolderPath))
             {
                 try
                 {
                     IRaml raml;
                     if (ParserV2Utils.useParserV2(content))
                     {
-                        ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getPath()));
+                        ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFolderPath));
                         raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
                     }
                     else
                     {
-                        raml = ParserV1Utils.build(content, ramlFile.getPath());
+                        raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
                     }
 
                     collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);

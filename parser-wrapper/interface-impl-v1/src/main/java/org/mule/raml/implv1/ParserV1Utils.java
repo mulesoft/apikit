@@ -18,13 +18,13 @@ import java.util.List;
 
 public class ParserV1Utils
 {
-    public static List<String> validate(String filePath, String resource, String resourceContent)
+    public static List<String> validate(String resourceFolder, String rootFileName, String resourceContent)
     {
         List<String> errorsList = new ArrayList<>();
         IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
-        ramlDocumentBuilder.addPathLookupFirst(filePath);
+        ramlDocumentBuilder.addPathLookupFirst(resourceFolder);
         IRamlValidationService validationService = new RamlValidationServiceImpl(ramlDocumentBuilder);
-        IRamlValidationService result = validationService.validate(resourceContent, resource);
+        IRamlValidationService result = validationService.validate(resourceContent, rootFileName);
         for (IValidationResult validationResult : result.getErrors())
         {
             errorsList.add(validationResult.getMessage());
@@ -32,10 +32,10 @@ public class ParserV1Utils
         return  errorsList;
     }
 
-    public static IRaml build(String content, String resourceLocation)
+    public static IRaml build(String content, String resourceFolder, String rootFileName)
     {
         IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
-        ramlDocumentBuilder.addPathLookupFirst(resourceLocation);
-        return ramlDocumentBuilder.build(content, resourceLocation);
+        ramlDocumentBuilder.addPathLookupFirst(resourceFolder);
+        return ramlDocumentBuilder.build(content, rootFileName);
     }
 }
