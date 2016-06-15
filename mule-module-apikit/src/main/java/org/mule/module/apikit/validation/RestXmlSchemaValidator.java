@@ -6,14 +6,8 @@
  */
 package org.mule.module.apikit.validation;
 
-import org.mule.api.MuleContext;
-import org.mule.api.MuleEvent;
-import org.mule.api.transformer.DataType;
-import org.mule.module.apikit.validation.cache.XmlSchemaCache;
-import org.mule.transformer.types.DataTypeFactory;
-import org.mule.util.IOUtils;
-
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -24,7 +18,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
+import org.mule.api.MuleContext;
+import org.mule.api.MuleEvent;
 import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.validation.cache.XmlSchemaCache;
+import org.mule.util.IOUtils;
 import org.raml.model.Raml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,12 +50,26 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             Object input = muleEvent.getMessage().getPayload();
             if (input instanceof InputStream)
             {
-                input = IOUtils.toString((InputStream) input, muleEvent.getMessage().getEncoding());
-                logger.debug("transforming payload to perform XSD validation");
-                DataType<String> dataType = DataTypeFactory.create(String.class, muleEvent.getMessage().getDataType().getMimeType());
-                muleEvent.getMessage().setPayload(input, dataType);
-            }
-            if (input instanceof String)
+            	// Do NOT convert to String.
+            	// Either stream is marked/reset or byteArray is copied:
+            	InputStream tempInputStream = (InputStream) input;
+            	ByteArrayOutputStream tempBytes = null;
+            	if (tempInputStream.markSupported()) {
+            		tempInputStream.mark(Integer.MAX_VALUE);
+            		data = loadDocument(tempInputStream);
+            	} else {
+            		tempBytes = new ByteArrayOutputStream();
+					IOUtils.copyLarge(tempInputStream, tempBytes);
+            		data = loadDocument(new ByteArrayInputStream(tempBytes.toByteArray()));
+            	}
+				// After consuming the stream it has to be resetted for next content reader.
+            	if (tempBytes == null) {
+            		tempInputStream.reset();
+            	} else {
+            		muleEvent.getMessage().setPayload(new ByteArrayInputStream(tempBytes.toByteArray()));
+            	}
+            } 
+            else if (input instanceof String)
             {
                 data = loadDocument(IOUtils.toInputStream((String) input));
             }
