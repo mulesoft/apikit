@@ -52,10 +52,24 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             Object input = muleEvent.getMessage().getPayload();
             if (input instanceof InputStream)
             {
-                input = IOUtils.toString((InputStream) input, muleEvent.getMessage().getEncoding());
-                logger.debug("transforming payload to perform XSD validation");
-                DataType<String> dataType = DataTypeFactory.create(String.class, muleEvent.getMessage().getDataType().getMimeType());
-                muleEvent.getMessage().setPayload(input, dataType);
+            	// Do NOT convert to String.
+            	// Either stream is marked/reset or byteArray is copied:
+            	InputStream tempInputStream = (InputStream) input;
+            	ByteArrayOutputStream tempBytes = null;
+            	if (tempInputStream.markSupported()) {
+            		tempInputStream.mark(Integer.MAX_VALUE);
+            		data = loadDocument(tempInputStream);
+            	} else {
+            		tempBytes = new ByteArrayOutputStream();
+					IOUtils.copyLarge(tempInputStream, tempBytes);
+            		data = loadDocument(new ByteArrayInputStream(tempBytes.toByteArray()));
+            	}
+				// After consuming the stream it has to be resetted for next content reader.
+            	if (tempBytes == null) {
+            		tempInputStream.reset();
+            	} else {
+            		muleEvent.getMessage().setPayload(new ByteArrayInputStream(tempBytes.toByteArray()));
+            	}
             }
             if (input instanceof String)
             {
