@@ -11,6 +11,7 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import java.util.List;
 
 import org.raml.v2.api.model.common.ValidationResult;
+import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 
 public class ParameterImpl implements IParameter
@@ -52,7 +53,14 @@ public class ParameterImpl implements IParameter
     @Override
     public boolean isRepeat()
     {
-        throw new UnsupportedOperationException();
+        // only available in RAML 0.8
+        return false;
+    }
+
+    @Override
+    public boolean isArray()
+    {
+        return typeDeclaration instanceof ArrayTypeDeclaration;
     }
 
     @Override

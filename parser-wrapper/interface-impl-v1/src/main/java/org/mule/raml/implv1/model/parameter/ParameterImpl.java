@@ -34,6 +34,12 @@ public class ParameterImpl implements IParameter
         return parameter.isRepeat();
     }
 
+    public boolean isArray()
+    {
+        // only available in RAML 1.0+
+        return false;
+    }
+
     public boolean validate(String s)
     {
         return parameter.validate(s);

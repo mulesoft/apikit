@@ -11,6 +11,7 @@ public interface IParameter
     boolean isRequired();
     String getDefaultValue();
     boolean isRepeat();
+    boolean isArray();
     boolean validate(String value);
     String message(String value);
     String getDisplayName();

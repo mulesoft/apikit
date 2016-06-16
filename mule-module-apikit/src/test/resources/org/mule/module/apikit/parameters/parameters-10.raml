@@ -1,0 +1,15 @@
+#%RAML 1.0
+
+title: Parameters API
+
+/repeat:
+    get:
+        queryParameters:
+            status:
+                type: string[]
+                minItems: 1
+                required: false
+        responses:
+            200:
+                body:
+                    text/plain: ~

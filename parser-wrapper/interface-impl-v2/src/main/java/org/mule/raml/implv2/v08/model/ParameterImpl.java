@@ -39,6 +39,13 @@ public class ParameterImpl implements IParameter
     }
 
     @Override
+    public boolean isArray()
+    {
+        // only available in RAML 1.0+
+        return false;
+    }
+
+    @Override
     public boolean validate(String value)
     {
         throw new UnsupportedOperationException();

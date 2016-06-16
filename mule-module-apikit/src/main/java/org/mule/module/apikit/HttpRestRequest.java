@@ -148,9 +148,18 @@ public class HttpRestRequest
             }
             if (actual != null)
             {
-                if (actual instanceof Collection && !expected.isRepeat())
+                if (actual instanceof Collection)
                 {
-                    throw new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable");
+                    if (expected.isArray())
+                    {
+                        // raml 1.0 array validation
+                        validateQueryParam(expectedKey, expected, (Collection<?>) actual);
+                        return;
+                    }
+                    else if (!expected.isRepeat())
+                    {
+                        throw new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable");
+                    }
                 }
                 if (!(actual instanceof Collection))
                 {
@@ -159,14 +168,31 @@ public class HttpRestRequest
                 //noinspection unchecked
                 for (String param : (Collection<String>) actual)
                 {
-                    if (!expected.validate(param))
-                    {
-                        String msg = String.format("Invalid value '%s' for query parameter %s. %s",
-                                                   param, expectedKey, expected.message(param));
-                        throw new InvalidQueryParameterException(msg);
-                    }
+                    validateQueryParam(expectedKey, expected, param);
                 }
             }
+        }
+    }
+
+    private void validateQueryParam(String paramKey, IParameter expected, Collection<?> paramValue) throws InvalidQueryParameterException
+    {
+        StringBuilder builder = new StringBuilder("[");
+        for (Object item : paramValue)
+        {
+            builder.append(String.valueOf(item)).append(",");
+        }
+        builder.deleteCharAt(builder.length() - 1);
+        String arrayParam = builder.append("]").toString();
+        validateQueryParam(paramKey, expected, arrayParam);
+    }
+
+    private void validateQueryParam(String paramKey, IParameter expected, String paramValue) throws InvalidQueryParameterException
+    {
+        if (!expected.validate(paramValue))
+        {
+            String msg = String.format("Invalid value '%s' for query parameter %s. %s",
+                                       paramValue, paramKey, expected.message(paramValue));
+            throw new InvalidQueryParameterException(msg);
         }
     }
 
