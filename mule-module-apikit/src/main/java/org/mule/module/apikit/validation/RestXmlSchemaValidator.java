@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -68,7 +69,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             } 
             else if (input instanceof String)
             {
-                data = loadDocument(IOUtils.toInputStream((String) input));
+                data = loadDocument(new StringReader((String) input));
             }
             else if (input instanceof byte[])
             {
@@ -99,13 +100,36 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
      */
     public static Document loadDocument(InputStream inputStream) throws IOException
     {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    	InputSource tempSource = new InputSource(inputStream);
+        return loadDocument(tempSource);
+    }
+    /**
+     * Loads the document from the <code>content</code>.
+     *
+     * @param inputStream the content to load
+     * @return the {@link org.w3c.dom.Document} represents the DOM of the content
+     * @throws java.io.IOException
+     */
+    public static Document loadDocument(StringReader stringReader) throws IOException
+    {
+    	InputSource tempSource = new InputSource(stringReader);
+        return loadDocument(tempSource);
+    }
+
+    /**
+     * Load a document from the input source with the default java DocumentBuilder.
+     * @param InputSource the content to load
+     * @return the {@link org.w3c.dom.Document} represents the DOM of the content
+     * @throws java.io.IOException
+     */
+	private static Document loadDocument(InputSource aSource) throws IOException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         setFeatures(factory);
         factory.setNamespaceAware(true);
         try
         {
             DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(new InputSource(inputStream));
+			return builder.parse(aSource);
         }
         catch (ParserConfigurationException e)
         {
@@ -115,7 +139,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
         {
             throw new IOException("An internal operation failed.", e);
         }
-    }
+	}
 
     /*
      * Prevent XXE attacks
