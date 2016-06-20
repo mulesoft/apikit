@@ -65,8 +65,8 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             		// After consuming the stream it has to be resetted for next content reader.
             		muleEvent.getMessage().setPayload(new ByteArrayInputStream(tempBytes.toByteArray()));
             	}
-            }
-            if (input instanceof String)
+            } 
+            else if (input instanceof String)
             {
                 data = loadDocument(IOUtils.toInputStream((String) input));
             }
