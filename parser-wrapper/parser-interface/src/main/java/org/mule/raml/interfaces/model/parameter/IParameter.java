@@ -6,6 +6,8 @@
  */
 package org.mule.raml.interfaces.model.parameter;
 
+import java.util.Map;
+
 public interface IParameter
 {
     boolean isRequired();
@@ -16,5 +18,7 @@ public interface IParameter
     String message(String value);
     String getDisplayName();
     String getDescription();
+    String getExample();
+    Map<String, String> getExamples();
     Object getInstance();
 }

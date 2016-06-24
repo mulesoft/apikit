@@ -7,6 +7,10 @@
 package org.mule.raml.implv1.model.parameter;
 
 import org.mule.raml.interfaces.model.parameter.IParameter;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.raml.model.parameter.AbstractParam;
 
 public class ParameterImpl implements IParameter
@@ -58,6 +62,17 @@ public class ParameterImpl implements IParameter
     public String getDescription()
     {
         return parameter.getDescription();
+    }
+
+    public String getExample()
+    {
+        return parameter.getExample();
+    }
+
+    @Override
+    public Map<String, String> getExamples()
+    {
+        return new HashMap<>();
     }
 
     public Object getInstance()

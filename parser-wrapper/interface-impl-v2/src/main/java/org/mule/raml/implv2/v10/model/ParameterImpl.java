@@ -7,12 +7,14 @@
 package org.mule.raml.implv2.v10.model;
 
 import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import java.util.List;
-
 import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
+import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ParameterImpl implements IParameter
 {
@@ -73,6 +75,27 @@ public class ParameterImpl implements IParameter
     public String getDescription()
     {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getExample()
+    {
+        if (typeDeclaration.example() == null)
+        {
+            return null;
+        }
+        return typeDeclaration.example().value();
+    }
+
+    @Override
+    public Map<String, String> getExamples()
+    {
+        Map<String, String> examples = new LinkedHashMap<>();
+        for (ExampleSpec example : typeDeclaration.examples())
+        {
+            examples.put(example.name(), example.value());
+        }
+        return examples;
     }
 
     @Override

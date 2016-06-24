@@ -10,6 +10,9 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import org.raml.v2.api.model.v08.parameters.Parameter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ParameterImpl implements IParameter
 {
 
@@ -23,13 +26,17 @@ public class ParameterImpl implements IParameter
     @Override
     public boolean isRequired()
     {
-        throw new UnsupportedOperationException();
+        return parameter.required();
     }
 
     @Override
     public String getDefaultValue()
     {
-        throw new UnsupportedOperationException();
+        if (parameter.defaultValue() == null)
+        {
+            return null;
+        }
+        return parameter.defaultValue().toString();
     }
 
     @Override
@@ -67,6 +74,19 @@ public class ParameterImpl implements IParameter
     public String getDescription()
     {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getExample()
+    {
+        return parameter.example();
+    }
+
+    @Override
+    public Map<String, String> getExamples()
+    {
+        // only available in RAML 1.0+
+        return new HashMap<>();
     }
 
     @Override
