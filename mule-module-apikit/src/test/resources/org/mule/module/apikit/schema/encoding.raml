@@ -1,0 +1,44 @@
+#%RAML 1.0
+title: payload encoding
+
+/testXml:
+    post:
+        body:
+            application/xml:
+                schema: |
+                  <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                   elementFormDefault="qualified" xmlns="http://mulesoft.com/schemas/fulbo"
+                   targetNamespace="http://mulesoft.com/schemas/fulbo">
+                  <xs:element name="liga">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="nombre" type="xs:string"/>
+                        <xs:element name="descripción" type="xs:string" minOccurs="0"/>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                  </xs:schema>
+        responses:
+            200:
+                description: Return the input
+                body:
+                    application/xml: ~
+
+/testJson:
+    post:
+        body:
+            application/json:
+                schema: |
+                  {
+                    "$schema": "http://json-schema.org/schema",
+                    "type": "object",
+                    "properties":
+                      {
+                        "content": { "type": "string" }
+                      }
+                  }
+        responses:
+            200:
+                description: Return the input
+                body:
+                    application/json: ~

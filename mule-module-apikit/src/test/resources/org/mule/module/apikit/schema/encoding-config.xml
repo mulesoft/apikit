@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+
+    <apikit:config name="raml08" raml="org/mule/module/apikit/schema/encoding-08.raml" consoleEnabled="false"/>
+    <apikit:config name="raml10" raml="org/mule/module/apikit/schema/encoding.raml" consoleEnabled="false"/>
+
+    <flow name="doorway10">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api10"/>
+        <apikit:router config-ref="raml10"/>
+    </flow>
+
+    <flow name="doorway08">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api08"/>
+        <apikit:router config-ref="raml08"/>
+    </flow>
+
+    <flow name="doorway10string">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api10str"/>
+        <object-to-string-transformer/>
+        <apikit:router config-ref="raml10"/>
+    </flow>
+
+    <flow name="doorway08string">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api08str"/>
+        <object-to-string-transformer/>
+        <apikit:router config-ref="raml08"/>
+    </flow>
+
+    <flow name="post:/testXml:raml10">
+        <set-payload value="#[payload]"/>
+    </flow>
+
+    <flow name="post:/testJson:raml10">
+        <set-payload value="#[payload]"/>
+    </flow>
+
+    <flow name="post:/testXml:raml08">
+        <set-payload value="#[payload]"/>
+    </flow>
+
+    <flow name="post:/testJson:raml08">
+        <set-payload value="#[payload]"/>
+    </flow>
+
+</mule>
