@@ -16,8 +16,12 @@ import org.mule.transformer.types.DataTypeFactory;
 import org.mule.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,20 +54,24 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
 
             Document data;
             Object input = muleEvent.getMessage().getPayload();
+            String messageEncoding = muleEvent.getEncoding();
             if (input instanceof InputStream)
             {
-                input = IOUtils.toString((InputStream) input, muleEvent.getMessage().getEncoding());
                 logger.debug("transforming payload to perform XSD validation");
-                DataType<String> dataType = DataTypeFactory.create(String.class, muleEvent.getMessage().getDataType().getMimeType());
-                muleEvent.getMessage().setPayload(input, dataType);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                IOUtils.copyLarge((InputStream) input, baos);
+                DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, muleEvent.getMessage().getDataType().getMimeType());
+                dataType.setEncoding(messageEncoding);
+                muleEvent.getMessage().setPayload(new ByteArrayInputStream(baos.toByteArray()), dataType);
+                data = loadDocument(new InputStreamReader(new ByteArrayInputStream(baos.toByteArray()), messageEncoding));
             }
-            if (input instanceof String)
+            else if (input instanceof String)
             {
-                data = loadDocument(IOUtils.toInputStream((String) input));
+                data = loadDocument(new StringReader((String) input));
             }
             else if (input instanceof byte[])
             {
-                data = loadDocument(new ByteArrayInputStream((byte[]) input));
+                data = loadDocument(new InputStreamReader(new ByteArrayInputStream((byte[]) input), messageEncoding));
             }
             else
             {
@@ -84,11 +92,11 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
     /**
      * Loads the document from the <code>content</code>.
      *
-     * @param inputStream the content to load
+     * @param reader the content to load
      * @return the {@link org.w3c.dom.Document} represents the DOM of the content
      * @throws java.io.IOException
      */
-    public static Document loadDocument(InputStream inputStream) throws IOException
+    private static Document loadDocument(Reader reader) throws IOException
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         setFeatures(factory);
@@ -96,7 +104,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
         try
         {
             DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(new InputSource(inputStream));
+            return builder.parse(new InputSource(reader));
         }
         catch (ParserConfigurationException e)
         {

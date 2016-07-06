@@ -14,6 +14,7 @@ import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.cache.JsonSchemaCache;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.transformer.types.DataTypeFactory;
+import org.mule.util.IOUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jackson.JsonLoader;
@@ -22,6 +23,7 @@ import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,12 +53,18 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             Object input = muleEvent.getMessage().getPayload();
             if (input instanceof InputStream)
             {
-                input = StreamUtils.toString((InputStream) input);
                 logger.debug("transforming payload to perform JSON Schema validation");
-                DataType<String> dataType = DataTypeFactory.create(String.class, muleEvent.getMessage().getDataType().getMimeType());
-                muleEvent.getMessage().setPayload(input, dataType);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                IOUtils.copyLarge((InputStream) input, baos);
+                DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, muleEvent.getMessage().getDataType().getMimeType());
+                dataType.setEncoding(muleEvent.getEncoding());
+                muleEvent.getMessage().setPayload(new ByteArrayInputStream(baos.toByteArray()), dataType);
+
+                //convert to string to remove BOM
+                String str = StreamUtils.toString(new ByteArrayInputStream(baos.toByteArray()));
+                data = JsonLoader.fromReader(new StringReader(str));
             }
-            if (input instanceof String)
+            else if (input instanceof String)
             {
                 data = JsonLoader.fromReader(new StringReader((String) input));
             }
