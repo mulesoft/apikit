@@ -39,9 +39,13 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
+import org.mule.util.IOUtils;
 
 import com.google.common.net.MediaType;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -316,7 +320,7 @@ public class HttpRestRequest
                 found = true;
                 if (!config.isDisableValidations())
                 {
-                    valideateBody(mimeTypeName);
+                    validateBody(mimeTypeName);
                 }
                 break;
             }
@@ -332,16 +336,16 @@ public class HttpRestRequest
         throw new UnsupportedMediaTypeException();
     }
 
-    private void valideateBody(String mimeTypeName) throws MuleRestException
+    private void validateBody(String mimeTypeName) throws MuleRestException
     {
         IMimeType actionMimeType = action.getBody().get(mimeTypeName);
-        if (actionMimeType.getSchema() != null &&
-            (mimeTypeName.contains("xml") ||
-             mimeTypeName.contains("json")))
+        boolean isJson = mimeTypeName.contains("json");
+        boolean isXml = mimeTypeName.contains("xml");
+        if (actionMimeType.getSchema() != null && (isXml || isJson))
         {
             if (config.isParserV2())
             {
-                validateSchemaV2(actionMimeType);
+                validateSchemaV2(actionMimeType, isJson);
             }
             else
             {
@@ -443,9 +447,9 @@ public class HttpRestRequest
         }
     }
 
-    private void validateSchemaV2(IMimeType mimeType) throws BadRequestException
+    private void validateSchemaV2(IMimeType mimeType, boolean isJson) throws BadRequestException
     {
-        String payload = getPayloadAsString(requestEvent.getMessage());
+        String payload = getPayloadAsString(requestEvent.getMessage(), isJson);
         List<ValidationResult> validationResults;
         if (mimeType instanceof org.mule.raml.implv2.v10.model.MimeTypeImpl)
         {
@@ -466,15 +470,34 @@ public class HttpRestRequest
         }
     }
 
-    private String getPayloadAsString(MuleMessage message) throws BadRequestException
+    private String getPayloadAsString(MuleMessage message, boolean isJson) throws BadRequestException
     {
         Object input = message.getPayload();
         if (input instanceof InputStream)
         {
-            input = StreamUtils.toString((InputStream) input);
             logger.debug("transforming payload to perform Schema validation");
-            DataType<String> dataType = DataTypeFactory.create(String.class, message.getDataType().getMimeType());
-            message.setPayload(input, dataType);
+            try
+            {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                IOUtils.copyLarge((InputStream) input, baos);
+                DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, message.getDataType().getMimeType());
+                dataType.setEncoding(message.getEncoding());
+                message.setPayload(new ByteArrayInputStream(baos.toByteArray()), dataType);
+
+                if (isJson)
+                {
+                    // json only supports UTF family that is auto-detected
+                    input = StreamUtils.toString(new ByteArrayInputStream(baos.toByteArray()));
+                }
+                else
+                {
+                    input = IOUtils.toString(new ByteArrayInputStream(baos.toByteArray()), message.getEncoding());
+                }
+            }
+            catch (IOException e)
+            {
+                throw new BadRequestException("Error processing request: " + e.getMessage());
+            }
         }
         else if (input instanceof byte[])
         {
