@@ -742,7 +742,8 @@
         collapsible: '=',
         isNestedProperty: '=',
         hideTypeLinks: '=',
-        hidePropertyDetails: '='
+        hidePropertyDetails: '=',
+        showExamples: '='
       },
       controller: function ($scope, $rootScope) {
         if (!Array.isArray($scope.list)) {
@@ -763,6 +764,7 @@
             newType.type = newType.items.type.map(function (aType) {
               return aType + '[]';
             });
+            newType.properties = newType.items.properties;
           }
 
           return newType;
@@ -2706,6 +2708,11 @@
       $q,
       $window
     ) {
+      var jsonOptions=  {
+        serializeMetadata: false,
+        dumpSchemaContents: true
+      };
+
       return {
         load:     toQ(load),
         loadPath: toQ(loadPath)
@@ -2773,13 +2780,13 @@
             var apiJSON;
 
             api = api.expand ? api.expand() : api;
-            apiJSON = api.toJSON();
+            apiJSON = api.toJSON(jsonOptions);
             if (api.uses && api.uses()) {
               apiJSON.uses = {};
               api.uses().forEach(function (usesItem) {
                 var libraryAST = usesItem.ast();
                 libraryAST = libraryAST.expand ? libraryAST.expand() : libraryAST;
-                apiJSON.uses[usesItem.key()] = libraryAST.toJSON();
+                apiJSON.uses[usesItem.key()] = libraryAST.toJSON(jsonOptions);
               });
             }
 
@@ -4261,7 +4268,7 @@ RAML.Inspector = (function() {
   function findSchema(schemaName, schemas) {
     if (schemas) {
       var existingSchema = find(schemaName, schemas);
-      return existingSchema ? existingSchema[schemaName] : existingSchema;
+      return existingSchema;
     }
   }
 
@@ -5906,13 +5913,17 @@ RAML.Inspector = (function() {
   };
 
   var TYPES = {
-    string:    String,
-    number:    toNumber,
-    integer:   toInteger,
-    "boolean": toBoolean,
-    date:      toDate,
-    object:    returnValue,
-    union:     toUnion
+    string:          String,
+    number:          toNumber,
+    integer:         toInteger,
+    'boolean':       toBoolean,
+    date:            toDate,
+    'date-only':     toDate,
+    'time-only':     toDate,
+    'datetime-only': toDate,
+    'datetime':      toDate,
+    object:          returnValue,
+    union:           toUnion
   };
 
   /**
@@ -6345,13 +6356,17 @@ RAML.Inspector = (function() {
   }
 
   var TYPES = {
-    date:      isDate,
-    number:    isNumber,
-    integer:   isInteger,
-    "boolean": isBoolean,
-    string:    isString,
-    object:    isJSON,
-    union:     isUnion
+    date:            isDate,
+    'date-only':     isDate,
+    'time-only':     isDate,
+    'datetime-only': isDate,
+    datetime:        isDate,
+    number:          isNumber,
+    integer:         isInteger,
+    'boolean':       isBoolean,
+    string:          isString,
+    object:          isJSON,
+    union:           isUnion
   };
 
   /**
@@ -6425,7 +6440,7 @@ RAML.Inspector = (function() {
       maximum:   isMaximum,
       minLength: isMinimumLength,
       maxLength: isMaximumLength,
-      "enum":    isEnum,
+      'enum':    isEnum,
       pattern:   isPattern
     };
 
@@ -6474,17 +6489,17 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "    <section class=\"raml-console-resource-section\" id=\"docs-uri-parameters\" ng-if=\"resource.uriParametersForDocumentation\">\n" +
     "      <h3 class=\"raml-console-resource-heading-a\">URI Parameters</h3>\n" +
-    "      <properties list=\"resource.uriParametersForDocumentation\"></properties>\n" +
+    "      <properties list=\"resource.uriParametersForDocumentation\" show-examples=\"true\"></properties>\n" +
     "    </section>\n" +
     "\n" +
     "    <section class=\"raml-console-resource-section\" id=\"docs-headers\" ng-if=\"methodInfo.headers.plain\">\n" +
     "      <h3 class=\"raml-console-resource-heading-a\">Headers</h3>\n" +
-    "      <properties list=\"methodInfo.headers.plain\"></properties>\n" +
+    "      <properties list=\"methodInfo.headers.plain\" show-examples=\"true\"></properties>\n" +
     "    </section>\n" +
     "\n" +
     "    <section class=\"raml-console-resource-section\" id=\"docs-query-parameters\" ng-if=\"methodInfo.queryParameters\">\n" +
     "      <h3 class=\"raml-console-resource-heading-a\">Query Parameters</h3>\n" +
-    "      <properties list=\"methodInfo.queryParameters\"></properties>\n" +
+    "      <properties list=\"methodInfo.queryParameters\" show-examples=\"true\"></properties>\n" +
     "    </section>\n" +
     "\n" +
     "    <section class=\"raml-console-resource-section\" id=\"docs-query-string\" ng-if=\"methodInfo.queryString\">\n" +
@@ -6502,12 +6517,12 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "\n" +
     "      <section class=\"raml-console-resource-section raml-console-scheme-headers\" ng-if=\"documentationSchemeSelected.describedBy.headers\">\n" +
     "        <h4 class=\"raml-console-resource-heading-a\">Headers</h4>\n" +
-    "        <properties list=\"documentationSchemeSelected.describedBy.headers\"></properties>\n" +
+    "        <properties list=\"documentationSchemeSelected.describedBy.headers\" show-examples=\"true\"></properties>\n" +
     "      </section>\n" +
     "\n" +
     "      <section class=\"raml-console-resource-section raml-console-scheme-query-parameters\" ng-if=\"documentationSchemeSelected.describedBy.queryParameters\">\n" +
     "        <h4 class=\"raml-console-resource-heading-a\">Query Parameters</h4>\n" +
-    "        <properties list=\"documentationSchemeSelected.describedBy.queryParameters\"></properties>\n" +
+    "        <properties list=\"documentationSchemeSelected.describedBy.queryParameters\" show-examples=\"true\"></properties>\n" +
     "      </section>\n" +
     "\n" +
     "      <section class=\"raml-console-resource-section raml-console-scheme-responses\" ng-if=\"documentationSchemeSelected.describedBy.responses\">\n" +
@@ -6725,11 +6740,21 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
     "      <div ng-if=\"!vm.isCollapsed\">\n" +
     "        <p ng-if=\"type.description\" markdown=\"type.description\" class=\"raml-console-marked-content\"></p>\n" +
     "\n" +
+    "        <p ng-if=\"type.example !== undefined && showExamples\">\n" +
+    "          <span class=\"raml-console-resource-param-example\"><b>Example:</b> {{type.example}}</span>\n" +
+    "        </p>\n" +
+    "\n" +
     "        <pre ng-if=\"isSchema(type.type[0])\" class=\"raml-console-resource-pre\">\n" +
     "          <code class=\"raml-console-hljs\" hljs source=\"type.type[0]\"></code>\n" +
     "        </pre>\n" +
     "\n" +
-    "        <properties style=\"padding-left: 10px; margin-top: 11px;\" list=\"type.properties\" ng-if=\"type.properties\" hide-type-links=\"hideTypeLinks\" is-nested-property=\"true\"></properties>\n" +
+    "        <properties\n" +
+    "          style=\"padding-left: 10px; margin-top: 11px;\"\n" +
+    "          list=\"type.properties\"\n" +
+    "          ng-if=\"type.properties\"\n" +
+    "          hide-type-links=\"hideTypeLinks\"\n" +
+    "          is-nested-property=\"true\">\n" +
+    "        </properties>\n" +
     "      </div>\n" +
     "    </div>\n" +
     "  </div>\n" +
@@ -7362,7 +7387,7 @@ angular.module('ramlConsoleApp').run(['$templateCache', function($templateCache)
 
   $templateCache.put('directives/type-properties.tpl.html',
     "<div>\n" +
-    "  <properties list=\"properties\" hide-property-details=\"true\"></properties>\n" +
+    "  <properties list=\"properties\" hide-property-details=\"true\" show-examples=\"true\"></properties>\n" +
     "<div>\n"
   );
 
