@@ -159,6 +159,7 @@ public class ConsoleHandler implements MessageProcessor
         InputStream in = null;
         try
         {
+            boolean addContentEncodingHeader = false;
             if (path.equals(embeddedConsolePath) && !(contextPath.endsWith("/") && standalone))
             {
                 // client redirect
@@ -198,6 +199,19 @@ public class ConsoleHandler implements MessageProcessor
                         in = new FileInputStream(apiResource);
                     }
                 }
+                else if (path.startsWith(embeddedConsolePath + "/scripts"))
+                {
+                    String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
+                    if (acceptEncoding != null && acceptEncoding.contains("gzip"))
+                    {
+                        in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()) + ".gz");
+                        addContentEncodingHeader = true;
+                    }
+                    else
+                    {
+                        in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
+                    }
+                }
                 else if (path.startsWith(embeddedConsolePath))
                 {
                     in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
@@ -226,6 +240,10 @@ public class ConsoleHandler implements MessageProcessor
             resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length);
             resultEvent.getMessage().setOutboundProperty("Access-Control-Allow-Origin", "*");
 
+            if (addContentEncodingHeader)
+            {
+                resultEvent.getMessage().setOutboundProperty("Content-Encoding", "gzip");
+            }
             if (mimetype.equals(MimeTypes.HTML))
             {
                 resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_EXPIRES, -1); //avoid IE ajax response caching
