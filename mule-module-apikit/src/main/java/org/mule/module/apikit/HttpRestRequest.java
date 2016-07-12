@@ -29,6 +29,7 @@ import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
+import org.mule.module.apikit.validation.RestXmlSchemaValidator;
 import org.mule.module.apikit.validation.SchemaType;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
 import org.mule.module.http.internal.ParameterMap;
@@ -47,7 +48,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -345,7 +345,7 @@ public class HttpRestRequest
         {
             if (config.isParserV2())
             {
-                validateSchemaV2(actionMimeType, isJson);
+                validateSchemaV2(actionMimeType);
             }
             else
             {
@@ -447,9 +447,9 @@ public class HttpRestRequest
         }
     }
 
-    private void validateSchemaV2(IMimeType mimeType, boolean isJson) throws BadRequestException
+    private void validateSchemaV2(IMimeType mimeType) throws BadRequestException
     {
-        String payload = getPayloadAsString(requestEvent.getMessage(), isJson);
+        String payload = getPayloadAsString(requestEvent.getMessage());
         List<ValidationResult> validationResults;
         if (mimeType instanceof org.mule.raml.implv2.v10.model.MimeTypeImpl)
         {
@@ -470,9 +470,10 @@ public class HttpRestRequest
         }
     }
 
-    private String getPayloadAsString(MuleMessage message, boolean isJson) throws BadRequestException
+    private String getPayloadAsString(MuleMessage message) throws BadRequestException
     {
         Object input = message.getPayload();
+        String charset = RestXmlSchemaValidator.getHeaderCharset(message);
         if (input instanceof InputStream)
         {
             logger.debug("transforming payload to perform Schema validation");
@@ -482,17 +483,9 @@ public class HttpRestRequest
                 IOUtils.copyLarge((InputStream) input, baos);
                 DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, message.getDataType().getMimeType());
                 dataType.setEncoding(message.getEncoding());
-                message.setPayload(new ByteArrayInputStream(baos.toByteArray()), dataType);
-
-                if (isJson)
-                {
-                    // json only supports UTF family that is auto-detected
-                    input = StreamUtils.toString(new ByteArrayInputStream(baos.toByteArray()));
-                }
-                else
-                {
-                    input = IOUtils.toString(new ByteArrayInputStream(baos.toByteArray()), message.getEncoding());
-                }
+                byte[] bytes = baos.toByteArray();
+                message.setPayload(new ByteArrayInputStream(bytes), dataType);
+                input = byteArrayToString(bytes, charset);
             }
             catch (IOException e)
             {
@@ -503,11 +496,11 @@ public class HttpRestRequest
         {
             try
             {
-                input = new String((byte[]) input, StreamUtils.detectEncoding((byte[]) input));
+                input = byteArrayToString((byte[]) input, charset);
             }
-            catch (UnsupportedEncodingException e)
+            catch (IOException e)
             {
-                throw new BadRequestException("Unsupported payload encoding: " + e.getMessage());
+                throw new BadRequestException("Error processing request: " + e.getMessage());
             }
         }
         else if (input instanceof String)
@@ -519,6 +512,15 @@ public class HttpRestRequest
             throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
         }
         return (String) input;
+    }
+
+    private String byteArrayToString(byte[] bytes, String charset) throws IOException
+    {
+        if (charset == null)
+        {
+            return StreamUtils.toString(new ByteArrayInputStream(bytes));
+        }
+        return IOUtils.toString(new ByteArrayInputStream(StreamUtils.trimBom(bytes)), charset);
     }
 
     private void validateSchema(String mimeTypeName) throws MuleRestException

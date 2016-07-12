@@ -8,11 +8,13 @@ package org.mule.module.apikit.validation;
 
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
+import org.mule.api.MuleMessage;
 import org.mule.api.transformer.DataType;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.cache.XmlSchemaCache;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.transformer.types.DataTypeFactory;
+import org.mule.transport.http.HttpConstants;
 import org.mule.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -55,6 +57,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             Document data;
             Object input = muleEvent.getMessage().getPayload();
             String messageEncoding = muleEvent.getEncoding();
+            String charset = getHeaderCharset(muleEvent.getMessage());
             if (input instanceof InputStream)
             {
                 logger.debug("transforming payload to perform XSD validation");
@@ -63,7 +66,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
                 DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, muleEvent.getMessage().getDataType().getMimeType());
                 dataType.setEncoding(messageEncoding);
                 muleEvent.getMessage().setPayload(new ByteArrayInputStream(baos.toByteArray()), dataType);
-                data = loadDocument(new InputStreamReader(new ByteArrayInputStream(baos.toByteArray()), messageEncoding));
+                data = loadDocument(new ByteArrayInputStream(baos.toByteArray()), charset);
             }
             else if (input instanceof String)
             {
@@ -71,7 +74,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             }
             else if (input instanceof byte[])
             {
-                data = loadDocument(new InputStreamReader(new ByteArrayInputStream((byte[]) input), messageEncoding));
+                data = loadDocument(new ByteArrayInputStream((byte[]) input), charset);
             }
             else
             {
@@ -90,13 +93,42 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
     }
 
     /**
+     *
+     * @return the charset specified by the content-type header or null if not specified
+     * @param message
+     */
+    public static String getHeaderCharset(MuleMessage message)
+    {
+        String contentType = message.getInboundProperty(HttpConstants.HEADER_CONTENT_TYPE, "application/xml");
+        if (contentType.contains("charset="))
+        {
+            return message.getEncoding();
+        }
+        return null;
+    }
+
+    private static Document loadDocument(InputStream stream, String charset) throws IOException
+    {
+        if (charset == null)
+        {
+            return loadDocument(new InputSource(stream));
+        }
+        return loadDocument(new InputSource(new InputStreamReader(stream, charset)));
+    }
+
+    private static Document loadDocument(Reader reader) throws IOException
+    {
+        return loadDocument(new InputSource(reader));
+    }
+
+    /**
      * Loads the document from the <code>content</code>.
      *
-     * @param reader the content to load
+     * @param source the content to load
      * @return the {@link org.w3c.dom.Document} represents the DOM of the content
      * @throws java.io.IOException
      */
-    private static Document loadDocument(Reader reader) throws IOException
+    private static Document loadDocument(InputSource source) throws IOException
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         setFeatures(factory);
@@ -104,7 +136,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
         try
         {
             DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(new InputSource(reader));
+            return builder.parse(source);
         }
         catch (ParserConfigurationException e)
         {
