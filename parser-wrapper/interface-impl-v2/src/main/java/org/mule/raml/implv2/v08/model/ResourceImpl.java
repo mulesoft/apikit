@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.raml.v2.api.model.v08.methods.Method;
+import org.raml.v2.api.model.v08.parameters.Parameter;
 import org.raml.v2.api.model.v08.resources.Resource;
 
 public class ResourceImpl implements IResource
@@ -91,7 +92,17 @@ public class ResourceImpl implements IResource
     @Override
     public Map<String, IParameter> getResolvedUriParameters()
     {
-        throw new UnsupportedOperationException();
+        Map<String, IParameter> result = new HashMap<>();
+        Resource current = resource;
+        while (current != null)
+        {
+            for (Parameter parameter : current.uriParameters())
+            {
+                result.put(parameter.name(), new ParameterImpl(parameter));
+            }
+            current = current.parentResource();
+        }
+        return result;
     }
 
     @Override

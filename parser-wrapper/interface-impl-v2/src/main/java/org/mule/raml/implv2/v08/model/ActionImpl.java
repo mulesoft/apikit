@@ -14,6 +14,7 @@ import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import java.util.Map;
 import org.raml.v2.api.model.v08.bodies.BodyLike;
 import org.raml.v2.api.model.v08.bodies.Response;
 import org.raml.v2.api.model.v08.methods.Method;
+import org.raml.v2.api.model.v08.parameters.Parameter;
 
 public class ActionImpl implements IAction
 {
@@ -81,13 +83,23 @@ public class ActionImpl implements IAction
     @Override
     public Map<String, IParameter> getQueryParameters()
     {
-        throw new UnsupportedOperationException();
+        Map<String, IParameter> result = new HashMap<>();
+        for (Parameter parameter : method.queryParameters())
+        {
+            result.put(parameter.name(), new ParameterImpl(parameter));
+        }
+        return result;
     }
 
     @Override
     public Map<String, IParameter> getHeaders()
     {
-        throw new UnsupportedOperationException();
+        Map<String, IParameter> result = new HashMap<>();
+        for (Parameter parameter : method.headers())
+        {
+            result.put(parameter.name(), new ParameterImpl(parameter));
+        }
+        return result;
     }
 
     @Override
