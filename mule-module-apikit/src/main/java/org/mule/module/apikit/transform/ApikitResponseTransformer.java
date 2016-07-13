@@ -42,7 +42,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
             return message;
         }
         String responseRepresentation = message.getInvocationProperty(BEST_MATCH_REPRESENTATION);
-        List<IMimeType> responseMimeTypes = message.getInvocationProperty(CONTRACT_MIME_TYPES);
+        List<String> responseMimeTypes = message.getInvocationProperty(CONTRACT_MIME_TYPES);
         String acceptedHeader = message.getInvocationProperty(ACCEPT_HEADER);
         if (responseRepresentation == null)
         {
@@ -56,7 +56,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         return transformToExpectedContentType(message, responseRepresentation, responseMimeTypes, acceptedHeader);
     }
 
-    public Object transformToExpectedContentType(MuleMessage message, String responseRepresentation, List<IMimeType> responseMimeTypes,
+    public Object transformToExpectedContentType(MuleMessage message, String responseRepresentation, List<String> responseMimeTypes,
                                                  String acceptedHeader) throws TransformerException
     {
         Object payload = message.getPayload();
@@ -87,7 +87,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
             return payload;
         }
 
-        Collection<IMimeType> conjunctionTypes = getBestMatchMediaTypes(responseMimeTypes, acceptedHeader);
+        Collection<String> conjunctionTypes = getBestMatchMediaTypes(responseMimeTypes, acceptedHeader);
         String msgAcceptedContentType = acceptedContentType(msgMimeType, msgContentType, conjunctionTypes);
         if (msgAcceptedContentType != null)
         {
@@ -125,7 +125,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
 
     }
 
-    private Collection<IMimeType> getBestMatchMediaTypes(List<IMimeType> responseMimeTypes, String acceptedHeader)
+    private Collection<String> getBestMatchMediaTypes(List<String> responseMimeTypes, String acceptedHeader)
     {
         if(acceptedHeader.contains("*/*"))
         {
@@ -136,15 +136,15 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         return filterAccepted(responseMimeTypes, acceptedTypes);
     }
 
-    private Collection<IMimeType> filterAccepted(List<IMimeType> responseMimeTypes, final Collection<String> acceptedTypes)
+    private Collection<String> filterAccepted(List<String> responseMimeTypes, final Collection<String> acceptedTypes)
     {
         return Collections2.filter(
-                responseMimeTypes, new Predicate<IMimeType>()
+                responseMimeTypes, new Predicate<String>()
                 {
                     @Override
-                    public boolean apply(IMimeType m)
+                    public boolean apply(String m)
                     {
-                        return acceptedTypes.contains(m.getType());
+                        return acceptedTypes.contains(m);
                     }
                 }
         );
@@ -169,18 +169,18 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
      *
      * @return null if it is not
      */
-    private String acceptedContentType(String msgMimeType, String msgContentType, Collection<IMimeType> conjunctionTypes)
+    private String acceptedContentType(String msgMimeType, String msgContentType, Collection<String> conjunctionTypes)
     {
-        for (IMimeType acceptedMediaType : conjunctionTypes)
+        for (String acceptedMediaType : conjunctionTypes)
         {
-            if(msgMimeType != null && msgMimeType.contains(acceptedMediaType.getType()))
+            if(msgMimeType != null && msgMimeType.contains(acceptedMediaType))
             {
                 return msgMimeType;
             }
         }
-        for (IMimeType acceptedMediaType : conjunctionTypes)
+        for (String acceptedMediaType : conjunctionTypes)
         {
-            if(msgContentType != null && msgContentType.contains(acceptedMediaType.getType()))
+            if(msgContentType != null && msgContentType.contains(acceptedMediaType))
             {
                 return msgContentType;
             }

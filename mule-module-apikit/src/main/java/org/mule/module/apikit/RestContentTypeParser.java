@@ -262,17 +262,16 @@ public final class RestContentTypeParser
      * @param header
      * @return
      */
-    public static MediaType bestMatch(List<IMimeType> supportedRepresentations, String header) {
+    public static MediaType bestMatch(List<String> supportedRepresentations, String header) {
         List<ParseResults> parseResults = new LinkedList<ParseResults>();
         for (String r : StringUtils.split(header, ','))
                     parseResults.add(parseMediaRange(r));
 
         List<FitnessAndQuality> weightedMatches = new LinkedList<FitnessAndQuality>();
         String quality = "1"; //first representation defined
-        for (IMimeType representation : supportedRepresentations) {
-            String mediaType = representation.getType();
-            FitnessAndQuality fitnessAndQuality = fitnessAndQualityParsed(mediaType + ";q=" + quality, parseResults);
-            fitnessAndQuality.mimeType = mediaType;
+        for (String representation : supportedRepresentations) {
+            FitnessAndQuality fitnessAndQuality = fitnessAndQualityParsed(representation + ";q=" + quality, parseResults);
+            fitnessAndQuality.mimeType = representation;
             weightedMatches.add(fitnessAndQuality);
             quality = "0.5"; //subsequent representations
         }
