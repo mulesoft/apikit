@@ -120,7 +120,7 @@ public class HttpRestRequest
             processHeaders();
         }
         negotiateInputRepresentation();
-        List<IMimeType> responseMimeTypes = getResponseMimeTypes();
+        List<String> responseMimeTypes = getResponseMimeTypes();
         String responseRepresentation = negotiateOutputRepresentation(responseMimeTypes);
 
         if (responseMimeTypes != null)
@@ -528,7 +528,7 @@ public class HttpRestRequest
         validator.validate(config.getName(), SchemaCacheUtils.getSchemaCacheKey(action, mimeTypeName), requestEvent, config.getApi());
     }
 
-    private String negotiateOutputRepresentation(List<IMimeType> mimeTypes) throws MuleRestException
+    private String negotiateOutputRepresentation(List<String> mimeTypes) throws MuleRestException
     {
         if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
         {
@@ -541,11 +541,11 @@ public class HttpRestRequest
             return handleNotAcceptable();
         }
         logger.debug("=== negotiated response content-type: " + bestMatch.toString());
-        for (IMimeType representation : mimeTypes)
+        for (String representation : mimeTypes)
         {
-            if (representation.getType().equals(bestMatch.withoutParameters().toString()))
+            if (representation.equals(bestMatch.withoutParameters().toString()))
             {
-                return representation.getType();
+                return representation;
             }
         }
         return handleNotAcceptable();
@@ -556,18 +556,21 @@ public class HttpRestRequest
         throw new NotAcceptableException();
     }
 
-    private List<IMimeType> getResponseMimeTypes()
+    private List<String> getResponseMimeTypes()
     {
-        List<IMimeType> mimeTypes = new ArrayList<>();
+        List<String> mimeTypes = new ArrayList<>();
         int status = getSuccessStatus();
         if (status != -1)
         {
             IResponse response = action.getResponses().get(String.valueOf(status));
             if (response != null && response.hasBody())
             {
-                Collection<IMimeType> types = response.getBody().values();
-                logger.debug(String.format("=== adding response mimeTypes for status %d : %s", status, types));
-                mimeTypes.addAll(types);
+                Map<String, IMimeType> interfacesOfTypes = response.getBody();
+                for (Map.Entry<String, IMimeType> entry : interfacesOfTypes.entrySet())
+                {
+                    mimeTypes.add(entry.getValue().getType());
+                }
+                logger.debug(String.format("=== adding response mimeTypes for status %d : %s", status, mimeTypes));
             }
         }
         return mimeTypes;
