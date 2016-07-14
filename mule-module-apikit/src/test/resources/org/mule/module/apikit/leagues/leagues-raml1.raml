@@ -19,6 +19,13 @@ types:
         type: !include league.json
     league-xml:
         type: !include league16.xsd
+    league-yaml:
+        properties:
+            id?: string
+            name: string
+        example:
+            id: liga-bbva
+            name: Liga BBVA
 
 resourceTypes:
     collection:
@@ -43,7 +50,7 @@ traits:
     post:
         body: &league-schema
             application/json:
-                type: league-json
+                type: league-yaml
                 example: |
                     { "name" : "liga criolla" }
             text/xml:

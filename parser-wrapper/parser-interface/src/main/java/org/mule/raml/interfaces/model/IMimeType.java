@@ -16,7 +16,12 @@ public interface IMimeType
     Object getCompiledSchema();
     String getSchema();
     Map<String, List<IParameter>> getFormParameters();
+
+    /**
+     * @return the mime type name (e.g: application/json)
+     */
     String getType();
+
     String getExample();
     Object getInstance();
 }

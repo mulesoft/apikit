@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.raml.v2.api.model.v10.api.Api;
+import org.raml.v2.api.model.v10.datamodel.AnyTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ExternalTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.resources.Resource;
@@ -76,14 +77,18 @@ public class RamlImpl10V2 implements IRaml
         return result;
     }
 
-    // only returns external types
     static String getTypeAsString(TypeDeclaration typeDeclaration)
     {
         if (typeDeclaration instanceof ExternalTypeDeclaration)
         {
             return ((ExternalTypeDeclaration) typeDeclaration).schemaContent();
         }
-        return null;
+        if (typeDeclaration instanceof AnyTypeDeclaration)
+        {
+            return null;
+        }
+        //return non-null value in order to detect that a schema was defined
+        return "[yaml-type-flag]";
     }
 
     @Override
