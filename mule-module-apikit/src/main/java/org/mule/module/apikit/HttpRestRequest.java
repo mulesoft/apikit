@@ -180,14 +180,12 @@ public class HttpRestRequest
 
     private void validateQueryParam(String paramKey, IParameter expected, Collection<?> paramValue) throws InvalidQueryParameterException
     {
-        StringBuilder builder = new StringBuilder("[");
+        StringBuilder builder = new StringBuilder();
         for (Object item : paramValue)
         {
-            builder.append(String.valueOf(item)).append(",");
+            builder.append("- ").append(String.valueOf(item)).append("\n");
         }
-        builder.deleteCharAt(builder.length() - 1);
-        String arrayParam = builder.append("]").toString();
-        validateQueryParam(paramKey, expected, arrayParam);
+        validateQueryParam(paramKey, expected, builder.toString());
     }
 
     private void validateQueryParam(String paramKey, IParameter expected, String paramValue) throws InvalidQueryParameterException
