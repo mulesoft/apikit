@@ -32,9 +32,11 @@ import org.mule.util.IOUtils;
 import org.mule.util.StringMessageUtils;
 import org.mule.util.StringUtils;
 
+import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 import java.io.File;
@@ -492,6 +494,25 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     public RamlUpdater getRamlUpdater()
     {
         return parserService.getRamlUpdater(api, this);
+    }
+
+    public FlowConstruct getParentFlow(MuleEvent event)
+    {
+        if(findsWrappedFlow(event.getFlowConstruct()))
+            return this.flowConstruct;
+        return null;
+    }
+
+    private boolean findsWrappedFlow(final FlowConstruct flowConstruct)
+    {
+        return Iterables.any(restFlowMapWrapper.keySet(), new Predicate<String>()
+        {
+            @Override
+            public boolean apply(String key)
+            {
+                return restFlowMapWrapper.get(key).getFlow().equals(flowConstruct);
+            }
+        });
     }
 
     public Set<String> getFlowActionRefs(Flow flow)
