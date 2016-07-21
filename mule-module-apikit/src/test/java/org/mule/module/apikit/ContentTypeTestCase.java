@@ -54,6 +54,26 @@ public class ContentTypeTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void getOnUsingInvalidAcceptHeader() throws Exception
+    {
+        given().header("Accept", "invalid/invalid")
+                .expect()
+                .response()
+                .statusCode(406)
+                .when().get("/api/resources");
+    }
+
+    @Test
+    public void getOnUsingSingleInvalidAcceptHeader() throws Exception
+    {
+        given().header("Accept", "invalid")
+                .expect()
+                .response()
+                .statusCode(406)
+                .when().get("/api/resources");
+    }
+
+    @Test
     public void getOnAcceptNotSpecified() throws Exception
     {
         given().header("Accept", "")

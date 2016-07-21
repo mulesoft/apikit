@@ -56,7 +56,9 @@ public final class RestContentTypeParser
             StringBuffer s = new StringBuffer("('" + type + "', '" + subType
                     + "', {");
             for (String k : params.keySet())
+            {
                 s.append("'" + k + "':'" + params.get(k) + "',");
+            }
             return s.append("})").toString();
         }
     }
@@ -78,17 +80,24 @@ public final class RestContentTypeParser
             String p = parts[i];
             String[] subParts = StringUtils.split(p, '=');
             if (subParts.length == 2)
+            {
                 results.params.put(subParts[0].trim(), subParts[1].trim());
+            }
         }
         String fullType = parts[0].trim();
 
         // Java URLConnection class sends an Accept header that includes a
         // single "*" - Turn it into a legal wildcard.
         if (fullType.equals("*"))
+        {
             fullType = "*/*";
+        }
         String[] types = StringUtils.split(fullType, "/");
         results.type = types[0].trim();
-        results.subType = types[1].trim();
+        if(types.length > 1)
+        {
+            results.subType = types[1].trim();
+        }
         return results;
     }
 
@@ -110,7 +119,9 @@ public final class RestContentTypeParser
         String q = results.params.get("q");
         float f = NumberUtils.toFloat(q, 1);
         if (StringUtils.isBlank(q) || f < 0 || f > 1)
+        {
             results.params.put("q", "1");
+        }
         return results;
     }
 
@@ -132,13 +143,20 @@ public final class RestContentTypeParser
         }
 
         public int compareTo(FitnessAndQuality o) {
-            if (fitness == o.fitness) {
+            if (fitness == o.fitness)
+            {
                 if (quality == o.quality)
+                {
                     return 0;
+                }
                 else
+                {
                     return quality < o.quality ? -1 : 1;
+                }
             } else
+            {
                 return fitness < o.fitness ? -1 : 1;
+            }
         }
     }
 
