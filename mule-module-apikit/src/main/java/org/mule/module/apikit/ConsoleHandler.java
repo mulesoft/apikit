@@ -84,7 +84,9 @@ public class ConsoleHandler implements MessageProcessor
                 consoleElement = CONSOLE_ELEMENT_OLD;
                 consoleAttributes = CONSOLE_ATTRIBUTES_OLD;
             }
-            String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
+            InputStream indexInputStream = getClass().getResourceAsStream(RESOURCE_BASE + "/index.html");
+            String indexHtml = IOUtils.toString(indexInputStream);
+            IOUtils.closeQuietly(indexInputStream);
             indexHtml = indexHtml.replaceFirst(consoleElement + " src=\"[^\"]+\"",
                                                consoleElement + " src=\"" + relativeRamlUri + "\"");
             cachedIndexHtml = indexHtml.replaceFirst(CONSOLE_ATTRIBUTES_PLACEHOLDER, consoleAttributes);
