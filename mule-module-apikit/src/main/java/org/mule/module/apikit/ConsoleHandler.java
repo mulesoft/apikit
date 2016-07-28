@@ -61,7 +61,9 @@ public class ConsoleHandler
     public ConsoleHandler(String ramlUri, String consolePath)
     {
         this.consolePath = sanitize(consolePath);
-        String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
+        InputStream indexInputStream = getClass().getResourceAsStream(RESOURCE_BASE + "/index.html");
+        String indexHtml = IOUtils.toString(indexInputStream);
+        IOUtils.closeQuietly(indexInputStream);
         this.ramlUri = ramlUri.endsWith("/") ? ramlUri : ramlUri + "/";
         String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
                                                      "<raml-console src=\"" + this.ramlUri + "\"");
@@ -84,7 +86,6 @@ public class ConsoleHandler
 
     public MuleEvent process(MuleEvent event) throws MuleException
     {
-
         String path = UrlUtils.getResourceRelativePath(event.getMessage());
         String contextPath = UrlUtils.getBasePath(event.getMessage());
 
