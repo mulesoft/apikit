@@ -130,9 +130,9 @@ public class ConsoleHandler
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             IOUtils.copyLarge(in, baos);
-
+            IOUtils.closeQuietly(in);
             byte[] buffer = baos.toByteArray();
-
+            IOUtils.closeQuietly(baos);
             String mimetype = getMimeType(path);
             if (mimetype == null)
             {
