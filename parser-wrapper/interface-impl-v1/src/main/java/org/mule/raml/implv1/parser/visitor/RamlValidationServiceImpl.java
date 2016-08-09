@@ -6,6 +6,7 @@
  */
 package org.mule.raml.implv1.parser.visitor;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +50,14 @@ public class RamlValidationServiceImpl implements IRamlValidationService
             if (content != null)
             {
                 results = RamlValidationService.createDefault(resourceLoader).validate(resource);
+                try
+                {
+                    content.close();
+                }
+                catch (IOException e)
+                {
+                    // ignore IOException in close
+                }
             }
         }
         if (resourceContent == null && content == null)
