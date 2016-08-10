@@ -159,6 +159,7 @@ public class ConsoleHandler implements MessageProcessor
         }
         MuleEvent resultEvent;
         InputStream in = null;
+        ByteArrayOutputStream baos = null;
         try
         {
             boolean addContentEncodingHeader = false;
@@ -224,11 +225,9 @@ public class ConsoleHandler implements MessageProcessor
                 throw new NotFoundException(path);
             }
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos = new ByteArrayOutputStream();
             IOUtils.copyLarge(in, baos);
-
             byte[] buffer = baos.toByteArray();
-
             String mimetype = getMimeType(path);
             if (mimetype == null)
             {
@@ -254,6 +253,11 @@ public class ConsoleHandler implements MessageProcessor
         catch (IOException e)
         {
             throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path), event, this);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(baos);
         }
 
         return resultEvent;
