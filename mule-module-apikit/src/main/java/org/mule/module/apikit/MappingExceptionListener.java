@@ -8,7 +8,9 @@ package org.mule.module.apikit;
 
 import static org.mule.transport.http.HttpConnector.HTTP_STATUS_PROPERTY;
 
+import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
+import org.mule.api.lifecycle.InitialisationException;
 import org.mule.exception.CatchMessagingExceptionStrategy;
 
 import java.util.ArrayList;
@@ -22,7 +24,8 @@ import org.mule.util.ClassUtils;
 public class MappingExceptionListener extends CatchMessagingExceptionStrategy
 {
     private int statusCode;
-    private List<Class<?>> exceptions = new ArrayList<Class<?>>();
+    private List<Class<?>> exceptionTypes = new ArrayList<Class<?>>();
+    private List<String> exceptions;
 
     public void setStatusCode(int statusCode)
     {
@@ -31,11 +34,20 @@ public class MappingExceptionListener extends CatchMessagingExceptionStrategy
 
     public void setExceptions(List<String> exceptions)
     {
+        this.exceptions = exceptions;
+    }
+
+    @Override
+    public void doInitialise(MuleContext muleContext) throws InitialisationException
+    {
+        super.doInitialise(muleContext);
+
+        //Resolve exception types during init to have access to application classloader
         for(String exception : exceptions)
         {
             try
             {
-                this.exceptions.add(ClassUtils.getClass(exception));
+                this.exceptionTypes.add(ClassUtils.getClass(muleContext.getExecutionClassLoader(), exception));
             }
             catch (ClassNotFoundException e)
             {
@@ -51,7 +63,7 @@ public class MappingExceptionListener extends CatchMessagingExceptionStrategy
         Map<Throwable, Object> visited = new IdentityHashMap<Throwable, Object>();
         while (exception != null && !visited.containsKey(exception))
         {
-            for (Class declared : exceptions)
+            for (Class declared : exceptionTypes)
             {
                 if (declared.isAssignableFrom(exception.getClass()))
                 {
