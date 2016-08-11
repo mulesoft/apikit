@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+    <http:listener-config name="httpListenerConfig" host="localhost" port="${serverPort}" />
+
+    <apikit:config raml="org/mule/module/apikit/parameters/form-parameters-10.raml"/>
+
+    <flow name="doorwayPathless">
+        <http:listener config-ref="httpListenerConfig" path="/api/*"/>
+        <apikit:router/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
+    <flow name="post:/multipart">
+        <logger level="INFO" message="siamo qui"/>
+    </flow>
+
+    <flow name="post:/url-encoded">
+        <logger level="INFO" message="siamo qui"/>
+    </flow>
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-payload value="resource not found"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
+            <set-payload value="method not allowed"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException"/>
+            <set-payload value="unsupported media type"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>
+            <set-payload value="not acceptable"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException"/>
+            <set-payload value="bad request"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+</mule>

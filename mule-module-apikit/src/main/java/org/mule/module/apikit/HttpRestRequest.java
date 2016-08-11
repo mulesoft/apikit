@@ -42,6 +42,7 @@ import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
 import org.mule.util.IOUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
 
 import java.io.ByteArrayInputStream;
@@ -358,7 +359,15 @@ public class HttpRestRequest
         else if (actionMimeType.getFormParameters() != null &&
                  mimeTypeName.contains("application/x-www-form-urlencoded"))
         {
-            validateUrlencodedForm(actionMimeType.getFormParameters());
+            if (actionMimeType instanceof org.mule.raml.implv2.v10.model.MimeTypeImpl)
+            {
+                validateUrlencodedForm10((org.mule.raml.implv2.v10.model.MimeTypeImpl)actionMimeType);
+            }
+            else
+            {
+                validateUrlencodedForm(actionMimeType.getFormParameters());
+
+            }
         }
     }
 
@@ -412,6 +421,31 @@ public class HttpRestRequest
             }
         }
         requestEvent.getMessage().setPayload(paramMap);
+    }
+
+    private void validateUrlencodedForm10(org.mule.raml.implv2.v10.model.MimeTypeImpl actionMimeType) throws MuleRestException
+    {
+        String jsonText;
+        try
+        {
+            Map<String, String> payload = (Map<String, String>) requestEvent.getMessage().getPayload();
+            jsonText = new ObjectMapper().writeValueAsString(payload);
+        }
+        catch (Exception e)
+        {
+            throw new MuleRestException("Error parsing form parameters. " + e.getMessage());
+        }
+
+        List<ValidationResult> validationResult = actionMimeType.validate(jsonText);
+        if (validationResult.size() > 0)
+        {
+            String resultString =  "";
+            for (ValidationResult result : validationResult)
+            {
+                resultString += result.getMessage() + "\n";
+            }
+            throw new InvalidFormParameterException(resultString);
+        }
     }
 
     private void validateMultipartForm(Map<String, List<IParameter>> formParameters) throws BadRequestException
