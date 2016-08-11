@@ -33,6 +33,7 @@ import org.mule.module.apikit.validation.RestXmlSchemaValidator;
 import org.mule.module.apikit.validation.SchemaType;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
 import org.mule.module.http.internal.ParameterMap;
+import org.mule.raml.implv2.v10.model.MimeTypeImpl;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
@@ -42,6 +43,7 @@ import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
 import org.mule.util.IOUtils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.net.MediaType;
 
 import java.io.ByteArrayInputStream;
@@ -358,7 +360,15 @@ public class HttpRestRequest
         else if (actionMimeType.getFormParameters() != null &&
                  mimeTypeName.contains("application/x-www-form-urlencoded"))
         {
-            validateUrlencodedForm(actionMimeType.getFormParameters());
+            if (config.isParserV2())
+            {
+                validateUrlencodedFormV2(actionMimeType);
+            }
+            else
+            {
+                validateUrlencodedForm(actionMimeType.getFormParameters());
+
+            }
         }
     }
 
@@ -407,11 +417,42 @@ public class HttpRestRequest
                 {
                     String msg = String.format("Invalid value '%s' for form parameter %s. %s",
                                                actual, expectedKey, expected.message((String) actual));
-                    throw new InvalidQueryParameterException(msg);
+                    throw new InvalidFormParameterException(msg);
                 }
             }
         }
         requestEvent.getMessage().setPayload(paramMap);
+    }
+
+    private void validateUrlencodedFormV2(IMimeType actionMimeType) throws MuleRestException
+    {
+        if (!(actionMimeType instanceof MimeTypeImpl))
+        {
+            // validate only raml 1.0
+            return;
+        }
+        String jsonText;
+        try
+        {
+            Map<String, String> payload = (Map<String, String>) requestEvent.getMessage().getPayload();
+            jsonText = new ObjectMapper().writeValueAsString(payload);
+        }
+        catch (Exception e)
+        {
+            logger.warn("Cannot validate url-encoded form", e);
+            return;
+        }
+
+        List<ValidationResult> validationResult = ((MimeTypeImpl) actionMimeType).validate(jsonText);
+        if (validationResult.size() > 0)
+        {
+            String resultString =  "";
+            for (ValidationResult result : validationResult)
+            {
+                resultString += result.getMessage() + "\n";
+            }
+            throw new InvalidFormParameterException(resultString);
+        }
     }
 
     private void validateMultipartForm(Map<String, List<IParameter>> formParameters) throws BadRequestException

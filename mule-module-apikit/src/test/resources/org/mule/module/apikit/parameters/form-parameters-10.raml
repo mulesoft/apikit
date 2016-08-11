@@ -1,0 +1,20 @@
+#%RAML 1.0
+---
+title: Parameters API
+
+/url-encoded:
+    post:
+        body:
+            application/x-www-form-urlencoded:
+                properties:
+                    first:
+                        type: string
+                        required: true
+                    second:
+                        type: string
+                        required: false
+                        enum: [ segundo, secondo ]
+                    third:
+                        type: boolean
+        responses:
+            201: ~
