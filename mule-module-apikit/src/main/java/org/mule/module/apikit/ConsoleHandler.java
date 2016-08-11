@@ -61,7 +61,9 @@ public class ConsoleHandler
     public ConsoleHandler(String ramlUri, String consolePath)
     {
         this.consolePath = sanitize(consolePath);
-        String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
+        InputStream indexInputStream = getClass().getResourceAsStream(RESOURCE_BASE + "/index.html");
+        String indexHtml = IOUtils.toString(indexInputStream);
+        IOUtils.closeQuietly(indexInputStream);
         this.ramlUri = ramlUri.endsWith("/") ? ramlUri : ramlUri + "/";
         String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
                                                      "<raml-console src=\"" + this.ramlUri + "\"");
@@ -94,6 +96,7 @@ public class ConsoleHandler
         }
         MuleEvent resultEvent;
         InputStream in = null;
+        ByteArrayOutputStream baos = null;
         try
         {
             if (path.equals(consolePath) && !(contextPath.endsWith("/") && standalone))
@@ -127,7 +130,7 @@ public class ConsoleHandler
                 throw new NotFoundException(path);
             }
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos = new ByteArrayOutputStream();
             IOUtils.copyLarge(in, baos);
 
             byte[] buffer = baos.toByteArray();
@@ -151,6 +154,11 @@ public class ConsoleHandler
         catch (IOException e)
         {
             throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path), event);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(baos);
         }
 
         return resultEvent;

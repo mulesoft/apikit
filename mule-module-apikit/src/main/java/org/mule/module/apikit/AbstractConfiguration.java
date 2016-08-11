@@ -206,16 +206,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
     protected void validateRaml(ResourceLoader resourceLoader)
     {
-        List<ValidationResult> results = new ArrayList<ValidationResult>();
-        InputStream content = resourceLoader.fetchResource(raml);
-        if (content != null)
-        {
-            results = RamlValidationService.createDefault(resourceLoader).validate(raml);
-        }
-        else
-        {
-            results.add(ValidationResult.createErrorResult("Raml resource not found "));
-        }
+        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader).validate(raml);
         List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
         if (!errors.isEmpty())
         {
