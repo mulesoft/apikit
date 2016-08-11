@@ -17,8 +17,6 @@ import org.mule.raml.implv1.model.RamlImplV1;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.util.BeanUtils;
 
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -62,16 +60,7 @@ public class ParserWrapperV1 implements ParserWrapper
     @Override
     public void validate()
     {
-        List<ValidationResult> results = new ArrayList<>();
-        InputStream content = resourceLoader.fetchResource(ramlPath);
-        if (content != null)
-        {
-            results = RamlValidationService.createDefault(resourceLoader).validate(ramlPath);
-        }
-        else
-        {
-            results.add(ValidationResult.createErrorResult("Raml resource not found "));
-        }
+        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader).validate(ramlPath);
         List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
         if (!errors.isEmpty())
         {

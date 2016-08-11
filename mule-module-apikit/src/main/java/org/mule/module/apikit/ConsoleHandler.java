@@ -84,7 +84,9 @@ public class ConsoleHandler implements MessageProcessor
                 consoleElement = CONSOLE_ELEMENT_OLD;
                 consoleAttributes = CONSOLE_ATTRIBUTES_OLD;
             }
-            String indexHtml = IOUtils.toString(getClass().getResourceAsStream(RESOURCE_BASE + "/index.html"));
+            InputStream indexInputStream = getClass().getResourceAsStream(RESOURCE_BASE + "/index.html");
+            String indexHtml = IOUtils.toString(indexInputStream);
+            IOUtils.closeQuietly(indexInputStream);
             indexHtml = indexHtml.replaceFirst(consoleElement + " src=\"[^\"]+\"",
                                                consoleElement + " src=\"" + relativeRamlUri + "\"");
             cachedIndexHtml = indexHtml.replaceFirst(CONSOLE_ATTRIBUTES_PLACEHOLDER, consoleAttributes);
@@ -157,6 +159,7 @@ public class ConsoleHandler implements MessageProcessor
         }
         MuleEvent resultEvent;
         InputStream in = null;
+        ByteArrayOutputStream baos = null;
         try
         {
             boolean addContentEncodingHeader = false;
@@ -222,11 +225,9 @@ public class ConsoleHandler implements MessageProcessor
                 throw new NotFoundException(path);
             }
 
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            baos = new ByteArrayOutputStream();
             IOUtils.copyLarge(in, baos);
-
             byte[] buffer = baos.toByteArray();
-
             String mimetype = getMimeType(path);
             if (mimetype == null)
             {
@@ -252,6 +253,11 @@ public class ConsoleHandler implements MessageProcessor
         catch (IOException e)
         {
             throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path), event, this);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(in);
+            IOUtils.closeQuietly(baos);
         }
 
         return resultEvent;
