@@ -6,7 +6,6 @@
  */
 package org.mule.raml.implv1.parser.visitor;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,24 +37,7 @@ public class RamlValidationServiceImpl implements IRamlValidationService
     {
         ResourceLoader resourceLoader = ramlDocumentBuilderImpl.getResourceLoader();
         List<ValidationResult> results = new ArrayList<ValidationResult>();
-        InputStream content = null;
-        if (resourceContent != null)
-        {
-            results = RamlValidationService.createDefault(resourceLoader).validate(resourceContent, resource);
-        }
-        else
-        {
-            content = resourceLoader.fetchResource(resource);
-            if (content != null)
-            {
-                results = RamlValidationService.createDefault(resourceLoader).validate(resource);
-            }
-        }
-        if (resourceContent == null && content == null)
-        {
-            results.add(ValidationResult.createErrorResult("Raml resource not found "));
-        }
-
+        results = RamlValidationService.createDefault(resourceLoader).validate(resourceContent, resource);
         errors = new ArrayList<IValidationResult>();
         for (ValidationResult validationResult : ValidationResult.getLevel(ValidationResult.Level.ERROR, results))
         {

@@ -56,7 +56,7 @@ public class InvalidRamlTestCase extends AbstractMuleContextTestCase
         catch (ApikitRuntimeException e)
         {
             assertThat(e.getMessage(), containsString("errors found: 1"));
-            assertThat(e.getMessage(), containsString("Raml resource not found  --  file: invalidRamlLocation.raml"));
+            assertThat(e.getMessage(), containsString("RAML resource not found --  file: invalidRamlLocation.raml"));
         }
     }
 }
