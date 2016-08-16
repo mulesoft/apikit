@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>apikit-parent</artifactId>
-    <version>3.8.1-SNAPSHOT</version>
+    <version>3.8.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
@@ -18,7 +18,7 @@
 
     <properties>
         <!--mule community version-->
-        <mule.version>3.8.1-SNAPSHOT</mule.version>
+        <mule.version>3.8.1</mule.version>
         <cors.module.version>2.1.2</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,7 +34,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>1.0.1-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
