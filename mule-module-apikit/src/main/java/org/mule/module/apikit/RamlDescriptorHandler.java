@@ -29,7 +29,7 @@ public class RamlDescriptorHandler
     public boolean handles(HttpRestRequest request)
     {
         String path = request.getResourcePath();
-        return (path.equals(config.getApi().getUri()) &&
+        return (isValidPath(path) &&
                 ActionType.GET.toString().equals(request.getMethod().toUpperCase()) &&
                 request.getAdapter().getAcceptableResponseMediaTypes().contains(APPLICATION_RAML));
     }
@@ -52,5 +52,17 @@ public class RamlDescriptorHandler
         event.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, raml.length());
         event.getMessage().setOutboundProperty("Access-Control-Allow-Origin", "*");
         return event;
+    }
+
+    private boolean isValidPath(String path)
+    {
+        if (config instanceof Configuration && ((Configuration) config).isConsoleEnabled())
+        {
+            if (path.equals("/" + ((Configuration) config).getConsolePath()))
+            {
+                return true;
+            }
+        }
+        return path.equals(config.getApi().getUri());
     }
 }
