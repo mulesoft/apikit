@@ -379,7 +379,7 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       matches("(?s).*src=\"http://[localhost0-9.]+:" + port + "/api/\".*")))
+                                       matches("(?s).*src=\"\\./\\?\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/index.html");
     }
@@ -390,7 +390,7 @@ public class LeaguesTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
             .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       matches("(?s).*src=\"http://[localhost0-9.]+:" + port + "/api/\".*")))
+                                       matches("(?s).*src=\"\\./\\?\".*")))
                 .header("Content-type", "text/html").statusCode(200)
             .when().get("/api/console/");
     }

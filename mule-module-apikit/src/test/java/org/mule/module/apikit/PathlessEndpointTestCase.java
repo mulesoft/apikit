@@ -136,7 +136,7 @@ public class PathlessEndpointTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
                 .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + path)))
+                                       containsString("src=\"./?")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get((path.endsWith("/") ? path.substring(0, path.length() - 1) : path) + "/console/index.html");
     }

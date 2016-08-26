@@ -61,7 +61,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
         given().header("Accept", "text/html")
                 .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       containsString("src=\"http://localhost:" + port + CONSOLE_PATH + "/\"")))
+                                       containsString("src=\"./?\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get(CONSOLE_PATH + "/index.html");
     }
@@ -92,7 +92,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
         given().port(serverPort2.getNumber()).header("Accept", "text/html")
                 .expect()
                 .response().body(allOf(containsString("<title>API Console</title>"),
-                                       containsString("src=\"http://localhost:" + serverPort2.getNumber() + "/\"")))
+                                       containsString("src=\"./?\"")))
                 .header("Content-type", "text/html").statusCode(200)
                 .when().get("/index.html");
     }

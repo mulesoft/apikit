@@ -66,7 +66,7 @@ public class ConsoleHandler
         IOUtils.closeQuietly(indexInputStream);
         this.ramlUri = ramlUri.endsWith("/") ? ramlUri : ramlUri + "/";
         String baseHomePage = indexHtml.replaceFirst("<raml-console src=\"[^\"]+\"",
-                                                     "<raml-console src=\"" + this.ramlUri + "\"");
+                                                     "<raml-console src=\"./?\"");
         baseSchemeHostPort = getBaseSchemeHostPort(this.ramlUri);
         homePage.put(baseSchemeHostPort, baseHomePage);
     }
