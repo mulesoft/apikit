@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
+import static org.mule.module.apikit.CharsetUtils.trimBom;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.ACCEPT_HEADER;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.APIKIT_ROUTER_REQUEST;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.BEST_MATCH_REPRESENTATION;
@@ -29,7 +31,6 @@ import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
-import org.mule.module.apikit.validation.RestXmlSchemaValidator;
 import org.mule.module.apikit.validation.SchemaType;
 import org.mule.module.apikit.validation.cache.SchemaCacheUtils;
 import org.mule.module.http.internal.ParameterMap;
@@ -60,7 +61,6 @@ import java.util.Map;
 import javax.activation.DataHandler;
 
 import org.raml.v2.api.model.common.ValidationResult;
-import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -345,7 +345,8 @@ public class HttpRestRequest
         {
             if (config.isParserV2())
             {
-                validateSchemaV2(actionMimeType);
+                // json requires trimming the BOM if present
+                validateSchemaV2(actionMimeType, isJson);
             }
             else
             {
@@ -486,9 +487,9 @@ public class HttpRestRequest
         }
     }
 
-    private void validateSchemaV2(IMimeType mimeType) throws BadRequestException
+    private void validateSchemaV2(IMimeType mimeType, boolean trimBom) throws BadRequestException
     {
-        String payload = getPayloadAsString(requestEvent.getMessage());
+        String payload = getPayloadAsString(requestEvent.getMessage(), trimBom);
         List<ValidationResult> validationResults;
         if (mimeType instanceof org.mule.raml.implv2.v10.model.MimeTypeImpl)
         {
@@ -509,22 +510,25 @@ public class HttpRestRequest
         }
     }
 
-    private String getPayloadAsString(MuleMessage message) throws BadRequestException
+    private String getPayloadAsString(MuleMessage message, boolean trimBom) throws BadRequestException
     {
         Object input = message.getPayload();
-        String charset = RestXmlSchemaValidator.getHeaderCharset(message);
         if (input instanceof InputStream)
         {
-            logger.debug("transforming payload to perform Schema validation");
+            logger.debug("Transforming payload to perform Schema validation");
             try
             {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 IOUtils.copyLarge((InputStream) input, baos);
-                DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, message.getDataType().getMimeType());
-                dataType.setEncoding(message.getEncoding());
                 byte[] bytes = baos.toByteArray();
+                String encoding = getEncoding(message, bytes, logger);
+                input = byteArrayToString(bytes, encoding, trimBom);
+
+                //update payload and encoding
+                DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, message.getDataType().getMimeType());
+                dataType.setEncoding(encoding);
                 message.setPayload(new ByteArrayInputStream(bytes), dataType);
-                input = byteArrayToString(bytes, charset);
+
             }
             catch (IOException e)
             {
@@ -535,7 +539,13 @@ public class HttpRestRequest
         {
             try
             {
-                input = byteArrayToString((byte[]) input, charset);
+                String encoding = getEncoding(message, (byte[]) input, logger);
+                input = byteArrayToString((byte[]) input, encoding, trimBom);
+
+                //update message encoding
+                DataType<byte[]> dataType = DataTypeFactory.create(byte[].class, message.getDataType().getMimeType());
+                dataType.setEncoding(encoding);
+                message.setPayload(input, dataType);
             }
             catch (IOException e)
             {
@@ -553,13 +563,18 @@ public class HttpRestRequest
         return (String) input;
     }
 
-    private String byteArrayToString(byte[] bytes, String charset) throws IOException
+    private String byteArrayToString(byte[] bytes, String charset, boolean trimBom) throws IOException
     {
-        if (charset == null)
+        String result;
+        if (trimBom)
         {
-            return StreamUtils.toString(new ByteArrayInputStream(bytes));
+            result = IOUtils.toString(new ByteArrayInputStream(trimBom(bytes)), charset);
         }
-        return IOUtils.toString(new ByteArrayInputStream(StreamUtils.trimBom(bytes)), charset);
+        else
+        {
+            result = IOUtils.toString(bytes, charset);
+        }
+        return result;
     }
 
     private void validateSchema(String mimeTypeName) throws MuleRestException
