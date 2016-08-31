@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.validation;
 
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
+
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.registry.RegistrationException;
@@ -30,7 +32,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.concurrent.ExecutionException;
 
-import org.raml.parser.utils.StreamUtils;
+import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,8 +58,10 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
                 logger.debug("transforming payload to perform JSON Schema validation");
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 IOUtils.copyLarge((InputStream) input, baos);
+
+                String encoding = getEncoding(muleEvent.getMessage(), baos.toByteArray(), logger);
                 DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, muleEvent.getMessage().getDataType().getMimeType());
-                dataType.setEncoding(muleEvent.getEncoding());
+                dataType.setEncoding(encoding);
                 muleEvent.getMessage().setPayload(new ByteArrayInputStream(baos.toByteArray()), dataType);
 
                 //convert to string to remove BOM
@@ -70,7 +74,14 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             }
             else if (input instanceof byte[])
             {
-                data = JsonLoader.fromReader(new InputStreamReader(new ByteArrayInputStream((byte[]) input)));
+                String encoding = getEncoding(muleEvent.getMessage(), (byte[]) input, logger);
+                input = StreamUtils.trimBom((byte[]) input);
+                data = JsonLoader.fromReader(new InputStreamReader(new ByteArrayInputStream((byte[]) input), encoding));
+
+                //update message encoding
+                DataType<byte[]> dataType = DataTypeFactory.create(byte[].class, muleEvent.getMessage().getDataType().getMimeType());
+                dataType.setEncoding(encoding);
+                muleEvent.getMessage().setPayload(input, dataType);
             }
             else
             {

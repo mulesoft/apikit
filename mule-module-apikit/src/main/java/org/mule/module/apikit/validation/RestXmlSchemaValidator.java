@@ -6,15 +6,16 @@
  */
 package org.mule.module.apikit.validation;
 
+import static org.mule.module.apikit.CharsetUtils.getHeaderCharset;
+import static org.mule.module.apikit.CharsetUtils.getXmlEncoding;
+
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
-import org.mule.api.MuleMessage;
 import org.mule.api.transformer.DataType;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.cache.XmlSchemaCache;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.transformer.types.DataTypeFactory;
-import org.mule.transport.http.HttpConstants;
 import org.mule.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -56,17 +57,18 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
 
             Document data;
             Object input = muleEvent.getMessage().getPayload();
-            String messageEncoding = muleEvent.getEncoding();
-            String charset = getHeaderCharset(muleEvent.getMessage());
+            String charset = getHeaderCharset(muleEvent.getMessage(), logger);
             if (input instanceof InputStream)
             {
-                logger.debug("transforming payload to perform XSD validation");
+                logger.debug("Transforming payload to perform XSD validation");
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 IOUtils.copyLarge((InputStream) input, baos);
-                DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, muleEvent.getMessage().getDataType().getMimeType());
-                dataType.setEncoding(messageEncoding);
-                muleEvent.getMessage().setPayload(new ByteArrayInputStream(baos.toByteArray()), dataType);
                 data = loadDocument(new ByteArrayInputStream(baos.toByteArray()), charset);
+
+                // update payload and set encoding
+                String encoding = charset != null ? charset : getXmlEncoding(muleEvent, baos.toByteArray(), data, logger);
+                DataType<?> dataType = getDataType(muleEvent, ByteArrayInputStream.class, encoding);
+                muleEvent.getMessage().setPayload(new ByteArrayInputStream(baos.toByteArray()), dataType);
             }
             else if (input instanceof String)
             {
@@ -75,6 +77,10 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             else if (input instanceof byte[])
             {
                 data = loadDocument(new ByteArrayInputStream((byte[]) input), charset);
+
+                // update message encoding
+                String encoding = charset != null ? charset : getXmlEncoding(muleEvent, (byte[]) input, data, logger);
+                muleEvent.getMessage().setPayload(input, getDataType(muleEvent, encoding));
             }
             else
             {
@@ -92,19 +98,17 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
         }
     }
 
-    /**
-     *
-     * @return the charset specified by the content-type header or null if not specified
-     * @param message
-     */
-    public static String getHeaderCharset(MuleMessage message)
+    private DataType<?> getDataType(MuleEvent muleEvent, String encoding)
     {
-        String contentType = message.getInboundProperty(HttpConstants.HEADER_CONTENT_TYPE, "application/xml");
-        if (contentType.contains("charset="))
-        {
-            return message.getEncoding();
-        }
-        return null;
+        return getDataType(muleEvent, muleEvent.getMessage().getDataType().getType(), encoding);
+    }
+
+    private DataType<?> getDataType(MuleEvent muleEvent, Class<?> type, String encoding)
+    {
+        DataType<?> messageDataType = muleEvent.getMessage().getDataType();
+        DataType<?> dataType = DataTypeFactory.create(type, messageDataType.getMimeType());
+        dataType.setEncoding(encoding);
+        return dataType;
     }
 
     private static Document loadDocument(InputStream stream, String charset) throws IOException

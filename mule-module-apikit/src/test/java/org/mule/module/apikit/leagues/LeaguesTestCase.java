@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
@@ -164,13 +165,13 @@ public class LeaguesTestCase extends FunctionalTestCase
     @Test
     public void postOnLeaguesXmlWindows1252() throws Exception
     {
-        InputStream inputStrem = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/leagues/league-windows1252.xml");
-        String body = IOUtils.toString(inputStrem, "windows-1252");
-        Matcher matcher = Pattern.compile(".*<description>(.*)</description>.*").matcher(body);
-        matcher.find();
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/leagues/league-windows1252.xml");
+        byte[] body = IOUtils.toByteArray(inputStream);
+        Matcher matcher = Pattern.compile(".*<description>(.*)</description>.*").matcher(IOUtils.toString(body, "windows-1252"));
+        assertTrue(matcher.find());
         String responseBody = matcher.group(1);
         given().body(body)
-                .contentType("text/xml;charset=windows-1252")
+                .header("Content-Type", "text/xml")
                 .header("Accept", "text/plain")
             .expect().statusCode(201)
                 .body(is(responseBody))

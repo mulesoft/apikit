@@ -15,13 +15,11 @@ import org.mule.util.IOUtils;
 
 import com.jayway.restassured.RestAssured;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.raml.parser.utils.StreamUtils;
 
 public class EncodingTestCase extends FunctionalTestCase
 {
@@ -48,51 +46,98 @@ public class EncodingTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void postXmlWindows1252on10() throws Exception
+    public void postXmlW1252on10asStream() throws Exception
     {
         postXmlWindows1252("/api10");
     }
 
     @Test
-    public void postXmlWindows1252on08() throws Exception
+    public void postXmlW1252on10asStreamNoCharset() throws Exception
     {
-        postXmlWindows1252("/api08");
+        postXmlWindows1252("/api10", false);
     }
 
     @Test
-    public void postXmlWindows1252on10asString() throws Exception
+    public void postXmlW1252on10asString() throws Exception
     {
         postXmlWindows1252("/api10str");
     }
 
     @Test
-    public void postXmlWindows1252on08asString() throws Exception
+    public void postXmlW1252on10asByteArray() throws Exception
+    {
+        postXmlWindows1252("/api10byte");
+    }
+
+    @Test
+    public void postXmlW1252on10asByteArrayNoCharset() throws Exception
+    {
+        postXmlWindows1252("/api10byte", false);
+    }
+
+    @Test
+    public void postXmlW1252on08asStream() throws Exception
+    {
+        postXmlWindows1252("/api08");
+    }
+
+    @Test
+    public void postXmlW1252on08asStreamNoCharset() throws Exception
+    {
+        postXmlWindows1252("/api08", false);
+    }
+
+    @Test
+    public void postXmlW1252on08asString() throws Exception
     {
         postXmlWindows1252("/api08str");
     }
 
+    @Test
+    public void postXmlW1252on08asByteArray() throws Exception
+    {
+        postXmlWindows1252("/api08byte");
+    }
+
+    @Test
+    public void postXmlW1252on08asByteArrayNoCharset() throws Exception
+    {
+        postXmlWindows1252("/api08byte", false);
+    }
+
     private void postXmlWindows1252(String api) throws Exception
     {
-        InputStream inputStrem = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/schema/payload-windows1252.xml");
-        String body = IOUtils.toString(inputStrem, "windows-1252");
+        postXmlWindows1252(api, true);
+    }
+
+    private void postXmlWindows1252(String api, boolean sendCharset) throws Exception
+    {
+        InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/schema/payload-windows1252.xml");
+        byte[] body = IOUtils.toByteArray(inputStream);
+        String responseBody = IOUtils.toString(body, "windows-1252");
+        String contentType = "application/xml";
+        if (sendCharset)
+        {
+            contentType += ";charset=windows-1252";
+        }
         given().body(body)
-                .contentType("application/xml;charset=windows-1252")
+                .header("Content-Type", contentType)
                 .header("Accept", "application/xml")
                 .expect().log().everything().statusCode(200)
-                .body(is(body))
+                .body(is(responseBody))
                 .when().post(api + "/testXml");
     }
 
     @Test
-    public void postJsonUtf16beOn10() throws IOException
+    public void postJsonUtf16beOn10asStream() throws IOException
     {
         postJsonUtf16be("/api10");
     }
 
     @Test
-    public void postJsonUtf16beOn08() throws IOException
+    public void postJsonUtf16beOn10asStreamNoCharset() throws IOException
     {
-        postJsonUtf16be("/api08");
+        postJsonUtf16be("/api10", false);
     }
 
     @Test
@@ -102,18 +147,65 @@ public class EncodingTestCase extends FunctionalTestCase
     }
 
     @Test
+    public void postJsonUtf16beOn10asByteArray() throws IOException
+    {
+        postJsonUtf16be("/api10byte");
+    }
+
+    @Test
+    public void postJsonUtf16beOn10asByteArrayNoCharset() throws IOException
+    {
+        postJsonUtf16be("/api10byte", false);
+    }
+
+    @Test
+    public void postJsonUtf16beOn08asStream() throws IOException
+    {
+        postJsonUtf16be("/api08");
+    }
+
+    @Test
+    public void postJsonUtf16beOn08asStreamNoCharset() throws IOException
+    {
+        postJsonUtf16be("/api08", false);
+    }
+
+    @Test
     public void postJsonUtf16beOn08asString() throws IOException
     {
         postJsonUtf16be("/api08str");
     }
 
+    @Test
+    public void postJsonUtf16beOn08asByteArray() throws IOException
+    {
+        postJsonUtf16be("/api08byte");
+    }
+
+    @Test
+    public void postJsonUtf16beOn08asByteArrayNoCharset() throws IOException
+    {
+        postJsonUtf16be("/api08byte", false);
+    }
+
+
     private void postJsonUtf16be(String api) throws IOException
     {
+        postJsonUtf16be(api, true);
+    }
+
+    private void postJsonUtf16be(String api, boolean sendCharset) throws IOException
+    {
         InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/unicode/diacritics-utf16be.json");
-        byte[] bytes = IOUtils.toByteArray(inputStream);
-        String responseBody = StreamUtils.toString(new ByteArrayInputStream(bytes)); //removes BOM
-        given().body(bytes)
-                .contentType("application/json;charset=UTF-16")
+        byte[] body = IOUtils.toByteArray(inputStream);
+        String contentType = "application/json";
+        if (sendCharset)
+        {
+            contentType += ";charset=UTF-16";
+        }
+        String responseBody = IOUtils.toString(body, "UTF-16");
+        given().body(body)
+                .header("Content-Type", contentType)
                 .expect()
                 .statusCode(200)
                 .body(is(responseBody))

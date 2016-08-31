@@ -33,6 +33,18 @@
         <apikit:router config-ref="raml08"/>
     </flow>
 
+    <flow name="doorway10byte">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api10byte"/>
+        <object-to-byte-array-transformer/>
+        <apikit:router config-ref="raml10"/>
+    </flow>
+
+    <flow name="doorway08byte">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api08byte"/>
+        <object-to-byte-array-transformer/>
+        <apikit:router config-ref="raml08"/>
+    </flow>
+
     <flow name="post:/testXml:raml10">
         <set-payload value="#[payload]"/>
     </flow>
