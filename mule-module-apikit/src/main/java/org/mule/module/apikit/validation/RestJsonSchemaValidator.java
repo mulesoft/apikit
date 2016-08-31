@@ -73,7 +73,7 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             ProcessingReport report = schema.validate(data);
             if (!report.isSuccess())
             {
-                String message = report.iterator().hasNext() ? report.iterator().next().getMessage() : "no message";
+                String message = report.iterator().hasNext() ? report.iterator().next().toString() : "no message";
                 logger.info("Schema validation failed: " + message);
                 throw new BadRequestException(message);
             }
