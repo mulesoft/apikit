@@ -1,0 +1,28 @@
+#%RAML 0.8
+title: TShirt API
+version: v1
+#baseUri: http://tshirt.api.com
+baseUri: http://mocksvc.mulesoft.com/mocks/9ca1a8d9-05d8-44cd-be8a-1ce47be5a257/mocks/91b3cc9a-d503-4c41-a645-e1d991fcb9a2
+/orderTshirt:
+  post:
+    description: Submits a new order for the t shirt
+    body: 
+      application/json:
+        schema: |
+          {
+            "type": "object",
+            "$schema": "http://json-schema.org/draft-03/schema",
+            "id": "http://jsonschema.net",
+            "required": true,
+            "properties": {
+              "size": {"type": "string","required": true},
+              "email": {"type": "string","required": true},
+              "name": {"type": "string","required": true},
+              "address1": {"type": "string","required": true},
+              "address2": {"type": "string","required": true},
+              "city": {"type": "string","required": true},
+              "stateOrProvince": {"type": "string","required": true},
+              "postalCode": {"type": "string","required": true},
+              "country": {"type": "string","required": true}
+             }
+          }
