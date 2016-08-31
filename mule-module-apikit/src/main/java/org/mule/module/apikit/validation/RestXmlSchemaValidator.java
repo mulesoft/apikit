@@ -62,7 +62,14 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             {
                 logger.debug("Transforming payload to perform XSD validation");
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                IOUtils.copyLarge((InputStream) input, baos);
+                try
+                {
+                    IOUtils.copyLarge((InputStream) input, baos);
+                }
+                finally
+                {
+                    IOUtils.closeQuietly((InputStream) input);
+                }
                 data = loadDocument(new ByteArrayInputStream(baos.toByteArray()), charset);
 
                 // update payload and set encoding
