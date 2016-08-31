@@ -7,15 +7,14 @@
         http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
 
-    <apikit:proxy-config name="proxy-config" raml="http://localhost:${serverPort}/api" disableValidations="true"/>
+    <http:listener-config name="httpListenerConfig" host="localhost" port="${proxyPort}"/>
+    <http:request-config name="http-request-config" host="localhost" port="${serverPort}" protocol="HTTP"/>
+    <apikit:proxy-config name="proxy-config" raml="org/mule/module/apikit/proxy/app-with-raml/proxy.raml" disableValidations="true"/>
 
-    <http:listener-config name="httpConfig" host="localhost" port="${proxyPort}" />
-    <http:request-config name="http-request-config" host="localhost" port="${serverPort}" basePath="api"/>
-
-    <flow name="proxy" processingStrategy="non-blocking">
-        <http:listener config-ref="httpConfig" path="/proxy/*" />
+    <flow name="proxy">
+        <http:listener config-ref="httpListenerConfig" path="/proxy/*"/>
         <apikit:proxy config-ref="proxy-config"/>
-        <http:request config-ref="http-request-config" method="#[message.inboundProperties['http.method']]" path="#[message.inboundProperties['http.request.path'].substring(message.inboundProperties['http.listener.path'].length()-2)]" parseResponse="false">
+        <http:request config-ref="http-request-config" method="#[message.inboundProperties['http.method']]" path="api/#[message.inboundProperties['http.request.path'].substring(message.inboundProperties['http.listener.path'].length()-2)]" parseResponse="false">
             <http:request-builder>
                 <http:query-params expression="#[message.inboundProperties['http.query.params']]"/>
             </http:request-builder>
@@ -25,7 +24,7 @@
     </flow>
 
     <flow name="proxyConsole">
-        <http:listener config-ref="httpConfig" path="/proxyConsole/*" />
+        <http:listener config-ref="httpListenerConfig" path="/proxyConsole/*"/>
         <apikit:console config-ref="proxy-config" />
     </flow>
 
@@ -39,8 +38,10 @@
             <set-payload value="method not allowed"/>
         </apikit:mapping>
         <apikit:mapping statusCode="406">
-            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>
-            <set-payload value="not acceptable"/>
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" />
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
