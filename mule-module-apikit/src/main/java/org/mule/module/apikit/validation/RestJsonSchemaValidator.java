@@ -57,7 +57,14 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             {
                 logger.debug("transforming payload to perform JSON Schema validation");
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                IOUtils.copyLarge((InputStream) input, baos);
+                try
+                {
+                    IOUtils.copyLarge((InputStream) input, baos);
+                }
+                finally
+                {
+                    IOUtils.closeQuietly((InputStream) input);
+                }
 
                 String encoding = getEncoding(muleEvent.getMessage(), baos.toByteArray(), logger);
                 DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, muleEvent.getMessage().getDataType().getMimeType());
