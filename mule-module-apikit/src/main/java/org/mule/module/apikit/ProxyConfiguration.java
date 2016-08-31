@@ -33,12 +33,6 @@ public class ProxyConfiguration extends AbstractConfiguration
     }
 
     @Override
-    protected HttpRestRequest getHttpRestRequest(MuleEvent event)
-    {
-        return new HttpRestProxyRequest(event, this);
-    }
-
-    @Override
     protected void initializeRestFlowMapWrapper()
     {
         if (chain != null)
