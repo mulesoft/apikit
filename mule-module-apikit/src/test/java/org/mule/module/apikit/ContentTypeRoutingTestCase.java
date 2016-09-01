@@ -86,4 +86,21 @@ public class ContentTypeRoutingTestCase extends FunctionalTestCase
                 .when().put("/api/leagues/liga-bbva");
     }
 
+    @Test
+    public void postOnLeaguesInvalidMediaTypeWithOtherMediaTypeDefinedInFlow() throws Exception
+    {
+        given().body("<test>asdf</test>")
+                .contentType("application/xml")
+                .expect().statusCode(415)
+                .when().post("/api/leagues2");
+    }
+
+    @Test
+    public void postOnLeaguesInvalidMediaTypeWithNoMediaTypeDefinedInFlow() throws Exception
+    {
+        given().body("<test>asdf</test>")
+                .contentType("application/xml")
+                .expect().statusCode(415)
+                .when().post("/api/leagues3");
+    }
 }
