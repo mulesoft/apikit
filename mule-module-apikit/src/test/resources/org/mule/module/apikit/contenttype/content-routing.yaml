@@ -31,3 +31,24 @@ schemas:
             body: *league-schema
             responses:
                 204:
+/leagues2:
+    post:
+        body: &league-schema
+            application/json:
+                schema: league-json
+                example: |
+                    { "name" : "liga criolla" }
+            text/xml: ~
+        responses:
+            201:
+                description: league created
+/leagues3:
+    post:
+        body: &league-schema
+            application/json:
+                schema: league-json
+                example: |
+                    { "name" : "liga criolla" }
+        responses:
+            201:
+                description: league created

@@ -47,7 +47,8 @@ public class ProxingNonApikitAppTestCase extends AbstractFakeMuleServerTestCase
         muleServer.start();
         muleServer.deployAppFromClasspathFolder(getProxyAppFolder(), "proxy");
         muleServer.assertDeploymentSuccess("proxy");
-        handleUnsupportedMediaType();
+        handleUnsupportedMediaTypeSpecifyingOneMediaType();
+        handleUnsupportedMediaTypeSpecifyingMultipleMediaTypes();
         handleNotAcceptable();
     }
 
@@ -56,12 +57,20 @@ public class ProxingNonApikitAppTestCase extends AbstractFakeMuleServerTestCase
         return "org/mule/module/apikit/proxy/app-with-raml";
     }
 
-    private void handleUnsupportedMediaType() throws Exception
+    private void handleUnsupportedMediaTypeSpecifyingOneMediaType() throws Exception
     {
-        given().header("Accept", "application/xml").body("<test>hello</test>")
+        given().header("Content-Type", "application/xml").body("<test>hello</test>")
                 .expect()
-                .response().statusCode(406)
+                .response().statusCode(415)
                 .when().post("/proxy/leagues");
+    }
+
+    private void handleUnsupportedMediaTypeSpecifyingMultipleMediaTypes() throws Exception
+    {
+        given().header("Content-Type", "application/xml").body("<test>hello</test>")
+                .expect()
+                .response().statusCode(415)
+                .when().post("/proxy/leagues2");
     }
 
     private void handleNotAcceptable() throws Exception

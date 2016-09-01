@@ -16,4 +16,11 @@
         <set-payload value="[{ &quot;name&quot;: &quot;Liga BBVA&quot; }, { &quot;name&quot;: &quot;Premiere League&quot; }]"/>
         <set-property propertyName="Content-Type" value="application/json"/>
     </flow>
+
+    <flow name="post:/leagues2">
+        <http:listener config-ref="httpListenerConfigServer" path="/api/leagues2/*"/>
+        <cors:validate publicResource="true" config-ref="defaultConfig" />
+        <set-payload value="[{ &quot;name&quot;: &quot;Liga BBVA&quot; }, { &quot;name&quot;: &quot;Premiere League&quot; }]"/>
+        <set-property propertyName="Content-Type" value="application/json"/>
+    </flow>
 </mule>
