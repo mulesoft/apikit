@@ -38,10 +38,11 @@
             <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
             <set-payload value="method not allowed"/>
         </apikit:mapping>
-        <apikit:mapping statusCode="406">
-            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>
-            <set-payload value="not acceptable"/>
-        </apikit:mapping>
+        <!-- uncomment if proxy-config validations are enabled -->
+        <!--<apikit:mapping statusCode="406">-->
+            <!--<apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>-->
+            <!--<set-payload value="not acceptable"/>-->
+        <!--</apikit:mapping>-->
     </apikit:mapping-exception-strategy>
 
 </mule>

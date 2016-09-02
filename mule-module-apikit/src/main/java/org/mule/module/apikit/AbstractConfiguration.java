@@ -481,10 +481,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         return resource.getAction(request.getMethod());
     }
 
-    protected HttpRestRequest getHttpRestRequest(MuleEvent event)
-    {
-        return new HttpRestRequest(event, this);
-    }
+    protected abstract HttpRestRequest getHttpRestRequest(MuleEvent muleEvent);
 
     public static Collection<AbstractConfiguration> getAllConfigurations(MuleContext muleContext)
     {

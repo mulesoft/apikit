@@ -73,6 +73,12 @@ public class Configuration extends AbstractConfiguration
         this.flowMappings = flowMappings;
     }
 
+    @Override
+    protected HttpRestRequest getHttpRestRequest(MuleEvent event)
+    {
+        return new HttpRestRequest(event, this);
+    }
+
     protected void initializeRestFlowMap()
     {
         flattenResourceTree(getApi().getResources());
