@@ -79,6 +79,12 @@ public class Configuration extends AbstractConfiguration
     }
 
     @Override
+    protected HttpRestRequest getHttpRestRequest(MuleEvent event)
+    {
+        return new HttpRestRequest(event, this);
+    }
+
+    @Override
     public ResourceLoader getRamlResourceLoader()
     {
         ResourceLoader loader = new DefaultResourceLoader();
