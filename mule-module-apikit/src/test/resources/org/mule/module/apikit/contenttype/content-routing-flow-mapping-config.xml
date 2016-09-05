@@ -12,6 +12,8 @@
                    consoleEnabled="false">
         <apikit:flow-mapping resource="/leagues" action="post" content-type="application/json" flow-ref="post-leagues-json"/>
         <apikit:flow-mapping resource="/leagues" action="post" content-type="application/xml" flow-ref="post-leagues-xml"/>
+        <apikit:flow-mapping resource="/leagues2" action="post" content-type="application/json" flow-ref="post-leagues2-json"/>
+        <apikit:flow-mapping resource="/leagues3" action="post" flow-ref="post-leagues3"/>
         <apikit:flow-mapping resource="/leagues/{leagueId}" action="get" flow-ref="get-leagueId"/>
         <apikit:flow-mapping resource="/leagues/{leagueId}" action="put" flow-ref="put-leagueId"/>
     </apikit:config>
@@ -34,6 +36,14 @@
 
     <flow name="post-leagues-xml">
         <set-property propertyName="incoming-content-type" value="application/xml"/>
+    </flow>
+
+    <flow name="post-leagues2-json">
+        <set-property propertyName="incoming-content-type" value="application/json"/>
+    </flow>
+
+    <flow name="post-leagues3">
+        <set-property propertyName="incoming-content-type" value="application/json"/>
     </flow>
 
     <flow name="get-leagueId">

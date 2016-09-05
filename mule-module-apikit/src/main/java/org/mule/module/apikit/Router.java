@@ -12,6 +12,7 @@ import org.mule.api.lifecycle.StartException;
 import org.mule.api.registry.RegistrationException;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
+import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.raml.interfaces.model.IResource;
 
 import java.util.Map;
@@ -76,7 +77,7 @@ public class Router extends AbstractRouter
      * if there is no match it retries using method and resource only.
      */
     @Override
-    protected Flow getFlow(IResource resource, HttpRestRequest request)
+    protected Flow getFlow(IResource resource, HttpRestRequest request) throws UnsupportedMediaTypeException
     {
         String baseKey = request.getMethod() + ":" + resource.getUri();
         String contentType = request.getContentType();
@@ -85,8 +86,24 @@ public class Router extends AbstractRouter
         if (flow == null)
         {
             flow = rawRestFlowMap.get(baseKey);
+            if (flow == null && isFlowDeclaredWithDifferentMediaType(rawRestFlowMap, baseKey))
+            {
+                throw new UnsupportedMediaTypeException();
+            }
         }
         return flow;
+    }
+
+    protected boolean isFlowDeclaredWithDifferentMediaType(Map<String, Flow> map, String baseKey)
+    {
+        for (String flowName : map.keySet())
+        {
+            String [] split = flowName.split(":");
+            String methodAndResoruce = split[0] + ":" + split[1];
+            if (methodAndResoruce.equals(baseKey))
+                return true;
+        }
+        return false;
     }
 
     @Override
