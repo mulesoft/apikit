@@ -29,6 +29,7 @@ import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
+import org.mule.processor.AbstractInterceptingMessageProcessor;
 import org.mule.processor.AbstractRequestResponseMessageProcessor;
 
 import com.google.common.cache.LoadingCache;
@@ -43,7 +44,7 @@ import org.raml.model.parameter.UriParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractRouter extends AbstractRequestResponseMessageProcessor implements ApiRouter
+public abstract class AbstractRouter extends AbstractInterceptingMessageProcessor implements ApiRouter
 {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -73,6 +74,24 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
         this.flowConstruct = flowConstruct;
     }
 
+    @Override
+    public final MuleEvent process(MuleEvent event) throws MuleException
+    {
+        if (isNonBlocking(event))
+        {
+            return processNonBlocking(event);
+        }
+        else
+        {
+            return processBlocking(event);
+        }
+    }
+
+    private boolean isNonBlocking(MuleEvent event)
+    {
+        return event.isAllowNonBlocking() && event.getReplyToHandler() != null;
+    }
+
     protected MuleEvent processBlocking(MuleEvent event) throws MuleException
     {
         if (config.isExtensionEnabled() && config.getRouterExtension().isExecutable(event))
@@ -96,7 +115,6 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
         return processRouterResponse(event, result.getSuccessStatus());
     }
 
-    @Override
     protected MuleEvent processNonBlocking(MuleEvent event) throws MuleException
     {
         final RouterRequest result = processRouterRequest(event);
@@ -116,14 +134,12 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
                 {
                     originalReplyToHandler.processReplyTo(response, null, null);
                 }
-                processFinally(event, null);
             }
 
             @Override
             public void processExceptionReplyTo(MessagingException exception, Object replyTo)
             {
                 originalReplyToHandler.processExceptionReplyTo(exception, replyTo);
-                processFinally(exception.getEvent(), exception);
             }
         });
         // Update RequestContext ThreadLocal for backwards compatibility
@@ -208,19 +224,7 @@ public abstract class AbstractRouter extends AbstractRequestResponseMessageProce
     protected abstract MuleEvent doProcessRouterResponse(MuleEvent event, Integer successStatus);
 
     @Override
-    protected MuleEvent processRequest(MuleEvent event) throws MuleException
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     protected MuleEvent processNext(MuleEvent event) throws MuleException
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected MuleEvent processResponse(MuleEvent event) throws MuleException
     {
         throw new UnsupportedOperationException();
     }
