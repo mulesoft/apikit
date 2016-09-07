@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:json="http://www.mulesoft.org/schema/mule/json"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+      http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+    <http:listener-config name="server_lc" host="0.0.0.0" port="${serverPort}"/>
+
+    <http:listener-config name="proxy_lc" host="0.0.0.0" port="${proxyPort}">
+        <http:worker-threading-profile maxThreadsActive="32" />
+    </http:listener-config>
+
+    <http:request-config name="request-config" host="localhost" port="${serverPort}" basePath="/" responseTimeout="300000" />
+
+    <apikit:config name="api-config" raml="org/mule/module/apikit/non-blocking/api.raml" consoleEnabled="false" consolePath="console"/>
+
+    <flow name="mock-backendFlow">
+        <http:listener config-ref="server_lc" path="/*"/>
+        <set-payload value="#['{&quot;message&quot;:&quot;my message&quot;}']" mimeType="application/json"/>
+    </flow>
+
+    <flow name="api-main" processingStrategy="non-blocking">
+        <http:listener config-ref="proxy_lc" path="/proxy/*">
+            <http:response-builder reasonPhrase="#[message.outboundProperties['http.reason']]" />
+        </http:listener>
+        <choice>
+            <when expression="#[message.inboundProperties['Content-Type'] == 'application/xml']">
+                <logger message="Entered to check the API kit Exception mapping" level="DEBUG"/>
+            </when>
+            <otherwise>
+                <apikit:router config-ref="api-config"/>
+            </otherwise>
+        </choice>
+        <logger message="Entered to check the API kit Exception mapping" level="DEBUG" />
+        <exception-strategy ref="api-apiKitGlobalExceptionMapping" />
+    </flow>
+
+
+
+    <flow name="post:/assets:application/json:api-config">
+        <set-variable value="assets/initiateassets" variableName="proxyPath" />
+        <http:request config-ref="request-config" path="#[flowVars['proxyPath']]" method="POST" parseResponse="false">
+            <http:success-status-code-validator values="0..599" />
+        </http:request>
+        <logger message="real payload: #[message.payloadAs(java.lang.String)]" level="INFO"/>
+        <set-property propertyName="http.status" value="#[message.inboundProperties['http.status']]" />
+    </flow>
+
+
+    <apikit:mapping-exception-strategy name="api-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" />
+        </apikit:mapping>
+        <apikit:mapping statusCode="500">
+            <apikit:exception value="java.lang.Exception" />
+            <set-property propertyName="http.reason" value="Internal Server Error" />
+            <set-property propertyName="Content-Type" value="application/json" />
+            <set-payload value="{ &quot;status&quot;: &quot;500&quot;, &quot;message&quot;: &quot;Internal Server Error: #[org.mule.util.StringUtils.escape(exception.getMessage())]&quot;}" />
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>
+
