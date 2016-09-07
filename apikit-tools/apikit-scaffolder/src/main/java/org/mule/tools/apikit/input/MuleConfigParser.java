@@ -41,10 +41,13 @@ public class MuleConfigParser {
     private final APIFactory apiFactory;
     private final Log log;
 
-    public MuleConfigParser(Log log, Set<File> ramlPaths, Map<File, InputStream> streams, APIFactory apiFactory) {
+    public MuleConfigParser(Log log, APIFactory apiFactory) {
         this.apiFactory = apiFactory;
         this.httpListenerConfigs.putAll(apiFactory.getDomainHttpListenerConfigs());
         this.log = log;
+    }
+
+    public MuleConfigParser parse(Set<File> ramlPaths, Map<File, InputStream> streams) {
         for (Entry<File, InputStream> fileStreamEntry : streams.entrySet()) {
             InputStream stream = fileStreamEntry.getValue();
             File file = fileStreamEntry.getKey();
@@ -56,17 +59,19 @@ public class MuleConfigParser {
                 log.debug(e);
             }
         }
+
+        return this;
     }
 
-    private void parseMuleConfigFile(File file, InputStream stream, Set<File> ramlPaths) throws JDOMException, IOException {
+    protected void parseMuleConfigFile(File file, InputStream stream, Set<File> ramlPaths) throws JDOMException, IOException {
         SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
         Document document = saxBuilder.build(stream);
 
-        apikitConfigs = new APIKitConfigParser().parse(document);
+        apikitConfigs.putAll(new APIKitConfigParser().parse(document));
         httpListenerConfigs.putAll(new HttpListenerConfigParser().parse(document));
-        includedApis = new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document);
+        includedApis.putAll(new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document));
 
-        entries = new APIKitFlowsParser(log, includedApis).parse(document);
+        entries.addAll(new APIKitFlowsParser(log, includedApis).parse(document));
     }
 
     public Map<String, APIKitConfig> getApikitConfigs() {
