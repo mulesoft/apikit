@@ -45,6 +45,7 @@ public class NonBlockingTestCase  extends FunctionalTestCase
                 .expect()
                 .response()
                 .statusCode(200)
+                .header("non-blocking","true")
                 .when().post("/proxy/assets");
     }
 }
