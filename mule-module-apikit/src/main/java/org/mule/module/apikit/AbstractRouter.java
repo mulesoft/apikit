@@ -17,6 +17,7 @@ import org.mule.api.MessagingException;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.MuleMessage;
+import org.mule.api.NonBlockingSupported;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.lifecycle.StartException;
 import org.mule.api.transport.ReplyToHandler;
@@ -44,7 +45,7 @@ import org.raml.model.parameter.UriParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractRouter extends AbstractInterceptingMessageProcessor implements ApiRouter
+public abstract class AbstractRouter extends AbstractInterceptingMessageProcessor implements ApiRouter, NonBlockingSupported
 {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
