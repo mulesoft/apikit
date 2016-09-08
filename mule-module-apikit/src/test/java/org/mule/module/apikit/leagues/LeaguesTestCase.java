@@ -35,6 +35,11 @@ import org.junit.Test;
 public class LeaguesTestCase extends FunctionalTestCase
 {
 
+    public String isNonBlocking()
+    {
+        return "false";
+    }
+
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
 
@@ -118,7 +123,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("leagues.name", hasItems("Liga BBVA", "Premier League"))
                 .header("Content-type", "application/json").statusCode(200)
-            .when().get("/api/leagues");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues");
     }
 
     @Test
@@ -128,7 +134,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("leagues.name", hasItems("Liga BBVA", "Premier League"))
                 .header("Content-type", "application/json").statusCode(200)
-            .when().get("/api/leagues/");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/");
     }
 
     @Test
@@ -138,7 +145,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("leagues.league.name", hasItems("Liga BBVA", "Premier League"))
                 .header("Content-type", "text/xml").statusCode(200)
-            .when().get("/api/leagues");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues");
     }
 
     @Test
@@ -149,7 +157,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect().statusCode(201)
                 .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/4")
                 .body(is("")).header("Content-Length", "0")
-            .when().post("/api/leagues");
+                .header("non-blocking", isNonBlocking())
+                .when().post("/api/leagues");
     }
 
     @Test
@@ -159,7 +168,8 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .contentType("text/xml")
             .expect().statusCode(201)
                 .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/4")
-            .when().post("/api/leagues");
+                .header("non-blocking", isNonBlocking())
+                .when().post("/api/leagues");
     }
 
     @Test
@@ -176,6 +186,7 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect().statusCode(201)
                 .body(is(responseBody))
                 .header("Location", "http://localhost:" + serverPort.getValue() + "/api/leagues/4")
+                .header("non-blocking", isNonBlocking())
                 .when().post("/api/leagues");
     }
 
@@ -187,7 +198,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .statusCode(400)
                 .body(is("Invalid League Name"))
-            .when().post("/api/leagues");
+                .header("non-blocking", isNonBlocking())
+                .when().post("/api/leagues");
     }
 
     @Test
@@ -197,7 +209,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("name", is("Liga BBVA"))
                 .header("Content-type", "application/json").statusCode(200)
-            .when().get("/api/leagues/liga-bbva");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/liga-bbva");
     }
 
     @Test
@@ -207,7 +220,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("league.name", is("Liga BBVA"))
                 .header("Content-type", "text/xml").statusCode(200)
-            .when().get("/api/leagues/liga-bbva");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/liga-bbva");
     }
 
     @Test
@@ -224,7 +238,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("leagues.name", hasItems("Liga Hispanica", "Premier League"))
                 .header("Content-type", "application/json").statusCode(200)
-            .when().get("/api/leagues");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues");
     }
 
     @Test
@@ -241,7 +256,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("leagues.name", hasItems("Hispanic League", "Premier League"))
                 .header("Content-type", "application/json").statusCode(200)
-            .when().get("/api/leagues");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues");
     }
 
     @Test
@@ -252,7 +268,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .statusCode(400)
                 .body(is(""))
-            .when().put("/api/leagues/liga-bbva");
+                .header("non-blocking", isNonBlocking())
+                .when().put("/api/leagues/liga-bbva");
     }
 
     @Test
@@ -262,6 +279,7 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .multiPart("image", "bbva.jpg", this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/leagues/bbva.jpg"))
                 .expect().statusCode(200)
                 .body("upload", is("OK"))
+                .header("non-blocking", isNonBlocking())
                 .when().put("/api/leagues/liga-bbva/badge");
     }
 
@@ -270,7 +288,8 @@ public class LeaguesTestCase extends FunctionalTestCase
     {
         expect().response()
             .statusCode(204).body(is(""))
-            .when().delete("/api/leagues/liga-bbva");
+                .header("non-blocking", isNonBlocking())
+                .when().delete("/api/leagues/liga-bbva");
     }
 
     @Test
@@ -280,7 +299,7 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body(is("bad request"))
                 .statusCode(400)
-            .when().get("/api/leagues/a-name-long-enough-not-to-be-valid");
+                .when().get("/api/leagues/a-name-long-enough-not-to-be-valid");
     }
 
     @Test
@@ -290,7 +309,7 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body(is("bad request"))
                 .statusCode(400)
-            .when().get("/api/leagues/invalid_name");
+                .when().get("/api/leagues/invalid_name");
     }
 
     @Test
@@ -300,7 +319,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("name", hasItems("Barcelona", "Real Madrid", "Valencia", "Athletic Bilbao", "Atletico Madrid"))
                 .header("Content-type", "application/json").header("preferred-team", "BCN").statusCode(200)
-            .when().get("/api/leagues/liga-bbva/teams");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/liga-bbva/teams");
     }
 
     @Test
@@ -310,7 +330,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("name", hasItems("Barcelona", "Real Madrid", "Valencia", "Athletic Bilbao", "Atletico Madrid"))
                 .header("Content-type", "application/json").header("preferred-team", "RMD").statusCode(200)
-            .when().get("/api/leagues/liga-bbva/teams");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/liga-bbva/teams");
     }
 
     @Test
@@ -321,6 +342,7 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .response().body("name", allOf(hasItems("Athletic Bilbao", "Atletico Madrid"), not(hasItem("Barcelona")),
                                                not(hasItem("Real Madrid")), not(hasItem("Valencia"))))
                 .header("Content-type", "application/json").statusCode(200)
+                .header("non-blocking", isNonBlocking())
                 .when().get("/api/leagues/liga-bbva/teams?offset=3");
     }
 
@@ -351,7 +373,7 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body(matchesPattern("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
-            .when().get("/api");
+                .when().get("/api");
     }
 
     @Test
@@ -361,7 +383,7 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body(matchesPattern("(?s).*baseUri: \"http://[localhost0-9.]+:" + port + "/api\".*"))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
-            .when().get("/api/console");
+                .when().get("/api/console");
     }
 
     @Test
@@ -371,7 +393,7 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body(containsString("resource not found"))
                 .statusCode(404)
-            .when().get("/api");
+                .when().get("/api");
     }
 
     @Test
@@ -382,7 +404,7 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .response().body(allOf(containsString("<title>API Console</title>"),
                                        matchesPattern("(?s).*src=\"\\./\\?\".*")))
                 .header("Content-type", "text/html").statusCode(200)
-            .when().get("/api/console/index.html");
+                .when().get("/api/console/index.html");
     }
 
     @Test
@@ -403,7 +425,7 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().statusCode(301)
                 .header("Location", "http://localhost:" + serverPort.getValue() + "/api/console/")
-            .when().get("/api/console");
+                .when().get("/api/console");
     }
 
     @Test
@@ -413,7 +435,8 @@ public class LeaguesTestCase extends FunctionalTestCase
             .expect()
                 .response().body("name", is("Liga BBVA"))
                 .header("Content-type", "application/json").statusCode(200)
-            .when().get("/api/leagues/liga-bbva/badge");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/liga-bbva/badge");
     }
 
     @Test
@@ -422,7 +445,8 @@ public class LeaguesTestCase extends FunctionalTestCase
         given()
             .expect()
                 .response().statusCode(200)
-            .when().get("/api/leagues/liga-bbva/teams/leader");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/liga-bbva/teams/leader");
     }
 
     @Test
@@ -431,7 +455,8 @@ public class LeaguesTestCase extends FunctionalTestCase
         given()
             .expect()
                 .response().statusCode(200)
-            .when().get("/api/leagues/league+one");
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/league+one");
     }
 
 

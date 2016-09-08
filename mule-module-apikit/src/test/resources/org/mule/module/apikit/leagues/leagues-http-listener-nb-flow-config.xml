@@ -17,14 +17,13 @@
     <flow name="doorway" processingStrategy="non-blocking">
         <http:listener config-ref="httpConfig" path="/api/*" />
         <apikit:router/>
-        <test:non-blocking-processor />
-        <set-property propertyName="next" value="ok"/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
 
     <flow name="console">
         <http:listener config-ref="httpConfig" path="/console/*" />
         <apikit:console config-ref="leaguesApi"/>
+
     </flow>
 
 </mule>

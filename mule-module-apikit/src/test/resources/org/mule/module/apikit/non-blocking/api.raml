@@ -1,0 +1,60 @@
+#%RAML 0.8
+---
+title: Rocketdyne API
+version: 1
+mediaType: application/json
+
+/assets:
+  description: |
+    Client-Calling-System will make a single call to Rocketdyne.  Rocketdyne will call the Asset vendor.  The asset vendor will return a SSOURL to  Rocketdyne.  The URL will be provided to the client who will be redirected to the asset vendor webpage.
+  post:
+    description: |
+      Intitate the asset process and respond with the SSO URL.
+    body:
+      application/json: ~
+    responses:
+      200:
+        description: |
+          This is a successful return of data from the third party vendor and include SSO URL.
+        body:
+          application/json: ~
+      400:
+        description: |
+          This is an error message due to an invalid request. The server returned a invalid request message.
+        body:
+          application/json:
+            example: |
+              {
+                "message": "Bad request"
+              }
+      403:
+        description: |
+          This is an error message due to an unauthorized request. You are not authorized to connect to the server.
+        body:
+          application/json:
+            example: |
+                {
+                  "error": "invalid_client",
+                  "description": "wrong client_id or client_secret"
+                }
+      404:
+        description: |
+          This is an error message due to data is not foound. The data is not available in the Rocketdyne database
+        body:
+          application/json:
+            example: |
+                {
+                  "error": "invalid_client",
+                  "description": "wrong client_id or client_secret"
+                }
+      500:
+        description: |
+          The server is unable to determine your request. The server returned an error.
+        body:
+          application/json:
+            example: |
+              {
+                "code": 500,
+                "description": "Internal Server Error.",
+                "status": "Internal Server Error"
+              }
