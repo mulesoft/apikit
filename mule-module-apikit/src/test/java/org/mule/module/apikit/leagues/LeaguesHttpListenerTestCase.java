@@ -34,6 +34,7 @@ public class LeaguesHttpListenerTestCase extends LeaguesTestCase
                 .multiPart("image", "bbva.jpg", this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/leagues/bbva.jpg"))
                 .expect().statusCode(200)
                 .body("upload", is("OK"))
+                .header("non-blocking", isNonBlocking())
                 .when().put("/api/leagues/liga-bbva/badge");
     }
 

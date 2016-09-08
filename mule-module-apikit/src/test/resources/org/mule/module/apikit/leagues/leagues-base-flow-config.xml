@@ -4,11 +4,11 @@
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
       xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
         http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-
+        http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
-
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
@@ -39,6 +39,7 @@
 
     <flow name="get:/leagues">
         <set-payload value="#[registry:list-of-leagues]"/>
+        <flow-ref name="non-blocking-checker"/>
     </flow>
 
     <flow name="post:/leagues">
@@ -59,6 +60,8 @@
                 <set-payload value="#[payload.description]" mimeType="text/plain" encoding="windows-1252"/>
             </otherwise>
         </choice>
+        <flow-ref name="non-blocking-checker"/>
+
     </flow>
 
     <flow name="get:/leagues/{leagueId}">
@@ -71,6 +74,7 @@
                 <set-property propertyName="http.status" value="404"/>
             </otherwise>
         </choice>
+        <flow-ref name="non-blocking-checker"/>
     </flow>
 
     <flow name="put:/leagues/{leagueId}">
@@ -90,12 +94,14 @@
                 <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
             </otherwise>
         </choice>
+        <flow-ref name="non-blocking-checker"/>
     </flow>
 
     <flow name="delete:/leagues/{leagueId}">
         <expression-component>
             app.registry['list-of-leagues'].deleteLeague(leagueId)
         </expression-component>
+        <flow-ref name="non-blocking-checker"/>
     </flow>
 
     <flow name="get:/leagues/{leagueId}/teams">
@@ -106,6 +112,7 @@
             payload = teams.subList(from, to);
         </expression-component>
         <set-property propertyName="preferred-team" value="#[message.inboundProperties.preferred]"/>
+        <flow-ref name="non-blocking-checker"/>
     </flow>
 
     <flow name="put:/leagues/{leagueId}/badge">
@@ -115,16 +122,25 @@
                       value="#[message.inboundAttachments['image'].getDataSource().getPart().getContentDispositionFilename()]"/>
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{ &quot;upload&quot;: &quot;OK&quot; }"/>
+        <flow-ref name="non-blocking-checker"/>
     </flow>
 
     <flow name="get:/leagues/{leagueId}/badge">
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{ &quot;name&quot;: &quot;Liga BBVA&quot; }"/>
+        <flow-ref name="non-blocking-checker"/>
     </flow>
 
     <flow name="get:/leagues/{leagueId}/teams/leader">
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{ &quot;name&quot;: &quot;Aleti&quot; }"/>
+        <flow-ref name="non-blocking-checker"/>
+    </flow>
+
+    <flow name="non-blocking-checker">
+        <scripting:component>
+            <scripting:script engine="Groovy"><![CDATA[message.setOutboundProperty('non-blocking',eventContext.event.isAllowNonBlocking());return message;]]></scripting:script>
+        </scripting:component>
     </flow>
 
     <spring:beans>

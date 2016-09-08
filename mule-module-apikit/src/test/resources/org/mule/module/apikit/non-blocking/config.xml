@@ -4,11 +4,13 @@
       xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xmlns:spring="http://www.springframework.org/schema/beans"
+      xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/json http://www.mulesoft.org/schema/mule/json/current/mule-json.xsd
       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
       http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+      http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd
       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <http:listener-config name="server_lc" host="0.0.0.0" port="${serverPort}"/>
@@ -51,6 +53,9 @@
         </http:request>
         <logger message="real payload: #[message.payloadAs(java.lang.String)]" level="INFO"/>
         <set-property propertyName="http.status" value="#[message.inboundProperties['http.status']]" />
+        <scripting:component>
+            <scripting:script engine="Groovy"><![CDATA[message.setOutboundProperty('non-blocking',eventContext.event.isAllowNonBlocking()) && eventContext.event.getReplyToHandler() != null;return message;]]></scripting:script>
+        </scripting:component>
     </flow>
 
 
