@@ -9,6 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>apikit-scaffolder</artifactId>
+    <version>3.8.1-HF1</version>
     <properties>
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
     </properties>
@@ -17,12 +18,12 @@
         <dependency>
             <groupId>org.mule.raml</groupId>
             <artifactId>parser-interface-impl-v1</artifactId>
-            <version>${project.version}</version>
+            <version>3.8.1</version>
         </dependency>
         <dependency>
             <groupId>org.mule.raml</groupId>
             <artifactId>parser-interface-impl-v2</artifactId>
-            <version>${project.version}</version>
+            <version>3.8.1</version>
         </dependency>
         <dependency>
             <groupId>jaxen</groupId>
@@ -67,7 +68,7 @@
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-apikit-spi</artifactId>
-            <version>${project.version}</version>
+            <version>3.8.1</version>
        </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
