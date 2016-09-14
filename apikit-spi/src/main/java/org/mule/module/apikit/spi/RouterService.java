@@ -8,7 +8,7 @@ package org.mule.module.apikit.spi;
 
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.processor.AbstractRequestResponseMessageProcessor;
+import org.mule.api.processor.MessageProcessor;
 
 /**
  * Extension (SPI) for the APIKit Module
@@ -22,7 +22,7 @@ public interface RouterService
      * @param event
      * @return
      */
-    MuleEvent processBlockingRequest(MuleEvent event, AbstractRequestResponseMessageProcessor router) throws MuleException;
+    MuleEvent processBlockingRequest(MuleEvent event, MessageProcessor router) throws MuleException;
 
     /**
      * Returns true if the path of the HTTP request matches a predefined condition
