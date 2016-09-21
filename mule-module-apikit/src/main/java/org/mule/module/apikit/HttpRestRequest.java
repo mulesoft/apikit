@@ -143,39 +143,66 @@ public class HttpRestRequest
         for (String expectedKey : action.getQueryParameters().keySet())
         {
             IParameter expected = action.getQueryParameters().get(expectedKey);
-            Object actual = ((Map) requestEvent.getMessage().getInboundProperty("http.query.params")).get(expectedKey);
-            if (actual == null && expected.isRequired())
+            Object map = requestEvent.getMessage().getInboundProperty("http.query.params");
+            Object actual;
+            if (map instanceof ParameterMap)
             {
-                throw new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified");
+                actual = ((ParameterMap) map).getAll(expectedKey);
             }
-            if (actual == null && expected.getDefaultValue() != null)
+            else
             {
-                setQueryParameter(expectedKey, expected.getDefaultValue());
+                actual = ((Map) map).get(expectedKey);
             }
-            if (actual != null)
+            if (actual == null || ((actual instanceof Collection) && ((Collection) actual).size() == 0))
             {
-                if (actual instanceof Collection)
+                if (expected.isRequired())
                 {
-                    if (expected.isArray())
-                    {
-                        // raml 1.0 array validation
-                        validateQueryParam(expectedKey, expected, (Collection<?>) actual);
-                        return;
-                    }
-                    else if (!expected.isRepeat())
-                    {
-                        throw new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable");
-                    }
+                    throw new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified");
                 }
-                if (!(actual instanceof Collection))
+
+                if (expected.getDefaultValue() != null)
                 {
-                    actual = Collections.singletonList(actual);
+                    setQueryParameter(expectedKey, expected.getDefaultValue());
+
                 }
-                //noinspection unchecked
-                for (String param : (Collection<String>) actual)
+                continue;
+            }
+
+            if (map instanceof ParameterMap)
+            {
+                if (expected.isArray())
                 {
-                    validateQueryParam(expectedKey, expected, param);
+                    // raml 1.0 array validation
+                    validateQueryParam(expectedKey, expected, (Collection<?>) actual);
+                    return;
                 }
+                else if (!expected.isRepeat() && ((Collection) actual).size() > 1)
+                {
+                    throw new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable");
+                }
+                actual = Collections.singletonList(((Collection) actual).iterator().next());
+            }
+            else if (actual instanceof Collection)
+            {
+                if (expected.isArray())
+                {
+                    // raml 1.0 array validation
+                    validateQueryParam(expectedKey, expected, (Collection<?>) actual);
+                    return;
+                }
+                else if (!expected.isRepeat())
+                {
+                    throw new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable");
+                }
+            }
+            else
+            {
+                actual = Collections.singletonList(actual);
+            }
+            //noinspection unchecked
+            for (String param : (Collection<String>) actual)
+            {
+                validateQueryParam(expectedKey, expected, param);
             }
         }
     }
