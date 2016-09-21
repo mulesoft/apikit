@@ -31,12 +31,10 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <http:listener-config name="httpListenerConfig" host="localhost" port="${serverPort}" />
-
     <apikit:config raml="org/mule/module/apikit/parameters/parameters.yaml"/>
 
     <flow name="doorwayPathless">
-        <http:listener config-ref="httpListenerConfig" path="/api/*"/>
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
         <apikit:router/>
         <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
     </flow>
