@@ -42,6 +42,14 @@
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
+    <flow name="get:/leagues.json">
+        <set-payload value="{&quot;leagues&quot;: [{&quot;id&quot;: &quot;liga-bbva&quot;,&quot;name&quot;: &quot;Liga BBVA&quot;},{&quot;id&quot;: &quot;premier-league&quot;,&quot;name&quot;: &quot;Premier League&quot;}]}"/>
+    </flow>
+
+    <flow name="get:/leagues.xml">
+        <set-payload value="&lt;leagues&gt;&lt;league&gt;&lt;ns2:id xmlns:ns2=&quot;http://mulesoft.com/schemas/soccer&quot;&gt;liga-bbva&lt;/ns2:id&gt;&lt;ns2:name xmlns:ns2=&quot;http://mulesoft.com/schemas/soccer&quot;&gt;Liga BBVA&lt;/ns2:name&gt;&lt;/league&gt;&lt;league&gt;&lt;ns2:id xmlns:ns2=&quot;http://mulesoft.com/schemas/soccer&quot;&gt;premier-league&lt;/ns2:id&gt;&lt;ns2:name xmlns:ns2=&quot;http://mulesoft.com/schemas/soccer&quot;&gt;Premier League&lt;/ns2:name&gt;&lt;/league&gt;&lt;/leagues&gt;"/>
+    </flow>
+
     <flow name="post:/leagues">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.leagues.League"/>

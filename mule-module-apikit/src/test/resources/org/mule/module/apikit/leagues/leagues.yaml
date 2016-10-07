@@ -30,7 +30,7 @@ traits:
     is: [ taxed ]
     displayName: Leagues
     description: World Soccer Leagues
-    get:
+    get: &getLeagues
         responses:
             200:
                 body:
@@ -123,3 +123,7 @@ traits:
                                 example: '.'
             /leader:
                 get: ~
+/leagues.json:
+    get: *getLeagues
+/leagues.xml:
+    get: *getLeagues
