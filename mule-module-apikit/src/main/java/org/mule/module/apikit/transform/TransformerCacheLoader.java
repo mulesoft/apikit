@@ -15,6 +15,7 @@ import org.mule.module.json.transformers.JsonToObject;
 import org.mule.module.json.transformers.ObjectToJson;
 import org.mule.module.xml.transformer.jaxb.JAXBMarshallerTransformer;
 import org.mule.module.xml.transformer.jaxb.JAXBUnmarshallerTransformer;
+import org.mule.transformer.simple.ObjectToString;
 import org.mule.transformer.types.MimeTypes;
 
 import com.google.common.cache.CacheLoader;
@@ -51,9 +52,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
                                              DataType sourceDataType,
                                              DataType resultDataType) throws MuleException
     {
-        if (sourceDataType.getMimeType().equals(MimeTypes.JSON)
-            || sourceDataType.getMimeType().equals(MimeTypes.APPLICATION_JSON)
-            || sourceDataType.getMimeType().endsWith("+json"))
+        if (isJson(sourceDataType))
         {
             JsonToObject jto = new JsonToObject();
             jto.setReturnDataType(resultDataType);
@@ -61,9 +60,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
             muleContext.getRegistry().applyProcessorsAndLifecycle(jto);
             return jto;
         }
-        else if (resultDataType.getMimeType().equals(MimeTypes.JSON)
-                 || resultDataType.getMimeType().equals(MimeTypes.APPLICATION_JSON)
-                 || resultDataType.getMimeType().endsWith("+json"))
+        else if (isJson(resultDataType))
         {
             ObjectToJson otj = new ObjectToJson();
             otj.setSourceClass(sourceDataType.getType());
@@ -72,9 +69,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
             muleContext.getRegistry().applyProcessorsAndLifecycle(otj);
             return otj;
         }
-        else if (sourceDataType.getMimeType().equals(MimeTypes.XML)
-                 || sourceDataType.getMimeType().equals(MimeTypes.APPLICATION_XML)
-                 || sourceDataType.getMimeType().endsWith("+xml"))
+        else if (isXml(sourceDataType))
         {
             try
             {
@@ -88,10 +83,15 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
                 LOGGER.error("Unable to create JAXB unmarshaller for " + resultDataType, e);
             }
         }
-        else if (resultDataType.getMimeType().equals(MimeTypes.XML)
-                 || resultDataType.getMimeType().equals(MimeTypes.APPLICATION_XML)
-                 || resultDataType.getMimeType().endsWith("+xml"))
+        else if (isXml(resultDataType))
         {
+            if (String.class.equals(sourceDataType.getType()))
+            {
+                ObjectToString ots = new ObjectToString();
+                ots.setReturnDataType(resultDataType);
+                muleContext.getRegistry().applyProcessorsAndLifecycle(ots);
+                return ots;
+            }
             try
             {
                 TransientAnnotationReader reader = new TransientAnnotationReader();
@@ -124,6 +124,20 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
         }
 
         return muleContext.getRegistry().lookupTransformer(sourceDataType, resultDataType);
+    }
+
+    private boolean isXml(DataType sourceDataType)
+    {
+        return sourceDataType.getMimeType().equals(MimeTypes.XML)
+                 || sourceDataType.getMimeType().equals(MimeTypes.APPLICATION_XML)
+                 || sourceDataType.getMimeType().endsWith("+xml");
+    }
+
+    private boolean isJson(DataType sourceDataType)
+    {
+        return sourceDataType.getMimeType().equals(MimeTypes.JSON)
+            || sourceDataType.getMimeType().equals(MimeTypes.APPLICATION_JSON)
+            || sourceDataType.getMimeType().endsWith("+json");
     }
 
 }
