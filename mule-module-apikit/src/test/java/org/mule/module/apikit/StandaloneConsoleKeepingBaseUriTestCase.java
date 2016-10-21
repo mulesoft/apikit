@@ -7,7 +7,6 @@
 package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.port;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.mule.module.apikit.Configuration.APPLICATION_RAML;
@@ -20,7 +19,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-public class StandaloneConsoleTestCase extends FunctionalTestCase
+public class StandaloneConsoleKeepingBaseUriTestCase extends FunctionalTestCase
 {
 
     private static final String CONSOLE_PATH = "/konsole";
@@ -52,7 +51,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/console/standalone-console-config-not-keep-base-uri.xml";
+        return "org/mule/module/apikit/console/standalone-console-config-keep-base-uri.xml";
     }
 
     @Test
@@ -67,21 +66,11 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void consoleResource() throws Exception
-    {
-        given().header("Accept", "text/css")
-                .expect()
-                .response().body(containsString(".CodeMirror"))
-                .header("Content-type", "text/css").statusCode(200)
-                .when().get(CONSOLE_PATH + "/styles/api-console-light-theme.css");
-    }
-
-    @Test
     public void getRaml() throws Exception
     {
         given().header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(containsString("baseUri: \"http://localhost:" + port + "/api\""))
+                .response().body(containsString("baseUri: \"http://localhost/originalapi\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/api");
     }
@@ -91,7 +80,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     {
         given().header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(containsString("baseUri: \"http://localhost:" + port + "/api\""))
+                .response().body(containsString("baseUri: \"http://localhost/originalapi\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/konsole");
     }
@@ -113,7 +102,7 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     {
         given().port(serverPort2.getNumber()).header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(containsString("baseUri: \"http://localhost:" + serverPort.getNumber() + "/api\""))
+                .response().body(containsString("baseUri: \"http://localhost/originalapi\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/");
     }
@@ -123,19 +112,9 @@ public class StandaloneConsoleTestCase extends FunctionalTestCase
     {
         given().port(serverPort4.getNumber()).header("Accept", APPLICATION_RAML)
                 .expect()
-                .response().body(containsString("baseUri: \"http://localhost:" + serverPort3.getNumber() + "/api\""))
+                .response().body(containsString("baseUri: \"http://localhost/originalapi\""))
                 .header("Content-type", APPLICATION_RAML).statusCode(200)
                 .when().get("/");
-    }
-
-    @Test
-    public void consoleEmbeddedNoPath() throws Exception
-    {
-        given().port(serverPort5.getNumber()).redirects().follow(false)
-                .header("Accept", "text/html")
-                .expect()
-                .response().statusCode(301)
-                .when().get("/console");
     }
 
 }

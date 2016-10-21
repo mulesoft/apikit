@@ -75,6 +75,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     protected String raml;
     protected IRaml api;
     private String baseSchemeHostPort;
+    protected Boolean keepRamlBaseUri = KEEP_RAML_BASEURI;
     private Map<String, String> apikitRaml = new ConcurrentHashMap<String, String>();
     private boolean disableValidations;
     protected Map<String, FlowResolver> restFlowMapWrapper;
@@ -206,7 +207,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private void resetRamlMap()
     {
         apikitRaml = new ConcurrentHashMap<>();
-        if (KEEP_RAML_BASEURI)
+        if (keepRamlBaseUri)
         {
             apikitRaml.put(baseSchemeHostPort, parserService.dumpRaml(api));
         }
@@ -221,7 +222,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private void injectEndpointUri(IRaml ramlApi)
     {
         String address = getEndpointAddress(flowConstruct);
-        if (!KEEP_RAML_BASEURI)
+        if (!keepRamlBaseUri)
         {
             parserService.updateBaseUri(ramlApi, address);
         }
@@ -264,7 +265,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     public String getApikitRaml(String schemeHostPort)
     {
         String baseRaml = apikitRaml.get(baseSchemeHostPort);
-        if (schemeHostPort == null || KEEP_RAML_BASEURI)
+        if (schemeHostPort == null || keepRamlBaseUri)
         {
             return baseRaml;
         }
@@ -315,6 +316,11 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     public void setDisableValidations(boolean disableValidations)
     {
         this.disableValidations = disableValidations;
+    }
+
+    public void setKeepRamlBaseUri(boolean keepRamlBaseUri)
+    {
+        this.keepRamlBaseUri = keepRamlBaseUri || KEEP_RAML_BASEURI;
     }
 
     public IRaml getApi()

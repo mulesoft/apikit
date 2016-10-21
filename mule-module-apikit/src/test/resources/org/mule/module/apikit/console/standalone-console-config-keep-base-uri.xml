@@ -9,11 +9,11 @@
         http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
         http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd">
 
-    <apikit:config name="localhost" raml="org/mule/module/apikit/console/console.raml" consoleEnabled="false"/>
+    <apikit:config name="localhost" raml="org/mule/module/apikit/console/console.raml" keepRamlBaseUri="true" consoleEnabled="false"/>
 
-    <apikit:config name="bindAll" raml="org/mule/module/apikit/console/console.raml" consoleEnabled="false"/>
+    <apikit:config name="bindAll" raml="org/mule/module/apikit/console/console.raml" keepRamlBaseUri="true" consoleEnabled="false"/>
 
-    <apikit:config name="embedded" raml="org/mule/module/apikit/console/console.raml" consoleEnabled="true" />
+    <apikit:config name="embedded" raml="org/mule/module/apikit/console/console.raml" keepRamlBaseUri="true" consoleEnabled="false" />
 
     <cors:config name="defaultConfig"/>
 
