@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:cors="http://www.mulesoft.org/schema/mule/cors"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+        http://www.mulesoft.org/schema/mule/cors http://www.mulesoft.org/schema/mule/cors/current/mule-cors.xsd">
+
+    <apikit:config name="localhost" raml="org/mule/module/apikit/console/console.raml" keepRamlBaseUri="false" consoleEnabled="false"/>
+
+    <apikit:config name="bindAll" raml="org/mule/module/apikit/console/console.raml" keepRamlBaseUri="false" consoleEnabled="false"/>
+
+    <apikit:config name="embedded" raml="org/mule/module/apikit/console/console.raml" keepRamlBaseUri="false" consoleEnabled="true" />
+
+    <cors:config name="defaultConfig"/>
+
+    <flow name="router">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <cors:validate publicResource="true" config-ref="defaultConfig" />
+        <apikit:router config-ref="localhost"/>
+    </flow>
+
+    <flow name="console">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="konsole"/>
+        <apikit:console config-ref="localhost"/>
+    </flow>
+
+    <flow name="consoleNoPath">
+        <http:inbound-endpoint port="${serverPort2}" host="localhost"/>
+        <apikit:console config-ref="localhost"/>
+    </flow>
+
+    <flow name="routerBindAll">
+        <http:inbound-endpoint port="${serverPort3}" host="0.0.0.0" path="api"/>
+        <cors:validate publicResource="true" config-ref="defaultConfig" />
+        <apikit:router config-ref="bindAll"/>
+    </flow>
+
+    <flow name="consoleBindAll">
+        <http:inbound-endpoint port="${serverPort4}" host="0.0.0.0"/>
+        <apikit:console config-ref="bindAll"/>
+    </flow>
+
+    <flow name="routerEmbedded">
+        <http:inbound-endpoint port="${serverPort5}" host="localhost"/>
+        <apikit:router config-ref="embedded"/>
+    </flow>
+
+    <flow name="get:/user">
+        <set-property propertyName="Content-Type" value="application/json"/>
+        <set-payload value="{ &quot;name&quot;: &quot;Lisa&quot; }"/>
+    </flow>
+
+</mule>

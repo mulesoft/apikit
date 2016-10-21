@@ -47,6 +47,7 @@
                 <xsd:attribute name="consoleEnabled" type="mule:substitutableBoolean" default="true" use="optional"/>
                 <xsd:attribute name="extensionEnabled" type="mule:substitutableBoolean" default="false" use="optional"/>
                 <xsd:attribute name="consolePath" type="mule:nonBlankString" default="console" use="optional"/>
+                <xsd:attribute name="keepRamlBaseUri" type="mule:substitutableBoolean" default="false" use="optional"/>
                 <xsd:attribute name="disableValidations" type="mule:substitutableBoolean" default="false" use="optional">
                     <xsd:annotation>
                         <xsd:documentation>
