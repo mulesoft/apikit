@@ -114,7 +114,7 @@ public class UrlUtils
 
     public static String replaceBaseUri(String raml, String newBaseUri)
     {
-        return replaceBaseUri(raml, "https?://.*$", newBaseUri);
+        return replaceBaseUri(raml, ".*$", newBaseUri);
     }
 
     private static String replaceBaseUri(String raml, String regex, String replacement)
@@ -125,6 +125,10 @@ public class UrlUtils
             if (split[i].startsWith("baseUri: "))
             {
                 split[i] = split[i].replaceFirst(regex, replacement);
+                if (!split[i].contains("baseUri: "))
+                {
+                    split[i] = "baseUri: " + split[i];
+                }
             }
         }
         return StringUtils.join(split, "\n");
