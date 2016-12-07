@@ -6,24 +6,10 @@
  */
 package org.mule.module.apikit.validation;
 
-import static org.mule.module.apikit.CharsetUtils.getHeaderCharset;
-import static org.mule.module.apikit.CharsetUtils.getXmlEncoding;
-
-import org.mule.api.MuleContext;
-import org.mule.api.MuleEvent;
-import org.mule.api.transformer.DataType;
-import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.validation.cache.XmlSchemaCache;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.transformer.types.DataTypeFactory;
-import org.mule.util.IOUtils;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.StringReader;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -33,6 +19,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
+import org.mule.api.MuleContext;
+import org.mule.api.MuleEvent;
+import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.validation.cache.XmlSchemaCache;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -57,37 +49,31 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
 
             Document data;
             Object input = muleEvent.getMessage().getPayload();
-            String charset = getHeaderCharset(muleEvent.getMessage(), logger);
             if (input instanceof InputStream)
             {
-                logger.debug("Transforming payload to perform XSD validation");
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                try
-                {
-                    IOUtils.copyLarge((InputStream) input, baos);
-                }
-                finally
-                {
-                    IOUtils.closeQuietly((InputStream) input);
-                }
-                data = loadDocument(new ByteArrayInputStream(baos.toByteArray()), charset);
-
-                // update payload and set encoding
-                String encoding = charset != null ? charset : getXmlEncoding(muleEvent, baos.toByteArray(), data, logger);
-                DataType<?> dataType = getDataType(muleEvent, ByteArrayInputStream.class, encoding);
-                muleEvent.getMessage().setPayload(new ByteArrayInputStream(baos.toByteArray()), dataType);
-            }
+            	// Do NOT convert to String.
+            	// Either stream is marked/reset or byteArray is copied:
+            	InputStream tempInputStream = (InputStream) input;
+            	if (tempInputStream.markSupported()) {
+            		tempInputStream.mark(Integer.MAX_VALUE);
+            		data = loadDocument(tempInputStream);
+            		tempInputStream.reset();
+            	} else {
+            		ByteArrayOutputStream tempBytes = null;
+            		tempBytes = new ByteArrayOutputStream();
+					IOUtils.copyLarge(tempInputStream, tempBytes);
+            		data = loadDocument(new ByteArrayInputStream(tempBytes.toByteArray()));
+            		// After consuming the stream it has to be resetted for next content reader.
+            		muleEvent.getMessage().setPayload(new ByteArrayInputStream(tempBytes.toByteArray()));
+            	}
+            } 
             else if (input instanceof String)
             {
                 data = loadDocument(new StringReader((String) input));
             }
             else if (input instanceof byte[])
             {
-                data = loadDocument(new ByteArrayInputStream((byte[]) input), charset);
-
-                // update message encoding
-                String encoding = charset != null ? charset : getXmlEncoding(muleEvent, (byte[]) input, data, logger);
-                muleEvent.getMessage().setPayload(input, getDataType(muleEvent, encoding));
+                data = loadDocument(new ByteArrayInputStream((byte[]) input));
             }
             else
             {
@@ -105,49 +91,45 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
         }
     }
 
-    private DataType<?> getDataType(MuleEvent muleEvent, String encoding)
-    {
-        return getDataType(muleEvent, muleEvent.getMessage().getDataType().getType(), encoding);
-    }
-
-    private DataType<?> getDataType(MuleEvent muleEvent, Class<?> type, String encoding)
-    {
-        DataType<?> messageDataType = muleEvent.getMessage().getDataType();
-        DataType<?> dataType = DataTypeFactory.create(type, messageDataType.getMimeType());
-        dataType.setEncoding(encoding);
-        return dataType;
-    }
-
-    private static Document loadDocument(InputStream stream, String charset) throws IOException
-    {
-        if (charset == null)
-        {
-            return loadDocument(new InputSource(stream));
-        }
-        return loadDocument(new InputSource(new InputStreamReader(stream, charset)));
-    }
-
-    private static Document loadDocument(Reader reader) throws IOException
-    {
-        return loadDocument(new InputSource(reader));
-    }
-
     /**
      * Loads the document from the <code>content</code>.
      *
-     * @param source the content to load
+     * @param inputStream the content to load
      * @return the {@link org.w3c.dom.Document} represents the DOM of the content
      * @throws java.io.IOException
      */
-    private static Document loadDocument(InputSource source) throws IOException
+    public static Document loadDocument(InputStream inputStream) throws IOException
     {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    	InputSource tempSource = new InputSource(inputStream);
+        return loadDocument(tempSource);
+    }
+    /**
+     * Loads the document from the <code>content</code>.
+     *
+     * @param inputStream the content to load
+     * @return the {@link org.w3c.dom.Document} represents the DOM of the content
+     * @throws java.io.IOException
+     */
+    public static Document loadDocument(StringReader stringReader) throws IOException
+    {
+    	InputSource tempSource = new InputSource(stringReader);
+        return loadDocument(tempSource);
+    }
+
+    /**
+     * Load a document from the input source with the default java DocumentBuilder.
+     * @param InputSource the content to load
+     * @return the {@link org.w3c.dom.Document} represents the DOM of the content
+     * @throws java.io.IOException
+     */
+	private static Document loadDocument(InputSource aSource) throws IOException {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         setFeatures(factory);
         factory.setNamespaceAware(true);
         try
         {
             DocumentBuilder builder = factory.newDocumentBuilder();
-            return builder.parse(source);
+			return builder.parse(aSource);
         }
         catch (ParserConfigurationException e)
         {
@@ -157,7 +139,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
         {
             throw new IOException("An internal operation failed.", e);
         }
-    }
+	}
 
     /*
      * Prevent XXE attacks
