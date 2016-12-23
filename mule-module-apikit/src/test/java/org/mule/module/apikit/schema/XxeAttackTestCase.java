@@ -24,7 +24,8 @@ public class XxeAttackTestCase extends FunctionalTestCase
 {
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
-
+    @Rule
+    public DynamicPort serverPort2 = new DynamicPort("serverPort2");
     @Override
     public int getTestTimeoutSecs()
     {
@@ -56,4 +57,13 @@ public class XxeAttackTestCase extends FunctionalTestCase
         assertThat(response, not(containsString("League Schema")));
     }
 
+    @Test
+    public void xxeAttack2() throws Exception
+    {
+        given().log().all()
+                .body("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE xxeattack PUBLIC \"foo\" \"http://localhost:" + serverPort2.getValue() + "/\"><a>1</a>")
+                .contentType("application/xml")
+                .expect().statusCode(400)
+                .when().post("/api/test");
+    }
 }
