@@ -46,3 +46,16 @@ title: Parameters API
             status:
                 type: string
                 repeat: true
+/trackOrder:
+  get:
+    queryParameters:
+      email:
+        displayName: email
+        description: email of the user
+        type: string
+        required: true
+      orderId:
+        displayName: orderId
+        description: id of the order
+        type: string
+        required: true
