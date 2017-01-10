@@ -17,11 +17,11 @@ import org.mule.api.transformer.DataType;
 import org.mule.module.apikit.CharsetUtils;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.cache.JsonSchemaCache;
+import org.mule.module.apikit.validation.io.JsonUtils;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.util.IOUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jackson.JsonLoader;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
@@ -82,17 +82,17 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
 
                 //convert to string to remove BOM
                 String str = StreamUtils.toString(new ByteArrayInputStream(baos.toByteArray()));
-                data = JsonLoader.fromReader(new StringReader(str));
+                data = JsonUtils.parseJson(new StringReader(str));
             }
             else if (input instanceof String)
             {
-                data = JsonLoader.fromReader(new StringReader((String) input));
+                data = JsonUtils.parseJson(new StringReader((String) input));
             }
             else if (input instanceof byte[])
             {
                 String encoding = getEncoding(muleEvent.getMessage(), (byte[]) input, logger);
                 input = CharsetUtils.trimBom((byte[]) input);
-                data = JsonLoader.fromReader(new InputStreamReader(new ByteArrayInputStream((byte[]) input), encoding));
+                data = JsonUtils.parseJson(new InputStreamReader(new ByteArrayInputStream((byte[]) input), encoding));
 
                 //update message encoding
                 DataType<byte[]> dataType = DataTypeFactory.create(byte[].class, muleEvent.getMessage().getDataType().getMimeType());
