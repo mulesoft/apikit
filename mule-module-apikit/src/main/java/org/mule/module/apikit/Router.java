@@ -54,7 +54,7 @@ public class Router extends AbstractRouter
         config.loadApiDefinition(flowConstruct);
         if (getConfig().isConsoleEnabled())
         {
-            consoleHandler = new ConsoleHandler(getApi().getBaseUri(), getConfig().getConsolePath());
+            consoleHandler = new ConsoleHandler(getApi().getBaseUri(), getConfig().getConsolePath(), config);
             getConfig().addConsoleUrl(consoleHandler.getConsoleUrl());
         }
     }

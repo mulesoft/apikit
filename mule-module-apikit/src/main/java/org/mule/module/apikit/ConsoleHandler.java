@@ -25,6 +25,8 @@ import org.mule.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
@@ -43,23 +45,34 @@ public class ConsoleHandler
     public static final String MIME_TYPE_SVG = "image/svg+xml";
     public static final String MIME_TYPE_CSS = "text/css";
     private static final String RESOURCE_BASE = System.getProperty("apikit.console.old") != null ? "/console" : "/console2";
+    private static final String CONSOLE_ELEMENT = "<raml-console-loader";
+    private static final String CONSOLE_ELEMENT_OLD = "<raml-console";
+    private static final String CONSOLE_ATTRIBUTES = "options=\"{disableRamlClientGenerator: true, disableThemeSwitcher: true}\"";
+    private static final String CONSOLE_ATTRIBUTES_OLD = "disable-raml-client-generator=\"\" disable-theme-switcher=\"\"";
+    private static final String CONSOLE_ATTRIBUTES_PLACEHOLDER = "console-attributes-placeholder";
+    private static final String DEFAULT_API_RESOURCES_PATH = "api/";
+    private static final String RAML_QUERY_STRING = "raml";
 
     private Map<String, String> homePage = new ConcurrentHashMap<String, String>();
     private String consolePath;
     private String baseSchemeHostPort;
+    private String apiResourcesRelativePath = DEFAULT_API_RESOURCES_PATH;
     private boolean standalone;
+    private String cachedIndexHtml;
+    private AbstractConfiguration configuration;
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private String ramlUri;
 
-    public ConsoleHandler(String ramlUri)
+    public ConsoleHandler(String ramlUri, AbstractConfiguration configuration)
     {
-        this(ramlUri, "");
+        this(ramlUri, "", configuration);
         standalone = true;
     }
 
-    public ConsoleHandler(String ramlUri, String consolePath)
+    public ConsoleHandler(String ramlUri, String consolePath, AbstractConfiguration configuration)
     {
+        this.configuration = configuration;
         this.consolePath = sanitize(consolePath);
         InputStream indexInputStream = getClass().getResourceAsStream(RESOURCE_BASE + "/index.html");
         String indexHtml = IOUtils.toString(indexInputStream);
@@ -70,6 +83,38 @@ public class ConsoleHandler
         baseSchemeHostPort = getBaseSchemeHostPort(this.ramlUri);
         homePage.put(baseSchemeHostPort, baseHomePage);
     }
+
+    public void updateRamlUri()
+    {
+        String relativeRamlUri = "./?";
+        if (relativeRamlUri != null)
+        {
+            String consoleElement = CONSOLE_ELEMENT;
+            String consoleAttributes = CONSOLE_ATTRIBUTES;
+            if (isOldConsole())
+            {
+                consoleElement = CONSOLE_ELEMENT_OLD;
+                consoleAttributes = CONSOLE_ATTRIBUTES_OLD;
+            }
+            InputStream indexInputStream = getClass().getResourceAsStream(RESOURCE_BASE + "/index.html");
+            String indexHtml = IOUtils.toString(indexInputStream);
+            IOUtils.closeQuietly(indexInputStream);
+            indexHtml = indexHtml.replaceFirst(consoleElement + " src=\"[^\"]+\"",
+                                               consoleElement + " src=\"" + relativeRamlUri + "\"");
+            cachedIndexHtml = indexHtml.replaceFirst(CONSOLE_ATTRIBUTES_PLACEHOLDER, consoleAttributes);
+        }
+        else
+        {
+            cachedIndexHtml = "RAML Console is DISABLED.";
+        }
+    }
+
+    private boolean isOldConsole()
+    {
+        return RESOURCE_BASE.equals("/console");
+    }
+
+
 
     private String sanitize(String consolePath)
     {
@@ -89,6 +134,7 @@ public class ConsoleHandler
 
         String path = UrlUtils.getResourceRelativePath(event.getMessage());
         String contextPath = UrlUtils.getBasePath(event.getMessage());
+        String queryString = event.getMessage().getInboundProperty("http.query.string");
 
         if (logger.isDebugEnabled())
         {
@@ -109,7 +155,6 @@ public class ConsoleHandler
                 String host = event.getMessage().getInboundProperty("Host");
                 String requestPath = event.getMessage().getInboundProperty("http.request.path");
                 String redirectLocation = scheme + "://" + host + requestPath + "/";
-                String queryString = event.getMessage().getInboundProperty("http.query.string");
                 if (StringUtils.isNotEmpty(queryString))
                 {
                     redirectLocation += "?" + queryString;
@@ -122,6 +167,24 @@ public class ConsoleHandler
                 path = RESOURCE_BASE + "/index.html";
                 in = new ByteArrayInputStream(getHomePage(getBaseSchemeHostPort(event)).getBytes());
             }
+            else
+            {
+                String apiResourcesFullPath = consolePath + "/" + apiResourcesRelativePath;
+                if (path.startsWith(apiResourcesFullPath))
+                {
+                    // check for root raml
+                    if (path.equals(apiResourcesFullPath) && queryString.equals(RAML_QUERY_STRING))
+                    {
+                        path += ".raml"; // to set raml mime type
+                        in = new ByteArrayInputStream(configuration.getApikitRamlConsole(event).getBytes());
+                    }
+                    else
+                    {
+                        String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
+                        File apiResource = new File(configuration.getAppHome(), resourcePath);
+                        in = new FileInputStream(apiResource);
+                    }
+                }
                 else if (path.startsWith(consolePath + "/scripts"))
                 {
                     String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
@@ -135,12 +198,12 @@ public class ConsoleHandler
                         in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(consolePath.length()));
                     }
                 }
-
-
-            else if (path.startsWith(consolePath))
-            {
-                in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(consolePath.length()));
+                else if (path.startsWith(consolePath))
+                {
+                    in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(consolePath.length()));
+                }
             }
+
             if (in == null)
             {
                 throw new NotFoundException(path);
