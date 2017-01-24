@@ -552,7 +552,7 @@ public class HttpRestRequest
                 IOUtils.copyLarge((InputStream) input, baos);
                 byte[] bytes = baos.toByteArray();
                 String encoding = getEncoding(message, bytes, logger);
-                input = byteArrayToString(bytes, encoding, trimBom);
+                input = byteArrayToString(bytes, encoding, true);
 
                 //update payload and encoding
                 DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, message.getDataType().getMimeType());
