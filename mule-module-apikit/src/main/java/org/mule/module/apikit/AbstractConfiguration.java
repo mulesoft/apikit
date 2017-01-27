@@ -93,6 +93,12 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     protected boolean extensionEnabled = false;
     private RouterService routerExtension = null;
 
+    public static final String RAML_EXTERNAL_ENTITIES_PROPERTY = "raml.xml.expandExternalEntities";
+    public static final String RAML_EXPAND_ENTITIES_PROPERTY = "raml.xml.expandInternalEntities";
+
+    public static final String MULE_EXTERNAL_ENTITIES_PROPERTY = "mule.xml.expandExternalEntities";
+    public static final String MULE_EXPAND_ENTITIES_PROPERTY = "mule.xml.expandInternalEntities";
+
     @Override
     public void initialise() throws InitialisationException
     {
@@ -100,6 +106,11 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         {
             return;
         }
+        String externalEntitiesValue = System.getProperty(MULE_EXTERNAL_ENTITIES_PROPERTY, "false");
+        System.setProperty(RAML_EXTERNAL_ENTITIES_PROPERTY, externalEntitiesValue);
+
+        String expandEntitiesValue = System.getProperty(MULE_EXPAND_ENTITIES_PROPERTY, "false");
+        System.setProperty(RAML_EXPAND_ENTITIES_PROPERTY, expandEntitiesValue);
 
         ResourceLoader loader = getRamlResourceLoader();
         validateRaml(loader);

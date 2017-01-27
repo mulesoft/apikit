@@ -41,7 +41,13 @@ import org.xml.sax.SAXException;
 
 public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
 {
+    public static final String EXTERNAL_ENTITIES_PROPERTY = "raml.xml.expandExternalEntities";
+    public static final String EXPAND_ENTITIES_PROPERTY = "raml.xml.expandInternalEntities";
 
+    private static final Boolean externalEntities =
+            Boolean.parseBoolean(System.getProperty(EXTERNAL_ENTITIES_PROPERTY, "false"));
+    private static final Boolean expandEntities =
+            Boolean.parseBoolean(System.getProperty(EXPAND_ENTITIES_PROPERTY, "false"));
     protected static final Logger logger = LoggerFactory.getLogger(RestXmlSchemaValidator.class);
 
     public RestXmlSchemaValidator(MuleContext muleContext)
@@ -178,17 +184,17 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
 
             // If you can't completely disable DTDs, then at least do the following:
             feature = "http://xml.org/sax/features/external-general-entities";
-            dbf.setFeature(feature, false);
+            dbf.setFeature(feature, externalEntities);
 
             feature = "http://xml.org/sax/features/external-parameter-entities";
-            dbf.setFeature(feature, false);
+            dbf.setFeature(feature, externalEntities);
 
             feature = "http://apache.org/xml/features/disallow-doctype-decl";
-            dbf.setFeature(feature, true);
+            dbf.setFeature(feature, !expandEntities);
 
             // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks" (see reference below)
-            dbf.setXIncludeAware(false);
-            dbf.setExpandEntityReferences(false);
+            dbf.setXIncludeAware(expandEntities);
+            dbf.setExpandEntityReferences(expandEntities);
 
         }
         catch (ParserConfigurationException e)
