@@ -20,6 +20,8 @@
         <!--mule community version-->
         <mule.version>3.8.1</mule.version>
         <cors.module.version>2.1.2</cors.module.version>
+        <ramlParser.version>0.8.17</ramlParser.version>
+        <ramlParser2.version>1.0.7-SNAPSHOT</ramlParser2.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -29,12 +31,12 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>
-                <version>0.8.17</version>
+                <version>${ramlParser.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.7-SNAPSHOT</version>
+                <version>${ramlParser2.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
