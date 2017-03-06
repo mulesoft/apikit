@@ -99,7 +99,6 @@ public class ConsoleHandler
         ByteArrayOutputStream baos = null;
         try
         {
-            boolean addContentEncodingHeader = false;
             if (path.equals(consolePath) && !(contextPath.endsWith("/") && standalone))
             {
                 // client redirect
@@ -122,21 +121,6 @@ public class ConsoleHandler
                 path = RESOURCE_BASE + "/index.html";
                 in = new ByteArrayInputStream(getHomePage(getBaseSchemeHostPort(event)).getBytes());
             }
-                else if (path.startsWith(consolePath + "/scripts"))
-                {
-                    String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
-                    if (acceptEncoding != null && acceptEncoding.contains("gzip"))
-                    {
-                        in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(consolePath.length()) + ".gz");
-                        addContentEncodingHeader = true;
-                    }
-                    else
-                    {
-                        in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(consolePath.length()));
-                    }
-                }
-
-
             else if (path.startsWith(consolePath))
             {
                 in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(consolePath.length()));
@@ -162,10 +146,6 @@ public class ConsoleHandler
                                                          String.valueOf(HttpConstants.SC_OK));
             resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_TYPE, mimetype);
             resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_CONTENT_LENGTH, buffer.length);
-            if (addContentEncodingHeader)
-            {
-                resultEvent.getMessage().setOutboundProperty("Content-Encoding", "gzip");
-            }
             if (mimetype.equals(MimeTypes.HTML))
             {
                 resultEvent.getMessage().setOutboundProperty(HttpConstants.HEADER_EXPIRES, -1); //avoid IE ajax response caching
