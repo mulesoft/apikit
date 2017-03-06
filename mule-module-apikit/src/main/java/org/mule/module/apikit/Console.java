@@ -74,7 +74,7 @@ public class Console implements MessageProcessor, Initialisable, MuleContextAwar
             }
             config = configurations.iterator().next();
         }
-        consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct), config);
+        consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct));
         config.addConsoleUrl(consoleHandler.getConsoleUrl());
         ramlHandler = new RamlDescriptorHandler(config);
     }
