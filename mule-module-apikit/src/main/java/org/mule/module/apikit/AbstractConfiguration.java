@@ -14,7 +14,6 @@ import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
-import org.mule.api.config.MuleProperties;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.context.MuleContextAware;
 import org.mule.api.lifecycle.Initialisable;
@@ -93,7 +92,6 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     private boolean started;
     protected boolean extensionEnabled = false;
     private RouterService routerExtension = null;
-    private String appHome;
 
     @Override
     public void initialise() throws InitialisationException
@@ -113,16 +111,6 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         initializeRestFlowMapWrapper();
         loadRoutingTable();
         buildResourcePatternCaches();
-    }
-
-    public String getAppHome()
-    {
-        if (appHome != null)
-        {
-            return appHome;
-        }
-        appHome = muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
-        return appHome;
     }
 
     @Override
