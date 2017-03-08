@@ -15,7 +15,7 @@ import java.io.Reader;
 
 public class JsonUtils
 {
-    private static final String JSON_STRICT_DUPLICATE_DETECTION_PROPERTY = "json_duplicate_keys_detection";
+    private static final String JSON_STRICT_DUPLICATE_DETECTION_PROPERTY = "yagi.json_duplicate_keys_detection";
 
     public static JsonNode parseJson(Reader reader) throws IOException
     {

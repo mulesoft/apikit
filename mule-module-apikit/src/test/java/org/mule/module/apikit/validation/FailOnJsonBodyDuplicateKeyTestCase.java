@@ -18,7 +18,7 @@ import static com.jayway.restassured.RestAssured.given;
 
 public class FailOnJsonBodyDuplicateKeyTestCase extends FunctionalTestCase
 {
-    private static final String JSON_STRICT_DUPLICATE_DETECTION_PROPERTY = "json_duplicate_keys_detection";
+    private static final String JSON_STRICT_DUPLICATE_DETECTION_PROPERTY = "yagi.json_duplicate_keys_detection";
 
     @Before
     public void setup()
