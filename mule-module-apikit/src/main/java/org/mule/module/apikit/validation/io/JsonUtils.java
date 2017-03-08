@@ -26,7 +26,7 @@ public class JsonUtils
 
     private static boolean getSystemPropValue()
     {
-        return Boolean.valueOf(System.getProperty(JSON_STRICT_DUPLICATE_DETECTION_PROPERTY, "false"));
+        return Boolean.valueOf(System.getProperty(JSON_STRICT_DUPLICATE_DETECTION_PROPERTY, "true"));
     }
 
 }
