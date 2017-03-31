@@ -114,7 +114,7 @@ public class Configuration extends AbstractConfiguration
     {
         for (IResource resource : resources.values())
         {
-            flatResourceTree.put(resource.getUri(), resource);
+            flatResourceTree.put(resource.getResolvedUri(api.getVersion()), resource);
             if (resource.getResources() != null)
             {
                 flattenResourceTree(resource.getResources());
@@ -126,7 +126,7 @@ public class Configuration extends AbstractConfiguration
     {
         for (IResource resource : flatResourceTree.values())
         {
-            String fullResource = resource.getUri();
+            String fullResource = resource.getResolvedUri(api.getVersion());
             for (IAction action : resource.getActions().values())
             {
                 String method = action.getType().name().toLowerCase();

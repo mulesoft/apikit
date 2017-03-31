@@ -77,9 +77,9 @@ public class Router extends AbstractRouter
      * if there is no match it retries using method and resource only.
      */
     @Override
-    protected Flow getFlow(IResource resource, HttpRestRequest request) throws UnsupportedMediaTypeException
+    protected Flow getFlow(IResource resource, HttpRestRequest request, String version) throws UnsupportedMediaTypeException
     {
-        String baseKey = request.getMethod() + ":" + resource.getUri();
+        String baseKey = request.getMethod() + ":" + resource.getResolvedUri(version);
         String contentType = request.getContentType();
         Map<String, Flow> rawRestFlowMap = ((Configuration) config).getRawRestFlowMap();
         Flow flow = rawRestFlowMap.get(baseKey + ":" + contentType);

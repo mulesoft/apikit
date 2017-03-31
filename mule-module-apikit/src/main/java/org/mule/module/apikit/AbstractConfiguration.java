@@ -187,11 +187,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         for (IResource resource : resources.values())
         {
             String parentUri = resource.getParentUri();
-            if (parentUri.contains("{version}"))
-            {
-                resource.setParentUri(parentUri.replaceAll("\\{version}", getApi().getVersion()));
-            }
-            String uri = resource.getUri();
+            String uri = resource.getResolvedUri(api.getVersion());
             logger.debug("Adding URI to the routing table: " + uri);
             routingTable.put(new URIPattern(uri), resource);
             if (resource.getResources() != null)
@@ -370,7 +366,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     {
         for (Map.Entry<String, IResource> resourceEntry : resources.entrySet())
         {
-            String resource = resourceEntry.getValue().getUri();
+            String resource = resourceEntry.getValue().getResolvedUri(api.getVersion());
             for (Map.Entry<IActionType, IAction> actionEntry : resourceEntry.getValue().getActions().entrySet())
             {
                 String key = actionEntry.getKey().name().toLowerCase() + ":" + resource;

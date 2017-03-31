@@ -142,6 +142,18 @@
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
+    <flow name="get:/leagues/version/v1">
+        <set-property propertyName="Content-Type" value="application/json"/>
+        <set-payload value="{ &quot;version&quot;: &quot;v1&quot; }"/>
+        <flow-ref name="non-blocking-checker"/>
+    </flow>
+
+    <flow name="get:/leagues/version/v1/child">
+        <set-property propertyName="Content-Type" value="application/json"/>
+        <set-payload value="{ &quot;version&quot;: &quot;v1-child&quot; }"/>
+        <flow-ref name="non-blocking-checker"/>
+    </flow>
+
     <flow name="non-blocking-checker">
         <scripting:component>
             <scripting:script engine="Groovy"><![CDATA[message.setOutboundProperty('non-blocking',eventContext.event.isAllowNonBlocking());return message;]]></scripting:script>

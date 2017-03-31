@@ -15,6 +15,7 @@ public interface IResource
 {
     IAction getAction(String name);
     String getUri();
+    String getResolvedUri(String version);
     void setParentUri(String parentUri);
     Map<String, IResource> getResources();
     String getParentUri();

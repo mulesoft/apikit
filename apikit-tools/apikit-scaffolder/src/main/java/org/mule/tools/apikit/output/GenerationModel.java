@@ -31,23 +31,25 @@ public class GenerationModel implements Comparable<GenerationModel> {
     private IAction action;
     private IResource resource;
     private String mimeType;
+    private String version;
     private List<String> splitPath;
     private API api;
 
-    public GenerationModel(API api, IResource resource, IAction action) { this(api, resource, action, null); }
+    public GenerationModel(API api, String version, IResource resource, IAction action) { this(api, version, resource, action, null); }
 
-    public GenerationModel(API api, IResource resource, IAction action, String mimeType) {
+    public GenerationModel(API api, String version, IResource resource, IAction action, String mimeType) {
         this.api = api;
         Validate.notNull(api);
         Validate.notNull(action);
         Validate.notNull(action.getType());
-        Validate.notNull(resource.getUri());
+        Validate.notNull(resource.getResolvedUri(version));
 
         this.resource = resource;
         this.action = action;
-        this.splitPath = new ArrayList<>(Arrays.asList(this.resource.getUri().split("/")));
+        this.splitPath = new ArrayList<>(Arrays.asList(this.resource.getResolvedUri(version).split("/")));
         this.verb = action.getType().toString();
         this.mimeType = mimeType;
+        this.version = version;
         if(!splitPath.isEmpty()) {
             splitPath.remove(0);
             splitPath.remove(0);
@@ -178,7 +180,7 @@ public class GenerationModel implements Comparable<GenerationModel> {
         StringBuilder flowName = new StringBuilder("");
         flowName.append(action.getType().toString().toLowerCase())
                 .append(FLOW_NAME_SEPARATOR)
-                .append(resource.getUri());
+                .append(resource.getResolvedUri(version));
 
         if (mimeType != null)
         {

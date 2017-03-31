@@ -479,5 +479,27 @@ public class LeaguesTestCase extends FunctionalTestCase
                 .when().get("/api/leagues/league+one");
     }
 
+    @Test
+    public void getVersionParameter() throws Exception
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().body("version", is("v1"))
+                .header("Content-type", "application/json").statusCode(200)
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/version/v1");
+    }
+
+    @Test
+    public void getVersionParameterChild() throws Exception
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().body("version", is("v1-child"))
+                .header("Content-type", "application/json").statusCode(200)
+                .header("non-blocking", isNonBlocking())
+                .when().get("/api/leagues/version/v1/child");
+    }
+
 
 }
