@@ -274,6 +274,7 @@
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-apikit</artifactId>
             <version>${project.version}</version>
+            <classifier>mule-plugin</classifier>
             <exclusions>
                 <exclusion>
                     <groupId>org.mule</groupId>
