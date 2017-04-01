@@ -6,61 +6,135 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.api.MuleContext;
-import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
-import org.mule.api.processor.DynamicPipelineException;
-import org.mule.api.processor.MessageProcessor;
-import org.mule.construct.Flow;
-import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.module.apikit.transform.ApikitResponseTransformer;
-import org.mule.raml.interfaces.model.IAction;
-import org.mule.raml.interfaces.model.IResource;
+import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.module.apikit.uri.URIPattern;
+import org.mule.module.apikit.uri.URIResolver;
+import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
+import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.core.api.MuleContext;
+import org.mule.runtime.core.api.config.MuleProperties;
 
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import javax.inject.Inject;
+import javax.xml.validation.Schema;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Configuration extends AbstractConfiguration
-{
 
-    public static final String DEFAULT_CONSOLE_PATH = "console";
+public class Configuration implements Initialisable
+{
+    private boolean disableValidations;
+    private String name;
+    private String raml;
+    private boolean extensionEnabled;
+    private boolean keepRamlBaseUri;
+    private String outboundHeadersMapName;
+    private String httpStatusVarName;
+    private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
+
+
+    private final static String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeadersMap";
+    private final static String DEFAULT_HTTP_STATUS_VAR_NAME = "httpStatus";
+
+    protected LoadingCache<String, URIResolver> uriResolverCache;
+    protected LoadingCache<String, URIPattern> uriPatternCache;
+
+    private LoadingCache<String, JsonSchema> jsonSchemaCache;
+    private LoadingCache<String, Schema> xmlSchemaCache;
+
+    private static final int URI_CACHE_SIZE = 1000;
+
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private boolean consoleEnabled = true;
-    private String consolePath = DEFAULT_CONSOLE_PATH;
-    private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
-    private Map<String, Flow> restFlowMap;
-    private Map<String, Flow> restFlowMapUnwrapped;
-    private Map<String, IResource> flatResourceTree = new HashMap<>();
+    private RamlHandler ramlHandler;
+    private FlowFinder flowFinder;
 
-    public boolean isConsoleEnabled()
+    @Inject //TODO delete this after getting resources from resource folder and the flows
+    private MuleContext muleContext;
+
+    @Inject
+    private ApikitRegistry registry;
+
+    public void initialise() throws InitialisationException
     {
-        return consoleEnabled;
+        ramlHandler = new RamlHandler(raml, getApiServer(), keepRamlBaseUri, getAppHome());
+        flowFinder = new FlowFinder(ramlHandler, getName(), muleContext, flowMappings);
+        buildResourcePatternCaches();
+        registry.registerConfiguration(this);
     }
 
-    public void setConsoleEnabled(boolean consoleEnabled)
+    @Deprecated //TODO USE NEW API
+    public String getApiServer()
     {
-        this.consoleEnabled = consoleEnabled;
+        return "http://localhost:8081";
     }
 
-    public String getConsolePath()
-    {
-        return consolePath;
+    @Deprecated //TODO use new service
+    public String getAppHome() {
+        return muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
     }
 
-    public void setConsolePath(String consolePath)
+    //config properties
+    public String getName()
     {
-        this.consolePath = consolePath;
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getRaml()
+    {
+        return raml;
+    }
+
+    public void setRaml(String raml)
+    {
+        this.raml = raml;
+    }
+
+    public boolean isDisableValidations()
+    {
+        return disableValidations;
+    }
+
+    public void setDisableValidations(boolean disableValidations)
+    {
+        this.disableValidations = disableValidations;
+    }
+
+    public boolean isExtensionEnabled()
+    {
+        return extensionEnabled;
+    }
+
+    public void setExtensionEnabled(boolean extensionEnabled) {
+        this.extensionEnabled = extensionEnabled; //TODO improve method as 3.8.x does
+    }
+
+    public boolean isKeepRamlBaseUri()
+    {
+        return extensionEnabled;
+    }
+
+    public void setKeepRamlBaseUri(boolean keepRamlBaseUri)
+    {
+        this.keepRamlBaseUri = keepRamlBaseUri;
     }
 
     public List<FlowMapping> getFlowMappings()
@@ -73,281 +147,113 @@ public class Configuration extends AbstractConfiguration
         this.flowMappings = flowMappings;
     }
 
-    @Override
-    protected HttpRestRequest getHttpRestRequest(MuleEvent event)
-    {
-        return new HttpRestRequest(event, this);
+    public String getOutboundHeadersMapName() {
+        if (outboundHeadersMapName == null) {
+            return DEFAULT_OUTBOUND_HEADERS_MAP_NAME;
+        }
+        return outboundHeadersMapName;
     }
 
-    protected void initializeRestFlowMap()
-    {
-        flattenResourceTree(getApi().getResources());
-
-        if (restFlowMap == null)
-        {
-            restFlowMap = new HashMap<>();
-
-            //init flows by convention
-            Collection<Flow> flows = muleContext.getRegistry().lookupObjects(Flow.class);
-            for (Flow flow : flows)
-            {
-                String key = getRestFlowKey(flow.getName());
-                if (key != null)
-                {
-                    restFlowMap.put(key, flow);
-                }
-            }
-
-            //init flow mappings
-            for (FlowMapping mapping : getFlowMappings())
-            {
-                restFlowMap.put(mapping.getKey(), mapping.getFlow());
-            }
-
-            logMissingMappings();
-
-            restFlowMapUnwrapped = new HashMap<>(restFlowMap);
-        }
+    public void setOutboundHeadersMapName(String outboundHeadersMapName){
+        this.outboundHeadersMapName = outboundHeadersMapName;
     }
 
-    private void flattenResourceTree(Map<String, IResource> resources)
-    {
-        for (IResource resource : resources.values())
-        {
-            flatResourceTree.put(resource.getUri(), resource);
-            if (resource.getResources() != null)
-            {
-                flattenResourceTree(resource.getResources());
-            }
+    public String getHttpStatusVarName() {
+        if (httpStatusVarName == null) {
+            return DEFAULT_HTTP_STATUS_VAR_NAME;
         }
+        return httpStatusVarName;
     }
 
-    private void logMissingMappings()
-    {
-        for (IResource resource : flatResourceTree.values())
-        {
-            String fullResource = resource.getUri();
-            for (IAction action : resource.getActions().values())
-            {
-                String method = action.getType().name().toLowerCase();
-                String key = method + ":" + fullResource;
-                if (restFlowMap.get(key) != null)
-                {
-                    continue;
-                }
-                if (action.hasBody())
-                {
-                    for (String contentType : action.getBody().keySet())
-                    {
-                        if (restFlowMap.get(key + ":" + contentType) == null)
-                        {
-                            logger.warn(String.format("Action-Resource-ContentType triplet has no implementation -> %s:%s:%s ",
-                                                      method, fullResource, contentType));
-                        }
-                    }
-                }
-                else
-                {
-                    logger.warn(String.format("Action-Resource pair has no implementation -> %s:%s ",
-                                              method, fullResource));
-                }
-            }
-        }
-
-        if (logger.isDebugEnabled())
-        {
-            logger.debug("==== RestFlows defined:");
-            for (String key : restFlowMap.keySet())
-            {
-                logger.debug("\t\t" + key);
-            }
-        }
+    public void setHttpStatusVarName(String httpStatusVarName) {
+        this.httpStatusVarName = httpStatusVarName;
     }
 
-    private void addResponseTransformers(Collection<Flow> flows)
-    {
-        for (Flow flow : flows)
-        {
+    private void buildResourcePatternCaches() {
+         logger.info("Building resource URI cache...");
+        uriResolverCache = CacheBuilder.newBuilder()
+                .maximumSize(URI_CACHE_SIZE)
+                .build(
+                        new CacheLoader<String, URIResolver>() {
 
-            try
-            {
-                flow.dynamicPipeline(null).injectAfter(new ApikitResponseTransformer()).resetAndUpdate();
-            }
-            catch (DynamicPipelineException e)
-            {
-                //ignore, transformer already added
-            }
-            catch (MuleException e)
-            {
-                throw new ApikitRuntimeException(e);
-            }
-        }
+                            public URIResolver load(String path) throws IOException
+                            {
+                                return new URIResolver(path);
+                            }
+                        });
+
+        uriPatternCache = CacheBuilder.newBuilder()
+                .maximumSize(URI_CACHE_SIZE)
+                .build(
+                        new CacheLoader<String, URIPattern>() {
+
+                            public URIPattern load(String path) throws Exception {
+                                URIResolver resolver = uriResolverCache.get(path);
+                                URIPattern match = flowFinder.findBestMatch(resolver);
+
+                                if (match == null) {
+                                    logger.warn("No matching patterns for URI " + path);
+                                    throw new NotFoundException(path);
+                                }
+                                return match;
+                            }
+                        });
     }
 
-    @Override
-    public Set<String> getFlowActionRefs(Flow flow)
-    {
-        Set<String> flowActionRefs = super.getFlowActionRefs(flow);
-        for (Map.Entry<String, Flow> entry : restFlowMapUnwrapped.entrySet())
-        {
-            if (flow == entry.getValue())
-            {
-                flowActionRefs.add(entry.getKey());
-            }
-        }
-        return flowActionRefs;
+    public FlowFinder getFlowFinder() {
+        return flowFinder;
     }
 
-    public Map<String, Flow> getRawRestFlowMap()
+    //ramlHandler
+    public boolean isParserV2()
     {
-        return restFlowMap;
+        return ramlHandler.isParserV2();
     }
 
-    /**
-     * validates if name is a valid router flow name according to the following pattern:
-     *  method:/resource[:content-type][:config-name]
-     *
-     * @param name to be validated
-     * @return the name with the config-name stripped or null if it is not a router flow
-     */
-    private String getRestFlowKey(String name)
-    {
-        String[] coords = name.split(":");
-        String[] methods = {"get", "put", "post", "delete", "head", "patch", "options"};
-        if (coords.length < 2 || coords.length > 4 ||
-            !Arrays.asList(methods).contains(coords[0]) ||
-            !coords[1].startsWith("/"))
-        {
-            return null;
-        }
-        if (coords.length == 4)
-        {
-            if (coords[3].equals(getName()))
-            {
-                return validateRestFlowKeyAgainstApi(coords[0], coords[1], coords[2]);
-            }
-            return null;
-        }
-        if (coords.length == 3)
-        {
-            if (coords[2].equals(getName()))
-            {
-                return validateRestFlowKeyAgainstApi(coords[0], coords[1]);
-            }
-            return validateRestFlowKeyAgainstApi(coords[0], coords[1], coords[2]);
-        }
-        return validateRestFlowKeyAgainstApi(coords[0], coords[1]);
+    //public void setApi(IRaml api)
+    //{
+    //    if (ramlHandler == null)
+    //    {
+    //        ramlHandler = new RamlHandler();
+    //    this.ramlHandler.setApi(api);
+    //}
+
+    //uri caches
+    public LoadingCache<String, URIPattern> getUriPatternCache() {
+        return uriPatternCache;
     }
 
-    private String validateRestFlowKeyAgainstApi(String... coords)
-    {
-        String method = coords[0];
-        String resource = coords[1];
-        String type = coords.length == 3 ? coords[2] : null;
-        String key = String.format("%s:%s", method, resource);
-        if (type != null)
-        {
-            key = key + ":" + type;
-        }
-        IResource apiResource = flatResourceTree.get(resource);
-        if (apiResource != null)
-        {
-            IAction action = apiResource.getAction(method);
-            if (action != null)
-            {
-                if (type == null)
-                {
-                    return key;
-                }
-                else
-                {
-                    if (action.hasBody() && action.getBody().get(type) != null)
-                    {
-                        return key;
-                    }
-                }
-            }
-        }
-        logger.warn(String.format("Flow named \"%s\" does not match any RAML descriptor resource", key));
-        return null;
+    public LoadingCache<String, URIResolver> getUriResolverCache() {
+        return uriResolverCache;
     }
 
-    @Override
-    protected FlowResolver getFlowResolver(AbstractConfiguration abstractConfiguration, String key)
+    //schema caches
+    public LoadingCache<String, JsonSchema> getJsonSchemaCache()
     {
-        return new RouterFlowResolver((Configuration) abstractConfiguration, key);
+        if (jsonSchemaCache == null)
+        {
+            jsonSchemaCache = CacheBuilder.newBuilder()
+                    .maximumSize(1000)
+                    .build(new JsonSchemaCacheLoader(ramlHandler.getApi()));
+        }
+        return  jsonSchemaCache;
     }
 
-    private static class RouterFlowResolver implements FlowResolver
+    public LoadingCache<String, Schema> getXmlSchemaCache()
     {
-
-        private static final String WRAPPER_FLOW_SUFFIX = "-gateway-wrapper";
-
-        private Map<String, Flow> restFlowMap;
-        private String key;
-        private Flow targetFlow;
-        private Flow wrapperFlow;
-
-        RouterFlowResolver(Configuration configuration, String key)
+        if (xmlSchemaCache == null)
         {
-            this.restFlowMap = configuration.restFlowMap;
-            this.key = key;
-            this.targetFlow = restFlowMap.get(key);
+            LoadingCache<String, Schema> transformerCache = CacheBuilder.newBuilder()
+                    .maximumSize(1000)
+                    .build(new XmlSchemaCacheLoader(ramlHandler.getApi()));
+
+            xmlSchemaCache = transformerCache;
         }
-
-        @Override
-        public Flow getFlow()
-        {
-            //already wrapped
-            if (wrapperFlow != null)
-            {
-                return wrapperFlow;
-            }
-
-            //target not implemented
-            if (targetFlow == null)
-            {
-                return null;
-            }
-
-            //wrap target
-            wrapperFlow = wrapFlow();
-            restFlowMap.put(key, wrapperFlow);
-            return wrapperFlow;
-        }
-
-        private Flow wrapFlow()
-        {
-            String flowName = targetFlow.getName() + WRAPPER_FLOW_SUFFIX;
-            MuleContext muleContext = targetFlow.getMuleContext();
-            Flow wrapper = new Flow(flowName, muleContext);
-            wrapper.setMessageProcessors(Collections.<MessageProcessor>singletonList(new MessageProcessor()
-            {
-                @Override
-                public MuleEvent process(MuleEvent muleEvent) throws MuleException
-                {
-                    return targetFlow.process(muleEvent);
-                }
-            }));
-            try
-            {
-                muleContext.getRegistry().registerFlowConstruct(wrapper);
-                if (!wrapper.isStarted())
-                {
-                    wrapper.start();
-                }
-            }
-            catch (MuleException e)
-            {
-                throw new RuntimeException("Error registering flow " + flowName, e);
-            }
-            return wrapper;
-        }
+        return xmlSchemaCache;
     }
 
-    @Override
-    public void start() throws MuleException
-    {
-        addResponseTransformers(restFlowMap.values());
+    public void setRamlHandler(RamlHandler ramlHandler) {
+        this.ramlHandler = ramlHandler; //TODO REPLACE WITH REFLECTION
     }
+
 }

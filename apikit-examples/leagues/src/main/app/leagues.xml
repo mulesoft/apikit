@@ -67,7 +67,7 @@
 
     <flow name="get:/teams:leaguesApi">
         <expression-component>
-            payload = app.registry['league-api'].getTeams(message.inboundProperties['http.query.params']['city']);
+            payload = app.registry['league-api'].getTeams(message.getAttributes().getQueryParams()['city']);
         </expression-component>
     </flow>
 
@@ -98,11 +98,11 @@
     <flow name="post:/teams:leaguesApi">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.examples.leagues.request.Team"/>
-        <set-property propertyName="Location" value="http://localhost:${http.port}/api/teams/#[payload.id]"/>
+        <set-property propertyName="Location" value="http://localhost:${http.port}/api/teams/#[mel:payload.id]"/>
         <expression-component>
             app.registry['league-api'].addTeam(payload);
         </expression-component>
-        <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+        <set-payload value="#[mel:org.mule.transport.NullPayload.getInstance()]"/>
     </flow>
 
     <flow name="put:/fixture/{homeTeamId}/{awayTeamId}:leaguesApi">
@@ -111,7 +111,7 @@
         <expression-component>
             app.registry['league-api'].updateScore(homeTeamId, awayTeamId, payload);
         </expression-component>
-        <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+        <set-payload value="#[mel:org.mule.transport.NullPayload.getInstance()]"/>
     </flow>
 
     <flow name="put:/teams/{teamId}:leaguesApi">
@@ -120,7 +120,7 @@
         <expression-component>
             app.registry['league-api'].updateTeam(teamId, payload);
         </expression-component>
-        <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+        <set-payload value="#[mel:org.mule.transport.NullPayload.getInstance()]"/>
     </flow>
 
 </mule>

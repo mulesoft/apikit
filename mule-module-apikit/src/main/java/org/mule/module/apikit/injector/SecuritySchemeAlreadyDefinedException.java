@@ -11,8 +11,7 @@ import org.mule.module.apikit.exception.ApikitRuntimeException;
 public class SecuritySchemeAlreadyDefinedException extends ApikitRuntimeException
 {
 
-    public SecuritySchemeAlreadyDefinedException(String message)
-    {
-        super(message);
-    }
+  public SecuritySchemeAlreadyDefinedException(String message) {
+    super(message);
+  }
 }

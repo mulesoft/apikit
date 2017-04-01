@@ -6,11 +6,9 @@
  */
 package org.mule.module.apikit.exception;
 
-public class InvalidUriParameterException extends BadRequestException
-{
+public class InvalidUriParameterException extends BadRequestException {
 
-    public InvalidUriParameterException(String message)
-    {
-        super(message);
-    }
+  public InvalidUriParameterException(String message) {
+    super(message);
+  }
 }

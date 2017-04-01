@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.construct.Flow;
+import org.mule.runtime.core.api.construct.Flow;
 
 public class FlowMapping
 {
@@ -14,6 +14,7 @@ public class FlowMapping
     private String resource;
     private String action;
     private String contentType;
+    private String flowRef;
     private Flow flow;
 
     public String getResource()
@@ -46,23 +47,28 @@ public class FlowMapping
         this.contentType = contentType;
     }
 
-    public Flow getFlow()
-    {
-        return flow;
-    }
-
-    public void setFlow(Flow flow)
-    {
-        this.flow = flow;
-    }
-
-    public String getKey()
-    {
+    public String getKey() {
         String key = action + ":" + resource;
         if (contentType != null)
         {
             key += ":" + contentType;
         }
         return key;
+    }
+
+    public String getFlowRef() {
+        return flowRef;
+    }
+
+    public void setFlowRef(String flowRef){
+        this.flowRef = flowRef;
+    }
+
+    public void setFlow(Flow flow){
+        this.flow = flow;
+    }
+
+    public Flow getFlow(){
+        return flow;
     }
 }

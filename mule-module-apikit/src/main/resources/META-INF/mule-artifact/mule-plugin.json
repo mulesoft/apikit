@@ -1,0 +1,35 @@
+{
+  "name":"APIKit",
+  "minMuleVersion":"4.0.0",
+  "bundleDescriptorLoader": {
+    "id": "maven",
+    "attributes": {
+    }
+  },
+  "classLoaderModelLoaderDescriptor":{
+    "id":"maven",
+    "attributes":{
+      "exportedPackages":[
+        "org.mule.module.apikit.config",
+        "org.mule.module.apikit.exception",
+        "org.mule.module.apikit.injector",
+        "org.mule.module.apikit.parser",
+        "org.mule.module.apikit.transform",
+        "org.mule.module.apikit.uri",
+        "org.mule.module.apikit.validation",
+        "org.mule.module.apikit",
+        "org.raml.parser.loader"
+      ],
+      "exportedResources":[
+        "/META-INF/",
+        "/META-INF/mule-apikit.xsd",
+        "/META-INF/spring.handlers",
+        "/META-INF/spring.schemas",
+        "/META-INF/services/org.mule.runtime.dsl.api.component.ComponentBuildingDefinitionProvider",
+        "/META-INF/services/org.mule.runtime.dsl.api.xml.XmlNamespaceInfoProvider",
+        "/META-INF/org/mule/runtime/core/config/registry-bootstrap.properties",
+        "/plugin-bootstrap.properties"
+      ]
+    }
+  }
+}

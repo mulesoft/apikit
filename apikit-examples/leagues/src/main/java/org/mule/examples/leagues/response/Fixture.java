@@ -6,7 +6,7 @@
  */
 package org.mule.examples.leagues.response;
 
-import org.mule.api.annotations.Transformer;
+//import org.mule.api.annotations.Transformer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,14 +31,14 @@ public class Fixture {
         this.fixture = fixture;
     }
 
-    @Transformer(resultMimeType = "application/json")
+    //@Transformer(resultMimeType = "application/json")
     public String toJson(Fixture fixture) throws IOException
     {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(fixture);
     }
 
-    @Transformer(resultMimeType = "text/xml")
+//    @Transformer(resultMimeType = "text/xml")
     public String toXml(Fixture fixture) throws IOException, JAXBException
     {
         JAXBContext context = JAXBContext.newInstance(getClass());

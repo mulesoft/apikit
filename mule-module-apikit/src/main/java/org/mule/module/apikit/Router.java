@@ -6,114 +6,113 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.api.MuleEvent;
-import org.mule.api.MuleException;
-import org.mule.api.lifecycle.StartException;
-import org.mule.api.registry.RegistrationException;
-import org.mule.config.i18n.MessageFactory;
-import org.mule.construct.Flow;
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.exception.MethodNotAllowedException;
+import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
+import org.mule.module.apikit.uri.ResolvedVariables;
+import org.mule.module.apikit.uri.URIPattern;
+import org.mule.module.apikit.uri.URIResolver;
+import org.mule.module.apikit.validation.AttributesValidatior;
+import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.core.api.DefaultMuleException;
+import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.construct.Flow;
+import org.mule.runtime.core.api.message.InternalMessage;
+import org.mule.runtime.core.processor.AbstractInterceptingMessageProcessor;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.inject.Inject;
 
-public class Router extends AbstractRouter
+public class Router extends AbstractInterceptingMessageProcessor
 {
+    @Inject
+    private ApikitRegistry registry;
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private String configRef;
 
-    private ConsoleHandler consoleHandler;
+    private String name;
 
-    public Configuration getConfig()
+
+
+    public Event process(Event event) throws MuleException
     {
-        return (Configuration) config;
-    }
+        Configuration config = registry.getConfiguration(getConfigRef());
+        event = EventHelper.addVariable(event, config.getOutboundHeadersMapName(), new HashMap<>());
+        event = EventHelper.addVariable(event, config.getHttpStatusVarName(), "200");
 
-    public void setConfig(Configuration config)
-    {
-        this.config = config;
-    }
+        HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes());
 
-    @Override
-    protected void startConfiguration() throws StartException
-    {
-        if (config == null)
-        {
-            try
-            {
-                config = muleContext.getRegistry().lookupObject(Configuration.class);
+        String path = UrlUtils.getRelativePath(attributes);
+        path = path.isEmpty() ? "/" : path;
+
+        //Get uriPattern, uriResolver, and the resolvedVariables
+        URIPattern uriPattern;
+        URIResolver uriResolver;
+        try {
+            uriPattern = config.getUriPatternCache().get(path);
+            uriResolver = config.getUriResolverCache().get(path);
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof MuleRestException) {
+                throw (MuleRestException) e.getCause();
             }
-            catch (RegistrationException e)
-            {
-                throw new StartException(MessageFactory.createStaticMessage("APIKit configuration not Found"), this);
-            }
+            throw new DefaultMuleException(e);
         }
-        config.loadApiDefinition(flowConstruct);
-        if (getConfig().isConsoleEnabled())
-        {
-            consoleHandler = new ConsoleHandler(getConfig().getEndpointAddress(flowConstruct), getConfig().getConsolePath(), config);
-            consoleHandler.updateRamlUri();
-            getConfig().addConsoleUrl(consoleHandler.getConsoleUrl());
-        }
+        ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
+        IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
+
+        event = validateRequest(event, config, resource, attributes, resolvedVariables);
+        String contentType = MessageHelper.getHeader(event.getMessage(), HeaderNames.CONTENT_TYPE);
+        Flow flow = config.getFlowFinder().getFlow(resource,attributes.getMethod().toLowerCase(), contentType);
+        return flow.process(event);
     }
 
-    @Override
-    protected MuleEvent handleEvent(MuleEvent event, String path) throws MuleException
+    public String getConfigRef()
     {
-        //check for console request
-        if (getConfig().isConsoleEnabled() && path.startsWith("/" + getConfig().getConsolePath()))
-        {
-            return consoleHandler.process(event);
-        }
-        return null;
+        return configRef;
     }
 
-    /**
-     * Returns the flow that handles the request or null if there is none.
-     * First tries to match a flow by method, resource and content type,
-     * if there is no match it retries using method and resource only.
-     */
-    @Override
-    protected Flow getFlow(IResource resource, HttpRestRequest request) throws UnsupportedMediaTypeException
+    public void setConfigRef(String config)
     {
-        String baseKey = request.getMethod() + ":" + resource.getUri();
-        String contentType = request.getContentType();
-        Map<String, Flow> rawRestFlowMap = ((Configuration) config).getRawRestFlowMap();
-        Flow flow = rawRestFlowMap.get(baseKey + ":" + contentType);
-        if (flow == null)
-        {
-            flow = rawRestFlowMap.get(baseKey);
-            if (flow == null && isFlowDeclaredWithDifferentMediaType(rawRestFlowMap, baseKey))
-            {
-                throw new UnsupportedMediaTypeException();
-            }
-        }
-        return flow;
+        this.configRef = config;
     }
 
-    protected boolean isFlowDeclaredWithDifferentMediaType(Map<String, Flow> map, String baseKey)
+    public String getName()
     {
-        for (String flowName : map.keySet())
-        {
-            String [] split = flowName.split(":");
-            String methodAndResoruce = split[0] + ":" + split[1];
-            if (methodAndResoruce.equals(baseKey))
-                return true;
-        }
-        return false;
+        return name;
     }
 
-    @Override
-    protected MuleEvent doProcessRouterResponse(MuleEvent event, Integer successStatus)
+    public void setName(String name)
     {
-        if (event.getMessage().getOutboundProperty("http.status") == null)
-        {
-            event.getMessage().setOutboundProperty("http.status", successStatus);
-        }
-        return event;
+        this.name = name;
     }
+
+    public Event validateRequest(Event event, Configuration config, IResource resource, HttpRequestAttributes attributes, ResolvedVariables resolvedVariables) throws DefaultMuleException, MuleRestException
+    {
+        //Attributes validation
+        AttributesValidatior attributesValidatior = new AttributesValidatior(config);
+        attributes = attributesValidatior.validateAndAddDefaults(attributes, resource, resolvedVariables);
+        Event newEvent = EventHelper.regenerateEvent(event, attributes);
+
+        //Body validation
+        BodyValidator bodyValidator = new BodyValidator(config,resource.getAction(attributes.getMethod().toLowerCase()));
+        return EventHelper.regenerateEvent(event, bodyValidator.validate(newEvent.getMessage()));
+    }
+
+    private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws MethodNotAllowedException
+    {
+        IResource resource = configuration.getFlowFinder().getResource(uriPattern);
+        if (resource.getAction(method) == null) {
+            throw new MethodNotAllowedException(resource.getUri(), method);
+        }
+        return resource;
+    }
+
+
 
 }

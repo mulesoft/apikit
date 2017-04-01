@@ -6,21 +6,20 @@
  */
 package org.mule.module.apikit.parser;
 
-import org.mule.module.apikit.AbstractConfiguration;
 import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.interfaces.model.IRaml;
 
-public interface ParserWrapper
-{
-    void validate();
+public interface ParserWrapper {
 
-    IRaml build();
+  void validate();
 
-    String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort);
+  IRaml build();
 
-    String dump(IRaml api, String newBaseUri);
+  String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort);
 
-    RamlUpdater getRamlUpdater(IRaml api, AbstractConfiguration configuration);
+  String dump(IRaml api, String newBaseUri);
 
-    void updateBaseUri(IRaml api, String baseUri);
+  RamlUpdater getRamlUpdater(IRaml api);
+
+  void updateBaseUri(IRaml api, String baseUri);
 }

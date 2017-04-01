@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>apikit-examples</artifactId>
-        <version>3.8.5-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
     <groupId>org.mule.examples</groupId>
     <artifactId>leagues</artifactId>
@@ -23,7 +23,7 @@
         <vmtype>org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType</vmtype>
         <jdkName>JavaSE-1.6</jdkName>
         <jdk.version>1.6</jdk.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.10</junit.version>
         <rest.assured.version>1.8.1</rest.assured.version>
     </properties>
 
@@ -232,7 +232,7 @@
         </dependency>
         <!-- Mule Dependencies -->
         <dependency>
-            <groupId>org.mule</groupId>
+            <groupId>org.mule.runtime</groupId>
             <artifactId>mule-core</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
@@ -245,33 +245,27 @@
         </dependency>
         <!-- Xml configuration -->
         <dependency>
-            <groupId>org.mule.modules</groupId>
+            <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-spring-config</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
         </dependency>
         <!-- Mule Transports -->
-        <dependency>
-            <groupId>org.mule.transports</groupId>
-            <artifactId>mule-transport-http</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.mule.transports</groupId>-->
+            <!--<artifactId>mule-transport-http</artifactId>-->
+            <!--<version>${mule.version}</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
         <!-- Mule Modules -->
         <dependency>
-            <groupId>org.mule.modules</groupId>
+            <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-scripting</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-json</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.modules</groupId>
+            <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-xml</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
@@ -337,10 +331,72 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.jayway.restassured</groupId>
             <artifactId>rest-assured</artifactId>
             <version>${rest.assured.version}</version>
             <scope>test</scope>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+            <!--<artifactId>jackson-core</artifactId>-->
+            <!--<version>2.8.7</version>-->
+        <!--</dependency>-->
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-sockets</artifactId>
+            <version>${mule.version}</version>
+            <scope>test</scope>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-http-ext</artifactId>
+            <version>${mule.version}</version>
+            <scope>test</scope>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.mule.runtime</groupId>-->
+            <!--<artifactId>mule-module-service</artifactId>-->
+            <!--<version>${mule.version}</version>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.mule.services</groupId>
+            <artifactId>mule-service-http</artifactId>
+            <version>${mule.version}</version>
+            <scope>test</scope>
+            <classifier>mule-service</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.services</groupId>
+            <artifactId>mule-service-scheduler</artifactId>
+            <version>${mule.version}</version>
+            <scope>test</scope>
+            <classifier>mule-service</classifier>
         </dependency>
 
     </dependencies>

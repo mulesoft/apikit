@@ -1,0 +1,18 @@
+#%RAML 1.0
+---
+title: Parameters API
+/resources:
+  get:
+    responses:
+        200:
+            body:
+                application/json: !!null
+                text/xml: !!null
+/multitype:
+  get:
+    responses:
+        200:
+            body:
+                application/json: ~
+                application/xml: ~
+                text/html: ~

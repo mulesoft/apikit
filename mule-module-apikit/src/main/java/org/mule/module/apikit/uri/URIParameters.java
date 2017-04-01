@@ -25,100 +25,86 @@ import java.util.Set;
 public class URIParameters implements Parameters
 {
 
-    /**
-     * Maps the parameter names to the values.
-     */
-    private Map<String, String[]> _parameters;
+  /**
+   * Maps the parameter names to the values.
+   */
+  private Map<String, String[]> _parameters;
 
-    /**
-     * Creates a new instance.
-     */
-    public URIParameters()
-    {
-        this._parameters = new HashMap<String, String[]>();
-    }
+  /**
+   * Creates a new instance.
+   */
+  public URIParameters() {
+    this._parameters = new HashMap<String, String[]>();
+  }
 
-    /**
-     * Creates a new instance from the specified map.
-     *
-     * @param parameters The map of parameters to supply
-     */
-    public URIParameters(Map<String, String[]> parameters)
-    {
-        this._parameters = new HashMap<String, String[]>(parameters);
-    }
+  /**
+   * Creates a new instance from the specified map.
+   *
+   * @param parameters The map of parameters to supply
+   */
+  public URIParameters(Map<String, String[]> parameters) {
+    this._parameters = new HashMap<String, String[]>(parameters);
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void set(String name, String value)
-    {
-        if (value == null)
-        {
-            return;
-        }
-        this._parameters.put(name, new String[] {value});
+  /**
+   * {@inheritDoc}
+   */
+  public void set(String name, String value) {
+    if (value == null) {
+      return;
     }
+    this._parameters.put(name, new String[] {value});
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public void set(String name, String[] values)
-    {
-        if (values == null)
-        {
-            return;
-        }
-        this._parameters.put(name, values);
+  /**
+   * {@inheritDoc}
+   */
+  public void set(String name, String[] values) {
+    if (values == null) {
+      return;
     }
+    this._parameters.put(name, values);
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Set<String> names()
-    {
-        return Collections.unmodifiableSet(this._parameters.keySet());
-    }
+  /**
+   * {@inheritDoc}
+   */
+  public Set<String> names() {
+    return Collections.unmodifiableSet(this._parameters.keySet());
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String getValue(String name)
-    {
-        String[] vals = this._parameters.get(name);
-        if (vals == null || vals.length == 0)
-        {
-            return null;
-        }
-        else
-        {
-            return vals[0];
-        }
+  /**
+   * {@inheritDoc}
+   */
+  public String getValue(String name) {
+    String[] vals = this._parameters.get(name);
+    if (vals == null || vals.length == 0) {
+      return null;
+    } else {
+      return vals[0];
     }
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public String[] getValues(String name)
-    {
-        return this._parameters.get(name);
-    }
+  /**
+   * {@inheritDoc}
+   */
+  public String[] getValues(String name) {
+    return this._parameters.get(name);
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean exists(String name)
-    {
-        return this._parameters.containsKey(name);
-    }
+  /**
+   * {@inheritDoc}
+   */
+  public boolean exists(String name) {
+    return this._parameters.containsKey(name);
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean hasValue(String name)
-    {
-        String[] values = this._parameters.get(name);
-        return values != null && values.length > 0 && values[0].length() > 0;
-    }
+  /**
+   * {@inheritDoc}
+   */
+  public boolean hasValue(String name) {
+    String[] values = this._parameters.get(name);
+    return values != null && values.length > 0 && values[0].length() > 0;
+  }
 
 }

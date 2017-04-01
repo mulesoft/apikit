@@ -31,53 +31,48 @@ import java.util.List;
 public class VariableResolverList implements VariableResolver
 {
 
-    /**
-     * The list of values.
-     */
-    private List<String> _values;
+  /**
+   * The list of values.
+   */
+  private List<String> _values;
 
-    /**
-     * Creates a new variable resolver.
-     */
-    public VariableResolverList()
-    {
-        this._values = new ArrayList<String>();
-    }
+  /**
+   * Creates a new variable resolver.
+   */
+  public VariableResolverList() {
+    this._values = new ArrayList<String>();
+  }
 
-    /**
-     * Creates a new variable resolver from the list of values.
-     *
-     * @param values The list of values.
-     */
-    public VariableResolverList(List<String> values)
-    {
-        this._values = new ArrayList<String>();
-        this._values.addAll(values);
-    }
+  /**
+   * Creates a new variable resolver from the list of values.
+   *
+   * @param values The list of values.
+   */
+  public VariableResolverList(List<String> values) {
+    this._values = new ArrayList<String>();
+    this._values.addAll(values);
+  }
 
-    /**
-     * Creates a new variable resolver from the list of values.
-     *
-     * @param values The list of values.
-     */
-    public VariableResolverList(String[] values)
-    {
-        this._values = Arrays.asList(values);
-    }
+  /**
+   * Creates a new variable resolver from the list of values.
+   *
+   * @param values The list of values.
+   */
+  public VariableResolverList(String[] values) {
+    this._values = Arrays.asList(values);
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean exists(String value)
-    {
-        return this._values.contains(value);
-    }
+  /**
+   * {@inheritDoc}
+   */
+  public boolean exists(String value) {
+    return this._values.contains(value);
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    public Object resolve(String value)
-    {
-        return exists(value) ? value : null;
-    }
+  /**
+   * {@inheritDoc}
+   */
+  public Object resolve(String value) {
+    return exists(value) ? value : null;
+  }
 }

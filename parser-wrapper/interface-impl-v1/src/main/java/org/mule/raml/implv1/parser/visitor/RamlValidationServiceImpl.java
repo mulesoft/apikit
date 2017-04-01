@@ -36,8 +36,7 @@ public class RamlValidationServiceImpl implements IRamlValidationService
     public IRamlValidationService validate(String resourceContent, String resource)
     {
         ResourceLoader resourceLoader = ramlDocumentBuilderImpl.getResourceLoader();
-        List<ValidationResult> results = new ArrayList<ValidationResult>();
-        results = RamlValidationService.createDefault(resourceLoader).validate(resourceContent, resource);
+        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader).validate(resourceContent, resource);
         errors = new ArrayList<IValidationResult>();
         for (ValidationResult validationResult : ValidationResult.getLevel(ValidationResult.Level.ERROR, results))
         {

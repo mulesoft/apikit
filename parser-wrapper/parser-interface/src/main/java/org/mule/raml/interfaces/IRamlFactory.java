@@ -6,10 +6,10 @@
  */
 package org.mule.raml.interfaces;
 
-import org.mule.raml.interfaces.parser.visitor.IRamlValidationService;
 import org.mule.raml.interfaces.emitter.IRamlEmitter;
 import org.mule.raml.interfaces.parser.visitor.IRamlCloningService;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
+import org.mule.raml.interfaces.parser.visitor.IRamlValidationService;
 
 public interface IRamlFactory
 {

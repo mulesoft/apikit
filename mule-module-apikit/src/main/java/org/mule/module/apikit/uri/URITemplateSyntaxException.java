@@ -18,58 +18,53 @@ package org.mule.module.apikit.uri;
  * @author Christophe Lauret
  * @version 31 December 2008
  */
-public class URITemplateSyntaxException extends IllegalArgumentException
-{
+public class URITemplateSyntaxException extends IllegalArgumentException {
 
-    /**
-     * For serialisation.
-     */
-    private static final long serialVersionUID = -8924504091165837799L;
+  /**
+   * For serialisation.
+   */
+  private static final long serialVersionUID = -8924504091165837799L;
 
-    /**
-     * The input string.
-     */
-    private final String _input;
+  /**
+   * The input string.
+   */
+  private final String _input;
 
-    /**
-     * The reason string.
-     */
-    private final String _reason;
+  /**
+   * The reason string.
+   */
+  private final String _reason;
 
-    /**
-     * Constructs an instance from the given input string, reason.
-     *
-     * @param input  The input string.
-     * @param reason A string explaining why the input could not be parsed.
-     */
-    public URITemplateSyntaxException(String input, String reason)
-    {
-        super(reason + " : " + input);
-        if ((input == null) || (reason == null))
-        {
-            throw new NullPointerException();
-        }
-        this._input = input;
-        this._reason = reason;
+  /**
+   * Constructs an instance from the given input string, reason.
+   *
+   * @param input  The input string.
+   * @param reason A string explaining why the input could not be parsed.
+   */
+  public URITemplateSyntaxException(String input, String reason) {
+    super(reason + " : " + input);
+    if ((input == null) || (reason == null)) {
+      throw new NullPointerException();
     }
+    this._input = input;
+    this._reason = reason;
+  }
 
-    /**
-     * Returns the input string.
-     *
-     * @return The input string.
-     */
-    public String getInput()
-    {
-        return this._input;
-    }
+  /**
+   * Returns the input string.
+   *
+   * @return The input string.
+   */
+  public String getInput() {
+    return this._input;
+  }
 
-    /**
-     * Returns the reason explaining why the input string could not be parsed.
-     *
-     * @return The reason string.
-     */
-    public String getReason()
-    {
-        return this._reason;
-    }
+  /**
+   * Returns the reason explaining why the input string could not be parsed.
+   *
+   * @return The reason string.
+   */
+  public String getReason() {
+    return this._reason;
+  }
 }

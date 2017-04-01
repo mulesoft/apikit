@@ -3,33 +3,57 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>apikit-parent</artifactId>
-        <version>3.8.5-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-apikit</artifactId>
-    <packaging>jar</packaging>
+    <packaging>mule-plugin</packaging>
     <name>APIKit Module</name>
     <description>Module for creating API's using REST/SOAP Web Services</description>
 
-    <properties>
-        <licensePath>../LICENSE_HEADER.txt</licensePath>
+       <properties>
         <rest.assured.version>1.7.2</rest.assured.version>
-        <guava.version>18.0</guava.version>
-        <jackson2.version>2.4.3</jackson2.version>
+        <mule.version>4.0.0-SNAPSHOT</mule.version>
+        <apikit.version>4.0.0-SNAPSHOT</apikit.version>
+        <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
+        <mule.api.version>1.0.0-SNAPSHOT</mule.api.version>
     </properties>
 
     <build>
         <plugins>
             <plugin>
+                <groupId>org.mule.plugins</groupId>
+                <artifactId>mule-app-plugins-maven-plugin</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <extensions>true</extensions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <!--TODO (MULE-10540) parent pom for mule plugins -->
+            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-test-jar</id>
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
+                    </execution>
+                    <execution>
+                        <id>mule-plugin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>mule-plugin</classifier>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -37,156 +61,45 @@
     </build>
 
     <dependencies>
-
         <dependency>
-            <groupId>org.mule.raml</groupId>
-            <artifactId>parser-interface-impl-v1</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-api</artifactId>
+            <version>${mule.api.version}</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.mule</groupId>-->
+            <!--<artifactId>mule-core</artifactId>-->
+            <!--<version>4.0-SNAPSHOT</version>-->
+            <!--<scope>provided</scope>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>org.mule.raml</groupId>
-            <artifactId>parser-interface-impl-v2</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-apikit-spi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.mule</groupId>
-            <artifactId>mule-core</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.transports</groupId>
-            <artifactId>mule-transport-http</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.modules</groupId>
+            <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-spring-config</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
         </dependency>
+        <!--parser-->
         <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-json</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
+            <groupId>org.raml</groupId>
+            <artifactId>raml-parser</artifactId>
+            <version>0.9-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-devkit-support</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
+            <groupId>org.raml</groupId>
+            <artifactId>raml-parser-2</artifactId>
+            <version>1.0.5-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-cors</artifactId>
-            <version>${cors.module.version}</version>
+            <groupId>org.mule.raml</groupId>
+            <artifactId>parser-interface-impl-v1</artifactId>
+            <version>${apikit.version}</version>
         </dependency>
         <dependency>
-            <groupId>wsdl4j</groupId>
-            <artifactId>wsdl4j</artifactId>
-            <version>1.6.2</version>
+            <groupId>org.mule.raml</groupId>
+            <artifactId>parser-interface-impl-v2</artifactId>
+            <version>${apikit.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.fge</groupId>
-            <artifactId>json-schema-validator</artifactId>
-            <version>2.2.6</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.code.findbugs</groupId>
-                    <artifactId>jsr305</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>joda-time</groupId>
-                    <artifactId>joda-time</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.1.17</version>
-        </dependency>
-        <!--test deps -->
-        <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-client</artifactId>
-            <version>${mule.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-scripting</artifactId>
-            <version>${mule.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-spring-security</artifactId>
-            <version>${mule.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.transports</groupId>
-            <artifactId>mule-transport-vm</artifactId>
-            <version>${mule.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.transports</groupId>
-            <artifactId>mule-transport-jetty</artifactId>
-            <version>${mule.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule</groupId>
-            <artifactId>mule-core</artifactId>
-            <version>${mule.version}</version>
-            <scope>test</scope>
-            <type>test-jar</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--test-->
         <dependency>
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-functional</artifactId>
@@ -219,31 +132,105 @@
             <version>${muleTestsInfrastructure.version}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-sockets</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-module-http-ext</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+        <!--TODO: The dependency to mule-service-http-api is used to retrieve the ParameterMap class. It can be removed once it is passed to mule-api-->
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-service-http-api</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-module-http</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!--TODO: MULE-10837-->
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-module-service</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mule.services</groupId>
+            <artifactId>mule-service-http</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+            <classifier>mule-service</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.services</groupId>
+            <artifactId>mule-service-scheduler</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+            <classifier>mule-service</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-module-extensions-support</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-module-spring-security</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-module-scripting</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-module-extensions-spring-support</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.services</groupId>
+            <artifactId>mule-service-weave</artifactId>
+            <classifier>mule-service</classifier>
+            <version>4.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-core</artifactId>
+            <version>${mule.version}</version>
             <exclusions>
                 <exclusion>
-                    <groupId>org.hamcrest</groupId>
-                    <artifactId>hamcrest-core</artifactId>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
                 </exclusion>
             </exclusions>
+            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>1.9.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.skyscreamer</groupId>
-            <artifactId>jsonassert</artifactId>
-            <version>1.2.0</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
 
 </project>

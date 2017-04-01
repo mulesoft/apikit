@@ -11,8 +11,7 @@ import org.mule.module.apikit.exception.ApikitRuntimeException;
 public class TraitAlreadyDefinedException extends ApikitRuntimeException
 {
 
-    public TraitAlreadyDefinedException(String message)
-    {
-        super(message);
-    }
+  public TraitAlreadyDefinedException(String message) {
+    super(message);
+  }
 }

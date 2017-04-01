@@ -6,9 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.api.MuleEvent;
-import org.mule.api.MuleMessage;
-import org.mule.transport.http.HttpConstants;
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.MuleContext;
 
 import org.raml.parser.utils.StreamUtils;
 import org.slf4j.Logger;
@@ -26,21 +27,21 @@ public class CharsetUtils
      *  - detects the payload encoding using BOM, or tries to auto-detect it
      *  - return the mule message encoding
      *
-     * @param message mule message
+     * @param event mule event
      * @param bytes payload byte array
      * @param logger where to log
      * @return payload encoding
      */
-    public static String getEncoding(MuleMessage message, byte[] bytes, Logger logger)
+    public static String getEncoding(Event event, byte[] bytes, Logger logger)
     {
-        String encoding = getHeaderCharset(message, logger);
+        String encoding = getHeaderCharset(event.getMessage(), logger);
         if (encoding == null)
         {
             encoding = StreamUtils.detectEncoding(bytes);
             logger.debug("Detected payload encoding: " + logEncoding(encoding));
             if (encoding == null)
             {
-                encoding = message.getEncoding();
+                encoding = EventHelper.getEncoding(event).toString();
                 logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
             }
         }
@@ -50,6 +51,38 @@ public class CharsetUtils
         }
         return encoding;
     }
+
+    /**
+     * Tries to figure out the encoding of the request in the following order
+     *  - checks if the content-type header includes the charset
+     *  - detects the payload encoding using BOM, or tries to auto-detect it
+     *  - return the mule message encoding
+     *
+     * @param message mule message
+     * @param bytes payload byte array
+     * @param logger where to log
+     * @return payload encoding
+     */
+    public static String getEncoding(Message message, byte[] bytes, Logger logger)
+    {
+        String encoding = getHeaderCharset(message, logger);
+        if (encoding == null)
+        {
+            encoding = StreamUtils.detectEncoding(bytes);
+            logger.debug("Detected payload encoding: " + logEncoding(encoding));
+            if (encoding == null)
+            {
+                encoding = EventHelper.getEncoding(message).toString();
+                logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
+            }
+        }
+        if (encoding.matches("(?i)UTF-16.+"))
+        {
+            encoding = "UTF-16";
+        }
+        return encoding;
+    }
+
 
     /**
      * Tries to figure out the encoding of an xml request in the following order
@@ -63,7 +96,7 @@ public class CharsetUtils
      * @param logger where to log
      * @return xml payload encoding
      */
-    public static String getXmlEncoding(MuleEvent muleEvent, byte[] payload, Document document, Logger logger)
+    public static String getXmlEncoding(Event muleEvent, byte[] payload, Document document, Logger logger)
     {
         String encoding = document.getXmlEncoding();
         logger.debug("Xml declaration encoding: " + logEncoding(encoding));
@@ -74,7 +107,7 @@ public class CharsetUtils
         }
         if (encoding == null)
         {
-            encoding = muleEvent.getEncoding();
+            encoding = EventHelper.getEncoding(muleEvent).toString();
             logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
         }
         return encoding;
@@ -87,14 +120,22 @@ public class CharsetUtils
      * @return header charset
      * @param message mule message
      */
-    public static String getHeaderCharset(MuleMessage message, Logger logger)
+    public static String getHeaderCharset(Message message, Logger logger)
     {
         String charset = null;
-        String contentType = message.getInboundProperty(HttpConstants.HEADER_CONTENT_TYPE, "application/xml");
+        String contentType = ((HttpRequestAttributes)message.getAttributes()).getHeaders().get("Content-Type");//getInboundProperty(HttpConstants.HEADER_CONTENT_TYPE, "application/xml");
+        if (contentType == null)
+        {
+            contentType = ((HttpRequestAttributes)message.getAttributes()).getHeaders().get("content-type");
+        }
+        if (contentType == null)
+        {
+            contentType = "application/xml";
+        }
         if (contentType.contains("charset="))
         {
-            charset = message.getEncoding();
-            logger.debug("Request Content-Type charset: " + logEncoding(charset));
+           charset = message.getPayload().getDataType().getMediaType().toString();//message.getEncoding();
+           logger.debug("Request Content-Type charset: " + logEncoding(charset));
         }
         return charset;
     }

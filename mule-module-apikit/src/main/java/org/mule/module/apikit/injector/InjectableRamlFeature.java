@@ -10,39 +10,35 @@ import org.raml.model.Action;
 import org.raml.model.Raml;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 
-public abstract class InjectableRamlFeature
-{
-    protected String name;
-    private String yaml;
+public abstract class InjectableRamlFeature {
 
-    protected InjectableRamlFeature(String name, String yaml)
-    {
-        if (name == null || yaml == null)
-        {
-            throw new IllegalArgumentException("neither name nor yaml can be null");
-        }
-        this.name = name;
-        this.yaml = yaml;
+  protected String name;
+  private String yaml;
+
+  protected InjectableRamlFeature(String name, String yaml) {
+    if (name == null || yaml == null) {
+      throw new IllegalArgumentException("neither name nor yaml can be null");
     }
+    this.name = name;
+    this.yaml = yaml;
+  }
 
-    protected Raml parse()
-    {
-        StringBuilder wholeYaml = new StringBuilder(getBoilerPlateBefore());
-        String[] split = yaml.split("[\r\n]+");
-        for (String s : split)
-        {
-            wholeYaml.append(getIndentation()).append(s).append("\n");
-        }
-        wholeYaml.append(getBoilerPlateAfter());
-        return new RamlDocumentBuilder().build(wholeYaml.toString(), "");
+  protected Raml parse() {
+    StringBuilder wholeYaml = new StringBuilder(getBoilerPlateBefore());
+    String[] split = yaml.split("[\r\n]+");
+    for (String s : split) {
+      wholeYaml.append(getIndentation()).append(s).append("\n");
     }
+    wholeYaml.append(getBoilerPlateAfter());
+    return new RamlDocumentBuilder().build(wholeYaml.toString(), "");
+  }
 
-    public abstract void applyToAction(Action target);
+  public abstract void applyToAction(Action target);
 
-    protected abstract String getBoilerPlateBefore();
+  protected abstract String getBoilerPlateBefore();
 
-    protected abstract String getBoilerPlateAfter();
+  protected abstract String getBoilerPlateAfter();
 
-    protected abstract String getIndentation();
+  protected abstract String getIndentation();
 
 }

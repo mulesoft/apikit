@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.parser;
 
-import org.mule.module.apikit.AbstractConfiguration;
 import org.mule.module.apikit.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
@@ -24,86 +23,70 @@ import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ParserWrapperV2 implements ParserWrapper
-{
+public class ParserWrapperV2 implements ParserWrapper {
 
-    private static final Logger logger = LoggerFactory.getLogger(ParserWrapperV2.class);
+  private static final Logger logger = LoggerFactory.getLogger(ParserWrapperV2.class);
 
-    private final String ramlPath;
-    private final ResourceLoader resourceLoader;
+  private final String ramlPath;
+  private final ResourceLoader resourceLoader;
 
-    public ParserWrapperV2(String ramlPath, String appHome)
-    {
-        this.ramlPath = ramlPath;
-        if (appHome != null)
-        {
-            this.resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(appHome));
-        }
-        else
-        {
-            this.resourceLoader = new DefaultResourceLoader();
-        }
+  public ParserWrapperV2(String ramlPath, String appHome) {
+    this.ramlPath = ramlPath;
+    if (appHome != null) {
+      this.resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(appHome));
+    } else {
+      this.resourceLoader = new DefaultResourceLoader();
     }
+  }
 
-    @Override
-    public void validate()
-    {
-        List<String> errors = ParserV2Utils.validate(resourceLoader, ramlPath);
-        if (!errors.isEmpty())
-        {
-            StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
-            message.append(errors.size()).append("\n\n");
-            for (String error : errors)
-            {
-                message.append(error).append("\n");
-            }
-            throw new ApikitRuntimeException(message.toString());
-        }
+  @Override
+  public void validate() {
+    List<String> errors = ParserV2Utils.validate(resourceLoader, ramlPath);
+    if (!errors.isEmpty()) {
+      StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
+      message.append(errors.size()).append("\n\n");
+      for (String error : errors) {
+        message.append(error).append("\n");
+      }
+      throw new ApikitRuntimeException(message.toString());
     }
+  }
 
-    @Override
-    public IRaml build()
-    {
-        return ParserV2Utils.build(resourceLoader, ramlPath);
-    }
+  @Override
+  public IRaml build() {
+    return ParserV2Utils.build(resourceLoader, ramlPath);
+  }
 
-    @Override
-    public String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort)
-    {
-        return UrlUtils.rewriteBaseUri(ramlContent, newSchemeHostPort);
-    }
+  @Override
+  public String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort) {
+    return UrlUtils.rewriteBaseUri(ramlContent, newSchemeHostPort);
+  }
 
-    @Override
-    public String dump(IRaml api, String newBaseUri)
-    {
-        String dump = dumpRaml(api);
-        if (newBaseUri != null)
-        {
-            dump = UrlUtils.replaceBaseUri(dump, newBaseUri);
-        }
-        return dump;
+  @Override
+  public String dump(IRaml api, String newBaseUri) {
+    String dump = dumpRaml(api);
+    if (newBaseUri != null) {
+      dump = UrlUtils.replaceBaseUri(dump, newBaseUri);
     }
+    return dump;
+  }
 
-    private String dumpRaml(IRaml api)
-    {
-        InputStream stream = resourceLoader.fetchResource(ramlPath);
-        if (stream == null)
-        {
-            throw new ApikitRuntimeException("Invalid RAML descriptor");
-        }
-        return StreamUtils.toString(stream);
+  private String dumpRaml(IRaml api) {
+    InputStream stream = resourceLoader.fetchResource(ramlPath);
+    if (stream == null) {
+      throw new ApikitRuntimeException("Invalid RAML descriptor");
     }
+    return StreamUtils.toString(stream);
+  }
 
-    @Override
-    public RamlUpdater getRamlUpdater(IRaml api, AbstractConfiguration configuration)
-    {
-        throw new UnsupportedOperationException("RAML 1.0 is read only");
-    }
+  @Override
+  public RamlUpdater getRamlUpdater(IRaml api) {
+    throw new UnsupportedOperationException("RAML 1.0 is read only");
+  }
 
-    @Override
-    public void updateBaseUri(IRaml api, String baseUri)
-    {
-        // do nothing, as updates are not supported
-        logger.debug("RAML 1.0 parser does not support base uri updates");
-    }
+  @Override
+  public void updateBaseUri(IRaml api, String baseUri) {
+    // do nothing, as updates are not supported
+    logger.debug("RAML 1.0 parser does not support base uri updates");
+  }
 }
