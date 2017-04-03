@@ -64,7 +64,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
             }
 
             for (File ramlPath : ramlPaths) {
-                if (ramlPath.getName().equals(config.getRaml()))
+                if (ramlPath.getPath().endsWith(config.getRaml()))
                 {
                     Element inbound = findListenerOrInboundEndpoint(element.getParentElement().getChildren());
 
