@@ -148,7 +148,11 @@ public class ConsoleHandler implements MessageProcessor
 
     public MuleEvent process(MuleEvent event) throws MuleException
     {
-
+        String listenerPath = event.getMessage().getInboundProperty("http.listener.path");
+        if (listenerPath != null && !listenerPath.endsWith("/*"))
+        {
+            throw new IllegalStateException("Console path in listener must end with /*");
+        }
         String path = UrlUtils.getResourceRelativePath(event.getMessage());
         String contextPath = UrlUtils.getBasePath(event.getMessage());
         String queryString = UrlUtils.getQueryString(event.getMessage());
