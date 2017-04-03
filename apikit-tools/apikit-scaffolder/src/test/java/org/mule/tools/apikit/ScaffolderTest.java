@@ -53,6 +53,8 @@ public class ScaffolderTest {
         folder.newFolder("scaffolder-existing-old-address");
         folder.newFolder("scaffolder-existing-custom-and-normal-lc");
         folder.newFolder("double-root-raml");
+        folder.newFolder("raml-inside-folder");
+        folder.newFolder("raml-inside-folder/folder");
         folder.newFolder("custom-domain");
         folder.newFolder("empty-domain");
         folder.newFolder("custom-domain-multiple-lc");
@@ -218,6 +220,25 @@ public class ScaffolderTest {
         assertEquals(0, countOccurences(s, "extensionEnabled"));
         assertEquals(1, countOccurences(s, "<apikit:console"));
         assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
+    }
+
+    @Test
+    public void testSimpleGenerationWithRamlInsideAFolder() throws Exception
+    {
+        File ramlFile = getFile("raml-inside-folder/folder/api.raml");
+        List<File> ramls = Arrays.asList(ramlFile);
+        File xmlFile = getFile("raml-inside-folder/api.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("raml-inside-folder");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
+        scaffolder.run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(1, countOccurences(s, "<apikit:mapping-exception-strategy name=\"api-apiKitGlobalExceptionMapping\">"));
+        assertEquals(1, countOccurences(s, "<flow name=\"post:/oneResource:api-config\">"));
+        assertEquals(1, countOccurences(s, "<http:listener-config name=\"api-httpListenerConfig\" host=\"0.0.0.0\" port=\"8081\" />"));
     }
 
     @Test
