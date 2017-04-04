@@ -127,3 +127,12 @@ traits:
     get: *getLeagues
 /leagues.xml:
     get: *getLeagues
+
+/leagues/version/{version}:
+  get: &versionedGet
+    responses:
+      200:
+        body:
+          application/json:
+  /child:
+    get: *versionedGet

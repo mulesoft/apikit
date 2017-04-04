@@ -141,9 +141,9 @@ public class Proxy extends AbstractRouter
     }
 
     @Override
-    protected Flow getFlow(IResource resource, HttpRestRequest request)
+    protected Flow getFlow(IResource resource, HttpRestRequest request, String version)
     {
-        FlowResolver flowResolver = config.getRestFlowMap().get(request.getMethod() + ":" + resource.getUri());
+        FlowResolver flowResolver = config.getRestFlowMap().get(request.getMethod() + ":" + resource.getResolvedUri(version));
         Flow rawFlow = ((ProxyConfiguration.ProxyFlowResolver) flowResolver).getRawFlow();
         if (rawFlow == null)
         {

@@ -48,7 +48,7 @@ public class RAMLFilesParserTest
 
         Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
         assertNotNull(entries);
-        assertEquals(2, entries.size());
+        assertEquals(3, entries.size());
         Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
         ResourceActionMimeTypeTriplet triplet = (ResourceActionMimeTypeTriplet)CollectionUtils.find(ramlEntries, new Predicate()
         {

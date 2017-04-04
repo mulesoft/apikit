@@ -6,6 +6,8 @@
  */
 package org.mule.raml.implv1.model;
 
+import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,9 +43,16 @@ public class ResourceImpl implements IResource
 
     }
 
+    @Override
     public String getUri()
     {
         return resource.getUri();
+    }
+
+    @Override
+    public String getResolvedUri(String version)
+    {
+        return resolveVersion(getUri(), version);
     }
 
     public void setParentUri(String s)
@@ -130,5 +139,11 @@ public class ResourceImpl implements IResource
     public void cleanBaseUriParameters()
     {
         resource.getBaseUriParameters().clear();
+    }
+
+    @Override
+    public String toString()
+    {
+        return getUri();
     }
 }

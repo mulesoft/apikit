@@ -189,14 +189,14 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
         IResource resource = getRoutingTable().get(uriPattern);
         if (resource.getAction(request.getMethod()) == null)
         {
-            throw new MethodNotAllowedException(resource.getUri(), request.getMethod());
+            throw new MethodNotAllowedException(resource.getResolvedUri(config.getApi().getVersion()), request.getMethod());
         }
 
         ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
 
         processUriParameters(resolvedVariables, resource, event);
 
-        Flow flow = getFlow(resource, request);
+        Flow flow = getFlow(resource, request, config.getApi().getVersion());
         if (flow == null)
         {
             throw new ApikitRuntimeException("Flow not found for resource: " + resource);
@@ -285,7 +285,7 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
         }
     }
 
-    protected abstract Flow getFlow(IResource resource, HttpRestRequest request) throws UnsupportedMediaTypeException;
+    protected abstract Flow getFlow(IResource resource, HttpRestRequest request, String version) throws UnsupportedMediaTypeException;
 
     private static class RouterRequest
     {
