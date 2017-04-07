@@ -70,7 +70,7 @@ public class Configuration implements Initialisable
 
     public void initialise() throws InitialisationException
     {
-        ramlHandler = new RamlHandler(raml, getApiServer(), keepRamlBaseUri, getAppHome());
+        ramlHandler = new RamlHandler(raml, getApiServer(), keepRamlBaseUri, null);
         flowFinder = new FlowFinder(ramlHandler, getName(), muleContext, flowMappings);
         buildResourcePatternCaches();
         registry.registerConfiguration(this);

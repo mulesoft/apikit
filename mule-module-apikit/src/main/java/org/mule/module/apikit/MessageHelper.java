@@ -14,14 +14,19 @@ import org.mule.service.http.api.domain.ParameterMap;
 
 public class MessageHelper
 {
-    public static String getHeader(Message message, String name)
+    public static String getHeaderIgnoreCase(Message message, String name)
     {
         ParameterMap headers = ((HttpRequestAttributes)message.getAttributes()).getHeaders();
-        for (String header : headers.keySet())
+        return getParamIgnoreCase(headers, name);
+    }
+
+    public static String getParamIgnoreCase(ParameterMap parameters, String name)
+    {
+        for (String header : parameters.keySet())
         {
             if (header.equalsIgnoreCase(name.toLowerCase()))
             {
-                return headers.get(header);
+                return parameters.get(header);
             }
         }
         return null;
@@ -29,7 +34,7 @@ public class MessageHelper
 
     public static String getMediaType(Message message)
     {
-        String contentType = getHeader(message, HeaderNames.CONTENT_TYPE);
+        String contentType = getHeaderIgnoreCase(message, HeaderNames.CONTENT_TYPE);
         return contentType != null ? contentType.split(";")[0] : null;
     }
 

@@ -12,6 +12,7 @@ import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.DataTypeBuilder;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.core.api.config.MuleProperties;
 
 import com.google.common.cache.LoadingCache;
@@ -71,6 +72,10 @@ public class RestXmlSchemaValidator
             Document data;
             Object input = message.getPayload().getValue();
             Charset messageEncoding = EventHelper.getEncoding(message);
+            if (input instanceof CursorStreamProvider)
+            {
+                //TODO supoport cursorStreams
+            }
             if (input instanceof InputStream)
             {
                 logger.debug("transforming payload to perform XSD validation");

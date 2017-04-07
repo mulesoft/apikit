@@ -67,7 +67,7 @@ public class Router extends AbstractInterceptingMessageProcessor
         IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
 
         event = validateRequest(event, config, resource, attributes, resolvedVariables);
-        String contentType = MessageHelper.getHeader(event.getMessage(), HeaderNames.CONTENT_TYPE);
+        String contentType = MessageHelper.getHeaderIgnoreCase(event.getMessage(), HeaderNames.CONTENT_TYPE);
         Flow flow = config.getFlowFinder().getFlow(resource,attributes.getMethod().toLowerCase(), contentType);
         return flow.process(event);
     }

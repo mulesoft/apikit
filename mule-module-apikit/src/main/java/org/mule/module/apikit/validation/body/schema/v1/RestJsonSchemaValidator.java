@@ -17,6 +17,7 @@ import org.mule.module.apikit.validation.body.schema.v1.io.JsonUtils;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.DataTypeBuilder;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.core.util.IOUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -60,6 +61,10 @@ public class RestJsonSchemaValidator
         {
             JsonNode data;
             Object input = message.getPayload().getValue();
+            if (input instanceof CursorStreamProvider)
+            {
+                //TODO supoport cursorStreams
+            }
             if (input instanceof InputStream)
             {
                 logger.debug("transforming payload to perform JSON Schema validation");

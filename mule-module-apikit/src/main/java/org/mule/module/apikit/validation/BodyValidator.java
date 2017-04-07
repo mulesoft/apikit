@@ -60,7 +60,7 @@ public class BodyValidator
                 newMessage = schemaValidator.validate(message);
 
                 FormParametersValidator formParametersValidator = new FormParametersValidator(mimeType, config.isParserV2());
-                newMessage = formParametersValidator.validate(message);
+                newMessage = formParametersValidator.validate(newMessage);
 
                 break;
             }

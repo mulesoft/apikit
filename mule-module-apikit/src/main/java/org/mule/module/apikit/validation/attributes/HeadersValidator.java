@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation.attributes;
 
 import org.mule.module.apikit.AttributesRegenerator;
+import org.mule.module.apikit.MessageHelper;
 import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -27,7 +28,7 @@ public class HeadersValidator {
       if (expectedKey.contains("{?}")) {
         String regex = expectedKey.replace("{?}", ".*");
         for (String incoming : headers.keySet()) {
-          String incomingValue = headers.get(incoming);
+          String incomingValue = MessageHelper.getParamIgnoreCase(headers, incoming);
           if (incoming.matches(regex) && !expected.validate(incomingValue)) {
             String msg = String.format("Invalid value '%s' for header %s. %s",
                                        incomingValue, expectedKey, expected.message(incomingValue));
@@ -35,7 +36,7 @@ public class HeadersValidator {
           }
         }
       } else {
-        String actual = headers.get(expectedKey);
+        String actual = MessageHelper.getParamIgnoreCase(headers, expectedKey);
         if (actual == null && expected.isRequired()) {
           throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
         }

@@ -14,6 +14,10 @@ import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidator;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.api.streaming.bytes.CursorStream;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
+import org.mule.runtime.core.internal.streaming.object.factory.InMemoryCursorIteratorProviderFactory;
+import org.mule.runtime.core.streaming.object.CursorIteratorProviderFactory;
 import org.mule.runtime.core.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -67,6 +71,19 @@ public class RestSchemaV2Validator implements IRestSchemaValidator
     private String getPayloadAsString(boolean trimBom) throws BadRequestException
     {
         Object input = message.getPayload().getValue();
+        if (input instanceof CursorStreamProvider)
+        {
+            return IOUtils.toString((CursorStreamProvider) input);
+
+            //try (CursorStream cursor = ((CursorStreamProvider) input).openCursor())
+            //{
+            //    cursor.release();
+            //}
+            //catch (IOException e)
+            //{
+            //    throw new BadRequestException("Error processing request: " + e.getMessage());
+            //}
+        }
         if (input instanceof InputStream)
         {
             logger.debug("transforming payload to perform Schema validation");
