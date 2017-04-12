@@ -9,14 +9,13 @@ package org.mule.module.apikit;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
-import org.mule.runtime.core.api.message.InternalMessage;
 import org.mule.service.http.api.domain.ParameterMap;
 
 public class MessageHelper
 {
     public static String getHeaderIgnoreCase(Message message, String name)
     {
-        ParameterMap headers = ((HttpRequestAttributes)message.getAttributes()).getHeaders();
+        ParameterMap headers = ((HttpRequestAttributes) message.getAttributes().getValue()).getHeaders();
         return getParamIgnoreCase(headers, name);
     }
 
@@ -51,7 +50,7 @@ public class MessageHelper
 
     public static Message setPayload(Message message, Object payload, MediaType mediatype)
     {
-        InternalMessage.Builder messageBuilder = InternalMessage.builder(message);
+        Message.Builder messageBuilder = Message.builder(message);
         messageBuilder.payload(payload);
         if (mediatype != null)
         {

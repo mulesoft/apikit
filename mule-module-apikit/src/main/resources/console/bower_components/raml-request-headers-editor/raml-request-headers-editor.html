@@ -1,0 +1,401 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../headers-parser-behavior/headers-parser-behavior.html">
+<link rel="import" href="../raml-headers-form/raml-headers-form.html">
+<link rel="import" href="../code-mirror/code-mirror.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../arc-icons/arc-icons.html">
+<!-- CodeMirror autocomplete -->
+<link rel="import" href="../paper-material/paper-material.html">
+<link rel="import" href="../paper-menu/paper-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-tooltip/paper-tooltip.html">
+<link rel="import" href="cm-arc-styles.html">
+<link rel="import" href="cm-modules-import.html">
+<!--
+`<raml-request-headers-editor>` A headers editor to be used with the RAML defined requests
+
+### Example
+```
+<raml-request-headers-editor></raml-request-headers-editor>
+```
+
+## Events
+This element listens for the `request-headers-changed` and `request-header-changed` events.
+The first event when handled will replace current editor value. New value mast be set to a `value`
+property of the event's detail object.
+Second event, when handled, will update single header value if the header is on the list of append
+header if it is a new header. Event handler expects `name` and `value` properties to be set on event's
+detail object.
+
+### `request-headers-changed` example
+```
+var init = {
+  detail: {
+    value: 'Authorization: Basic base64 string'
+  },
+  bubbles: true,
+  cancelable: true
+};
+var event = new CustomEvent('request-headers-changed', init);
+document.dispatchEvent(event);
+```
+This event will set editor value to:
+```
+Authorization: Basic base64 string
+```
+
+### `request-header-changed` example
+```
+var init = {
+  detail: {
+    name: 'Authorization',
+    value: 'custom'
+  },
+  bubbles: true,
+  cancelable: true
+};
+var event = new CustomEvent('request-header-changed', init);
+document.dispatchEvent(event);
+```
+This event will update the Authorization header value to `custom`.
+
+If the event was canceled by calling `event.preventDefault()` then the value won't be updated.
+
+### Styling
+`<raml-request-headers-editor>` provides the following custom properties and mixins for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--raml-request-headers-editor` | Mixin applied to the element | `{}`
+
+@group RAML Elements
+@element raml-request-headers-editor
+@demo demo/index.html
+-->
+<dom-module id="raml-request-headers-editor">
+  <template>
+    <style>
+     :host {
+      display: block;
+      position: relative;
+
+      @apply(--raml-request-headers-editor);
+
+      --code-mirror-editor: {
+        z-index: 0;
+      }
+
+      --paper-autocomplete: {
+        top: 32px;
+      }
+    }
+    .CodeMirror-hints {
+      position: absolute;
+      z-index: 10;
+      background: white;
+      overflow: hidden;
+      overflow-y: auto;
+      max-height: 20em;
+      margin-left: 20px;
+    }
+
+    .editor-actions {
+      padding: 0 8px;
+    }
+
+    #copyContainer {
+      margin: 0;
+      padding: 0;
+    }
+
+    paper-icon-button[active] {
+      background-color: #E0E0E0;
+      border-radius: 50%;
+    }
+    </style>
+    <div class="content">
+      <div class="editor-actions">
+        <paper-icon-button icon="arc:content-copy" id="copyButton" on-tap="_copyToClipboard"></paper-icon-button>
+        <paper-icon-button icon="arc:code" id="editMode" toggles active="{{sourceMode}}"></paper-icon-button>
+        <paper-tooltip for="copyButton">Copy headers value to clipboard</paper-tooltip>
+        <paper-tooltip for="editMode">Toggle source edit mode</paper-tooltip>
+      </div>
+      <iron-pages content selected="{{selected}}" on-iron-select="_tabChangedHandler" selected-attribute="active">
+        <raml-headers-form value="{{value}}" narrow="[[narrow]]" narrow-width="[[narrowWidth]]" raml-headers="[[ramlHeaders]]"></raml-headers-form>
+        <code-mirror mode="http-headers" theme="cm-arc" value="{{value}}"></code-mirror>
+      </iron-pages>
+    </div>
+    <p id="copyContainer"></p>
+  </template>
+  <script>
+  Polymer({
+    is: 'raml-request-headers-editor',
+    behaviors: [ArcBehaviors.HeadersParserBehavior],
+    /**
+     * Fired when the content type header has been set / updated.
+     *
+     * @event content-type-changed
+     * @param {String} value New Content type.
+     */
+    /**
+     * Fired when the editor value change
+     *
+     * @event request-headers-changed
+     * @param {String} value Current editor value.
+     */
+    properties: {
+      /**
+       * A HTTP headers message part as defined in HTTP spec.
+       *
+       * @type {String}
+       */
+      value: {
+        type: String,
+        notify: true
+      },
+      // Currently selected editor. Can be raw (CodeMirror) (0) or form editor (1).
+      selected: {
+        type: Number,
+        value: 0
+      },
+      /**
+       * RAML headers definition.
+       */
+      ramlHeaders: Object,
+      /**
+       * Value of a Content-Type header.
+       * When this value change then editor update the value for the content type. However,
+       * to change a single header value, please, use `request-headers-changed` event with `name`
+       * and `value` properties set on the detail object.
+       *
+       * @type {Stirng}
+       */
+      contentType: {
+        type: String,
+        notify: true,
+        observer: '_onContentTypeChanged'
+      },
+
+      /**
+       * If set it will renders the view in the narrow layout.
+       */
+      narrow: {
+        type: Boolean,
+        value: false,
+        notify: true
+      },
+      // A widith below which the `narrow` property will be set to true.
+      narrowWidth: {
+        type: String,
+        value: '768px'
+      },
+      // When set to true then the source edit mode is enabled
+      sourceMode: Boolean
+    },
+
+    observers: [
+      '_valueChanged(value)',
+      '_sourceModeChanged(sourceMode)'
+    ],
+
+    attached: function() {
+      this.listen(window, 'request-headers-changed', '_headersChangedHandler');
+      this.listen(window, 'request-header-changed', '_headerChangedHandler');
+    },
+
+    detached: function() {
+      this.unlisten(window, 'request-headers-changed', '_headersChangedHandler');
+      this.unlisten(window, 'request-header-changed', '_headerChangedHandler');
+    },
+
+    ready: function() {
+      var cm = this.$$('code-mirror');
+      cm.setOption('extraKeys', {
+        'Ctrl-Space': function(cm) {
+          CodeMirror.showHint(cm, CodeMirror.hint['http-headers'], {
+            container: Polymer.dom(this.root)
+          });
+        }.bind(this)
+      });
+    },
+
+    _sourceModeChanged: function(sourceMode) {
+      if (sourceMode) {
+        this.set('selected', 1);
+      } else {
+        this.set('selected', 0);
+      }
+    },
+
+    /**
+     * Called by CodeMirror editor.
+     * When something change n the headers list, detect content type header.
+     */
+    _valueChanged: function(value) {
+      this._detectContentType(value);
+      if (!this._cacncelChangeEvent) {
+        this.fire('request-headers-changed', {
+          value: value
+        });
+      }
+    },
+
+    _detectContentType: function(value) {
+      if (!value && this.contentType) {
+        this.set('contentType', null);
+        return;
+      }
+      if (!this.value) {
+        return;
+      }
+      var ct = this.getContentType(value);
+      if (!ct) {
+        return;
+      }
+      this.set('contentType', ct);
+    },
+
+    _onContentTypeChanged: function(currentCt) {
+      if (!currentCt) {
+        this.fire('content-type-changed', {
+          'value': ''
+        });
+        return;
+      }
+      var arr = this.headersToJSON(this.value);
+      var updated = false;
+      var notChanged = false; //True when values are equal, no change needed.
+      arr.map(function(item) {
+        if (updated || item.name.toLowerCase() !== 'content-type') {
+          return item;
+        }
+        updated = true;
+        if (item.value === currentCt) {
+          notChanged = true;
+          return item;
+        }
+        item.value = currentCt;
+        return item;
+      });
+
+      if (notChanged) {
+        return;
+      }
+      if (!updated) {
+        arr.push({
+          name: 'Content-Type',
+          value: currentCt
+        });
+      }
+
+      var headers = this.headersToString(arr);
+      this.set('value', headers);
+      this.fire('content-type-changed', {
+        'value': currentCt
+      });
+    },
+
+    _tabChangedHandler: function(e) {
+      var name = e.detail.item && e.detail.item.nodeName;
+      if (!name) {
+        return;
+      }
+      if (name === 'CODE-MIRROR') {
+        e.detail.item.editor.refresh();
+      }
+    },
+
+    _copyToClipboard: function() {
+      // From https://github.com/google/material-design-lite/blob/master/docs/_assets/snippets.js
+      this.$.copyContainer.innerText = this.value;
+      var snipRange = document.createRange();
+      snipRange.selectNodeContents(this.$.copyContainer);
+      var selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(snipRange);
+      var result = false;
+      try {
+        result = document.execCommand('copy');
+        this.$.copyButton.icon = 'arc:done';
+      } catch (err) {
+        // Copy command is not available
+        Polymer.Base._error(err);
+        this.$.copyButton.icon = 'arc:error';
+      }
+      this.$.copyContainer.innerText = '';
+      // Return to the copy button after a second.
+      setTimeout(this._resetCopyButtonState.bind(this), 1000);
+      selection.removeAllRanges();
+      return result;
+    },
+
+    _resetCopyButtonState: function() {
+      this.$.copyButton.icon = 'arc:content-copy';
+    },
+    /**
+     * Handler tor the `request-headers-changed` event.
+     * Updates the editor value to the value of the event detail object.
+     */
+    _headersChangedHandler: function(e) {
+      if (e.target === this) {
+        return;
+      }
+      if (e.defaultPrevented) {
+        return;
+      }
+      var value = e.detail.value;
+      this._cacncelChangeEvent = true;
+      this.set('value', value);
+      this._cacncelChangeEvent = false;
+    },
+    /**
+     * Handler for the `request-header-changed` event.
+     * It updates value for a single header.
+     */
+    _headerChangedHandler: function(e) {
+      if (e.defaultPrevented) {
+        return;
+      }
+      var name = e.detail.name;
+      if (!name) {
+        return console.warn('request-header-changed fired without the name.');
+      }
+      var value = e.detail.value;
+      var arr = this.headersToJSON(this.value);
+      var updated = false;
+      for (var i = 0, len = arr.length; i < len; i++) {
+        if (arr[i].name.toLowerCase() === name.toLowerCase()) {
+          arr[i].value = value;
+          updated = true;
+          break;
+        }
+      }
+      if (!updated) {
+        arr.push({
+          name: name,
+          value: value
+        });
+      }
+      var headers = this.headersToString(arr);
+      this._cacncelChangeEvent = true;
+      this.set('value', headers);
+      this._cacncelChangeEvent = false;
+    }
+  });
+  </script>
+</dom-module>

@@ -1,0 +1,215 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<!--
+The `<raml-json-enhance>` enhaces the JSON output from the RAML parser so it can
+be used in the ARC elements (which expect enhanced data structure).
+
+The work is asynchronous. After the `json` property is set/changed it will call the
+worker automatically and report the result via the `raml-json-enhance-ready` event.
+
+Polymer application can bind to the `result` property which will notify the change.
+
+### Example
+```
+<raml-json-enhance json="{...}"></raml-json-enhance>
+window.addEventListener('raml-json-enhance-ready', function(e) {
+  console.log(e.detail.json);
+  // equals to
+  console.log(e.target.json);
+});
+```
+
+**Note** This element MUST be used to enhance parser JSON output in order to use
+any RAML related ARC element. Enhancer creates common data structure and
+expands RAML types. Element expects the JSON object to contain complete data
+about method / endpoint / type / security scheme and so on. It will not look for
+the data in the root of raml definition. Thanks to this, you can push just a part
+of the JSON object to a specific element to make it work.
+
+For example the `<raml-docs-method-viewer>` viewer ecpects the `raml` propety to
+be a method definition only (without of the rest of the RAML structure). If
+enhanced with the library, the JSON object describing the method will contain
+all required information to render the view.
+
+The element contains a set of Polyfills so it will work in the IE11+ browsers.
+
+### Biuld process
+This element uses web workers to expand JSON result (normalize it).
+The element will attempty to load following scitps from the same location where
+this script resides:
+- polyfills.js
+- browser/index.js
+- raml2object.js
+Build scripts should ensure that this resources are included in the final build.
+
+@group Logic Elements
+@element raml-json-enhance
+@demo demo/index.html
+-->
+<script>
+(function() {
+  'use strict';
+  var importLocation = '';
+  (function() {
+    var url;
+    if (window.currentImport && window.currentImport.URL) {
+      url = window.currentImport.URL;
+      if (window.currentImport._URL) {
+        url = window.currentImport._URL;
+      }
+    } else if (window.currentImport._URL) {
+      url = window.currentImport._URL;
+    } else {
+      url = window.location.href;
+    }
+    if (url === 'about:blank') {
+      importLocation = '../';
+      // in test cases for edge this will fail because it should be set to ../../
+      // but right now I can't waste time to check how to check if this is the particular case.
+    } else {
+      var path = url.substr(url.indexOf('/', 8));
+      path = path.substr(0, path.lastIndexOf('/') + 1);
+      if (path.indexOf('/test') !== -1 || path.indexOf('/demo') !== -1) {
+        path = path.substr(0, path.length - 1);
+        path = path.substr(0, path.lastIndexOf('/') + 1);
+      }
+      importLocation = path;
+    }
+  })();
+  Polymer({
+    is: 'raml-json-enhance',
+    properties: {
+      /**
+       * A JSON retuned by the `toJson()` function of the RAML JS parser.
+       */
+      json: {
+        type: Object,
+        observer: '_jsonChnaged'
+      },
+      // The result of enhancing the `json` object.
+      result: {
+        type: Object,
+        notify: true,
+        readOnly: true
+      },
+      /**
+       * Import location of the web worker.
+       */
+      importLocation: {
+        type: String,
+        value: function() {
+          return importLocation;
+        }
+      },
+      // function to be called when worker data are received
+      _workerExpandDataHandler: {
+        type: Function,
+        value: function() {
+          return this._expandWorkerData.bind(this);
+        }
+      },
+      // function to be called when worker error data are received
+      _workerExpandErrorHandler: {
+        type: Function,
+        value: function() {
+          return this._expandWorkerError.bind(this);
+        }
+      },
+      /**
+       * If true it will generate a report about the usage time using the
+       * performance API.
+       * It will print the computed data to the console after it finish
+       * computing RAML data.
+       */
+      debug: Boolean,
+      /**
+       * Web worker object used to perform the work.
+       */
+      _expadndWorker: Object
+    },
+
+    /**
+     * Used to debug the application.
+     * It uses the Parformance API to mark a specific point in time.
+     */
+    _markTime: function(name) {
+      if (this.debug && performance && performance.mark) {
+        performance.mark(name);
+      }
+    },
+
+    // Handler for the `json` property change.
+    _jsonChnaged: function(json) {
+      if (!json) {
+        return this._setResult(undefined);
+      }
+      if (json.specification) {
+        json = json.specification;
+      }
+      this._normalizeRamlJson(json);
+    },
+
+    _normalizeRamlJson: function(json) {
+      if (!this._expadndWorker) {
+        var worker = new Worker(this.importLocation + 'raml-object-worker.js');
+        worker.addEventListener('message', this._workerExpandDataHandler);
+        worker.addEventListener('error', this._workerExpandErrorHandler);
+        this._expadndWorker = worker;
+      }
+      this._markTime('raml-worker-expansion-library-send');
+      this._expadndWorker.postMessage({
+        raml: json
+      });
+    },
+
+    _expandWorkerData: function(e) {
+      this._markTime('raml-worker-expansion-library-receive');
+      var data = e.data;
+      if (data.error) {
+        console.log('Error in the worker.', data);
+        this.fire('error', {
+          message: data.message
+        });
+        return;
+      }
+      var result = data.result;
+      this._setResult(result);
+      this.fire('raml-json-enhance-ready', {
+        json: result
+      });
+      this._measureData();
+    },
+
+    _expandWorkerError: function(e) {
+      this._markTime('raml-worker-expansion-library-receive');
+      var err = new Error(e.message || ' Unknown worker error.');
+      console.log('Error in the worker.', err);
+      this.fire('error', {
+        message: err.message
+      });
+    },
+
+    _measureData: function() {
+      if (!this.debug || !performance || !performance.mark) {
+        return;
+      }
+      performance.measure('worker-work-time', 'raml-worker-expansion-library-send',
+        'raml-worker-expansion-library-receive');
+      var items = performance.getEntriesByType('measure');
+      console.log(items);
+    }
+  });
+})();
+</script>

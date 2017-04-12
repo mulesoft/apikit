@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:httpn="http://www.mulesoft.org/schema/mule/httpn"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/httpn http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd
+      http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <configuration defaultErrorHandler-ref="defaultErrorHandler"/>
+
+    <httpn:listener-config name="httpListenerConfigDefault">
+        <httpn:listener-connection host="localhost" port="${serverPort}"/>
+    </httpn:listener-config>
+
+    <httpn:listener-config name="httpListenerConfigForInvalidConsoleFlow">
+        <httpn:listener-connection host="localhost" port="${serverPort2}"/>
+    </httpn:listener-config>
+
+
+    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/simple-routing/simple.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
+    </apikit:config>
+
+    <flow name="api-console">
+        <httpn:listener config-ref="httpListenerConfigDefault" path="/console/*">
+            <httpn:response statusCode="#[variables.httpStatus default 200]"><httpn:headers>#[variables.outboundHeaders]</httpn:headers></httpn:response>
+            <httpn:error-response statusCode="#[variables.httpStatus default 500]"><httpn:headers>#[variables.outboundHeaders]</httpn:headers></httpn:error-response>
+        </httpn:listener>
+
+        <apikit:console config-ref="apikitConfig" />
+    </flow>
+
+    <flow name="invalid-api-console">
+        <httpn:listener config-ref="httpListenerConfigForInvalidConsoleFlow" path="/konsole/"/>
+        <apikit:console config-ref="apikitConfig" />
+    </flow>
+
+
+    <error-handler name="defaultErrorHandler">
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotFoundException)]">
+            <set-variable variableName="httpStatus" value="404"/>
+            <set-payload value="resource not found"/>
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.MethodNotAllowedException)]">
+            <set-variable variableName="httpStatus" value="405"/>
+            <set-payload value="method not allowed"/>
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.UnsupportedMediaTypeException)]">
+            <set-variable variableName="httpStatus" value="415"/>
+            <set-payload value="unsupported media type"/>
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotAcceptableException)]">
+            <set-variable variableName="httpStatus" value="406"/>
+            <set-payload value="not acceptable"/>
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.BadRequestException)]">
+            <set-variable variableName="httpStatus" value="400"/>
+            <set-payload value="bad request"/>
+        </on-error-propagate>
+        <on-error-propagate>
+            <set-variable variableName="httpStatus" value="500"/>
+            <set-payload value="Server error" mimeType="text/plain"/>
+        </on-error-propagate>
+    </error-handler>
+</mule>

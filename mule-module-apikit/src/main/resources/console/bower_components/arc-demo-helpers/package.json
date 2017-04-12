@@ -1,0 +1,32 @@
+{
+  "name": "arc-demo-helpers",
+  "description": "Helper components for documenting ARC elements.",
+  "version": "1.0.12",
+  "license": "Apache-2.0 OR CC-BY-4.0",
+  "devDependencies": {
+    "polymer-cli": "^0.17.0"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "private": false,
+  "main": [
+    "raml-docs-parser.html"
+  ],
+  "author": "The Advanced REST client authors <arc@mulesoft.com>",
+  "scripts": {
+    "serve": "node_modules/.bin/polymer serve",
+    "lint": "node_modules/.bin/polymer lint arc-demo-helpers.html",
+    "test": "exit 0",
+    "deps": "npm install --quiet && bower install --quiet",
+    "update-deps": "npm update --quiet && bower update --quiet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/advanced-rest-client/arc-demo-helpers.git"
+  },
+  "bugs": {
+    "url": "https://github.com/advanced-rest-client/arc-demo-helpers/issues",
+    "email": "arc@mulesoft.com"
+  }
+}

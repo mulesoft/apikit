@@ -1,0 +1,123 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../docs-parameters-table/docs-json-parameters-table.html">
+<link rel="import" href="../docs-parameters-table/docs-xml-parameters-table.html">
+<link rel="import" href="../docs-parameters-table/docs-form-parameters-table.html">
+<link rel="import" href="../iron-media-query/iron-media-query.html">
+
+<!--
+`<raml-docs-types-viewer>` A documentation viewer for RAML types
+
+### Example
+```
+<raml-docs-types-viewer></raml-docs-types-viewer>
+```
+
+### Styling
+`<raml-docs-types-viewer>` provides the following custom properties and mixins for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--raml-docs-types-viewer` | Mixin applied to the element | `{}`
+
+@group UI Elements
+@element raml-docs-types-viewer
+@demo demo/index.html
+-->
+<dom-module id="raml-docs-types-viewer">
+  <template>
+    <style include="markdown-styles"></style>
+    <style>
+    :host {
+      display: block;
+    }
+
+
+    h2 {
+      @apply(--arc-font-headline);
+      @apply(--raml-docs-h1);
+    }
+
+    h2 .value {
+      font-weight: var(--raml-docs-types-viewer-title-type-font-weight, 500);
+      margin-left: 8px;
+    }
+
+    .type-desc {
+      margin-bottom: 28px;
+      color: rgba(0,0,0,0.74);
+      @apply(--arc-font-body1);
+      @apply(--raml-docs-types-viewer-content-section);
+      @apply(--raml-docs-item-description);
+    }
+    </style>
+    <h2>
+      <span class="label">Type</span>
+      <span class="value">[[_computeTypeName(type)]]</span>
+    </h2>
+
+    <div hidden$="[[_computeTypeMethodDesc(type.description)]]" class="type-desc">
+      <marked-element markdown="[[type.description]]">
+        <div class="markdown-html markdown-body"></div>
+      </marked-element>
+    </div>
+
+    <docs-json-parameters-table type="[[_computeType(type)]]" structure-display-opened narrow="[[narrow]]"></docs-json-parameters-table>
+    <iron-media-query query="max-width: 640px" query-matches="{{narrow}}"></iron-media-query>
+  </template>
+  <script>
+  Polymer({
+    is: 'raml-docs-types-viewer',
+    properties: {
+      // A type declaration to display.
+      type: Object,
+      /**
+       * Set to true when whould display narrow layout.
+       */
+      narrow: Boolean
+    },
+
+    _computeTypeName: function(type) {
+      if (!type) {
+        return;
+      }
+      return type.displayName || type.name || type.key || undefined;
+    },
+
+    _computeType: function(type) {
+      if (!type) {
+        return;
+      }
+      if (type.properties) {
+        if (!(type.properties instanceof Array)) {
+          var names = Object.getOwnPropertyNames(type.properties);
+          var properties = [];
+          names.forEach(function(name) {
+            var item = type.properties[name];
+            item.key = name;
+            properties.push(item);
+          });
+          type.properties = properties;
+        }
+      }
+      return type;
+    },
+
+    _computeTypeMethodDesc: function(description) {
+      return !description;
+    },
+  });
+  </script>
+</dom-module>

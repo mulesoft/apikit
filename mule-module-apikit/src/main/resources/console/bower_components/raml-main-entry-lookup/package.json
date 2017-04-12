@@ -1,0 +1,28 @@
+{
+  "name": "raml-main-entry-lookup",
+  "version": "1.0.2",
+  "license": "LICENSE.md",
+  "description": "An element that lookup for a main RAML file in the web filesystem structure",
+  "devDependencies": {
+    "polymer-cli": "^0.17.0"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "private": false,
+  "main": [
+    "raml-main-entry-lookup.html"
+  ],
+  "author": "The Advanced REST client authors",
+  "scripts": {
+    "serve": "node_modules/.bin/polymer serve",
+    "lint": "node_modules/.bin/polymer lint raml-main-entry-lookup.html",
+    "test": "node_modules/.bin/polymer test",
+    "deps": "npm install --quiet && bower install --quiet",
+    "update-deps": "npm update --quiet && bower update --quiet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/advanced-rest-client/raml-main-entry-lookup.git"
+  }
+}

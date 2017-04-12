@@ -1,0 +1,696 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../paper-tabs/paper-tabs.html">
+<link rel="import" href="../paper-tabs/paper-tab.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../raml-body-editor-panel/raml-body-editor-panel.html">
+<link rel="import" href="../raml-request-headers-editor/raml-request-headers-editor.html">
+<link rel="import" href="../raml-docs-response-panel/raml-docs-response-panel.html">
+<link rel="import" href="../raml-docs-method-viewer/raml-docs-method-viewer.html">
+<link rel="import" href="../raml-request-parameters-editor/raml-request-parameters-editor.html">
+<link rel="import" href="../iron-media-query/iron-media-query.html">
+<link rel="import" href="../raml-request-url-editor/raml-request-url-editor.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-spinner/paper-spinner.html">
+<link rel="import" href="../authorization-panel/authorization-panel.html">
+<link rel="import" href="../oauth-authorization/oauth2-authorization.html">
+<link rel="import" href="../promise-polyfill/promise-polyfill-lite.html">
+<link rel="import" href="../fetch-polyfill/fetch-polyfill.html">
+<link rel="import" href="../paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../paper-dialog/paper-dialog.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="raml-request-panel-simple-xhr.html">
+<!--
+The request panel view for the request defined as a RAML method.
+It is a main view element for the API console to display the request panel related to the RAML
+specification.
+
+The element has it's own XHR / Fetch transport method and it will be used if the hostng application
+do not handle the `api-console-request` event.
+
+When the user request to make the HTTP request then cancellable `api-console-request` event will
+be fired with the request details (see below).
+The hosting application, if it about to use different transport method, should cancel the event by
+calling `preventDefault()` function on the event (and possibly `stopPropagation()`) and handle the
+request. If the event was not prevented (canceled) then internall Fetch/XHR will be used.
+
+When the request is ready then the hosting app must fire the `api-console-response` event with
+created Request and Response objects. This element listens on the `window` property for the
+`api-console-response` event.
+
+## Events
+### api-console-request
+This event is fired when the user request to make a HTTP request.
+This event will have the following properties set on the `detail` object:
+
+Property | Type | Description
+----------------|-------------|----------
+`url` | String | The request URL
+`method` | String | The HTTP method
+`headers` | String | Headers to send
+`payload` | String | Payload to send
+`auth` | Object | Optional. For some authorization methodss (like NTLM) the authorization header or query param can't be set and the authorization must be made on the connection. In this cases the auth object will be set with `type` and `settings` properties. While `type` is the name of the authorization method, the `settings` object depends on the authorization method and may vary. Detailed documentation for the auth methods is in the `auth-methods` element.
+
+### api-console-response
+This event must be fired when the hosring app finish the request. It must contains generated Request
+and Response object according to the [Fetch specification](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch).
+
+Becaue the Fetch API is a new API not all browsers support it. In this case the polyfill must be used
+in the hosted app. Add the `fetch-polyfill` element (advanced-rest-client/fetch-polyfill) to the
+hosted app to have the support. It is recommended to use this element so the polyfill will be loaded
+only once. See the `raml-request-panel-simple-xhr` element for example implementation.
+
+Property | Type | Description
+----------------|-------------|----------
+`request` | Object | The request object as defined in the Fetch API spec.
+`response` | Object | The response object as defined in the Fetch API spec.
+`isXhr` | Boolean | If not set the element assumes it's true. Indicated if the transport method doesn't support advanced timings and redirects information. See below.
+`error` | Error | When the request / response is errored (`request.ok` equals `false`) then the error object should be set with the human readable message that will be displayed to the user.
+`loadingTime` | Number | The response full loading time
+
+See `Advanced transport options` for more event options.
+
+### Example
+```
+<raml-request-panel
+  method="[[ramlMethod]]"
+  redirect-url="http://oauth.redirect.url"
+  request="{{request}}"
+  response="{{response}}"
+  response-error="{{responseError}}"
+  loading-time="{{loadingTime}}"></raml-request-panel>
+```
+
+## Advanced transport options
+The response panel in the ARC elements is able to display the response in simple and advanced view.
+
+Simple is meant to be used when the HTTP request has been made by the simple transports like XHR or
+Fetch. It just displays the response status, headers and paylaod.
+
+Advanced view is reserved for transport methods that are able to generate additional informations
+about the request and resposne. This information is timings for the request/response, timings for
+the redirects and information about redirects.
+
+When the advanced options are set then the `isXhr` flag on the `api-console-response` event's detail
+object must be set to true.
+
+#### timings
+The `timings` propery added to the `api-console-response` is the request / response timings as
+defined in HAR 1.2 spec. For example:
+```
+"timings": {
+  "blocked": 0,
+  "dns": -1,
+  "connect": 15,
+  "send": 20,
+  "wait": 38,
+  "receive": 12,
+  "ssl": -1,
+  "comment": ""
+}
+```
+If the `timings` property is set the `loadingTime` property is optional since it will be calculated
+from the detailed timing.
+
+#### redirectTimings
+The `redirectTimings` propery added to the `api-console-response` is the list of the `timings`
+objects as defined in HAR 1.2 specification.
+The list should be ordered list of redirections. For example:
+
+```
+"redirect-timings": [{
+  "blocked": 0,
+  "dns": -1,
+  "connect": 15,
+  "send": 20,
+  "wait": 38,
+  "receive": 12,
+  "ssl": -1,
+  "comment": ""
+}]
+```
+
+#### redirects
+The `redirects` property added to the `api-console-response` event is the list of objects. Each
+object should have the `headers` property as a HTTP headers string, `status` as a HTTP status
+and optionally `statusText`. It is consisted with the `Response` object except the headers are
+String instead of the Headers object.
+
+```
+"redirects": [Response {
+  "status": 301,
+  "statusText": "Moved Permanently",
+  "headers": "Content-lenght: 0"
+}]
+```
+
+#### sourceMessage
+The HTTP source message sent to the server. It should be full message from the message header to
+the request body.
+
+### Advanced event example
+```
+var event = new CustomEvent('api-console-response', {
+  cancelable: true,
+  bubbles: true,
+  composed: true,
+  detail: {
+    isXhr: true,
+    request: request,
+    response: response,
+    error: new Error('Dummy error'), // Has the response details so it shouldn't be set.
+    loadingTime: 125, // This is optional because timings is set
+    timings: { dns: 123, ... }
+    redirectTimings: [{ dns: 123, ... }],
+    redirects: [redirectResponse1, ...],
+    sourceMessage: 'HTTP/1.1 200 OK\n ....'
+  }
+});
+document.body.dispatchEvent(event);
+```
+
+### Styling
+`<raml-request-panel>` provides the following custom properties and mixins for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--raml-request-panel` | Mixin applied to the element | `{}`
+`--raml-request-panel-panel-border-color` | Border color of each block in the tabs | `rgba(0, 0, 0, 0.24)`
+`--raml-request-panel-container` | Mixin applied to the main content container | `{}`
+`--raml-request-panel-container-narrow` | Mixin applied to the main content container when layout is narrow | `{}`
+`--action-button` | Mixin applied ot the action button | `{}`
+`--primary-color` | background-color of the main action button | `--primary-color`
+`--primary-action-color` | Color of the main action button | `--primary-action-color`
+
+You can set the `narrow` property so the element will be rendered in the mobile view.
+This property will be propagated to all sub-elements that uses this property to change layout.
+
+@group RAML Elements
+@element raml-request-panel
+@demo demo/index.html
+-->
+<dom-module id="raml-request-panel">
+  <template>
+    <style>
+     :host {
+      display: block;
+      @apply(--raml-request-panel);
+    }
+
+    .content {
+      height: 100%;
+      @apply(--layout-vertical);
+      @apply(--raml-request-panel-container);
+    }
+
+    h2 {
+      @apply(--paper-font-subhead);
+      margin: 8px 12px;
+      font-weight: var(--raml-request-panel-navigation-title-font-weight, 500);
+    }
+
+    *[hidden] {
+      display: none !important;
+    }
+
+    iron-pages>* {
+      border: 1px var(--raml-request-panel-panel-border-color, transparent) solid;
+      min-height: 120px;
+    }
+
+    .action-bar {
+      @apply(--layout-horizontal);
+      @apply(--layout-end-justified);
+      @apply(--layout-center);
+      margin-top: 8px;
+    }
+
+    .action-button {
+      background-color: var(--accent-color);
+      color: #fff;
+      @apply(--action-button);
+    }
+
+    .url-editor {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+    }
+
+    raml-request-url-editor {
+      @apply(--layout-flex);
+    }
+
+     :host([narrow]) .content {
+      @apply(--layout-vertical);
+      @apply(--raml-request-panel-container-narrow);
+    }
+
+     :host([narrow]) raml-request-url-editor {
+      width: auto;
+    }
+
+    paper-spinner {
+      margin-right: 8px;
+    }
+
+    .panel-warning {
+      width: 16px;
+      height: 16px;
+      margin-left: 4px;
+      color: #FF5722;
+    }
+
+    .auth-required-info {
+      color: rgba(0, 0, 0, 0.54);
+    }
+    </style>
+    <iron-media-query query="(max-width: [[narrowWidth]])" query-matches="{{narrow}}"></iron-media-query>
+    <div class="content">
+      <div class="url-editor">
+        <raml-request-url-editor uri-parameters="[[method.allUriParameters]]" url="[[method.absoluteUri]]" value="{{url}}"></raml-request-url-editor>
+      </div>
+      <paper-tabs selected="{{selectedTab}}">
+        <paper-tab hidden$="[[!authRequired]]">
+          Authorization
+          <iron-icon icon="arc:warning" class="panel-warning" hidden$="[[authValid]]" title="Fill up missing auth data"></iron-icon>
+        </paper-tab>
+        <paper-tab>Parameters</paper-tab>
+        <paper-tab>Headers</paper-tab>
+        <paper-tab hidden$="[[!isPayloadRequest]]">Body</paper-tab>
+      </paper-tabs>
+      <iron-pages selected="{{selectedTab}}">
+        <authorization-panel hidden$="[[!authRequired]]" secured-by="[[method.securedBy]]" narrow="[[narrow]]" request-url="[[url]]" request-method="[[method.method]]" redirect-url="[[redirectUrl]]" is-required="{{authRequired}}"></authorization-panel>
+        <raml-request-parameters-editor narrow="[[narrow]]" query-parameters="[[method.queryParameters]]" uri-parameters="[[method.allUriParameters]]" url="[[method.absoluteUri]]" value="{{url}}"></raml-request-parameters-editor>
+        <raml-request-headers-editor narrow="[[narrow]]" raml-headers="[[method.headers]]" content-type="{{contentType}}" is-payload="[[isPayloadRequest]]" value="{{headers}}"></raml-request-headers-editor>
+        <raml-body-editor-panel narrow="[[narrow]]" body="[[method.body]]" hidden$="[[!isPayloadRequest]]" content-type="{{contentType}}" value="{{payload}}"></raml-body-editor-panel>
+      </iron-pages>
+      <div class="action-bar">
+        <paper-spinner alt="Loading contacts list" active="[[loadingRequest]]"></paper-spinner>
+        <paper-button class="action-button" on-tap="execute" hidden$="[[authNeeded]]">Send</paper-button>
+        <div hidden$="[[!authNeeded]]">
+          <span class="auth-required-info">This endpoint requires authorization.</span>
+          <paper-button class="action-button" on-tap="authAndExecute">authorize and send</paper-button>
+        </div>
+      </div>
+    </div>
+    <paper-dialog id="authDialog">
+      <h2>Authorization</h2>
+      <paper-dialog-scrollable>
+        <authorization-panel secured-by="[[method.securedBy]]" narrow="[[narrow]]" request-url="[[url]]" request-method="[[method.method]]" redirect-url="[[redirectUrl]]"></authorization-panel>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss autofocus>Cancel</paper-button>
+        <paper-button dialog-confirm on-tap="_onAuthAndSend">Authorize</paper-button>
+      </div>
+    </paper-dialog>
+    <oauth2-authorization></oauth2-authorization>
+    <raml-request-panel-simple-xhr id="xhr"></raml-request-panel-simple-xhr>
+    <paper-toast text="Authorization is required for this endpoint." id="authRequired"></paper-toast>
+    <paper-toast text="Fill in the authorization form first." id="authFormError"></paper-toast>
+  </template>
+  <script>
+  Polymer({
+    is: 'raml-request-panel',
+
+    /**
+     * Fired when the response has been recorded and request, response, redirects and timings data
+     * are set.
+     *
+     * @event api-console-response-ready
+     *
+     * @param {Boolean} isXhr True if the transport method is a basic transport.
+     * @param {Response} response The response object
+     * @param {Error} responseError Error object if the response is errored
+     * @param {Request} request The request object.
+     * @param {Number} loadingTime Request loading time
+     * @param {Object} timings As defined in HAR 1.2 timnings object
+     * @param {Array<Object>} redirectTimings List of redirect timings
+     * @param {Array} redirects List of redirect Responses
+     * @param {String} sourceMessage Source HTTP message sent to the server.
+     */
+    properties: {
+      /**
+       * A RAML node representing a method node in RAML definition.
+       * It should be obtained from the `raml-path-to-object` element.
+       */
+      method: Object,
+      // Selected request tab.
+      selectedTab: {
+        type: Number,
+        value: 0,
+        notify: true
+      },
+      // Current content type.
+      contentType: {
+        type: String,
+        notify: true
+      },
+      // Computed value if the method can carry a payload
+      isPayloadRequest: {
+        type: Boolean,
+        value: false,
+        computed: '_computeIsPayloadRequest(method.*)'
+      },
+      // Headers for the request.
+      headers: String,
+      // Body for the request
+      payload: String,
+      // Current URL
+      url: String,
+      /**
+       * If set it will renders the view in the narrow layout.
+       */
+      narrow: {
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true
+      },
+      // A widith below which the `narrow` property will be set to true.
+      narrowWidth: {
+        type: String,
+        value: '768px'
+      },
+      // If true then the request is currently loaded.
+      loadingRequest: {
+        type: Boolean,
+        notify: true,
+        readOnly: true,
+        value: false
+      },
+      // If true then the request was made using the XHR object (it has less data in the response).
+      responseIsXhr: {
+        type: Boolean,
+        notify: true,
+        readOnly: true
+      },
+      /**
+       * The request object created by the transport.
+       * It should be the `Request` object as defined in the Fetch API spec.
+       * This element provides the polyfill for this API.
+       */
+      request: {
+        type: Request,
+        notify: true,
+        readOnly: true
+      },
+      /**
+       * The response object from the transport.
+       * It should be the `Response` object as defined in the Fetch API spec.
+       * This element provides the polyfill for this API.
+       */
+      response: {
+        type: Response,
+        notify: true,
+        readOnly: true
+      },
+      // Set when the response errored.
+      responseError: {
+        type: Object,
+        notify: true,
+        readOnly: true
+      },
+      // Response full loading time.
+      loadingTime: {
+        type: Number,
+        notify: true,
+        readOnly: true
+      },
+      /**
+       * If the transport method is able to collect detailed information about request timings
+       * then this value will be set. It's the `timings` property from the HAR 1.2 spec.
+       */
+      timings: {
+        type: Object,
+        notify: true,
+        readOnly: true
+      },
+      /**
+       * If the transport method is able to collect detailed information about redirects timings
+       * then this value will be set. It's a list of `timings` property from the HAR 1.2 spec.
+       */
+      redirectTimings: {
+        type: Array,
+        notify: true,
+        readOnly: true
+      },
+      /**
+       * It will be set if the transport method can generate information about redirections.
+       */
+      redirects: {
+        type: Array,
+        notify: true,
+        readOnly: true
+      },
+      /**
+       * Http message sent to the server.
+       *
+       * This information should be available only in case of advanced HTTP transport.
+       */
+      sourceMessage: {
+        type: String,
+        notify: true,
+        readOnly: true
+      },
+      // Computed value if current method is secured
+      authRequired: Boolean,
+      // OAuth2 redirect URL
+      redirectUrl: String,
+      // Selected by the user auth method (if any)
+      authorizationMethod: String,
+      // Current authorization settings.
+      authorizationSettings: Object,
+      // If true then the authorization panel passed validation and auth data are set.
+      authValid: Boolean,
+      /**
+       * Computes if all data required for authorization are set.
+       * It check for the `authValid` property as a native form validation and in case of OAuth2
+       * for token information. If the token is not set then the auth is still invalid.
+       */
+      authNeeded: {
+        type: Boolean,
+        value: true,
+        computed: '_computeAuthNeeded(authValid,authorizationMethod,authorizationSettings)'
+      }
+    },
+
+    observers: [
+      '_isPayloadRequestChanged(isPayloadRequest)',
+      '_authRequiredChanged(authRequired)'
+    ],
+
+    listeners: {
+      'authorization-settings-changed': '_authSettingsChanged'
+    },
+
+    attached: function() {
+      this.listen(window, 'api-console-response', '_responseHandler');
+    },
+
+    detached: function() {
+      this.unlisten(window, 'api-console-response', '_responseHandler');
+    },
+
+    // Computes boolean value if the selected object (method) can carry a payload
+    _computeIsPayloadRequest: function(record) {
+      var base = record.base;
+      if (!base || !base.method) {
+        return false;
+      }
+      return ['get', 'head'].indexOf(base.method) === -1;
+    },
+
+    _isPayloadRequestChanged: function(required) {
+      var tabs = this.$$('paper-tabs');
+      if (!tabs) {
+        return;
+      }
+      tabs.notifyResize();
+      if (required && tabs.selected === 3) {
+        tabs.selected = 0;
+      }
+    },
+
+    _authRequiredChanged: function(required) {
+      var tabs = this.$$('paper-tabs');
+      if (!tabs) {
+        return;
+      }
+      tabs.notifyResize();
+      if (required && tabs.selected === 2) {
+        tabs.selected = 0;
+      }
+    },
+    /**
+     * Execute the request with current settings.
+     * This method fires the `api-console-request` so the request can be handled by the
+     * hosting app.
+     * Hosting app must call `event.preventDefault()` on the event otherwise the console
+     * will attempt to make a request usnig XHR object.
+     */
+    execute: function() {
+      this._clearRequestData();
+      this._setLoadingRequest(true);
+      var event = new CustomEvent('api-console-request', {
+        cancelable: true,
+        bubbles: true,
+        composed: true,
+        detail: this.serializeRequest()
+      });
+      this.dispatchEvent(event);
+      if (!event.defaultPrevented) {
+        this._executeRequest(event.detail);
+      }
+    },
+    /**
+     * Performs an authorization by bringing up the authorization
+     * form in a popup and after successful authorization executes the
+     * request.
+     */
+    authAndExecute: function() {
+      if (this.selectedTab === 0) {
+        this.$.authFormError.opened = true;
+        return;
+      }
+      this.$.authDialog.opened = true;
+    },
+    /**
+     * Handler for "authorize" button click in the authorization dialog.
+     * If nescessary it will signal OAuth token request and wait until
+     * the token is ready before executing the request.
+     */
+    _onAuthAndSend: function() {
+      if (!this.authValid) {
+        this.$.authRequired.opened = true;
+        return;
+      }
+      var callSend = false;
+      switch (this.authorizationMethod) {
+        case 'oauth2':
+          if (!this.authorizationSettings || !this.authorizationSettings.tokenValue) {
+            this.fire('oauth2-token-requested', this.authorizationSettings);
+          } else {
+            callSend = true;
+          }
+          break;
+        case 'basic':
+          if (!this.authorizationSettings || !this.authorizationSettings.hash) {
+            this.$.authRequired.opened = true;
+            return;
+          } else {
+            callSend = true;
+          }
+          break;
+      }
+      if (callSend) {
+        this.execute();
+      } else {
+        this.__pendingRequest = true;
+      }
+    },
+    /**
+     * Returns an object with the request properties.
+     * The object contains:
+     * - method (String)
+     * - url (String)
+     * - headers (String)
+     * - payload (String)
+     * - auth (Object)
+     *
+     * The `auth` property is optional and is only added to the request if simple `authorization`
+     * header will not work. For example NTLM auth method has to be made on a single socket
+     * connection (authorization and the request) so it can't be made before the request.
+     *
+     * The `auth` object contains 2 properties:
+     * - type (String) the authorization type - one of from the `auth-methods` element
+     * - settings (Object) Authorization parameters entered by the user. It vary and depends on
+     * selected auth method. For example in case of the NTLM it will be: `username`, `password` and
+     * `domain`.
+     */
+    serializeRequest: function() {
+      var result = {
+        method: this.method.method.toUpperCase(),
+        url: this.url,
+        headers: this.headers,
+        payload: this.payload
+      };
+      return result;
+    },
+
+    _executeRequest: function(data) {
+      this.$.xhr.execute(data);
+    },
+
+    // A handler for the `api-console-response` event.
+    _responseHandler: function(e) {
+      this._setResponseIsXhr(e.detail.isXhr || true);
+      this._setResponse(e.detail.response);
+      this._setResponseError(e.detail.error);
+      this._setRequest(e.detail.request);
+      this._setLoadingTime(e.detail.loadingTime);
+      this._setTimings(e.detail.timings);
+      this._setRedirectTimings(e.detail.redirectTimings);
+      this._setRedirects(e.detail.redirects);
+      this._setSourceMessage(e.detail.sourceMessage);
+      this.fire('api-console-response-ready', {
+        isXhr: e.detail.isXhr,
+        response: e.detail.response,
+        responseError: e.detail.error,
+        request: e.detail.request,
+        loadingTime: e.detail.loadingTime,
+        timings: e.detail.timings,
+        redirectTimings: e.detail.redirectTimings,
+        redirects: e.detail.redirects,
+        sourceMessage: e.detail.sourceMessage
+      });
+      this._setLoadingRequest(false);
+    },
+
+    _clearRequestData: function() {
+      this._setResponseIsXhr(false);
+      this._setResponse(undefined);
+      this._setResponseError(undefined);
+      this._setRequest(undefined);
+      this._setLoadingTime(undefined);
+      this._setTimings(undefined);
+      this._setRedirectTimings(undefined);
+      this._setRedirects(undefined);
+    },
+
+    _authSettingsChanged: function(e) {
+      this.authorizationMethod = e.detail.type;
+      this.authorizationSettings = e.detail.settings;
+      this.set('authValid', e.detail.valid);
+      if (this.__pendingRequest) {
+        this.__pendingRequest = false;
+        this.execute();
+      }
+    },
+
+    _computeAuthNeeded: function(authValid, authorizationMethod, authorizationSettings) {
+      if (!authValid) {
+        return true;
+      }
+      if (authorizationMethod === 'oauth2') {
+        if (!authorizationSettings.tokenValue) {
+          return true;
+        }
+      }
+      return false;
+    }
+  });
+  </script>
+</dom-module>

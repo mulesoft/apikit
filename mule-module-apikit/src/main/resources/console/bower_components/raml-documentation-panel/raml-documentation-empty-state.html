@@ -1,0 +1,85 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="raml-documentation-panel-icons.html">
+
+<!--
+The `raml-documentation-empty-state` is an element that shows an empty state
+screen when the documentation panel has no selection.
+
+Note: The element is set to use 100% of height. To render it on full page
+height all parent elements has to be 100% height.
+
+### Styling
+`<raml-documentation-empty-state>` provides the following custom properties and mixins for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--raml-documentation-empty-state` | Mixin applied to the element | `{}`
+`--raml-documentation-empty-state-container` | Mixin applied to the main container where the flex layout is applied | `{}`
+`--raml-documentation-empty-state-message` | Mixin applied to the message element. | `{}`
+`--raml-documentation-empty-state-background-color` | Background color of the element | `#FAFAFA`
+`--raml-documentation-empty-state-icon-color` | Color of the icon (paths that are possible to style) | `#75c9e1`
+`--raml-documentation-empty-state-icon-size` | Size of the icon | `256px`
+`--raml-documentation-empty-state-message-color` | Color of the message | `#757575`
+`--arc-font-body1` | Mixin applied to the message container | `{}`
+
+@element raml-documentation-empty-state
+@demo demo/index.html
+-->
+<dom-module id="raml-documentation-empty-state">
+  <template>
+    <style>
+    :host {
+      display: block;
+      background-color: var(--raml-documentation-empty-state-background-color, #FAFAFA);
+      height: 100%;
+      @apply(--raml-documentation-empty-state);
+    }
+
+    .content {
+      height: 100%;
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+      @apply(--layout-flex);
+      @apply(--raml-documentation-empty-state-container);
+    }
+
+    .icon {
+      width: var(--raml-documentation-empty-state-icon-size, 256px);
+      height: var(--raml-documentation-empty-state-icon-size, 256px);
+      color: var(--raml-documentation-empty-state-icon-color, #75c9e1);
+    }
+
+    .info {
+      color: var(--raml-documentation-empty-state-message-color, #757575);
+      /* The icon has to be squered but the image is not so move the text closer to the image content */
+      position: relative;
+      top: 48px;
+      @apply(--arc-font-body1);
+      @apply(--raml-documentation-empty-state-message);
+    }
+    </style>
+    <div class="content">
+      <p class="info">You have no documentation to display</p>
+      <iron-icon class="icon" icon="raml-docs-panel:empty-state"></iron-icon>
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: 'raml-documentation-empty-state'
+    });
+  </script>
+</dom-module>

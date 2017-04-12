@@ -1,0 +1,254 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<!--
+The `<raml-main-entry-lookup>` is an element that lookup for a main RAML file
+in the web filesystem structure.
+It is a helper for RAML parser to indetify the main RAML file.
+
+It is looking for a signle RAML file in the highest directory in the structure
+and moving down to subdirectories looking for other RAML files.
+The file that is lokated on top ove the directory structure wins.
+If the element find more than one file all of them will be returned and the program
+should ask the user to choose an entry that is the main file.
+
+### Example
+```html
+<raml-main-entry-lookup
+  files="[[webFileSystem]]"
+  entry="{{ramlEntry}}"
+  on-entry="_entryPointFound"></raml-main-entry-lookup>
+```
+```javascript
+this._entryPointFound: function(e) {
+  var file = e.detail.entry;
+  if (!file) {
+    return this.notifyLackOfEntryPoint();
+  }
+  if (file instanceof Array) {
+    this.askUserAboutMainFile(file);
+  } else {
+    this.processRAML(file);
+  }
+}
+```
+Tou can pass a single file as the `files` attribute or the web filesystem structure.
+
+@group RAML Elements
+@element raml-main-entry-lookup
+@demo demo/index.html
+-->
+<script>
+Polymer({
+  is: 'raml-main-entry-lookup',
+  /**
+   * Fired when the entry was found.
+   *
+   * @event entry
+   * @param {FileEntry} file Can be FileEntry, Array of file entries or null
+   * if not found at all.
+   */
+  properties: {
+    candidates: {
+      type: Array,
+      value: function() {
+        return [];
+      },
+      readOnly: true
+    },
+    // Array of File, FileEntry or DirectoryEntry on which perform the search.
+    files: Array,
+    // Found entry. If this is an array more than one candidate was found.
+    entry: {
+      type: Object,
+      notify: true
+    }
+  },
+
+  observers: [
+    '_filesChanged(files.*)'
+  ],
+
+  _filesChanged: function(record) {
+    if (!record || !record.base) {
+      return;
+    }
+    this.async(function() {
+      this.lookup();
+    }, 1);
+  },
+
+  // Lookup for main RAML file.
+  lookup: function() {
+    var entries = this.files;
+    if (!entries) {
+      console.warn('Expected files to be set.');
+      return;
+    }
+    if (entries.length === 1 && entries[0].isDirectory) {
+      this._directoryRoot = entries[0].fullPath;
+    }
+    if (!(entries instanceof Array)) {
+      entries = [entries];
+    }
+
+    var candidates = [];
+    var promises = [];
+
+    for (var i = 0; i < entries.length; i++) {
+      var entry = entries[i];
+      if (entry.isFile || entry instanceof File) {
+        var name = entry.name;
+        if (name.substr(name.lastIndexOf('.') + 1) === 'raml') {
+          var path = entry.fullPath;
+          if (!path) {
+            path = '/' + name;
+          }
+          var obj = {
+            name: name,
+            entry: entry,
+            path: path.substr(0, path.lastIndexOf(name))
+          };
+          candidates.push(obj);
+        }
+      } else if (entry.isDirectory || entry instanceof FileList) {
+        promises.push(this.getDirectoryCandidates(entry));
+      }
+    }
+
+    return Promise.all(promises)
+    .then(function(_candidates) {
+      candidates = candidates.concat(_candidates);
+      candidates = candidates.filter(function(item) {
+        return !!item;
+      });
+      var list = [];
+      candidates.forEach(function(item) {
+        if (item instanceof Array) {
+          list = list.concat(item);
+        } else {
+          list.push(item);
+        }
+      });
+      candidates = list;
+      if (candidates.length === 1) {
+        candidates = candidates[0];
+      } else if (candidates.length === 0) {
+        candidates = null;
+      }
+      return candidates;
+    })
+    .then(function(candidates) {
+      if (candidates && candidates instanceof Array) {
+        candidates = this.processResults(candidates);
+      }
+      this.fire('entry', {entry: candidates});
+      return candidates;
+    }.bind(this))
+    .catch(function(e) {
+      console.error(e);
+    });
+  },
+
+  getDirectoryCandidates: function(entry) {
+    if (entry.isDirectory || entry instanceof FileList) {
+      var context = this;
+      return new Promise(function(resolve, reject) {
+        var reader = entry.createReader();
+        var all = [];
+        var readEntries = function() {
+          reader.readEntries(function(results) {
+            if (!results.length) {
+              Promise.all(all)
+              .then(function(candidates) {
+                candidates = candidates.filter(function(item) {
+                  return !!item;
+                });
+                if (candidates.length === 0) {
+                  candidates = null;
+                } else {
+                  var list = [];
+                  candidates.forEach(function(item) {
+                    if (item instanceof Array) {
+                      list = list.concat(item);
+                    } else {
+                      list.push(item);
+                    }
+                  });
+                  candidates = list;
+                }
+                resolve(candidates);
+              });
+            } else {
+              for (var i = 0; i < results.length; i++) {
+                all.push(context.getDirectoryCandidates(results[i]));
+              }
+              readEntries();
+            }
+          }, reject);
+        };
+        readEntries();
+      });
+    } else if (entry.isFile) {
+      var name = entry.name;
+      if (name.substr(name.lastIndexOf('.') + 1) === 'raml') {
+        var path = entry.fullPath;
+        return Promise.resolve({
+          name: name,
+          entry: entry,
+          path: path.substr(0, path.lastIndexOf(name))
+        });
+      }
+    }
+    return Promise.resolve(null);
+  },
+  /**
+   * Lookup for a RAML files that are put on top of the directory structure.
+   * @param {Array<File>} candidates A list of RAML files in the structure.
+   * @return {File|Array<File>} A file if only one candidate was found and
+   * list of files if more than one file was found.
+   */
+  processResults: function(candidates) {
+    if (!candidates || !candidates.length) {
+      return null;
+    }
+    if (candidates.length === 1) {
+      return candidates[0];
+    }
+    // find a main file in the root dir
+    var entryPoints = [];
+    var minLen = -1;
+    candidates.forEach(function(item) {
+      var len = item.path.length;
+      if (minLen === -1) {
+        minLen = len;
+        entryPoints = [item];
+      } else if (len < minLen) {
+        minLen = len;
+        entryPoints = [item];
+      } else if (len === minLen) {
+        // multiple candidates in current path.
+        entryPoints.push(item);
+      }
+    });
+    if (entryPoints.length === 0) {
+      return null;
+    }
+    if (entryPoints.length === 1) {
+      return entryPoints[0];
+    }
+    return entryPoints;
+  }
+});
+</script>

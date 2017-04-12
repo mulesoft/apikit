@@ -1,0 +1,343 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../raml-behaviors/raml-behavior.html">
+<link rel="import" href="../raml-aware/raml-aware.html">
+<!--
+The `<raml-path-to-object>` is a helper element that can work with the
+`raml-js-parser` and `raml-path-selector` to compute additional properties
+alongside the raml object.
+
+It will compute wherther selected `path` (from the `raml-path-selector`) is
+method, resource or documentation.
+
+If the `auto` property is set then it will set a listeners for the
+`raml-selected-path-changed` event and fire back one of the events supported by
+this element as descrived below in the event section.
+
+The most basic task for this element is to transform the `path` into a RAML
+object reporesented by the path. When the path change then the `selectedObject`
+will contain a JS object that corresponds to the path.
+
+### Usage
+```
+<raml-path-selector raml="[[raml]]" selected-path="{{selectedPath}}"></raml-path-selector>
+<raml-path-to-object
+  raml="[[raml]]"
+  selected-path="{{selectedPath}}"
+  selected-object="{{selectedObject}}"
+  is-method="{{isMethod}}"
+  is-resource="{{isResource}}"
+  is-documentation="{{isDocumentation}}"></raml-path-to-object>
+```
+
+### The path
+Pa§
+```
+resources.1.methods.0
+```
+means that the path to the value is through resources array, 2nd element, then methods array
+first element.
+
+@group RAML Elements
+@element raml-path-to-object
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="raml-path-to-object">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+    <template is="dom-if" if="[[aware]]" restamp="true">
+      <raml-aware raml="{{raml}}" scope="[[aware]]"></raml-aware>
+    </template>
+  </template>
+<script>
+Polymer({
+  is: 'raml-path-to-object',
+  behaviors: [Polymer.RamlBehavior],
+  properties: {
+    // Currently selected path by the path selector (or anhy other)
+    selectedPath: String,
+    // An object read from path.
+    selectedObject: {
+      type: Object,
+      notify: true,
+      readOnly: true
+    },
+    // Parent of the selected object (if any is possible)
+    selectedParent: {
+      type: Object,
+      notify: true,
+      readOnly: true
+    },
+    // True if the selected object is a method definition
+    isMethod: {
+      type: Boolean,
+      value: false,
+      notify: true,
+      readOnly: true
+    },
+    // True if the selected object is a resource definition
+    isResource: {
+      type: Boolean,
+      value: false,
+      notify: true,
+      readOnly: true
+    },
+    // True if the selected object is a documentation definition
+    isDocumentation: {
+      type: Boolean,
+      value: false,
+      notify: true,
+      readOnly: true
+    },
+    // True if the selected object is a summary of the api
+    isSummary: {
+      type: Boolean,
+      readOnly: true,
+      notify: true,
+      value: false
+    },
+    // True if the selected object is a type definition
+    isType: {
+      type: Boolean,
+      readOnly: true,
+      notify: true,
+      value: false
+    },
+    // Name of the `<raml-aware>` scope, so it will fill the raml property.
+    aware: String,
+    // If true, then it will listen for change events instead using data binding
+    auto: {
+      type: Boolean,
+      value: false,
+      observer: '_autoChanged'
+    }
+  },
+
+  observers: [
+    '_ramlChanged(raml.*)',
+    '_pathChanged(selectedPath, raml)',
+    '_fireSelectedObject(selectedObject.*)',
+    '_fireSelectedParent(selectedParent.*)',
+    '_fireIsMethodState(isMethod)',
+    '_fireIsResourceState(isResource)',
+    '_fireIsDocumentationState(isDocumentation)',
+    '_fireIsSummaryState(isSummary)',
+    '_fireIsTypeState(isType)'
+  ],
+
+  attached: function() {
+    this._eventTarget = Polymer.dom(this).host || document;
+    this._autoChanged(this.auto);
+  },
+
+  _autoChanged: function(state) {
+    if (state) {
+      this._attacheListeners();
+    } else {
+      this._detachListeners();
+    }
+  },
+
+  _attacheListeners: function() {
+    if (!this._eventTarget) {
+      return;
+    }
+    this._detachListeners();
+    this.listen(this._eventTarget, 'raml-selected-path-changed',
+      '_pathChangeHandler');
+  },
+
+  _detachListeners: function() {
+    if (!this._eventTarget) {
+      return;
+    }
+    this.unlisten(this._eventTarget, 'raml-selected-path-changed',
+      '_pathChangeHandler');
+  },
+
+  _pathChangeHandler: function(e, detail) {
+    this.set('selectedPath', detail.path);
+  },
+
+  // Restore properties to the original state
+  clear: function() {
+    this._setSelectedObject(undefined);
+    this._setIsMethod(false);
+    this._setIsResource(false);
+    this._setIsDocumentation(false);
+    this._setIsSummary(false);
+    this._setIsType(false);
+    this._cachedRegexps = {};
+  },
+  // Handler for the raml change. Resets the data.
+  _ramlChanged: function() {
+    this.clear();
+  },
+  // Called when path changes and raml is set.
+  _pathChanged: function(path, raml) {
+    if (!raml || !path) {
+      return this.clear();
+    }
+
+    this._analysePath(path);
+    var obj = this._computeObject(path);
+    if (!obj) {
+      return this.clear();
+    }
+    this._setSelectedObject(obj);
+    this._selectParent(path);
+  },
+
+  _analysePath: function(path) {
+    var _path;
+    if (path.indexOf('.') !== -1) {
+      var parts = path.split('.');
+      parts.pop(); // Last array index
+      _path = parts.pop();
+    } else {
+      _path = path;
+    }
+
+    var method = false;
+    var doc = false;
+    var resource = false;
+    var type = false;
+    var summary = false;
+    switch (_path) {
+      case 'resources':
+        resource = true;
+        break;
+      case 'methods':
+        method = true;
+        break;
+      case 'documentation':
+        doc = true;
+        break;
+      case 'types':
+        type = true;
+        break;
+      case 'summary':
+        summary = true;
+        break;
+      default:
+        return this.clear();
+    }
+    this._setIsMethod(method);
+    this._setIsResource(resource);
+    this._setIsDocumentation(doc);
+    this._setIsSummary(summary);
+    this._setIsType(type);
+  },
+
+  _selectParent: function(path) {
+    if (!(this.isMethod || this.isResource || this.isSummary || this.isType)) {
+      // No parent.
+      return this._setSelectedParent(undefined);
+    }
+    var parts = path.split('.');
+    parts.splice(parts.length - 2, 2);
+    var parentPath = parts.join('.');
+    if (!parentPath) {
+      return this._setSelectedParent(undefined);
+    }
+    var obj = this.get('raml.' + parentPath);
+    if (!obj) {
+      return this._setSelectedParent(undefined);
+    }
+    this._setSelectedParent(obj);
+  },
+  /**
+   * Inserts dependencies definitions to current node.
+   * It will update query parameters, uri parameters, security schemas etc with it's definitions.
+   *
+   * As a result, instead of array of ID's in the `is` property, full definition of trait will
+   * be inserted. `uriParameters` will be added as a `uriParameters` property. Ans so on.
+   *
+   * This function must be called after type of object has been determined.
+   * @param {String} path A path to the object.
+   */
+  _computeObject: function(path) {
+    if (this.isDocumentation) {
+      // No dependencies here
+      return this.get('raml.' + path);
+    }
+    if (this.isSummary) {
+      return this.raml;
+    }
+    if (this.isType) {
+      var names = Object.getOwnPropertyNames(this.raml.types);
+      var match = path.match(/(\d+)/);
+      var index = Number(match[1]);
+      try {
+        return this.raml.types[names[index]];
+      } catch (e) {
+        console.error('Unknown type in types list', names[index]);
+      }
+      return;
+    }
+    var current = this.get('raml.' + path);
+    return current;
+  },
+
+  _fireSelectedObject: function() {
+    this.fire('raml-selected-object-changed', {
+      selectedObject: this.selectedObject
+    });
+  },
+
+  _fireSelectedParent: function() {
+    this.fire('raml-selected-parent-changed', {
+      selectedParent: this.selectedParent
+    });
+  },
+
+  _fireIsMethodState: function(isMethod) {
+    this.fire('raml-is-method-changed', {
+      state: isMethod
+    });
+  },
+
+  _fireIsResourceState: function(isResource) {
+    this.fire('raml-is-resource-changed', {
+      state: isResource
+    });
+  },
+
+  _fireIsDocumentationState: function(isDocumentation) {
+    this.fire('raml-is-documentation-changed', {
+      state: isDocumentation
+    });
+  },
+
+  _fireIsSummaryState: function(isSummary) {
+    this.fire('raml-is-summary-changed', {
+      state: isSummary
+    });
+  },
+
+  _fireIsTypeState: function(isType) {
+    this.fire('raml-is-type-changed', {
+      state: isType
+    });
+  }
+});
+</script>
+</dom-module>

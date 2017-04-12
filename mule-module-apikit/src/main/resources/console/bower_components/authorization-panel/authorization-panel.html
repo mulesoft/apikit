@@ -1,0 +1,698 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-pages/iron-pages.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../auth-methods/auth-methods.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<!--
+`<authorization-panel>` The authorization panel used in the request panel.
+It is a set of forms that allow set up the authorization method for a HTTP request.
+
+It renders a set of forms. But it or it's children do not perform authorization.
+In case of `basic` method the app should insert the authorization header automatically when
+running the request.
+When enabled authorization type is `ntlm` then username, password and domain should be passed
+to transport (XHR, socket) and there perform the authorization.
+
+Oauth 2 form sends the `oauth2-token-requested` with the OAuth settings provided with the form.
+Any element / app can handle this event and perform authorization.
+ARC provides the `<oauth2-authorization>` element (from the `oauth-authorization` repo) that can
+be placed anywhere in the DOM (from current element where `authorization-panel` is attached up to
+the body) and perform OAuth athorization. However it can be done by any other element / app  or
+even server. See `<oauth2-authorization>` for detailed documentation.
+
+Note: OAuth 2.0 server flow probably will not work in regular browser environment because
+main providers aren't setting CORS headers and therefore the request will be canceled by the
+browser.
+To make it work, handle the `oauth2-token-requested` fired from the inside of this element.
+If it's browser flow type (implicit) then the `oauth2-authorization` element can be used.
+If other type, then cancel the event and use server to handle token exchange.
+
+Oauth 1a is not currently supported. Though the form is ready and available, there's no
+authorization method in the ARC components set.
+
+### Example
+```
+<authorization-panel></authorization-panel>
+```
+
+### Styling
+`<authorization-panel>` provides the following custom properties and mixins for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--authorization-panel` | Mixin applied to the element | `{}`
+
+@group UI Elements
+@element authorization-panel
+@demo demo/index.html
+-->
+<dom-module id="authorization-panel">
+  <template>
+    <style>
+    :host {
+      display: block;
+      @apply(--authorization-panel);
+    }
+
+    #container {
+      position: relative;
+    }
+
+    .stepper {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      padding: 12px 0;
+      position: relative;
+      pointer-events: none;
+    }
+
+    .stepper.active {
+      pointer-events: all;
+      cursor: pointer;
+    }
+
+    .step {
+      display: inline-block;
+      background-color: var(--stepper-step-number-background-color, #3D8099);
+      color: var(--stepper-step-number-color, #fff);
+      font-size: 14px;
+      @apply(--layout-center-center);
+      @apply(--layout-horizontal);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+
+    .step-header {
+      position: relative;
+    }
+
+    .step-title {
+      @apply(--arc-font-body1);
+      display: block;
+      color: var(--stepper-step-title-color, #3D8099);
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .step-selection {
+      @apply(--arc-font-body1);
+      color: var(--stepper-step-selection-label-color, rgba(0, 0, 0, 0.54));
+      position: absolute;
+      bottom: -16px;
+    }
+
+    paper-ripple {
+      color: var(--stepper-step-title-color, #3D8099);
+    }
+
+    .step-content {
+      @apply(--layout-horizontal);
+      margin-bottom: 12px;
+      min-height: 32px;
+    }
+
+    .line {
+      width: 11px;
+      border-right: 1px var(--stepper-line-color, rgba(0, 0, 0, 0.12)) solid;
+      margin-right: 24px;
+    }
+    </style>
+    <div id="container">
+      <div class="row">
+        <div class$="[[_computeStepperClass(isSelected)]]" on-tap="_clearCelection">
+          <span class="step">1</span>
+          <span class="step-header">
+            <span class="step-title">Select authorization method</span>
+            <span class="step-selection" hidden$="[[!isSelected]]">[[_computeSelectedLabel(selected)]]</span>
+          </span>
+          <paper-ripple></paper-ripple>
+        </div>
+        <div class="step-content">
+          <div class="line"></div>
+          <iron-collapse opened="[[!isSelected]]">
+            <div class="content">
+              <paper-dropdown-menu label="Authorization method">
+                <paper-listbox class="dropdown-content" selected="{{selected}}" attr-for-selected="data-type">
+                  <template is="dom-repeat" items="[[authMethods]]">
+                    <paper-item data-type="[[item.id]]">[[item.name]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
+          </iron-collapse>
+        </div>
+      </div>
+      <iron-pages selected="[[selected]]" attr-for-selected="data-type" hidden$="[[!isSelected]]">
+        <auth-method-basic data-type="basic"></auth-method-basic>
+        <auth-method-digest data-type="digest"></auth-method-digest>
+        <!-- <auth-method-oauth1 data-type="ntlm" redirect-url="[[redirectUrl]]" raml-settings="[[_computeSettings(securedBy, 'OAuth 1.0')]]"></auth-method-oauth1> -->
+        <auth-method-oauth2 data-type="oauth2" redirect-url="[[redirectUrl]]" raml-settings="[[_computeSettings(securedBy, 'OAuth 2.0')]]"></auth-method-oauth2>
+      </iron-pages>
+    </div>
+  </template>
+  <script>
+  Polymer({
+    is: 'authorization-panel',
+    /**
+     * Fired when auth settings change.
+     *
+     * It will be fired when any of types is currently selected and
+     * any value of any property has changed.
+     *
+     * @event authorization-settings-changed
+     * @param {Object} settings Current auth settings. It depends on enabled `type`.
+     * @param {String} type Enabled auth type. For example `basic`, `ntlm` or `oauth2`.
+     */
+    /**
+     * Fired when the authorization type changed.
+     * Note that the `settings` property may not be updated at the moment of of
+     * firing the event.
+     *
+     * @event authorization-type-changed
+     * @param {String} type Current auth type
+     */
+    /**
+     * Fired when the request header changed and all listeners should update
+     * header value.
+     *
+     * @event request-header-changed
+     * @param {String} name Name of the header that has changed
+     * @param {String} value Header new value
+     */
+    /**
+     * Fired when the query param changed and all listeners should update
+     * parameters / URL value.
+     *
+     * @event query-parameter-changed
+     * @param {String} name Name of the header that has changed
+     * @param {String} value Header new value
+     */
+    properties: {
+      // Selected authorization type. E.g. `basic`, `oauth2` etc.
+      selected: {
+        type: String,
+        notify: true
+      },
+      // Computed value. True when selection has been made.
+      isSelected: {
+        type: Boolean,
+        value: false,
+        computed: '_computeIsSelected(selected)'
+      },
+      // If true then according to the API spec authorization is required.
+      isRequired: {
+        type: Boolean,
+        value: false,
+        readOnly: true,
+        notify: true
+      },
+      /**
+       * Current settings of enabled auth type.
+       * Can be `undefined` if the user hasn't filled all required fields in the form.
+       */
+      settings: {
+        type: Object,
+        readOnly: true,
+        notify: true
+      },
+      /**
+       * A definition of the RAML `securedBy` node of the method. description.
+       * If set it will limit number of panels to show only those which are
+       * defined in the RAML spec and provide the fill data.
+       */
+      securedBy: {
+        type: Object,
+        observer: '_securedByChanged'
+      },
+      /**
+       * The OAuth2 redirect URL to be set in the OAuth2 form pane.
+       */
+      redirectUrl: String,
+      /**
+       * If true, then the RAML data is set (the `securedBy` property) but
+       * methods described in the API spec does not fit those supported by this
+       * element. In this case, to prevent displaying empty widget,
+       * the element displays all possible auth forms. Though, authors can hide
+       * this element from the view so they should use this property to be
+       * aware of this condition.
+       */
+      noRamlSelected: {
+        type: Boolean,
+        value: false,
+        readOnly: true,
+        notify: true
+      },
+
+      // The auth methods to display in the ath method selector.
+      authMethods: {
+        type: Array
+      },
+
+      _availableAuthMethods: {
+        type: Array,
+        value: function() {
+          return [{
+            'id': 'basic',
+            'name': 'Basic authorization'
+          }, /*{
+            'id': 'ntlm',
+            'name': 'NTLM'
+          },*/ {
+            'id': 'digest',
+            'name': 'Digest Authentication'
+          }, {
+            'id': 'oauth2',
+            'name': 'Oauth 2.0'
+          }];
+        }
+      },
+      /**
+       * Computed value. True if the authorization form is filled with all required data.
+       * For basic only login is required for the form to be valid. In case of OAuth 2 panel
+       * validation is more complex.
+       * Check auth methods panels documentation for more info.
+       */
+      valid: {
+        type: Boolean,
+        value: true,
+        notify: true,
+        computed: '_checkAuthorizationReady(settings.valid, selected, required)'
+      }
+    },
+
+    observers: [
+      '_authSettingsChanged(selected, settings.*)',
+      '_selectedChanged(selected)'
+    ],
+
+    ready: function() {
+      if (!this.authMethods) {
+        this.set('authMethods', this._availableAuthMethods);
+      }
+      this._updateValidationState();
+    },
+
+    listeners: {
+      'auth-settings-changed': '_authSettingsHandler',
+      'authorization-settings-changed': '_onAuthSettingsChanged'
+    },
+    /**
+     * Updates validation state for the selected form.
+     * When element is initializing and RAML's `securedBy` property is set
+     * during the initialization time, events with settings are fired before the form
+     * is ready.
+     */
+    _updateValidationState: function() {
+      this.debounce('check-validation-state', function() {
+        if (!this.selected || !this.settings) {
+          return;
+        }
+        var panel = this.$$('[data-type="' + this.selected + '"]');
+        if (!panel) {
+          console.warn('The auth panel for %s not set', this.selected);
+          return;
+        }
+        this.set('settings.valid', panel.validate());
+      }, 200);
+    },
+
+    _authSettingsHandler: function(e) {
+      if (e.detail.type !== this.selected) {
+        return;
+      }
+      this._setSettings(e.detail);
+    },
+
+    // Fires the `authorization-settings-changed` event when something change
+    _authSettingsChanged: function(selected, record) {
+      if (!selected || !record || !record.base) {
+        return;
+      }
+      var set = record.base;
+      this._notifySettings(set, selected);
+    },
+    /**
+     * Notifies settings change if currently selected method is the same as
+     * `settings.type`.
+     *
+     * @param {Object} settings Authorization settings to notify.
+     * @param {String} selected Currently selected method name.
+     * @return {CustomEvent} The event fired to the listeners.
+     */
+    _notifySettings: function(settings, selected) {
+      if (!settings) {
+        return this.fire('authorization-settings-changed', {
+          settings: undefined,
+          valid: false,
+          type: selected
+        });
+      }
+      if (settings.type !== selected) {
+        return;
+      }
+      return this.fire('authorization-settings-changed', {
+        settings: settings.settings,
+        valid: settings.valid,
+        type: this.selected
+      });
+    },
+
+    /**
+     * Fires the `authorization-type-changed` event when the selection change.
+     */
+    _selectedChanged: function(selected) {
+      this.fire('authorization-type-changed', {
+        type: selected
+      });
+      var settings = this._readCurrentSettings();
+      this._setSettings(settings);
+      this._notifySettings(settings, this.selected);
+    },
+
+    /**
+     * A handler called when the `securedBy` property changes.
+     * It sets up the list of available auth methods
+     */
+    _securedByChanged: function(secured) {
+      if (!secured || !secured.length) {
+        // If no RAML then show them all.
+        this._setIsRequired(false);
+        return this._updateMethodsSelection();
+      }
+
+      var state = {
+        oauth1: false,
+        oauth2: false,
+        basic: false,
+        ntlm: false,
+        digest: false
+      };
+
+      for (var i = 0, len = secured.length; i < len; i++) {
+        if (typeof secured[i] === 'string') {
+          continue;
+        }
+        switch (secured[i].type) {
+          case 'OAuth 1.0': state.oauth1 = true; break;
+          case 'OAuth 2.0': state.oauth2 = true; break;
+          case 'Basic Authentication': state.basic = true; break;
+          case 'Digest Authentication': state.digest = true; break;
+          case 'Pass Through': break;
+          default:
+            console.warn('Unsupported auth method', secured[i]);
+        }
+      }
+      this._updateMethodsSelection(state);
+      this._updateValidationState();
+      var required = false;
+      for (var key in state) {
+        if (state[key]) {
+          required = true;
+          break;
+        }
+      }
+      this._setIsRequired(required);
+    },
+    /**
+     * Updates number of possible type selection when RAML definition change.
+     *
+     * @param {Object} state A map where keys are auth types and values is
+     * the boolean value of the state. True for show the auth option in the
+     * selector.
+     */
+    _updateMethodsSelection: function(state) {
+      // makes a copy of the array. Otherwise `this._availableAuthMethods`
+      // may change
+      var available = this._availableAuthMethods.map(function(item) {
+        return item;
+      });
+      if (!state) {
+        this.set('authMethods', available);
+        return;
+      }
+      for (var key in state) {
+        if (!state[key]) {
+          delete state[key];
+        }
+      }
+
+      var allowedKeys = Object.keys(state);
+      var i;
+      for (i = available.length - 1; i >= 0; i--) {
+        if (allowedKeys.indexOf(available[i].id) === -1) {
+          available.splice(i, 1);
+        }
+      }
+
+      this.set('authMethods', available);
+      // check if current selection is still available
+      var current = this.selected;
+      var hasCurrent = false;
+      for (i = available.length - 1; i >= 0; i--) {
+        if (available[i].id === current) {
+          hasCurrent = true;
+          break;
+        }
+      }
+      if (!hasCurrent) {
+        if (available && available[0]) {
+          this.set('selected', available[0].id);
+        } else {
+          this.set('selected', '');
+        }
+      }
+    },
+    /**
+     * Computes settings for the auth panel if RAML's `securedBy`
+     * property is set and the `type` matches one of the defined types.
+     *
+     * @param {Array} secured The `securedBy` value.
+     * @param {String} type RAML's one of predefined authorization types.
+     * @return {Object|undefined} A scheme definition object if `type` matches.
+     */
+    _computeSettings: function(secured, type) {
+      if (!secured || !secured.length || !type) {
+        return undefined;
+      }
+      for (var i = 0, len = secured.length; i < len; i++) {
+        if (secured[i].type === type) {
+          return secured[i];
+        }
+      }
+    },
+
+    _computeIsSelected: function(selected) {
+      return !!selected;
+    },
+
+    _computeSelectedLabel: function(selected) {
+      switch (selected) {
+        case 'basic': return 'Basic';
+        case 'oauth2': return 'OAuth 2.0';
+        case 'oauth1': return 'OAuth 1.0';
+        case 'ntlm': return 'NTLM';
+        default: return selected;
+      }
+    },
+
+    _computeStepperClass: function(isSelected) {
+      var cls = 'stepper';
+      if (isSelected) {
+        cls += ' active';
+      }
+      return cls;
+    },
+
+    _clearCelection: function() {
+      this.set('selected', undefined);
+    },
+
+    _checkAuthorizationReady: function(formValid, selected, required) {
+      if (!required) {
+        return true;
+      }
+      if (!selected || !formValid) {
+        return false;
+      }
+      return true;
+    },
+
+    /**
+     * Forces element to read settings from currently selected element.
+     *
+     * @return {Object|undefined} Settings object or undefined.
+     */
+    _readCurrentSettings: function() {
+      if (!this.selected) {
+        return;
+      }
+      var panel = this.$$('[data-type="' + this.selected + '"]');
+      if (!panel) {
+        console.warn('The auth panel for %s not set', this.selected);
+        return;
+      }
+      var settings = panel.settings;
+      var validationResult = panel.validate();
+      var detail = {
+        settings: settings,
+        type: this.selected,
+        valid: validationResult
+      };
+      return detail;
+    },
+
+    /**
+     * The function will determine if current settings are valid for selected
+     * method. If they are it will send a header / query parameter change
+     * request event so the corresponding editors update their values.
+     *
+     * It will determine if either headers or query parameters should
+     * be updated from RAML spec or from default behavior for given method.
+     */
+    _onAuthSettingsChanged: function(e) {
+      var settings = e.detail;
+      if (!settings) {
+        return;
+      }
+      var type = settings.type;
+      var method = this._getSecuredMethod(type);
+      switch (type) {
+        case 'basic': this._handleBasicSettings(settings); break;
+        case 'oauth2': this._handleOauth2Settings(settings, method); break;
+        case 'digest': this._handleDigestSettings(settings); break;
+        default:
+          console.warn('Unsupported auth method', type);
+      }
+    },
+
+    /**
+     * Handles the case when basic settings changed.
+     *
+     * @param {Object} settings Basic auth settings object
+     */
+    _handleBasicSettings: function(settings) {
+      settings = settings || {};
+      var value = (settings.settings && settings.settings.hash) ?
+        'Basic ' + settings.settings.hash : '';
+      this.fire('request-header-changed', {
+        name: 'authorization',
+        value: value
+      });
+    },
+    /**
+     * Handles the case when OAuth2 settings changed.
+     *
+     * @param {Object} settings Oauth2 auth settings object
+     * @param {Object?} secureMethod If set, it's RAML's auth definition.
+     * If this parameter is not defined then default behavior will be to
+     * notify listeners to set Authorization header with Bearer token.
+     */
+    _handleOauth2Settings: function(settings, secureMethod) {
+      settings = settings || {};
+      settings = settings.settings || {};
+      var token = settings.tokenValue;
+      var transportType = 'header';
+      var paramName = 'authorization';
+      if (secureMethod) {
+        if (secureMethod.describedBy) {
+          var desc = secureMethod.describedBy;
+          if (desc.headers && desc.headers.length) {
+            paramName = desc.headers[0].name;
+          } else if (desc.queryParameters && desc.queryParameters.length) {
+            paramName = desc.queryParameters[0].name;
+            transportType = 'query-parameter';
+          }
+        }
+      }
+
+      if (transportType === 'header') {
+        this.fire('request-header-changed', {
+          name: paramName,
+          value: token ? 'Bearer ' + token : ''
+        });
+      } else if (transportType === 'query-parameter') {
+        this.fire('query-parameter-changed', {
+          name: paramName,
+          value: token ? token : ''
+        });
+      }
+    },
+    /**
+     * Handles the case when digest auth method settings changed.
+     *
+     * @param {Object} settings Digest auth method settings object
+     * It can be either username and password (that will be passed to
+     * transport method) then this function do nothing or list of Authorization
+     * header parameters.
+     */
+    _handleDigestSettings: function(settings) {
+      if (!settings.valid) {
+        return this.fire('request-header-changed', {
+          name: 'authorization',
+          value: ''
+        });
+      }
+      if (!settings.settings) {
+        return;
+      }
+      var data = settings.settings;
+      if (data.username && data.password) {
+        return;
+      }
+      var value = 'Digest ';
+      var names = Object.getOwnPropertyNames(data);
+      names.forEach(function(name) {
+        value += name + '="' +  data[name] + '", ';
+      });
+      value = value.substr(0, value.length - 2);
+      this.fire('request-header-changed', {
+        name: 'authorization',
+        value: value
+      });
+    },
+    /**
+     * Gets selected security scheme for selected type.
+     *
+     * @param {String} type One of `basic`, `oauth1`, `oauth2`
+     * @return {Object} Corresponding security scheme for given type or undefined if not found.
+     */
+    _getSecuredMethod: function(type) {
+      var securedBy = this.securedBy;
+      if (!securedBy || !securedBy.length) {
+        return;
+      }
+      var securityMethodsMapping = {
+        'OAuth 1.0': 'oauth1',
+        'OAuth 2.0': 'oauth2',
+        'Basic Authentication': 'basic',
+        'Digest Authentication': 'digest',
+        'Pass Through': 'passthrough'
+      };
+      for (var i = 0, len = securedBy.length; i < len; i++) {
+        if (securityMethodsMapping[securedBy[i].type] === type) {
+          return securedBy[i];
+        }
+      }
+    }
+  });
+  </script>
+</dom-module>

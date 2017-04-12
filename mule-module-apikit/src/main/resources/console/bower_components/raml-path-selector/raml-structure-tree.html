@@ -1,0 +1,356 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../raml-behaviors/raml-behavior.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../arc-icons/arc-icons.html">
+<link rel="import" href="../iron-collapse/iron-collapse.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="raml-resource-tree-item.html">
+<link rel="import" href="raml-documentation-tree-item.html">
+<link rel="import" href="raml-type-tree-item.html">
+<link rel="import" href="raml-tree-item-styles.html">
+<link rel="import" href="path-selector-documentation.html">
+<link rel="import" href="path-selector-types.html">
+<link rel="import" href="path-selector-resource.html">
+<!--
+The `<raml-structure-tree>` renders a list view for the `<raml-path-selector>`.
+See docs for `<raml-path-selector>` for element's documentation.
+
+## Styling
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--raml-structure-tree` | Mixin applied to this element | `{}`
+`--arc-font-subhead` | Theme element, mixin applied to the tree section headers. The color will be overritten by the `--raml-path-selector-header-color` variable.  | ``
+`--raml-path-selector-header-color` | Color of the section headers | `rgba(0, 0, 0, 0.54)`
+`--raml-path-selector-headers` | Mixin applied to the tree section headers. This will ovveride all other values. | `{}`
+`--raml-path-selector-toggle-icon-color` | Color of the toggle icon. | `rgba(0, 0, 0, 0.54)`
+`--raml-path-selector-toggle-icon-hover-color` | Color of the toggle icon when hovered. | `rgba(0, 0, 0, 0.78)`
+
+@element raml-structure-tree
+@demo demo/index.html
+-->
+<dom-module id="raml-structure-tree">
+  <template>
+    <style include="raml-tree-item-styles">
+     :host {
+      display: block;
+      background-color: inherit;
+      color: inherit;
+      overflow: auto;
+      position: relative;
+      @apply(--raml-structure-tree);
+    }
+
+    h3 {
+      @apply(--arc-font-subhead);
+      color: var(--raml-path-selector-header-color, rgba(0, 0, 0, 0.54));
+      padding-left: 14px;
+      @apply(--raml-path-selector-headers);
+    }
+
+    *[hidden] {
+      display: none;
+    }
+
+    .section-title {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      cursor: pointer;
+    }
+
+    .section-title h3 {
+      @apply(--layout-flex);
+      padding-left: 0;
+      font-weight: 400;
+    }
+
+    .toggle-button {
+      color: var(--raml-path-selector-toggle-icon-color, rgba(0, 0, 0, 0.54));
+      transform: rotateZ(-90deg);
+      transition: color 0.25s linear, transform 0.3s linear;
+    }
+
+    .toggle-button.opened {
+      transform: rotateZ(0deg)
+    }
+
+    .enter-button {
+      color: var(--raml-path-selector-toggle-icon-color, rgba(0, 0, 0, 0.54));
+    }
+
+    .toggle-button:hover {
+      color: var(--raml-path-selector-toggle-icon-hover-color, rgba(0, 0, 0, 0.78));
+    }
+    </style>
+    <paper-item on-tap="_selectSummary" class$="[[_computeItemSelectedClass(selectedPath, 'summary')]]" title="API sumamry">API summary</paper-item>
+    <section class="documentation" hidden$="[[!hasDocumentation]]">
+      <div class="section-title">
+        <paper-icon-button data-section="documentation" on-tap="_toggleSection" class$="toggle-button[[_computeToggleIconClass(documentationOpened)]]" icon="arc:arrow-drop-down"></paper-icon-button>
+        <h3 data-section="documentation" on-tap="_toggleSection">Documentation</h3>
+        <paper-icon-button class="enter-button" icon="arc:chevron-right" hidden$="[[!narrow]]" data-section="documentation" on-tap="_enterSection"></paper-icon-button>
+      </div>
+      <iron-collapse opened="[[documentationOpened]]">
+        <div>
+          <template is="dom-repeat" items="[[raml.documentation]]">
+            <raml-documentation-tree-item indent="1" indent-size="24" selected-path="[[selectedPath]]" doc="[[item]]" path="documentation.[[index]]"></raml-documentation-tree-item>
+          </template>
+        </div>
+      </iron-collapse>
+    </section>
+    <section class="documentation" hidden$="[[!hasTypes]]">
+      <div class="section-title">
+        <paper-icon-button data-section="types" on-tap="_toggleSection" class$="toggle-button[[_computeToggleIconClass(typesOpened)]]" icon="arc:arrow-drop-down"></paper-icon-button>
+        <h3 data-section="types" on-tap="_toggleSection">Types</h3>
+        <paper-icon-button class="enter-button" icon="arc:chevron-right" hidden$="[[!narrow]]" data-section="types" on-tap="_enterSection"></paper-icon-button>
+      </div>
+      <iron-collapse opened="[[typesOpened]]">
+        <div>
+          <template is="dom-repeat" items="[[_objectToArray(raml.types)]]">
+            <raml-type-tree-item indent="1" indent-size="24" selected-path="[[selectedPath]]" type="[[item]]" path="types.[[index]]"></raml-type-tree-item>
+          </template>
+        </div>
+      </iron-collapse>
+    </section>
+    <section class="documentation" hidden$="[[!hasResources]]">
+      <div class="section-title">
+        <paper-icon-button data-section="resources" on-tap="_toggleSection" class$="toggle-button[[_computeToggleIconClass(resourcesOpened)]]" icon="arc:arrow-drop-down"></paper-icon-button>
+        <h3 data-section="resources" on-tap="_toggleSection">Resources</h3>
+        <paper-icon-button class="enter-button" icon="arc:chevron-right" hidden$="[[!narrow]]" data-section="resources" on-tap="_enterSection"></paper-icon-button>
+      </div>
+      <iron-collapse opened="[[resourcesOpened]]">
+        <div>
+          <template is="dom-repeat" items="[[raml.resources]]" resources>
+            <raml-resource-tree-item indent="1" indent-size="24" selected-path="[[selectedPath]]" resource="[[item]]" path="resources.[[index]]" opened="[[opened]]" narrow="[[narrow]]"></raml-resource-tree-item>
+          </template>
+        </div>
+      </iron-collapse>
+    </section>
+    <path-selector-documentation documentation="[[raml.documentation]]" selected-path="[[selectedPath]]"></path-selector-documentation>
+    <path-selector-types types="[[_objectToArray(raml.types)]]" selected-path="[[selectedPath]]"></path-selector-types>
+    <path-selector-resource resources="[[raml.resources]]" selected-path="[[selectedPath]]" items-opened="[[opened]]"></path-selector-resource>
+  </template>
+  <script>
+  Polymer({
+    is: 'raml-structure-tree',
+    behaviors: [Polymer.RamlBehavior],
+
+    /**
+     * Fired when the path change.
+     *
+     * @event raml-selected-path-changed
+     * @param {String} path The selected path
+     */
+
+    properties: {
+      // Currently selected by the user path.
+      selectedPath: {
+        type: String,
+        notify: true
+      },
+      // If true then the first level of resources will be opened by default.
+      opened: {
+        type: Boolean,
+        value: false
+      },
+      // Is set to true when the RAML's `resources` array is not empty
+      hasDocumentation: Boolean,
+      // Is set to true when the RAML's `documentation` array is not empty
+      hasResources: Boolean,
+      /**
+       * Set to true when the RAML's `types` array is not empty
+       * and the path selector should render types list.
+       */
+      hasTypes: Boolean,
+      /**
+       * If set it will renders the view in the narrow layout.
+       */
+      narrow: {
+        type: Boolean,
+        value: false,
+        notify: true,
+        reflectToAttribute: true
+      },
+
+      // A widith below which the `narrow` property will be set to true.
+      narrowWidth: {
+        type: String,
+        value: '768px'
+      },
+      /**
+       * If true then the documentation section will be exanded if the RAML
+       * contains documentation.
+       */
+      documentationOpened: Boolean,
+      /**
+       * If true then the types list section will be exanded if the RAML
+       * contains types.
+       */
+      typesOpened: Boolean,
+      /**
+       * If true then the resources list section will be exanded if the RAML
+       * contains resources.
+       */
+      resourcesOpened: Boolean
+    },
+
+    hostAttributes: {
+      role: 'listbox',
+      tabindex: '0'
+    },
+
+    listeners: {
+      'raml-path-selected': '_onPathSelected',
+      'raml-path-selector-nav-back': '_onNarrowPageBack'
+    },
+
+    observers: [
+      '_patchChanged(selectedPath)',
+      '_ramlChanged(raml)'
+    ],
+
+    // Sets the `selectedPath` value form the `raml-path-selected` event.
+    _onPathSelected: function(e) {
+      e.stopPropagation();
+      this.set('selectedPath', e.detail.path);
+    },
+
+    // Fires the `raml-selected-path-changed` event when the path changes.
+    _patchChanged: function(selectedPath) {
+      this.fire('raml-selected-path-changed', {
+        path: selectedPath
+      });
+    },
+
+    /**
+     * Sets the path to the first available item.
+     */
+    _ramlChanged: function(raml) {
+      if (!raml) {
+        this.set('selectedPath', '');
+      } else {
+        this._selectSummary();
+      }
+    },
+
+    _computeItemSelectedClass: function(selectedPath, itemsPath) {
+      return selectedPath === itemsPath ? 'selected' : '';
+    },
+
+    _selectSummary: function() {
+      this.set('selectedPath', 'summary');
+    },
+
+    /**
+     * Transforms Object to Array and sets a `key` property on each
+     * array item as an original key name from the object.
+     *
+     * @param {Object} obj The object to translate to array
+     * @return {Array|undefined} Array or undefined if not passed an object.
+     */
+    _objectToArray: function(obj) {
+      if (!obj) {
+        return;
+      }
+      var keys = Object.keys(obj);
+      return keys.map(function(key) {
+        var value = Object.assign({}, obj[key]);
+        value.key = key;
+        return value;
+      });
+    },
+    /**
+     * Computes toggle icon active CSS class name.
+     *
+     * @param {String} sectionOpened True if the correspoinding section is
+     * opened.
+     * @return {String} Toggle button active CSS class name.
+     */
+    _computeToggleIconClass: function(sectionOpened) {
+      var clazz = '';
+      if (sectionOpened) {
+        clazz += ' opened';
+      }
+      return clazz;
+    },
+    // Toggles visibility of navigation sections.
+    _toggleSection: function(e) {
+      var section = this._getEventSection(e);
+      var varName = section + 'Opened';
+      this[varName] = !this[varName];
+    },
+    /**
+     * Gets the value nof the `data-section` propery of the first
+     * element that contain this property in even't path.
+     *
+     * This function throws an error if event's path is not defined or when
+     * `data-section` wasn't found in any element in the path.
+     *
+     * @param {Event} e An event object associated with user action
+     * @return {String} section name associated with click target
+     * @throws It throws an arror if event's path is not defined or
+     * if section is not set in any element in the path.
+     */
+    _getEventSection: function(e) {
+      e = Polymer.dom(e);
+      var path = e.path;
+      if (!path || !path.length) {
+        throw new Error('Event path not defined.');
+      }
+      var section;
+      while (true) {
+        var _target = path.shift();
+        if (!_target) {
+          var msg = 'Invalid node selection. No data-section found in path.';
+          throw new Error(msg);
+        }
+        if (_target.dataset && _target.dataset.section) {
+          section = _target.dataset.section;
+          break;
+        }
+      }
+      return section;
+    },
+
+    _getNavElementForSection: function(section) {
+      var elm;
+      switch (section) {
+        case 'documentation':
+          elm = this.$$('path-selector-documentation');
+          break;
+        case 'types':
+          elm = this.$$('path-selector-types');
+          break;
+        case 'resources':
+          elm = this.$$('path-selector-resource');
+          break;
+      }
+      return elm;
+    },
+
+    _enterSection: function(e) {
+      var section = this._getEventSection(e);
+      var elm = this._getNavElementForSection(section);
+      elm.opened = true;
+      this._subpageSection = section;
+    },
+
+    _onNarrowPageBack: function() {
+      var elm = this._getNavElementForSection(this._subpageSection);
+      elm.opened = false;
+    }
+  });
+  </script>
+</dom-module>

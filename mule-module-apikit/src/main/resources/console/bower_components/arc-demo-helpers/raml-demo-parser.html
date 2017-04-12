@@ -1,0 +1,247 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../raml-js-parser/raml-js-parser.html">
+<link rel="import" href="../file-drop/file-drop.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-spinner/paper-spinner.html">
+<link rel="import" href="../iron-demo-helpers/demo-pages-shared-styles.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../raml-main-entry-lookup/raml-main-entry-lookup.html">
+<link rel="import" href="../iron-demo-helpers/demo-pages-shared-styles.html">
+<link rel="import" href="../raml-aware/raml-aware.html">
+<!--
+# `<raml-docs-parser>`
+The `<raml-docs-parser>` is an element that is intended to use in demo pages as a
+set of RAML parser, RAML entry lookup and produces JSON output that is used by
+other elements.
+
+## Usage
+```
+<raml-docs-parser raml="{{raml}}"></raml-docs-parser>
+```
+The `raml` property will contain a JSON output from the parser. Also `raml-ready` event will
+be fired with the `raml` property on the detail object.
+
+@group UI Elements
+@element raml-demo-parser
+-->
+<dom-module id="raml-demo-parser">
+  <template>
+    <style>
+    .vertical-section-container {
+      max-width: 600px;
+    }
+
+    file-drop {
+      margin: 0;
+    }
+
+    .loader {
+      margin: 24px;
+    }
+
+    h1 {
+      @apply(--paper-font-title);
+    }
+
+    h2 {
+      @apply(--paper-font-subhead);
+    }
+
+    small {
+      color: rgba(0, 0, 0, 0.54);
+    }
+
+    .url-field {
+      @apply(--layout-horizontal);
+    }
+
+    .url-field paper-input {
+      @apply(--layout-flex);
+    }
+    </style>
+    <template is="dom-if" if="[[aware]]" restamp="true">
+      <raml-aware raml="[[raml]]" scope="[[aware]]"></raml-aware>
+    </template>
+
+    <raml-js-parser json latest-json="{{plainRaml}}"></raml-js-parser>
+    <raml-json-enhance json="[[plainRaml.specification]]" result="{{raml}}"></raml-json-enhance>
+
+    <raml-main-entry-lookup files="[[file]]" on-entry="entryFound"></raml-main-entry-lookup>
+    <div class="vertical-section-container centered">
+      <h1>Drop RAML file here.</h1>
+      <file-drop multiple file="{{file}}" on-file-accepted="fileListChanged"></file-drop>
+      <h2>Or enter RAML file URL here</h2>
+      <div class="url-field">
+        <paper-input label="RAML url" value="{{ramlFileUrl}}"></paper-input>
+        <paper-button raised on-tap="_downloadRaml">Download</paper-button>
+      </div>
+      <section class="no-entry-point" hidden$="[[!noEntryPoint]]">
+        <h3>No entry point found</h3>
+        <p>The app scanned files and there were no candidates for entry point raml file. Please, try again.</p>
+      </section>
+      <section class="multiple-entry-points" hidden$="[[!multipleEntryPoints]]">
+        <h3>Multiple entry points found</h3>
+        <p>Please, select file that is the entry point to the API definition.</p>
+        <template is="dom-repeat" items="[[entryPoints]]" index-as="index">
+          <p>[[item.path]][[item.name]]
+            <paper-button raised on-tap="_useEntryPoint">use this</paper-button>
+          </p>
+        </template>
+      </section>
+      <section class="loader">
+        <paper-spinner active="[[working]]"></paper-spinner>
+      </section>
+    </div>
+  </template>
+  <script>
+  Polymer({
+    is: 'raml-demo-parser',
+
+    properties: {
+      // File object from file-drop element.
+      file: Object,
+      // Will set to true when there's no entry point in the selected files.
+      noEntryPoint: {
+        type: Boolean,
+        value: false
+      },
+      // Will set to true when there's there are miltiple entry points in the selected files.
+      multipleEntryPoints: {
+        type: Boolean,
+        value: false
+      },
+      // List of detected entry points
+      entryPoints: {
+        type: Array,
+        value: []
+      },
+      // Will set to true when parsing data.
+      working: {
+        type: Boolean,
+        value: false
+      },
+      // Will set to true when parser has data
+      hasData: {
+        type: Boolean,
+        value: false
+      },
+      // Reference to the API object produced by the parser
+      api: Object,
+      // The URL of the RAML file to download.
+      ramlFileUrl: {
+        type: String,
+        value: 'https://cdn.rawgit.com/advanced-rest-client/raml-example-api/master/api.raml'
+      },
+      // RAML as JSON produced by the parser.
+      raml: {
+        type: Object,
+        notify: true,
+        readOnly: true
+      },
+      // List of parser errors
+      errors: {
+        type: Array,
+        notify: true,
+        readOnly: true
+      },
+      // Name of the `<raml-aware>` scope, so it will fill the raml property.
+      aware: String
+    },
+
+    fileListChanged: function() {
+      this.hasData = false;
+      this.noEntryPoint = false;
+      this.multipleEntryPoints = false;
+      this.entryPoints = [];
+      this.api = undefined;
+    },
+
+    entryFound: function(e) {
+      var file = e.detail.entry;
+      if (!file) {
+        this.noEntryPoint = true;
+        return;
+      }
+      if (file instanceof Array) {
+        this.multipleEntryPoints = true;
+        this.entryPoints = file;
+      } else {
+        this.parseRaml(file);
+      }
+    },
+
+    _useEntryPoint: function(e) {
+      var item = e.model.get('item');
+      this.multipleEntryPoints = false;
+      this.entryPoints = [];
+      this.parseRaml(item);
+    },
+
+    parseRaml: function(item) {
+      this.working = true;
+
+      var detail = {
+        'file': item.entry,
+        'files': this.file
+      };
+      var event = this.fire('parse-raml-file', detail);
+      if (!event.detail.raml) {
+        console.error('Event did not contained raml property.');
+        return;
+      }
+
+      this._handleRamlEvent(event);
+    },
+
+    _downloadRaml: function() {
+      var url = this.ramlFileUrl;
+      if (!url) {
+        return;
+      }
+      this.working = true;
+      var detail = {
+        'url': url
+      };
+      var event = this.fire('parse-raml-url', detail);
+      if (!event.detail.raml) {
+        console.error('Event did not contained raml property.');
+        return;
+      }
+
+      this._handleRamlEvent(event);
+    },
+
+    _handleRamlEvent: function(event) {
+      var context = this;
+      event.detail.raml
+      .then(function(data) {
+        context.api = data.result;
+        context._setRaml(data.json.specification);
+        context._setErrors(data.json.errors);
+        context.fire('raml-ready', {
+          raml: data.json.specification
+        });
+        context.working = false;
+      })
+      .catch(function(e) {
+        console.warn('API error', e);
+        context.working = false;
+      });
+    }
+  });
+  </script>
+</dom-module>

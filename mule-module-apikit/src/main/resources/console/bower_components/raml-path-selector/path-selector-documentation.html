@@ -1,0 +1,59 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="raml-documentation-tree-item.html">
+<link rel="import" href="path-selector-styles.html">
+<link rel="import" href="path-selector-behavior.html">
+<!--
+The `path-selector-documentation` is a full screen display for the documentation list.
+
+See demo (with narrow layout enabled) for an example.
+
+## Styling
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--raml-path-selector-back-icon-color` | Color of the "back" icon | `rgba(0, 0, 0, 0.54)`
+`--raml-path-selector-back-icon-color-hover` | Color of the "back" icon when hovered | `rgba(0, 0, 0, 0.87)`
+
+@element path-selector-documentation
+@demo demo/index.html
+-->
+<dom-module id="path-selector-documentation">
+  <template>
+    <style include="path-selector-styles"></style>
+    <template is="dom-if" if="[[opened]]">
+      <div class="section-title">
+        <paper-icon-button on-tap="back" class="back-button" icon="arc:arrow-back"></paper-icon-button>
+        <h3>Documentation</h3>
+      </div>
+      <template is="dom-repeat" items="[[documentation]]">
+        <raml-documentation-tree-item indent="1" indent-size="24" selected-path="[[selectedPath]]" doc="[[item]]" path="documentation.[[index]]"></raml-documentation-tree-item>
+      </template>
+    </template>
+  </template>
+  <script>
+  Polymer({
+    is: 'path-selector-documentation',
+    properties: {
+      /**
+       * List of documentation nodes.
+       */
+      documentation: Array
+    },
+    behaviors: [RamlBehaviors.PathSelectorBehavior]
+  });
+  </script>
+</dom-module>

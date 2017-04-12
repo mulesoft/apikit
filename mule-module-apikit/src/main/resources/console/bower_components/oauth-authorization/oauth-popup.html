@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Oauth2 callback window</title>
+    <style>*[hidden] { display: none; } </style>
+  </head>
+  <body>
+    <p id="general-error" hidden>A general error occured.</p>
+    <script>
+    var $ = function(selector, target) {
+      return (target || document).querySelector(selector);
+    };
+
+    var Auth = {
+      init: function() {
+        var search = location.search.substr(1);
+        if (search) {
+          Auth.handleResponse(search);
+        } else {
+          Auth.handleResponse(window.location.hash.substr(1));
+        }
+      },
+
+      handleResponse: function(data) {
+        var params = {
+          'tokenTime': Date.now()
+        };
+        data.split('&').forEach(function(p) {
+          var item = p.split('=');
+          var name = item[0];
+          var origName = name;
+          var i = 0;
+          var l;
+          while ((l = name[i])) {
+            if ((l === '_' || l === '-') && i + 1 < name.length) {
+              name = name.substr(0, i) + name[i + 1].toUpperCase() + name.substr(i + 2);
+            }
+            i++;
+          }
+          params[name] = decodeURIComponent(item[1]);
+          params[origName] = decodeURIComponent(item[1]);
+        });
+        window.opener.postMessage(params, window.opener.location.origin);
+      }
+    };
+    if (!window.opener || !window.opener.postMessage) {
+      var elm = $('#general-error');
+      elm.removeAttribute('hidden');
+    } else {
+      Auth.init();
+    }
+    </script>
+  </body>
+</html>

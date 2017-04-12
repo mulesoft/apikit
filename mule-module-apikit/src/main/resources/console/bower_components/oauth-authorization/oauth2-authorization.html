@@ -1,0 +1,480 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<!--
+The `<outh2-authorization>` performs an OAuth2 requests to get a token for given settings.
+
+There are 4 basic token requests flows:
+- Authorization Code for apps running on a web server (`authorization_code` type)
+- Implicit for browser-based or mobile apps (`implicit` type)
+- Password for logging in with a username and password (`password` type)
+- Client credentials for application access (`client_credentials` type)
+
+This element uses them all.
+
+Main function is the `authorize()` function that can be also used via event system.
+This function accepts different set of parameters depending on request type. However it will
+not perform a validation on the settings. It will try to perform the request for given set of
+parameters. If it fails, than it fail on the server side.
+
+### Example
+```
+<outh2-authorization></outh2-authorization>
+```
+```
+var settings = {
+  type: 'implicit',
+  clientId: 'CLIENT ID',
+  redirectUrl: 'https://example.com/auth-popup.html',
+  authorizationUrl: 'https://auth.example.com/token'
+  scopes: ['email']
+};
+var factory = document.querySelector('outh2-authorization');
+factory.authorize(settings)
+
+// or event based
+var event = new CustomEvent('oauth2-token-requested', { 'detail': settings, bubbles: true });
+document.dispatchEvent(event);
+```
+
+There is one difference for from using event based approach. When the token has been received
+this will set `tokenValue` property on the target of the event.
+The event will be canceled one it reach this element so other elements will not double the action.
+
+An element or app that requesting the token should observe the `oauth2-token-response` and
+`oauth2-error` events to get back the response.
+
+## Popup in authorization flow
+This element conatin a `oauth-popup.html` that can be used to exchange token / code data with
+hosting page. Other page can be used as well. But in must `window.postMessage` back to the
+`window.opener`. The structure of the message if the parsed query or has string to the map
+of parameters. Furthermore it must camel case the parameters. Example script is source code
+of the `oauth-popup.html` page.
+Popup should be served over the SSL.
+
+## The state parameter and security
+This element is intened to be used in debug applications where confidentialy is already
+compromised because users may be asked to provide client secret parameter (depending on the flow).
+**It should not be used in client applications** that don't serve debugging purposes.
+Client secret should never be used on the client side.
+
+To have at least minimum of protection (in already compromised environment) this library generates
+a `state` parameter as a series of alphanumeric characters and append them to the request.
+It is expected to return the same string in the response (as defined in rfc6749). Though this
+parameter is optional, it will reject the response if the `state` parameter is not the same as the
+one generated before the request.
+
+## Demo
+See `auth-methods` > `auth-method-oauth2` element for the demo.
+
+@group Logic Elements
+@element oauth-authorization
+-->
+<script>
+Polymer({
+  is: 'oauth2-authorization',
+  /**
+   * Fired when OAuth2 token has been received.
+   * Properties of the `detail` object will contain the response from the authentication server.
+   * It will contain the original parameteres but also camel case of the parameters.
+   *
+   * So for example 'implicit' will be in the response as well as `accessToken` with the same
+   * value. The puropse of this is to support JS application that has strict formatting rules
+   * and disallow using '_' in property names. Like ARC.
+   *
+   * @event oauth2-token-response
+   */
+  /**
+   * Fired wne error occurred.
+   * An error may occure when `state` parameter of the OAuth2 response is different from
+   * the requested one. Another example is when the popup window has been closed before it passed
+   * response token. It may happen when the OAuth request was invalid.
+   *
+   * @event oauth2-error
+   * @param {String} message A message that can be displayed to the user.
+   * @param {String} code A message code: `invalid_state` - when `state` parameter is different;
+   * `no_response` when the popup was closed before sendin token data; `response_parse` - when
+   * the response from the code exchange can't be parsed; `request_error` when the request
+   * errored by the transport library. Other status codes are defined in
+   * [rfc6749](https://tools.ietf.org/html/rfc6749).
+   */
+  properties: {
+    // A full data returned by the authorization endpoint.
+    tokenInfo: {
+      type: Object,
+      readOnly: true
+    }
+  },
+
+  attached: function() {
+    this.listen(window, 'oauth2-token-requested', '_tokenRequestedHandler');
+    this.listen(window, 'message', '_listenPopup');
+  },
+
+  detached: function() {
+    this.unlisten(window, 'oauth2-token-requested', '_tokenRequestedHandler');
+    this.unlisten(window, 'message', '_listenPopup');
+  },
+
+  clear: function() {
+    this._popup = undefined;
+
+    this._state = undefined;
+  },
+
+  _tokenRequestedHandler: function(e, detail) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+    this._eventSource = e.target;
+    this.authorize(detail);
+  },
+
+  /**
+   * Authorize the user using provided settings.
+   * See `auth-methods/auth-method-oauth2` element for more information about settings.
+   */
+  authorize: function(settings) {
+    this._setTokenInfo(undefined);
+    this._type = settings.type;
+    switch (settings.type) {
+      case 'implicit':
+        this._authorizeToken(settings);
+        break;
+      case 'authorization_code':
+        this._authorizeCode(settings);
+        break;
+      case 'client_credentials':
+        this._authorizeClientCredential(settings);
+        break;
+      case 'password':
+        this._authorizePassword(settings);
+        break;
+      default:
+        throw new Error('Unknown authorization method ' + settings.type);
+    }
+  },
+  // Authorize the user in the browser flow.
+  _authorizeToken: function(settings) {
+    var url = this._constructPopupUrl(settings, 'token');
+    var op = 'menubar=no,location=no,resizable=yes,scrollbars=yes,status=no,width=800,height=600';
+    this._popup = window.open(url, 'oauth-window', op);
+    if (!this._popup) {
+      // popup blocked.
+      this.fire('oauth2-error', {
+        'message': 'Authorization popup is being blocked.',
+        'code': 'popup_blocked'
+      });
+      return;
+    }
+    this._popup.window.focus();
+    this._observePopupState();
+  },
+
+  // Authorize the user in the browser flow.
+  _authorizeCode: function(settings) {
+    this._settings = settings;
+    var url = this._constructPopupUrl(settings, 'code');
+    var op = 'menubar=no,location=no,resizable=yes,scrollbars=yes,status=no,width=800,height=600';
+    this._popup = window.open(url, 'oauth-window-code', op);
+    if (!this._popup) {
+      // popup blocked.
+      this.fire('oauth2-error', {
+        'message': 'Authorization popup is being blocked.',
+        'code': 'popup_blocked'
+      });
+      return;
+    }
+    this._popup.window.focus();
+    this._observePopupState();
+  },
+  // Observer if the popup has been closed befor the data has been received.
+  _observePopupState: function() {
+    var context = this;
+    var popupCheckInterval = setInterval(function() {
+      if (!context._popup || context._popup.closed) {
+        clearInterval(popupCheckInterval);
+        context._beforePopupUnloadHandler();
+      }
+    }, 500);
+  },
+  // Browser or server flow: open the initial popup.
+  _constructPopupUrl: function(settings, type) {
+    this._state = this.randomString(6);
+    var url = settings.authorizationUrl + '?response_type=' + type + '&';
+    url += 'client_id=' + encodeURIComponent(settings.clientId) + '&';
+    if (settings.redirectUrl) {
+      url += 'redirect_uri=' + encodeURIComponent(settings.redirectUrl) + '&';
+    }
+    url += 'scope=' + encodeURIComponent(settings.scopes.join(' '));
+    url += '&state=' + encodeURIComponent(this._state);
+    return url;
+  },
+  /**
+   * Listen for a message from the popup.
+   * The message from the popup will be accepted only if following conditions are met:
+   * - origin of the event is the same as current origin
+   * - event's source location is the same as opened popup location.
+   * Token will be extracted and `oauth2-token-response` will be fired. Also, if the initial
+   * request came from an event, a `tokenValue` property fill be set on the event target.
+   */
+  _listenPopup: function(e) {
+    if (!location || !e.source || !this._popup || e.origin !== location.origin ||
+      e.source.location.href !== this._popup.location.href) {
+      return;
+    }
+    var tokenInfo = e.data;
+    if (tokenInfo.state !== this._state) {
+      this.clear();
+      this._eventSource = undefined;
+      this.fire('oauth2-error', {
+        'message': 'Invalid state returned by the oauth server.',
+        'code': 'invalid_state'
+      });
+      return;
+    }
+
+    if ('error' in tokenInfo) {
+      this.fire('oauth2-error', {
+        'message': tokenInfo.errorDescription || 'The request is invalid.',
+        'code': tokenInfo.error
+      });
+    } else {
+      if (this._type === 'implicit') {
+        this._setTokenInfo(tokenInfo);
+        if (this._eventSource) {
+          this._eventSource.tokenValue = tokenInfo.accessToken;
+        }
+        this.fire('oauth2-token-response', tokenInfo);
+        this._eventSource = undefined;
+      } else if (this._type === 'authorization_code') {
+        this._exchangeCodeValue = tokenInfo.code;
+        this._exchangeCode(tokenInfo.code);
+      }
+    }
+
+    this._popup.close();
+    this.clear();
+  },
+  // http://stackoverflow.com/a/10727155/1127848
+  randomString: function(len) {
+    return Math.round((Math.pow(36, len + 1) - Math.random() * Math.pow(36, len)))
+      .toString(36).slice(1);
+  },
+
+  _beforePopupUnloadHandler: function() {
+    // Popup is closed by this element so if data is not yet set it means that the
+    // user closed the window - probably some error.
+    // The UI state should reset if needed.
+    if (this.tokenInfo || (this._type === 'authorization_code' && this._exchangeCodeValue)) {
+      return;
+    }
+    this.clear();
+    this._eventSource = undefined;
+    this.fire('oauth2-error', {
+      'message': 'No response has been recorded.',
+      'code': 'no_response'
+    });
+  },
+
+  /**
+   * Exchange code for token.
+   * One note here. This element is intened to use with applications that test endpoints.
+   * It asks user to provide `client_secret` parameter and it is not a security concern to him.
+   * However, this method **can't be used in regular web applications** because it is a
+   * security risk and whole OAuth token exchange can be compromised. Secrets should never be
+   * present on client side.
+   *
+   * @param {String} code Returned code from the authorization endpoint.
+   */
+  _exchangeCode: function(code) {
+    var url = this._settings.accessTokenUrl;
+    var body = this._getCodeEchangeBody(this._settings, code);
+    this._tokenCodeRequest(url, body);
+  },
+
+  _getCodeEchangeBody: function(settings, code) {
+    var url = 'grant_type=authorization_code&';
+    url += 'client_id=' + encodeURIComponent(settings.clientId) + '&';
+    if (settings.redirectUrl) {
+      url += 'redirect_uri=' + encodeURIComponent(settings.redirectUrl) + '&';
+    }
+    url += 'code=' + encodeURIComponent(code) + '&';
+    url += 'client_secret=' + settings.clientSecret;
+    return url;
+  },
+
+  _tokenCodeRequest: function(url, body) {
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', function(e) {
+      try {
+        this._handleTokenCodeResponse(e.target.response,
+          e.target.getResponseHeader('content-type'));
+      } catch (e) {
+        this.fire('oauth2-error', {
+          'message': e.message || 'App error while decoding the token.',
+          'code': 0
+        });
+      }
+    }.bind(this));
+    xhr.addEventListener('error', this._handleTokenCodeError.bind(this));
+    xhr.open('POST', url);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(body);
+  },
+
+  // Decode token information from the response body.
+  _handleTokenCodeResponse: function(data, contentType) {
+    var tokenInfo;
+    if (contentType.indexOf('json') !== -1) {
+      try {
+        tokenInfo = JSON.parse(data);
+        for (var name in tokenInfo) {
+          var camelName = this._camel(name);
+          if (camelName) {
+            tokenInfo[camelName] = tokenInfo[name];
+          }
+        }
+      } catch (e) {
+        this.fire('oauth2-error', {
+          'message': 'The response could not be parsed. ' + e.message,
+          'code': 'response_parse'
+        });
+        this._settings = undefined;
+        this._eventSource = undefined;
+        this._exchangeCodeValue = undefined;
+        return;
+      }
+    } else {
+      tokenInfo = {};
+      data.split('&').forEach(function(p) {
+        var item = p.split('=');
+        var name = item[0];
+        var camelName = this._camel(name);
+        var value = decodeURIComponent(item[1]);
+        tokenInfo[name] = value;
+        tokenInfo[camelName] = value;
+      }, this);
+    }
+    this._setTokenInfo(tokenInfo);
+    if ('error' in tokenInfo) {
+      this.fire('oauth2-error', {
+        'message': tokenInfo.errorDescription || 'The request is invalid.',
+        'code': tokenInfo.error
+      });
+    } else {
+      if (this._eventSource) {
+        this._eventSource.tokenValue = tokenInfo.accessToken;
+      }
+      this.fire('oauth2-token-response', tokenInfo);
+    }
+
+    this._settings = undefined;
+    this._eventSource = undefined;
+    this._exchangeCodeValue = undefined;
+  },
+
+  _handleTokenCodeError: function(e) {
+    this.fire('oauth2-error', {
+      'message': 'Couldn\'t connect to the server. ' + e.message,
+      'code': 'request_error'
+    });
+    this._settings = undefined;
+    this._eventSource = undefined;
+  },
+
+  _camel: function(name) {
+    var i = 0;
+    var l;
+    var changed = false;
+    while ((l = name[i])) {
+      if ((l === '_' || l === '-') && i + 1 < name.length) {
+        name = name.substr(0, i) + name[i + 1].toUpperCase() + name.substr(i + 2);
+        changed = true;
+      }
+      i++;
+    }
+    return changed ? name : undefined;
+  },
+
+  _authorizePassword: function(settings) {
+    var url = this._settings.accessTokenUrl;
+    var body = this._getPasswordBody(settings);
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', function(e) {
+      try {
+        this._handleTokenCodeResponse(e.target.response,
+          e.target.getResponseHeader('content-type'));
+      } catch (e) {
+        this.fire('oauth2-error', {
+          'message': e.message || 'App error while decoding the token.',
+          'code': 0
+        });
+      }
+    }.bind(this));
+    xhr.addEventListener('error', this._handleTokenCodeError.bind(this));
+    xhr.open('POST', url);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(body);
+  },
+
+  _getPasswordBody: function(settings) {
+    var url = 'grant_type=password';
+    url += '&username=' + encodeURIComponent(settings.username);
+    url += '&password=' + encodeURIComponent(settings.password);
+    if (settings.clientId) {
+      url += '&client_id=' + encodeURIComponent(settings.clientId);
+    }
+    if (settings.scopes && settings.scopes.length) {
+      url += 'scope=' + encodeURIComponent(settings.scopes.join(' '));
+    }
+    return url;
+  },
+
+  _authorizeClientCredential: function(settings) {
+    var url = this._settings.accessTokenUrl;
+    var body = this._getClientCredentialBody(settings);
+    var xhr = new XMLHttpRequest();
+    xhr.addEventListener('load', function(e) {
+      try {
+        this._handleTokenCodeResponse(e.target.response,
+          e.target.getResponseHeader('content-type'));
+      } catch (e) {
+        this.fire('oauth2-error', {
+          'message': e.message || 'App error while decoding the token.',
+          'code': 0
+        });
+      }
+    }.bind(this));
+    xhr.addEventListener('error', this._handleTokenCodeError.bind(this));
+    xhr.open('POST', url);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(body);
+  },
+
+  _getClientCredentialBody: function(settings) {
+    var url = 'grant_type=client_credentials';
+    if (settings.clientId) {
+      url += '&client_id=' + encodeURIComponent(settings.clientId);
+    }
+    if (settings.clientSecret) {
+      url += '&client_secret=' + settings.clientSecret;
+    }
+    if (settings.scopes && settings.scopes.length) {
+      url += 'scope=' + encodeURIComponent(settings.scopes.join(' '));
+    }
+    return url;
+  }
+});
+</script>

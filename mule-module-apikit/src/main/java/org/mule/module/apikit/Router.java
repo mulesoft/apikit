@@ -9,7 +9,6 @@ package org.mule.module.apikit;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
-import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
@@ -20,11 +19,9 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.message.InternalMessage;
 import org.mule.runtime.core.processor.AbstractInterceptingMessageProcessor;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -46,7 +43,7 @@ public class Router extends AbstractInterceptingMessageProcessor
         event = EventHelper.addVariable(event, config.getOutboundHeadersMapName(), new HashMap<>());
         event = EventHelper.addVariable(event, config.getHttpStatusVarName(), "200");
 
-        HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes());
+        HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
 
         String path = UrlUtils.getRelativePath(attributes);
         path = path.isEmpty() ? "/" : path;
