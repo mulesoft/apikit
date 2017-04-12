@@ -8,7 +8,6 @@ package org.mule.module.apikit;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
@@ -53,7 +52,7 @@ public class getRamlV1IntegrationTestCase extends MuleArtifactFunctionalTestCase
                 .expect()
                 .response().body(containsString("RAML 0.8"))
                 .statusCode(200)
-                .when().get("/console");
+                .when().get("/console/");
     }
 
     @Test
@@ -62,6 +61,6 @@ public class getRamlV1IntegrationTestCase extends MuleArtifactFunctionalTestCase
         given().expect()
                 .response().body(not(containsString("RAML 0.8")))
                 .statusCode(200)
-                .when().get("/console");
+                .when().get("/console/");
     }
 }

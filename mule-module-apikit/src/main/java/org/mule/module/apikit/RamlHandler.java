@@ -7,7 +7,6 @@
 package org.mule.module.apikit;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.parser.ParserService;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
@@ -158,6 +157,17 @@ public class RamlHandler
                 APPLICATION_RAML.equals(AttributesHelper.getHeaderIgnoreCase(messageAttributes,"Accept")));
     }
 
+    public boolean isRequestingRamlV1ForConsole(HttpRequestAttributes messageAttributes)
+    {
+        String listenerPath = UrlUtils.getListenerPath(messageAttributes);
+        return (!isParserV2() &&
+                (listenerPath.equals(messageAttributes.getRequestPath()) ||
+                        (listenerPath + "/").equals(messageAttributes.getRequestPath())) &&
+                ActionType.GET.toString().equals(messageAttributes.getMethod().toUpperCase()) &&
+                (APPLICATION_RAML.equals(AttributesHelper.getHeaderIgnoreCase(messageAttributes,"Accept"))
+                        || messageAttributes.getQueryString().equals(RAML_QUERY_STRING)));
+    }
+
     public boolean isRequestingRamlV2(HttpRequestAttributes messageAttributes)
     {
         String consolePath = UrlUtils.getListenerPath(messageAttributes);
@@ -177,7 +187,7 @@ public class RamlHandler
                 resourcesFullPath += apiResourcesRelativePath.substring(1);
             }
         }
-        return messageAttributes.getQueryString().equals(RAML_QUERY_STRING)
+        return isParserV2() && messageAttributes.getQueryString().equals(RAML_QUERY_STRING)
                && ActionType.GET.toString().equals(messageAttributes.getMethod().toUpperCase())
                 && messageAttributes.getRequestPath().startsWith(resourcesFullPath);
     }
@@ -214,6 +224,14 @@ public class RamlHandler
             }
         }
         return null;
+    }
+
+    public String getRootRamlLocationForV2() {
+        return "this.location.href" + " + '" +  apiResourcesRelativePath + "/?" + RAML_QUERY_STRING + "'";
+    }
+
+    public String getRootRamlLocationForV1() {
+        return "this.location.href" + " + '" +  "?" + RAML_QUERY_STRING + "'";
     }
 
     public String getSuccessStatusCode(IAction action)

@@ -9,18 +9,19 @@ package org.mule.module.apikit;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.Event;
-import org.mule.service.http.api.domain.ParameterMap;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
 
 public class EventHelper
 {
+    private EventHelper()
+    {
+
+    }
 
     public static Charset getEncoding(Event event)
     {
@@ -69,25 +70,30 @@ public class EventHelper
         return value;
     }
 
-    //public static Event addOutboundProperty(Event event, String outboundHeadersMapName, String key, String value)
-    //{
-    //    Map<String, String> header = new HashMap<>();
-    //    header.put(key, value);
-    //    return addOutboundProperties(event, outboundHeadersMapName, header);
-    //}
-    //
-    //public static Event addOutboundProperties(Event event, String outboundHeadersMapName, Map<String, String> headers)
-    //{
-    //    Event.Builder builder = Event.builder(event);
-    //    Map<String, String> outboundHeaders = new HashMap<>();
-    //    if (event.getVariable(outboundHeadersMapName) != null)
-    //    {
-    //        outboundHeaders = new HashMap<>((Map<String, String>) event.getVariable(outboundHeadersMapName).getValue());
-    //    }
-    //    outboundHeaders.putAll(headers);
-    //    builder.addVariable(outboundHeadersMapName, outboundHeaders);
-    //    return builder.build();
-    //}
+    public static Event addOutboundProperty(Event event, String outboundHeadersMapName, String key, String value)
+    {
+        Map<String, String> header = new HashMap<>();
+        header.put(key, value);
+        return addOutboundProperties(event, outboundHeadersMapName, header);
+    }
+
+    public static Event addOutboundProperties(Event event, String outboundHeadersMapName, Map<String, String> headers)
+    {
+        Event.Builder builder = Event.builder(event);
+        Map<String, String> outboundHeaders = new HashMap<>();
+        if (event.getVariable(outboundHeadersMapName) != null)
+        {
+            outboundHeaders = new HashMap<>((Map<String, String>) event.getVariable(outboundHeadersMapName).getValue());
+        }
+        outboundHeaders.putAll(headers);
+        builder.addVariable(outboundHeadersMapName, outboundHeaders);
+        return builder.build();
+    }
+
+    public static HttpRequestAttributes getHttpRequestAttributes(Event event)
+    {
+        return ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
+    }
 
     //public static Event setPayload(Event event, Object payload, String primaryType, String secondaryType)
     //{

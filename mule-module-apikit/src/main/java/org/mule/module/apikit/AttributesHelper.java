@@ -15,6 +15,10 @@ import java.util.Map;
 
 public class AttributesHelper
 {
+  private AttributesHelper()
+  {
+      // Prevents instantiation :)
+  }
 
   //public static HttpRequestAttributes addHeader(HttpRequestAttributes oldHttpRequestAttributes, String key, String value) {
   //  Map<String, LinkedList<String>> mapHeaders = new HashMap<>();
@@ -154,4 +158,5 @@ public class AttributesHelper
     }
     return acceptedResponseMediaTypes.contains(candidateMediaType);
   }
+
 }

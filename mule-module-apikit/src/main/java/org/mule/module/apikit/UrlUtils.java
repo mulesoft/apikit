@@ -20,6 +20,8 @@ public class UrlUtils
   public static final String HTTP_CONTEXT_PATH_PROPERTY = "http.context.path";
   public static final String HTTP_REQUEST_PATH_PROPERTY = "http.request.path";
 
+  private UrlUtils() {}
+
   //public static String getBaseSchemeHostPort(Event event) {
   //  String host = ((HttpRequestAttributes) event.getMessage().getAttributes()).getHeaders().get("host");
   //  String chHost = System.getProperty("fullDomain");
@@ -96,6 +98,10 @@ public class UrlUtils
         relativePath = "/" + relativePath;
       }
     }
+    else {
+      relativePath += "/";
+    }
+
     return relativePath;
   }
 
@@ -140,12 +146,12 @@ public class UrlUtils
   }
 
 
-  //public static String getBasePath(Message message) {
-  //  String baseAndApiPath = ((HttpRequestAttributes) message.getAttributes()).getListenerPath();
-  //  String requestPath = ((HttpRequestAttributes) message.getAttributes()).getRequestPath();
-  //  int character = getEndOfBasePathIndex(baseAndApiPath, requestPath);
-  //  return requestPath.substring(0, character);
-  //}
+  public static String getBasePath(HttpRequestAttributes attributes) {
+    String baseAndApiPath = attributes.getListenerPath();
+    String requestPath = attributes.getRequestPath();
+    int character = getEndOfBasePathIndex(baseAndApiPath, requestPath);
+    return requestPath.substring(0, character);
+  }
   //
   //public static String getQueryString(Message message) {
   //  String queryString = ((HttpRequestAttributes) message.getAttributes()).getQueryString();
