@@ -170,7 +170,7 @@
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-http-ext</artifactId>
             <version>${mule.version}</version>
-            <scope>provided</scope>
+            <!--<scope>provided</scope>-->
             <classifier>mule-plugin</classifier>
         </dependency>
         <!--TODO: The dependency to mule-service-http-api is used to retrieve the ParameterMap class. It can be removed once it is passed to mule-api-->

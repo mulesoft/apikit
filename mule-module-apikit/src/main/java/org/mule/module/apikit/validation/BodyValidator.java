@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.validation;
 
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.AttributesHelper;
 import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.MessageHelper;
 import org.mule.module.apikit.exception.MuleRestException;
@@ -42,7 +44,7 @@ public class BodyValidator
         }
 
         Message newMessage = message;
-        String requestMimeTypeName = MessageHelper.getMediaType(message);
+        String requestMimeTypeName = AttributesHelper.getMediaType((HttpRequestAttributes) message.getAttributes());
         boolean found = false;
         for (String mimeTypeName : action.getBody().keySet())
         {
@@ -59,7 +61,7 @@ public class BodyValidator
                 RestSchemaValidator schemaValidator = new RestSchemaValidator(mimeType, config, action);
                 newMessage = schemaValidator.validate(message);
 
-                FormParametersValidator formParametersValidator = new FormParametersValidator(mimeType, config.isParserV2());
+                FormParametersValidator formParametersValidator = new FormParametersValidator(mimeType, config.getRamlHandler().isParserV2());
                 newMessage = formParametersValidator.validate(newMessage);
 
                 break;

@@ -20,7 +20,6 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.message.InternalMessage;
 import org.mule.runtime.core.processor.AbstractInterceptingMessageProcessor;
 
 import java.util.HashMap;
@@ -67,7 +66,7 @@ public class Router extends AbstractInterceptingMessageProcessor
         IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
 
         event = validateRequest(event, config, resource, attributes, resolvedVariables);
-        String contentType = MessageHelper.getHeaderIgnoreCase(event.getMessage(), HeaderNames.CONTENT_TYPE);
+        String contentType = AttributesHelper.getHeaderIgnoreCase((HttpRequestAttributes) event.getMessage().getAttributes(), HeaderNames.CONTENT_TYPE);
         Flow flow = config.getFlowFinder().getFlow(resource,attributes.getMethod().toLowerCase(), contentType);
         return flow.process(event);
     }

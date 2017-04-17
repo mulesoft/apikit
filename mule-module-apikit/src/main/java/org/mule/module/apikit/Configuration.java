@@ -70,7 +70,14 @@ public class Configuration implements Initialisable
 
     public void initialise() throws InitialisationException
     {
-        ramlHandler = new RamlHandler(raml, getApiServer(), keepRamlBaseUri, null);
+        try
+        {
+            ramlHandler = new RamlHandler(raml, getApiServer(), keepRamlBaseUri);
+        }
+        catch (IOException e)
+        {
+            throw new InitialisationException(e.fillInStackTrace(), this);
+        }
         flowFinder = new FlowFinder(ramlHandler, getName(), muleContext, flowMappings);
         buildResourcePatternCaches();
         registry.registerConfiguration(this);
@@ -204,11 +211,6 @@ public class Configuration implements Initialisable
         return flowFinder;
     }
 
-    //ramlHandler
-    public boolean isParserV2()
-    {
-        return ramlHandler.isParserV2();
-    }
 
     //public void setApi(IRaml api)
     //{
@@ -254,6 +256,11 @@ public class Configuration implements Initialisable
 
     public void setRamlHandler(RamlHandler ramlHandler) {
         this.ramlHandler = ramlHandler; //TODO REPLACE WITH REFLECTION
+    }
+
+    public RamlHandler getRamlHandler()
+    {
+        return this.ramlHandler;
     }
 
 }

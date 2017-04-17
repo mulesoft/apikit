@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import org.mule.module.apikit.AttributesRegenerator;
+import org.mule.module.apikit.AttributesHelper;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.raml.interfaces.model.IResource;
@@ -54,7 +54,7 @@ public class UriParametersValidator {
 
     for (String name : resolvedVariables.names()) {
       String value = String.valueOf(resolvedVariables.get(name));
-      uriParams = AttributesRegenerator.addParam(uriParams, name, value);
+      uriParams = AttributesHelper.addParam(uriParams, name, value);
     }
     return uriParams;
   }

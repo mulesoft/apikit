@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.validation.body;
 
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.AttributesHelper;
 import org.mule.module.apikit.EventHelper;
 import org.mule.module.apikit.MessageHelper;
 import org.mule.module.apikit.exception.BadRequestException;
@@ -44,7 +46,7 @@ public class FormParametersValidator
 
     public Message validate(Message message) throws MuleRestException
     {
-        String requestMimeType = MessageHelper.getMediaType(message);
+        String requestMimeType = AttributesHelper.getMediaType((HttpRequestAttributes)message.getAttributes());
         if (actionMimeType.getFormParameters() != null && requestMimeType.contains("multipart/form-data"))
         {
             validateMultipartForm(message, actionMimeType.getFormParameters());

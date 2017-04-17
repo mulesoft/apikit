@@ -13,31 +13,31 @@
         <httpn:listener-connection host="localhost" port="${serverPort}"/>
     </httpn:listener-config>
 
-    <apikit:config name="apikitConfig" raml="simple-routing/simple.raml"
-                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
-            <apikit:flow-mapping resource="/resources" action="get" flow-ref="subflow"/>
-            <apikit:flow-mapping resource="/resources2" action="get" flow-ref="subflow2"/>
-
-    </apikit:config>
+    <apikit:config name="apikitConfig" raml="raml-handler/simple10-with-example.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">
         <httpn:listener config-ref="httpListenerConfigDefault" path="/api/*">
             <httpn:response statusCode="#[httpStatus]"><httpn:headers>#[outboundHeaders]</httpn:headers></httpn:response>
-            <httpn:error-response statusCode="500"><httpn:headers>#[outboundHeaders]</httpn:headers></httpn:error-response>
+            <httpn:error-response statusCode="500">
+                <httpn:headers>#[outboundHeaders]</httpn:headers></httpn:error-response>
         </httpn:listener>
         <apikit:router config-ref="apikitConfig"/>
     </flow>
 
-    <flow name="subflow">
+    <flow name="get:/resources">
         <logger level="INFO" message="inside of get:/resources"/>
         <set-payload value="hello"/>
     </flow>
 
-    <flow name="subflow2">
-        <logger level="INFO" message="inside of get:/resources2"/>
-        <set-payload value="hello2"/>
+    <flow name="consoleFlow">
+        <httpn:listener config-ref="httpListenerConfigDefault" path="/console/*">
+            <httpn:response statusCode="#[httpStatus]"><httpn:headers>#[outboundHeaders]</httpn:headers></httpn:response>
+            <httpn:error-response statusCode="500">
+                <httpn:headers>#[outboundHeaders]</httpn:headers></httpn:error-response>
+        </httpn:listener>
+        <apikit:console config-ref="apikitConfig"/>
     </flow>
-
 
     <error-handler name="defaultErrorHandler">
         <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotFoundException)]">

@@ -6,7 +6,9 @@
  */
 package org.mule.module.apikit.validation.body.schema.v1;
 
+import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.ApikitRegistry;
+import org.mule.module.apikit.AttributesHelper;
 import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.MessageHelper;
 import org.mule.module.apikit.exception.BadRequestException;
@@ -36,7 +38,7 @@ public class RestSchemaV1Validator implements IRestSchemaValidator
 
     public Message validate(Message message) throws BadRequestException
     {
-        String requestMimeType = MessageHelper.getMediaType(message);
+        String requestMimeType = AttributesHelper.getMediaType((HttpRequestAttributes)message.getAttributes());
         if (requestMimeType.contains("json"))
         {
             RestJsonSchemaValidator validatorV1 = new RestJsonSchemaValidator(jsonSchemaCache);

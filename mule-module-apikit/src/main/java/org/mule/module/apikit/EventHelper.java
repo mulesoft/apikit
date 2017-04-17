@@ -11,7 +11,6 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.Event;
-import org.mule.runtime.core.api.message.InternalMessage;
 import org.mule.service.http.api.domain.ParameterMap;
 
 import java.nio.charset.Charset;
@@ -37,7 +36,7 @@ public class EventHelper
     public static Event regenerateEvent(Event event, HttpRequestAttributes newAttributes)
     {
         Event.Builder builder = Event.builder(event);
-        InternalMessage.Builder messageBuilder = InternalMessage.builder(event.getMessage());
+        Message.Builder messageBuilder = Message.builder(event.getMessage());
         messageBuilder.attributes(newAttributes);
         return builder.message(messageBuilder.build()).build();
     }
@@ -98,14 +97,11 @@ public class EventHelper
     //    return builder.message(messageBuilder.build()).build();
     //}
     //
-    //public static Event setPayload(Event event, Object payload, String mimetype)
-    //{
-    //    Event.Builder builder = Event.builder(event);
-    //    InternalMessage.Builder messageBuilder = InternalMessage.builder(event.getMessage());
-    //    messageBuilder.payload(payload);
-    //    messageBuilder.mediaType(MediaType.parse(mimetype));
-    //    return builder.message(messageBuilder.build()).build();
-    //}
+    public static Event setPayload(Event event, Object payload, String mimetype)
+    {
+        Event.Builder builder = Event.builder(event);
+        return builder.message(MessageHelper.setPayload(event.getMessage(), payload, mimetype)).build();
+    }
     //
     //
     //

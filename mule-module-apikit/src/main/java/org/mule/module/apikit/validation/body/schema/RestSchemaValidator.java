@@ -38,7 +38,7 @@ public class RestSchemaValidator
 
     private IRestSchemaValidator determineValidator()
     {
-        if(config.isParserV2())
+        if(config.getRamlHandler().isParserV2())
         {
             return new RestSchemaV2Validator(mimeType);
         }

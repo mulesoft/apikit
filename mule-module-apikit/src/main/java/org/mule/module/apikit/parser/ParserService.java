@@ -29,20 +29,21 @@ public class ParserService {
   private ParserWrapper parserWrapper;
   private boolean parserV2;
 
-  public ParserService(String ramlPath, String appHome) {
+  public ParserService(String ramlPath) {
     this.ramlPath = ramlPath;
-    setupV2ResourceLoader(appHome);
+//    setupV2ResourceLoader(appHome);
+    resourceLoaderV2 = new DefaultResourceLoader();
     checkParserVersion();
-    setupParserWrapper(ramlPath, appHome);
+    setupParserWrapper(ramlPath);
   }
 
-  private void setupV2ResourceLoader(String appHome) {
-    if (appHome != null) {
-      resourceLoaderV2 = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(appHome));
-    } else {
-      resourceLoaderV2 = new DefaultResourceLoader();
-    }
-  }
+  //private void setupV2ResourceLoader(String appHome) {
+  //  if (appHome != null) {
+  //    resourceLoaderV2 = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(appHome));
+  //  } else {
+  //    resourceLoaderV2 = new DefaultResourceLoader();
+  //  }
+  //}
 
   public boolean isParserV2() {
     return parserV2;
@@ -57,11 +58,11 @@ public class ParserService {
     logger.debug("Using parser " + (parserV2 ? "V2" : "V1"));
   }
 
-  private void setupParserWrapper(String ramlPath, String appHome) {
+  private void setupParserWrapper(String ramlPath) {
     if (parserV2) {
-      parserWrapper = new ParserWrapperV2(ramlPath, appHome);
+      parserWrapper = new ParserWrapperV2(ramlPath);
     } else {
-      parserWrapper = new ParserWrapperV1(ramlPath, appHome);
+      parserWrapper = new ParserWrapperV1(ramlPath);
     }
   }
 

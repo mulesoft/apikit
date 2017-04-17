@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import org.mule.module.apikit.AttributesRegenerator;
+import org.mule.module.apikit.AttributesHelper;
 import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -40,9 +40,9 @@ public class QueryParameterValidator {
 
         if (expected.getDefaultValue() != null) {
           queryString =
-              AttributesRegenerator.addQueryString(queryString, queryParams.size(), expectedKey, expected.getDefaultValue());
+              AttributesHelper.addQueryString(queryString, queryParams.size(), expectedKey, expected.getDefaultValue());
 
-          queryParams = AttributesRegenerator.addParam(queryParams, expectedKey, expected.getDefaultValue());
+          queryParams = AttributesHelper.addParam(queryParams, expectedKey, expected.getDefaultValue());
         }
       } else {
 

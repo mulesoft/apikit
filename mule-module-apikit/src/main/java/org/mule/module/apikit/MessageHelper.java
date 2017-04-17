@@ -6,38 +6,11 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
-import org.mule.runtime.core.api.message.InternalMessage;
-import org.mule.service.http.api.domain.ParameterMap;
 
 public class MessageHelper
 {
-    public static String getHeaderIgnoreCase(Message message, String name)
-    {
-        ParameterMap headers = ((HttpRequestAttributes)message.getAttributes()).getHeaders();
-        return getParamIgnoreCase(headers, name);
-    }
-
-    public static String getParamIgnoreCase(ParameterMap parameters, String name)
-    {
-        for (String header : parameters.keySet())
-        {
-            if (header.equalsIgnoreCase(name.toLowerCase()))
-            {
-                return parameters.get(header);
-            }
-        }
-        return null;
-    }
-
-    public static String getMediaType(Message message)
-    {
-        String contentType = getHeaderIgnoreCase(message, HeaderNames.CONTENT_TYPE);
-        return contentType != null ? contentType.split(";")[0] : null;
-    }
-
     public static Message setPayload(Message message, Object payload)
     {
         MediaType mediaType = null;
@@ -51,7 +24,7 @@ public class MessageHelper
 
     public static Message setPayload(Message message, Object payload, MediaType mediatype)
     {
-        InternalMessage.Builder messageBuilder = InternalMessage.builder(message);
+        Message.Builder messageBuilder = Message.builder(message);
         messageBuilder.payload(payload);
         if (mediatype != null)
         {

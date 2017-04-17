@@ -30,13 +30,9 @@ public class ParserWrapperV2 implements ParserWrapper {
   private final String ramlPath;
   private final ResourceLoader resourceLoader;
 
-  public ParserWrapperV2(String ramlPath, String appHome) {
+  public ParserWrapperV2(String ramlPath) {
     this.ramlPath = ramlPath;
-    if (appHome != null) {
-      this.resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(appHome));
-    } else {
-      this.resourceLoader = new DefaultResourceLoader();
-    }
+    this.resourceLoader = new DefaultResourceLoader();
   }
 
   @Override
@@ -59,7 +55,7 @@ public class ParserWrapperV2 implements ParserWrapper {
 
   @Override
   public String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort) {
-    return UrlUtils.rewriteBaseUri(ramlContent, newSchemeHostPort);
+    return UrlUtils.replaceBaseUri(ramlContent, newSchemeHostPort);
   }
 
   @Override

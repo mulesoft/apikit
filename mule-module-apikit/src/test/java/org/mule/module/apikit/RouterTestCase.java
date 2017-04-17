@@ -18,8 +18,7 @@ import org.junit.Test;
 
 import com.jayway.restassured.RestAssured;
 
-@ArtifactClassLoaderRunnerConfig(plugins = {"org.mule.modules:mule-module-sockets", "org.mule.modules:mule-module-http-ext"},
-        providedInclusions = "org.mule.modules:mule-module-sockets")
+@ArtifactClassLoaderRunnerConfig
 public class RouterTestCase extends MuleArtifactFunctionalTestCase
 {
     @Rule

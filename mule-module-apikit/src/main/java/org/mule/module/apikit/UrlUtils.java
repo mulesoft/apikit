@@ -99,6 +99,47 @@ public class UrlUtils
     return relativePath;
   }
 
+  public static String getListenerPath(HttpRequestAttributes attributes)
+  {
+    String listenerPath =  attributes.getListenerPath();
+    String requestPath = attributes.getRequestPath();
+    if (!listenerPath.startsWith("/"))
+    {
+      listenerPath = "/" + listenerPath;
+    }
+    if (!requestPath.startsWith("/"))
+    {
+      requestPath = "/" + requestPath;
+    }
+    int slashesAmount = 0;
+    for (int i =0; i < listenerPath.length(); i ++)
+    {
+      if (listenerPath.charAt(i) == '/')
+      {
+        slashesAmount++;
+      }
+    }
+    String[] split = requestPath.split("/");
+    String result = "";
+    if (split.length == 0)
+    {
+      return "/";
+    }
+    if (split.length == 1 && split[0].equals(""))
+    {
+      return "/";
+    }
+    for (int i = 0; i < slashesAmount; i ++)
+    {
+      if (!split[i].equals(""))
+      {
+        result += "/" + split[i];
+      }
+    }
+    return result;
+  }
+
+
   //public static String getBasePath(Message message) {
   //  String baseAndApiPath = ((HttpRequestAttributes) message.getAttributes()).getListenerPath();
   //  String requestPath = ((HttpRequestAttributes) message.getAttributes()).getRequestPath();
@@ -111,9 +152,9 @@ public class UrlUtils
   //  return queryString == null ? "" : queryString;
   //}
 
-  public static String rewriteBaseUri(String raml, String baseSchemeHostPort) {
-    return replaceBaseUri(raml, "https?://[^/]*", baseSchemeHostPort);
-  }
+  //public static String rewriteBaseUri(String raml, String baseSchemeHostPort) {
+  //  return replaceBaseUri(raml, "https?://[^/]*", baseSchemeHostPort);
+  //}
 
   public static String replaceBaseUri(String raml, String newBaseUri) {
     return replaceBaseUri(raml, ".*$", newBaseUri);

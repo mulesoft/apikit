@@ -42,13 +42,9 @@ public class ParserWrapperV1 implements ParserWrapper {
   private final ResourceLoader resourceLoader;
   private Raml baseApi; //original api to clone
 
-  public ParserWrapperV1(String ramlPath, String appHome) {
+  public ParserWrapperV1(String ramlPath) {
     this.ramlPath = ramlPath;
-    if (appHome != null) {
-      this.resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(appHome));
-    } else {
-      this.resourceLoader = new DefaultResourceLoader();
-    }
+    this.resourceLoader = new DefaultResourceLoader();
   }
 
   @Override

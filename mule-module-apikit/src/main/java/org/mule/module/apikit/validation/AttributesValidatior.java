@@ -7,26 +7,16 @@
 package org.mule.module.apikit.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.AttributesRegenerator;
+import org.mule.module.apikit.AttributesHelper;
 import org.mule.module.apikit.Configuration;
-import org.mule.module.apikit.UrlUtils;
-import org.mule.module.apikit.exception.InvalidHeaderException;
-import org.mule.module.apikit.exception.InvalidQueryParameterException;
-import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.uri.ResolvedVariables;
-import org.mule.module.apikit.uri.URIPattern;
-import org.mule.module.apikit.uri.URIResolver;
 import org.mule.module.apikit.validation.attributes.HeadersValidator;
 import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
 import org.mule.module.apikit.validation.attributes.UriParametersValidator;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.service.http.api.domain.ParameterMap;
-
-import com.sun.tools.javac.comp.Resolve;
-
-import java.util.concurrent.ExecutionException;
 
 //import org.mule.runtime.core.api.DefaultMuleException;
 
@@ -63,7 +53,7 @@ public class AttributesValidatior {
     headers = headersValidator.getNewHeaders();
 
     //regenerate attributes
-    return AttributesRegenerator.replaceParams(attributes, headers, queryParams, queryString, uriParams);
+    return AttributesHelper.replaceParams(attributes, headers, queryParams, queryString, uriParams);
   }
 
 }
