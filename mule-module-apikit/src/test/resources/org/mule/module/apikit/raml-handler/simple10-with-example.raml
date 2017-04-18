@@ -1,0 +1,14 @@
+#%RAML 1.0
+---
+title: Leagues API
+version: v1
+baseUri: http://localhost/myapi
+
+/user:
+    displayName: User
+    get:
+        responses:
+            200:
+                body:
+                    application/json:
+                        example: !include example.json
