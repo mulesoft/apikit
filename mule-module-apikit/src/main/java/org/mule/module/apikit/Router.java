@@ -45,7 +45,7 @@ public class Router extends AbstractInterceptingMessageProcessor
         event = EventHelper.addVariable(event, config.getOutboundHeadersMapName(), new HashMap<>());
         event = EventHelper.addVariable(event, config.getHttpStatusVarName(), "200");
 
-        HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes());
+        HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes().getValue());
 
         String path = UrlUtils.getRelativePath(attributes);
         path = path.isEmpty() ? "/" : path;
@@ -66,7 +66,7 @@ public class Router extends AbstractInterceptingMessageProcessor
         IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
 
         event = validateRequest(event, config, resource, attributes, resolvedVariables);
-        String contentType = AttributesHelper.getHeaderIgnoreCase((HttpRequestAttributes) event.getMessage().getAttributes(), HeaderNames.CONTENT_TYPE);
+        String contentType = AttributesHelper.getHeaderIgnoreCase((HttpRequestAttributes) event.getMessage().getAttributes().getValue(), HeaderNames.CONTENT_TYPE);
         Flow flow = config.getFlowFinder().getFlow(resource,attributes.getMethod().toLowerCase(), contentType);
         return flow.process(event);
     }

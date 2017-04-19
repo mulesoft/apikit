@@ -44,7 +44,7 @@ public class BodyValidator
         }
 
         Message newMessage = message;
-        String requestMimeTypeName = AttributesHelper.getMediaType((HttpRequestAttributes) message.getAttributes());
+        String requestMimeTypeName = AttributesHelper.getMediaType((HttpRequestAttributes) message.getAttributes().getValue());
         boolean found = false;
         for (String mimeTypeName : action.getBody().keySet())
         {

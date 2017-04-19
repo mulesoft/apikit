@@ -17,6 +17,7 @@ import org.mule.runtime.api.message.Message;
 
 import com.google.common.net.HttpHeaders;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,12 +52,19 @@ public class RamlHandler
     {
         this.keepRamlBaseUri = keepRamlBaseUri;
         this.apiServer = apiServer;
-        URL ramlLocationUrl = this.getClass().getResource(ramlLocation);
-        if (ramlLocationUrl == null)
+        //URL ramlLocationUrl = this.getClass().getResource(ramlLocation);
+        //if (ramlLocationUrl == null)
+        //{
+        //    throw new IOException("Raml resource not found at: " + ramlLocation);
+        //}
+        if (!ramlLocation.startsWith("/"))
         {
-            throw new IOException("Raml resource not found at: " + ramlLocation);
+            if (!ramlLocation.startsWith(DEFAULT_API_RESOURCES_PATH))
+            {
+                ramlLocation = DEFAULT_API_RESOURCES_PATH + ramlLocation;
+            }
         }
-        parserService = new ParserService(ramlLocationUrl.toString());
+        parserService = new ParserService(ramlLocation);
         parserService.validateRaml();
         this.api = parserService.build();
         if (!keepRamlBaseUri && apiServer != null)
@@ -68,10 +76,11 @@ public class RamlHandler
         if (idx > 0)
         {
             this.apiResourcesRelativePath = ramlLocation.substring(0, idx + 1);
-            if (!apiResourcesRelativePath.startsWith("/"))
-            {
-                apiResourcesRelativePath = "/" + apiResourcesRelativePath;
-            }
+            this.apiResourcesRelativePath = sanitarizeResourceRelativePath(apiResourcesRelativePath);
+            //if (!apiResourcesRelativePath.startsWith("/"))
+            //{
+            //    apiResourcesRelativePath = "/" + apiResourcesRelativePath;
+            //}
             //apiResourcesRelativePath = apiResourcesRelativePath + "?" + RAML_QUERY_STRING;
         }
     }
@@ -93,7 +102,16 @@ public class RamlHandler
     //resourcesRelativePath should not contain the console path
     public String getRamlParserV2(String resourceRelativePath) throws NotFoundException, IOException
     {
-        if (resourceRelativePath.equals(apiResourcesRelativePath))
+        resourceRelativePath = sanitarizeResourceRelativePath(resourceRelativePath);
+        if (resourceRelativePath.contains(".."))
+        {
+            throw new IOException("\"..\" is not allowed");
+        }
+        if (!resourceRelativePath.startsWith(DEFAULT_API_RESOURCES_PATH))
+        {
+            throw new IOException("Request must start with: " + DEFAULT_API_RESOURCES_PATH);
+        }
+        if (apiResourcesRelativePath.equals(resourceRelativePath))
         {
             //root raml
             String rootRaml = parserService.dumpRaml(api);
@@ -110,8 +128,11 @@ public class RamlHandler
             ByteArrayOutputStream baos = null;
             try
             {
-                resourceRelativePath = sanitarizeResourceRelativePath(resourceRelativePath);
-                apiResource = this.getClass().getResourceAsStream(resourceRelativePath);
+                apiResource = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceRelativePath);
+
+                //URL url = new URL(resourceRelativePath);
+                //apiResource = new BufferedInputStream(url.openStream());
+//                        this.getClass().getResourceAsStream(resourceRelativePath);
 
                 if (apiResource == null)
                 {
@@ -150,8 +171,24 @@ public class RamlHandler
     public boolean isRequestingRamlV2(HttpRequestAttributes messageAttributes)
     {
         String consolePath = UrlUtils.getListenerPath(messageAttributes);
+        String resourcesFullPath = consolePath;
+        if (!consolePath.endsWith("/"))
+        {
+            if (!apiResourcesRelativePath.startsWith("/"))
+            {
+                resourcesFullPath += "/";
+            }
+            resourcesFullPath += apiResourcesRelativePath;
+        }
+        else
+        {
+            if (apiResourcesRelativePath.startsWith("/") && apiResourcesRelativePath.length() >1)
+            {
+                resourcesFullPath += apiResourcesRelativePath.substring(1);
+            }
+        }
         return messageAttributes.getQueryString().equals(RAML_QUERY_STRING)
-                && messageAttributes.getRequestPath().startsWith(consolePath + apiResourcesRelativePath);
+                && messageAttributes.getRequestPath().startsWith(resourcesFullPath);
     }
 
     private String sanitarizeResourceRelativePath(String resourceRelativePath)
@@ -160,6 +197,11 @@ public class RamlHandler
         if (resourceRelativePath.startsWith("/") && resourceRelativePath.length() > 1)
         {
             resourceRelativePath = resourceRelativePath.substring(1, resourceRelativePath.length());
+        }
+        //delete querystring
+        if (resourceRelativePath.contains("?raml"))
+        {
+            resourceRelativePath = resourceRelativePath.substring(0,resourceRelativePath.indexOf('?'));
         }
         //delete last slash
         if (resourceRelativePath.endsWith("/") && resourceRelativePath.length() > 1)

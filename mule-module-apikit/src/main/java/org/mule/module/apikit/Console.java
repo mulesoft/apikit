@@ -39,7 +39,7 @@ public class Console implements Processor
         event = EventHelper.addVariable(event, config.getOutboundHeadersMapName(), new HashMap<>());
         event = EventHelper.addVariable(event, config.getHttpStatusVarName(), "200");
 
-        HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes());
+        HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
 
         String relativePath = UrlUtils.getRelativePath(attributes);
 

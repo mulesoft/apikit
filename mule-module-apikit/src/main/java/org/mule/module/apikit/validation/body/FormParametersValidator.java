@@ -46,7 +46,7 @@ public class FormParametersValidator
 
     public Message validate(Message message) throws MuleRestException
     {
-        String requestMimeType = AttributesHelper.getMediaType((HttpRequestAttributes)message.getAttributes());
+        String requestMimeType = AttributesHelper.getMediaType((HttpRequestAttributes)message.getAttributes().getValue());
         if (actionMimeType.getFormParameters() != null && requestMimeType.contains("multipart/form-data"))
         {
             validateMultipartForm(message, actionMimeType.getFormParameters());

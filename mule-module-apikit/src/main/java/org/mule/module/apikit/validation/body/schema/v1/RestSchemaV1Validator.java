@@ -38,7 +38,7 @@ public class RestSchemaV1Validator implements IRestSchemaValidator
 
     public Message validate(Message message) throws BadRequestException
     {
-        String requestMimeType = AttributesHelper.getMediaType((HttpRequestAttributes)message.getAttributes());
+        String requestMimeType = AttributesHelper.getMediaType((HttpRequestAttributes)message.getAttributes().getValue());
         if (requestMimeType.contains("json"))
         {
             RestJsonSchemaValidator validatorV1 = new RestJsonSchemaValidator(jsonSchemaCache);
