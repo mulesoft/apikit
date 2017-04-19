@@ -13,7 +13,7 @@
         <httpn:listener-connection host="localhost" port="${serverPort}"/>
     </httpn:listener-config>
 
-    <apikit:config name="apikitConfig" raml="raml-handler/simple10-with-example.raml"
+    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/raml-handler/simple10-with-example.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">

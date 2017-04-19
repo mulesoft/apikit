@@ -52,7 +52,7 @@ public class RamlHandlerIntegrationTestCase extends MuleArtifactFunctionalTestCa
                 .expect()
                 .response().body(containsString("RAML 1.0"))
                 .statusCode(200)
-                .when().get("/console/raml-handler/?raml");
+                .when().get("/console/org/mule/module/apikit/raml-handler/?raml");
     }
 
     @Test
@@ -62,6 +62,6 @@ public class RamlHandlerIntegrationTestCase extends MuleArtifactFunctionalTestCa
                 .expect()
                 .response().body(containsString("jane"))
                 .statusCode(200)
-                .when().get("/console/raml-handler/example.json/?raml");
+                .when().get("/console/org/mule/module/apikit/raml-handler/example.json/?raml");
     }
 }

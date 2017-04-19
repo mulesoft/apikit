@@ -13,7 +13,7 @@
         <httpn:listener-connection host="localhost" port="${serverPort}"/>
     </httpn:listener-config>
 
-    <apikit:config name="apikitConfig" raml="simple-routing/simple.raml"
+    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/simple-routing/simple.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
             <apikit:flow-mapping resource="/resources" action="get" flow-ref="subflow"/>
             <apikit:flow-mapping resource="/resources2" action="get" flow-ref="subflow2"/>

@@ -6,22 +6,18 @@
  */
 package org.mule.module.apikit;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.processor.Processor;
 
 import javax.inject.Inject;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Console implements Processor
 {
@@ -30,6 +26,7 @@ public class Console implements Processor
 
     private String configRef;
     private String name;
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
     @Override
@@ -50,10 +47,10 @@ public class Console implements Processor
                 String raml = config.getRamlHandler().getRamlParserV2(relativePath);
                 return EventHelper.setPayload(event, raml, RamlHandler.APPLICATION_RAML);
             }
-            catch (IOException | NotFoundException e)
+            catch (IOException | IllegalAccessException e)
             {
-                e.printStackTrace();
-
+                logger.debug(e.getMessage());
+                throw new MuleRestException(e.getCause());
             }
         }
 

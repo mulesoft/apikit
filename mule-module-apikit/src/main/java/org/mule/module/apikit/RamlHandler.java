@@ -10,24 +10,12 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.parser.ParserService;
 import org.mule.raml.interfaces.model.IRaml;
-import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.exception.MuleRuntimeException;
-import org.mule.runtime.api.i18n.I18nMessage;
-import org.mule.runtime.api.message.Message;
 
-import com.google.common.net.HttpHeaders;
-
-import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.raml.model.ActionType;
@@ -36,35 +24,26 @@ public class RamlHandler
 {
     public static final String APPLICATION_RAML = "application/raml+yaml";
     private static final String RAML_QUERY_STRING = "raml";
-    private static final String DEFAULT_API_RESOURCES_PATH = "api/";
 
-    // private String ramlLocation;
     private boolean keepRamlBaseUri;
-//    private Map<String, String> apikitRaml;
     private String apiServer;
     private IRaml api;
     private ParserService parserService;
 
-    private String apiResourcesRelativePath = DEFAULT_API_RESOURCES_PATH;
+    private String apiResourcesRelativePath = "";
 
     //ramlLocation should be the root raml location, relative of the resources folder
     public RamlHandler(String ramlLocation, String apiServer, boolean keepRamlBaseUri) throws IOException
     {
         this.keepRamlBaseUri = keepRamlBaseUri;
         this.apiServer = apiServer;
-        //URL ramlLocationUrl = this.getClass().getResource(ramlLocation);
-        //if (ramlLocationUrl == null)
-        //{
-        //    throw new IOException("Raml resource not found at: " + ramlLocation);
-        //}
-        if (!ramlLocation.startsWith("/"))
+
+        String rootRamlLocation = findRootRaml(ramlLocation);
+        if (rootRamlLocation == null)
         {
-            if (!ramlLocation.startsWith(DEFAULT_API_RESOURCES_PATH))
-            {
-                ramlLocation = DEFAULT_API_RESOURCES_PATH + ramlLocation;
-            }
+            throw new IOException("Raml not found at: " + ramlLocation);
         }
-        parserService = new ParserService(ramlLocation);
+        parserService = new ParserService(rootRamlLocation);
         parserService.validateRaml();
         this.api = parserService.build();
         if (!keepRamlBaseUri && apiServer != null)
@@ -72,16 +51,11 @@ public class RamlHandler
             parserService.updateBaseUri(api, apiServer);
         }
 
-        int idx = ramlLocation.lastIndexOf("/");
+        int idx = rootRamlLocation.lastIndexOf("/");
         if (idx > 0)
         {
-            this.apiResourcesRelativePath = ramlLocation.substring(0, idx + 1);
+            this.apiResourcesRelativePath = rootRamlLocation.substring(0, idx + 1);
             this.apiResourcesRelativePath = sanitarizeResourceRelativePath(apiResourcesRelativePath);
-            //if (!apiResourcesRelativePath.startsWith("/"))
-            //{
-            //    apiResourcesRelativePath = "/" + apiResourcesRelativePath;
-            //}
-            //apiResourcesRelativePath = apiResourcesRelativePath + "?" + RAML_QUERY_STRING;
         }
     }
 
@@ -100,16 +74,12 @@ public class RamlHandler
     }
 
     //resourcesRelativePath should not contain the console path
-    public String getRamlParserV2(String resourceRelativePath) throws NotFoundException, IOException
+    public String getRamlParserV2(String resourceRelativePath) throws NotFoundException, IOException, IllegalAccessException
     {
         resourceRelativePath = sanitarizeResourceRelativePath(resourceRelativePath);
         if (resourceRelativePath.contains(".."))
         {
             throw new IOException("\"..\" is not allowed");
-        }
-        if (!resourceRelativePath.startsWith(DEFAULT_API_RESOURCES_PATH))
-        {
-            throw new IOException("Request must start with: " + DEFAULT_API_RESOURCES_PATH);
         }
         if (apiResourcesRelativePath.equals(resourceRelativePath))
         {
@@ -123,16 +93,17 @@ public class RamlHandler
         }
         else
         {
+            //the resource should be in a subfolder, otherwise it could be requesting the properties file
+            if (!resourceRelativePath.contains("/"))
+            {
+                throw new IllegalAccessException("Requested resources should be in a subfolder");
+            }
             //resource
             InputStream apiResource = null;
             ByteArrayOutputStream baos = null;
             try
             {
                 apiResource = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceRelativePath);
-
-                //URL url = new URL(resourceRelativePath);
-                //apiResource = new BufferedInputStream(url.openStream());
-//                        this.getClass().getResourceAsStream(resourceRelativePath);
 
                 if (apiResource == null)
                 {
@@ -144,7 +115,8 @@ public class RamlHandler
             }
             catch (IOException e)
             {
-                throw new NotFoundException(resourceRelativePath);//ResourceNotFoundException(null, null);// fileNotFound(RESOURCE_BASE + path)
+                
+                throw new NotFoundException(resourceRelativePath);
             }
             finally
             {
@@ -209,5 +181,19 @@ public class RamlHandler
             resourceRelativePath = resourceRelativePath.substring(0, resourceRelativePath.length()-1);
         }
         return resourceRelativePath;
+    }
+
+    private String findRootRaml(String ramlLocation)
+    {
+        String[] startingLocations = new String[]{"", "api/", "api"};
+        for (String start : startingLocations)
+        {
+            URL ramlLocationUrl = Thread.currentThread().getContextClassLoader().getResource(start + ramlLocation);
+            if (ramlLocationUrl != null)
+            {
+                return start + ramlLocation;
+            }
+        }
+        return null;
     }
 }
