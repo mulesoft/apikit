@@ -1,0 +1,194 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../promise-polyfill/promise-polyfill-lite.html">
+<link rel="import" href="../fetch-polyfill/fetch-polyfill.html">
+<!--
+
+The `raml-request-panel-simple-xhr` is an element that executes the request if the hosted app do
+not handle the `api-console-request` event.
+
+It can be used as a boilerplate for communication with the `raml-request-panel` element to handle
+request event, execute the request and return the result.
+
+The `raml-request-panel` is based on the fetch's API Request and Response object. The returning
+event transport them to the source element.
+Because the Response object is not intended to carry a custom errors, in case of error, the
+Response object only carrying nformation `response.ok` equals `false` and the `error` Error
+object is added to the event's detail object.
+
+This element don't listen for the `api-console-request` event giving a chance for the hosted app to
+handle it. If the hosted app intend to handle the requests it should listen for an event:
+
+```
+window.addEventListener('api-console-request', function(e) {
+  var data = e.detail;
+  console.log(data.url);
+  console.log(data.method);
+  console.log(data.payload);
+  console.log(data.headers);
+  console.log(data.auth); // optional, see `raml-request-panel.serializeRequest()`
+});
+
+```
+
+After the request is made (successfully or not) the `api-console-response` event must be fired.
+It should have `request` and `response` objects added to the event's `detail` object. If the request
+is errored the it must contain additional `error` proeprty which is JS' Error object with the human
+readable message (it will be displayed as an error message).
+Additionaly the detail object can contain the `isXhr` property which is set to true be default.
+It should be set to false if the request has been made by more than XHR advanced transport which
+dives information about timings and redirects.
+
+See the `response-panel` for more information.
+
+```
+var event = new CustomEvent('api-console-request', {
+  cancelable: false,
+  bubbles: true,
+  composed: true,
+  detail: {
+    request: new Request(...),
+    response: new Response(body, {status: 200})
+  }
+});
+this.dispatchEvent(event);
+```
+
+Becaue the Fetch API is a new API not all browsers support it. Therefore the polyfill must be used
+in the hosted app. Add the `fetch-polyfill` element (advanced-rest-client/fetch-polyfill) to the
+hosted app to have it supported.
+
+Because this element fires back an event it has to be attached to the DOM.
+
+@group RAML Elements
+@element raml-request-panel
+@demo demo/index.html
+-->
+<script>
+  Polymer({
+    is: 'raml-request-panel-simple-xhr',
+
+    properties: {
+      // If true then the request is currently loaded.
+      loading: {
+        type: Boolean,
+        notify: true,
+        readOnly: true,
+        value: false
+      },
+      /**
+       * Generated Request object during the latest request
+       */
+      request: Object,
+      /**
+       * Generated Response object during the latest request
+       */
+      response: Object,
+      /**
+       * Generated error object during the latest request
+       */
+      error: Object,
+      // Total request / response time
+      loadingTime: Number
+    },
+
+    /**
+     * Executes the request.
+     *
+     * @param {Object} data A request configuration object with `method`, `url`, `headers` and
+     * `payload` properties.
+     */
+    execute: function(data) {
+      this._setLoading(true);
+      this.error = undefined;
+      this.response = undefined;
+      this.request = this._createRequest(data);
+      var requestStart = performance.now();
+      fetch(this.request)
+      .then(function(response) {
+        this.loadingTime = performance.now() - requestStart;
+        this.response = response;
+        if (!response.ok) {
+          this.error = new Error('Resource is unavailable');
+        }
+        this._finishRequest();
+      }.bind(this))
+      .catch(function(e) {
+        this.loadingTime = performance.now() - requestStart;
+        this.response = Response.error();
+        this.error = e;
+        this._finishRequest();
+      }.bind(this));
+    },
+    // Sends the event with data to be handled by the `raml-request-panel`.
+    _finishRequest: function() {
+      var detail = {
+        request: this.request,
+        response: this.response,
+        loadingTime: this.loadingTime,
+        isXhr: true
+      };
+      if (this.error) {
+        detail.error = this.error;
+      }
+      var event = new CustomEvent('api-console-response', {
+        cancelable: false,
+        bubbles: true,
+        composed: true,
+        detail: detail
+      });
+      this.dispatchEvent(event);
+    },
+
+    _createRequest: function(data) {
+      var init = {
+        method: data.method,
+        mode: 'cors'
+      };
+      if (data.headers) {
+        var headers = new Headers();
+        var list = data.headers.split('\n').map(function(line) {
+          var _parts = line.split(':');
+          var _name = _parts[0];
+          var _value = _parts[1];
+          _name = _name ? _name.trim() : null;
+          _value = _value ? _value.trim() : null;
+          if (!_name || !_value) {
+            return null;
+          }
+          return {
+            name: _name,
+            value: _value
+          };
+        }).filter(function(item) {
+          return !!item;
+        });
+        list.forEach(function(item) {
+          headers.append(item.name, item.value);
+        });
+        init.headers = headers;
+      }
+      if (['GET', 'HEAD'].indexOf(data.method) !== -1) {
+        data.payload = undefined;
+      } else {
+        if (data.payload) {
+          init.body = data.payload;
+        }
+      }
+
+      return new Request(data.url, init);
+    }
+  });
+</script>

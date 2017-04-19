@@ -1,0 +1,49 @@
+{
+  "name": "raml-main-entry-lookup",
+  "description": "An element that lookup for a main RAML file in the web filesystem structure",
+  "author": "The Advanced REST client authors",
+  "keywords": [
+    "web-components",
+    "polymer"
+  ],
+  "private": true,
+  "main": [
+    "raml-main-entry-lookup.html"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:advanced-rest-client/raml-main-entry-lookup.git"
+  },
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "polymerelements/iron-component-page#1.0.0",
+    "web-component-tester": "^4.0.0",
+    "paper-styles": "polymerelements/paper-styles#^1.0.2",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "iron-test-helpers": "PolymerElements/iron-test-helpers#^1.0.0",
+    "test-fixture": "PolymerElements/test-fixture#^1.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
+    "file-drop": "advanced-rest-client/file-drop#^1.0.3",
+    "paper-toast": "PolymerElements/paper-toast#^1.3.0"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tasks"
+  ],
+  "version": "1.0.2",
+  "homepage": "https://github.com/advanced-rest-client/raml-main-entry-lookup",
+  "_release": "1.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.0.2",
+    "commit": "bdaa1a3b09944e65855d8eb1400e9b688c92c861"
+  },
+  "_source": "https://github.com/advanced-rest-client/raml-main-entry-lookup.git",
+  "_target": "^1.0.1",
+  "_originalSource": "advanced-rest-client/raml-main-entry-lookup"
+}

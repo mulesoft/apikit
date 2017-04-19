@@ -1,0 +1,215 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../fetch-polyfill/fetch-polyfill.html">
+<!--
+`<api-console-ext-comm>` is an element that support communication with the api-console-extension.
+
+If the extension is installed then it will intercept the `api-console-request` and cancel it.
+Data from the event will be passed to the extension and the request will be executed from within
+the extension.
+
+@group Logic Elements
+@element api-console-ext-comm
+-->
+<script>
+Polymer({
+  /**
+   * Called when the API console extension has been detected,
+   *
+   * @event api-console-extension-installed
+   */
+  is: 'api-console-ext-comm',
+
+  properties: {
+    /**
+     * If true then the API console extension has been detected.
+     */
+    extension: {
+      type: Boolean,
+      value: false,
+      notify: true,
+      readOnly: true
+    },
+    // Last sent request data to the extension
+    _lastestRequestData: Object
+  },
+
+  attached: function() {
+    this.listen(window, 'message', '_messsageHandler');
+    // Body will receive the event faster so it will cancel it before other listeners.
+    this.listen(document.body, 'api-console-request', '_requestHandler');
+  },
+
+  detached: function() {
+    this.unlisten(window, 'message', '_messsageHandler');
+    this.unlisten(document.body, 'api-console-request', '_requestHandler');
+  },
+  /**
+   * Called when message from `postMessage` is available.
+   * This is a communication channel with the extension.
+   */
+  _messsageHandler: function(e) {
+    // We are interested with internal messages only
+    if (e.source !== window) {
+      return;
+    }
+    var data = e.data;
+    if (!data['api-console-extension']) {
+      return;
+    }
+    var payload = data['api-console-payload'];
+    switch (payload) {
+      case 'init':
+        this._extensionDetected();
+        break;
+      case 'api-console-response':
+        this._responseReady(data['api-console-data']);
+        break;
+    }
+  },
+  /**
+   * Called when the api-console-extension is detected.
+   */
+  _extensionDetected: function() {
+    this._setExtension(true);
+    this.fire('api-console-extension-installed');
+  },
+
+  _requestHandler: function(e) {
+    if (!this.extension) {
+      return;
+    }
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
+
+    this._lastestRequestData = e.detail;
+    window.postMessage({
+      payload: 'api-console-request',
+      detail: e.detail
+    }, location.origin);
+  },
+  /**
+   * Called when the response arrive from the extension page.
+   */
+  _responseReady: function(extResponse) {
+    var responseData = extResponse ? extResponse.data.responseData : undefined;
+    var request = this._createRequest(this._lastestRequestData);
+    this._lastestRequestData = undefined;
+    var response = this._createResponse(responseData);
+
+    var detail = {
+      request: request,
+      response: response,
+      loadingTime: extResponse ? extResponse.data.stats.loadingTime : 0,
+      isXhr: true
+    };
+    if (responseData.error) {
+      detail.error = new Error(responseData.message);
+    } else if (!response.ok) {
+      detail.error = new Error('Resource is unavailable');
+    }
+    var event = new CustomEvent('api-console-response', {
+      cancelable: false,
+      bubbles: true,
+      composed: true,
+      detail: detail
+    });
+    this.dispatchEvent(event);
+  },
+  /**
+   * Creates a request object from the latest request data.
+   *
+   * @param {Object} data Latest request data as in the `api-console-request` object event.
+   * @param {Request} The Request object.
+   */
+  _createRequest: function(data) {
+    var init = {
+      method: data.method,
+      mode: 'cors'
+    };
+    if (data.headers) {
+      init.headers = this._createHeaders(data.headers);
+    }
+    if (['GET', 'HEAD'].indexOf(data.method) !== -1) {
+      data.payload = undefined;
+    } else {
+      if (data.payload) {
+        init.body = data.payload;
+      }
+    }
+    return new Request(data.url, init);
+  },
+  /**
+   * Creates a response object from the response data.
+   * If the response is invalid then returned Response object will be errored.
+   *
+   * @param {Object} response The response object returned by the extension.
+   * @return {Response} The response object.
+   */
+  _createResponse: function(response) {
+    if (!response || response.error) {
+      return Response.error();
+    }
+    if (!response.status || response.status < 200) {
+      return Response.error();
+    }
+    var init = {
+      status: response.status,
+      statusText: response.statusText
+    };
+    if (response.headers) {
+      init.headers = this._createHeaders(response.headers);
+    }
+    try {
+      return new Response(response.response, init);
+    } catch (e) {
+      return Response.error();
+    }
+  },
+  /**
+   * Creates a Headers object based on the HTTP headers string.
+   *
+   * @param {String} headers HTTP headers.
+   * @return {Headers} Parsed headers object.
+   */
+  _createHeaders: function(headers) {
+    if (!headers) {
+      return new Headers();
+    }
+    var result = new Headers();
+    var list = headers.split('\n').map(function(line) {
+      var _parts = line.split(':');
+      var _name = _parts[0];
+      var _value = _parts[1];
+      _name = _name ? _name.trim() : null;
+      _value = _value ? _value.trim() : null;
+      if (!_name || !_value) {
+        return null;
+      }
+      return {
+        name: _name,
+        value: _value
+      };
+    }).filter(function(item) {
+      return !!item;
+    });
+    list.forEach(function(item) {
+      result.append(item.name, item.value);
+    });
+    return result;
+  }
+});
+</script>

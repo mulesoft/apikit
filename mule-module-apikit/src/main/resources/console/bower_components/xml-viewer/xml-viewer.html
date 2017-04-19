@@ -1,0 +1,449 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../text-search-behavior/text-search-behavior.html">
+<link rel="import" href="../paper-spinner/paper-spinner.html">
+<!-- Icons are set in the web worker. Must be included here. -->
+<link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../arc-icons/arc-icons.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../error-message/error-message.html">
+<!--
+`<xml-viewer>` An XML payload viewer for the XML response
+
+### Example
+```
+<xml-viewer xml="&lt;tag&gt;&lt;/tag&gt;"></xml-viewer>
+```
+
+ **Note** This element uses web workers with dependencies. It expect to find
+workers files in current directory in the `workers` folder.
+Your build process has to ensure that this files will be avaiable.
+
+## Content actions
+By default the user can copy content of the code to clipboard. This action is
+always visible.
+You can add more actions in the actions bar by putting elements as a children
+of this element.
+### Example
+```
+<xml-viewer>
+  <paper-icon-button title="Additional action" icon="arc:cached"></paper-icon-button>
+  <paper-icon-button title="Clear the code" icon="arc:clear"></paper-icon-button>
+</xml-viewer>
+```
+
+### Styling
+`<xml-viewer>` provides the following custom properties and mixins for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--xml-viewer` | Mixin applied to the element | `{}`
+`--xml-viewer-comment-color` | Color of the comment section. | `#236E25`
+`--xml-viewer-punctuation-color` | Color of the punctuation signs | `black`
+`--xml-viewer-tag-name-color` | Color of the XML tag name | `#881280`
+`--xml-viewer-attribute-name-color` | Color of the XML attribute. | `#994500`
+`--xml-viewer-attribute-value-color` | Color of the attribute's value. | `#1A1AA6`
+`--xml-viewer-cdata-color` | CDATA section color. | `#48A`
+`--xml-viewer-document-declaration-color` | XML document declaration (header) color. | `#999`
+`--xml-viewer-constant-color` | Constant (boolean, null, number) color. | `#283593`
+
+@group UI Elements
+@element xml-viewer
+@demo demo/index.html
+-->
+<dom-module id="xml-viewer">
+  <template>
+    <style>
+     :host {
+      display: block;
+      color: black;
+      cursor: text;
+      -webkit-user-select: text;
+      user-select: text;
+      overflow: auto;
+      word-wrap: break-word;
+      @apply(--xml-viewer);
+    }
+
+    .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      /* Preferred icon size */
+      display: inline-block;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .prettyPrint {
+      font-family: monospace;
+      font-size: 15px;
+    }
+
+    .arrowEmpty {}
+
+    .node {
+      margin: 1px 0px;
+    }
+
+    .opened {}
+
+    .comment {
+      color: var(--xml-viewer-comment-color, #236E25);
+    }
+
+    .punctuation {
+      color: var(--xml-viewer-punctuation-color, black);
+    }
+
+    .tagname {
+      color: var(--xml-viewer-tag-name-color, #881280);
+    }
+
+    .attname {
+      color: var(--xml-viewer-attribute-name-color, #994500);
+    }
+
+    .attribute {
+      color: var(--xml-viewer-attribute-value-color, #1A1AA6);
+    }
+
+    .cdata {
+      color: var(--xml-viewer-cdata-color, #48A);
+    }
+
+    .cdata *[collapsible] {
+      white-space: pre;
+    }
+
+    .arrowExpanded,
+    .arrowEmpty {
+      display: inline-block;
+      width: 24px;
+      height: 18px;
+    }
+
+    .processing {
+      color: var(--xml-viewer-document-declaration-color, #999);
+    }
+
+    .inline,
+    .inline > div {
+      display: inline-block;
+      text-indent: 0px;
+    }
+
+    .node.opened >. arrowEmpty {
+      text-indent: 0;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      width: 21px;
+      margin-left: 3px;
+      margin-right: 3px;
+    }
+
+    .nodeMargin {
+      margin-left: 44px;
+    }
+
+    .collapseIndicator {
+      display: none;
+      margin: 0px 1px;
+      text-indent: 0px;
+    }
+
+    *[colapse-marker] {
+      -webkit-user-select: none;
+      cursor: pointer;
+    }
+
+    *[less] {
+      display: inline-block;
+    }
+
+    *[more] {
+      display: none;
+    }
+
+    *[data-expanded="false"] .arrowEmpty {
+      display: none;
+    }
+
+    *[data-expanded="false"] *[less] {
+      display: none;
+    }
+
+    *[data-expanded="false"] *[more] {
+      display: inline-block;
+    }
+
+    *[data-expanded="false"] *[collapsible] {
+      display: none !important;
+    }
+
+    *[data-expanded="false"] *[collapse-indicator] {
+      display: inline-block !important;
+    }
+
+    .value.number,
+    .value.null,
+    .value.boolean {
+      color: var(--xml-viewer-constant-color, #283593);
+    }
+
+    .arc-search-mark.selected {
+      background-color: #ff9632;
+    }
+
+    .actions-panel {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      @apply(--response-highlighter-action-bar);
+    }
+
+    .actions-panel.hidden {
+      display: none;
+    }
+    </style>
+    <div class$="[[_computeActionsPanelClass(showOutput)]]">
+      <content select="[content-action]"></content>
+    </div>
+    <paper-spinner active="[[working]]"></paper-spinner>
+    <error-message hidden$="[[!isError]]">
+      <p>There was an error parsing XML data</p>
+      <p>[[errorMessage]]</p>
+    </error-message>
+    <output id="output" hidden$="[[!showOutput]]" on-tap="_handleDisplayClick"></output>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    var importLocation = '';
+    (function() {
+      var url;
+      if (window.currentImport && window.currentImport.URL) {
+        url = window.currentImport.URL;
+        if (window.currentImport._URL) {
+          url = window.currentImport._URL;
+        }
+      } else if (window.currentImport._URL) {
+        url = window.currentImport._URL;
+      } else {
+        url = window.location.href;
+      }
+      if (url === 'about:blank') {
+        importLocation = '../';
+        // in test cases for edge this will fail because it should be set to ../../
+        // but right now I can't waste time to check how to check if this is the particular case.
+      } else {
+        var path = url.substr(url.indexOf('/', 8));
+        path = path.substr(0, path.lastIndexOf('/') + 1);
+        if (path.indexOf('/test') !== -1 || path.indexOf('/demo') !== -1) {
+          path = path.substr(0, path.length - 1);
+          path = path.substr(0, path.lastIndexOf('/') + 1);
+        }
+        importLocation = path;
+      }
+    })();
+
+    Polymer({
+      is: 'xml-viewer',
+      properties: {
+        /**
+         * XML data to parse and display
+         */
+        xml: {
+          type: Object,
+          observer: '_changed'
+        },
+        /**
+         * True if error ocurred when parsing data
+         */
+        isError: {
+          type: Boolean,
+          readOnly: true,
+          value: false,
+          notify: true
+        },
+        /**
+         * True when XML is parsing
+         */
+        working: {
+          type: Boolean,
+          readOnly: true,
+          value: false,
+          notify: true
+        },
+        /**
+         * True when output should be shown.
+         */
+        showOutput: {
+          type: Boolean,
+          readOnly: true,
+          value: false,
+          computed: '_computeShowOutput(working, isError, xml)'
+        },
+        /**
+         * An error message to display.
+         */
+        errorMessage: {
+          type: String,
+          readOnly: true
+        },
+        // A reference to the web worker object.
+        _worker: Object,
+        // function to be called when worker data are received
+        _workerDataHandler: {
+          type: Function,
+          value: function() {
+            return this._workerData.bind(this);
+          }
+        },
+        // function to be called when worker error data are received
+        _workerErrorHandler: {
+          type: Function,
+          value: function() {
+            return this._workerError.bind(this);
+          }
+        },
+
+        // An element that should be searched for text.
+        _textSearch: {
+          type: HTMLElement,
+          value: function() {
+            return this.$.output;
+          }
+        },
+        /**
+         * If set it will highlight each occurance of the query in the
+         * XML viewer.
+         */
+        query: {
+          type: String,
+          observer: '_queryChanged'
+        },
+        /**
+         * A location of this script as a base URL for it's assets in the
+         * `workers` folder.
+         */
+        importLocation: {
+          type: String,
+          value: function() {
+            return importLocation;
+          }
+        }
+      },
+
+      behaviors: [
+        ArcBehaviors.TextSearchBehavior
+      ],
+
+      detached: function() {
+        if (this._worker) {
+          this._worker.removeEventListener('message', this._workerDataHandler);
+          this._worker.removeEventListener('error', this._workerErrorHandler);
+          this._worker = undefined;
+          // Created URL via URL.createObjectURL will be cleaned by the browser.
+        }
+      },
+
+      _changed: function() {
+        if (!this.xml) {
+          return;
+        }
+        this._setWorking(true);
+        this._setIsError(false);
+        this._setErrorMessage(null);
+        this.$.output.innerText = '';
+
+        if (!this._worker) {
+          var worker = new Worker(this.importLocation + '/workers/xmlviewer.js');
+          worker.addEventListener('message', this._workerDataHandler);
+          worker.addEventListener('error', this._workerErrorHandler);
+          this._worker = worker;
+        }
+        this._worker.postMessage({
+          xml: this.xml,
+          cssPrefix: this.nodeName.toLowerCase() + ' style-scope '
+        });
+      },
+
+      _workerData: function(e) {
+        this._setWorking(false);
+        this.$.output.innerHTML = e.data;
+      },
+
+      _workerError: function(e) {
+        this._setIsError(true);
+        this._setWorking(false);
+        var err = e.message.replace('Uncaught Error: ', '');
+        if (err) {
+          this._setErrorMessage(err);
+        }
+      },
+
+      _computeShowOutput: function(working, isError, xml) {
+        return !working && !isError && !!xml;
+      },
+
+      _handleDisplayClick: function(e) {
+        if (!e.target) {
+          return;
+        }
+        var target = e.target;
+        if (!target.getAttribute('colapse-marker')) {
+          target = target.parentNode;
+          if (!target || !target.getAttribute('colapse-marker')) {
+            return;
+          }
+        }
+        target = target.parentNode;
+        var expanded = target.dataset.expanded;
+        if (!expanded || expanded === 'true') {
+          target.dataset.expanded = 'false';
+        } else {
+          target.dataset.expanded = 'true';
+        }
+      },
+
+      _queryChanged: function(query) {
+        if (!query) {
+          this.cleanMarked();
+          return;
+        }
+        this.mark(query);
+      },
+
+      // Computes CSS class for the content actions pane.
+      _computeActionsPanelClass: function(showOutput) {
+        var clazz = 'actions-panel';
+        if (!showOutput) {
+          clazz += ' hidden';
+        }
+        return clazz;
+      }
+    });
+  })();
+  </script>
+</dom-module>

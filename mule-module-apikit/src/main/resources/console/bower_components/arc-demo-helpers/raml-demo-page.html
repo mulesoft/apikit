@@ -1,0 +1,352 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../font-roboto/roboto.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-item/paper-item-body.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../raml-aware/raml-aware.html">
+<link rel="import" href="../raml-js-parser/raml-js-parser.html">
+<link rel="import" href="../paper-spinner/paper-spinner.html">
+<link rel="import" href="../paper-styles/typography.html">
+<link rel="import" href="../raml-path-to-object/raml-path-to-object.html">
+<link rel="import" href="../raml-path-selector/raml-path-selector.html">
+<link rel="import" href="../paper-toast/paper-toast.html">
+<link rel="import" href="../paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../paper-menu/paper-menu.html">
+<link rel="import" href="../paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../raml-json-enhance/raml-json-enhance.html">
+<!--
+A full screen RAML elements demo.
+It has RAML parser, data processor and basic UI for displaying the demo page.
+
+## Usage
+The element accepts a `h1` as a page title placed in the header element and
+any element which has the `main` attribute.
+
+To extend the list of APIs (the dropdown) add a `paper-item` child node with
+the `data-url` attribute set to the URL of the RAML file. You can add as much
+children as you want.
+
+### Example
+```
+<raml-demo-page selected-object="{{selected}}" is-resource="{{isResource}}">
+  <h1>My demo page</h1>
+  <div main>
+    <my-element hidden$="[[!isResource]]" raml="[[selected]]"></my-element>
+  </div>
+  <paper-item data-url="https://raw.githubusercontent.com/api.raml">My API</paper-item>
+</raml-demo-page>
+```
+
+## Raml aware
+It uses the `raml-aware` element with scope set to `raml`.
+
+@group UI Elements
+@element raml-demo-page
+@demo demo/raml-demo-page.html
+-->
+<dom-module id="raml-demo-page">
+  <template>
+    <style>
+    html,
+    body,
+     :host {
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', 'Noto', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 20px;
+    }
+
+    header {
+      background-color: #e0e0e0;
+      margin: 0;
+      padding: 12px;
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+    }
+
+    .h1 {
+      @apply(--layout-flex);
+    }
+
+    .h1 ::content>h1 {
+      padding: 0;
+      margin: 0;
+      @apply(--paper-font-title);
+    }
+
+    h2 {
+      @apply(--paper-font-subhead);
+      padding: 0px 8px;
+    }
+
+    :host {
+      display: block;
+    }
+
+    .content {
+      @apply(--layout-horizontal);
+      padding: 16px;
+    }
+
+    :host([narrow]) .content {
+      @apply(--layout-vertical);
+    }
+
+    .loader {
+      padding: 16px;
+      @apply(--layout-vertical);
+      @apply(--layout-center-center);
+      @apply(--layout-fit);
+      background-color: #fff;
+      z-index: 2;
+      margin-top: 86px;
+    }
+
+    *[hidden] {
+      display: none !important;
+    }
+
+    .drawer {
+      width: 256px;
+    }
+
+    :host([narrow]) .drawer {
+      width: 100%;
+    }
+
+    .main {
+      @apply(--layout-flex);
+    }
+
+    .checkable-menu paper-item-body {
+      margin-right: 8px;
+    }
+    </style>
+    <header>
+      <div class="h1">
+        <content select="h1"></content>
+      </div>
+      <paper-dropdown-menu label="RAML definition">
+        <paper-listbox id="urlSelector" class="dropdown-content" selected="0" on-iron-select="_urlChangeHandler">
+          <paper-item data-url="https://raw.githubusercontent.com/advanced-rest-client/raml-example-api/master/api.raml">ARC example</paper-item>
+          <paper-item data-url="https://raw.githubusercontent.com/raml-org/raml-examples/master/others/world-music-api/api.raml">World Music API</paper-item>
+          <paper-item data-url="https://raw.githubusercontent.com/raml-org/raml-examples/master/others/alainn-mobile-shopping/api.raml">Álainn Cosmetics Mobile Orders API</paper-item>
+          <paper-item data-url="https://raw.githubusercontent.com/raml-org/raml-examples/master/others/mobile-order-api/api.raml">Mobile Order API</paper-item>
+          <paper-item data-url="https://anypoint.mulesoft.com/apiplatform/repository/v2/organizations/52560d3f-c37a-409d-9887-79e0a9a9ecff/public/apis/19695/versions/24854/files/root">FlightStats</paper-item>
+          <paper-item data-url="https://anypoint.mulesoft.com/apiplatform/repository/v2/organizations/52560d3f-c37a-409d-9887-79e0a9a9ecff/public/apis/6308/versions/6302/files/root">Twitter API</paper-item>
+          <paper-item data-url="https://anypoint.mulesoft.com/apiplatform/repository/v2/organizations/52560d3f-c37a-409d-9887-79e0a9a9ecff/public/apis/12164/versions/12574/files/root">Google Drive</paper-item>
+          <paper-item data-url="https://anypoint.mulesoft.com/apiplatform/repository/v2/organizations/52560d3f-c37a-409d-9887-79e0a9a9ecff/public/apis/7965/versions/8129/files/root">Facebook</paper-item>
+          <paper-item data-url="https://anypoint.mulesoft.com/apiplatform/repository/v2/organizations/52560d3f-c37a-409d-9887-79e0a9a9ecff/public/apis/8077/versions/8266/files/root">Zendesk</paper-item>
+          <paper-item data-url="https://anypoint.mulesoft.com/apiplatform/repository/v2/organizations/52560d3f-c37a-409d-9887-79e0a9a9ecff/public/apis/8086/versions/8276/files/root">LinkedIn</paper-item>
+          <paper-item data-url="https://anypoint.mulesoft.com/apiplatform/repository/v2/organizations/52560d3f-c37a-409d-9887-79e0a9a9ecff/public/apis/7195/versions/7257/files/root">Google Contacts API</paper-item>
+          <paper-item data-url="https://anypoint.mulesoft.com/apiplatform/repository/v2/organizations/52560d3f-c37a-409d-9887-79e0a9a9ecff/public/apis/7782/versions/7918/files/root">GitHub API</paper-item>
+          <paper-item data-url="https://anypoint.mulesoft.com/apiplatform/repository/v2/organizations/52560d3f-c37a-409d-9887-79e0a9a9ecff/public/apis/8111/versions/8305/files/root">SalesForce</paper-item>
+          <content select="paper-item[data-url]"></content>
+        </paper-listbox>
+      </paper-dropdown-menu>
+      <paper-menu-button dynamic-align>
+        <paper-icon-button icon="menu" class="dropdown-trigger"></paper-icon-button>
+        <paper-menu class="dropdown-content">
+          <paper-item class="checkable-menu"><paper-item-body>Narrow layout</paper-item-body><paper-checkbox checked="{{narrow}}"></paper-checkbox></paper-item>
+        </paper-menu>
+      </paper-menu-button>
+    </header>
+
+    <div class="loader" hidden$="[[!working]]">
+      <paper-spinner active="[[working]]"></paper-spinner>
+      <p>Loading content. Please wait a sec...</p>
+    </div>
+
+    <div class="content">
+      <div class="drawer" hidden$="[[noSelector]]">
+        <h2>[[raml.title]]</h2>
+        <raml-path-selector narrow="{{narrow}}" raml="[[raml]]" selected-path="{{path}}"></raml-path-selector>
+      </div>
+      <div class="main">
+        <content select="[main]"></content>
+      </div>
+    </div>
+
+    <raml-aware raml="[[raml]]" scope="raml"></raml-aware>
+
+    <raml-js-parser json latest-json="{{plainRaml}}"></raml-js-parser>
+    <raml-json-enhance json="[[plainRaml.specification]]" result="{{raml}}"></raml-json-enhance>
+
+    <raml-path-to-object raml="[[raml]]" selected-parent="{{parentEndpoint}}" selected-path="[[path]]" selected-object="{{selectedObject}}" is-method="{{isMethod}}" is-resource="{{isResource}}" is-documentation="{{isDocumentation}}" is-type="{{isType}}" is-summary="{{isSummary}}"></raml-path-to-object>
+    <paper-toast text=""></paper-toast>
+  </template>
+  <script>
+  Polymer({
+    is: 'raml-demo-page',
+    properties: {
+      // Generated raml
+      raml: {
+        type: Object,
+        notify: true
+      },
+      // URL of the raml file.
+      url: {
+        type: String,
+        notify: true
+      },
+      // List of parser errors.
+      errors: {
+        type: Array,
+        notify: true,
+        readOnly: true
+      },
+      // True if the element and child elements has been loaded.
+      _loaded: Boolean,
+      // Will be set to true if the RAML file has been loaded.
+      hasRaml: {
+        type: Boolean,
+        value: false,
+        notify: true,
+        computed: '_computeHasRaml(_loaded, raml)'
+      },
+      // Will be set to true when parsing the RAML file.
+      working: {
+        type: Boolean,
+        value: false,
+        readOnly: true,
+        notify: true
+      },
+      // Parent endpoint for selected method.
+      parentEndpoint: {
+        type: Object,
+        notify: true
+      },
+      // Selected path.
+      path: {
+        type: String,
+        notify: true
+      },
+      // Selected and tranformed object.
+      selectedObject: {
+        type: Object,
+        notify: true
+      },
+      // True if the `selectedObject` is a method.
+      isMethod: {
+        type: Boolean,
+        value: false,
+        notify: true
+      },
+      // True if the `selectedObject` is a resource.
+      isResource: {
+        type: Boolean,
+        value: false,
+        notify: true
+      },
+      // True if the `selectedObject` is a documentation.
+      isDocumentation: {
+        type: Boolean,
+        value: false,
+        notify: true
+      },
+      // True if the `selectedObject` is a type.
+      isType: {
+        type: Boolean,
+        value: false,
+        notify: true
+      },
+      // True if the `selectedObject` is a summary. `selectedObject` then
+      // equals to `raml` (it's the same object).
+      isSummary: {
+        type: Boolean,
+        value: false,
+        notify: true
+      },
+      // If set it will not display a path selector on the left hand side.
+      noSelector: Boolean,
+      // If set then it renders "mobile" view.
+      narrow: {
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true
+      }
+    },
+
+    observers: ['_urlChanged(url)'],
+
+    listeners: {
+      'raml-json-enhance-ready': '_enhanced',
+      'api-parse-ready': '_parsed'
+    },
+
+    attached: function() {
+      this._loaded = true;
+      this._urlChanged(this.url);
+    },
+
+    // Handler for the dropdown with URLs.
+    _urlChangeHandler: function(e) {
+      if (!e.detail || !e.detail.item || !e.detail.item.dataset) {
+        return;
+      }
+      var url = e.detail.item.dataset.url;
+      this.url = url;
+    },
+    // Called when the URL change
+    _urlChanged: function(url) {
+      if (!this._loaded) {
+        return;
+      }
+      if (!url) {
+        return;
+      }
+      this._setWorking(true);
+      this.set('raml', undefined);
+      this._setErrors(undefined);
+      var parser = this.$$('raml-js-parser');
+      var context = this;
+      parser.loadApi(url)
+      .catch(function(e) {
+        context._toastMessage('Parser error: ' + e.message);
+        context._setWorking(false);
+        console.warn('API error', e);
+      });
+    },
+
+    // Displays a toast with a `message`.
+    _toastMessage: function(message) {
+      var toast = this.$$('paper-toast');
+      toast.text = message;
+      toast.opened = true;
+    },
+    // Compute is the element received and parsed RAML file.
+    _computeHasRaml: function(_loaded, raml) {
+      return !!(_loaded && !!raml);
+    },
+    // Called when raml has been enhanced.
+    _enhanced: function() {
+      this._setWorking(false);
+    },
+
+    _parsed: function(e) {
+      this._setErrors(e.detail.json.errors);
+    }
+  });
+  </script>
+</dom-module>

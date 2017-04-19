@@ -1,0 +1,551 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../paper-styles/paper-styles.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../marked-element/marked-element.html">
+<link rel="import" href="../markdown-styles/markdown-styles.html">
+<link rel="import" href="../iron-validatable-behavior/iron-validatable-behavior.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../arc-icons/arc-icons.html">
+<link rel="import" href="../paper-button/paper-button.html">
+
+<!--
+`<body-form-editor>` A Form data editor for the HTTP body
+
+The element provides varlidation against RAML type it the `type` proeprty is set. Although it will
+display form error (invalida data, wrong pattern, type, etc) it will set the value as the form
+controls has them right now. So the output bight be not valid in terms of the spec. But the user
+will be warned in the UI.
+
+### Example
+```
+<body-form-editor value="{{value}}" type="[[ramlType]]"></body-form-editor>
+```
+
+If the `type` is provided (as a RAML definition type) and it contains the `formParameters` object
+then the for will render predefinied fields.
+
+### Styling
+The `<body-form-editor>` is consistent with the `<raml-request-parameters-form>` styling.
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--body-form-editor` | Mixin applied to the element | `{}`
+`--raml-request-parameters-form` | The same as above. | `{}`
+`--raml-request-parameters-editor-input-label-color` | Color of the paper input's labels | `rgba(0, 0, 0, 0.48)`
+`--raml-request-parameters-editor-predefined-label-color` | Color of the predefinied parameter name label | `rgba(0, 0, 0, 0.87)`
+`--raml-request-parameters-editor-docs-color` | Color of the documentation string below the input field. Note that it will appy also `marked-element` styles to this element | `rgba(0, 0, 0, 0.87)`
+`--raml-request-parameters-editor-predefined-row` | Mixin applied to each predefined by schema row of the form | `{}`
+`--raml-request-parameters-editor-user-defined-row` | Mixin applied to each user defined row of the form | `{}`
+`--form-label` | Mixin applied to the predefinied parameter name label | `{}`
+
+Additionally when the `narrow` attribute is set then the form will be displayed in the mobile friendly view.
+
+@group UI Elements
+@element body-form-editor
+@demo demo/index.html
+-->
+<dom-module id="body-form-editor">
+  <template>
+    <style>
+    :host {
+      display: block;
+      padding: 8px;
+
+      @apply(--raml-request-parameters-form);
+      @apply(--body-form-editor);
+
+      --paper-input-container-label: {
+        color: var(--raml-request-parameters-editor-input-label-color, rgba(0, 0, 0, 0.48));
+      }
+    }
+
+    .user-defined-row,
+    .predefined-row {
+      @apply(--layout-horizontal);
+      position: relative;
+
+    }
+
+    .predefined-row {
+      @apply(--raml-request-parameters-editor-predefined-row);
+    }
+
+    .user-defined-row {
+      @apply(--raml-request-parameters-editor-user-defined-row);
+    }
+
+    .predefined-row label {
+      display: block;
+      min-width: 120px;
+      @apply(--layout-horizontal);
+      @apply(--layout-end-justified);
+      @apply(--paper-font-body1);
+      font-size: 15px;
+      color: var(--raml-request-parameters-editor-predefined-label-color, rgba(0, 0, 0, 0.87));
+      text-align: right;
+      margin-right: 8px;
+      padding-top: 12px;
+      @apply(--form-label);
+    }
+
+    .param-name {
+      margin-right: 8px;
+      @apply(--layout-flex);
+    }
+
+    .param-value {
+      @apply(--layout-vertical);
+      @apply(--layout-flex);
+    }
+
+    .param-value .input {
+      @apply(--layout-horizontal);
+    }
+
+    paper-input {
+      width: 100%;
+    }
+
+    .docs {
+      @apply(--paper-font-common-base);
+      font-size: 13px;
+      font-weight: 200;
+      line-height: 24px;
+      color: var(--raml-request-parameters-editor-docs-color, rgba(0, 0, 0, 0.87));
+    }
+
+    .action-button {
+      color: var(--primary-color);
+    }
+
+    .markdown-html p:first-child {
+      margin-top: 0;
+      padding-top: 0;
+    }
+
+    .markdown-html p:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    paper-icon-button {
+      @apply(--icon-button);
+    }
+
+    paper-icon-button:hover {
+      @apply(--icon-button-hover);
+    }
+
+    </style>
+    <form is="iron-form" id="form">
+      <template is="dom-repeat" items="{{schema}}">
+        <div class="predefined-row">
+          <label class="label" for="body-form-editor-[[index]]" hidden="[[narrow]]">[[item.name]]<span hidden$="[[!item.required]]">*</span></label>
+          <div class="param-value">
+            <template is="dom-if" if="[[_computeIsEnum(item.enum)]]" restamp>
+              <paper-dropdown-menu no-label-float label="[[_computeInputLabel(item.*, narrow)]]" name="[[item.name]]" required id="body-form-editor-[[index]]">
+                <paper-listbox class="dropdown-content" attr-for-selected="data-value" selected="{{item.value}}">
+                  <template is="dom-repeat" items="[[item.enum]]">
+                    <paper-item data-value="[[item]]">[[item]]</paper-item>
+                  </template>
+                  <paper-item label=" ">(empty value)</paper-item>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </template>
+            <template is="dom-if" if="[[!_computeIsEnum(item.enum)]]" restamp>
+              <div class="input">
+                <paper-input no-label-float="[[!narrow]]"
+                  label="[[_computeInputLabel(item.*, narrow)]]"
+                  id="body-form-editor-[[index]]"
+                  value="{{item.value}}"
+                  required="[[item.required]]"
+                  pattern="[[item.pattern]]"
+                  name="[[item.name]]"
+                  auto-validate
+                  type="[[_computeInputType(item.type)]]"
+                  min="[[item.minimum]]"
+                  max="[[item.maximum]]"
+                  maxlength="[[item.maxLength]]"></paper-input>
+              </div>
+            </template>
+            <div class="docs" hidden$="[[!_hasValue(item.description)]]">
+              <marked-element markdown="[[item.description]]">
+                <div class="markdown-html markdown-body"></div>
+              </marked-element>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template is="dom-repeat" items="{{userParams}}" user-params>
+        <div class="user-defined-row">
+          <div class="param-name">
+            <paper-input no-label-float="[[!narrow]]" label="Param name" value="{{item.name}}" type="text"></paper-input>
+          </div>
+          <div class="param-value">
+            <div class="input">
+              <paper-input no-label-float="[[!narrow]]" label="Param value" name="[[item.name]]" value="{{item.value}}" type="text"></paper-input>
+            </div>
+          </div>
+          <paper-icon-button icon="arc:close" on-tap="_removeUserParam" title="Remove form parameter"></paper-icon-button>
+        </div>
+      </template>
+      <div class="add-action">
+        <paper-button class="action-button" on-tap="_addUserParam" title="Add form parameter">add</paper-button>
+      </div>
+    </form>
+  </template>
+  <script>
+  Polymer({
+    is: 'body-form-editor',
+
+    behaviors: [Polymer.IronValidatableBehavior],
+
+    properties: {
+      /**
+       * If available, this is the RAML's type definition. It will provide schema definition
+       * for the editor.
+       */
+      type: Object, //
+      // gets / sets JSON string value
+      value: {
+        type: String,
+        notify: true,
+        value: ''
+      },
+      /**
+       * Determines if the editor is currently displayed in the UI and relevant to the user.
+       * If not (parent element/app set it to false) then all computations will be on hold
+       * until the element is open again.
+       */
+      opened: {
+        type: Boolean,
+        value: true
+      },
+      // A schema as a list of properties that raml JS parser returns.
+      schema: Array,
+      // If true then narrow layout will be applied.
+      narrow: {
+        type: Boolean,
+        value: false
+      },
+      // User defined parameters
+      userParams: Array
+    },
+
+    observers: [
+      '_typeChanged(type.*)',
+      '_schemaChanged(schema.*)',
+      '_schemaChanged(userParams.*)',
+      '_valueChanged(opened, value)'
+    ],
+    // Handler to type change observer.
+    _typeChanged: function(record) {
+      var type = record.base;
+      if (!type || !type.formParameters) {
+        this.schema = undefined;
+      } else {
+        this.schema = this.readSchema(type.formParameters);
+      }
+    },
+    // Computes if given array item has enum values.
+    _computeIsEnum: function(itemEnum) {
+      return !!(itemEnum && itemEnum.length);
+    },
+    // Computes input type attribute based on item's type
+    _computeInputType: function(itemType) {
+      if (!itemType || itemType === 'text') {
+        return 'text';
+      }
+      switch (itemType) {
+        case 'number':
+        case 'integer':
+        case 'float':
+          return 'number';
+        default:
+          return 'text';
+      }
+    },
+    // Computes the name of the label to display in the input field.
+    _computeInputLabel: function(record, narrow) {
+      var object = record.base;
+      if (!object) {
+        return;
+      }
+      if (narrow) {
+        return object.name;
+      }
+      if (!!object.examples && object.examples.length && object.examples[0]) {
+        return 'Example: ' + object.examples[0];
+      }
+      return 'Param value';
+    },
+    /**
+     * Check if passed object is not empty.
+     * 0 (zero) returns true while empty string returns false.
+     *
+     * @return {Boolean} True/False depending if passed object has a value.
+     */
+    _hasValue: function(obj) {
+      if (typeof obj === 'number' && obj === 0) {
+        return true;
+      }
+      if (typeof obj === 'boolean') {
+        return true;
+      }
+      return !!obj;
+    },
+    // Overidden from Polymer.IronValidatableBehavior. Will set the `invalid`
+    // attribute automatically, which should be used for styling.
+    _getValidity: function() {
+      return this.$.form.validate();
+    },
+    /**
+     * Creates schema object from the type properties.
+     *
+     * @param {Object} obj The RAML type form peroperties
+     * @return {Array}
+     */
+    readSchema: function(obj) {
+      if (!obj) {
+        return [];
+      }
+      if (obj instanceof Array) {
+        return obj;
+      }
+      var names = Object.keys(obj);
+      if (!names) {
+        return [];
+      }
+      return names.map(function(key) {
+        var item = obj[key];
+        item.key = key;
+        if (typeof item.default !== 'undefined' && !item.value) {
+          item.value = item.default;
+        }
+        if (typeof item.value === 'undefined' && item.required) {
+          if (item.examples) {
+            item.value = item.examples[0];
+          } else if (item.example) {
+            item.value = item.example;
+          }
+          if (item.value && item.value.indexOf && item.value.indexOf(item.name + '=') === 0) {
+            item.value = item.value.substr(item.name.length + 1);
+          }
+        }
+        if (typeof item.value === 'undefined' && item.enum && item.enum.length) {
+          item.value = item.enum[0];
+        }
+        return Object.assign({}, item);
+      });
+    },
+    /**
+     * A handler to the scheme change observer.
+     * Serializes the form value and sets the `value` property.
+     */
+    _schemaChanged: function() {
+      this.async(function() {
+        var values = this.$.form.serialize();
+        var value = this._wwwFormUrlEncode(values);
+        this._internalValueChange = true;
+        this.set('value', value);
+        this._internalValueChange = false;
+      }, 1);
+    },
+
+    /**
+     * @param {Object} object The object to encode as x-www-form-urlencoded.
+     * @return {string} .
+     */
+    _wwwFormUrlEncode: function(object) {
+      if (!object) {
+        return '';
+      }
+      var pieces = [];
+      Object.keys(object).forEach(function(key) {
+        var value = object[key];
+        if (!value) {
+          if (!this._isKeyRequired(key)) {
+            return;
+          }
+        }
+        pieces.push(
+            this._wwwFormUrlEncodePiece(key) + '=' +
+            this._wwwFormUrlEncodePiece(value));
+      }, this);
+      return pieces.join('&');
+    },
+    /**
+     * @param {*} str A key or value to encode as x-www-form-urlencoded.
+     * @return {string} .
+     */
+    _wwwFormUrlEncodePiece: function(str) {
+      // Spec says to normalize newlines to \r\n and replace %20 spaces with +.
+      // jQuery does this as well, so this is likely to be widely compatible.
+      if (!str) {
+        return '';
+      }
+      return encodeURIComponent(str.toString().replace(/\r?\n/g, '\r\n'))
+          .replace(/%20/g, '+');
+    },
+    /**
+     * @param {String} str A key or value to decode as x-www-form-urlencoded.
+     * @return {string} .
+     */
+    _wwwFormUrlDecode: function(str) {
+      // Spec says to normalize newlines to \r\n and replace %20 spaces with +.
+      if (!str) {
+        return '';
+      }
+      return decodeURIComponent(str.toString().replace(/\+/g, ' '));
+    },
+    // Checks if the param name is required by the type spec.
+    _isKeyRequired: function(key) {
+      if (!key) {
+        return false;
+      }
+      var schema = this.schema;
+      if (!schema || !schema.length) {
+        return false;
+      }
+      for (var i = 0, len = schema.length; i < len; i++) {
+        if (schema[i].key === key) {
+          return schema[i].required === true;
+        }
+      }
+      return false;
+    },
+
+    _valueChanged: function(opened, value) {
+      if (!opened || this._internalValueChange) {
+        return;
+      }
+      if (!value) {
+        return this._updateValues({});
+      }
+      var map = this._deserializeValues(value);
+      this._updateValues(map);
+    },
+    /**
+     * Reads the key - value properties from the string.
+     *
+     * @param {String} data www-url-encoded string to decode.
+     * @return {Object} A map of key - value part of the form data. If passed value is not the
+     * string then it will return empty map.
+     */
+    _deserializeValues: function(data) {
+      if (!data || typeof data !== 'string') {
+        return {};
+      }
+      var params = data.split('&').map(function(pair) {
+        if (!pair) {
+          return null;
+        }
+        var _param = pair.split('=');
+        if (!_param.length) {
+          return null;
+        }
+        return {
+          name: this._wwwFormUrlDecode(_param[0]),
+          value: this._wwwFormUrlDecode(_param[1])
+        };
+      }, this)
+      .filter(function(item) {
+        return !!item;
+      });
+      var result = {};
+      params.forEach(function(item) {
+        result[item.name] = item.value;
+      });
+      return result;
+    },
+    /**
+     * Updates the form values for given map.
+     * The map's key will be mapped to the scheme's or userParams' name property
+     * and value to their values. If the map does not contain value.
+     */
+    _updateValues: function(map) {
+      map = map || {};
+      var mapNames = Object.keys(map);
+      var schema = this.schema;
+      if (schema) {
+        // it should also clear the values if they are not in the map.
+        schema.forEach(function(item, i) {
+          var _name = item.name;
+          var _index = mapNames.indexOf(_name);
+          if (_index === -1) {
+            this.set(['schema', i, 'value'], '');
+          } else {
+            this.set(['schema', i, 'value'], map[_name]);
+            mapNames.splice(_index, 1);
+          }
+        }, this);
+      }
+      if (!mapNames.length) {
+        return;
+      }
+      if (!this.userParams) {
+        this.userParams = [];
+      }
+      var userParamsNames = this.userParams.map(function(item, i) {
+        if (mapNames.indexOf(item.name) === -1) {
+          this.splice('userParams', i, 1);
+          return null;
+        }
+        return item.name;
+      }, this)
+      .filter(function(item) {
+        return !!item;
+      });
+      // What's left is not in the schema
+      mapNames.forEach(function(item) {
+        var _index = userParamsNames.indexOf(item);
+        if (_index !== -1) {
+          this.set(['userParams', _index, 'value'], map[item]);
+        } else {
+          this.push('userParams', {
+            name: item,
+            value: map[item]
+          });
+        }
+      }, this);
+    },
+    // Handler for the user param click event
+    _removeUserParam: function(e) {
+      var rp = this.$$('template[user-params]');
+      var index = rp.indexForElement(e.target);
+      if (index === undefined || index === -1) {
+        return;
+      }
+      this.splice('userParams', index, 1);
+    },
+    // Append new user param to the form
+    _addUserParam: function() {
+      if (!this.userParams) {
+        this.userParams = [];
+      }
+      this.push('userParams', {
+        name: '',
+        value: ''
+      });
+    }
+  });
+  </script>
+</dom-module>

@@ -123,10 +123,10 @@ public class CharsetUtils
     public static String getHeaderCharset(Message message, Logger logger)
     {
         String charset = null;
-        String contentType = ((HttpRequestAttributes)message.getAttributes()).getHeaders().get("Content-Type");//getInboundProperty(HttpConstants.HEADER_CONTENT_TYPE, "application/xml");
+        String contentType = ((HttpRequestAttributes)message.getAttributes().getValue()).getHeaders().get("Content-Type");//getInboundProperty(HttpConstants.HEADER_CONTENT_TYPE, "application/xml");
         if (contentType == null)
         {
-            contentType = ((HttpRequestAttributes)message.getAttributes()).getHeaders().get("content-type");
+            contentType = ((HttpRequestAttributes)message.getAttributes().getValue()).getHeaders().get("content-type");
         }
         if (contentType == null)
         {

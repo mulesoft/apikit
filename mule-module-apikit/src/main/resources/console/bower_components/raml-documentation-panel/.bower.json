@@ -1,0 +1,65 @@
+{
+  "name": "raml-documentation-panel",
+  "description": "A documentation details panel. Its purpose is to compute documentation from the RAML file and display the result as a main documentation panel",
+  "license": "Apache-2.0 OR CC-BY-4.0",
+  "authors": [
+    "The Advanced REST client authors <arc@mulesoft.com>"
+  ],
+  "keywords": [
+    "web-components",
+    "polymer",
+    "raml",
+    "documentation"
+  ],
+  "private": true,
+  "main": [
+    "raml-documentation-panel.html",
+    "raml-documentation-empty-state.html"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:advanced-rest-client/raml-documentation-panel.git"
+  },
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.3.1",
+    "raml-docs-method-viewer": "advanced-rest-client/raml-docs-method-viewer#^0.1.4",
+    "raml-docs-resource-viewer": "advanced-rest-client/raml-docs-resource-viewer#^1.0.1",
+    "raml-docs-documentation-viewer": "advanced-rest-client/raml-docs-documentation-viewer#^1.0.1",
+    "iron-media-query": "PolymerElements/iron-media-query#^1.0.8",
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^1.0.9",
+    "iron-icon": "PolymerElements/iron-icon#^1.0.12",
+    "raml-summary-view": "advanced-rest-client/raml-summary-view#^1.0.3",
+    "raml-docs-types-viewer": "advanced-rest-client/raml-docs-types-viewer#^0.0.2"
+  },
+  "devDependencies": {
+    "iron-component-page": "polymerelements/iron-component-page#1.0.0",
+    "web-component-tester": "^4.0.0",
+    "paper-styles": "polymerelements/paper-styles#^1.0.2",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "iron-test-helpers": "PolymerElements/iron-test-helpers#^1.0.0",
+    "test-fixture": "PolymerElements/test-fixture#^1.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
+    "arc-demo-helpers": "advanced-rest-client/arc-demo-helpers#^1.0.5",
+    "paper-toast": "PolymerElements/paper-toast#^1.3.0"
+  },
+  "ignore": [
+    "**/.*",
+    "dependencyci.yml",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tasks"
+  ],
+  "version": "2.0.12",
+  "homepage": "https://github.com/advanced-rest-client/raml-documentation-panel",
+  "_release": "2.0.12",
+  "_resolution": {
+    "type": "version",
+    "tag": "2.0.12",
+    "commit": "8b07d0e9cad7860ceeafea00f45209877cf9fb8e"
+  },
+  "_source": "https://github.com/advanced-rest-client/raml-documentation-panel.git",
+  "_target": "^2.0.9",
+  "_originalSource": "advanced-rest-client/raml-documentation-panel"
+}

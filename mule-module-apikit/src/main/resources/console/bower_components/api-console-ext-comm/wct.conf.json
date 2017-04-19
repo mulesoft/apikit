@@ -1,0 +1,16 @@
+{
+  "verbose": false,
+  "plugins": {
+    "local": {
+      "browsers": ["chrome"]
+    },
+    "sauce": {
+      "disabled": true,
+      "browsers": [{
+        "browserName": "chrome",
+        "platform": "Windows 10",
+        "version": "latest-4"
+      }]
+    }
+  }
+}

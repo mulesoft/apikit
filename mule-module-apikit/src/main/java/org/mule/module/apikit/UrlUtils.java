@@ -20,6 +20,8 @@ public class UrlUtils
   public static final String HTTP_CONTEXT_PATH_PROPERTY = "http.context.path";
   public static final String HTTP_REQUEST_PATH_PROPERTY = "http.request.path";
 
+  private UrlUtils() {}
+
   //public static String getBaseSchemeHostPort(Event event) {
   //  String host = ((HttpRequestAttributes) event.getMessage().getAttributes()).getHeaders().get("host");
   //  String chHost = System.getProperty("fullDomain");
@@ -96,7 +98,16 @@ public class UrlUtils
         relativePath = "/" + relativePath;
       }
     }
+    else {
+      relativePath += "/";
+    }
+
     return relativePath;
+  }
+
+  public static String getBasePath(HttpRequestAttributes attributes)
+  {
+    return attributes.getRelativePath().replace("/*", "");
   }
 
   //public static String getBasePath(Message message) {

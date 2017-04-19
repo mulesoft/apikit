@@ -1,0 +1,304 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../raml-docs-method-viewer/raml-docs-method-viewer.html">
+<link rel="import" href="../raml-docs-documentation-viewer/raml-docs-documentation-viewer.html">
+<link rel="import" href="../raml-docs-resource-viewer/raml-docs-resource-viewer.html">
+<link rel="import" href="../iron-media-query/iron-media-query.html">
+<link rel="import" href="../raml-summary-view/raml-summary-view.html">
+<link rel="import" href="../raml-docs-types-viewer/raml-docs-types-viewer.html">
+<link rel="import" href="raml-documentation-empty-state.html">
+ <!--
+The documentation details panel.
+Is shows a documentation panel depending on if the selected object is a
+method, resource or the documentation node.
+
+The computation of the selected object should be performed outside the element.
+Use the `raml-path-selector` with `raml-path-to-object` to get the data
+structure that this element can work with.
+
+### Example
+```
+<raml-path-to-object selected-object="{{obj}}" ...></raml-path-to-object>
+<raml-documentation-panel
+  selected-object="[[obj]]"
+  selected-parent="[[selectedParent]]"
+  path="[[path]]"></raml-documentation-panel>
+```
+or
+```
+document.querySelector('raml-documentation-panel').selectedObject = obj;
+```
+
+The `path` property is required because the `raml-docs-resource-viewer`
+required current path to compute relative paths to sub-resources.
+
+
+### Styling
+`<raml-documentation-panel>` provides the following custom properties and mixins for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--raml-documentation-panel` | Mixin applied to the element | `{}`
+`--raml-docs-main-content` | Mixin applied to the main docs content (where the docs content is displayed). | `{}`
+`--raml-docs-main-content-width` | Max width of the documentation panel. Additional space is required for innner panels navigation | `900px`
+`--raml-docs-documentation-width` | Max width of the documentation panel. It should be used to avoid usability issues for reading long texts. | `700px`
+
+@group RAML Elements
+@element raml-documentation-panel
+@demo demo/index.html
+-->
+<dom-module id="raml-documentation-panel">
+  <template>
+    <style>
+     :host {
+      display: block;
+      height: 100%;
+      @apply(--raml-documentation-panel);
+    }
+
+    .docs-content {
+      max-width: var(--raml-docs-main-content-width, 900px);
+      @apply(--layout-flex);
+      @apply(--raml-docs-main-content);
+    }
+
+    .docs-content raml-docs-documentation-viewer {
+      max-width: var(--raml-docs-documentation-width, 700px);
+    }
+
+    .no-selection,
+    .docs-content {
+      height: 100%;
+    }
+    </style>
+    <iron-media-query query="(max-width: [[narrowWidth]])" query-matches="{{narrow}}"></iron-media-query>
+    <div class="docs-content">
+      <div class="no-selection" hidden$="[[hasSelection]]">
+        <raml-documentation-empty-state></raml-documentation-empty-state>
+      </div>
+      <template is="dom-if" if="[[isMethod]]">
+        <raml-docs-method-viewer parent-endpoint="[[selectedParent]]" raml="[[selectedObject]]" narrow="[[narrow]]"></raml-docs-method-viewer>
+      </template>
+      <template is="dom-if" if="[[isResource]]">
+        <raml-docs-resource-viewer raml="[[selectedObject]]" current-path="{{path}}" narrow="[[narrow]]" scroll-target="[[scrollTarget]]"></raml-docs-resource-viewer>
+      </template>
+      <template is="dom-if" if="[[isDocumentation]]">
+        <raml-docs-documentation-viewer documentation="[[selectedObject]]" narrow="[[narrow]]"></raml-docs-documentation-viewer>
+      </template>
+      <template is="dom-if" if="[[isSummary]]">
+        <raml-summary-view raml="[[selectedObject]]" narrow="[[narrow]]"></raml-summary-view>
+      </template>
+      <template is="dom-if" if="[[isType]]">
+        <raml-docs-types-viewer type="[[selectedObject]]" narrow="[[narrow]]"></raml-docs-types-viewer>
+      </template>
+    </div>
+  </template>
+  <script>
+  Polymer({
+    is: 'raml-documentation-panel',
+
+    properties: {
+      // Selcted path in the path selector.
+      path: {
+        type: String,
+        notify: true,
+        observer: '_pathChanged'
+      },
+      // An object selected in the `raml-path-selector`
+      selectedObject: Object,
+      // Parent object selected in the `raml-path-selector`
+      selectedParent: Object,
+      /**
+       * If set it will renders the view in the narrow layout.
+       */
+      narrow: {
+        type: Boolean,
+        notify: true,
+        reflectToAttribute: true
+      },
+      // A widith below which the `narrow` property will be set to true.
+      narrowWidth: {
+        type: String,
+        value: '768px'
+      },
+      // Set to true if the selected object is a method node of the RAML
+      isMethod: {
+        type: Boolean,
+        readOnly: true,
+        value: false
+      },
+      // Set to true if the selected object is a resource node of the RAML
+      isResource: {
+        type: Boolean,
+        readOnly: true,
+        value: false
+      },
+      // Set to true if the selected object is a documentation node of the RAML
+      isDocumentation: {
+        type: Boolean,
+        readOnly: true,
+        value: false
+      },
+      // Set to true if the selected object is a summary view for the RAML
+      isSummary: {
+        type: Boolean,
+        readOnly: true,
+        value: false
+      },
+      // Set to true if the selected object is a summary view for the RAML
+      isType: {
+        type: Boolean,
+        readOnly: true,
+        value: false
+      },
+      // Computed value if there is any selection made.
+      hasSelection: {
+        type: Boolean,
+        value: false,
+        notify: true,
+        computed: '_computeHasSelection(isMethod, isResource, isDocumentation, isSummary, isType)'
+      },
+      // An element that handles application scroll region.
+      // Default scroll target is the window.
+      scrollTarget: HTMLElement,
+      /**
+       * By default the element computes which view to display.
+       * If this property is set then it will not compute current view
+       * type and will listen for events fired by the `raml-path-to-object`
+       * element. Use it only if you use `raml-path-to-object` to optymize
+       * the app.
+       */
+      handlePathEvents: {
+        type: Boolean,
+        observer: '_handleEventsChanged'
+      },
+      // True when the element is attached to the DOM.
+      isElementAttached: {
+        type: Boolean,
+        readOnly: true
+      }
+    },
+
+    observers: [
+      '_handleEventsChanged(handlePathEvents, isElementAttached)'
+    ],
+
+    attached: function() {
+      this._setIsElementAttached(true);
+    },
+
+    detached: function() {
+      this._setIsElementAttached(false);
+    },
+
+    // Returns true if any of the arguments is trurly
+    _computeHasSelection: function(isMethod, isResource, isDocumentation,
+        isSummary, isType) {
+      return !!(isMethod || isResource || isDocumentation || isSummary || isType);
+    },
+    // Hadnles path change and computes selected object type.
+    _pathChanged: function(path) {
+      if (this.handlePathEvents) {
+        return;
+      }
+      var isMethod = false;
+      var isResource = false;
+      var isDocumentation = false;
+      var isSummary = false;
+      var isType = false;
+
+      if (path) {
+        if (path.indexOf('documentation') === 0) {
+          isDocumentation = true;
+        } else if (/methods\.\d+$/.test(path)) {
+          isMethod = true;
+        } else if (/resources\.\d+$/.test(path)) {
+          isResource = true;
+        } else if (path === 'summary') {
+          isSummary = true;
+        } else if (/types\.\d+$/.test(path)) {
+          isType = true;
+        }
+      }
+
+      this._setIsMethod(isMethod);
+      this._setIsResource(isResource);
+      this._setIsDocumentation(isDocumentation);
+      this._setIsSummary(isSummary);
+      this._setIsType(isType);
+    },
+    /**
+     * Handler for the `handlePathEvents` property change.
+     * Registers or unregisters path change listeners depending on
+     * the `handlePathEvents` property value.
+     */
+    _handleEventsChanged: function(handlePathEvents, isElementAttached) {
+      if (handlePathEvents && isElementAttached) {
+        this.registerPathEvents();
+      } else {
+        this.unregisterPathEvents();
+      }
+    },
+    /**
+     * Resisters raml-path-to-object events fired when the path change.
+     *
+     * Handled events:
+     * - raml-is-method-changed
+     * - raml-is-resource-changed
+     * - raml-is-documentation-changed
+     * - raml-is-summary-changed
+     * - raml-is-type-changed
+     */
+    registerPathEvents: function() {
+      this.listen(window, 'raml-is-method-changed', '_onChangedSateMethod');
+      this.listen(window, 'raml-is-resource-changed', '_onChangedSateResource');
+      this.listen(window, 'raml-is-documentation-changed', '_onChangedSateDocs');
+      this.listen(window, 'raml-is-summary-changed', '_onChangedSateSummary');
+      this.listen(window, 'raml-is-type-changed', '_onChangedSateType');
+      // raml-selected-object-changed
+      // raml-selected-parent-changed
+    },
+
+    unregisterPathEvents: function() {
+      this.unlisten(window, 'raml-is-method-changed', '_onChangedSateMethod');
+      this.unlisten(window, 'raml-is-resource-changed', '_onChangedSateResource');
+      this.unlisten(window, 'raml-is-documentation-changed', '_onChangedSateDocs');
+      this.unlisten(window, 'raml-is-summary-changed', '_onChangedSateSummary');
+      this.unlisten(window, 'raml-is-type-changed', '_onChangedSateType');
+    },
+
+    _onChangedSateMethod: function(e) {
+      this._setIsMethod(e.detail.state);
+    },
+
+    _onChangedSateResource: function(e) {
+      this._setIsResource(e.detail.state);
+    },
+
+    _onChangedSateDocs: function(e) {
+      this._setIsDocumentation(e.detail.state);
+    },
+
+    _onChangedSateSummary: function(e) {
+      this._setIsSummary(e.detail.state);
+    },
+
+    _onChangedSateType: function(e) {
+      this._setIsType(e.detail.state);
+    }
+  });
+  </script>
+</dom-module>

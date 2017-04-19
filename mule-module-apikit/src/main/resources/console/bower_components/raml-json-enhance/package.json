@@ -1,0 +1,31 @@
+{
+  "name": "raml-json-enhance",
+  "version": "0.1.4",
+  "license": "Apache-2.0 OR CC-BY-4.0",
+  "description": "Enhaces the JSON output from the RAML parser so it can be used in the ARC elements (which expect enhanced data structure)",
+  "devDependencies": {
+    "polymer-cli": "^0.16.0"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "private": false,
+  "main": [
+    "raml-json-enhance.html"
+  ],
+  "author": "The Advanced REST client authors <arc@mulesoft.com>",
+  "scripts": {
+    "serve": "node_modules/.bin/polymer serve",
+    "lint": "node_modules/.bin/polymer lint raml-json-enhance.html",
+    "deps": "npm install --quiet && bower install --quiet",
+    "update-deps": "npm update --quiet && bower update --quiet"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/advanced-rest-client/raml-json-enhance.git"
+  },
+  "bugs": {
+    "url": "https://github.com/advanced-rest-client/raml-json-enhance/issues",
+    "email": "arc@mulesoft.com"
+  }
+}

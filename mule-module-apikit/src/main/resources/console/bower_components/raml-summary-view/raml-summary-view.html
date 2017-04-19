@@ -1,0 +1,147 @@
+<!--
+@license
+Copyright 2016 The Advanced REST client authors <arc@mulesoft.com>
+Licensed under the Apache License, Version 2.0 (the "License"); you may not
+use this file except in compliance with the License. You may obtain a copy of
+the License at
+http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+License for the specific language governing permissions and limitations under
+the License.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../raml-behaviors/raml-behavior.html">
+<link rel="import" href="../marked-element/marked-element.html">
+<link rel="import" href="../markdown-styles/markdown-styles.html">
+<link rel="import" href="../docs-parameters-table/docs-parameters-table.html">
+
+<!--
+# `<raml-summary-view>`
+A basic information about the RAML definition viewer for the documentation panel.
+
+### Example
+```
+<raml-summary-view raml="[[raml]]"></raml-summary-view>
+```
+or in vanila JavaScript
+```
+let summary = document.querySelector('#raml-summary-view');
+summary.raml = raml;
+```
+
+### Styling
+`<raml-summary-view>` provides the following custom properties and mixins for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--raml-summary-view` | Mixin applied to the element | `{}`
+`--raml-summary-view-title` | Mixin applied to the API title element | `{}`
+`--raml-summary-view-property` | Mixin applied to each line of attributes applied in the basic documentation view | `{}`
+`--raml-summary-view-description-color` | Color of the description of the API. | `rgba(0, 0, 0, 0.54)`
+`--raml-summary-view-description-max-width` | Max width of the API description | `700px`
+`--raml-summary-view-description-value-color` | The color of the property value description | `rgba(0, 0, 0, 0.74)`
+
+@group RAML Elements
+@element raml-summary-view
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="raml-summary-view">
+  <template>
+    <style include="markdown-styles"></style>
+    <style>
+    :host {
+      display: block;
+      @apply(--raml-summary-view);
+    }
+
+    :host([hidden]) {
+      display: none;
+    }
+
+    h1 {
+      @apply(--paper-font-title);
+      @apply(--raml-summary-view-title);
+    }
+
+    h3 {
+      @apply(--arc-font-body1);
+      margin: 24px 0;
+      color: rgba(0, 0, 0, 0.87);
+    }
+
+    p.simple-desc {
+      margin: 8px 0;
+      color: rgba(0, 0, 0, 0.87);
+      @apply(--arc-font-body1);
+      @apply(--raml-summary-view-property);
+    }
+
+    .simple-desc > span {
+      color: var(--raml-summary-view-description-value-color, rgba(0, 0, 0, 0.74));
+    }
+
+    .api-description {
+      margin: 20px 0;
+      color: var(--raml-summary-view-description-color, rgba(0, 0, 0, 0.74));
+      @apply(--arc-font-body1);
+      font-size: 15px;
+      max-width: var(--raml-summary-view-description-max-width, 700px);
+      @apply(--raml-summary-view-property);
+    }
+    </style>
+    <h1>[[raml.title]]</h1>
+
+    <p class="simple-desc" hidden$="[[isEmpty(raml.version)]]">
+      <label>Version</label>
+      <span>[[raml.version]]</span>
+    </p>
+
+    <p class="simple-desc" hidden$="[[isEmpty(raml.baseUri)]]">
+      <label>Base URL</label>
+      <span>[[raml.baseUri]]</span>
+    </p>
+
+    <p class="simple-desc" hidden$="[[isEmpty(raml.mediaType)]]">
+      <label>Supported media type:</label>
+      <span>[[_displayArray(raml.mediaType)]]</span>
+    </p>
+
+    <p class="simple-desc" hidden$="[[isEmpty(raml.protocols)]]">
+      <label>Supported protocols:</label>
+      <span>[[_displayArray(raml.protocols)]]</span>
+    </p>
+
+    <div hidden$="[[isEmpty(raml.description)]]" class="api-description">
+      <marked-element markdown="[[raml.description]]">
+        <div class="markdown-html markdown-body"></div>
+      </marked-element>
+    </div>
+
+    <h3 hidden$="[[!hasUriParameteres]]">URI parameters</h3>
+    <docs-parameters-table hidden$="[[!hasUriParameteres]]" uri-parameters="[[raml.baseUriParameters]]" has-uri-parameteres="{{hasUriParameteres}}" auto-hide></docs-parameters-table>
+  </template>
+  <script>
+  Polymer({
+    is: 'raml-summary-view',
+    behaviors: [Polymer.RamlBehavior],
+
+    properties: {
+      // True if the base raml has URI parametersd defined.
+      hasUriParameteres: Boolean
+    },
+    // Displays array values.
+    _displayArray: function(arr) {
+      if (!arr) {
+        return '';
+      }
+      if (!(arr instanceof Array)) {
+        return arr;
+      }
+      return arr.join(', ');
+    }
+  });
+  </script>
+</dom-module>
