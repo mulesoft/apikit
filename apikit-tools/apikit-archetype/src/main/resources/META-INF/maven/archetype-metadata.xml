@@ -3,8 +3,8 @@
     xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype-descriptor/1.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <requiredProperties>
-        <requiredProperty key="muleVersion">
-            <defaultValue>3.7.0</defaultValue>
+        <requiredProperty key="minMuleVersion">
+            <defaultValue>4.0.0</defaultValue>
         </requiredProperty>
         <requiredProperty key="sharedHttpListener">
             <defaultValue>empty</defaultValue>
@@ -14,33 +14,27 @@
         </requiredProperty>
     </requiredProperties>
     <fileSets>
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory>src/main/java</directory>
-      <includes>
-          <include>**/**</include>
-      </includes>
-    </fileSet>
-    <fileSet filtered="true" encoding="UTF-8">
-      <directory>src/main/app</directory>
-      <includes>
-        <include>**/*.xml</include>
-        <include>**/*.properties</include>
-      </includes>
-    </fileSet>
-      <fileSet filtered="true" encoding="UTF-8">
-          <directory>src/main/resources</directory>
-          <includes>
-              <include>**/*.properties</include>
-          </includes>
-      </fileSet>
-    <fileSet encoding="UTF-8">
-      <directory>src/main/api</directory>
-      <includes>
-        <include>**/*.json</include>
-        <include>**/*.yml</include>
-        <include>**/*.yaml</include>
-        <include>**/*.raml</include>
-      </includes>
-    </fileSet>
+        <fileSet filtered="true" encoding="UTF-8">
+            <directory/>
+            <includes>
+                <include>mule-application.json</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true" encoding="UTF-8">
+            <directory>src/main/mule</directory>
+            <includes>
+                <include>**/*.xml</include>
+            </includes>
+        </fileSet>
+        <fileSet filtered="true" encoding="UTF-8">
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*.json</include>
+                <include>**/*.yml</include>
+                <include>**/*.yaml</include>
+                <include>**/*.raml</include>
+                <include>**/*.properties</include>
+            </includes>
+        </fileSet>
   </fileSets>
 </archetype-descriptor>
