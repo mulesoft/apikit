@@ -1,0 +1,19 @@
+{
+  "name": "${meta.prefix}${meta.artifactId}${meta.suffix}",
+  "minMuleVersion": "${minMuleVersion}",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "maven",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": []
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "maven",
+    "attributes": {}
+  },
+  "configs": [
+    "mule-config.xml"
+  ],
+  "domain": "${domainName}"
+}
