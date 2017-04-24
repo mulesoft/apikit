@@ -12,6 +12,9 @@
         <requiredProperty key="domainName">
             <defaultValue>default</defaultValue>
         </requiredProperty>
+        <requiredProperty key="compatibilityMode">
+            <defaultValue>false</defaultValue>
+        </requiredProperty>
     </requiredProperties>
     <fileSets>
         <fileSet filtered="true" encoding="UTF-8">
