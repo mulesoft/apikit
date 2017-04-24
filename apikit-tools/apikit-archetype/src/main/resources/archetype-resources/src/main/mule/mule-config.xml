@@ -11,7 +11,10 @@
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 
 #set ( $useSharedHttpListener = !($sharedHttpListener.isEmpty() || $sharedHttpListener.equals("empty")))
-#if( !$useSharedHttpListener )
+#set ( $useInboundEndpoint = $compatibilityMode.toLowerCase().equals("true") ||
+    $compatibilityMode.toLowerCase().equals("yes") ||
+    $compatibilityMode.toLowerCase().equals("y"))
+#if( !$useSharedHttpListener && !$useInboundEndpoint )
     <httpn:listener-config name="httpListenerConfigDefault">
         <httpn:listener-connection host="localhost" port="${http.port}"/>
     </httpn:listener-config>
@@ -23,6 +26,7 @@
 #set( $configRefName = "httpListenerConfigDefault" )
 #end
     <flow name="main-api">
+#if( !$useInboundEndpoint )
         <httpn:listener config-ref="$configRefName" path="/api/*">
             <httpn:response statusCode="#[variables.httpStatus default 200]">
                 <httpn:headers>#[variables.outboundHeaders]</httpn:headers>
@@ -32,11 +36,14 @@
                 <httpn:headers>#[variables.outboundHeaders]</httpn:headers>
             </httpn:error-response>
         </httpn:listener>
-
+#else
+        <http:inbound-endpoint address="http://0.0.0.0:${http.port}/api"/>
+#end
         <apikit:router config-ref="router-config" />
     </flow>
 
     <flow name="main-console">
+#if( !$useInboundEndpoint )
         <httpn:listener config-ref="$configRefName" path="/console/*">
             <httpn:response statusCode="#[variables.httpStatus default 200]">
                 <httpn:headers>#[variables.outboundHeaders]</httpn:headers>
@@ -46,7 +53,9 @@
                 <httpn:headers>#[variables.outboundHeaders]</httpn:headers>
             </httpn:error-response>
         </httpn:listener>
-
+#else
+        <http:inbound-endpoint address="http://0.0.0.0:${http.port}/console"/>
+#end
         <apikit:console config-ref="router-config" />
     </flow>
 
