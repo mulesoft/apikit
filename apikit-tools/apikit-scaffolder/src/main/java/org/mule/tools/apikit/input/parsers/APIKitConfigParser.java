@@ -32,31 +32,30 @@ public class APIKitConfigParser implements MuleConfigFileParser {
         for(Element element : elements) {
             Attribute name = element.getAttribute(APIKitConfig.NAME_ATTRIBUTE);
             Attribute raml = element.getAttribute(APIKitConfig.RAML_ATTRIBUTE);
-            Attribute consoleEnabled = element.getAttribute(APIKitConfig.CONSOLE_ENABLED_ATTRIBUTE);
             Attribute extensionEnabled = element.getAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE);
-            Attribute consolePath = element.getAttribute(APIKitConfig.CONSOLE_PATH_ATTRIBUTE);
+            Attribute outboundHeadersMapName = element.getAttribute(APIKitConfig.OUTBOUND_HEADERS_MAP_ATTRIBUTE);
+            Attribute httpStatusVarName = element.getAttribute(APIKitConfig.HTTP_STATUS_VAR_ATTRIBUTE);
 
             if(raml == null) {
                 throw new IllegalArgumentException(APIKitConfig.RAML_ATTRIBUTE + " attribute is required");
             }
-
-            APIKitConfig.Builder configBuilder = new APIKitConfig.Builder(raml.getValue());
+            APIKitConfig apiKitConfig = new APIKitConfig();
+            apiKitConfig.setRaml(raml.getValue());
             if(name != null) {
-                configBuilder.setName(name.getValue());
+                apiKitConfig.setName(name.getValue());
             }
-            if(consoleEnabled != null) {
-                configBuilder.setConsoleEnabled(Boolean.valueOf(consoleEnabled.getValue()));
+            if(outboundHeadersMapName != null) {
+                apiKitConfig.setOutboundHeadersMapName(outboundHeadersMapName.getValue());
             }
             if(extensionEnabled != null) {
-                configBuilder.setExtensionEnabled(Boolean.valueOf(extensionEnabled.getValue()));
+                apiKitConfig.setExtensionEnabled(Boolean.valueOf(extensionEnabled.getValue()));
             }
-            if(consolePath != null) {
-                configBuilder.setConsolePath(consolePath.getValue());
+            if(httpStatusVarName != null) {
+                apiKitConfig.setHttpStatusVarName(httpStatusVarName.getValue());
             }
 
-            APIKitConfig config = configBuilder.build();
-            String configId = config.getName() != null ? config.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
-            apikitConfigs.put(configId, config);
+            String configId = apiKitConfig.getName() != null ? apiKitConfig.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
+            apikitConfigs.put(configId, apiKitConfig);
         }
 
         return apikitConfigs;

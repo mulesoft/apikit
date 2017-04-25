@@ -38,13 +38,13 @@ public class RAMLFilesParser
     private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
     private final APIFactory apiFactory;
     private final Log log;
-    private final String muleVersion;
+    private final boolean compatibilityMode;
 
-    public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory, String muleVersion)
+    public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory, boolean compatibilityMode)
     {
         this.log = log;
         this.apiFactory = apiFactory;
-        this.muleVersion = muleVersion;
+        this.compatibilityMode = compatibilityMode;
         List<File> processedFiles = new ArrayList<>();
         for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet())
         {
@@ -80,7 +80,6 @@ public class RAMLFilesParser
                     {
                         raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
                     }
-
                     collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);
                     processedFiles.add(ramlFile);
                 }
@@ -143,7 +142,8 @@ public class RAMLFilesParser
             for (IAction action : resource.getActions().values())
             {
 
-                API api = apiFactory.createAPIBinding(filename,null, baseUri, APIKitTools.getPathFromUri(baseUri,false), null, null, APIKitTools.defaultIsInboundEndpoint(muleVersion));
+
+                API api = apiFactory.createAPIBinding(filename,null, baseUri, APIKitTools.getPathFromUri(baseUri,false), null, null, compatibilityMode);
 
                 Map<String, IMimeType> mimeTypes = action.getBody();
                 boolean addGenericAction = false;
@@ -171,7 +171,7 @@ public class RAMLFilesParser
 
     void addResource(API api, IResource resource, IAction action, String mimeType) {
         String completePath;
-        if (!api.useInboundEndpoint() && api.getHttpListenerConfig() != null)
+        if (!compatibilityMode && api.getHttpListenerConfig() != null)
         {
             completePath = APIKitTools.getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
         }

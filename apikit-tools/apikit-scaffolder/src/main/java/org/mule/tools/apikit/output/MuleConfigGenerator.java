@@ -8,21 +8,21 @@ package org.mule.tools.apikit.output;
 
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
-import org.mule.tools.apikit.model.HttpListenerConfig;
+import org.mule.tools.apikit.model.HttpListener4xConfig;
 import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
 import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
 import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
-import org.mule.tools.apikit.output.scopes.ExceptionStrategyScope;
-import org.mule.tools.apikit.output.scopes.FlowScope;
-import org.mule.tools.apikit.output.scopes.HttpListenerConfigScope;
-import org.mule.tools.apikit.output.scopes.MuleScope;
 import org.mule.tools.apikit.output.scopes.ConsoleFlowScope;
+import org.mule.tools.apikit.output.scopes.FlowScope;
+import org.mule.tools.apikit.output.scopes.HttpListenerConfigMule4Scope;
+import org.mule.tools.apikit.output.scopes.MuleScope;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,9 +55,18 @@ public class MuleConfigGenerator {
             Namespace.getNamespace("http", "http://www.mulesoft.org/schema/mule/http"),
             "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd"
     );
+    public static final NamespaceWithLocation HTTPN_NAMESPACE = new NamespaceWithLocation(
+            Namespace.getNamespace("httpn", "http://www.mulesoft.org/schema/mule/httpn"),
+            "http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd"
+    );
     public static final NamespaceWithLocation SPRING_NAMESPACE = new NamespaceWithLocation(
             Namespace.getNamespace("spring", "http://www.springframework.org/schema/beans"),
             "http://www.springframework.org/schema/beans/spring-beans-3.1.xsd"
+    );
+
+    public static final NamespaceWithLocation EE_NAMESPACE = new NamespaceWithLocation(
+            Namespace.getNamespace("ee", "http://www.mulesoft.org/schema/mule/ee/core"),
+            "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd"
     );
 
     private static final String INDENTATION = "    ";
@@ -65,16 +74,16 @@ public class MuleConfigGenerator {
     private final List<GenerationModel> flowEntries;
     private final Log log;
     private final File rootDirectory;
-    private final Map<String, HttpListenerConfig> domainHttpListenerConfigs;
-    private final String muleVersion;
+    private final Map<String, HttpListener4xConfig> domainHttpListenerConfigs;
+    private final boolean compatibilityMode;
     private final Set<File> ramlsWithExtensionEnabled;
 
-    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListenerConfig> domainHttpListenerConfigs, String muleVersion, Set<File> ramlsWithExtensionEnabled) {
+    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListener4xConfig> domainHttpListenerConfigs, boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled) {
         this.log = log;
         this.flowEntries = flowEntries;
         this.rootDirectory = muleConfigOutputDirectory;
         this.domainHttpListenerConfigs = domainHttpListenerConfigs;
-        this.muleVersion = muleVersion;
+        this.compatibilityMode = compatibilityMode;
         if (ramlsWithExtensionEnabled == null)
         {
             this.ramlsWithExtensionEnabled = new TreeSet<>();
@@ -148,7 +157,7 @@ public class MuleConfigGenerator {
             doc = docs.get(api);
         } else {
             doc = getDocument(api);
-            if(api.getConfig() == null || (!api.useInboundEndpoint() && api.getHttpListenerConfig() == null)) {
+            if(api.getConfig() == null || (!compatibilityMode && api.getHttpListenerConfig() == null)) {
                 if (api.getConfig() == null)
                 {
                     api.setDefaultAPIKitConfig();
@@ -171,7 +180,7 @@ public class MuleConfigGenerator {
         if (!xmlFile.exists() || xmlFile.length() == 0) {
             xmlFile.getParentFile().mkdirs();
             doc = new Document();
-            doc.setRootElement(new MuleScope().generate());
+            doc.setRootElement(new MuleScope(compatibilityMode, false).generate());
         } else {
             InputStream xmlInputStream = new FileInputStream(xmlFile);
             doc = saxBuilder.build(xmlInputStream);
@@ -184,25 +193,43 @@ public class MuleConfigGenerator {
         List<Element> mules = muleExp.evaluate(doc);
         Element mule = mules.get(0);
         String listenerConfigRef = null;
-        if (!api.useInboundEndpoint())
+        if (!compatibilityMode)
         {
             if (!domainHttpListenerConfigs.containsKey(api.getHttpListenerConfig().getName()))
             {
-                new HttpListenerConfigScope(api, mule).generate();
+                //if (!compatibilityMode)
+                //{
+                    new HttpListenerConfigMule4Scope(api, mule).generate();
+                //}
             }
             listenerConfigRef = api.getHttpListenerConfig().getName();
             api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
         }
-        new APIKitConfigScope(api.getConfig(), mule, muleVersion).generate();
-        Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
+        //TODO GLOBAL EXCEPTION STRATEGY REFERENCE
+//        if (!api.useListenerMule3() && !api.useInboundEndpoint())
+//        {
+//            addGlobalExceptionStrategy(mule, api.getId());
+//        }
+        new APIKitConfigScope(api.getConfig(), mule).generate();
+        //Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
         String configRef = api.getConfig() != null? api.getConfig().getName() : null;
 
-        new FlowScope(mule, exceptionStrategy.getAttribute("name").getValue(),
+        String exceptionStrategyRef = null;//exceptionStrategy.getAttribute("name").getValue()
+        new FlowScope(mule, exceptionStrategyRef,
                       api, configRef, listenerConfigRef).generate();
 
         new ConsoleFlowScope(mule, api, configRef, listenerConfigRef).generate();
 
-        mule.addContent(exceptionStrategy);
+        //mule.addContent(exceptionStrategy);
+    }
+
+    private void addGlobalExceptionStrategy(Element mule, String apiId)
+    {
+        Element globalExceptionStrategy = new Element("error-handler",
+                                                        XMLNS_NAMESPACE.getNamespace());
+        globalExceptionStrategy.setAttribute("name", apiId + "-" + "apiKitGlobalExceptionMapping");
+        mule.addContent(globalExceptionStrategy);
+
     }
 
 }

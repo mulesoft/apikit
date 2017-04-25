@@ -25,7 +25,8 @@ import org.apache.commons.lang.Validate;
 public class GenerationModel implements Comparable<GenerationModel> {
 
     private static final char FLOW_NAME_SEPARATOR = ':';
-    public static final String DEFAULT_TEXT = "#[NullPayload.getInstance()]";
+
+//    public static final String DEFAULT_TEXT_MULE_4 = "";
 
     private final String verb;
     private IAction action;
@@ -73,18 +74,20 @@ public class GenerationModel implements Comparable<GenerationModel> {
         }
     }
 
-    public String getExample() {
-        String exampleWrappee = this.getExampleWrappee();
+    //public String getExample() {
+    //   return this.getExampleWrapper();
 
-        if (exampleWrappee != null) {
-            return exampleWrappee;
-        } else {
-            return DEFAULT_TEXT;
-        }
+        //if (exampleWrapper != null) {
+        //    return exampleWrapper;
+        //}
+        //else
+        //{
+        //    return DEFAULT_TEXT_MULE_4;
+        //}
 
-    }
+    //}
 
-    private String getExampleWrappee() {
+    public String getExampleWrapper() {
         Map<String, IResponse> responses = action.getResponses();
 
         IResponse response = responses.get("200");

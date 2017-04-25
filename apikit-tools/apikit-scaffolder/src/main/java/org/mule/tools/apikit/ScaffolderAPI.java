@@ -6,8 +6,6 @@
  */
 package org.mule.tools.apikit;
 
-import org.mule.tools.apikit.misc.APIKitTools;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +32,7 @@ public class ScaffolderAPI {
 
     public void run(List<File> ramlFiles, File appDir)
     {
-        run(ramlFiles, appDir, null, null);
+        run(ramlFiles, appDir, null, false);
     }
 
     /**
@@ -47,7 +45,7 @@ public class ScaffolderAPI {
      */
     public void run(List<File> ramlFiles, File appDir, File domainDir)
     {
-          run(ramlFiles, appDir, domainDir, null);
+          run(ramlFiles, appDir, domainDir, false);
     }
 
     /**
@@ -56,17 +54,17 @@ public class ScaffolderAPI {
      * @param ramlFiles the ramlFiles to which the scaffolder will be run on
      * @param appDir the directory which contained the generated Mule config files
      * @param domainDir the directory which contained the domain used by the mule config files
-     * @param muleVersion used to know which type of endpoint (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
+     * @param compatibilityMode used to know which type of endpoint (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
      */
-    public void run(List<File> ramlFiles, File appDir, File domainDir, String muleVersion)
+    public void run(List<File> ramlFiles, File appDir, File domainDir, boolean compatibilityMode)
     {
-        if (APIKitTools.canExtensionsBeEnabled(muleVersion) && ExtensionManager.isScaffolderExtensionEnabled())
+        if (ExtensionManager.isScaffolderExtensionEnabled())
         {
-            ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, muleVersion);
+            ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, compatibilityMode);
         }
         else
         {
-            execute(ramlFiles, appDir, domainDir, muleVersion);
+            execute(ramlFiles, appDir, domainDir, compatibilityMode);
         }
     }
 
@@ -77,9 +75,9 @@ public class ScaffolderAPI {
      * @param ramlFiles the ramlFiles to which the scaffolder will be run on
      * @param appDir the directory which contained the generated Mule config files
      * @param domainDir the directory which contained the domain used by the mule config files
-     * @param muleVersion used to know which type of endpoint (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
+     * @param compatibilityMode used to know which type of source (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
      */
-    public void execute(List<File> ramlFiles, File appDir, File domainDir, String muleVersion) {
+    public void execute(List<File> ramlFiles, File appDir, File domainDir, boolean compatibilityMode) {
         List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
         SystemStreamLog log = new SystemStreamLog();
@@ -98,7 +96,7 @@ public class ScaffolderAPI {
         }
         Scaffolder scaffolder;
         try {
-            scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain, muleVersion);
+            scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain, compatibilityMode);
         } catch(Exception e) {
             throw new RuntimeException("Error executing scaffolder", e);
         }

@@ -84,7 +84,7 @@ public class GenerationModelTest {
         when(resource.getUri()).thenReturn("/api/pet");
         API api = mock(API.class);
         assertEquals("{\n\"hello\": \">world<\"\n}",
-                new GenerationModel(api, resource, action).getExample());
+                new GenerationModel(api, resource, action).getExampleWrapper());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class GenerationModelTest {
         when(resource.getUri()).thenReturn("/api/pet");
         API api = mock(API.class);
         assertEquals("<hello>world</hello>",
-                new GenerationModel(api, resource, action).getExample());
+                new GenerationModel(api, resource, action).getExampleWrapper());
     }
 
     @Test
@@ -124,7 +124,7 @@ public class GenerationModelTest {
         when(resource.getUri()).thenReturn("/api/pet");
         API api = mock(API.class);
         assertEquals("<hello>world</hello>",
-                new GenerationModel(api, resource, action).getExample());
+                new GenerationModel(api, resource, action).getExampleWrapper());
     }
 
     @Test
@@ -134,7 +134,7 @@ public class GenerationModelTest {
         IResource resource = mock(IResource.class);
         when(resource.getUri()).thenReturn("/api/pet");
         API api = mock(API.class);
-        assertEquals(GenerationModel.DEFAULT_TEXT, new GenerationModel(api, resource, action).getExample());
+        assertEquals(null, new GenerationModel(api, resource, action).getExampleWrapper());
     }
 
     @Test

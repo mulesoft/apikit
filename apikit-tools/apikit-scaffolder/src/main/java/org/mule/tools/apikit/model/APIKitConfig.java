@@ -6,76 +6,37 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.apache.commons.lang.StringUtils;
-
 public class APIKitConfig {
 
     public static final String ELEMENT_NAME = "config";
     public static final String NAME_ATTRIBUTE = "name";
     public static final String RAML_ATTRIBUTE = "raml";
-    public static final String CONSOLE_ENABLED_ATTRIBUTE = "consoleEnabled";
     public static final String EXTENSION_ENABLED_ATTRIBUTE = "extensionEnabled";
-    public static final String CONSOLE_PATH_ATTRIBUTE = "consolePath";
-    public static final String DEFAULT_CONSOLE_PATH = "console";
     public static final String DEFAULT_CONFIG_NAME = "config";
-
+    public static final String OUTBOUND_HEADERS_MAP_ATTRIBUTE = "outboundHeadersMapName";
+    public static final String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeaders";
+    public static final String HTTP_STATUS_VAR_ATTRIBUTE = "httpStatusVarName";
+    public static final String DEFAULT_HTTP_STATUS_NAME = "httpStatus";
 
     private String name;
     private String raml;
-    private boolean consoleEnabled;
-    private Boolean extensionEnabled;
-    private String consolePath;
+    private Boolean extensionEnabled = null;
+    private String outboundHeadersMapName = DEFAULT_OUTBOUND_HEADERS_MAP_NAME;
+    private String httpStatusVarName = DEFAULT_HTTP_STATUS_NAME;
 
-    public static class Builder {
-        private String name;
-        private final String raml;
-        private boolean consoleEnabled = false;
-        private Boolean extensionEnabled = null;
-        private String consolePath;
-
-        public Builder(final String raml) {
-            if(StringUtils.isEmpty(raml)) {
-                throw new IllegalArgumentException("Raml attribute cannot be null or empty");
-            }
-            this.raml = raml;
-        }
-
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder setConsoleEnabled(boolean consoleEnabled) {
-            this.consoleEnabled = consoleEnabled;
-            return this;
-        }
-
-        public Builder setExtensionEnabled(boolean extensionEnabled) {
-            this.extensionEnabled = extensionEnabled;
-            return this;
-        }
-
-        public Builder setConsolePath(String consolePath) {
-            this.consolePath = consolePath;
-            return this;
-        }
-
-        public APIKitConfig build() {
-            return new APIKitConfig(this.name, this.raml, this.consoleEnabled, this.extensionEnabled, this.consolePath != null? this.consolePath : DEFAULT_CONSOLE_PATH);
-        }
-    }
-
-    private APIKitConfig(final String name,
+    public APIKitConfig(final String name,
                          final String raml,
-                         final boolean consoleEnabled,
                          final Boolean extensionEnabled,
-                         final String consolePath) {
+                         final String outboundHeadersMapName,
+                         final String httpStatusVarName) {
         this.name = name;
         this.raml = raml;
-        this.consoleEnabled = consoleEnabled;
         this.extensionEnabled = extensionEnabled;
-        this.consolePath = consolePath;
+        this.outboundHeadersMapName = outboundHeadersMapName;
+        this.httpStatusVarName = httpStatusVarName;
     }
+
+    public APIKitConfig(){}
 
     public String getName() {
         return name;
@@ -85,9 +46,6 @@ public class APIKitConfig {
         return raml;
     }
 
-    public boolean isConsoleEnabled() {
-        return consoleEnabled;
-    }
 
     public Boolean isExtensionEnabled() {
         return extensionEnabled;
@@ -97,9 +55,40 @@ public class APIKitConfig {
     {
         this.extensionEnabled = enabled;
     }
-
-    public String getConsolePath() {
-        return consolePath;
+    public void setName(String name) {
+        this.name = name;
+        if (name == null)
+        {
+            this.name = APIKitConfig.DEFAULT_CONFIG_NAME;
+        }
     }
 
+    public void setExtensionEnabled(boolean extensionEnabled) {
+        this.extensionEnabled = extensionEnabled;
+    }
+
+    public void setOutboundHeadersMapName(String outboundHeadersMapName)
+    {
+        this.outboundHeadersMapName = outboundHeadersMapName;
+    }
+
+    public void setHttpStatusVarName(String httpStatusVarName)
+    {
+        this.httpStatusVarName = httpStatusVarName;
+    }
+
+    public String getOutboundHeadersMapName()
+    {
+        return outboundHeadersMapName;
+    }
+
+    public String getHttpStatusVarName()
+    {
+        return httpStatusVarName;
+    }
+
+    public void setRaml(String raml)
+    {
+        this.raml = raml;
+    }
 }

@@ -25,7 +25,7 @@ public class APIKitFlowScopeTest {
         GenerationModel flowEntry = mock(GenerationModel.class);
         when(flowEntry.getFlowName()).thenReturn("get:/pet");
         when(flowEntry.getName()).thenReturn("retrievePet");
-        when(flowEntry.getExample()).thenReturn("Hello world!");
+        when(flowEntry.getExampleWrapper()).thenReturn("Hello world!");
 
         Document doc = new Document();
         Element mule = new Element("mule");
@@ -35,10 +35,7 @@ public class APIKitFlowScopeTest {
 
         String s = Helper.nonSpaceOutput(doc);
 
-        Diff diff = XMLUnit.compareXML("<flow " +
-                "xmlns='http://www.mulesoft.org/schema/mule/core' " +
-                "name='get:/pet'><set-payload " +
-                "value='Hello world!' /></flow>", s);
+        Diff diff = XMLUnit.compareXML("<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:/pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:set-payload><![CDATA[%output application/java --- Hello world!]]></ee:set-payload></ee:transform></flow>", s);
 
         assertTrue(diff.toString(), diff.similar());
     }

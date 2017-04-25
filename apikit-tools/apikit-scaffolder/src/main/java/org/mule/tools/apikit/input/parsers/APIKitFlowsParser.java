@@ -29,10 +29,12 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
 
     private final Log log;
     private final Map<String, API> includedApis;
+    private final boolean compatibilityMode;
 
-    public APIKitFlowsParser(Log log, final Map<String, API> includedApis) {
+    public APIKitFlowsParser(Log log, final Map<String, API> includedApis, boolean compatibilityMode) {
         this.log = log;
         this.includedApis = includedApis;
+        this.compatibilityMode = compatibilityMode;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
                     throw new IllegalStateException("Api path is invalid");
                 }
                 String completePath;
-                if (!api.useInboundEndpoint() && api.getHttpListenerConfig() != null)
+                if (!compatibilityMode && api.getHttpListenerConfig() != null)
                 {
                     completePath = APIKitTools.getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
                 }

@@ -33,20 +33,20 @@ public class Scaffolder
 
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles) throws IOException
     {
-        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, null, null, null);
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, null, false, null);
     }
 
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles, String domainFile) throws IOException
     {
-        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, null, null);
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, false, null);
     }
 
-    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles, String domainFile, String muleVersion) throws IOException
+    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles, String domainFile, boolean compatibilityMode) throws IOException
     {
-        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, muleVersion, null);
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, compatibilityMode, null);
     }
 
-    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specPaths, List<String> muleXmlPaths, String domainPath, String muleVersion, List<String> ramlsWithExtensionEnabledPaths) throws IOException
+    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specPaths, List<String> muleXmlPaths, String domainPath, boolean compatibilityMode, List<String> ramlsWithExtensionEnabledPaths) throws IOException
     {
         FileListUtils fileUtils = new FileListUtils(log);
         Map<File, InputStream> ramlStreams = fileUtils.toStreamsOrFail(specPaths);
@@ -60,17 +60,17 @@ public class Scaffolder
             }
         }
         InputStream domainStream = getDomainStream(log, domainPath);
-        return new Scaffolder(log, muleXmlOutputDirectory, ramlStreams, muleStreams, domainStream, muleVersion, ramlWithExtensionEnabled);
+        return new Scaffolder(log, muleXmlOutputDirectory, ramlStreams, muleStreams, domainStream, compatibilityMode, ramlWithExtensionEnabled);
     }
 
-    public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> ramls, Map<File, InputStream> xmls, InputStream domainStream, String muleVersion, Set<File> ramlsWithExtensionEnabled)
+    public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> ramls, Map<File, InputStream> xmls, InputStream domainStream, boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled)
     {
         MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
         APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
-        MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(ramls.keySet(), xmls);
-        RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory, muleVersion);
+        MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory, compatibilityMode).parse(ramls.keySet(), xmls);
+        RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory, compatibilityMode);
         List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
-        muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(), muleVersion, ramlsWithExtensionEnabled);
+        muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(), compatibilityMode, ramlsWithExtensionEnabled);
     }
 
     private static InputStream getDomainStream(Log log, String domainPath)

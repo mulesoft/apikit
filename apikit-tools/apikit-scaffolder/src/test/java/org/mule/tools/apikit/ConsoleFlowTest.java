@@ -7,26 +7,29 @@
 
 package org.mule.tools.apikit;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mule.tools.apikit.Helper.countOccurences;
+
+import org.mule.tools.apikit.misc.FileListUtils;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.mule.tools.apikit.Scaffolder;
-import org.mule.tools.apikit.ScaffolderTest;
-import org.mule.tools.apikit.misc.FileListUtils;
-
-import java.io.*;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mule.tools.apikit.Helper.countOccurences;
 
 public class ConsoleFlowTest {
 
@@ -40,9 +43,9 @@ public class ConsoleFlowTest {
     }
 
     @Test
-    public void testAlreadyExistWithConsoleEnabled() throws Exception {
+    public void testAlreadyExistWithConsole() throws Exception {
         List<File> ramls = Arrays.asList(getFile("console-flow/simple-console.raml"));
-        File xmlFile = getFile("console-flow/simple-enabled.xml");
+        File xmlFile = getFile("console-flow/simple.xml");
         List<File> xmls = Arrays.asList(xmlFile);
         File muleXmlOut = folder.newFolder("mule-xml-out");
 
@@ -51,67 +54,16 @@ public class ConsoleFlowTest {
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
-        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
-        assertEquals(1, countOccurences(s, "consoleEnabled=\"true\""));
+        assertEquals(1, countOccurences(s, "httpn:listener-config name=\"HTTP_Listener_Configuration\""));
+        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
-        assertEquals(1, countOccurences(s, "get:/pet"));
-        assertEquals(1, countOccurences(s, "post:/pet"));
-        assertEquals(1, countOccurences(s, "get:/\""));
+        assertEquals(1, countOccurences(s, "get:/pet:simpleV10-config"));
+        assertEquals(1, countOccurences(s, "post:/pet:simpleV10-config"));
+        assertEquals(1, countOccurences(s, "get:/:simpleV10-config\""));
         assertEquals(1, countOccurences(s, "get:/users"));
         assertEquals(0, countOccurences(s, "extensionEnabled"));
         assertEquals(0, countOccurences(s, "<flow name=\"simple-enabled-console\">"));
         assertEquals(0, countOccurences(s, "apikit:console"));
-    }
-
-    @Test
-    public void testAlreadyExistWithConsoleDisabled() throws Exception {
-        List<File> ramls = Arrays.asList(getFile("console-flow/simple-console.raml"));
-        File xmlFile = getFile("console-flow/simple-disabled.xml");
-        List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
-
-        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
-        scaffolder.run();
-
-        assertTrue(xmlFile.exists());
-        String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
-        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
-        assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
-        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
-        assertEquals(1, countOccurences(s, "get:/pet"));
-        assertEquals(1, countOccurences(s, "post:/pet"));
-        assertEquals(1, countOccurences(s, "get:/\""));
-        assertEquals(1, countOccurences(s, "get:/users"));
-        assertEquals(0, countOccurences(s, "extensionEnabled"));
-        assertEquals(0, countOccurences(s,"<flow name=\"simple-disabled-console\">"));
-        assertEquals(0, countOccurences(s,"apikit:console"));
-    }
-
-    @Test
-    public void testAlreadyExistWithConsoleDisabledAndConsoleFlow() throws Exception {
-        List<File> ramls = Arrays.asList(getFile("console-flow/simple-console.raml"));
-        File xmlFile = getFile("console-flow/simple-disabled-with-console.xml");
-        List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
-
-        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
-        scaffolder.run();
-
-        assertTrue(xmlFile.exists());
-        String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\" host=\"localhost\" port=\"${serverPort}\""));
-        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
-        assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
-        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
-        assertEquals(1, countOccurences(s, "get:/pet"));
-        assertEquals(1, countOccurences(s, "post:/pet"));
-        assertEquals(1, countOccurences(s, "get:/\""));
-        assertEquals(1, countOccurences(s, "get:/users"));
-        assertEquals(0, countOccurences(s, "extensionEnabled"));
-        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/console/*\""));
-        assertEquals(1, countOccurences(s, "apikit:console"));
     }
 
     private File getFile(String s) throws  Exception {
@@ -127,7 +79,7 @@ public class ConsoleFlowTest {
         return file;
     }
 
-    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, String muleVersion, Set<File> ramlsWithExtensionEnabled)
+    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled)
             throws FileNotFoundException {
         Log log = mock(Log.class);
         Map<File, InputStream> ramlMap = null;
@@ -141,13 +93,13 @@ public class ConsoleFlowTest {
         {
             domainStream = new FileInputStream(domainFile);
         }
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, muleVersion, ramlsWithExtensionEnabled);
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, compatibilityMode, ramlsWithExtensionEnabled);
     }
 
     private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
             throws FileNotFoundException
     {
-        return createScaffolder(ramls, xmls, muleXmlOut, null, null, null);
+        return createScaffolder(ramls, xmls, muleXmlOut, null, false, null);
     }
 
     private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {

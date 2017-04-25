@@ -16,12 +16,10 @@ public class APIKitConfigScope implements Scope {
 
     private final Element mule;
     private final APIKitConfig config;
-    private final String muleVersion;
 
-    public APIKitConfigScope(APIKitConfig config, Element mule, String muleVersion) {
+    public APIKitConfigScope(APIKitConfig config, Element mule) {
         this.mule = mule;
         this.config = config;
-        this.muleVersion = muleVersion;
     }
 
     @Override
@@ -36,16 +34,18 @@ public class APIKitConfigScope implements Scope {
             }
 
             config.setAttribute(APIKitConfig.RAML_ATTRIBUTE, this.config.getRaml());
-            if (this.config.isExtensionEnabled() != null && APIKitTools.canExtensionsBeEnabled(muleVersion))
+            if (this.config.isExtensionEnabled() != null)
             {
                 config.setAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE, String.valueOf(this.config.isExtensionEnabled()));
             }
-            config.setAttribute(APIKitConfig.CONSOLE_ENABLED_ATTRIBUTE, String.valueOf(this.config.isConsoleEnabled()));
-
-            if(this.config.isConsoleEnabled()) {
-                config.setAttribute(APIKitConfig.CONSOLE_PATH_ATTRIBUTE, this.config.getConsolePath());
+            if (this.config.getOutboundHeadersMapName() != null)
+            {
+                config.setAttribute(APIKitConfig.OUTBOUND_HEADERS_MAP_ATTRIBUTE, this.config.getOutboundHeadersMapName());
             }
-
+            if (this.config.getHttpStatusVarName() != null)
+            {
+                config.setAttribute(APIKitConfig.HTTP_STATUS_VAR_ATTRIBUTE, this.config.getHttpStatusVarName());
+            }
             mule.addContent(config);
         }
         return config;

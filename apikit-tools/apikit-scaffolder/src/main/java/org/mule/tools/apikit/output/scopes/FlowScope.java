@@ -6,16 +6,20 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import org.apache.commons.lang.StringUtils;
-import org.jdom2.Element;
-
-import org.mule.tools.apikit.misc.APIKitTools;
-import org.mule.tools.apikit.model.API;
-
+import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTPN_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 
+import org.mule.tools.apikit.misc.APIKitTools;
+import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIKitConfig;
+
+import org.apache.commons.lang.StringUtils;
+import org.jdom2.Element;
+import org.mozilla.javascript.tools.debugger.Main;
+
 public class FlowScope implements Scope {
+
 
     private final Element main;
 
@@ -26,16 +30,11 @@ public class FlowScope implements Scope {
 
         if (httpListenerConfigRef != null)
         {
-            Element httpListener = new Element("listener", HTTP_NAMESPACE.getNamespace());
-            httpListener.setAttribute("config-ref", httpListenerConfigRef);
-            httpListener.setAttribute("path", api.getPath());
-            main.addContent(httpListener);
+            MainFlowsUtils.generateListenerSource(httpListenerConfigRef, api.getPath(), main);
         }
         else
         {
-            Element httpInboundEndpoint = new Element("inbound-endpoint", HTTP_NAMESPACE.getNamespace());
-            httpInboundEndpoint.setAttribute("address", api.getBaseUri());
-            main.addContent(httpInboundEndpoint);
+            MainFlowsUtils.generateInboundSource(api.getBaseUri(), main);
         }
 
         Element restProcessor = new Element("router", APIKitTools.API_KIT_NAMESPACE.getNamespace());
@@ -43,11 +42,13 @@ public class FlowScope implements Scope {
             restProcessor.setAttribute("config-ref", configRef);
         }
         main.addContent(restProcessor);
-
-        Element exceptionStrategy = new Element("exception-strategy", XMLNS_NAMESPACE.getNamespace());
-        exceptionStrategy.setAttribute("ref", exceptionStrategyRef);
-
-        main.addContent(exceptionStrategy);
+        //TODO ADD EXCEPTION STRATEGY
+        //if (APIKitTools.usesListenersMuleV3(api.getMuleVersion()) || APIKitTools.defaultIsInboundEndpoint(api.getMuleVersion()))
+        //{
+        //    Element exceptionStrategy = new Element("exception-strategy", XMLNS_NAMESPACE.getNamespace());
+        //    exceptionStrategy.setAttribute("ref", exceptionStrategyRef);
+        //    main.addContent(exceptionStrategy);
+        //}
 
         mule.addContent(main);
     }

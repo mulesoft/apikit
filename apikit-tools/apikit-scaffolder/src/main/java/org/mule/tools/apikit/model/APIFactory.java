@@ -14,13 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
 public class APIFactory
 {
     private Map<File, API> apis = new HashMap<File, API>();
-    private Map<String, HttpListenerConfig> domainHttpListenerConfigs = new HashMap<>();
-    public APIFactory (Map<String, HttpListenerConfig> domainHttpListenerConfigs)
+    private Map<String, HttpListener4xConfig> domainHttpListenerConfigs = new HashMap<>();
+    public APIFactory (Map<String, HttpListener4xConfig> domainHttpListenerConfigs)
     {
         this.domainHttpListenerConfigs.putAll(domainHttpListenerConfigs);
     }
@@ -29,17 +30,12 @@ public class APIFactory
     {
     }
 
-    public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config)
+    public API createAPIBindingInboundEndpoint(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config)
     {
         return createAPIBinding(ramlFile, xmlFile, baseUri, path, config, null, true);
     }
 
-    public API createAPIBinding(File ramlFile, File xmlFile, String path, APIKitConfig config, HttpListenerConfig httpListenerConfig)
-    {
-        return createAPIBinding(ramlFile, xmlFile, null, path, config, httpListenerConfig, false);
-    }
-
-    public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config, HttpListenerConfig httpListenerConfig, Boolean useInboundEndpoint)
+    public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config, HttpListener4xConfig httpListenerConfig, boolean compatibilityMode)
     {
         Validate.notNull(ramlFile);
         if(apis.containsKey(ramlFile))
@@ -52,8 +48,7 @@ public class APIFactory
             return api;
         }
         API api = new API(ramlFile, xmlFile, baseUri, path, config);
-        api.setUseInboundEndpoint(useInboundEndpoint);
-        if (!useInboundEndpoint)
+        if (!compatibilityMode)
         {
             if (httpListenerConfig == null)
             {
@@ -76,22 +71,36 @@ public class APIFactory
         return api;
     }
 
-    public Map<String, HttpListenerConfig> getDomainHttpListenerConfigs() {
+    public Map<String, HttpListener4xConfig> getDomainHttpListenerConfigs() {
         return domainHttpListenerConfigs;
     }
 
-    private HttpListenerConfig getFirstLC()
+    private HttpListener4xConfig getFirstLC()
     {
-        List<Map.Entry<String,HttpListenerConfig>> list = new ArrayList<>(domainHttpListenerConfigs.entrySet());
-        Collections.sort(list, new Comparator<Map.Entry<String, HttpListenerConfig>>(){
+        List<Map.Entry<String,HttpListener4xConfig>> numericPortsList = new ArrayList<>();
+        List<Map.Entry<String,HttpListener4xConfig>> nonNumericPortsList = new ArrayList<>();
+
+        for (Map.Entry<String, HttpListener4xConfig> entry : domainHttpListenerConfigs.entrySet())
+        {
+            if (StringUtils.isNumeric(entry.getValue().getPort()))
+            {
+                numericPortsList.add(entry);
+            }
+            else
+            {
+                nonNumericPortsList.add(entry);
+            }
+        }
+        Collections.sort(numericPortsList, new Comparator<Map.Entry<String, HttpListener4xConfig>>(){
             @Override
-            public int compare(Map.Entry<String, HttpListenerConfig> o1, Map.Entry<String, HttpListenerConfig> o2)
+            public int compare(Map.Entry<String, HttpListener4xConfig> o1, Map.Entry<String, HttpListener4xConfig> o2)
             {
                 Integer i1 = Integer.parseInt(o1.getValue().getPort());
                 Integer i2 = Integer.parseInt(o2.getValue().getPort());
                 return i1.compareTo(i2);
             }
         });
-        return list.get(0).getValue();
+        numericPortsList.addAll(nonNumericPortsList);
+        return numericPortsList.get(0).getValue();
     }
 }

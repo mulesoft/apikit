@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule-domain xmlns="http://www.mulesoft.org/schema/mule/ee/domain"
+             xmlns:httpn="http://www.mulesoft.org/schema/mule/httpn"
+             xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/domain http://www.mulesoft.org/schema/mule/ee/domain/current/mule-domain-ee.xsd
+                                 http://www.mulesoft.org/schema/mule/httpn http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd
+                                 http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd">
+
+    <httpn:listener-config name="abcd">
+        <httpn:listener-connection  host="localhost" port="7001" protocol="HTTP"/>
+    </httpn:listener-config>
+
+    <httpn:listener-config name="http-lc-0.0.0.0-8083" basePath="/test">
+        <httpn:listener-connection  host="0.0.0.0" port="8083" protocol="HTTP"/>
+    </httpn:listener-config>
+
+    <httpn:listener-config name="https-lc-0.0.0.0-8082" basePath="/">
+        <httpn:listener-connection  host="0.0.0.0" port="8082" protocol="HTTPS" tlsContext="sharedTlsContext1"/>
+    </httpn:listener-config>
+
+    <httpn:listener-config name="http-lc-0.0.0.0-8080">
+        <httpn:listener-connection  host="0.0.0.0" port="8080" protocol="HTTP"/>
+    </httpn:listener-config>
+
+    <tls:context name="sharedTlsContext1">
+        <tls:key-store  path="serverKeystore" keyPassword="mulepassword" password="mulepassword"/>
+    </tls:context>
+
+    <tls:context name="sharedTlsContext2">
+        <tls:trust-store  path="ssltest-cacerts.jks" password="changeit"/>
+    </tls:context>
+
+    <tls:context name="sharedTlsContext3">
+        <tls:key-store  path="ssltest-keystore.jks" password="changeit" keyPassword="changeit"/>
+    </tls:context>
+
+    <httpn:listener-config name="sharedListenerConfig">
+        <httpn:listener-connection host="localhost" port="${port1}" protocol="HTTPS" tlsContext="sharedTlsContext1"/>
+    </httpn:listener-config>
+
+    <httpn:request-config name="sharedRequestConfig">
+        <httpn:request-connection host="localhost" port="${port2}" protocol="HTTPS" tlsContext="sharedTlsContext2"/>
+    </httpn:request-config>
+</mule-domain>

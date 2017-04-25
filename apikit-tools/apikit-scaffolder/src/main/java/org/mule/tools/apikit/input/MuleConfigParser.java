@@ -11,11 +11,11 @@ import static java.util.Map.Entry;
 import org.mule.tools.apikit.input.parsers.APIKitConfigParser;
 import org.mule.tools.apikit.input.parsers.APIKitFlowsParser;
 import org.mule.tools.apikit.input.parsers.APIKitRoutersParser;
-import org.mule.tools.apikit.input.parsers.HttpListenerConfigParser;
+import org.mule.tools.apikit.input.parsers.HttpListener4xConfigParser;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
-import org.mule.tools.apikit.model.HttpListenerConfig;
+import org.mule.tools.apikit.model.HttpListener4xConfig;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 import java.io.File;
@@ -36,15 +36,17 @@ public class MuleConfigParser {
 
     private Set<ResourceActionMimeTypeTriplet> entries = new HashSet<>();
     private Map<String, API> includedApis = new HashMap<>();
-    private Map<String, HttpListenerConfig> httpListenerConfigs = new HashMap<>();
+    private Map<String, HttpListener4xConfig> httpListenerConfigs = new HashMap<>();
     private Map<String, APIKitConfig> apikitConfigs = new HashMap<>();
     private final APIFactory apiFactory;
     private final Log log;
+    private final boolean compatibilityMode;
 
-    public MuleConfigParser(Log log, APIFactory apiFactory) {
+    public MuleConfigParser(Log log, APIFactory apiFactory, boolean compatibilityMode) {
         this.apiFactory = apiFactory;
         this.httpListenerConfigs.putAll(apiFactory.getDomainHttpListenerConfigs());
         this.log = log;
+        this.compatibilityMode = compatibilityMode;
     }
 
     public MuleConfigParser parse(Set<File> ramlPaths, Map<File, InputStream> streams) {
@@ -59,7 +61,6 @@ public class MuleConfigParser {
                 log.debug(e);
             }
         }
-
         return this;
     }
 
@@ -68,10 +69,11 @@ public class MuleConfigParser {
         Document document = saxBuilder.build(stream);
 
         apikitConfigs.putAll(new APIKitConfigParser().parse(document));
-        httpListenerConfigs.putAll(new HttpListenerConfigParser().parse(document));
+        httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
+
         includedApis.putAll(new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document));
 
-        entries.addAll(new APIKitFlowsParser(log, includedApis).parse(document));
+        entries.addAll(new APIKitFlowsParser(log, includedApis, compatibilityMode).parse(document));
     }
 
     public Map<String, APIKitConfig> getApikitConfigs() {

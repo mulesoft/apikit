@@ -82,8 +82,8 @@ public class CreateMojo
     /**
      * Mule version that is being used.
      */
-    @Parameter (property = "muleVersion")
-    private String muleVersion;
+    @Parameter (property = "compatibilityMode")
+    private boolean compatibilityMode;
 
     private Log log;
 
@@ -113,13 +113,12 @@ public class CreateMojo
         List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
         List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
         String domainFile = processDomain();
-        processMuleVersion();
         log.info("Processing the following RAML files: " + specFiles);
         log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
 
         try
         {
-            Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, muleVersion);
+            Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, compatibilityMode);
             scaffolder.run();
         }
         catch (IOException e)
@@ -153,17 +152,4 @@ public class CreateMojo
         }
         return domainFile;
     }
-
-    private void processMuleVersion()
-    {
-        if (muleVersion != null)
-        {
-            log.info("Mule version provided: " + muleVersion);
-        }
-        else
-        {
-            log.info("Mule version was not provided. " + DEFAULT_MULE_VERSION + " will be used as default when generating a new xml file (if is not provided). To send the mule version, use -DmuleVersion.");
-        }
-    }
-
 }

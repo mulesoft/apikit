@@ -6,31 +6,61 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
+import org.jdom2.CDATA;
 import org.jdom2.Element;
 
 import org.mule.tools.apikit.output.GenerationModel;
 
+import static org.mule.tools.apikit.output.MuleConfigGenerator.EE_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
 
 public class APIKitFlowScope implements Scope {
     private final Element flow;
+
+    private static final String DEFAULT_EXAMPLE_CONTENT_TYPE = "application/java";
 
     public APIKitFlowScope(GenerationModel flowEntry) {
         flow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
         flow.setAttribute("name", flowEntry.getFlowName());
 
-        if( flowEntry.getContentType() != null ) {
-            Element setContentType = new Element("set-property", XMLNS_NAMESPACE.getNamespace());
-            setContentType.setAttribute("propertyName", "Content-Type");
-            setContentType.setAttribute("value", flowEntry.getContentType());
-            flow.addContent(setContentType);
+        //if( flowEntry.getContentType() != null ) {
+        //    Element setContentType = new Element("set-property", XMLNS_NAMESPACE.getNamespace());
+        //    setContentType.setAttribute("propertyName", "Content-Type");
+        //    setContentType.setAttribute("value", flowEntry.getContentType());
+        //    flow.addContent(setContentType);
+        //}
+        if (flowEntry.getExampleWrapper() == null)
+        {
+            Element echo = new Element("echo-component", XMLNS_NAMESPACE.getNamespace());
+            flow.addContent(echo);
         }
-
-        Element example = new Element("set-payload", XMLNS_NAMESPACE.getNamespace());
-        example.setAttribute("value", flowEntry.getExample().trim());
-        flow.addContent(example);
+        else
+        {
+            Element transform = new Element("transform", EE_NAMESPACE.getNamespace());
+            Element setPayload = new Element("set-payload", EE_NAMESPACE.getNamespace());
+            CDATA cdataSection = new CDATA(generateTransformText(flowEntry.getContentType(), flowEntry.getExampleWrapper()));
+            setPayload.addContent(cdataSection);
+            transform.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
+            transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(), XSI_NAMESPACE.getNamespace());
+            transform.addContent(setPayload);
+            flow.addContent(transform);
+        }
     }
 
+    private String generateTransformText(String contentType, String example)
+    {
+        String transformContentType = contentType;
+        if (contentType == null)
+        {
+            transformContentType = DEFAULT_EXAMPLE_CONTENT_TYPE;
+        }
+
+        return "            %output "+ transformContentType +"\n" +
+               "             ---\n" +
+               "             " + example.trim() + "\n";// +
+               //"         ]]>";
+    }
     @Override
     public Element generate() {
         return flow;

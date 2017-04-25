@@ -52,7 +52,14 @@ public class APIKitTools {
         }
         return path;
     }
-
+    public static String getProtocolFromUri(String baseUri)
+    {
+        if (baseUri.contains("//"))
+        {
+            return baseUri.substring(0, baseUri.indexOf("//")).toUpperCase();
+        }
+        return API.DEFAULT_PROTOCOL;
+    }
     public static String getHostFromUri(String baseUri)
     {
         int start = baseUri.indexOf("//") + 2;
@@ -146,6 +153,26 @@ public class APIKitTools {
         int major = Integer.parseInt(versionParts[0]);
         int minor = Integer.parseInt(versionParts[1]);
         if (major > 3 || (major == 3 && minor >= 7))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean usesListenersMuleV3(String candidateVersion)
+    {
+        if (candidateVersion == null)
+        {
+            return false;
+        }
+        String[] versionParts = candidateVersion.split("\\.");
+        if (versionParts.length < 2)
+        {
+            return false;
+        }
+        int major = Integer.parseInt(versionParts[0]);
+        int minor = Integer.parseInt(versionParts[1]);
+        if (major == 3 && minor >= 6)
         {
             return true;
         }

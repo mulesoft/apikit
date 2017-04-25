@@ -22,8 +22,8 @@ public interface ScaffolderService
      * @param ramlFiles the ramlFiles to which the scaffolder will be run on
      * @param appDir    the directory which contained the generated Mule config files
      * @param domainDir the directory which contained the domain used by the mule config files
-     * @param muleVersion used to know which type of endpoint (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
+     * @param compatibilityMode used to know which type of endpoint (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
      */
-    void executeScaffolder(List<File> ramlFiles, File appDir, File domainDir, String muleVersion);
+    void executeScaffolder(List<File> ramlFiles, File appDir, File domainDir, boolean compatibilityMode);
 
 }

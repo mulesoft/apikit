@@ -6,27 +6,29 @@
  */
 package org.mule.tools.apikit.model;
 
+import org.mule.tools.apikit.misc.APIKitTools;
+
 import java.io.File;
 
 import org.apache.commons.io.FilenameUtils;
 
 public class API {
+    public static final String DEFAULT_HOST = "0.0.0.0";
     public static final int DEFAULT_PORT = 8081;
-    public static final String DEFAULT_BASE_URI = "http://0.0.0.0:" + DEFAULT_PORT + "/api";
+    public static final String DEFAULT_BASE_URI = "http://" + DEFAULT_HOST +":" + DEFAULT_PORT + "/api";
     public static final String DEFAULT_BASE_PATH = "/";
+    public static final String DEFAULT_PROTOCOL = "HTTP";
     public static final String DEFAULT_CONSOLE_PATH = "/console/*";
-    public static final String DEFAULT_CONSOLE_PATH_INBOUND = "http://0.0.0.0:" + DEFAULT_PORT + "/console";
+    public static final String DEFAULT_CONSOLE_PATH_INBOUND = "http://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/console";
 
     private APIKitConfig config;
-    private HttpListenerConfig httpListenerConfig;
+    private HttpListener4xConfig httpListenerConfig;
     private String path;
 
     private String baseUri;
     private File xmlFile;
     private File ramlFile;
     private String id;
-    private Boolean useInboundEndpoint;
-
 
     public API(File ramlFile, File xmlFile, String baseUri, String path) {
         this.path = path;
@@ -73,7 +75,7 @@ public class API {
         this.path = path;
     }
 
-    public HttpListenerConfig getHttpListenerConfig() {
+    public HttpListener4xConfig getHttpListenerConfig() {
         return httpListenerConfig;
     }
 
@@ -85,28 +87,31 @@ public class API {
         this.config = config;
     }
 
-    public void setHttpListenerConfig(HttpListenerConfig httpListenerConfig) {
+    public void setHttpListenerConfig(HttpListener4xConfig httpListenerConfig) {
         this.httpListenerConfig = httpListenerConfig;
     }
 
     public void setDefaultAPIKitConfig() {
-        config = new APIKitConfig.Builder(ramlFile.getName()).setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME).build();
+        config = new APIKitConfig();
+        config.setRaml(ramlFile.getName());
+        config.setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME);
     }
 
     public void setDefaultHttpListenerConfig()
     {
-        String httpListenerConfigName = id == null? HttpListenerConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListenerConfig.DEFAULT_CONFIG_NAME;
-        httpListenerConfig = new HttpListenerConfig.Builder(httpListenerConfigName, API.DEFAULT_BASE_URI).build();
+        String httpListenerConfigName = id == null ? HttpListener4xConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListener4xConfig.DEFAULT_CONFIG_NAME;
+        httpListenerConfig = new HttpListener4xConfig(httpListenerConfigName);
     }
 
-    public Boolean useInboundEndpoint()
-    {
-        return useInboundEndpoint;
-    }
-    public boolean setUseInboundEndpoint(Boolean useInboundEndpoint)
-    {
-        return this.useInboundEndpoint = useInboundEndpoint;
-    }
+    //public Boolean useInboundEndpoint()
+    //{
+    //    return APIKitTools.defaultIsInboundEndpoint(muleVersion);
+    //}
+
+    //public boolean setUseInboundEndpoint(Boolean useInboundEndpoint)
+    //{
+    //    return this.useInboundEndpoint = useInboundEndpoint;
+    //}
     public String getBaseUri()
     {
         return baseUri;
