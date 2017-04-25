@@ -29,13 +29,11 @@ public class CreateMojo
     @Component
     private BuildContext buildContext;
 
-    private final static String DEFAULT_MULE_VERSION = "3.7.0";
-
     /**
      * Pattern of where to find the spec .raml, .yaml or .yml files.
      */
     @Parameter
-    private String[] specIncludes = new String[]{"src/main/api/**/*.yaml", "src/main/api/**/*.yml", "src/main/api/**/*.raml"};
+    private String[] specIncludes = new String[]{"src/main/resources/api/**/*.yaml", "src/main/resources/api/**/*.yml", "src/main/resources/api/**/*.raml"};
 
     /**
      * Pattern of what to exclude searching for .yaml files.
@@ -53,7 +51,7 @@ public class CreateMojo
      * Pattern of where to find the Mule XMLs.
      */
     @Parameter
-    private String[] muleXmlIncludes = new String[]{"src/main/app/**/*.xml", "src/main/resources/**/*.xml"};
+    private String[] muleXmlIncludes = new String[]{"src/main/mule/**/*.xml", "src/main/resources/**/*.xml"};
 
     /**
      * Pattern of what to exclude searching for Mule XML files.
@@ -70,7 +68,7 @@ public class CreateMojo
     /**
      * Where to output the generated mule config files.
      */
-    @Parameter(defaultValue = "${basedir}/src/main/app")
+    @Parameter(defaultValue = "${basedir}/src/main/mule")
     private File muleXmlOutputDirectory;
 
     /**

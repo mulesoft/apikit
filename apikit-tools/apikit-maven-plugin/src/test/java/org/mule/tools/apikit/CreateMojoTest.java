@@ -40,6 +40,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     private File src;
     private File main;
     private File app;
+    private File resources;
     private File api;
     private File lala;
     private File project;
@@ -53,8 +54,9 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         project = folder.newFolder("my-project");
         src = new File(project, "src");
         main = new File(src, "main");
-        app = new File(main, "app");
-        api = new File(main, "api");
+        app = new File(main, "mule");
+        resources = new File(main, "resources");
+        api = new File(resources, "api");
         lala = new File(api, "lala");
 
 
@@ -78,14 +80,14 @@ public class CreateMojoTest extends AbstractMojoTestCase {
 
     @Test
     public void testGetIncludedFiles() throws Exception {
-        List<String> files = mojo.getIncludedFiles(project, new String[]{"src/main/api/**/*.raml", "src/main/**/*.yml"},
+        List<String> files = mojo.getIncludedFiles(project, new String[]{"src/main/resources/api/**/*.raml", "src/main/resources/api/**/*.yml"},
                         new String[]{});
         HashSet<String> set = new HashSet<String>(files);
 
-        assertTrue(set.contains(new File(project, "src/main/api/hello.raml").getAbsolutePath()));
-        assertTrue(set.contains(new File(project, "src/main/api/bye.yml").getAbsolutePath()));
-        assertTrue(set.contains(new File(project, "src/main/api/lala/wow.raml").getAbsolutePath()));
-        assertFalse(set.contains(new File(project, "src/main/dont-read.raml").getAbsolutePath()));
+        assertTrue(set.contains(new File(project, "src/main/resources/api/hello.raml").getAbsolutePath()));
+        assertTrue(set.contains(new File(project, "src/main/resources/api/bye.yml").getAbsolutePath()));
+        assertTrue(set.contains(new File(project, "src/main/resources/api/lala/wow.raml").getAbsolutePath()));
+        assertFalse(set.contains(new File(project, "src/main/resources/dont-read.raml").getAbsolutePath()));
         assertEquals(3, files.size());
     }
 
@@ -106,7 +108,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         input.close();
 
         assertTrue(ramlFileContent.length() > 0);
-        File muleConfigFile = new File (project.getPath() + "/src/main/app/hello.xml");
+        File muleConfigFile = new File (project.getPath() + "/src/main/mule/hello.xml");
         assertTrue(muleConfigFile.exists());
 
         input = new FileInputStream(muleConfigFile);
@@ -141,7 +143,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         input.close();
 
         assertTrue(ramlFileContent.length() > 0);
-        File muleConfigFile = new File (project.getPath() + "/src/main/app/hello.xml");
+        File muleConfigFile = new File (project.getPath() + "/src/main/mule/hello.xml");
         assertTrue(muleConfigFile.exists());
 
         input = new FileInputStream(muleConfigFile);
@@ -172,7 +174,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         input.close();
 
         assertTrue(ramlFileContent.length() > 0);
-        File muleConfigFile = new File (project.getPath() + "/src/main/app/hello.xml");
+        File muleConfigFile = new File (project.getPath() + "/src/main/mule/hello.xml");
         assertTrue(muleConfigFile.exists());
 
         input = new FileInputStream(muleConfigFile);
@@ -201,7 +203,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         input.close();
 
         assertTrue(ramlFileContent.length() > 0);
-        File muleConfigFile = new File (project.getPath() + "/src/main/app/hello.xml");
+        File muleConfigFile = new File (project.getPath() + "/src/main/mule/hello.xml");
         assertTrue(muleConfigFile.exists());
 
         input = new FileInputStream(muleConfigFile);
