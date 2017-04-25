@@ -29,24 +29,26 @@ import org.apache.maven.plugin.logging.Log;
 
 public class Scaffolder
 {
+    private final static String DEFAULT_MULE_VERSION = "4.0.0";
+
     private final MuleConfigGenerator muleConfigGenerator;
 
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles) throws IOException
     {
-        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, null, false, null);
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, null, DEFAULT_MULE_VERSION, false, null);
     }
 
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles, String domainFile) throws IOException
     {
-        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, false, null);
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, DEFAULT_MULE_VERSION, false, null);
     }
 
-    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles, String domainFile, boolean compatibilityMode) throws IOException
+    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles, String domainFile, String muleVersion, boolean compatibilityMode) throws IOException
     {
-        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, compatibilityMode, null);
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, muleVersion, compatibilityMode, null);
     }
 
-    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specPaths, List<String> muleXmlPaths, String domainPath, boolean compatibilityMode, List<String> ramlsWithExtensionEnabledPaths) throws IOException
+    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specPaths, List<String> muleXmlPaths, String domainPath, String muleVersion, boolean compatibilityMode, List<String> ramlsWithExtensionEnabledPaths) throws IOException
     {
         FileListUtils fileUtils = new FileListUtils(log);
         Map<File, InputStream> ramlStreams = fileUtils.toStreamsOrFail(specPaths);
