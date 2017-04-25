@@ -25,9 +25,6 @@
         "/META-INF/mule-apikit.xsd",
         "/META-INF/spring.handlers",
         "/META-INF/spring.schemas",
-        "/META-INF/services/org.mule.runtime.dsl.api.component.ComponentBuildingDefinitionProvider",
-        "/META-INF/services/org.mule.runtime.dsl.api.xml.XmlNamespaceInfoProvider",
-        "/META-INF/org/mule/runtime/core/config/registry-bootstrap.properties",
         "/plugin-bootstrap.properties"
       ]
     }
