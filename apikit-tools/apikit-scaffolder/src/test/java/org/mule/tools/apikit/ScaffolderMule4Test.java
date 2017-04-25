@@ -395,7 +395,7 @@ public class ScaffolderMule4Test {
         File muleXmlSimple = simpleGeneration("example", null, false);
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-
+        assertEquals(1, countOccurences(s, "application/json"));
         assertEquals(1, countOccurences(s, "{\n" +
                                            "    \"name\": \"Bobby\",\n" +
                                            "    \"food\": \"Ice Cream\"\n" +

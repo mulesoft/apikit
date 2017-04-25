@@ -163,10 +163,11 @@ public class GenerationModel implements Comparable<GenerationModel> {
     }
 
     public String getContentType() {
-        if( action.getBody() != null ) {
+        if (action.getResponses() != null)
+        {
             for( String response : action.getResponses().keySet() ) {
                 int statusCode = Integer.parseInt(response);
-                if( statusCode > 200 && statusCode < 299 ) {
+                if( statusCode >= 200 && statusCode < 299 ) {
                     if( action.getResponses().get(response).getBody() != null && action.getResponses().get(response).getBody().size() > 0 ) {
                         return (String)action.getResponses().get(response).getBody().keySet().toArray()[0];
                     }
