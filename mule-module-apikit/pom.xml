@@ -21,15 +21,15 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
         <mule.api.version>1.0.0-SNAPSHOT</mule.api.version>
-        <mule.app.plugins.maven.plugin.version>1.0.0-SNAPSHOT</mule.app.plugins.maven.plugin.version>
+        <mule.extensions.maven.plugin.version>1.0.0-SNAPSHOT</mule.extensions.maven.plugin.version>
     </properties>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.mule.runtime.plugins</groupId>
-                <artifactId>mule-app-plugins-maven-plugin</artifactId>
-                <version>${mule.app.plugins.maven.plugin.version}</version>
+                <artifactId>mule-extensions-maven-plugin</artifactId>
+                <version>${mule.extensions.maven.plugin.version}</version>
                 <extensions>true</extensions>
             </plugin>
             <plugin>
@@ -41,26 +41,26 @@
                 </configuration>
             </plugin>
             <!--TODO (MULE-10540) parent pom for mule plugins -->
-            <plugin>
-                <artifactId>maven-jar-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>mule-plugin</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>mule-plugin</classifier>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--<plugin>-->
+                <!--<artifactId>maven-jar-plugin</artifactId>-->
+                <!--<executions>-->
+                    <!--<execution>-->
+                        <!--<goals>-->
+                            <!--<goal>test-jar</goal>-->
+                        <!--</goals>-->
+                    <!--</execution>-->
+                    <!--<execution>-->
+                        <!--<id>mule-plugin</id>-->
+                        <!--<phase>package</phase>-->
+                        <!--<goals>-->
+                            <!--<goal>jar</goal>-->
+                        <!--</goals>-->
+                        <!--<configuration>-->
+                            <!--<classifier>mule-plugin</classifier>-->
+                        <!--</configuration>-->
+                    <!--</execution>-->
+                <!--</executions>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
