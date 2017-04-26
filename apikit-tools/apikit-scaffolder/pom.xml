@@ -5,7 +5,7 @@
     <parent>
         <artifactId>apikit-tools</artifactId>
         <groupId>org.mule.tools</groupId>
-        <version>3.8.4-SNAPSHOT</version>
+        <version>3.8.4-HF1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>apikit-scaffolder</artifactId>
