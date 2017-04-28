@@ -115,7 +115,11 @@ public class ConsoleHandler implements MessageProcessor
             File apiResource = new File(configuration.getAppHome(), "/" + DEFAULT_API_RESOURCES_PATH + ramlLocation);
             if (apiResource.isFile())
             {
-                return DEFAULT_API_RESOURCES_PATH + "?" + RAML_QUERY_STRING;
+                if (ramlLocation.contains("/"))
+                {
+                    apiResourcesRelativePath += ramlLocation.substring(0, ramlLocation.lastIndexOf("/") + 1);
+                }
+                return apiResourcesRelativePath + "?" + RAML_QUERY_STRING;
             }
 
             // check if raml is in a classpath subdir
