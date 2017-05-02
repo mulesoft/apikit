@@ -22,7 +22,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,15 +74,13 @@ public class MuleConfigGenerator {
     private final Log log;
     private final File rootDirectory;
     private final Map<String, HttpListener4xConfig> domainHttpListenerConfigs;
-    private final boolean compatibilityMode;
     private final Set<File> ramlsWithExtensionEnabled;
 
-    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListener4xConfig> domainHttpListenerConfigs, boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled) {
+    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListener4xConfig> domainHttpListenerConfigs, Set<File> ramlsWithExtensionEnabled) {
         this.log = log;
         this.flowEntries = flowEntries;
         this.rootDirectory = muleConfigOutputDirectory;
         this.domainHttpListenerConfigs = domainHttpListenerConfigs;
-        this.compatibilityMode = compatibilityMode;
         if (ramlsWithExtensionEnabled == null)
         {
             this.ramlsWithExtensionEnabled = new TreeSet<>();
@@ -157,7 +154,7 @@ public class MuleConfigGenerator {
             doc = docs.get(api);
         } else {
             doc = getDocument(api);
-            if(api.getConfig() == null || (!compatibilityMode && api.getHttpListenerConfig() == null)) {
+            if(api.getConfig() == null || api.getHttpListenerConfig() == null) {
                 if (api.getConfig() == null)
                 {
                     api.setDefaultAPIKitConfig();
@@ -180,7 +177,7 @@ public class MuleConfigGenerator {
         if (!xmlFile.exists() || xmlFile.length() == 0) {
             xmlFile.getParentFile().mkdirs();
             doc = new Document();
-            doc.setRootElement(new MuleScope(compatibilityMode, false).generate());
+            doc.setRootElement(new MuleScope(false).generate());
         } else {
             InputStream xmlInputStream = new FileInputStream(xmlFile);
             doc = saxBuilder.build(xmlInputStream);
@@ -193,18 +190,12 @@ public class MuleConfigGenerator {
         List<Element> mules = muleExp.evaluate(doc);
         Element mule = mules.get(0);
         String listenerConfigRef = null;
-        if (!compatibilityMode)
+        if (!domainHttpListenerConfigs.containsKey(api.getHttpListenerConfig().getName()))
         {
-            if (!domainHttpListenerConfigs.containsKey(api.getHttpListenerConfig().getName()))
-            {
-                //if (!compatibilityMode)
-                //{
-                    new HttpListenerConfigMule4Scope(api, mule).generate();
-                //}
-            }
-            listenerConfigRef = api.getHttpListenerConfig().getName();
-            api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
+            new HttpListenerConfigMule4Scope(api, mule).generate();
         }
+        listenerConfigRef = api.getHttpListenerConfig().getName();
+        api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
         //TODO GLOBAL EXCEPTION STRATEGY REFERENCE
 //        if (!api.useListenerMule3() && !api.useInboundEndpoint())
 //        {

@@ -15,7 +15,6 @@
     <flow name="main">
         <httpn:listener config-ref="HTTP_Listener_Configuration" path="/api/*">
             <httpn:response-builder statusCode="#[mel:httpStatus]"><httpn:headers>#[mel:_outboundHeaders_]</httpn:headers></httpn:response-builder>
-            <httpn:error-response-builder statusCode="500"/>
         </httpn:listener>
         <set-variable variableName="_outboundHeaders_" value="#[mel:new java.util.HashMap()]"/>
         <apikit:router />

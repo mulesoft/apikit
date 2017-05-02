@@ -34,7 +34,7 @@ public class ScaffolderAPI {
 
     public void run(List<File> ramlFiles, File appDir)
     {
-        run(ramlFiles, appDir, null, DEFAULT_MULE_VERSION, false);
+        run(ramlFiles, appDir, null, DEFAULT_MULE_VERSION);
     }
 
     /**
@@ -48,12 +48,11 @@ public class ScaffolderAPI {
      */
     public void run(List<File> ramlFiles, File appDir, File domainDir)
     {
-          run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION, false);
+          run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION);
     }
 
+
     /**
-     * Modifies or creates the Mule config files which are contained in the appDir directory
-     * by running the scaffolder on the ramlFiles passed as parameter.
      * Looks for an extension point and executes it, relying on the execute method otherwise.
      *
      * @param ramlFiles the ramlFiles to which the scaffolder will be run on
@@ -63,32 +62,13 @@ public class ScaffolderAPI {
      */
     public void run(List<File> ramlFiles, File appDir, File domainDir, String muleVersion)
     {
-        run(ramlFiles, appDir, domainDir, muleVersion, false);
-    }
-
-    public void runInCompatibilityMode(List<File> ramlFiles, File appDir, File domainDir, String muleVersion)
-    {
-        run(ramlFiles, appDir, domainDir, muleVersion, true);
-    }
-
-    /**
-     * Looks for an extension point and executes it, relying on the execute method otherwise.
-     *
-     * @param ramlFiles the ramlFiles to which the scaffolder will be run on
-     * @param appDir the directory which contained the generated Mule config files
-     * @param domainDir the directory which contained the domain used by the mule config files
-     * @param muleVersion currently unused, will be useful in future improvements
-     * @param compatibilityMode used to know which type of endpoint (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
-     */
-    public void run(List<File> ramlFiles, File appDir, File domainDir, String muleVersion, boolean compatibilityMode)
-    {
         if (ExtensionManager.isScaffolderExtensionEnabled())
         {
-            ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, muleVersion, compatibilityMode);
+            ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, muleVersion);
         }
         else
         {
-            execute(ramlFiles, appDir, domainDir, muleVersion, compatibilityMode);
+            execute(ramlFiles, appDir, domainDir, muleVersion);
         }
     }
 
@@ -100,9 +80,8 @@ public class ScaffolderAPI {
      * @param appDir the directory which contained the generated Mule config files
      * @param domainDir the directory which contained the domain used by the mule config files
      * @param muleVersion currently unused, will be useful in future improvements
-     * @param compatibilityMode used to know which type of source (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
      */
-    public void execute(List<File> ramlFiles, File appDir, File domainDir, String muleVersion, boolean compatibilityMode) {
+    public void execute(List<File> ramlFiles, File appDir, File domainDir, String muleVersion) {
         List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
         SystemStreamLog log = new SystemStreamLog();
@@ -121,7 +100,7 @@ public class ScaffolderAPI {
         }
         Scaffolder scaffolder;
         try {
-            scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain, muleVersion, compatibilityMode);
+            scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain, muleVersion);
         } catch(Exception e) {
             throw new RuntimeException("Error executing scaffolder", e);
         }

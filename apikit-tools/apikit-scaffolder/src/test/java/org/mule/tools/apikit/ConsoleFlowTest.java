@@ -93,7 +93,7 @@ public class ConsoleFlowTest {
         {
             domainStream = new FileInputStream(domainFile);
         }
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, compatibilityMode, ramlsWithExtensionEnabled);
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled);
     }
 
     private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)

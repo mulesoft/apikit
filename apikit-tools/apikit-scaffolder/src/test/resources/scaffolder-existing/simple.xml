@@ -20,7 +20,6 @@
             <httpn:response statusCode="#[variables.httpStatus default 200]">
                 <httpn:headers>#[variables.outboundHeaders]</httpn:headers>
             </httpn:response>
-            <httpn:error-response statusCode="#[variables.httpStatus default 500]" />
         </httpn:listener>
         <apikit:router config-ref="simpleV10-config" />
     </flow>

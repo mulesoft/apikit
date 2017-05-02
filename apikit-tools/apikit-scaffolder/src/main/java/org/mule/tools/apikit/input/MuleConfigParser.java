@@ -40,13 +40,11 @@ public class MuleConfigParser {
     private Map<String, APIKitConfig> apikitConfigs = new HashMap<>();
     private final APIFactory apiFactory;
     private final Log log;
-    private final boolean compatibilityMode;
 
-    public MuleConfigParser(Log log, APIFactory apiFactory, boolean compatibilityMode) {
+    public MuleConfigParser(Log log, APIFactory apiFactory) {
         this.apiFactory = apiFactory;
         this.httpListenerConfigs.putAll(apiFactory.getDomainHttpListenerConfigs());
         this.log = log;
-        this.compatibilityMode = compatibilityMode;
     }
 
     public MuleConfigParser parse(Set<File> ramlPaths, Map<File, InputStream> streams) {
@@ -73,7 +71,7 @@ public class MuleConfigParser {
 
         includedApis.putAll(new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document));
 
-        entries.addAll(new APIKitFlowsParser(log, includedApis, compatibilityMode).parse(document));
+        entries.addAll(new APIKitFlowsParser(log, includedApis).parse(document));
     }
 
     public Map<String, APIKitConfig> getApikitConfigs() {

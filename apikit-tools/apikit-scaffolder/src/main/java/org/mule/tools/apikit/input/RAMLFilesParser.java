@@ -38,13 +38,11 @@ public class RAMLFilesParser
     private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
     private final APIFactory apiFactory;
     private final Log log;
-    private final boolean compatibilityMode;
 
-    public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory, boolean compatibilityMode)
+    public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory)
     {
         this.log = log;
         this.apiFactory = apiFactory;
-        this.compatibilityMode = compatibilityMode;
         List<File> processedFiles = new ArrayList<>();
         for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet())
         {
@@ -143,7 +141,7 @@ public class RAMLFilesParser
             {
 
 
-                API api = apiFactory.createAPIBinding(filename,null, baseUri, APIKitTools.getPathFromUri(baseUri,false), null, null, compatibilityMode);
+                API api = apiFactory.createAPIBinding(filename,null, baseUri, APIKitTools.getPathFromUri(baseUri,false), null, null);
 
                 Map<String, IMimeType> mimeTypes = action.getBody();
                 boolean addGenericAction = false;
@@ -170,15 +168,10 @@ public class RAMLFilesParser
     }
 
     void addResource(API api, IResource resource, IAction action, String mimeType) {
-        String completePath;
-        if (!compatibilityMode && api.getHttpListenerConfig() != null)
-        {
-            completePath = APIKitTools.getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
-        }
-        else
-        {
-            completePath = api.getPath();
-        }
+
+        String completePath = APIKitTools
+                .getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
+
         ResourceActionMimeTypeTriplet resourceActionTriplet = new ResourceActionMimeTypeTriplet(api, completePath + resource.getUri(),
                     action.getType().toString(), mimeType);
         entries.put(resourceActionTriplet, new GenerationModel(api, resource, action, mimeType));

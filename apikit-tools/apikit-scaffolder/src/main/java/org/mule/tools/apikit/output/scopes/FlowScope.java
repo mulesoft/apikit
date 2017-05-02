@@ -6,17 +6,13 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTPN_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
-import org.mule.tools.apikit.model.APIKitConfig;
 
 import org.apache.commons.lang.StringUtils;
 import org.jdom2.Element;
-import org.mozilla.javascript.tools.debugger.Main;
 
 public class FlowScope implements Scope {
 
@@ -24,18 +20,11 @@ public class FlowScope implements Scope {
     private final Element main;
 
     public FlowScope(Element mule, String exceptionStrategyRef, API api, String configRef, String httpListenerConfigRef) {
-        main = new Element("flow", XMLNS_NAMESPACE.getNamespace());
 
+        main = new Element("flow", XMLNS_NAMESPACE.getNamespace());
         main.setAttribute("name", api.getId() + "-" + "main");
 
-        if (httpListenerConfigRef != null)
-        {
-            MainFlowsUtils.generateListenerSource(httpListenerConfigRef, api.getPath(), main);
-        }
-        else
-        {
-            MainFlowsUtils.generateInboundSource(api.getBaseUri(), main);
-        }
+        MainFlowsUtils.generateListenerSource(httpListenerConfigRef, api.getPath(), main, true);
 
         Element restProcessor = new Element("router", APIKitTools.API_KIT_NAMESPACE.getNamespace());
         if(!StringUtils.isEmpty(configRef)) {
