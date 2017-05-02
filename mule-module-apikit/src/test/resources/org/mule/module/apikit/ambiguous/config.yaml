@@ -1,0 +1,22 @@
+#%RAML 1.0
+
+title: Ambiguous API
+
+/root:
+  /resourceA:
+    get:
+      responses:
+        200:
+
+  /{string}:
+    uriParameters:
+      string:
+        pattern: "[a-zA-Z]+"
+    get:
+      responses:
+        201:
+
+  /resourceB:
+    get:
+      responses:
+        202:
