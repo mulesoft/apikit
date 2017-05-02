@@ -11,51 +11,32 @@
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 
 #set ( $useSharedHttpListener = !($sharedHttpListener.isEmpty() || $sharedHttpListener.equals("empty")))
-#set ( $useInboundEndpoint = $compatibilityMode.toLowerCase().equals("true") ||
-    $compatibilityMode.toLowerCase().equals("yes") ||
-    $compatibilityMode.toLowerCase().equals("y"))
-#if( !$useSharedHttpListener && !$useInboundEndpoint )
+#if( !$useSharedHttpListener )
+#set( $configRefName = "httpListenerConfigDefault" )
     <httpn:listener-config name="httpListenerConfigDefault">
         <httpn:listener-connection host="localhost" port="${http.port}"/>
     </httpn:listener-config>
+#else
+#set( $configRefName = $sharedHttpListener )
 #end
 
-#if( $useSharedHttpListener )
-#set( $configRefName = $sharedHttpListener )
-#else
-#set( $configRefName = "httpListenerConfigDefault" )
-#end
     <flow name="main-api">
-#if( !$useInboundEndpoint )
-        <httpn:listener config-ref="$configRefName" path="/api/*">
+        <httpn:listener config-ref="$configRefName" path="/api/*" interpretRequestErrors="true">
             <httpn:response statusCode="#[variables.httpStatus default 200]">
                 <httpn:headers>#[variables.outboundHeaders]</httpn:headers>
             </httpn:response>
-
-            <httpn:error-response statusCode="#[variables.httpStatus default 500]">
-                <httpn:headers>#[variables.outboundHeaders]</httpn:headers>
-            </httpn:error-response>
         </httpn:listener>
-#else
-        <http:inbound-endpoint address="http://0.0.0.0:${http.port}/api"/>
-#end
+
         <apikit:router config-ref="router-config" />
     </flow>
 
     <flow name="main-console">
-#if( !$useInboundEndpoint )
-        <httpn:listener config-ref="$configRefName" path="/console/*">
+        <httpn:listener config-ref="$configRefName" path="/console/*" interpretRequestErrors="true">
             <httpn:response statusCode="#[variables.httpStatus default 200]">
                 <httpn:headers>#[variables.outboundHeaders]</httpn:headers>
             </httpn:response>
-
-            <httpn:error-response statusCode="#[variables.httpStatus default 500]">
-                <httpn:headers>#[variables.outboundHeaders]</httpn:headers>
-            </httpn:error-response>
         </httpn:listener>
-#else
-        <http:inbound-endpoint address="http://0.0.0.0:${http.port}/console"/>
-#end
+
         <apikit:console config-ref="router-config" />
     </flow>
 
