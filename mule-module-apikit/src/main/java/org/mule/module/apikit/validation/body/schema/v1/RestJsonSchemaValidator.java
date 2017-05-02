@@ -61,9 +61,12 @@ public class RestJsonSchemaValidator
         {
             JsonNode data;
             Object input = message.getPayload().getValue();
+            CursorStreamProvider cursorStreamProvider = null;
+
             if (input instanceof CursorStreamProvider)
             {
-                //TODO supoport cursorStreams
+                cursorStreamProvider = ((CursorStreamProvider) input);
+                input = cursorStreamProvider.openCursor();
             }
             if (input instanceof InputStream)
             {
@@ -76,6 +79,10 @@ public class RestJsonSchemaValidator
                 finally
                 {
                     IOUtils.closeQuietly((InputStream) input);
+                    if (cursorStreamProvider != null)
+                    {
+                        cursorStreamProvider.close();
+                    }
                 }
 
                 String charset = CharsetUtils.getEncoding(message, baos.toByteArray(), logger);

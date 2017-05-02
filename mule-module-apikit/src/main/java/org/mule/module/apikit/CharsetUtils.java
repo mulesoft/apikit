@@ -11,6 +11,8 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.MuleContext;
 
+import java.nio.charset.Charset;
+
 import org.raml.parser.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,12 @@ public class CharsetUtils
      */
     public static String getEncoding(Event event, byte[] bytes, Logger logger)
     {
+
         String encoding = getHeaderCharset(event.getMessage(), logger);
+        if (encoding == null)
+        {
+            encoding = getPayloadCharset(event.getMessage(), logger);
+        }
         if (encoding == null)
         {
             encoding = StreamUtils.detectEncoding(bytes);
@@ -123,23 +130,29 @@ public class CharsetUtils
     public static String getHeaderCharset(Message message, Logger logger)
     {
         String charset = null;
-        String contentType = ((HttpRequestAttributes)message.getAttributes().getValue()).getHeaders().get("Content-Type");//getInboundProperty(HttpConstants.HEADER_CONTENT_TYPE, "application/xml");
-        if (contentType == null)
-        {
-            contentType = ((HttpRequestAttributes)message.getAttributes().getValue()).getHeaders().get("content-type");
-        }
+        String contentType = AttributesHelper.getHeaderIgnoreCase(((HttpRequestAttributes) message.getAttributes().getValue()), "Content-Type");
         if (contentType == null)
         {
             contentType = "application/xml";
         }
         if (contentType.contains("charset="))
         {
-           charset = message.getPayload().getDataType().getMediaType().toString();//message.getEncoding();
-           logger.debug("Request Content-Type charset: " + logEncoding(charset));
+            charset = contentType.substring(contentType.indexOf("charset="));
+            logger.debug("Request Content-Type charset: " + logEncoding(charset));
         }
         return charset;
     }
 
+    public static String getPayloadCharset(Message message, Logger logger)
+    {
+        Charset charset = message.getPayload().getDataType().getMediaType().getCharset().get();
+        if (charset != null)
+        {
+            logger.debug("Request Payload charset: " + logEncoding(charset.toString()));
+            return charset.toString();
+        }
+        return null;
+    }
 
     /**
      * Removes BOM from byte array if present

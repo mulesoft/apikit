@@ -44,8 +44,8 @@
                 </xsd:sequence>
                 <xsd:attribute name="name" type="mule:nonBlankString" use="optional"/>
                 <xsd:attribute name="raml" type="mule:nonBlankString" use="required"/>
-                <xsd:attribute name="outboundHeadersMapName" type="mule:nonBlankString" use="optional"/>
-                <xsd:attribute name="httpStatusVarName" type="mule:nonBlankString" use="optional"/>
+                <xsd:attribute name="outboundHeadersMapName" type="mule:nonBlankString" use="optional" default="outboundHeaders"/>
+                <xsd:attribute name="httpStatusVarName" type="mule:nonBlankString" use="optional" default="httpStatus"/>
                 <xsd:attribute name="extensionEnabled" type="mule:substitutableBoolean" default="false" use="optional"/>
                 <xsd:attribute name="keepRamlBaseUri" type="mule:substitutableBoolean" default="true" use="optional"/>
                 <xsd:attribute name="disableValidations" type="mule:substitutableBoolean" default="false" use="optional">

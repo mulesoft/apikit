@@ -76,8 +76,6 @@ public class RestXmlSchemaValidator
             CursorStreamProvider cursorStreamProvider = null;
             if (input instanceof CursorStreamProvider)
             {
-                //TODO supoport cursorStreams
-//                ((AbstractCursorStreamProviderFactory.ManagedCursorStreamProvider) input).openCursor()
                 cursorStreamProvider = ((CursorStreamProvider) input);
                 input = cursorStreamProvider.openCursor();
             }

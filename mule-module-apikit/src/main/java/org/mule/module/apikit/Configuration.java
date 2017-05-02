@@ -45,7 +45,7 @@ public class Configuration implements Initialisable
     private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
 
 
-    private final static String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeadersMap";
+    private final static String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeaders";
     private final static String DEFAULT_HTTP_STATUS_VAR_NAME = "httpStatus";
 
     protected LoadingCache<String, URIResolver> uriResolverCache;

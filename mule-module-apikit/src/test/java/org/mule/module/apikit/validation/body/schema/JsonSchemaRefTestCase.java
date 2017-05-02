@@ -54,6 +54,7 @@ public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
+
     public void invalidSchema() throws Exception
     {
         given()
