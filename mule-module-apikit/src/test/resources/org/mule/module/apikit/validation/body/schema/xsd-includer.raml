@@ -1,0 +1,18 @@
+#%RAML 0.8
+---
+title: Sample API
+
+schemas:
+    - global: !include refs/xsd-includer-nested.xsd
+/name:
+    put:
+        body:
+            application/xml:
+                schema: !include xsd-includer.xsd
+        responses:
+            200:
+                body:
+                    text/plain: ~
+/last:
+    put:
+        body: !include refs/xsd-global.raml

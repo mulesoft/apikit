@@ -14,6 +14,7 @@ import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.DataTypeBuilder;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.core.api.config.MuleProperties;
+import org.mule.runtime.core.internal.streaming.bytes.factory.AbstractCursorStreamProviderFactory;
 
 import com.google.common.cache.LoadingCache;
 
@@ -72,9 +73,13 @@ public class RestXmlSchemaValidator
             Document data;
             Object input = message.getPayload().getValue();
             Charset messageEncoding = EventHelper.getEncoding(message);
+            CursorStreamProvider cursorStreamProvider = null;
             if (input instanceof CursorStreamProvider)
             {
                 //TODO supoport cursorStreams
+//                ((AbstractCursorStreamProviderFactory.ManagedCursorStreamProvider) input).openCursor()
+                cursorStreamProvider = ((CursorStreamProvider) input);
+                input = cursorStreamProvider.openCursor();
             }
             if (input instanceof InputStream)
             {
@@ -87,6 +92,10 @@ public class RestXmlSchemaValidator
                 finally
                 {
                     IOUtils.closeQuietly((InputStream) input);
+                    if (cursorStreamProvider != null)
+                    {
+                        cursorStreamProvider.close();
+                    }
                 }
 
                 DataType dataType = message.getPayload().getDataType();
@@ -98,6 +107,7 @@ public class RestXmlSchemaValidator
                 DataType sourceDataType = sourceDataTypeBuilder.build();//DataTypeFactory.create(event.getMessage().getPayload().getClass(), msgMimeType);
                 newMessage = MessageHelper.setPayload(message, new ByteArrayInputStream(baos.toByteArray()), sourceDataType.getMediaType());
                 data = loadDocument(new ByteArrayInputStream(baos.toByteArray()), messageEncoding.toString());
+
             }
             else if (input instanceof String)
             {

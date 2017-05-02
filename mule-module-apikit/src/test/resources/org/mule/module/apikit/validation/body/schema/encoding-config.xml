@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:httpn="http://www.mulesoft.org/schema/mule/httpn"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/httpn http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd
+      http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <httpn:listener-config name="httpListenerConfigDefault">
+        <httpn:listener-connection host="localhost" port="${serverPort}"/>
+    </httpn:listener-config>
+
+    <apikit:config name="raml08" raml="org/mule/module/apikit/validation/body/schema/encoding-08.raml"/>
+    <apikit:config name="raml10" raml="org/mule/module/apikit/validation/body/schema/encoding.raml" />
+
+    <flow name="doorway10">
+        <httpn:listener config-ref="httpListenerConfigDefault" path="/api10/*">
+            <httpn:response statusCode="#[variables.httpStatus default 200]"><httpn:headers>#[variables.outboundHeaders]</httpn:headers></httpn:response>
+        </httpn:listener>
+        <apikit:router config-ref="raml10"/>
+    </flow>
+
+    <flow name="doorway08">
+        <httpn:listener config-ref="httpListenerConfigDefault" path="/api08/*">
+            <httpn:response statusCode="#[variables.httpStatus default 200]"><httpn:headers>#[variables.outboundHeaders]</httpn:headers></httpn:response>
+        </httpn:listener>
+        <apikit:router config-ref="raml08"/>
+    </flow>
+
+    <flow name="doorway10string">
+        <httpn:listener config-ref="httpListenerConfigDefault" path="/api10str/*">
+            <httpn:response statusCode="#[variables.httpStatus default 200]"><httpn:headers>#[variables.outboundHeaders]</httpn:headers></httpn:response>
+        </httpn:listener>
+        <object-to-string-transformer/>
+        <apikit:router config-ref="raml10"/>
+    </flow>
+
+    <flow name="doorway08string">
+        <httpn:listener config-ref="httpListenerConfigDefault" path="/api08str/*">
+            <httpn:response statusCode="#[variables.httpStatus default 200]"><httpn:headers>#[variables.outboundHeaders]</httpn:headers></httpn:response>
+        </httpn:listener>
+        <object-to-string-transformer/>
+        <apikit:router config-ref="raml08"/>
+    </flow>
+
+    <flow name="doorway10byte">
+        <httpn:listener config-ref="httpListenerConfigDefault" path="/api10byte/*">
+            <httpn:response statusCode="#[variables.httpStatus default 200]"><httpn:headers>#[variables.outboundHeaders]</httpn:headers></httpn:response>
+        </httpn:listener>
+        <object-to-byte-array-transformer/>
+        <apikit:router config-ref="raml10"/>
+    </flow>
+
+    <flow name="doorway08byte">
+        <httpn:listener config-ref="httpListenerConfigDefault" path="/api08byte/*">
+            <httpn:response statusCode="#[variables.httpStatus default 200]"><httpn:headers>#[variables.outboundHeaders]</httpn:headers></httpn:response>
+        </httpn:listener>
+        <object-to-byte-array-transformer/>
+        <apikit:router config-ref="raml08"/>
+    </flow>
+
+    <flow name="post:/testXml:raml10">
+        <set-payload value="#[payload]"/>
+    </flow>
+
+    <flow name="post:/testJson:raml10">
+        <set-payload value="#[payload]"/>
+    </flow>
+
+    <flow name="post:/testXml:raml08">
+        <set-payload value="#[payload]"/>
+    </flow>
+
+    <flow name="post:/testJson:raml08">
+        <set-payload value="#[payload]"/>
+    </flow>
+
+</mule>

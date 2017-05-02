@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:httpn="http://www.mulesoft.org/schema/mule/httpn"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/httpn http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd
+      http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <httpn:listener-config name="httpListenerConfigDefault">
+        <httpn:listener-connection host="localhost" port="${serverPort}"/>
+    </httpn:listener-config>
+
+    <apikit:config name="config" raml="org/mule/module/apikit/validation/body/schema/json-ref.raml"/>
+
+    <flow name="doorway-cam">
+        <httpn:listener config-ref="httpListenerConfigDefault" path="/api/*">
+            <httpn:response statusCode="#[variables.httpStatus default 200]"><httpn:headers>#[variables.outboundHeaders]</httpn:headers></httpn:response>
+        </httpn:listener>
+        <apikit:router config-ref="config"/>
+    </flow>
+
+    <flow name="put:/resource">
+        <set-payload value="OK"/>
+    </flow>
+
+    <flow name="put:/global">
+        <set-payload value="OK"/>
+    </flow>
+
+    <flow name="put:/global-include">
+        <set-payload value="OK"/>
+    </flow>
+
+</mule>

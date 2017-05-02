@@ -30,6 +30,11 @@
         <set-payload value="hello"/>
     </flow>
 
+    <flow name="post:/types-test">
+        <logger level="INFO" message="inside of post:/types-test"/>
+        <set-payload value="hello"/>
+    </flow>
+
     <error-handler name="defaultErrorHandler">
         <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotFoundException)]">
             <set-variable variableName="httpStatus" value="404"/>

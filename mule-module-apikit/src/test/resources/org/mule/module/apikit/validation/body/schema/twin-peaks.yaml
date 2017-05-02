@@ -1,0 +1,22 @@
+#%RAML 0.8
+title: sample api
+/currentuser:
+    put:
+        body:
+            application/json:
+                schema: |
+                    {
+                        "title": "League Schema",
+                        "type": "object",
+                        "properties": {
+                            "id": {
+                                "type": "string",
+                                "required": true
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+
+        responses:
+            204: ~
+

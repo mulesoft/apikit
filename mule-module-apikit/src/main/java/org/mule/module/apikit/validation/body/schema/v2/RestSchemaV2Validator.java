@@ -121,7 +121,13 @@ public class RestSchemaV2Validator implements IRestSchemaValidator
         }
         else
         {
-            throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
+            String message = "Don't know how to parse payload";
+            if (input != null)
+            {
+                message = "Don't know how to parse " + input.getClass().getName();
+            }
+            throw new BadRequestException(message);
+
         }
         return (String) input;
     }
