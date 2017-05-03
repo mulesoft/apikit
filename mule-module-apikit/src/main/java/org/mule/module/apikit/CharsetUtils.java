@@ -38,18 +38,20 @@ public class CharsetUtils
     {
 
         String encoding = getHeaderCharset(event.getMessage(), logger);
-        if (encoding == null)
-        {
-            encoding = getPayloadCharset(event.getMessage(), logger);
-        }
+
         if (encoding == null)
         {
             encoding = StreamUtils.detectEncoding(bytes);
             logger.debug("Detected payload encoding: " + logEncoding(encoding));
             if (encoding == null)
             {
-                encoding = EventHelper.getEncoding(event).toString();
-                logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
+                encoding = getPayloadCharset(event.getMessage(), logger);
+
+                if (encoding == null)
+                {
+                    encoding = EventHelper.getEncoding(event).toString();
+                    logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
+                }
             }
         }
         if (encoding.matches("(?i)UTF-16.+"))
@@ -137,7 +139,7 @@ public class CharsetUtils
         }
         if (contentType.contains("charset="))
         {
-            charset = contentType.substring(contentType.indexOf("charset="));
+            charset = contentType.substring(contentType.indexOf("=") + 1);
             logger.debug("Request Content-Type charset: " + logEncoding(charset));
         }
         return charset;

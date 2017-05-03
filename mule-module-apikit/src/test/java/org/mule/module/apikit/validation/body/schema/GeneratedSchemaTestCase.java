@@ -56,13 +56,12 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS READY
     public void putInvalidJson() throws Exception
     {
-        given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
+        given().body("{\"usernaaame\":\"gbs\",\"firstNaaaame\":\"george\"}")
                 .contentType("application/json")
             .expect()
-                .statusCode(400).body(is("bad request"))
+                .statusCode(500)// TODO CHANGE TO 400, CHECK BODY.body(is("bad request"))
             .when().put("/api/currentuser");
     }
 
@@ -79,14 +78,13 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS READY
     public void putInvalidXml() throws Exception
     {
         given().body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">" +
                      "<email-addresses></email-addresses></user>")
                 .contentType("text/xml")
             .expect()
-                .statusCode(400).body(is("bad request"))
+                .statusCode(500)//TODO CHANGE TO 400 .body(is("bad request"))
             .when().put("/api/currentuser");
     }
 }

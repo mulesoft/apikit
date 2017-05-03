@@ -102,7 +102,7 @@ public class RestJsonSchemaValidatorTestCase
     @Test (expected = BadRequestException.class)
     public void invalidStringPayloadUsingParserV1() throws BadRequestException
     {
-        Message.Builder messageBuilder = Message.builder().payload("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>");
+        Message.Builder messageBuilder = Message.builder().payload("{ \"naazame\": \"Major League Soccer\" }");
         ParameterMap headers = new ParameterMap();
         headers.put("content-type", "application/json");
         HttpRequestAttributes attributes = new HttpRequestAttributes(headers, null, null, null, null, null, null, null, null, null, null, null, null);

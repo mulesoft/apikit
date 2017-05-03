@@ -9,8 +9,8 @@
     <Loggers>
 
         <!-- Mule classes -->
-        <AsyncLogger name="org.mule" level="TRACE"/>
-        <AsyncLogger name="com.mulesoft" level="DEBUG"/>
+        <AsyncLogger name="org.mule" level="WARN"/>
+        <AsyncLogger name="com.mulesoft" level="WARN"/>
 
         <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>
