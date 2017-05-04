@@ -15,7 +15,6 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import com.jayway.restassured.RestAssured;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -42,6 +41,7 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
     protected String getConfigResources()
     {
         return "org/mule/module/apikit/validation/body/schema/generated-schema-config.xml";
+        //TODO change raml to use the json schema autogenerator property (APIKIT-783)
     }
 
     @Test
@@ -58,11 +58,11 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
     @Test
     public void putInvalidJson() throws Exception
     {
-        given().body("{\"a\":\"a\"}")
+        given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
                 .contentType("application/json")
-            .expect()
-                .statusCode(500)// TODO CHANGE TO 400, CHECK BODY.body(is("bad request"))
-            .when().put("/api/currentuser");
+                .expect()
+                .statusCode(500)//.body(is("bad request")) TODO CHANGE ONCE RESPONSE STATUS CODES ARE ADDED. REAL STATUS CODE: 400
+                .when().put("/api/currentuser");
     }
 
     @Test

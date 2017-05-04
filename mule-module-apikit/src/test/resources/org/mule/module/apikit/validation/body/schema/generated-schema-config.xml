@@ -11,7 +11,7 @@
         <httpn:listener-connection host="localhost" port="${serverPort}"/>
     </httpn:listener-config>
 
-    <apikit:config raml="org/mule/module/apikit/validation/body/schema/generated-schema-api.yaml"/>
+    <apikit:config raml="org/mule/module/apikit/validation/body/schema/generated-schema-api.raml"/>
 
     <flow name="doorway">
         <httpn:listener config-ref="httpListenerConfigDefault" path="/api/*">

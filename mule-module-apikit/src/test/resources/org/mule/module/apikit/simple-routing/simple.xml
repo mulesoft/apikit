@@ -7,8 +7,6 @@
       http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
-    <configuration defaultErrorHandler-ref="defaultErrorHandler"/>
-
     <httpn:listener-config name="httpListenerConfigDefault">
         <httpn:listener-connection host="localhost" port="${serverPort}"/>
     </httpn:listener-config>
@@ -35,30 +33,4 @@
         <set-payload value="hello"/>
     </flow>
 
-    <error-handler name="defaultErrorHandler">
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotFoundException)]">
-            <set-variable variableName="httpStatus" value="404"/>
-            <set-payload value="resource not found"/>
-        </on-error-propagate>
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.MethodNotAllowedException)]">
-            <set-variable variableName="httpStatus" value="405"/>
-            <set-payload value="method not allowed"/>
-        </on-error-propagate>
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.UnsupportedMediaTypeException)]">
-            <set-variable variableName="httpStatus" value="415"/>
-            <set-payload value="unsupported media type"/>
-        </on-error-propagate>
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotAcceptableException)]">
-            <set-variable variableName="httpStatus" value="406"/>
-            <set-payload value="not acceptable"/>
-        </on-error-propagate>
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.BadRequestException)]">
-            <set-variable variableName="httpStatus" value="400"/>
-            <set-payload value="bad request"/>
-        </on-error-propagate>
-        <on-error-propagate>
-            <set-variable variableName="httpStatus" value="500"/>
-            <set-payload value="Server error" mimeType="text/plain"/>
-        </on-error-propagate>
-    </error-handler>
 </mule>
