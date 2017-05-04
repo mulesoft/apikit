@@ -4,41 +4,7 @@ title: sample api
     put:
         body:
             application/json:
-                schema: |
-                  { "$schema" : "http://json-schema.org/draft-03/schema",
-                      "id" : "http://jsonschema.net",
-                      "properties" : { "items" : { "id" : "http://jsonschema.net/items",
-                              "items" : { "id" : "http://jsonschema.net/items/0",
-                                 "properties" : { "code" : { "id" : "http://jsonschema.net/items/0/code",
-                                    "required" : false,
-                                    "type" : "string"
-                                    },
-                                "color" : { "id" : "http://jsonschema.net/items/0/color",
-                                    "required" : false,
-                                    "type" : "string"
-                                  },
-                                "description" : { "id" : "http://jsonschema.net/items/0/description",
-                                    "required" : false,
-                                    "type" : "string"
-                                  },
-                                "id" : { "id" : "http://jsonschema.net/items/0/id",
-                                    "required" : false,
-                                    "type" : "number"
-                                  },
-                                "size" : { "id" : "http://jsonschema.net/items/0/size",
-                                    "required" : false,
-                                    "type" : "string"
-                                  }
-                              },
-                            "required" : false,
-                            "type" : "object"
-                          },
-                        "required" : false,
-                        "type" : "array"
-                      } },
-                    "required" : false,
-                    "type" : "object"
-                  }
+                schema: !jackson org.mule.module.apikit.validation.body.schema.User
             text/xml:
                 schema: !jaxb org.mule.module.apikit.validation.body.schema.User
         responses:

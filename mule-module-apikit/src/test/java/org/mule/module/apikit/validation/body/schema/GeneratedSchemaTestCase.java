@@ -58,7 +58,7 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
     @Test
     public void putInvalidJson() throws Exception
     {
-        given().body("{\"usernaaame\":\"gbs\",\"firstNaaaame\":\"george\"}")
+        given().body("{\"a\":\"a\"}")
                 .contentType("application/json")
             .expect()
                 .statusCode(500)// TODO CHANGE TO 400, CHECK BODY.body(is("bad request"))
