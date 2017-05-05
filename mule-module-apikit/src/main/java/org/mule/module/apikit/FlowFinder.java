@@ -14,7 +14,6 @@ import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.construct.Flow;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -30,7 +29,6 @@ public class FlowFinder
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Map<String, IResource> flatResourceTree = new HashMap<>();
-    //private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
     private Map<String, Flow> restFlowMap;
     private Map<String, Flow> restFlowMapUnwrapped;
 
@@ -49,11 +47,6 @@ public class FlowFinder
         this.flowMappings = flowMappings;
         initializeRestFlowMap();
         loadRoutingTable();
-    }
-
-    private void mapFlowMappingsWithFlows()
-    {
-
     }
 
     protected void initializeRestFlowMap()
@@ -257,7 +250,8 @@ public class FlowFinder
             flow = rawRestFlowMap.get(baseKey);
             if (flow == null && isFlowDeclaredWithDifferentMediaType(rawRestFlowMap, baseKey))
             {
-                throw new UnsupportedMediaTypeException();
+                //throw new UnsupportedMediaTypeException();
+                ApikitErrorTypes.UNSUPPORTED_MEDIA_TYPE.throwErrorType("");
             }
         }
         return flow;

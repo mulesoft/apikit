@@ -12,4 +12,12 @@ public class InvalidQueryParameterException extends BadRequestException
   public InvalidQueryParameterException(String message) {
     super(message);
   }
+
+  public InvalidQueryParameterException(Throwable t) {
+    super(t);
+  }
+
+  public InvalidQueryParameterException(){
+    super();
+  }
 }

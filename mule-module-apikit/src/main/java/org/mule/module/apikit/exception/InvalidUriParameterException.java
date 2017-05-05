@@ -11,4 +11,12 @@ public class InvalidUriParameterException extends BadRequestException {
   public InvalidUriParameterException(String message) {
     super(message);
   }
+
+  public InvalidUriParameterException(Throwable t) {
+    super(t);
+  }
+
+  public InvalidUriParameterException(){
+    super();
+  }
 }

@@ -10,6 +10,7 @@ import static com.github.fge.jsonschema.core.report.LogLevel.ERROR;
 import static com.github.fge.jsonschema.core.report.LogLevel.WARNING;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 
+import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.CharsetUtils;
 import org.mule.module.apikit.MessageHelper;
 import org.mule.module.apikit.exception.BadRequestException;
@@ -18,6 +19,7 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.DataTypeBuilder;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
+import org.mule.runtime.core.exception.TypedException;
 import org.mule.runtime.core.util.IOUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -54,7 +56,7 @@ public class RestJsonSchemaValidator
         this.schemaCache = schemaCache;
     }
 
-    public Message validate(String schemaPath, Message message) throws BadRequestException
+    public Message validate(String schemaPath, Message message) throws TypedException
     {
         Message newMessage = message;
         try
@@ -115,7 +117,7 @@ public class RestJsonSchemaValidator
             }
             else
             {
-                throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
+                throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Don't know how to parse " + input.getClass().getName());
             }
 
             JsonSchema schema = schemaCache.get(schemaPath);
@@ -134,13 +136,13 @@ public class RestJsonSchemaValidator
                 if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning))
                 {
                     logger.info("Schema validation failed: " + logMessage);
-                    throw new BadRequestException(logMessage);
+                    throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(logMessage);
                 }
             }
         }
         catch (ExecutionException|IOException|ProcessingException e)
         {
-            throw new BadRequestException(e);
+            throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(e);
         }
         return newMessage;
     }

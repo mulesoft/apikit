@@ -61,7 +61,7 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
         given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
                 .contentType("application/json")
                 .expect()
-                .statusCode(500)//.body(is("bad request")) TODO CHANGE ONCE RESPONSE STATUS CODES ARE ADDED. REAL STATUS CODE: 400
+                .statusCode(400)//.body(is("bad request"))
                 .when().put("/api/currentuser");
     }
 
@@ -84,7 +84,7 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
                      "<email-addresses></email-addresses></user>")
                 .contentType("text/xml")
             .expect()
-                .statusCode(500)//TODO CHANGE TO 400 .body(is("bad request"))
+                .statusCode(400)
             .when().put("/api/currentuser");
     }
 }

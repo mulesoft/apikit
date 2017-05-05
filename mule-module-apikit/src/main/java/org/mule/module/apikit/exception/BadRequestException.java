@@ -15,4 +15,8 @@ public class BadRequestException extends MuleRestException {
   public BadRequestException(Throwable e) {
     super(e);
   }
+
+  public BadRequestException(){
+    super();
+  }
 }

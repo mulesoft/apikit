@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.AttributesHelper;
 import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.MessageHelper;
@@ -70,7 +71,8 @@ public class BodyValidator
 
         if (!found)
         {
-            throw new UnsupportedMediaTypeException();
+            ApikitErrorTypes.UNSUPPORTED_MEDIA_TYPE.throwErrorType("");
+            //throw new UnsupportedMediaTypeException();
         }
         return newMessage;
     }

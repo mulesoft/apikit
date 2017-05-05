@@ -53,7 +53,7 @@ public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase
         Response post = given().log().all()
                 .body("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE foo [<!ENTITY xxead812 SYSTEM \"src/test/resources/org/mule/module/apikit/validation/body/schema/twin-cam.yaml\"> ]><a>&xxead812;</a>")
                 .contentType("application/xml")
-                .expect().statusCode(500) // TODO CHANGE TO 400
+                .expect().statusCode(400)
                 .when().post("/api/test");
         String response = post.getBody().asString();
         assertThat(response, not(containsString("League Schema")));
@@ -65,7 +65,7 @@ public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase
         given().log().all()
                 .body("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE xxeattack PUBLIC \"foo\" \"http://localhost:" + serverPort2.getValue() + "/\"><a>1</a>")
                 .contentType("application/xml")
-                .expect().statusCode(500) // TODO CHANGE TO 400
+                .expect().statusCode(400)
                 .when().post("/api/test");
     }
 }

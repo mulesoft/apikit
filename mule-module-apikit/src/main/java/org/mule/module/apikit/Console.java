@@ -42,16 +42,8 @@ public class Console implements Processor
 
         if (config.getRamlHandler().isRequestingRamlV2(attributes))
         {
-            try
-            {
-                String raml = config.getRamlHandler().getRamlParserV2(relativePath);
-                return EventHelper.setPayload(event, raml, RamlHandler.APPLICATION_RAML);
-            }
-            catch (IOException | IllegalAccessException e)
-            {
-                logger.debug(e.getMessage());
-                throw new MuleRestException(e.getCause());
-            }
+            String raml = config.getRamlHandler().getRamlParserV2(relativePath);
+            return EventHelper.setPayload(event, raml, RamlHandler.APPLICATION_RAML);
         }
 
         return event;

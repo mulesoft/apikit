@@ -11,4 +11,12 @@ public class InvalidFormParameterException extends BadRequestException {
   public InvalidFormParameterException(String message) {
     super(message);
   }
+
+  public InvalidFormParameterException(Throwable t) {
+    super(t);
+  }
+
+  public InvalidFormParameterException(){
+    super();
+  }
 }

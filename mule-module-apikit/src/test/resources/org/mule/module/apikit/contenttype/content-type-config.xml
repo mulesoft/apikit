@@ -2,41 +2,10 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
-      xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-      http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
       http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-
-    <configuration defaultErrorHandler-ref="defaultErrorHandler"/>
-
-    <error-handler name="defaultErrorHandler">
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotFoundException)]">
-            <set-variable variableName="httpStatus" value="404"/>
-            <set-payload value="resource not found"/>
-        </on-error-propagate>
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.MethodNotAllowedException)]">
-            <set-variable variableName="httpStatus" value="405"/>
-            <set-payload value="method not allowed"/>
-        </on-error-propagate>
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.UnsupportedMediaTypeException)]">
-            <set-variable variableName="httpStatus" value="415"/>
-            <set-payload value="unsupported media type"/>
-        </on-error-propagate>
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotAcceptableException)]">
-            <set-variable variableName="httpStatus" value="406"/>
-            <set-payload value="not acceptable"/>
-        </on-error-propagate>
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.BadRequestException)]">
-            <set-variable variableName="httpStatus" value="400"/>
-            <set-payload value="bad request"/>
-        </on-error-propagate>
-        <on-error-propagate>
-            <set-variable variableName="httpStatus" value="500"/>
-            <set-payload value="Server error" mimeType="text/plain"/>
-        </on-error-propagate>
-    </error-handler>
 
     <http:listener-config name="httpListenerConfigDefault">
         <http:listener-connection host="localhost" port="${serverPort}"/>
@@ -45,13 +14,9 @@
     <apikit:config name="apikitConfig" raml="org/mule/module/apikit/contenttype/content-type.raml"/>
 
     <flow name="doorway">
-        <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
-            <http:response statusCode="#[mel:httpStatus]"><http:headers>#[mel:_outboundHeaders_]</http:headers></http:response>
-            <http:error-response statusCode="#[mel:httpStatus]"/>
+        <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/api/*">
+            <http:response statusCode="#[variables.httpStatus]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
         </http:listener>
-        <set-variable variableName="httpStatus" value="200"/>
-
-        <set-variable variableName="_outboundHeaders_" value="#[mel:new java.util.HashMap()]"/>
         <apikit:router config-ref="apikitConfig"/>
     </flow>
 
@@ -65,13 +30,13 @@
         <choice>
             <when expression="#[mel:message.getAttributes().getHeaders()['ctype'] == 'json']">
                 <logger level="INFO" message="returning json"/>
-                <expression-component>mel:flowVars['_outboundHeaders_'].put('Content-Type', 'application/json')</expression-component>
+                <expression-component>mel:flowVars['outboundHeaders'].put('Content-Type', 'application/json')</expression-component>
 
                 <!--<set-property propertyName="Content-Type" value="application/json"/>-->
             </when>
             <when expression="#[mel:message.getAttributes().getHeaders()['ctype'] == 'xml']">
                 <logger level="INFO" message="returning xml"/>
-                <expression-component>mel:flowVars['_outboundHeaders_'].put('Content-Type', 'application/xml')</expression-component>
+                <expression-component>mel:flowVars['outboundHeaders'].put('Content-Type', 'application/xml')</expression-component>
 
                 <!--<set-property propertyName="Content-Type" value="application/xml"/>-->
             </when>

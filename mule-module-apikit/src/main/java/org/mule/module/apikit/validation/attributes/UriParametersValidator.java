@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.AttributesHelper;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.uri.ResolvedVariables;
@@ -47,7 +48,7 @@ public class UriParametersValidator {
       if (!uriParameter.validate(value)) {
         String msg = String.format("Invalid value '%s' for uri parameter %s. %s",
                                    value, entry.getKey(), uriParameter.message(value));
-        throw new InvalidUriParameterException(msg);
+        ApikitErrorTypes.INVALID_URI_PARAMETER.throwErrorType(msg);
       }
     }
     //}

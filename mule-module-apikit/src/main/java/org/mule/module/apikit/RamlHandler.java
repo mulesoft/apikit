@@ -10,6 +10,7 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.parser.ParserService;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.runtime.core.exception.TypedException;
 
 import java.io.ByteArrayOutputStream;
 
@@ -19,6 +20,8 @@ import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
 import org.raml.model.ActionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RamlHandler
 {
@@ -31,6 +34,8 @@ public class RamlHandler
     private ParserService parserService;
 
     private String apiResourcesRelativePath = "";
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     //ramlLocation should be the root raml location, relative of the resources folder
     public RamlHandler(String ramlLocation, String apiServer, boolean keepRamlBaseUri) throws IOException
@@ -74,12 +79,12 @@ public class RamlHandler
     }
 
     //resourcesRelativePath should not contain the console path
-    public String getRamlParserV2(String resourceRelativePath) throws NotFoundException, IOException, IllegalAccessException
+    public String getRamlParserV2(String resourceRelativePath) throws TypedException
     {
         resourceRelativePath = sanitarizeResourceRelativePath(resourceRelativePath);
         if (resourceRelativePath.contains(".."))
         {
-            throw new IOException("\"..\" is not allowed");
+            throw ApikitErrorTypes.ILLEGAL_ACCESS.throwErrorType("\"..\" is not allowed");
         }
         if (apiResourcesRelativePath.equals(resourceRelativePath))
         {
@@ -96,7 +101,7 @@ public class RamlHandler
             //the resource should be in a subfolder, otherwise it could be requesting the properties file
             if (!resourceRelativePath.contains("/"))
             {
-                throw new IllegalAccessException("Requested resources should be in a subfolder");
+                throw ApikitErrorTypes.ILLEGAL_ACCESS.throwErrorType("Requested resources should be in a subfolder");
             }
             //resource
             InputStream apiResource = null;
@@ -107,7 +112,7 @@ public class RamlHandler
 
                 if (apiResource == null)
                 {
-                    throw new NotFoundException(resourceRelativePath);
+                    throw ApikitErrorTypes.NOT_FOUND.throwErrorType(resourceRelativePath);
                 }
 
                 baos = new ByteArrayOutputStream();
@@ -115,8 +120,8 @@ public class RamlHandler
             }
             catch (IOException e)
             {
-                
-                throw new NotFoundException(resourceRelativePath);
+                logger.debug(e.getMessage());
+                throw ApikitErrorTypes.NOT_FOUND.throwErrorType(resourceRelativePath);
             }
             finally
             {

@@ -6,12 +6,11 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.module.apikit.exception.NotFoundException;
+//import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
-import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
@@ -81,6 +80,7 @@ public class Configuration implements Initialisable
         flowFinder = new FlowFinder(ramlHandler, getName(), muleContext, flowMappings);
         buildResourcePatternCaches();
         registry.registerConfiguration(this);
+        ApikitErrorTypes.initialise(muleContext);
     }
 
     @Deprecated //TODO USE NEW API
@@ -200,7 +200,7 @@ public class Configuration implements Initialisable
 
                                 if (match == null) {
                                     logger.warn("No matching patterns for URI " + path);
-                                    throw new NotFoundException(path);
+                                    ApikitErrorTypes.NOT_FOUND.throwErrorType(path);
                                 }
                                 return match;
                             }
@@ -211,14 +211,6 @@ public class Configuration implements Initialisable
         return flowFinder;
     }
 
-
-    //public void setApi(IRaml api)
-    //{
-    //    if (ramlHandler == null)
-    //    {
-    //        ramlHandler = new RamlHandler();
-    //    this.ramlHandler.setApi(api);
-    //}
 
     //uri caches
     public LoadingCache<String, URIPattern> getUriPatternCache() {

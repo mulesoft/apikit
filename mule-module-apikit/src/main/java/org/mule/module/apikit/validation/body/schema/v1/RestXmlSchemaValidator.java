@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.validation.body.schema.v1;
 
+import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.EventHelper;
 import org.mule.module.apikit.MessageHelper;
 import org.mule.module.apikit.exception.BadRequestException;
@@ -14,7 +15,7 @@ import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.DataTypeBuilder;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.core.api.config.MuleProperties;
-import org.mule.runtime.core.internal.streaming.bytes.factory.AbstractCursorStreamProviderFactory;
+import org.mule.runtime.core.exception.TypedException;
 
 import com.google.common.cache.LoadingCache;
 
@@ -64,7 +65,7 @@ public class RestXmlSchemaValidator
         this.schemaCache = schemaCache;
     }
 
-    public Message validate(String schemaPath, Message message) throws BadRequestException
+    public Message validate(String schemaPath, Message message) throws TypedException
     {
         Message newMessage = message;
         try
@@ -117,7 +118,7 @@ public class RestXmlSchemaValidator
             }
             else
             {
-                throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
+                throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Don't know how to parse " + input.getClass().getName());
             }
 
             Schema schema = schemaCache.get(schemaPath);
@@ -127,7 +128,7 @@ public class RestXmlSchemaValidator
         catch (Exception e)
         {
             logger.info("Schema validation failed: " + e.getMessage());
-            throw new BadRequestException(e);
+            throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(e);
         }
         return newMessage;
     }

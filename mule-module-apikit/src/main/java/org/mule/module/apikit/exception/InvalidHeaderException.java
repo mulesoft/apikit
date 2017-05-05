@@ -12,4 +12,12 @@ public class InvalidHeaderException extends BadRequestException
   public InvalidHeaderException(String message) {
     super(message);
   }
+
+  public InvalidHeaderException(Throwable t) {
+    super(t);
+  }
+
+  public InvalidHeaderException(){
+    super();
+  }
 }

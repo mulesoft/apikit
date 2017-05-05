@@ -7,9 +7,7 @@
 package org.mule.module.apikit;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
-import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
@@ -20,10 +18,10 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.construct.Flow;
+import org.mule.runtime.core.exception.TypedException;
 import org.mule.runtime.core.processor.AbstractInterceptingMessageProcessor;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -57,9 +55,6 @@ public class Router extends AbstractInterceptingMessageProcessor
             uriPattern = config.getUriPatternCache().get(path);
             uriResolver = config.getUriResolverCache().get(path);
         } catch (ExecutionException e) {
-            if (e.getCause() instanceof MuleRestException) {
-                throw (MuleRestException) e.getCause();
-            }
             throw new DefaultMuleException(e);
         }
         ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
@@ -104,11 +99,11 @@ public class Router extends AbstractInterceptingMessageProcessor
         return EventHelper.regenerateEvent(event, bodyValidator.validate(newEvent.getMessage()));
     }
 
-    private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws MethodNotAllowedException
+    private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException
     {
         IResource resource = configuration.getFlowFinder().getResource(uriPattern);
         if (resource.getAction(method) == null) {
-            throw new MethodNotAllowedException(resource.getUri(), method);
+            ApikitErrorTypes.METHOD_NOT_ALLOWED.throwErrorType(resource.getUri() + " : " + method);
         }
         return resource;
     }

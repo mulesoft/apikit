@@ -20,6 +20,7 @@ import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.exception.TypedException;
 import org.mule.service.http.api.domain.ParameterMap;
 
 import java.io.ByteArrayInputStream;
@@ -82,7 +83,7 @@ public class RestJsonSchemaValidatorTestCase
     }
 
     @Test
-    public void validStringPayloadUsingParserV1() throws BadRequestException
+    public void validStringPayloadUsingParserV1() throws TypedException
     {
         Message.Builder messageBuilder = Message.builder().payload("{ \"name\": \"Major League Soccer\" }");
         ParameterMap headers = new ParameterMap();
@@ -99,8 +100,8 @@ public class RestJsonSchemaValidatorTestCase
         assertTrue(newMessage != null);
     }
 
-    @Test (expected = BadRequestException.class)
-    public void invalidStringPayloadUsingParserV1() throws BadRequestException
+    @Test (expected = TypedException.class)
+    public void invalidStringPayloadUsingParserV1() throws TypedException
     {
         Message.Builder messageBuilder = Message.builder().payload("{ \"naazame\": \"Major League Soccer\" }");
         ParameterMap headers = new ParameterMap();
@@ -119,7 +120,7 @@ public class RestJsonSchemaValidatorTestCase
     }
 
     @Test
-    public void validStreamPayloadUsingParserV1() throws BadRequestException
+    public void validStreamPayloadUsingParserV1() throws TypedException
     {
         InputStream is = new ByteArrayInputStream("{ \"name\": \"Major League Soccer\" }".getBytes());
         Message.Builder messageBuilder = Message.builder().payload(is);
@@ -137,8 +138,8 @@ public class RestJsonSchemaValidatorTestCase
         assertTrue(newMessage != null);
     }
 
-    @Test (expected = BadRequestException.class)
-    public void invalidStreamPayloadUsingParserV1() throws BadRequestException
+    @Test (expected = TypedException.class)
+    public void invalidStreamPayloadUsingParserV1() throws TypedException
     {
         InputStream is = new ByteArrayInputStream("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>".getBytes());
         Message.Builder messageBuilder = Message.builder().payload(is);
@@ -158,7 +159,7 @@ public class RestJsonSchemaValidatorTestCase
     }
 
     @Test
-    public void validByteArrayPayloadUsingParserV1() throws BadRequestException
+    public void validByteArrayPayloadUsingParserV1() throws TypedException
     {
         byte[] byteArray = "{ \"name\": \"Major League Soccer\" }".getBytes();
         Message.Builder messageBuilder = Message.builder().payload(byteArray);
@@ -176,8 +177,8 @@ public class RestJsonSchemaValidatorTestCase
         assertTrue(newMessage != null);
     }
 
-    @Test (expected = BadRequestException.class)
-    public void invalidByteArrayPayloadUsingParserV1() throws BadRequestException
+    @Test (expected = TypedException.class)
+    public void invalidByteArrayPayloadUsingParserV1() throws TypedException
     {
         byte[] byteArray = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>".getBytes();
         Message.Builder messageBuilder = Message.builder().payload(byteArray);

@@ -20,6 +20,7 @@ import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.exception.TypedException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -76,7 +77,7 @@ public class RestXMLSchemaValidatorTestCase
     }
 
     @Test
-    public void validStringPayloadUsingParserV1() throws BadRequestException
+    public void validStringPayloadUsingParserV1() throws TypedException
     {
         Message.Builder messageBuilder = Message.builder().payload("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>");
         Message message = messageBuilder.build();
@@ -91,8 +92,8 @@ public class RestXMLSchemaValidatorTestCase
         assertTrue(newMessage != null);
     }
 
-    @Test (expected = BadRequestException.class)
-    public void invalidStringPayloadUsingParserV1() throws BadRequestException, InitialisationException
+    @Test (expected = TypedException.class)
+    public void invalidStringPayloadUsingParserV1() throws TypedException, InitialisationException
     {
         Message.Builder messageBuilder = Message.builder().payload("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>");
         Message message = messageBuilder.build();
@@ -108,7 +109,7 @@ public class RestXMLSchemaValidatorTestCase
     }
 
     @Test
-    public void validStreamPayloadUsingParserV1() throws BadRequestException
+    public void validStreamPayloadUsingParserV1() throws TypedException
     {
         InputStream is = new ByteArrayInputStream("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>".getBytes());
         Message.Builder messageBuilder = Message.builder().payload(is);
@@ -124,8 +125,8 @@ public class RestXMLSchemaValidatorTestCase
         assertTrue(newMessage != null);
     }
 
-    @Test (expected = BadRequestException.class)
-    public void invalidStreamPayloadUsingParserV1() throws BadRequestException
+    @Test (expected = TypedException.class)
+    public void invalidStreamPayloadUsingParserV1() throws TypedException
     {
         InputStream is = new ByteArrayInputStream("{\"invalid\":\"true\"}".getBytes());
         Message.Builder messageBuilder = Message.builder().payload(is);
@@ -143,7 +144,7 @@ public class RestXMLSchemaValidatorTestCase
 
 
     @Test
-    public void validByteArrayPayloadUsingParserV1() throws BadRequestException
+    public void validByteArrayPayloadUsingParserV1() throws TypedException
     {
         byte[] byteArray = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>".getBytes();
         Message.Builder messageBuilder = Message.builder().payload(byteArray);
@@ -159,8 +160,8 @@ public class RestXMLSchemaValidatorTestCase
         assertTrue(newMessage != null);
     }
 
-    @Test (expected = BadRequestException.class)
-    public void invalidByteArrayPayloadUsingParserV1() throws BadRequestException
+    @Test (expected = TypedException.class)
+    public void invalidByteArrayPayloadUsingParserV1() throws TypedException
     {
         byte[] byteArray = "{\"invalid\":\"true\"}".getBytes();
         Message.Builder messageBuilder = Message.builder().payload(byteArray);

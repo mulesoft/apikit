@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.AttributesHelper;
-import org.mule.module.apikit.MessageHelper;
-import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.runtime.core.exception.TypedException;
 import org.mule.service.http.api.domain.ParameterMap;
 
 public class HeadersValidator {
@@ -19,7 +19,7 @@ public class HeadersValidator {
 
   public HeadersValidator() {}
 
-  public void validateAndAddDefaults(ParameterMap incomingHeaders, IAction action) throws InvalidHeaderException
+  public void validateAndAddDefaults(ParameterMap incomingHeaders, IAction action) throws TypedException
   {
     this.headers = incomingHeaders;
     for (String expectedKey : action.getHeaders().keySet()) {
@@ -32,13 +32,13 @@ public class HeadersValidator {
           if (incoming.matches(regex) && !expected.validate(incomingValue)) {
             String msg = String.format("Invalid value '%s' for header %s. %s",
                                        incomingValue, expectedKey, expected.message(incomingValue));
-            throw new InvalidHeaderException(msg);
+            throw ApikitErrorTypes.INVALID_HEADER.throwErrorType(msg);
           }
         }
       } else {
         String actual = AttributesHelper.getParamIgnoreCase(headers, expectedKey);
         if (actual == null && expected.isRequired()) {
-          throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
+          throw ApikitErrorTypes.INVALID_HEADER.throwErrorType("Required header " + expectedKey + " not specified");
         }
         if (actual == null && expected.getDefaultValue() != null) {
           headers = AttributesHelper.addParam(headers, expectedKey, expected.getDefaultValue());
@@ -47,7 +47,7 @@ public class HeadersValidator {
           if (!expected.validate(actual)) {
             String msg = String.format("Invalid value '%s' for header %s. %s",
                                        actual, expectedKey, expected.message(actual));
-            throw new InvalidHeaderException(msg);
+            throw ApikitErrorTypes.INVALID_HEADER.throwErrorType(msg);
           }
         }
       }

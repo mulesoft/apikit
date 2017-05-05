@@ -8,4 +8,15 @@ package org.mule.module.apikit.exception;
 
 public class UnsupportedMediaTypeException extends MuleRestException {
 
+    public UnsupportedMediaTypeException(String path) {
+        super(path);
+    }
+
+    public UnsupportedMediaTypeException(Throwable t) {
+        super(t);
+    }
+
+    public UnsupportedMediaTypeException(){
+        super();
+    }
 }

@@ -9,6 +9,7 @@
 
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-module-apikit</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>mule-plugin</packaging>
 
     <name>APIKit Module</name>
@@ -21,46 +22,38 @@
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
         <mule.api.version>1.0.0-SNAPSHOT</mule.api.version>
-        <mule.extensions.maven.plugin.version>1.0.0-SNAPSHOT</mule.extensions.maven.plugin.version>
+        <mule.app.plugins.maven.plugin.version>1.0.0-SNAPSHOT</mule.app.plugins.maven.plugin.version>
     </properties>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.mule.runtime.plugins</groupId>
-                <artifactId>mule-extensions-maven-plugin</artifactId>
-                <version>${mule.extensions.maven.plugin.version}</version>
+                <artifactId>mule-app-plugins-maven-plugin</artifactId>
                 <extensions>true</extensions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
+                <version>${mule.app.plugins.maven.plugin.version}</version>
             </plugin>
             <!--TODO (MULE-10540) parent pom for mule plugins -->
-            <!--<plugin>-->
-                <!--<artifactId>maven-jar-plugin</artifactId>-->
-                <!--<executions>-->
-                    <!--<execution>-->
-                        <!--<goals>-->
-                            <!--<goal>test-jar</goal>-->
-                        <!--</goals>-->
-                    <!--</execution>-->
-                    <!--<execution>-->
-                        <!--<id>mule-plugin</id>-->
-                        <!--<phase>package</phase>-->
-                        <!--<goals>-->
-                            <!--<goal>jar</goal>-->
-                        <!--</goals>-->
-                        <!--<configuration>-->
-                            <!--<classifier>mule-plugin</classifier>-->
-                        <!--</configuration>-->
-                    <!--</execution>-->
-                <!--</executions>-->
-            <!--</plugin>-->
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>mule-plugin</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>mule-plugin</classifier>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -70,18 +63,14 @@
             <artifactId>mule-api</artifactId>
             <version>${mule.api.version}</version>
             <scope>provided</scope>
+            <!-- scope: provided as it comes with the container-->
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.mule</groupId>-->
-        <!--<artifactId>mule-core</artifactId>-->
-        <!--<version>4.0-SNAPSHOT</version>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-spring-config</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
+            <!-- scope: provided as it comes with the container-->
         </dependency>
         <!--parser-->
         <dependency>
@@ -109,6 +98,25 @@
             <artifactId>parser-interface-impl-v2</artifactId>
             <version>${apikit.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mule.services</groupId>
+            <artifactId>mule-service-weave</artifactId>
+            <classifier>mule-service</classifier>
+            <version>4.0.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-core</artifactId>
+            <version>${mule.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>provided</scope>
+        </dependency>
+
         <!--test-->
         <dependency>
             <groupId>asm</groupId>
@@ -165,12 +173,12 @@
             <version>${mule.version}</version>
             <scope>provided</scope>
             <classifier>mule-plugin</classifier>
+            <!-- scope: provided as it comes with the container-->
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-http-ext</artifactId>
             <version>${mule.version}</version>
-            <!--<scope>provided</scope>-->
             <classifier>mule-plugin</classifier>
         </dependency>
         <!--TODO: The dependency to mule-service-http-api is used to retrieve the ParameterMap class. It can be removed once it is passed to mule-api-->
@@ -179,33 +187,32 @@
             <artifactId>mule-service-http-api</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
+            <!-- scope: provided as it comes with the container-->
         </dependency>
-        <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-module-http</artifactId>
-            <version>${mule.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--<dependency>-->
+        <!--<groupId>org.mule.runtime</groupId>-->
+        <!--<artifactId>mule-module-http</artifactId>-->
+        <!--<version>${mule.version}</version>-->
+        <!--</dependency>-->
         <!--TODO: MULE-10837-->
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-service</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
+            <!-- scope: provided as it comes with the container-->
         </dependency>
 
         <dependency>
             <groupId>org.mule.services</groupId>
             <artifactId>mule-service-http</artifactId>
             <version>${mule.version}</version>
-            <scope>provided</scope>
             <classifier>mule-service</classifier>
         </dependency>
         <dependency>
             <groupId>org.mule.services</groupId>
             <artifactId>mule-service-scheduler</artifactId>
             <version>${mule.version}</version>
-            <scope>provided</scope>
             <classifier>mule-service</classifier>
         </dependency>
         <dependency>
@@ -213,6 +220,7 @@
             <artifactId>mule-module-extensions-support</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
+            <!-- scope: provided as it comes with the container-->
         </dependency>
 
         <dependency>
@@ -220,46 +228,32 @@
             <artifactId>mule-module-spring-security</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
+            <!-- scope: provided as it comes with the container-->
         </dependency>
+
         <dependency>
+            <!--used to get muleContext in tests-->
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-scripting</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
+            <!-- scope: provided as it comes with the container-->
         </dependency>
-        <!--required by mule module scripting-->
         <dependency>
+            <!--required by mule module scripting-->
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>4.1.9.RELEASE</version>
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!--required by mule module scripting-->
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-extensions-spring-support</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
+            <!-- scope: provided as it comes with the container-->
         </dependency>
-        <dependency>
-            <groupId>org.mule.services</groupId>
-            <artifactId>mule-service-weave</artifactId>
-            <classifier>mule-service</classifier>
-            <version>4.0.0-SNAPSHOT</version>
-            <!--<scope>provided</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-core</artifactId>
-            <version>${mule.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 
 </project>

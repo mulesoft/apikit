@@ -19,7 +19,7 @@
     </apikit:config>
 
     <flow name="doorway">
-        <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
+        <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/api/*">
             <http:response statusCode="#[httpStatus]"><http:headers>#[outboundHeaders]</http:headers></http:response>
             <http:error-response statusCode="500"><http:headers>#[outboundHeaders]</http:headers></http:error-response>
         </http:listener>

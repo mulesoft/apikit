@@ -14,7 +14,7 @@
     <apikit:config name="config" raml="org/mule/module/apikit/validation/body/schema/xsd-includer.raml"/>
 
     <flow name="doorway-cam">
-        <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
+        <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/api/*">
             <http:response statusCode="#[variables.httpStatus default 200]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
         </http:listener>
         <apikit:router config-ref="config"/>

@@ -17,7 +17,7 @@
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">
-        <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
+        <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/api/*">
             <http:response statusCode="#[httpStatus]"><http:headers>#[outboundHeaders]</http:headers></http:response>
             <http:error-response statusCode="500">
                 <http:headers>#[outboundHeaders]</http:headers></http:error-response>
@@ -31,7 +31,7 @@
     </flow>
 
     <flow name="consoleFlow">
-        <http:listener config-ref="httpListenerConfigDefault" path="/console/*">
+        <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/console/*">
             <http:response statusCode="#[httpStatus]"><http:headers>#[outboundHeaders]</http:headers></http:response>
             <http:error-response statusCode="500">
                 <http:headers>#[outboundHeaders]</http:headers></http:error-response>

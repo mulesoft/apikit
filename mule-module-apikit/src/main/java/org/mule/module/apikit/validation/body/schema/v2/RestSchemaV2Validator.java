@@ -9,15 +9,13 @@ package org.mule.module.apikit.validation.body.schema.v2;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.module.apikit.CharsetUtils.trimBom;
 
+import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.MessageHelper;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidator;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.streaming.bytes.CursorStream;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
-import org.mule.runtime.core.internal.streaming.object.factory.InMemoryCursorIteratorProviderFactory;
-import org.mule.runtime.core.streaming.object.CursorIteratorProviderFactory;
 import org.mule.runtime.core.util.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -63,7 +61,7 @@ public class RestSchemaV2Validator implements IRestSchemaValidator
         {
             String logMessage = validationResults.get(0).getMessage();
             logger.info("Schema validation failed: " + logMessage);
-            throw new BadRequestException(logMessage);
+            throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(logMessage);
         }
         return message;
     }
@@ -99,7 +97,7 @@ public class RestSchemaV2Validator implements IRestSchemaValidator
             }
             catch (IOException e)
             {
-                throw new BadRequestException("Error processing request: " + e.getMessage());
+                throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Error processing request: " + e.getMessage());
             }
         }
         else if (input instanceof byte[])
@@ -112,7 +110,7 @@ public class RestSchemaV2Validator implements IRestSchemaValidator
             }
             catch (IOException e)
             {
-                throw new BadRequestException("Error processing request: " + e.getMessage());
+                throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Error processing request: " + e.getMessage());
             }
         }
         else if (input instanceof String)
@@ -126,7 +124,7 @@ public class RestSchemaV2Validator implements IRestSchemaValidator
             {
                 message = "Don't know how to parse " + input.getClass().getName();
             }
-            throw new BadRequestException(message);
+            throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(message);
 
         }
         return (String) input;

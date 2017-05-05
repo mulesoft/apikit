@@ -9,6 +9,7 @@ package org.mule.module.apikit.validation.attributes;
 import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
 import org.mule.raml.implv1.model.ActionImpl;
+import org.mule.runtime.core.exception.TypedException;
 import org.mule.service.http.api.domain.ParameterMap;
 
 import java.util.HashMap;
@@ -21,8 +22,8 @@ import org.raml.model.parameter.QueryParameter;
 
 public class QueryParametersValidatorTestCase {
 
-  @Test(expected = InvalidQueryParameterException.class)
-  public void invalidQueryParamMaxLength() throws InvalidQueryParameterException
+  @Test(expected = TypedException.class)
+  public void invalidQueryParamMaxLength() throws TypedException
   {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();
@@ -42,7 +43,7 @@ public class QueryParametersValidatorTestCase {
   }
 
   @Test
-  public void validQueryParamMaxLength() throws InvalidQueryParameterException
+  public void validQueryParamMaxLength() throws TypedException
   {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();

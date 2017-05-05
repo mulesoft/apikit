@@ -17,6 +17,7 @@ import org.mule.module.apikit.validation.body.schema.v1.cache.SchemaCacheUtils;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.exception.TypedException;
 
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.google.common.cache.LoadingCache;
@@ -36,7 +37,7 @@ public class RestSchemaV1Validator implements IRestSchemaValidator
         this.action = action;
     }
 
-    public Message validate(Message message) throws BadRequestException
+    public Message validate(Message message) throws TypedException
     {
         String requestMimeType = AttributesHelper.getMediaType((HttpRequestAttributes)message.getAttributes().getValue());
         if (requestMimeType.contains("json"))

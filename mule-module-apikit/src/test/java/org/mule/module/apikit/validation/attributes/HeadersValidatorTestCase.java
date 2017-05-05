@@ -10,6 +10,7 @@ package org.mule.module.apikit.validation.attributes;
 import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.module.apikit.validation.attributes.HeadersValidator;
 import org.mule.raml.implv1.model.ActionImpl;
+import org.mule.runtime.core.exception.TypedException;
 import org.mule.service.http.api.domain.ParameterMap;
 
 import java.util.ArrayList;
@@ -24,8 +25,8 @@ import org.raml.model.parameter.Header;
 
 public class HeadersValidatorTestCase {
 
-  @Test(expected = InvalidHeaderException.class)
-  public void invalidHeader() throws InvalidHeaderException
+  @Test(expected = TypedException.class)
+  public void invalidHeader() throws TypedException
   {
     Map<String, Header> expectedHeaders = new HashMap<>();
     Header header1 = new Header();
@@ -58,7 +59,7 @@ public class HeadersValidatorTestCase {
   }
 
   @Test
-  public void validHeader() throws InvalidHeaderException
+  public void validHeader() throws TypedException
   {
     Map<String, Header> expectedHeaders = new HashMap<>();
     Header header1 = new Header();

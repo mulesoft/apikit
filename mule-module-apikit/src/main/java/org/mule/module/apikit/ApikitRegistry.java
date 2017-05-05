@@ -6,16 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.module.apikit.validation.body.schema.v1.SchemaType;
-import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
-import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
-import org.mule.raml.interfaces.model.IRaml;
-
-import com.github.fge.jsonschema.main.JsonSchema;
-import javax.xml.validation.Schema;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
-
 import java.util.HashMap;
 import java.util.Map;
 
