@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
-      xmlns:httpn="http://www.mulesoft.org/schema/mule/httpn"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-               http://www.mulesoft.org/schema/mule/httpn http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
 
-    <httpn:listener-config name="HTTP_Listener_Configuration">
-        <httpn:listener-connection host="0.0.0.0" port="${serverPort}"/>
-    </httpn:listener-config>
+    <http:listener-config name="HTTP_Listener_Configuration">
+        <http:listener-connection host="0.0.0.0" port="${serverPort}"/>
+    </http:listener-config>
 
     <apikit:config name="apikit-config" raml="simple.raml" />
 
     <flow name="main">
-        <httpn:listener config-ref="HTTP_Listener_Configuration" path="/api/*">
-            <httpn:response-builder statusCode="#[mel:httpStatus]"><httpn:headers>#[mel:_outboundHeaders_]</httpn:headers></httpn:response-builder>
-        </httpn:listener>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*">
+            <http:response-builder statusCode="#[mel:httpStatus]"><http:headers>#[mel:_outboundHeaders_]</http:headers></http:response-builder>
+        </http:listener>
         <set-variable variableName="_outboundHeaders_" value="#[mel:new java.util.HashMap()]"/>
         <apikit:router config-ref="apikit-config" />
     </flow>

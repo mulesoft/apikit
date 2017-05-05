@@ -43,15 +43,10 @@ public class ScaffolderWithExistingConfig
     @Before
     public void setUp() {
         folder.newFolder("scaffolder");
-        folder.newFolder("scaffolder-existing");
         folder.newFolder("scaffolder-existing-extension");
-        folder.newFolder("scaffolder-existing-custom-lc");
         folder.newFolder("scaffolder-existing-old");
         folder.newFolder("scaffolder-existing-old-address");
-        folder.newFolder("scaffolder-existing-custom-and-normal-lc");
         folder.newFolder("custom-domain");
-        folder.newFolder("empty-domain");
-        folder.newFolder("custom-domain-multiple-lc");
     }
 
     @Test
@@ -81,8 +76,8 @@ public class ScaffolderWithExistingConfig
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "httpn:listener-config name=\"HTTP_Listener_Configuration\""));
-        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));

@@ -6,7 +6,7 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTPN_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
 
 import org.mule.tools.apikit.model.APIKitConfig;
 
@@ -19,15 +19,15 @@ public class MainFlowsUtils
 
     public static void generateListenerSource(String httpListenerConfigRef, String path, Element main, boolean interpretRequestErrors)
     {
-        Element httpListener = new Element("listener", HTTPN_NAMESPACE.getNamespace());
+        Element httpListener = new Element("listener", HTTP_NAMESPACE.getNamespace());
         httpListener.setAttribute("config-ref", httpListenerConfigRef);
         httpListener.setAttribute("path", path);
         httpListener.setAttribute("interpretRequestErrors", String.valueOf(interpretRequestErrors));
 
-        Element headers = new Element("headers", HTTPN_NAMESPACE.getNamespace());
+        Element headers = new Element("headers", HTTP_NAMESPACE.getNamespace());
         headers.setText(DEFAULT_OUTBOUND_HEADERS_MAP_VALUE);
 
-        Element responseBuilder = new Element("response", HTTPN_NAMESPACE.getNamespace());
+        Element responseBuilder = new Element("response", HTTP_NAMESPACE.getNamespace());
         responseBuilder.setAttribute("statusCode",DEFAULT_STATUS_CODE_SUCCESS_VALUE);
         responseBuilder.addContent(headers);
         httpListener.addContent(responseBuilder);

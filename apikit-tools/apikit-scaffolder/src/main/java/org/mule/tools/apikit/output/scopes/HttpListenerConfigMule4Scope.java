@@ -6,7 +6,7 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTPN_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
 
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
@@ -25,7 +25,7 @@ public class HttpListenerConfigMule4Scope implements Scope
 
         if (api.getHttpListenerConfig() != null)
         {
-            httpListenerConfig = new Element(HttpListener4xConfig.ELEMENT_NAME, HTTPN_NAMESPACE.getNamespace());
+            httpListenerConfig = new Element(HttpListener4xConfig.ELEMENT_NAME, HTTP_NAMESPACE.getNamespace());
             httpListenerConfig.setAttribute("name", api.getHttpListenerConfig().getName());
             String basePath = api.getHttpListenerConfig().getBasePath();
             if (basePath != null && basePath != "/" && basePath != "")
@@ -33,7 +33,7 @@ public class HttpListenerConfigMule4Scope implements Scope
                 httpListenerConfig.setAttribute("basePath", api.getHttpListenerConfig().getBasePath());
             }
             mule.addContent(httpListenerConfig);
-            Element connection = new Element("listener-connection", HTTPN_NAMESPACE.getNamespace());
+            Element connection = new Element("listener-connection", HTTP_NAMESPACE.getNamespace());
             connection.setAttribute("host", api.getHttpListenerConfig().getHost());
             connection.setAttribute("port", api.getHttpListenerConfig().getPort());
             httpListenerConfig.addContent(connection);
