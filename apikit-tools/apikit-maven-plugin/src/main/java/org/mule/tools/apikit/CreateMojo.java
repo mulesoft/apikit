@@ -83,12 +83,6 @@ public class CreateMojo
     @Parameter (property = "muleVersion")
     private String muleVersion;
 
-    /**
-     * Generate listener or inbound-endpoint.
-     */
-    @Parameter (property = "compatibilityMode")
-    private boolean compatibilityMode;
-
     private Log log;
 
     List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {
@@ -126,7 +120,7 @@ public class CreateMojo
 
         try
         {
-            Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, muleVersion, compatibilityMode);
+            Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, muleVersion);
             scaffolder.run();
         }
         catch (IOException e)

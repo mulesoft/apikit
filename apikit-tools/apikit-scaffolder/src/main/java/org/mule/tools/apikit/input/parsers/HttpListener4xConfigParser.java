@@ -6,7 +6,7 @@
  */
 package org.mule.tools.apikit.input.parsers;
 
-import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTPN_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
 
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
@@ -29,7 +29,7 @@ public class HttpListener4xConfigParser implements MuleConfigFileParser
     public Map<String, HttpListener4xConfig> parse(Document document){
         Map<String,HttpListener4xConfig> httpListenerConfigMap = new HashMap<String, HttpListener4xConfig>();
         XPathExpression<Element> xp = XPathFactory.instance().compile("//*/*[local-name()='" + ELEMENT_NAME + "']",
-                                                                      Filters.element(HTTPN_NAMESPACE.getNamespace()));
+                                                                      Filters.element(HTTP_NAMESPACE.getNamespace()));
         List<Element> elements = xp.evaluate(document);
         for (Element element : elements) {
             String name = element.getAttributeValue("name");

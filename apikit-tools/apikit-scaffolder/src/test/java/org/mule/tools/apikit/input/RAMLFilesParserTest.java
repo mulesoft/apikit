@@ -44,7 +44,7 @@ public class RAMLFilesParserTest
         HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
         streams.put(new File("hello"), resourceAsStream);
 
-        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory(), false);
+        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory());
 
         Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
         assertNotNull(entries);
@@ -94,7 +94,7 @@ public class RAMLFilesParserTest
         HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
         streams.put(new File("hello"), resourceAsStream);
 
-        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory(), false);
+        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory());
 
         Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
         assertNotNull(entries);

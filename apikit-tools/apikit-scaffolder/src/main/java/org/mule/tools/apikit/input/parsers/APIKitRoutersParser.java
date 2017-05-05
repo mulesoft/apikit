@@ -100,7 +100,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
         HttpListener4xConfig httpListenerConfig = getHTTPListenerConfig(source);
         String path = getPathFromInbound(source);
         //TODO PARSE HTTPSTATUSVARNAME AND OUTBOUNDHEADERSMAPNAME
-        return apiFactory.createAPIBinding(ramlFile, file, null, path, config, httpListenerConfig, false);
+        return apiFactory.createAPIBinding(ramlFile, file, null, path, config, httpListenerConfig);
     }
 
     public API handleInboundEndpointSource(Element source, File ramlFile, APIKitConfig config)
@@ -121,7 +121,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
         } else  if (!path.startsWith("/")) {
             path = "/" + path;
         }
-        return apiFactory.createAPIBinding(ramlFile, file, baseUri, path, config, null, true);
+        return apiFactory.createAPIBinding(ramlFile, file, baseUri, path, config, null);
     }
 
     private Element findListenerOrInboundEndpoint(List<Element> elements)

@@ -539,7 +539,7 @@ public class ScaffolderTest {
         {
             domainStream = new FileInputStream(domainFile);
         }
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, compatibilityMode, ramlsWithExtensionEnabled);
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled);
     }
 
     private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {

@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
-      xmlns:httpn="http://www.mulesoft.org/schema/mule/httpn"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xmlns:spring="http://www.springframework.org/schema/beans"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
-               http://www.mulesoft.org/schema/mule/httpn http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
                http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
                http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
 
     <configuration defaultErrorHandler-ref="defaultErrorHandler"/>
 
-    <httpn:listener-config name="HTTP_Listener_Configuration">
-        <httpn:listener-connection host="0.0.0.0" port="${serverPort}"/>
-    </httpn:listener-config>
+    <http:listener-config name="HTTP_Listener_Configuration">
+        <http:listener-connection host="0.0.0.0" port="${serverPort}"/>
+    </http:listener-config>
 
     <error-handler name="defaultErrorHandler">
         <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotFoundException)]">
@@ -45,12 +45,12 @@
     <apikit:config raml="leagues-custom-normal-lc.raml" />
 
     <flow name="otherFlow">
-        <httpn:listener config-ref="HTTP_Listener_Configuration" path="/api2/*"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api2/*"/>
         <set-payload value="test"/>
     </flow>
 
     <flow name="doorway">
-        <httpn:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*"/>
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*"/>
         <apikit:router />
     </flow>
 

@@ -32,10 +32,10 @@ public class APIFactory
 
     public API createAPIBindingInboundEndpoint(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config)
     {
-        return createAPIBinding(ramlFile, xmlFile, baseUri, path, config, null, true);
+        return createAPIBinding(ramlFile, xmlFile, baseUri, path, config, null);
     }
 
-    public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config, HttpListener4xConfig httpListenerConfig, boolean compatibilityMode)
+    public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config, HttpListener4xConfig httpListenerConfig)
     {
         Validate.notNull(ramlFile);
         if(apis.containsKey(ramlFile))
@@ -48,23 +48,20 @@ public class APIFactory
             return api;
         }
         API api = new API(ramlFile, xmlFile, baseUri, path, config);
-        if (!compatibilityMode)
+        if (httpListenerConfig == null)
         {
-            if (httpListenerConfig == null)
+            if (domainHttpListenerConfigs.size() >0)
             {
-                if (domainHttpListenerConfigs.size() >0)
-                {
-                    api.setHttpListenerConfig(getFirstLC());
-                }
-                else
-                {
-                    api.setDefaultHttpListenerConfig();
-                }
+                api.setHttpListenerConfig(getFirstLC());
             }
             else
             {
-                api.setHttpListenerConfig(httpListenerConfig);
+                api.setDefaultHttpListenerConfig();
             }
+        }
+        else
+        {
+            api.setHttpListenerConfig(httpListenerConfig);
         }
         api.setConfig(config);
         apis.put(ramlFile, api);

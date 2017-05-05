@@ -35,20 +35,20 @@ public class Scaffolder
 
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles) throws IOException
     {
-        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, null, DEFAULT_MULE_VERSION, false, null);
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, null, DEFAULT_MULE_VERSION, null);
     }
 
     public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles, String domainFile) throws IOException
     {
-        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, DEFAULT_MULE_VERSION, false, null);
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, DEFAULT_MULE_VERSION, null);
     }
 
-    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles, String domainFile, String muleVersion, boolean compatibilityMode) throws IOException
+    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles, List<String> muleXmlFiles, String domainFile, String muleVersion) throws IOException
     {
-        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, muleVersion, compatibilityMode, null);
+        return createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, muleVersion, null);
     }
 
-    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specPaths, List<String> muleXmlPaths, String domainPath, String muleVersion, boolean compatibilityMode, List<String> ramlsWithExtensionEnabledPaths) throws IOException
+    public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specPaths, List<String> muleXmlPaths, String domainPath, String muleVersion, List<String> ramlsWithExtensionEnabledPaths) throws IOException
     {
         FileListUtils fileUtils = new FileListUtils(log);
         Map<File, InputStream> ramlStreams = fileUtils.toStreamsOrFail(specPaths);
@@ -62,17 +62,17 @@ public class Scaffolder
             }
         }
         InputStream domainStream = getDomainStream(log, domainPath);
-        return new Scaffolder(log, muleXmlOutputDirectory, ramlStreams, muleStreams, domainStream, compatibilityMode, ramlWithExtensionEnabled);
+        return new Scaffolder(log, muleXmlOutputDirectory, ramlStreams, muleStreams, domainStream, ramlWithExtensionEnabled);
     }
 
-    public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> ramls, Map<File, InputStream> xmls, InputStream domainStream, boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled)
+    public Scaffolder(Log log, File muleXmlOutputDirectory, Map<File, InputStream> ramls, Map<File, InputStream> xmls, InputStream domainStream, Set<File> ramlsWithExtensionEnabled)
     {
         MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
         APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
-        MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory, compatibilityMode).parse(ramls.keySet(), xmls);
-        RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory, compatibilityMode);
+        MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(ramls.keySet(), xmls);
+        RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
         List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
-        muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(), compatibilityMode, ramlsWithExtensionEnabled);
+        muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(), ramlsWithExtensionEnabled);
     }
 
     private static InputStream getDomainStream(Log log, String domainPath)

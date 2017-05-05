@@ -54,8 +54,8 @@ public class ConsoleFlowTest {
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "httpn:listener-config name=\"HTTP_Listener_Configuration\""));
-        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet:simpleV10-config"));
         assertEquals(1, countOccurences(s, "post:/pet:simpleV10-config"));
@@ -93,7 +93,7 @@ public class ConsoleFlowTest {
         {
             domainStream = new FileInputStream(domainFile);
         }
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, compatibilityMode, ramlsWithExtensionEnabled);
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled);
     }
 
     private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)

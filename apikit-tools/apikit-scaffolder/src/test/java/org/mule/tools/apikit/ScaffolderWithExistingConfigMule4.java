@@ -82,10 +82,10 @@ public class ScaffolderWithExistingConfigMule4
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "httpn:listener-config name=\"HTTP_Listener_Configuration\""));
-        assertEquals(1, countOccurences(s, "httpn:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
-        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
-        assertEquals(0, countOccurences(s, "httpn:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+        assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
@@ -119,10 +119,10 @@ public class ScaffolderWithExistingConfigMule4
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "httpn:listener-config name=\"HTTP_Listener_Configuration\">"));
-        assertEquals(1, countOccurences(s, "httpn:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
-        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
-        assertEquals(0, countOccurences(s, "httpn:inbound-endpoint"));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\">"));
+        assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
@@ -156,9 +156,9 @@ public class ScaffolderWithExistingConfigMule4
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "httpn:listener-config name=\"HTTP_Listener_Configuration\""));
-        assertEquals(1, countOccurences(s, "httpn:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
-        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+        assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));
@@ -191,8 +191,8 @@ public class ScaffolderWithExistingConfigMule4
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "httpn:listener-config name=\"HTTP_Listener_Configuration\""));
-        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "post:/pet"));
@@ -226,10 +226,10 @@ public class ScaffolderWithExistingConfigMule4
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(0, countOccurences(s, "<httpn:listener-config"));
-        assertEquals(0, countOccurences(s, "httpn:listener-connection"));
+        assertEquals(0, countOccurences(s, "<http:listener-config"));
+        assertEquals(0, countOccurences(s, "http:listener-connection"));
 
-        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
@@ -264,12 +264,12 @@ public class ScaffolderWithExistingConfigMule4
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "<httpn:listener-config"));
-        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
+        assertEquals(1, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/leagues/{leagueId}"));
-        assertEquals(1, countOccurences(s, "<httpn:listener config-ref=\"HTTP_Listener_Configuration\""));
-        assertEquals(1, countOccurences(s, "<httpn:listener config-ref=\"http-lc-0.0.0.0-8081\""));
+        assertEquals(1, countOccurences(s, "<http:listener config-ref=\"HTTP_Listener_Configuration\""));
+        assertEquals(1, countOccurences(s, "<http:listener config-ref=\"http-lc-0.0.0.0-8081\""));
         assertEquals(0, countOccurences(s, "extensionEnabled"));
         assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
         assertEquals(2, countOccurences(s, "echo-component"));
@@ -299,8 +299,8 @@ public class ScaffolderWithExistingConfigMule4
 
         assertTrue(xmlFile.exists());
         String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "httpn:listener-config name=\"HTTP_Listener_Configuration\">"));
-        assertEquals(1, countOccurences(s, "httpn:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\">"));
+        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(1, countOccurences(s, "<apikit:router config-ref=\"apikit-config\" />"));
         assertEquals(0, countOccurences(s, "inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
@@ -420,7 +420,7 @@ public class ScaffolderWithExistingConfigMule4
         {
             domainStream = new FileInputStream(domainFile);
         }
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, compatibilityMode, ramlsWithExtensionEnabled);
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled);
     }
 
     private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {

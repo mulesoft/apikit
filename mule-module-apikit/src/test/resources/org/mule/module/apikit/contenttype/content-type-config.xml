@@ -2,10 +2,10 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core"
       xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
       xmlns:http="http://www.mulesoft.org/schema/mule/http"
-      xmlns:httpn="http://www.mulesoft.org/schema/mule/httpn"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
-      http://www.mulesoft.org/schema/mule/httpn http://www.mulesoft.org/schema/mule/httpn/current/mule-httpn.xsd
+      http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
       http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
@@ -38,17 +38,17 @@
         </on-error-propagate>
     </error-handler>
 
-    <httpn:listener-config name="httpListenerConfigDefault">
-        <httpn:listener-connection host="localhost" port="${serverPort}"/>
-    </httpn:listener-config>
+    <http:listener-config name="httpListenerConfigDefault">
+        <http:listener-connection host="localhost" port="${serverPort}"/>
+    </http:listener-config>
 
     <apikit:config name="apikitConfig" raml="org/mule/module/apikit/contenttype/content-type.raml"/>
 
     <flow name="doorway">
-        <httpn:listener config-ref="httpListenerConfigDefault" path="/api/*">
-            <httpn:response statusCode="#[mel:httpStatus]"><httpn:headers>#[mel:_outboundHeaders_]</httpn:headers></httpn:response>
-            <httpn:error-response statusCode="#[mel:httpStatus]"/>
-        </httpn:listener>
+        <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
+            <http:response statusCode="#[mel:httpStatus]"><http:headers>#[mel:_outboundHeaders_]</http:headers></http:response>
+            <http:error-response statusCode="#[mel:httpStatus]"/>
+        </http:listener>
         <set-variable variableName="httpStatus" value="200"/>
 
         <set-variable variableName="_outboundHeaders_" value="#[mel:new java.util.HashMap()]"/>
