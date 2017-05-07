@@ -155,6 +155,16 @@
             <artifactId>rest-assured</artifactId>
             <version>${rest.assured.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>asm</groupId>
+                    <artifactId>asm-analysis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mule.tests</groupId>
