@@ -15,13 +15,16 @@
 
     <flow name="doorway">
         <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/api/*">
-            <http:response statusCode="#[variables.httpStatus default 200]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
+            <http:response statusCode="#[variables.httpStatus]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
         </http:listener>
         <apikit:router />
+        <logger level="INFO" message="#[variables.httpStatus]"/>
+
     </flow>
 
     <flow name="put:/currentuser">
         <set-payload value="hello"/>
+        <logger level="INFO" message="#[variables.httpStatus]"/>
     </flow>
 
 </mule>

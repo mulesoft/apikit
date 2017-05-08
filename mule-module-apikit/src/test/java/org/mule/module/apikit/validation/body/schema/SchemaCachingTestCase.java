@@ -47,12 +47,12 @@ public class SchemaCachingTestCase extends MuleArtifactFunctionalTestCase
     {
         given()
             .body("{\"name\":\"gbs\"}").contentType("application/json")
-            .expect().statusCode(200)//204
+            .expect().statusCode(204)//204
             .when().put("/cam/currentuser");
 
         given()
             .body("{\"id\":\"gbs\"}").contentType("application/json")
-            .expect().statusCode(200)//204
+            .expect().statusCode(204)//204
             .when().put("/peaks/currentuser");
     }
 

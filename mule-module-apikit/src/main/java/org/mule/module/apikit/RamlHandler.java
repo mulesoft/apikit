@@ -9,6 +9,7 @@ package org.mule.module.apikit;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.parser.ParserService;
+import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.core.exception.TypedException;
 
@@ -200,5 +201,20 @@ public class RamlHandler
             }
         }
         return null;
+    }
+
+    public String getSuccessStatusCode(IAction action)
+    {
+
+        for (String status : action.getResponses().keySet())
+        {
+            int code = Integer.parseInt(status);
+            if (code >= 200 && code < 300)
+            {
+                return status;
+            }
+        }
+        //default success status
+        return "200";
     }
 }

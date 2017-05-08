@@ -51,6 +51,7 @@ public class EventHelper
     {
         Event.Builder builder = Event.builder(event);
         builder.addVariable(key, value);
+        builder.message(event.getMessage());
         return builder.build();
     }
 

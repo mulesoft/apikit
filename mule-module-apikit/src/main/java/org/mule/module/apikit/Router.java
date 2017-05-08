@@ -41,7 +41,7 @@ public class Router extends AbstractInterceptingMessageProcessor
     {
         Configuration config = registry.getConfiguration(getConfigRef());
         event = EventHelper.addVariable(event, config.getOutboundHeadersMapName(), new HashMap<>());
-        event = EventHelper.addVariable(event, config.getHttpStatusVarName(), "200");
+//        event = EventHelper.addVariable(event, config.getHttpStatusVarName(), "201");
 
         HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes().getValue());
 
@@ -63,8 +63,12 @@ public class Router extends AbstractInterceptingMessageProcessor
         event = validateRequest(event, config, resource, attributes, resolvedVariables);
         String contentType = AttributesHelper.getHeaderIgnoreCase((HttpRequestAttributes) event.getMessage().getAttributes().getValue(), HeaderNames.CONTENT_TYPE);
         Flow flow = config.getFlowFinder().getFlow(resource,attributes.getMethod().toLowerCase(), contentType);
-        Event flowEvent = flow.process(event);
-        return flowEvent;
+        String successStatusCode = config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
+        event = EventHelper.addVariable(event, config.getHttpStatusVarName(), successStatusCode);
+
+        event = flow.process(event);
+
+        return event;
     }
 
     public String getConfigRef()

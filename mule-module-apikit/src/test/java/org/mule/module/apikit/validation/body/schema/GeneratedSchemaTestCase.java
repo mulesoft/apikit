@@ -50,7 +50,7 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
         given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\",\"emailAddresses\":[\"gbs@ie\"]}")
                 .contentType("application/json")
             .expect()
-                .statusCode(200)//TODO CHANGE ONCE RESPONSE STATUS CODES ARE ADDED. REAL STATUS CODE: 204
+                .statusCode(201)
                 .body(is("hello"))
             .when().put("/api/currentuser");
     }
@@ -72,7 +72,7 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
                      "<email-addresses><email-address>gbs@ie</email-address></email-addresses></user>")
                 .contentType("text/xml")
             .expect()
-                .statusCode(200)//TODO CHANGE ONCE RESPONSE STATUS CODES ARE ADDED. REAL STATUS CODE: 204
+                .statusCode(201)
                 .body(is("hello"))
             .when().put("/api/currentuser");
     }
