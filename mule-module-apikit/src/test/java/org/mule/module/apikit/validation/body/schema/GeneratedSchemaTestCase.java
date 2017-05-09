@@ -15,6 +15,7 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import com.jayway.restassured.RestAssured;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
