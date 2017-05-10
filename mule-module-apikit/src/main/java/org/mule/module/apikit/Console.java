@@ -10,13 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.processor.Processor;
 
 import javax.inject.Inject;
-import java.io.IOException;
+
 import java.util.HashMap;
 
 public class Console implements Processor
@@ -40,9 +39,14 @@ public class Console implements Processor
 
         String relativePath = UrlUtils.getRelativePath(attributes);
 
+        if (config.getRamlHandler().isRequestingRamlV1(attributes))
+        {
+            String raml =config.getRamlHandler().getRamlV1();
+            return EventHelper.setPayload(event, raml, RamlHandler.APPLICATION_RAML);
+        }
         if (config.getRamlHandler().isRequestingRamlV2(attributes))
         {
-            String raml = config.getRamlHandler().getRamlParserV2(relativePath);
+            String raml = config.getRamlHandler().getRamlV2(relativePath);
             return EventHelper.setPayload(event, raml, RamlHandler.APPLICATION_RAML);
         }
 

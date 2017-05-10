@@ -20,7 +20,7 @@ import org.junit.Test;
 import com.jayway.restassured.RestAssured;
 
 @ArtifactClassLoaderRunnerConfig
-public class RamlHandlerIntegrationTestCase extends MuleArtifactFunctionalTestCase
+public class getRamlV1IntegrationTestCase extends MuleArtifactFunctionalTestCase
 {
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
@@ -41,27 +41,17 @@ public class RamlHandlerIntegrationTestCase extends MuleArtifactFunctionalTestCa
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/raml-handler/simple.xml";
+        return "org/mule/module/apikit/raml-handler/simple08.xml";
     }
 
 
     @Test
-    public void getRootRamlV2() throws Exception
+    public void getRamlV1() throws Exception
     {
-        given().header("Accept", "*/*")
+        given().header("Accept", "application/raml+yaml")
                 .expect()
-                .response().body(containsString("RAML 1.0"))
+                .response().body(containsString("RAML 0.8"))
                 .statusCode(200)
-                .when().get("/console/org/mule/module/apikit/raml-handler/?raml");
-    }
-
-    @Test
-    public void getExampleV2() throws Exception
-    {
-        given().header("Accept", "*/*")
-                .expect()
-                .response().body(containsString("jane"))
-                .statusCode(200)
-                .when().get("/console/org/mule/module/apikit/raml-handler/example.json/?raml");
+                .when().get("/console");
     }
 }

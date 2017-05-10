@@ -99,7 +99,7 @@ public class UrlUtils
     return relativePath;
   }
 
-  public static String getListenerPath(HttpRequestAttributes attributes)
+  public static String  getListenerPath(HttpRequestAttributes attributes)
   {
     String listenerPath =  attributes.getListenerPath();
     String requestPath = attributes.getRequestPath();

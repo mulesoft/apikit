@@ -79,8 +79,20 @@ public class RamlHandler
         this.api = api;
     }
 
+    public String getRamlV1() {
+        //if (keepRamlBaseUri)
+        //{
+            return parserService.dumpRaml(api);
+        //}
+        //else
+        //{
+        //    return parserService.dumpRaml(api, apiServer);
+        //}
+    }
+
+
     //resourcesRelativePath should not contain the console path
-    public String getRamlParserV2(String resourceRelativePath) throws TypedException
+    public String getRamlV2(String resourceRelativePath) throws TypedException
     {
         resourceRelativePath = sanitarizeResourceRelativePath(resourceRelativePath);
         if (resourceRelativePath.contains(".."))
@@ -139,9 +151,27 @@ public class RamlHandler
 
     public boolean isRequestingRamlV1(HttpRequestAttributes messageAttributes)
     {
-        String path = messageAttributes.getRequestPath();
+        String listenerPath = UrlUtils.getListenerPath(messageAttributes);// messageAttributes.getRequestPath();
+                //String resourcesFullPath = consolePath;
+        //if (!consolePath.endsWith("/"))
+        //{
+        //    if (!apiResourcesRelativePath.startsWith("/"))
+        //    {
+        //        resourcesFullPath += "/";
+        //    }
+        //    resourcesFullPath += apiResourcesRelativePath;
+        //}
+        //else
+        //{
+        //    if (apiResourcesRelativePath.startsWith("/") && apiResourcesRelativePath.length() >1)
+        //    {
+        //        resourcesFullPath += apiResourcesRelativePath.substring(1);
+        //    }
+        //}
+        //messageAttributes.getRequestPath().equals(resourcesFullPath);
         return (!isParserV2() &&
-                path.equals(getApi().getUri()) &&
+                listenerPath.equals(messageAttributes.getRequestPath()) &&
+//                consolePath.equals(getApi().getUri()) &&
                 ActionType.GET.toString().equals(messageAttributes.getMethod().toUpperCase()) &&
                 AttributesHelper.isAnAcceptedResponseMediaType(messageAttributes, APPLICATION_RAML));
     }
@@ -166,6 +196,7 @@ public class RamlHandler
             }
         }
         return messageAttributes.getQueryString().equals(RAML_QUERY_STRING)
+               && ActionType.GET.toString().equals(messageAttributes.getMethod().toUpperCase())
                 && messageAttributes.getRequestPath().startsWith(resourcesFullPath);
     }
 

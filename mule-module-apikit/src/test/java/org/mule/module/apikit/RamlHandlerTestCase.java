@@ -43,7 +43,7 @@ public class RamlHandlerTestCase
         boolean keepRamlBaseUri = true;
         String apiServer = "http://www.newBaseUri.com";
         RamlHandler handler = new RamlHandler(ramlLocation, apiServer, keepRamlBaseUri);
-        String rootRaml = handler.getRamlParserV2("org/mule/module/apikit/raml-handler/?raml");
+        String rootRaml = handler.getRamlV2("org/mule/module/apikit/raml-handler/?raml");
         assertTrue(rootRaml.contains("RAML 1.0"));
         assertTrue(!rootRaml.contains(apiServer));
         assertTrue(rootRaml.contains("baseUri: http://localhost/myapi"));
@@ -56,7 +56,7 @@ public class RamlHandlerTestCase
         boolean keepRamlBaseUri = false;
         String apiServer = "http://pepe.com";
         RamlHandler handler = new RamlHandler(ramlLocation, apiServer, keepRamlBaseUri);
-        String rootRaml = handler.getRamlParserV2("org/mule/module/apikit/raml-handler/?raml");
+        String rootRaml = handler.getRamlV2("org/mule/module/apikit/raml-handler/?raml");
         assertTrue(rootRaml.contains("baseUri: " + apiServer));
     }
 
@@ -67,6 +67,6 @@ public class RamlHandlerTestCase
         String apiServer = "unused";
         boolean keepRamlBaseUri = true;
         RamlHandler handler = new RamlHandler(ramlLocation, apiServer, keepRamlBaseUri);
-        assertTrue(handler.getRamlParserV2("org/mule/module/apikit/raml-handler/example.json/?raml").contains("{\"name\":\"jane\"}"));
+        assertTrue(handler.getRamlV2("org/mule/module/apikit/raml-handler/example.json/?raml").contains("{\"name\":\"jane\"}"));
     }
 }
