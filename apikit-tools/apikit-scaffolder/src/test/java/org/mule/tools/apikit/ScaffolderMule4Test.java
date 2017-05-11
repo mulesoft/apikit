@@ -421,9 +421,9 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "interpretRequestErrors=\"true\""));
         assertEquals(1, countOccurences(s, "application/json"));
         assertEquals(1, countOccurences(s, "{\n" +
-                                           "    \"name\": \"Bobby\",\n" +
-                                           "    \"food\": \"Ice Cream\"\n" +
-                                           "}"));
+                "  name: \"Bobby\",\n" +
+                "  food: \"Ice Cream\"\n" +
+                "}"));
     }
 
 

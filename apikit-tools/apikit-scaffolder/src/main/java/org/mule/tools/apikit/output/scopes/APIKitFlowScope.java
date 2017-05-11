@@ -6,6 +6,8 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
+import com.mulesoft.weave.module.reader.StringSourceProvider;
+import com.mulesoft.weave.runtime.utils.WeaveSimpleRunner;
 import org.jdom2.CDATA;
 import org.jdom2.Element;
 
@@ -23,17 +25,13 @@ public class APIKitFlowScope implements Scope {
     private static final String LOGGER_ATTRIBUTE_LEVEL_VALUE = "INFO";
 
     private static final String DEFAULT_EXAMPLE_CONTENT_TYPE = "application/java";
+    private static final String APPLICATION_DATAWEAVE = "application/dw";
+    private static final String DW_INPUT_TYPE = "payload";
 
     public APIKitFlowScope(GenerationModel flowEntry) {
         flow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
         flow.setAttribute("name", flowEntry.getFlowName());
 
-        //if( flowEntry.getContentType() != null ) {
-        //    Element setContentType = new Element("set-property", XMLNS_NAMESPACE.getNamespace());
-        //    setContentType.setAttribute("propertyName", "Content-Type");
-        //    setContentType.setAttribute("value", flowEntry.getContentType());
-        //    flow.addContent(setContentType);
-        //}
         if (flowEntry.getExampleWrapper() == null)
         {
             Element logger = new Element("logger", XMLNS_NAMESPACE.getNamespace());
@@ -62,10 +60,14 @@ public class APIKitFlowScope implements Scope {
             transformContentType = DEFAULT_EXAMPLE_CONTENT_TYPE;
         }
 
+        WeaveSimpleRunner runner = new WeaveSimpleRunner();
+        runner.addInput(DW_INPUT_TYPE, transformContentType, new StringSourceProvider(example.trim()));
+        runner.setOutputType(APPLICATION_DATAWEAVE);
+        String result = runner.execute(DW_INPUT_TYPE).toString();
+
         return "            %output "+ transformContentType +"\n" +
                "             ---\n" +
-               "             " + example.trim() + "\n";// +
-               //"         ]]>";
+               "             " + result + "\n";
     }
     @Override
     public Element generate() {
