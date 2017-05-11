@@ -18,6 +18,10 @@ import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
 public class APIKitFlowScope implements Scope {
     private final Element flow;
 
+    private static final String LOGGER_ATTRIBUTE_LEVEL = "level";
+    private static final String LOGGER_ATTRIBUTE_MESSAGE = "message";
+    private static final String LOGGER_ATTRIBUTE_LEVEL_VALUE = "INFO";
+
     private static final String DEFAULT_EXAMPLE_CONTENT_TYPE = "application/java";
 
     public APIKitFlowScope(GenerationModel flowEntry) {
@@ -32,8 +36,10 @@ public class APIKitFlowScope implements Scope {
         //}
         if (flowEntry.getExampleWrapper() == null)
         {
-            Element echo = new Element("echo-component", XMLNS_NAMESPACE.getNamespace());
-            flow.addContent(echo);
+            Element logger = new Element("logger", XMLNS_NAMESPACE.getNamespace());
+            logger.setAttribute(LOGGER_ATTRIBUTE_LEVEL, LOGGER_ATTRIBUTE_LEVEL_VALUE);
+            logger.setAttribute(LOGGER_ATTRIBUTE_MESSAGE, flow.getAttribute("name").getValue());
+            flow.addContent(logger);
         }
         else
         {

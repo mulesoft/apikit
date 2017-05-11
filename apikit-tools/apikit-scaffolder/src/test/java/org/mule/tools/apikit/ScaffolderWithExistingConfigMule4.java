@@ -87,10 +87,10 @@ public class ScaffolderWithExistingConfigMule4
         assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
-        assertEquals(1, countOccurences(s, "post:/pet"));
+        assertEquals(2, countOccurences(s, "post:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
         assertEquals(1, countOccurences(s, "extensionEnabled=\"false\""));
-        assertEquals(1, countOccurences(s, "echo-component"));
+        assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message="));
     }
 
     @Test
@@ -124,10 +124,11 @@ public class ScaffolderWithExistingConfigMule4
         assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
-        assertEquals(1, countOccurences(s, "post:/pet"));
+        assertEquals(2, countOccurences(s, "post:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
         assertEquals(1, countOccurences(s, "extensionEnabled=\"true\""));
         assertEquals(0, countOccurences(s, "#[mel:null]"));
+        assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message="));
     }
 
     @Test
@@ -161,10 +162,11 @@ public class ScaffolderWithExistingConfigMule4
         assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
-        assertEquals(1, countOccurences(s, "post:/pet"));
+        assertEquals(2, countOccurences(s, "post:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
         assertEquals(0, countOccurences(s, "extensionEnabled"));
         assertEquals(0, countOccurences(s, "#[mel:null]"));
+        assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message="));
      }
 
     @Test
@@ -195,10 +197,10 @@ public class ScaffolderWithExistingConfigMule4
         assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
-        assertEquals(1, countOccurences(s, "post:/pet"));
+        assertEquals(2, countOccurences(s, "post:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
         assertEquals(0, countOccurences(s, "extensionEnabled"));
-        assertEquals(1, countOccurences(s, "echo-component"));
+        assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message="));
     }
 
     @Test
@@ -233,10 +235,10 @@ public class ScaffolderWithExistingConfigMule4
         assertEquals(0, countOccurences(s, "inbound-endpoint"));
         assertEquals(1, countOccurences(s, "get:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
+        assertEquals(2, countOccurences(s, "post:/pet"));
         assertEquals(0, countOccurences(s, "extensionEnabled"));
         assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
-        assertEquals(1, countOccurences(s, "echo-component"));
-
+        assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message="));
     }
 
     @Test
@@ -267,12 +269,13 @@ public class ScaffolderWithExistingConfigMule4
         assertEquals(1, countOccurences(s, "<http:listener-config"));
         assertEquals(1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
         assertEquals(0, countOccurences(s, "inbound-endpoint"));
-        assertEquals(1, countOccurences(s, "get:/leagues/{leagueId}"));
+        assertEquals(2, countOccurences(s, "get:/leagues/{leagueId}"));
+        assertEquals(2, countOccurences(s, "post:/leagues/{leagueId}"));
         assertEquals(1, countOccurences(s, "<http:listener config-ref=\"HTTP_Listener_Configuration\""));
         assertEquals(1, countOccurences(s, "<http:listener config-ref=\"http-lc-0.0.0.0-8081\""));
         assertEquals(0, countOccurences(s, "extensionEnabled"));
         assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
-        assertEquals(2, countOccurences(s, "echo-component"));
+        assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
     }
 
     @Test
@@ -303,14 +306,14 @@ public class ScaffolderWithExistingConfigMule4
         assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
         assertEquals(1, countOccurences(s, "<apikit:router config-ref=\"apikit-config\" />"));
         assertEquals(0, countOccurences(s, "inbound-endpoint"));
-        assertEquals(1, countOccurences(s, "get:/pet"));
-        assertEquals(1, countOccurences(s, "post:/pet"));
-        assertEquals(1, countOccurences(s, "get:/:"));
+        assertEquals(2, countOccurences(s, "get:/pet"));
+        assertEquals(2, countOccurences(s, "post:/pet"));
+        assertEquals(2, countOccurences(s, "get:/:"));
         Collection<File> newXmlConfigs = FileUtils.listFiles(muleXmlOut, new String[] {"xml"}, true);
         assertEquals(0, newXmlConfigs.size());
         assertEquals(0, countOccurences(s, "extensionEnabled"));
         assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
-        assertEquals(3, countOccurences(s, "echo-component"));
+        assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
     }
 
     @Test
