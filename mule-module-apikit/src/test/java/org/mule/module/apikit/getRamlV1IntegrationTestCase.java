@@ -9,6 +9,7 @@ package org.mule.module.apikit;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -51,6 +52,15 @@ public class getRamlV1IntegrationTestCase extends MuleArtifactFunctionalTestCase
         given().header("Accept", "application/raml+yaml")
                 .expect()
                 .response().body(containsString("RAML 0.8"))
+                .statusCode(200)
+                .when().get("/console");
+    }
+
+    @Test
+    public void notGetRamlV1WithoutUsingHeader() throws Exception
+    {
+        given().expect()
+                .response().body(not(containsString("RAML 0.8")))
                 .statusCode(200)
                 .when().get("/console");
     }

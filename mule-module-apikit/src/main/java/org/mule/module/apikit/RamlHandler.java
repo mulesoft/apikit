@@ -152,28 +152,10 @@ public class RamlHandler
     public boolean isRequestingRamlV1(HttpRequestAttributes messageAttributes)
     {
         String listenerPath = UrlUtils.getListenerPath(messageAttributes);// messageAttributes.getRequestPath();
-                //String resourcesFullPath = consolePath;
-        //if (!consolePath.endsWith("/"))
-        //{
-        //    if (!apiResourcesRelativePath.startsWith("/"))
-        //    {
-        //        resourcesFullPath += "/";
-        //    }
-        //    resourcesFullPath += apiResourcesRelativePath;
-        //}
-        //else
-        //{
-        //    if (apiResourcesRelativePath.startsWith("/") && apiResourcesRelativePath.length() >1)
-        //    {
-        //        resourcesFullPath += apiResourcesRelativePath.substring(1);
-        //    }
-        //}
-        //messageAttributes.getRequestPath().equals(resourcesFullPath);
         return (!isParserV2() &&
                 listenerPath.equals(messageAttributes.getRequestPath()) &&
-//                consolePath.equals(getApi().getUri()) &&
                 ActionType.GET.toString().equals(messageAttributes.getMethod().toUpperCase()) &&
-                AttributesHelper.isAnAcceptedResponseMediaType(messageAttributes, APPLICATION_RAML));
+                APPLICATION_RAML.equals(AttributesHelper.getHeaderIgnoreCase(messageAttributes,"Accept")));
     }
 
     public boolean isRequestingRamlV2(HttpRequestAttributes messageAttributes)
