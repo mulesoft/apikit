@@ -88,7 +88,7 @@ public class MuleConfigGeneratorTest {
     }
 
     @Test
-    public void testGenerateFlowWithExample() throws Exception {
+    public void testGenerateFlowWithJsonExample() throws Exception {
         GenerationModel flowEntry = mock(GenerationModel.class);
         when(flowEntry.getFlowName()).thenReturn("get:/pet");
         when(flowEntry.getContentType()).thenReturn("application/json");
@@ -101,7 +101,26 @@ public class MuleConfigGeneratorTest {
 
         String s = Helper.nonSpaceOutput(doc);
 
-        Diff diff = XMLUnit.compareXML("<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:/pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:set-payload><![CDATA[%output application/json --- {\"name\": \"John\", \"kind\": \"dog\"}]]></ee:set-payload></ee:transform></flow>", s);
+        Diff diff = XMLUnit.compareXML("<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:/pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:set-payload><![CDATA[%output application/json --- { name: \"John\", kind: \"dog\" }]]></ee:set-payload></ee:transform></flow>", s);
+
+        assertTrue(diff.toString(), diff.similar());
+    }
+
+    @Test
+    public void testGenerateFlowWithXmlExample() throws Exception {
+        GenerationModel flowEntry = mock(GenerationModel.class);
+        when(flowEntry.getFlowName()).thenReturn("get:/pet");
+        when(flowEntry.getContentType()).thenReturn("application/xml");
+        when(flowEntry.getExampleWrapper()).thenReturn("<Pet> <name>John</name> <lastname>Doe</lastname> </Pet>");
+
+        Document doc = new Document();
+        Element mule = new Element("mule");
+        doc.setContent(mule);
+        mule.addContent(new APIKitFlowScope(flowEntry).generate());
+
+        String s = Helper.nonSpaceOutput(doc);
+
+        Diff diff = XMLUnit.compareXML("<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:/pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:set-payload><![CDATA[%output application/xml --- { Pet: { name: \"John\", lastname: \"Doe\" } }]]></ee:set-payload></ee:transform></flow>", s);
 
         assertTrue(diff.toString(), diff.similar());
     }
