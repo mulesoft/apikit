@@ -18,7 +18,6 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.response.Response;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -49,7 +48,6 @@ public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS FIXED
     public void xxeAttack() throws Exception
     {
         Response post = given().log().all()
@@ -62,7 +60,6 @@ public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS FIXED
     public void xxeAttack2() throws Exception
     {
         given().log().all()
