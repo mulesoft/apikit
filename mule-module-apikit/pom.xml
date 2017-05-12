@@ -23,6 +23,8 @@
         <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
         <mule.api.version>1.0.0-SNAPSHOT</mule.api.version>
         <mule.app.plugins.maven.plugin.version>1.0.0-SNAPSHOT</mule.app.plugins.maven.plugin.version>
+        <mule.http.connector.version>1.0.0-SNAPSHOT</mule.http.connector.version>
+        <mule.sockets.connector.version>1.0.0-SNAPSHOT</mule.sockets.connector.version>
     </properties>
 
     <build>
@@ -174,18 +176,18 @@
             <version>4.12</version>
         </dependency>
         <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-sockets</artifactId>
-            <version>${mule.version}</version>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-sockets-connector</artifactId>
+            <version>${mule.sockets.connector.version}</version>
             <scope>provided</scope>
             <classifier>mule-plugin</classifier>
             <!-- scope: provided as it comes with the container-->
         </dependency>
         <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-http-ext</artifactId>
-            <version>${mule.version}</version>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-http-connector</artifactId>
             <classifier>mule-plugin</classifier>
+            <version>${mule.http.connector.version}</version>
         </dependency>
         <!--TODO: The dependency to mule-service-http-api is used to retrieve the ParameterMap class. It can be removed once it is passed to mule-api-->
         <dependency>
