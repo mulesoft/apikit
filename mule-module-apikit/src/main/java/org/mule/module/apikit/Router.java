@@ -15,19 +15,18 @@ import org.mule.module.apikit.validation.AttributesValidatior;
 import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.meta.AbstractAnnotatedObject;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.processor.Processor;
 import org.mule.runtime.core.exception.TypedException;
+import org.mule.runtime.core.processor.AbstractInterceptingMessageProcessor;
 
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class Router extends AbstractAnnotatedObject implements Processor
+public class Router extends AbstractInterceptingMessageProcessor
 {
     @Inject
     private ApikitRegistry registry;
@@ -42,6 +41,7 @@ public class Router extends AbstractAnnotatedObject implements Processor
     {
         Configuration config = registry.getConfiguration(getConfigRef());
         event = EventHelper.addVariable(event, config.getOutboundHeadersMapName(), new HashMap<>());
+//        event = EventHelper.addVariable(event, config.getHttpStatusVarName(), "201");
 
         HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes().getValue());
 
