@@ -59,8 +59,10 @@ public class Router extends AbstractInterceptingMessageProcessor
         }
         ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
         IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
-
-        event = validateRequest(event, config, resource, attributes, resolvedVariables);
+        if (!config.isDisableValidations())
+        {
+            event = validateRequest(event, config, resource, attributes, resolvedVariables);
+        }
         String contentType = AttributesHelper.getHeaderIgnoreCase((HttpRequestAttributes) event.getMessage().getAttributes().getValue(), HeaderNames.CONTENT_TYPE);
         Flow flow = config.getFlowFinder().getFlow(resource,attributes.getMethod().toLowerCase(), contentType);
         String successStatusCode = config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));

@@ -44,9 +44,8 @@
                 </xsd:sequence>
                 <xsd:attribute name="name" type="mule:nonBlankString" use="optional"/>
                 <xsd:attribute name="raml" type="mule:nonBlankString" use="required"/>
-                <xsd:attribute name="outboundHeadersMapName" type="mule:nonBlankString" use="optional" default="outboundHeaders"/>
-                <xsd:attribute name="httpStatusVarName" type="mule:nonBlankString" use="optional" default="httpStatus"/>
-                <xsd:attribute name="extensionEnabled" type="mule:substitutableBoolean" default="false" use="optional"/>
+                <xsd:attribute name="outboundHeadersMapName" type="mule:nonBlankString" use="required"/>
+                <xsd:attribute name="httpStatusVarName" type="mule:nonBlankString" use="required"/>
                 <xsd:attribute name="keepRamlBaseUri" type="mule:substitutableBoolean" default="true" use="optional"/>
                 <xsd:attribute name="disableValidations" type="mule:substitutableBoolean" default="false" use="optional">
                     <xsd:annotation>
@@ -104,91 +103,6 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <!--<xsd:element name="proxy-config" type="proxyConfigType" substitutionGroup="mule:abstract-extension">-->
-    <!--<xsd:annotation>-->
-    <!--<xsd:documentation>-->
-    <!--APIkit Proxy configuration element.-->
-    <!--</xsd:documentation>-->
-    <!--</xsd:annotation>-->
-    <!--</xsd:element>-->
 
-    <!--<xsd:complexType name="proxyConfigType">-->
-    <!--<xsd:complexContent>-->
-    <!--<xsd:extension base="mule:abstractExtensionType">-->
-    <!--<xsd:attribute name="name" type="mule:nonBlankString" use="optional"/>-->
-    <!--<xsd:attribute name="raml" type="mule:nonBlankString" use="required"/>-->
-    <!--<xsd:attribute name="disableValidations" type="mule:substitutableBoolean" default="false" use="optional">-->
-    <!--<xsd:annotation>-->
-    <!--<xsd:documentation>-->
-    <!--Do no perform validation of uri parameters, headers, query parameters and body schemas.-->
-    <!--Default values are not enforced by the server.-->
-    <!--</xsd:documentation>-->
-    <!--</xsd:annotation>-->
-    <!--</xsd:attribute>-->
-    <!--</xsd:extension>-->
-    <!--</xsd:complexContent>-->
-    <!--</xsd:complexType>-->
-
-    <!--<xsd:element name="proxy" type="proxyType" substitutionGroup="mule:abstract-message-processor">-->
-    <!--<xsd:annotation>-->
-    <!--<xsd:documentation>-->
-    <!--Message processor that proxies a ReST API described in RAML.-->
-    <!--</xsd:documentation>-->
-    <!--</xsd:annotation>-->
-    <!--</xsd:element>-->
-
-    <!--<xsd:complexType name="proxyType">-->
-    <!--<xsd:complexContent>-->
-    <!--<xsd:extension base="mule:abstractMessageProcessorType">-->
-    <!--<xsd:attribute name="config-ref" type="mule:nonBlankString" use="optional">-->
-    <!--<xsd:annotation>-->
-    <!--<xsd:documentation>-->
-    <!--The Proxy configuration.-->
-    <!--</xsd:documentation>-->
-    <!--</xsd:annotation>-->
-    <!--</xsd:attribute>-->
-    <!--</xsd:extension>-->
-    <!--</xsd:complexContent>-->
-    <!--</xsd:complexType>-->
-
-
-    <!--<xsd:element name="mapping-exception-strategy" type="mappingExceptionStrategyType"-->
-    <!--substitutionGroup="mule:abstract-exception-strategy">-->
-    <!--<xsd:annotation>-->
-    <!--<xsd:documentation>-->
-    <!--Exception strategy used to map exceptions to http status codes.-->
-    <!--</xsd:documentation>-->
-    <!--</xsd:annotation>-->
-    <!--</xsd:element>-->
-
-    <!--<xsd:complexType name="mappingExceptionStrategyType">-->
-    <!--<xsd:complexContent>-->
-    <!--<xsd:extension base="mule:abstractNotificationExceptionStrategyType">-->
-    <!--<xsd:sequence>-->
-    <!--<xsd:element name="mapping" type="mappingStatusToExceptionType" minOccurs="1" maxOccurs="unbounded"/>-->
-    <!--</xsd:sequence>-->
-    <!--</xsd:extension>-->
-    <!--</xsd:complexContent>-->
-    <!--</xsd:complexType>-->
-
-    <!--<xsd:complexType name="mappingStatusToExceptionType">-->
-    <!--<xsd:complexContent>-->
-    <!--<xsd:extension base="mule:abstractNotificationExceptionStrategyType">-->
-    <!--<xsd:sequence>-->
-    <!--<xsd:element name="exception" minOccurs="1" maxOccurs="unbounded">-->
-    <!--<xsd:complexType>-->
-    <!--<xsd:attribute name="value" use="required" type="mule:nonBlankString" />-->
-    <!--</xsd:complexType>-->
-    <!--</xsd:element>-->
-    <!--<xsd:group ref="mule:messageProcessorOrMixedContentMessageProcessor" minOccurs="0" maxOccurs="unbounded" />-->
-    <!--</xsd:sequence>-->
-    <!--<xsd:attribute name="statusCode" use="required" type="mule:substitutableInt">-->
-    <!--<xsd:annotation>-->
-    <!--<xsd:documentation>The http status code to be returned when the nested exceptions are thrown</xsd:documentation>-->
-    <!--</xsd:annotation>-->
-    <!--</xsd:attribute>-->
-    <!--</xsd:extension>-->
-    <!--</xsd:complexContent>-->
-    <!--</xsd:complexType>-->
 
 </xsd:schema>

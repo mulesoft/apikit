@@ -11,7 +11,7 @@
         <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config name="config" raml="org/mule/module/apikit/validation/body/schema/json-ref.raml"/>
+    <apikit:config name="config" raml="org/mule/module/apikit/validation/body/schema/json-ref.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway-cam">
         <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/api/*">

@@ -11,7 +11,7 @@
         <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config raml="org/mule/module/apikit/validation/body/schema/generated-schema-api.raml"/>
+    <apikit:config raml="org/mule/module/apikit/validation/body/schema/generated-schema-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">
         <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/api/*">

@@ -15,7 +15,7 @@
         <http:listener-connection host="0.0.0.0" port="${serverPort2}"/>
     </http:listener-config>
 
-    <apikit:config name="api-config" raml="org/mule/module/apikit/validation/body/schema/xxe-attack.raml"/>
+    <apikit:config name="api-config" raml="org/mule/module/apikit/validation/body/schema/xxe-attack.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="api-main">
         <http:listener config-ref="api-httpListenerConfig" interpretRequestErrors="true" path="/api/*">

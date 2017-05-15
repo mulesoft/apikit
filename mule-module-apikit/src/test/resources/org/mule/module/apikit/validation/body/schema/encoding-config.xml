@@ -11,8 +11,8 @@
         <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config name="raml08" raml="org/mule/module/apikit/validation/body/schema/encoding-08.raml"/>
-    <apikit:config name="raml10" raml="org/mule/module/apikit/validation/body/schema/encoding.raml" />
+    <apikit:config name="raml08" raml="org/mule/module/apikit/validation/body/schema/encoding-08.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
+    <apikit:config name="raml10" raml="org/mule/module/apikit/validation/body/schema/encoding.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway10">
         <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/api10/*">

@@ -11,8 +11,8 @@
         <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config name="cam" raml="org/mule/module/apikit/validation/body/schema/twin-cam.yaml"/>
-    <apikit:config name="peaks" raml="org/mule/module/apikit/validation/body/schema/twin-peaks.yaml"/>
+    <apikit:config name="cam" raml="org/mule/module/apikit/validation/body/schema/twin-cam.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
+    <apikit:config name="peaks" raml="org/mule/module/apikit/validation/body/schema/twin-peaks.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway-cam">
         <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/cam/*">

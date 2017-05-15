@@ -17,8 +17,7 @@
 
 
     <apikit:config name="apikitConfig" raml="org/mule/module/apikit/simple-routing/simple.raml"
-                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus">
-    </apikit:config>
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="api-console">
         <http:listener config-ref="httpListenerConfigDefault" path="/console/*" interpretRequestErrors="true" >
