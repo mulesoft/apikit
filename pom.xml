@@ -72,6 +72,7 @@
                     <excludes>
                         <exclude>**/target/**</exclude>
                         <exclude>**/.gitignore</exclude>
+                        <exclude>**/bower_components/**</exclude>
                         <exclude>.idea/**</exclude>
                         <exclude>**/*.yaml</exclude>
                         <exclude>**/*.raml</exclude>
