@@ -13,6 +13,7 @@
         <apikit.version>4.0.0-SNAPSHOT</apikit.version>
         <mule.version>4.0.0-SNAPSHOT</mule.version>
         <mule.maven.plugin.version>3.0.0-SNAPSHOT</mule.maven.plugin.version>
+        <mule.http.connector.version>1.0.0-SNAPSHOT</mule.http.connector.version>
     </properties>
     <build>
         <plugins>
@@ -34,10 +35,10 @@
         </dependency>
 
         <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-http-ext</artifactId>
-            <version>${mule.version}</version>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-http-connector</artifactId>
             <classifier>mule-plugin</classifier>
+            <version>${mule.http.connector.version}</version>
         </dependency>
     </dependencies>
 
