@@ -200,7 +200,7 @@ public class Configuration implements Initialisable
 
                                 if (match == null) {
                                     logger.warn("No matching patterns for URI " + path);
-                                    ApikitErrorTypes.NOT_FOUND.throwErrorType(path);
+                                    throw ApikitErrorTypes.NOT_FOUND.throwErrorType(path);
                                 }
                                 return match;
                             }

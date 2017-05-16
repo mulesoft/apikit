@@ -71,7 +71,7 @@ public class BodyValidator
 
         if (!found)
         {
-            ApikitErrorTypes.UNSUPPORTED_MEDIA_TYPE.throwErrorType("");
+            throw ApikitErrorTypes.UNSUPPORTED_MEDIA_TYPE.throwErrorType("");
             //throw new UnsupportedMediaTypeException();
         }
         return newMessage;

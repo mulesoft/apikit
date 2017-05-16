@@ -109,7 +109,7 @@ public class Router extends AbstractInterceptingMessageProcessor
     {
         IResource resource = configuration.getFlowFinder().getResource(uriPattern);
         if (resource.getAction(method) == null) {
-            ApikitErrorTypes.METHOD_NOT_ALLOWED.throwErrorType(resource.getUri() + " : " + method);
+            throw ApikitErrorTypes.METHOD_NOT_ALLOWED.throwErrorType(resource.getUri() + " : " + method);
         }
         return resource;
     }
