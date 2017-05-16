@@ -20,7 +20,7 @@
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="api-console">
-        <http:listener config-ref="httpListenerConfigDefault" path="/console/*" interpretRequestErrors="true" >
+        <http:listener config-ref="httpListenerConfigDefault" path="/console/*">
             <http:response statusCode="#[variables.httpStatus default 200]">
                 <http:headers>#[variables.outboundHeaders]</http:headers>
             </http:response>

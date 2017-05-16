@@ -24,7 +24,7 @@ public class FlowScope implements Scope {
         main = new Element("flow", XMLNS_NAMESPACE.getNamespace());
         main.setAttribute("name", api.getId() + "-" + "main");
 
-        MainFlowsUtils.generateListenerSource(httpListenerConfigRef, api.getPath(), main, true);
+        MainFlowsUtils.generateListenerSource(httpListenerConfigRef, api.getPath(), main);
 
         Element restProcessor = new Element("router", APIKitTools.API_KIT_NAMESPACE.getNamespace());
         if(!StringUtils.isEmpty(configRef)) {

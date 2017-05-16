@@ -18,7 +18,7 @@
     <apikit:config name="api-config" raml="org/mule/module/apikit/validation/body/schema/xxe-attack.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="api-main">
-        <http:listener config-ref="api-httpListenerConfig" interpretRequestErrors="true" path="/api/*">
+        <http:listener config-ref="api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[variables.httpStatus default 200]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
         </http:listener>
         <apikit:router config-ref="api-config"/>
@@ -29,7 +29,7 @@
     </flow>
 
     <flow name="should-not-be-called-flow">
-        <http:listener config-ref="http-8086" interpretRequestErrors="true" path="/*">
+        <http:listener config-ref="http-8086" path="/*">
             <http:response statusCode="#[variables.httpStatus default 200]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
         </http:listener>
         <set-property propertyName="invalidheader" value="invalid"/>

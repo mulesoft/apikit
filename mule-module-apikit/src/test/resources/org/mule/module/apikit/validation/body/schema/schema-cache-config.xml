@@ -15,14 +15,14 @@
     <apikit:config name="peaks" raml="org/mule/module/apikit/validation/body/schema/twin-peaks.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway-cam">
-        <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/cam/*">
+        <http:listener config-ref="httpListenerConfigDefault" path="/cam/*">
             <http:response statusCode="#[variables.httpStatus default 200]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
         </http:listener>
         <apikit:router config-ref="cam"/>
     </flow>
 
     <flow name="doorway-peaks">
-        <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/peaks/*">
+        <http:listener config-ref="httpListenerConfigDefault" path="/peaks/*">
             <http:response statusCode="#[variables.httpStatus default 200]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
         </http:listener>
         <apikit:router config-ref="peaks"/>

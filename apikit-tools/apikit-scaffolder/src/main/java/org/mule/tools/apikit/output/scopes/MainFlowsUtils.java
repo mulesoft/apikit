@@ -17,12 +17,11 @@ public class MainFlowsUtils
     public static final String DEFAULT_STATUS_CODE_SUCCESS_VALUE = "#[variables." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 200]";
     public static final String DEFAULT_OUTBOUND_HEADERS_MAP_VALUE = "#[variables." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + "]";
 
-    public static void generateListenerSource(String httpListenerConfigRef, String path, Element main, boolean interpretRequestErrors)
+    public static void generateListenerSource(String httpListenerConfigRef, String path, Element main)
     {
         Element httpListener = new Element("listener", HTTP_NAMESPACE.getNamespace());
         httpListener.setAttribute("config-ref", httpListenerConfigRef);
         httpListener.setAttribute("path", path);
-        httpListener.setAttribute("interpretRequestErrors", String.valueOf(interpretRequestErrors));
 
         Element headers = new Element("headers", HTTP_NAMESPACE.getNamespace());
         headers.setText(DEFAULT_OUTBOUND_HEADERS_MAP_VALUE);

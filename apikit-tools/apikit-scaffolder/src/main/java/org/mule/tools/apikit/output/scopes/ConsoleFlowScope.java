@@ -25,7 +25,7 @@ public class ConsoleFlowScope implements Scope {
         consoleFlow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
         consoleFlow.setAttribute("name", api.getId() + "-" + "console");
 
-        MainFlowsUtils.generateListenerSource(httpListenerConfigRef, API.DEFAULT_CONSOLE_PATH, consoleFlow, true);
+        MainFlowsUtils.generateListenerSource(httpListenerConfigRef, API.DEFAULT_CONSOLE_PATH, consoleFlow);
 
         Element restProcessor = new Element("console", APIKitTools.API_KIT_NAMESPACE.getNamespace());
         if(!StringUtils.isEmpty(configRef)) {

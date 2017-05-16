@@ -15,14 +15,14 @@
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">
-        <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/api/*">
+        <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
             <http:response statusCode="#[variables.httpStatus]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
         </http:listener>
         <apikit:router config-ref="apikitConfig"/>
     </flow>
 
     <flow name="consoleFlow">
-        <http:listener config-ref="httpListenerConfigDefault" interpretRequestErrors="true" path="/console/*">
+        <http:listener config-ref="httpListenerConfigDefault" path="/console/*">
             <http:response statusCode="#[variables.httpStatus]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
         </http:listener>
         <apikit:console config-ref="apikitConfig"/>
