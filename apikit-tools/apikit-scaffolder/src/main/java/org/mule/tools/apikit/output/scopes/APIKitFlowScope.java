@@ -6,12 +6,12 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import com.mulesoft.weave.module.reader.StringSourceProvider;
-import com.mulesoft.weave.runtime.utils.WeaveSimpleRunner;
 import org.jdom2.CDATA;
 import org.jdom2.Element;
 
 import org.mule.tools.apikit.output.GenerationModel;
+import org.mule.weave.v2.module.reader.StringSourceProvider;
+import org.mule.weave.v2.runtime.utils.WeaveSimpleRunner;
 
 import static org.mule.tools.apikit.output.MuleConfigGenerator.EE_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
