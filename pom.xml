@@ -143,7 +143,7 @@
             <id>mulesoft-snapshots</id>
             <name>MuleSoft Snapshots Repository</name>
             <url>http://repository.mulesoft.org/snapshots/</url>
-            <layout>`</layout>
+            <layout>default</layout>
         </repository>
         <repository>
             <id>mulesoft-releases</id>
