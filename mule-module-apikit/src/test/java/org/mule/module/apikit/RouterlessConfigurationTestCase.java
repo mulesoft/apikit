@@ -34,6 +34,6 @@ public class RouterlessConfigurationTestCase extends FunctionalTestCase
         assertThat(config.getFlowMappings().size(), is(2));
         assertThat(config.getApi(), notNullValue());
         assertThat(config.getRawRestFlowMap().size(), is(3));
-        assertThat(config.getRestFlowMap().size(), is(6));
+        assertThat(config.getRestFlowMap().size(), is(3));
     }
 }
