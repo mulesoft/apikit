@@ -40,7 +40,7 @@ public class Configuration implements Initialisable
     private boolean keepRamlBaseUri;
     private String outboundHeadersMapName;
     private String httpStatusVarName;
-    private List<FlowMapping> flowMappings = new ArrayList<FlowMapping>();
+    private FlowMappings flowMappings = new FlowMappings();
 
 
     private final static String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeaders";
@@ -76,7 +76,7 @@ public class Configuration implements Initialisable
         {
             throw new InitialisationException(e.fillInStackTrace(), this);
         }
-        flowFinder = new FlowFinder(ramlHandler, getName(), muleContext, flowMappings);
+        flowFinder = new FlowFinder(ramlHandler, getName(), muleContext, flowMappings.getFlowMappings());
         buildResourcePatternCaches();
         registry.registerConfiguration(this);
         ApikitErrorTypes.initialise(muleContext);
@@ -134,12 +134,12 @@ public class Configuration implements Initialisable
         this.keepRamlBaseUri = keepRamlBaseUri;
     }
 
-    public List<FlowMapping> getFlowMappings()
+    public FlowMappings getFlowMappings()
     {
         return flowMappings;
     }
 
-    public void setFlowMappings(List<FlowMapping> flowMappings)
+    public void setFlowMappings(FlowMappings flowMappings)
     {
         this.flowMappings = flowMappings;
     }

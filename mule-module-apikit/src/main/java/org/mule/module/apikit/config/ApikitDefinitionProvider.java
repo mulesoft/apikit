@@ -9,11 +9,13 @@ package org.mule.module.apikit.config;
 import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.Console;
 import org.mule.module.apikit.FlowMapping;
+import org.mule.module.apikit.FlowMappings;
 import org.mule.module.apikit.Router;
 import org.mule.runtime.dsl.api.component.ComponentBuildingDefinition;
 import org.mule.runtime.dsl.api.component.ComponentBuildingDefinitionProvider;
 
 import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromChildCollectionConfiguration;
+import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromChildConfiguration;
 import static org.mule.runtime.dsl.api.component.TypeDefinition.fromType;
 import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromSimpleParameter;
 
@@ -42,6 +44,11 @@ public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProv
                                 .withSetterParameterDefinition("raml", fromSimpleParameter("raml").build())
                                 .withSetterParameterDefinition("outboundHeadersMapName", fromSimpleParameter("outboundHeadersMapName").build())
                                 .withSetterParameterDefinition("httpStatusVarName", fromSimpleParameter("httpStatusVarName").build())
+                                .withSetterParameterDefinition("flowMappings", fromChildConfiguration(FlowMappings.class).build())
+                                .build());
+
+        definitions.add(baseDefinition.copy().withIdentifier("flow-mappings")
+                                .withTypeDefinition(fromType(FlowMappings.class))
                                 .withSetterParameterDefinition("flowMappings", fromChildCollectionConfiguration(FlowMapping.class).build())
                                 .build());
 
