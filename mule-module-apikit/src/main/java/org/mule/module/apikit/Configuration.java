@@ -278,6 +278,17 @@ public class Configuration extends AbstractConfiguration
         return new RouterFlowResolver((Configuration) abstractConfiguration, key);
     }
 
+    @Override
+    protected Map<String, FlowResolver> populateFlowMapWrapper()
+    {
+        Map<String, FlowResolver> map = new HashMap<>();
+        for (Map.Entry<String, Flow> entry : restFlowMap.entrySet())
+        {
+            map.put(entry.getKey(), getFlowResolver(this, entry.getKey()));
+        }
+        return map;
+    }
+
     private static class RouterFlowResolver implements FlowResolver
     {
 

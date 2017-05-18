@@ -355,7 +355,7 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
         restFlowMapWrapper = populateFlowMapWrapper();
     }
 
-    private Map<String, FlowResolver> populateFlowMapWrapper()
+    protected Map<String, FlowResolver> populateFlowMapWrapper()
     {
         Map<String, FlowResolver> map = new HashMap<String, FlowResolver>();
         populateMapKeys(map, api.getResources());
