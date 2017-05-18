@@ -71,7 +71,7 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "http:listener "));
         assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
-        assertEquals(2, countOccurences(s, "#[variables.outboundHeaders]"));
+        assertEquals(2, countOccurences(s, "#[variables.outboundHeaders default {}]"));
         assertEquals(4, countOccurences(s, "http:headers"));
         assertEquals(2, countOccurences(s, "get:/:" + name + "-config"));
         assertEquals(2, countOccurences(s, "get:/pet:" + name + "-config"));
@@ -80,8 +80,8 @@ public class ScaffolderMule4Test {
         assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
         assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
         assertEquals(0, countOccurences(s, "#[null]"));
-        assertEquals(0, countOccurences(s, "expression-component>mel:flowVars['variables.outboundHeaders'].put('Content-Type', 'application/json')</expression-component>"));
-        assertEquals(0, countOccurences(s, "set-variable variableName=\"variables.outboundHeaders\" value=\"#[mel:new java.util.HashMap()]\" />"));
+        assertEquals(0, countOccurences(s, "expression-component>mel:flowVars['variables.outboundHeaders default {}'].put('Content-Type', 'application/json')</expression-component>"));
+        assertEquals(0, countOccurences(s, "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
         assertEquals(0, countOccurences(s, "exception-strategy"));
         assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
     }

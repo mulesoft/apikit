@@ -23,7 +23,7 @@
     <flow name="main-api">
         <http:listener config-ref="$configRefName" path="/api/*">
             <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders]</http:headers>
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
 
@@ -33,7 +33,7 @@
     <flow name="main-console">
         <http:listener config-ref="$configRefName" path="/console/*">
             <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders]</http:headers>
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
 

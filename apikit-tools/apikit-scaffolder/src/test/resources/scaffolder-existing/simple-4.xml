@@ -10,13 +10,15 @@
         <http:listener-connection host="0.0.0.0" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config raml="simple.raml" />
+    <apikit:config raml="simple.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="main">
         <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*">
-            <http:response-builder statusCode="#[mel:httpStatus]"><http:headers>#[mel:_outboundHeaders_]</http:headers></http:response-builder>
+            <http:response statusCode="#[variables.httpStatus default 200]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:response>
         </http:listener>
-        <set-variable variableName="_outboundHeaders_" value="#[mel:new java.util.HashMap()]"/>
         <apikit:router />
     </flow>
 

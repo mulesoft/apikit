@@ -14,8 +14,10 @@ import org.jdom2.Element;
 
 public class MainFlowsUtils
 {
+    private MainFlowsUtils() {}
+
     public static final String DEFAULT_STATUS_CODE_SUCCESS_VALUE = "#[variables." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 200]";
-    public static final String DEFAULT_OUTBOUND_HEADERS_MAP_VALUE = "#[variables." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + "]";
+    public static final String DEFAULT_OUTBOUND_HEADERS_MAP_VALUE = "#[variables." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + " default {}]";
 
     public static void generateListenerSource(String httpListenerConfigRef, String path, Element main)
     {

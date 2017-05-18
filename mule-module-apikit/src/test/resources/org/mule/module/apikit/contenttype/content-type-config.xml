@@ -11,11 +11,14 @@
         <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/contenttype/content-type.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
+    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/contenttype/content-type.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">
         <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
-            <http:response statusCode="#[variables.httpStatus]"><http:headers>#[variables.outboundHeaders]</http:headers></http:response>
+            <http:response statusCode="#[variables.httpStatus]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:response>
         </http:listener>
         <apikit:router config-ref="apikitConfig"/>
     </flow>
