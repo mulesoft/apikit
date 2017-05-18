@@ -96,7 +96,7 @@ public class RamlHandler
         resourceRelativePath = sanitarizeResourceRelativePath(resourceRelativePath);
         if (resourceRelativePath.contains(".."))
         {
-            throw ApikitErrorTypes.ILLEGAL_ACCESS.throwErrorType("\"..\" is not allowed");
+            throw ApikitErrorTypes.NOT_FOUND.throwErrorType("\"..\" is not allowed");
         }
         if (apiResourcesRelativePath.equals(resourceRelativePath))
         {
@@ -113,7 +113,7 @@ public class RamlHandler
             //the resource should be in a subfolder, otherwise it could be requesting the properties file
             if (!resourceRelativePath.contains("/"))
             {
-                throw ApikitErrorTypes.ILLEGAL_ACCESS.throwErrorType("Requested resources should be in a subfolder");
+                throw ApikitErrorTypes.NOT_FOUND.throwErrorType("Requested resources should be in a subfolder");
             }
             //resource
             InputStream apiResource = null;

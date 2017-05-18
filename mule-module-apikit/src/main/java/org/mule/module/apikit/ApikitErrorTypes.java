@@ -12,6 +12,7 @@ import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
+import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.runtime.api.component.ComponentIdentifier;
@@ -23,29 +24,15 @@ import org.mule.runtime.core.exception.TypedException;
 
 public enum ApikitErrorTypes
 {
-    //PARSING,
-    //TIMEOUT,
-    //SECURITY,
-    //TRANSFORMATION,
-    //CONNECTIVITY,
-    //RESPONSE_VALIDATION,
-    //BAD_REQUEST,
-    //UNAUTHORIZED,
-    //FORBIDDEN,
-    NOT_FOUND("HTTP:NOT_FOUND"),
-    METHOD_NOT_ALLOWED("HTTP:METHOD_NOT_ALLOWED"),
-    INVALID_URI_PARAMETER("HTTP:BAD_REQUEST"),
-    INVALID_HEADER("HTTP:BAD_REQUEST"),
-    INVALID_QUERY_PARAMETER("HTTP:BAD_REQUEST"),
-    INVALID_FORM_PARAMETER("HTTP:BAD_REQUEST"),
-    UNSUPPORTED_MEDIA_TYPE("HTTP:UNSUPPORTED_MEDIA_TYPE"),
-    BAD_REQUEST("HTTP:BAD_REQUEST"),
-    ILLEGAL_ACCESS("HTTP:FORBIDDEN"),
-    ILLEGAL_ARGUMENT("HTTP:FORBIDDEN");
-    //NOT_ACCEPTABLE,
-    //TOO_MANY_REQUESTS,
-    //INTERNAL_SERVER_ERROR,
-    //SERVICE_UNAVAILABLE;
+    NOT_FOUND("APIKIT:NOT_FOUND"),
+    METHOD_NOT_ALLOWED("APIKIT:METHOD_NOT_ALLOWED"),
+    UNSUPPORTED_MEDIA_TYPE("APIKIT:UNSUPPORTED_MEDIA_TYPE"),
+    NOT_ACCEPTABLE("APIKIT:NOT_ACCEPTABLE"),
+    INVALID_URI_PARAMETER("APIKIT:BAD_REQUEST"),
+    INVALID_HEADER("APIKIT:BAD_REQUEST"),
+    INVALID_QUERY_PARAMETER("APIKIT:BAD_REQUEST"),
+    INVALID_FORM_PARAMETER("APIKIT:BAD_REQUEST"),
+    BAD_REQUEST("APIKIT:BAD_REQUEST");
 
     private String internalName;
 
@@ -93,11 +80,8 @@ public enum ApikitErrorTypes
             case UNSUPPORTED_MEDIA_TYPE:
                 exception = new UnsupportedMediaTypeException(value);
                 break;
-            case ILLEGAL_ACCESS:
-                exception = new IllegalAccessException(value);
-                break;
-            case ILLEGAL_ARGUMENT:
-                exception = new IllegalArgumentException(value);
+            case NOT_ACCEPTABLE:
+                exception = new NotAcceptableException(value);
                 break;
             default:
                 exception = new DefaultMuleException(value);
@@ -139,11 +123,11 @@ public enum ApikitErrorTypes
             case INVALID_FORM_PARAMETER:
                 exception = new InvalidFormParameterException(value);
                 break;
-            case ILLEGAL_ACCESS:
-                exception = new IllegalAccessException();
+            case UNSUPPORTED_MEDIA_TYPE:
+                exception = new UnsupportedMediaTypeException(value);
                 break;
-            case ILLEGAL_ARGUMENT:
-                exception = new IllegalArgumentException(value);
+            case NOT_ACCEPTABLE:
+                exception = new NotAcceptableException(value);
                 break;
             default:
                 exception = new DefaultMuleException(value);
@@ -187,10 +171,12 @@ public enum ApikitErrorTypes
             case INVALID_FORM_PARAMETER:
                 exception = new InvalidFormParameterException();
                 break;
-            case ILLEGAL_ACCESS:
-                exception = new IllegalAccessException();
+            case UNSUPPORTED_MEDIA_TYPE:
+                exception = new UnsupportedMediaTypeException();
                 break;
-
+            case NOT_ACCEPTABLE:
+                exception = new NotAcceptableException();
+                break;
             default:
                 exception = new DefaultMuleException("");
         }

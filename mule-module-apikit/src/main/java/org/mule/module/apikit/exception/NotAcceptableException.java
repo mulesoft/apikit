@@ -8,4 +8,15 @@ package org.mule.module.apikit.exception;
 
 public class NotAcceptableException extends MuleRestException {
 
+    public NotAcceptableException(String message) {
+        super(message);
+    }
+
+    public NotAcceptableException(Throwable t) {
+        super(t);
+    }
+
+    public NotAcceptableException(){
+        super();
+    }
 }

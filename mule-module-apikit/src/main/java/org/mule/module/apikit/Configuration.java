@@ -37,7 +37,6 @@ public class Configuration implements Initialisable
     private boolean disableValidations;
     private String name;
     private String raml;
-    private boolean extensionEnabled;
     private boolean keepRamlBaseUri;
     private String outboundHeadersMapName;
     private String httpStatusVarName;
@@ -125,18 +124,9 @@ public class Configuration implements Initialisable
         this.disableValidations = disableValidations;
     }
 
-    public boolean isExtensionEnabled()
-    {
-        return extensionEnabled;
-    }
-
-    public void setExtensionEnabled(boolean extensionEnabled) {
-        this.extensionEnabled = extensionEnabled; //TODO improve method as 3.8.x does
-    }
-
     public boolean isKeepRamlBaseUri()
     {
-        return extensionEnabled;
+        return keepRamlBaseUri;
     }
 
     public void setKeepRamlBaseUri(boolean keepRamlBaseUri)
