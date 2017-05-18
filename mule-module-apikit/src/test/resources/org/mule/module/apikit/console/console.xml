@@ -22,7 +22,7 @@
     <flow name="api-console">
         <http:listener config-ref="httpListenerConfigDefault" path="/console/*">
             <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders]</http:headers>
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
 
