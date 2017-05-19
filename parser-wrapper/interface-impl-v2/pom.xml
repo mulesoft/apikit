@@ -23,6 +23,26 @@
             <artifactId>raml-parser-2</artifactId>
         </dependency>
         <dependency>
+            <groupId> org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <!--required by raml-parser-2. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <!--required by raml-parser-2. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <!--required by raml-parser-2. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <!--required by raml-parser-2. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
             <groupId>org.mule.raml</groupId>
             <artifactId>parser-interface</artifactId>
             <version>${project.version}</version>

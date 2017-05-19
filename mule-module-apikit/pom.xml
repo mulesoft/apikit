@@ -80,6 +80,26 @@
             <artifactId>raml-parser</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <!--required by raml-parser v1 & v2. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <!--required by raml-parser v1 & v2. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <!--required by raml-parser v1 & v2. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
+            <groupId> org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <!--required by raml-parser v1, v2 & http service. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
             <groupId>org.raml</groupId>
             <artifactId>raml-parser-2</artifactId>
         </dependency>
@@ -217,6 +237,12 @@
             <artifactId>mule-service-http</artifactId>
             <version>${mule.version}</version>
             <classifier>mule-service</classifier>
+            <exclusions>
+                <exclusion>
+                    <groupId> org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mule.services</groupId>
