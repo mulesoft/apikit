@@ -17,6 +17,7 @@ public class MainFlowsUtils
     private MainFlowsUtils() {}
 
     public static final String DEFAULT_STATUS_CODE_SUCCESS_VALUE = "#[variables." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 200]";
+    public static final String DEFAULT_STATUS_CODE_ERROR_VALUE = "#[variables." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 500]";
     public static final String DEFAULT_OUTBOUND_HEADERS_MAP_VALUE = "#[variables." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + " default {}]";
 
     public static void generateListenerSource(String httpListenerConfigRef, String path, Element main)
@@ -28,10 +29,18 @@ public class MainFlowsUtils
         Element headers = new Element("headers", HTTP_NAMESPACE.getNamespace());
         headers.setText(DEFAULT_OUTBOUND_HEADERS_MAP_VALUE);
 
+        Element errorHeaders = new Element("headers", HTTP_NAMESPACE.getNamespace());
+        errorHeaders.setText(DEFAULT_OUTBOUND_HEADERS_MAP_VALUE);
+
         Element responseBuilder = new Element("response", HTTP_NAMESPACE.getNamespace());
-        responseBuilder.setAttribute("statusCode",DEFAULT_STATUS_CODE_SUCCESS_VALUE);
+        responseBuilder.setAttribute("statusCode", DEFAULT_STATUS_CODE_SUCCESS_VALUE);
         responseBuilder.addContent(headers);
         httpListener.addContent(responseBuilder);
+
+        Element errorResponseBuilder = new Element("error-response", HTTP_NAMESPACE.getNamespace());
+        errorResponseBuilder.setAttribute("statusCode", DEFAULT_STATUS_CODE_ERROR_VALUE);
+        errorResponseBuilder.addContent(errorHeaders);
+        httpListener.addContent(errorResponseBuilder);
 
         main.addContent(httpListener);
     }

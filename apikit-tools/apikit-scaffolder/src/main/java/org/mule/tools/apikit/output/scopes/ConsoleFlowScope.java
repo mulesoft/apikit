@@ -33,6 +33,9 @@ public class ConsoleFlowScope implements Scope {
         }
         consoleFlow.addContent(restProcessor);
 
+        Element errorHandler = ErrorHandlerScope.createForConsoleFlow().generate();
+        consoleFlow.addContent(errorHandler);
+
         mule.addContent(consoleFlow);
 
     }

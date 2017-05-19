@@ -30,14 +30,11 @@ public class FlowScope implements Scope {
         if(!StringUtils.isEmpty(configRef)) {
             restProcessor.setAttribute("config-ref", configRef);
         }
+
+        Element errorHandler = ErrorHandlerScope.createForMainFlow().generate();
+
         main.addContent(restProcessor);
-        //TODO ADD EXCEPTION STRATEGY
-        //if (APIKitTools.usesListenersMuleV3(api.getMuleVersion()) || APIKitTools.defaultIsInboundEndpoint(api.getMuleVersion()))
-        //{
-        //    Element exceptionStrategy = new Element("exception-strategy", XMLNS_NAMESPACE.getNamespace());
-        //    exceptionStrategy.setAttribute("ref", exceptionStrategyRef);
-        //    main.addContent(exceptionStrategy);
-        //}
+        main.addContent(errorHandler);
 
         mule.addContent(main);
     }
