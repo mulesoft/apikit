@@ -4,17 +4,18 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit;
+package org.mule.module.apikit.helpers;
 
-
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.api.Event;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.validation.ValidRequest;
+import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.api.Event;
 
 public class EventHelper
 {
@@ -32,6 +33,16 @@ public class EventHelper
     {
         Optional<Charset> payloadEncoding = message.getPayload().getDataType().getMediaType().getCharset();
         return payloadEncoding.orElse(Charset.defaultCharset());// TODO Should we get default charset from mule?
+    }
+
+    public static Event regenerateEvent(Event event, ValidRequest validRequest) {
+        Event.Builder builder = Event.builder(event);
+
+        Message.Builder messageBuilder = Message.builder(event.getMessage());
+        messageBuilder.payload(validRequest.getBody().getPayload());
+        messageBuilder.attributes(validRequest.getAttributes());
+
+        return builder.message(messageBuilder.build()).build();
     }
 
     public static Event regenerateEvent(Event event, HttpRequestAttributes newAttributes)

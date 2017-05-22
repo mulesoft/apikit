@@ -6,10 +6,17 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.mule.module.apikit.ApikitRegistry;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import javax.xml.validation.Schema;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
 import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.RamlHandler;
 import org.mule.module.apikit.exception.BadRequestException;
@@ -18,162 +25,77 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
-import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.exception.TypedException;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.xml.validation.Schema;
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Mockito;
 
 public class RestXMLSchemaValidatorTestCase
 {
-    private static final String xmlSchema = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>" +
-                                     "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"" +
-                                     " elementFormDefault=\"qualified\" xmlns=\"http://mulesoft.com/schemas/soccer\"" +
-                                     " targetNamespace=\"http://mulesoft.com/schemas/soccer\">" +
-                                     "<xs:element name=\"league\">" +
-                                     "  <xs:complexType>" +
-                                     "    <xs:sequence>" +
-                                     "      <xs:element name=\"name\" type=\"xs:string\"/>" +
-                                     "      <xs:element name=\"description\" type=\"xs:string\" minOccurs=\"0\"/>" +
-                                     "    </xs:sequence>" +
-                                     "  </xs:complexType>" +
-                                     "</xs:element>" +
-                                     "</xs:schema>";
-    private static IRaml api;
+  private static final String xmlSchema = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>" +
+      "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"" +
+      " elementFormDefault=\"qualified\" xmlns=\"http://mulesoft.com/schemas/soccer\"" +
+      " targetNamespace=\"http://mulesoft.com/schemas/soccer\">" +
+      "<xs:element name=\"league\">" +
+      "  <xs:complexType>" +
+      "    <xs:sequence>" +
+      "      <xs:element name=\"name\" type=\"xs:string\"/>" +
+      "      <xs:element name=\"description\" type=\"xs:string\" minOccurs=\"0\"/>" +
+      "    </xs:sequence>" +
+      "  </xs:complexType>" +
+      "</xs:element>" +
+      "</xs:schema>";
+  private static IRaml api;
 
-    @BeforeClass
-    public static void mockApi()
-    {
-        api = Mockito.mock(IRaml.class);
+  @BeforeClass
+  public static void mockApi()
+  {
+    api = Mockito.mock(IRaml.class);
 
-        Map<String, Object> compiledSchemaMap = new HashMap<>();
-        Schema compiledSchema = org.raml.parser.visitor.SchemaCompiler.getInstance().compile(xmlSchema);
-        compiledSchemaMap.put("scheme-xml", compiledSchema);
-        when(api.getCompiledSchemas()).thenReturn(compiledSchemaMap);
+    Map<String, Object> compiledSchemaMap = new HashMap<>();
+    Schema compiledSchema = org.raml.parser.visitor.SchemaCompiler.getInstance().compile(xmlSchema);
+    compiledSchemaMap.put("scheme-xml", compiledSchema);
+    when(api.getCompiledSchemas()).thenReturn(compiledSchemaMap);
 
-        Map<String, String> schemaMap = new HashMap<>();
-        schemaMap.put("scheme-xml",xmlSchema);
-        when(api.getConsolidatedSchemas()).thenReturn(schemaMap);
+    Map<String, String> schemaMap = new HashMap<>();
+    schemaMap.put("scheme-xml",xmlSchema);
+    when(api.getConsolidatedSchemas()).thenReturn(schemaMap);
 
-        Map<String, IMimeType> body = new HashMap<>();
-        IMimeType mimeType = Mockito.mock(IMimeType.class);
-        when(mimeType.getType()).thenReturn("application/xml");
-        when(mimeType.getSchema()).thenReturn("scheme-xml");
-        body.put("application/xml", mimeType);
-        IAction mockedAction = Mockito.mock(IAction.class);
-        when(mockedAction.getBody()).thenReturn(body);
-        IResource mockedResource = Mockito.mock(IResource.class);
-        when(mockedResource.getAction("POST")).thenReturn(mockedAction);
-        when(api.getResource("/leagues")).thenReturn(mockedResource);
-    }
+    Map<String, IMimeType> body = new HashMap<>();
+    IMimeType mimeType = Mockito.mock(IMimeType.class);
+    when(mimeType.getType()).thenReturn("application/xml");
+    when(mimeType.getSchema()).thenReturn("scheme-xml");
+    body.put("application/xml", mimeType);
+    IAction mockedAction = Mockito.mock(IAction.class);
+    when(mockedAction.getBody()).thenReturn(body);
+    IResource mockedResource = Mockito.mock(IResource.class);
+    when(mockedResource.getAction("POST")).thenReturn(mockedAction);
+    when(api.getResource("/leagues")).thenReturn(mockedResource);
+  }
 
-    @Test
-    public void validStringPayloadUsingParserV1() throws TypedException
-    {
-        Message.Builder messageBuilder = Message.builder().payload("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>");
-        Message message = messageBuilder.build();
-        String schemaPath = "/leagues,POST,application/xml";
+  @Test
+  public void validStringPayloadUsingParser() throws TypedException, ExecutionException, BadRequestException {
+    String payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>";
+    String schemaPath = "/leagues,POST,application/xml";
 
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestXmlSchemaValidator validator = new RestXmlSchemaValidator(config.getXmlSchemaCache());
-        Message newMessage = validator.validate(schemaPath, message);
-        assertTrue(newMessage != null);
-    }
+    Configuration config = new Configuration();
+    RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
+    when(ramlHandler.getApi()).thenReturn(api);
+    config.setRamlHandler(ramlHandler);
 
-    @Test (expected = TypedException.class)
-    public void invalidStringPayloadUsingParserV1() throws TypedException, InitialisationException
-    {
-        Message.Builder messageBuilder = Message.builder().payload("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>");
-        Message message = messageBuilder.build();
-        String schemaPath = "/leagues,POST,application/xml";
+    RestXmlSchemaValidator xmlValidator = new RestXmlSchemaValidator(config.getXmlSchema(schemaPath));
 
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestXmlSchemaValidator validator = new RestXmlSchemaValidator(config.getXmlSchemaCache());
-        Message newMessage = validator.validate(schemaPath, message);
-        assertTrue(newMessage != null);
-    }
+    xmlValidator.validate(payload);
+  }
 
-    @Test
-    public void validStreamPayloadUsingParserV1() throws TypedException
-    {
-        InputStream is = new ByteArrayInputStream("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>".getBytes());
-        Message.Builder messageBuilder = Message.builder().payload(is);
-        Message message = messageBuilder.build();
-        String schemaPath = "/leagues,POST,application/xml";
+  @Test (expected = TypedException.class)
+  public void invalidStringPayloadUsingParser() throws TypedException, BadRequestException, ExecutionException {
+    String payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
+    String schemaPath = "/leagues,POST,application/xml";
 
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestXmlSchemaValidator validator = new RestXmlSchemaValidator(config.getXmlSchemaCache());
-        Message newMessage = validator.validate(schemaPath, message);
-        assertTrue(newMessage != null);
-    }
+    Configuration config = new Configuration();
+    RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
+    when(ramlHandler.getApi()).thenReturn(api);
+    config.setRamlHandler(ramlHandler);
 
-    @Test (expected = TypedException.class)
-    public void invalidStreamPayloadUsingParserV1() throws TypedException
-    {
-        InputStream is = new ByteArrayInputStream("{\"invalid\":\"true\"}".getBytes());
-        Message.Builder messageBuilder = Message.builder().payload(is);
-        Message message = messageBuilder.build();
-        String schemaPath = "/leagues,POST,application/xml";
-
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestXmlSchemaValidator validator = new RestXmlSchemaValidator(config.getXmlSchemaCache());
-        Message newMessage = validator.validate(schemaPath, message);
-        assertTrue(newMessage != null);
-    }
-
-
-    @Test
-    public void validByteArrayPayloadUsingParserV1() throws TypedException
-    {
-        byte[] byteArray = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><name>MLS</name></league>".getBytes();
-        Message.Builder messageBuilder = Message.builder().payload(byteArray);
-        Message message = messageBuilder.build();
-        String schemaPath = "/leagues,POST,application/xml";
-
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestXmlSchemaValidator validator = new RestXmlSchemaValidator(config.getXmlSchemaCache());
-        Message newMessage = validator.validate(schemaPath, message);
-        assertTrue(newMessage != null);
-    }
-
-    @Test (expected = TypedException.class)
-    public void invalidByteArrayPayloadUsingParserV1() throws TypedException
-    {
-        byte[] byteArray = "{\"invalid\":\"true\"}".getBytes();
-        Message.Builder messageBuilder = Message.builder().payload(byteArray);
-        Message message = messageBuilder.build();
-        String schemaPath = "/leagues,POST,application/xml";
-
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestXmlSchemaValidator validator = new RestXmlSchemaValidator(config.getXmlSchemaCache());
-        Message newMessage = validator.validate(schemaPath, message);
-        assertTrue(newMessage != null);
-    }
+    RestXmlSchemaValidator xmlValidator = new RestXmlSchemaValidator(config.getXmlSchema(schemaPath));
+    xmlValidator.validate(payload);
+  }
 }

@@ -6,13 +6,17 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.api.Event;
-import org.mule.runtime.core.api.MuleContext;
-
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.helpers.AttributesHelper;
+import org.mule.module.apikit.helpers.EventHelper;
+import org.mule.runtime.api.message.Message;
+import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.util.IOUtils;
 import org.raml.parser.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +96,53 @@ public class CharsetUtils
         return encoding;
     }
 
+    /**
+     * Tries to figure out the encoding of the request in the following order
+     *  - checks if the content-type header includes the charset
+     *  - Determine what type is payload
+     *  - detects the payload encoding using BOM, or tries to auto-detect it
+     *  - return the mule message encoding
+     *
+     * @param message mule message
+     * @param input payload that would be instrospected
+     * @param logger where to log
+     * @return payload encoding
+     */
+    public static String getEncoding(Message message, Object input, Logger logger) throws IOException {
+        String encoding = getHeaderCharset(message, logger);
+        byte[] bytes = null;
+
+        if (encoding == null)
+        {
+            if (input instanceof InputStream) {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                IOUtils.copyLarge((InputStream) input, baos);
+                bytes = baos.toByteArray();
+            } else if (input instanceof byte[]) {
+                bytes = (byte[]) input;
+            }
+            else if (input instanceof String) {
+                bytes = ((String) input).getBytes();
+            }
+
+            if ( bytes == null ) {
+                return null;
+            }
+            encoding = StreamUtils.detectEncoding(bytes);
+            logger.debug("Detected payload encoding: " + logEncoding(encoding));
+
+            if (encoding == null)
+            {
+                encoding = EventHelper.getEncoding(message).toString();
+                logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
+            }
+        }
+        if (encoding.matches("(?i)UTF-16.+"))
+        {
+            encoding = "UTF-16";
+        }
+        return encoding;
+    }
 
     /**
      * Tries to figure out the encoding of an xml request in the following order

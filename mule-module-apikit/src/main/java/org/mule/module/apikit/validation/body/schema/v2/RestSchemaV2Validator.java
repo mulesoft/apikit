@@ -6,146 +6,40 @@
  */
 package org.mule.module.apikit.validation.body.schema.v2;
 
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static org.mule.module.apikit.CharsetUtils.trimBom;
-
-import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.MessageHelper;
-import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.validation.body.schema.IRestSchemaValidator;
-import org.mule.raml.interfaces.model.IMimeType;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
-import org.mule.runtime.core.util.IOUtils;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
+import org.mule.module.apikit.ApikitErrorTypes;
+import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
+import org.mule.raml.interfaces.model.IMimeType;
 import org.raml.v2.api.model.common.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RestSchemaV2Validator implements IRestSchemaValidator
-{
+public class RestSchemaV2Validator implements IRestSchemaValidatorStrategy {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-    private Message message;
-    private IMimeType mimeType;
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private IMimeType mimeType;
 
-    public RestSchemaV2Validator(IMimeType mimeType)
-    {
-        this.mimeType = mimeType;
+  public RestSchemaV2Validator(IMimeType mimeType) {
+    this.mimeType = mimeType;
+  }
+
+  public void validate(String payload) throws BadRequestException {
+    List<ValidationResult> validationResults;
+
+    if (mimeType instanceof org.mule.raml.implv2.v10.model.MimeTypeImpl) {
+      validationResults = ((org.mule.raml.implv2.v10.model.MimeTypeImpl) mimeType).validate(payload);
+    } else {
+      // TODO implement for 08 (v2)
+      // List<ValidationResult> validationResults = ((org.mule.raml.implv2.v08.model.MimeTypeImpl) mimeType).validate(payload);
+      throw new RuntimeException("not supported");
     }
 
-    public Message validate(Message message) throws BadRequestException
-    {
-        boolean trimBom = mimeType.getType().contains("json");
-        this.message = message;
-        String payload = getPayloadAsString(trimBom);
-        List<ValidationResult> validationResults;
-        if (mimeType instanceof org.mule.raml.implv2.v10.model.MimeTypeImpl)
-        {
-            validationResults = ((org.mule.raml.implv2.v10.model.MimeTypeImpl) mimeType).validate(payload);
-        }
-        else
-        {
-            // TODO implement for 08 (v2)
-            // List<ValidationResult> validationResults = ((org.mule.raml.implv2.v08.model.MimeTypeImpl) mimeType).validate(payload);
-            throw new RuntimeException("not supported");
-
-        }
-        if (!validationResults.isEmpty())
-        {
-            String logMessage = validationResults.get(0).getMessage();
-            logger.info("Schema validation failed: " + logMessage);
-            throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(logMessage);
-        }
-        return message;
+    if (!validationResults.isEmpty()) {
+      String logMessage = validationResults.get(0).getMessage();
+      logger.info("Schema validation failed: " + logMessage);
+      throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(logMessage);
     }
-
-    private String getPayloadAsString(boolean trimBom) throws BadRequestException
-    {
-        Object input = message.getPayload().getValue();
-        if (input instanceof CursorStreamProvider)
-        {
-            return IOUtils.toString((CursorStreamProvider) input);
-
-            //try (CursorStream cursor = ((CursorStreamProvider) input).openCursor())
-            //{
-            //    cursor.release();
-            //}
-            //catch (IOException e)
-            //{
-            //    throw new BadRequestException("Error processing request: " + e.getMessage());
-            //}
-        }
-        if (input instanceof InputStream)
-        {
-            logger.debug("transforming payload to perform Schema validation");
-            try
-            {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                IOUtils.copyLarge((InputStream) input, baos);
-                byte[] bytes = baos.toByteArray();
-
-                String charset = getEncoding(message, bytes, logger);
-                message = MessageHelper.setPayload(message, new ByteArrayInputStream(baos.toByteArray()), message.getPayload().getDataType().getMediaType());
-                input = byteArrayToString(bytes, charset, trimBom);
-            }
-            catch (IOException e)
-            {
-                throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Error processing request: " + e.getMessage());
-            }
-        }
-        else if (input instanceof byte[])
-        {
-            try
-            {
-                String encoding = getEncoding(message, (byte[]) input, logger);
-
-                input = byteArrayToString((byte[]) input, encoding, trimBom);
-            }
-            catch (IOException e)
-            {
-                throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Error processing request: " + e.getMessage());
-            }
-        }
-        else if (input instanceof String)
-        {
-            // already in the right format
-        }
-        else
-        {
-            String message = "Don't know how to parse payload";
-            if (input != null)
-            {
-                message = "Don't know how to parse " + input.getClass().getName();
-            }
-            throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(message);
-
-        }
-        return (String) input;
-    }
-
-    private String byteArrayToString(byte[] bytes, String charset, boolean trimBom) throws IOException
-    {
-        String result;
-        if (trimBom)
-        {
-            result = IOUtils.toString(new ByteArrayInputStream(trimBom(bytes)), charset);
-        }
-        else
-        {
-            result = IOUtils.toString(bytes, charset);
-        }
-        return result;
-    }
-
-
-
-
-
+  }
 }

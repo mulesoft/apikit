@@ -7,32 +7,32 @@
 package org.mule.module.apikit;
 
 //import org.mule.module.apikit.exception.NotFoundException;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
+import javax.xml.validation.Schema;
+
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
+import org.mule.module.apikit.validation.ValidationConfig;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.config.MuleProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.inject.Inject;
-import javax.xml.validation.Schema;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-
-public class Configuration implements Initialisable
+public class Configuration implements Initialisable, ValidationConfig
 {
     private boolean disableValidations;
     private String name;
@@ -245,4 +245,18 @@ public class Configuration implements Initialisable
         return this.ramlHandler;
     }
 
+    @Override
+    public boolean isParserV2() {
+        return getRamlHandler().isParserV2();
+    }
+
+    @Override
+    public JsonSchema getJsonSchema(String schemaPath) throws ExecutionException {
+        return getJsonSchemaCache().get(schemaPath);
+    }
+
+    @Override
+    public Schema getXmlSchema(String schemaPath) throws ExecutionException {
+        return getXmlSchemaCache().get(schemaPath);
+    }
 }

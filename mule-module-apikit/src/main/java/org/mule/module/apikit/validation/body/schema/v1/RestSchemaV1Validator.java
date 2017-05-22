@@ -6,50 +6,19 @@
  */
 package org.mule.module.apikit.validation.body.schema.v1;
 
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.ApikitRegistry;
-import org.mule.module.apikit.AttributesHelper;
-import org.mule.module.apikit.Configuration;
-import org.mule.module.apikit.MessageHelper;
 import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.validation.body.schema.IRestSchemaValidator;
-import org.mule.module.apikit.validation.body.schema.v1.cache.SchemaCacheUtils;
-import org.mule.raml.interfaces.model.IAction;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.exception.TypedException;
+import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.google.common.cache.LoadingCache;
-
-import javax.xml.validation.Schema;
-
-public class RestSchemaV1Validator implements IRestSchemaValidator
+public class RestSchemaV1Validator implements IRestSchemaValidatorStrategy
 {
-    LoadingCache<String, JsonSchema> jsonSchemaCache;
-    LoadingCache<String, Schema> xmlSchemaCache;
-    IAction action;
+    IRestSchemaValidatorStrategy strategy;
 
-    public RestSchemaV1Validator (LoadingCache<String, JsonSchema> jsonSchemaCache, LoadingCache<String, Schema> xmlSchemaCache, IAction action)
+    public RestSchemaV1Validator (IRestSchemaValidatorStrategy strategy)
     {
-        this.jsonSchemaCache = jsonSchemaCache;
-        this.xmlSchemaCache = xmlSchemaCache;
-        this.action = action;
+        this.strategy = strategy;
     }
 
-    public Message validate(Message message) throws TypedException
-    {
-        String requestMimeType = AttributesHelper.getMediaType((HttpRequestAttributes)message.getAttributes().getValue());
-        if (requestMimeType.contains("json"))
-        {
-            RestJsonSchemaValidator validatorV1 = new RestJsonSchemaValidator(jsonSchemaCache);
-            return validatorV1.validate(SchemaCacheUtils.getSchemaCacheKey(action, requestMimeType), message);
-
-        }
-        else
-        {
-            RestXmlSchemaValidator validatorV1 = new RestXmlSchemaValidator(xmlSchemaCache);
-            return validatorV1.validate(SchemaCacheUtils.getSchemaCacheKey(action, requestMimeType), message);
-        }
+    public void validate(String payload) throws BadRequestException {
+        this.strategy.validate(payload);
     }
 }
