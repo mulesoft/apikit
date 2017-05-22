@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="httpListenerConfigDefault">
+        <http:listener-connection host="localhost" port="${serverPort}"/>
+    </http:listener-config>
+
+    <apikit:config name="apikitConfigWithRouter" raml="org/mule/module/apikit/console/simple-with-baseuri.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
+
+    <flow name="api-main">
+    <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
+        <http:response statusCode="#[variables.httpStatus default 200]">
+            <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+        </http:response>
+    </http:listener>
+    <apikit:router config-ref="apikitConfigWithRouter"/>
+    </flow>
+
+    <flow name="api-console">
+        <http:listener config-ref="httpListenerConfigDefault" path="/console/*">
+            <http:response statusCode="#[variables.httpStatus default 200]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:console config-ref="apikitConfigWithRouter" />
+    </flow>
+
+
+</mule>

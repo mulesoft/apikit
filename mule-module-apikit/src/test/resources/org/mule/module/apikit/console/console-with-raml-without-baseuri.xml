@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="httpListenerConfigDefault">
+    <http:listener-connection host="localhost" port="${serverPort}"/>
+    </http:listener-config>
+
+    <apikit:config name="apikitConfigWithoutRouterKRBUFalse" raml="org/mule/module/apikit/console/simple-without-baseuri.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" keepRamlBaseUri="false"/>
+
+    <apikit:config name="apikitConfigWithoutRouterKRBUTrue" raml="org/mule/module/apikit/console/simple-without-baseuri.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" keepRamlBaseUri="true"/>
+
+    <apikit:config name="apikitConfigWithRouter" raml="org/mule/module/apikit/console/simple-without-baseuri.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" keepRamlBaseUri="false"/>
+
+    <flow name="api-consoleWithoutRouterKRBUTrue">
+        <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithoutRouterKRBUTrue/*">
+            <http:response statusCode="#[variables.httpStatus default 200]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:console config-ref="apikitConfigWithoutRouterKRBUTrue" />
+    </flow>
+
+    <flow name="api-consoleWithoutRouterKRBUFalse">
+        <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithoutRouterKRBUFalse/*">
+            <http:response statusCode="#[variables.httpStatus default 200]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:console config-ref="apikitConfigWithoutRouterKRBUFalse" />
+    </flow>
+
+    <flow name="api-apiWithRouter">
+        <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
+            <http:response statusCode="#[variables.httpStatus default 200]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:router config-ref="apikitConfigWithRouter" />
+    </flow>
+
+    <flow name="api-consoleWithRouter">
+        <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithRouter/*">
+            <http:response statusCode="#[variables.httpStatus default 200]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:console config-ref="apikitConfigWithRouter" />
+    </flow>
+
+</mule>

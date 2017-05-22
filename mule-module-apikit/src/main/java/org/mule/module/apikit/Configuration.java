@@ -70,7 +70,7 @@ public class Configuration implements Initialisable
     {
         try
         {
-            ramlHandler = new RamlHandler(raml, getApiServer(), keepRamlBaseUri);
+            ramlHandler = new RamlHandler(raml, keepRamlBaseUri);
         }
         catch (IOException e)
         {

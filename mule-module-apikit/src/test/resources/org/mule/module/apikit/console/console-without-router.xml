@@ -15,8 +15,7 @@
         <http:listener-connection host="localhost" port="${serverPort2}"/>
     </http:listener-config>
 
-
-    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/simple-routing/simple.raml"
+    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/console/simple-with-baseuri.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="api-console">
@@ -25,13 +24,13 @@
                 <http:headers>#[variables.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
-
         <apikit:console config-ref="apikitConfig" />
     </flow>
 
     <flow name="invalid-api-console">
         <http:listener config-ref="httpListenerConfigForInvalidConsoleFlow" path="/konsole/"/>
-        <apikit:console config-ref="apikitConfig" />
+        <apikit:console config-ref="apikitConfigWithRouter" />
     </flow>
+
 
 </mule>

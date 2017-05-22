@@ -1,0 +1,25 @@
+#%RAML 1.0
+---
+title: Simple API
+baseUri: http://www.google.com
+types:
+  Person:
+    type: object
+    properties:
+      name:
+        required: true
+        type: string
+/resources:
+  get:
+    responses:
+        200:
+            body:
+                application/json: !!null
+                text/xml: !!null
+/types-test:
+  post:
+    body:
+        application/json:
+            type: Person
+    responses:
+      200: ~

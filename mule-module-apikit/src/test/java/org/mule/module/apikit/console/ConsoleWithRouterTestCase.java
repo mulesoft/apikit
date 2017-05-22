@@ -6,25 +6,26 @@
  */
 package org.mule.module.apikit.console;
 
-import com.jayway.restassured.RestAssured;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 
+import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.tck.junit4.rule.DynamicPort;
+import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
+
+import com.jayway.restassured.RestAssured;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.junit.Rule;
+import org.junit.Test;
+
 @ArtifactClassLoaderRunnerConfig
-public class ConsoleTestCase extends MuleArtifactFunctionalTestCase
+public class ConsoleWithRouterTestCase extends MuleArtifactFunctionalTestCase
 {
     @Rule public DynamicPort serverPort = new DynamicPort("serverPort");
-    @Rule public DynamicPort serverPort2 = new DynamicPort("serverPort2");
 
     private String CONSOLE_BASE_PATH = "/console/";
 
@@ -44,36 +45,26 @@ public class ConsoleTestCase extends MuleArtifactFunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/console/console.xml";
+        return "org/mule/module/apikit/console/console-with-router.xml";
     }
 
     @Test
     public void getConsoleIndex() throws Exception
     {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Length", "2478");
+        headers.put("Content-Length", "2471");
         headers.put("Access-Control-Allow-Origin", "*");
         headers.put("Expires", "-1");
 
         given().port(serverPort.getNumber())
                 .header("Accept", "text/html")
                 .expect()
-                    .statusCode(200)
-                    .headers(headers)
-                    .contentType("text/html")
-                    .body(startsWith("<!doctype html>"))
-                    .body(containsString("this.location.href + 'org/mule/module/apikit/simple-routing/?raml'"))
+                .statusCode(200)
+                .headers(headers)
+                .contentType("text/html")
+                .body(startsWith("<!doctype html>"))
+                .body(containsString("this.location.href + 'org/mule/module/apikit/console/?raml'"))
                 .when().get(CONSOLE_BASE_PATH);
-    }
-
-    @Test
-    public void getConsoleIndexWithInvalidListenerPath() throws Exception
-    {
-        RestAssured.port = serverPort2.getNumber();
-        given().header("Accept", "*/*")
-                .expect()
-                .statusCode(500)
-                .when().get("/konsole");
     }
 
     @Test
@@ -81,9 +72,9 @@ public class ConsoleTestCase extends MuleArtifactFunctionalTestCase
         given().port(serverPort.getNumber())
                 .header("Accept", "*/*")
                 .expect()
-                    .statusCode(200)
-                    .header("Access-Control-Allow-Origin", "*")
-                    .contentType("application/x-javascript")
+                .statusCode(200)
+                .header("Access-Control-Allow-Origin", "*")
+                .contentType("application/x-javascript")
                 .when().get(CONSOLE_BASE_PATH + "bower_components/webcomponentsjs/webcomponents-lite.min.js");
     }
 
@@ -94,7 +85,7 @@ public class ConsoleTestCase extends MuleArtifactFunctionalTestCase
         given().port(serverPort.getNumber())
                 .header("Accept", "*/*")
                 .expect()
-                    .statusCode(500)
+                .statusCode(500)
                 .when().get(CONSOLE_BASE_PATH + "not/found/file.html");
     }
 
@@ -104,8 +95,8 @@ public class ConsoleTestCase extends MuleArtifactFunctionalTestCase
         given().port(serverPort.getNumber()).redirects().follow(false)
                 .header("Accept", "text/html")
                 .expect()
-                    .header("Location", "http://localhost:" + serverPort.getNumber() + "/console/")
-                    .response().statusCode(301)
+                .header("Location", "http://localhost:" + serverPort.getNumber() + "/console/")
+                .response().statusCode(301)
                 .when().get("/console");
     }
 
@@ -115,11 +106,11 @@ public class ConsoleTestCase extends MuleArtifactFunctionalTestCase
         given().port(serverPort.getNumber())
                 .header("Accept", "application/raml+yaml")
                 .expect()
-                    .header("Content-Type", "application/raml+yaml")
+                .header("Content-Type", "application/raml+yaml")
                 .response()
-                    .statusCode(200)
-                    .body(containsString("/types-test:"))
-                .when().get("console/org/mule/module/apikit/simple-routing/simple.raml?raml");
+                .statusCode(200)
+                .body(containsString("/types-test:"))
+                .when().get("console/org/mule/module/apikit/console/simple-with-baseuri.raml?raml");
     }
 
     @Test
@@ -128,11 +119,11 @@ public class ConsoleTestCase extends MuleArtifactFunctionalTestCase
         given().port(serverPort.getNumber())
                 .header("Accept", "application/raml+yaml")
                 .expect()
-                    .header("Content-Type", "application/raml+yaml")
+                .header("Content-Type", "application/raml+yaml")
                 .response()
-                    .statusCode(200)
-                    .body(containsString("/types-test:"))
-                .when().get("console/org/mule/module/apikit/simple-routing/simple.raml");
+                .statusCode(200)
+                .body(containsString("/types-test:"))
+                .when().get("console/org/mule/module/apikit/console/simple-with-baseuri.raml");
     }
 
     @Test
@@ -141,11 +132,12 @@ public class ConsoleTestCase extends MuleArtifactFunctionalTestCase
         given().port(serverPort.getNumber())
                 .header("Accept", "application/raml+yaml")
                 .expect()
-                    .header("Content-Type", "application/raml+yaml")
+                .header("Content-Type", "application/raml+yaml")
                 .response()
-                    .statusCode(200)
-                    .body(containsString("/types-test:"))
-                .when().get("console/org/mule/module/apikit/simple-routing/?raml");
+                .statusCode(200)
+                .body(containsString("/types-test:"))
+                .body(containsString("baseUri: http://localhost"))
+                .when().get("console/org/mule/module/apikit/console/?raml");
     }
 
 }

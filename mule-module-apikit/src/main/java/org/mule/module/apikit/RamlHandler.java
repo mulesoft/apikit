@@ -38,10 +38,9 @@ public class RamlHandler
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     //ramlLocation should be the root raml location, relative of the resources folder
-    public RamlHandler(String ramlLocation, String apiServer, boolean keepRamlBaseUri) throws IOException
+    public RamlHandler(String ramlLocation, boolean keepRamlBaseUri) throws IOException
     {
         this.keepRamlBaseUri = keepRamlBaseUri;
-        this.apiServer = apiServer;
 
         String rootRamlLocation = findRootRaml(ramlLocation);
         if (rootRamlLocation == null)
@@ -51,10 +50,6 @@ public class RamlHandler
         parserService = new ParserService(rootRamlLocation);
         parserService.validateRaml();
         this.api = parserService.build();
-        if (!keepRamlBaseUri && apiServer != null)
-        {
-            parserService.updateBaseUri(api, apiServer);
-        }
 
         int idx = rootRamlLocation.lastIndexOf("/");
         if (idx > 0)
@@ -79,14 +74,14 @@ public class RamlHandler
     }
 
     public String getRamlV1() {
-        //if (keepRamlBaseUri)
-        //{
+        if (keepRamlBaseUri)
+        {
             return parserService.dumpRaml(api);
-        //}
-        //else
-        //{
-        //    return parserService.dumpRaml(api, apiServer);
-        //}
+        }
+        else
+        {
+            return parserService.dumpRaml(api, apiServer);
+        }
     }
 
 
@@ -247,5 +242,10 @@ public class RamlHandler
         }
         //default success status
         return "200";
+    }
+
+    public void setApiServer(String apiServer)
+    {
+        this.apiServer = apiServer;
     }
 }

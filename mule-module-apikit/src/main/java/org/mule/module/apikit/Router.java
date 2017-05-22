@@ -15,18 +15,21 @@ import org.mule.module.apikit.validation.AttributesValidatior;
 import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.exception.TypedException;
 import org.mule.runtime.core.processor.AbstractInterceptingMessageProcessor;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
 
-public class Router extends AbstractInterceptingMessageProcessor
+public class Router extends AbstractInterceptingMessageProcessor implements Initialisable
 {
     @Inject
     private ApikitRegistry registry;
@@ -35,7 +38,12 @@ public class Router extends AbstractInterceptingMessageProcessor
 
     private String name;
 
-
+    @Override
+    public void initialise() throws InitialisationException
+    {
+        URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
+        registry.setApiSource(configRef, uri.toString().replace("*",""));
+    }
 
     public Event process(Event event) throws MuleException
     {
@@ -113,7 +121,5 @@ public class Router extends AbstractInterceptingMessageProcessor
         }
         return resource;
     }
-
-
 
 }

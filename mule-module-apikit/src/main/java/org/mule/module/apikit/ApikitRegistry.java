@@ -13,6 +13,8 @@ public class ApikitRegistry
 {
     private Map<String, Configuration> configMap;
 
+    private Map<String, String> apiSourceMap;
+
     public void registerConfiguration(Configuration config)
     {
         if (configMap == null)
@@ -20,6 +22,10 @@ public class ApikitRegistry
             configMap = new HashMap<>();
         }
         this.configMap.put(config.getName(), config);
+        if (apiSourceMap != null && apiSourceMap.get(config.getName()) != null)
+        {
+            config.getRamlHandler().setApiServer(apiSourceMap.get(config.getName()));
+        }
     }
 
     public Configuration getConfiguration(String configName)
@@ -27,5 +33,21 @@ public class ApikitRegistry
         return configMap.get(configName);
     }
 
+    public void setApiSource(String configName, String apiSource)
+    {
+        if (apiSourceMap == null)
+        {
+            apiSourceMap = new HashMap<>();
+        }
+        apiSourceMap.put(configName, apiSource);
+        if (configMap != null && configMap.get(configName) != null)
+        {
+            configMap.get(configName).getRamlHandler().setApiServer(apiSource);
+        }
+    }
 
+    public String getApiSource(String configName)
+    {
+        return apiSourceMap.get(configName);
+    }
 }

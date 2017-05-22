@@ -44,6 +44,8 @@ public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProv
                                 .withSetterParameterDefinition("raml", fromSimpleParameter("raml").build())
                                 .withSetterParameterDefinition("outboundHeadersMapName", fromSimpleParameter("outboundHeadersMapName").build())
                                 .withSetterParameterDefinition("httpStatusVarName", fromSimpleParameter("httpStatusVarName").build())
+                                .withSetterParameterDefinition("keepRamlBaseUri", fromSimpleParameter("keepRamlBaseUri").build())
+                                .withSetterParameterDefinition("disableValidations", fromSimpleParameter("disableValidations").build())
                                 .withSetterParameterDefinition("flowMappings", fromChildConfiguration(FlowMappings.class).build())
                                 .build());
 

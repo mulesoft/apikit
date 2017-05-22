@@ -163,16 +163,41 @@ public class UrlUtils
   //}
 
   public static String replaceBaseUri(String raml, String newBaseUri) {
-    return replaceBaseUri(raml, ".*$", newBaseUri);
+    if (newBaseUri != null)
+    {
+      return replaceBaseUri(raml, ".*$", newBaseUri);
+    }
+    return raml;
   }
 
   private static String replaceBaseUri(String raml, String regex, String replacement) {
     String[] split = raml.split("\n");
+    boolean found = false;
     for (int i = 0; i < split.length; i++) {
-      if (split[i].startsWith("baseUri: ")) {
+      if (split[i].startsWith("baseUri: "))
+      {
+        found = true;
         split[i] = split[i].replaceFirst(regex, replacement);
-        if (!split[i].contains("baseUri: ")) {
+        if (!split[i].contains("baseUri: "))
+        {
           split[i] = "baseUri: " + split[i];
+        }
+      }
+    }
+    if (!found)
+    {
+      for (int i = 0; i < split.length; i++)
+      {
+        if (split[i].startsWith("title:"))
+        {
+          if (replacement.contains("baseUri:"))
+          {
+            split[i] = split[i] + "\n" + replacement;
+          }
+          else
+          {
+            split[i] = split[i] + "\n" + "baseUri: " + replacement;
+          }
         }
       }
     }
