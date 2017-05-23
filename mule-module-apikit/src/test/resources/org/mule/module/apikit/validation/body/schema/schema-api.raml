@@ -1,0 +1,56 @@
+#%RAML 0.8
+title: sample api
+/currentuser:
+    put:
+        body:
+            application/json:
+                schema: |
+                    {
+                       "type":"object",
+                       "id":"urn:jsonschema:org:mule:module:apikit:schema:User",
+                       "properties":{
+                          "firstName":{
+                             "type":"string",
+                             "required":true
+                          },
+                          "lastName":{
+                             "type":"string",
+                             "required":true
+                          },
+                          "emailAddresses":{
+                             "type":"array",
+                             "required":true,
+                             "items":{
+                                "type":"string"
+                             }
+                          },
+                          "username":{
+                             "type":"string",
+                             "required":true
+                          }
+                       }
+                    }
+            text/xml:
+                schema: |
+                    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+                    <xs:schema version="1.0" targetNamespace="http://mulesoft.org/schemas/sample" xmlns:tns="http://mulesoft.org/schemas/sample" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+                      <xs:element name="user" type="tns:user"/>
+                      <xs:complexType name="user">
+                        <xs:sequence>
+                          <xs:element name="email-addresses" form="qualified">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element name="email-address" type="xs:string" form="qualified" maxOccurs="unbounded"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="firstName" type="xs:string" use="required"/>
+                        <xs:attribute name="lastName" type="xs:string" use="required"/>
+                        <xs:attribute name="username" type="xs:string" use="required"/>
+                      </xs:complexType>
+                    </xs:schema>
+        responses:
+            201: ~
+            204: ~
+

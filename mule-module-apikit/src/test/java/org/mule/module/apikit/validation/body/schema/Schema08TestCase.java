@@ -20,7 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
+public class Schema08TestCase extends MuleArtifactFunctionalTestCase
 {
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
@@ -41,7 +41,7 @@ public class GeneratedSchemaTestCase extends MuleArtifactFunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/validation/body/schema/generated-schema-config.xml";
+        return "org/mule/module/apikit/validation/body/schema/schema-config.xml";
         //TODO change raml to use the json schema autogenerator property (APIKIT-783)
     }
 
