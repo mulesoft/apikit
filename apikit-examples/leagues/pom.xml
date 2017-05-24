@@ -90,6 +90,14 @@
                             <groupId>org.mule.modules</groupId>
                             <artifactId>mule-module-apikit</artifactId>
                         </inclusion>
+                        <!--<inclusion>-->
+                            <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+                            <!--<artifactId>jackson-databind</artifactId>-->
+                        <!--</inclusion>-->
+                        <!--<inclusion>-->
+                            <!--<groupId>com.fasterxml.jackson.module</groupId>-->
+                            <!--<artifactId>jackson-module-jsonSchema</artifactId>-->
+                        <!--</inclusion>-->
                     </inclusions>
                 </configuration>
             </plugin>
@@ -241,6 +249,7 @@
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
                 </exclusion>
+
             </exclusions>
         </dependency>
         <!-- Xml configuration -->
@@ -269,6 +278,17 @@
             <artifactId>mule-module-json</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.6.6</version>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
@@ -305,6 +325,7 @@
                     <groupId>javax.mail</groupId>
                     <artifactId>mailapi</artifactId>
                 </exclusion>
+
             </exclusions>
         </dependency>
         <!-- for testing -->
