@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.parameters;
 
+import static com.jayway.restassured.RestAssured.expect;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
@@ -51,6 +52,13 @@ public class Parameters10TestCase extends FunctionalTestCase
                 .expect().response().statusCode(200)
                 .body(is("status: [a, b]"))
                 .when().get("/api/repeat");
+    }
+
+    @Test
+    public void nonRequiredQueryParamProvidedWithoutEquals() throws Exception
+    {
+        expect().response().statusCode(200)
+            .when().get("/api/repeat?optional");
     }
 
 }

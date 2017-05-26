@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit;
 
+import static com.google.common.collect.Collections2.*;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.module.apikit.CharsetUtils.trimBom;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.ACCEPT_HEADER;
@@ -13,6 +14,7 @@ import static org.mule.module.apikit.transform.ApikitResponseTransformer.APIKIT_
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.BEST_MATCH_REPRESENTATION;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.CONTRACT_MIME_TYPES;
 
+import com.google.common.base.Function;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -60,6 +62,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.activation.DataHandler;
+import javax.annotation.Nullable;
 
 import org.raml.v2.api.model.common.ValidationResult;
 import org.slf4j.Logger;
@@ -206,7 +209,15 @@ public class HttpRestRequest
                 actual = ImmutableList.of(param);
             }
         }
-        return actual;
+
+
+        return transform(actual, new Function<Object, Object>() {
+            @Nullable
+            @Override
+            public Object apply(@Nullable Object o) {
+                return o == null ? "" : o;
+            }
+        });
     }
 
     //only for raml 1.0
