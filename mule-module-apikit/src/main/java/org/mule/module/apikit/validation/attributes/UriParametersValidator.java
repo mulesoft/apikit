@@ -12,7 +12,7 @@ import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-import org.mule.service.http.api.domain.ParameterMap;
+import org.mule.runtime.http.api.domain.ParameterMap;
 
 import java.util.Map;
 

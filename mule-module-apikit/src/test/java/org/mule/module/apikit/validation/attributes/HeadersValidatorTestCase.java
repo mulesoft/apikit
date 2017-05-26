@@ -11,7 +11,7 @@ import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.module.apikit.validation.attributes.HeadersValidator;
 import org.mule.raml.implv1.model.ActionImpl;
 import org.mule.runtime.core.exception.TypedException;
-import org.mule.service.http.api.domain.ParameterMap;
+import org.mule.runtime.http.api.domain.ParameterMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;

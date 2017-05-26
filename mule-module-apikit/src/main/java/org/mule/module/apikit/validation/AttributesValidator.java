@@ -15,7 +15,7 @@ import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
 import org.mule.module.apikit.validation.attributes.UriParametersValidator;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.DefaultMuleException;
-import org.mule.service.http.api.domain.ParameterMap;
+import org.mule.runtime.http.api.domain.ParameterMap;
 
 public class AttributesValidator {
 

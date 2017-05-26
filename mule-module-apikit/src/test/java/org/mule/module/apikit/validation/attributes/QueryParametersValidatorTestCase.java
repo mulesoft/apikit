@@ -10,7 +10,7 @@ import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
 import org.mule.raml.implv1.model.ActionImpl;
 import org.mule.runtime.core.exception.TypedException;
-import org.mule.service.http.api.domain.ParameterMap;
+import org.mule.runtime.http.api.domain.ParameterMap;
 
 import java.util.HashMap;
 import java.util.Map;

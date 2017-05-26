@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.HeaderNames;
-import org.mule.service.http.api.domain.ParameterMap;
+import org.mule.runtime.http.api.domain.ParameterMap;
 
 public class AttributesHelper
 {
