@@ -9,12 +9,12 @@ package org.mule.module.apikit.helpers;
 import static org.mule.module.apikit.CharsetUtils.trimBom;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.mule.runtime.core.util.IOUtils;
 import org.slf4j.Logger;
@@ -28,24 +28,16 @@ public class PayloadHelper {
   {
     if (input instanceof CursorStreamProvider)
     {
-      return IOUtils.toString((CursorStreamProvider) input);
+      return IOUtils.toString(((CursorStreamProvider) input).openCursor());
     }
 
     if (input instanceof InputStream)
     {
       logger.debug("transforming payload to perform Schema validation");
-      try
-      {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        IOUtils.copyLarge((InputStream) input, baos);
-        byte[] bytes = baos.toByteArray();
+      RewindableInputStream rewindableInputStream = new RewindableInputStream((InputStream) input);
+      input = IOUtils.toString(rewindableInputStream);
+      rewindableInputStream.rewind();
 
-        input = byteArrayToString(bytes, charset, trimBom);
-      }
-      catch (IOException e)
-      {
-        throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Error processing request: " + e.getMessage());
-      }
     }
     else if (input instanceof byte[])
     {
