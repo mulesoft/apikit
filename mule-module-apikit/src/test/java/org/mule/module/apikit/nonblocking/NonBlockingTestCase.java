@@ -14,7 +14,6 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import com.jayway.restassured.RestAssured;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -39,7 +38,6 @@ public class NonBlockingTestCase  extends FunctionalTestCase
     }
 
     @Test
-    @Ignore
     public void nonBlocking() throws Exception
     {
         given().header("Content-Type", "application/json")

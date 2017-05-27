@@ -9,9 +9,9 @@ package org.mule.module.apikit.proxy;
 public class ProxyNonBlockingTestCase extends ProxyTestCase
 {
 
-    //protected String getProxyAppFolder()
-    //{
-    //    return "org/mule/module/apikit/proxy/app-nb";
-    //}
+    protected String getProxyAppFolder()
+    {
+        return "org/mule/module/apikit/proxy/app-nb";
+    }
 
 }
