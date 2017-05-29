@@ -6,193 +6,109 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.Configuration;
-import org.mule.module.apikit.RamlHandler;
-import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.validation.body.schema.v1.RestSchemaV1Validator;
-import org.mule.raml.interfaces.model.IAction;
-import org.mule.raml.interfaces.model.IActionType;
-import org.mule.raml.interfaces.model.IMimeType;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.raml.interfaces.model.IResource;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.exception.TypedException;
-import org.mule.service.http.api.domain.ParameterMap;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.xml.validation.Schema;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mule.module.apikit.Configuration;
+import org.mule.module.apikit.RamlHandler;
+import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.validation.body.schema.v1.RestJsonSchemaValidator;
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IActionType;
+import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.core.exception.TypedException;
 
-public class RestJsonSchemaValidatorTestCase
-{
-    private static final String jsonSchema = "{\n" +
-                                            "    \"$schema\" : \"http://json-schema.org/draft-03/schema\",\n" +
-                                            "    \"title\": \"League Schema\",\n" +
-                                            "    \"type\": \"object\",\n" +
-                                            "    \"properties\": {\n" +
-                                            "        \"id\": {\n" +
-                                            "            \"type\": \"string\"\n" +
-                                            "        },\n" +
-                                            "        \"name\": {\n" +
-                                            "            \"type\": \"string\",\n" +
-                                            "            \"required\": true\n" +
-                                            "        }\n" +
-                                            "    }\n" +
-                                            "}\n";
-    private static IRaml api;
-    private static IAction mockedAction;
+public class RestJsonSchemaValidatorTestCase {
 
-    @BeforeClass
-    public static void mockApi()
-    {
-        api = Mockito.mock(IRaml.class);
+  private static final String jsonSchema = "{\n" +
+      "    \"$schema\" : \"http://json-schema.org/draft-03/schema\",\n" +
+      "    \"title\": \"League Schema\",\n" +
+      "    \"type\": \"object\",\n" +
+      "    \"properties\": {\n" +
+      "        \"id\": {\n" +
+      "            \"type\": \"string\"\n" +
+      "        },\n" +
+      "        \"name\": {\n" +
+      "            \"type\": \"string\",\n" +
+      "            \"required\": true\n" +
+      "        }\n" +
+      "    }\n" +
+      "}\n";
+  private static IRaml api;
+  private static IAction mockedAction;
 
-        Map<String, Object> compiledSchemaMap = new HashMap<>();
-        Schema compiledSchema = org.raml.parser.visitor.SchemaCompiler.getInstance().compile(jsonSchema);
-        compiledSchemaMap.put("scheme-json", compiledSchema);
-        when(api.getCompiledSchemas()).thenReturn(compiledSchemaMap);
+  @BeforeClass
+  public static void mockApi() {
+    api = Mockito.mock(IRaml.class);
 
-        Map<String, String> schemaMap = new HashMap<>();
-        schemaMap.put("scheme-json",jsonSchema);
-        when(api.getConsolidatedSchemas()).thenReturn(schemaMap);
+    IMimeType mimeType = Mockito.mock(IMimeType.class);
+    Map<String, Object> compiledSchemaMap = new HashMap<>();
+    Map<String, IMimeType> body = new HashMap<>();
+    Schema compiledSchema = org.raml.parser.visitor.SchemaCompiler.getInstance().compile(jsonSchema);
 
-        Map<String, IMimeType> body = new HashMap<>();
-        IMimeType mimeType = Mockito.mock(IMimeType.class);
-        when(mimeType.getType()).thenReturn("application/json");
-        when(mimeType.getSchema()).thenReturn("scheme-json");
-        body.put("application/json", mimeType);
-        mockedAction = Mockito.mock(IAction.class);
-        when(mockedAction.getBody()).thenReturn(body);
-        IResource mockedResource = Mockito.mock(IResource.class);
-        when(mockedResource.getAction("POST")).thenReturn(mockedAction);
-        when(mockedResource.getUri()).thenReturn("/leagues");
-        when(mockedAction.getResource()).thenReturn(mockedResource);
-        when(mockedAction.getType()).thenReturn(IActionType.POST);
-        when(api.getResource("/leagues")).thenReturn(mockedResource);
-    }
+    compiledSchemaMap.put("scheme-json", compiledSchema);
+    when(api.getCompiledSchemas()).thenReturn(compiledSchemaMap);
 
-    @Test
-    public void validStringPayloadUsingParserV1() throws TypedException
-    {
-        Message.Builder messageBuilder = Message.builder().payload("{ \"name\": \"Major League Soccer\" }");
-        ParameterMap headers = new ParameterMap();
-        headers.put("content-type", "application/json");
-        HttpRequestAttributes attributes = new HttpRequestAttributes(headers, null, null, null, null, null, null, null, null, null, null, null, null);
-        messageBuilder.attributes(attributes);
-        Message message = messageBuilder.build();
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestSchemaV1Validator validator = new RestSchemaV1Validator(config.getJsonSchemaCache(), config.getXmlSchemaCache(), mockedAction);
-        Message newMessage = validator.validate(message);
-        assertTrue(newMessage != null);
-    }
+    Map<String, String> schemaMap = new HashMap<>();
+    schemaMap.put("scheme-json", jsonSchema);
+    when(api.getConsolidatedSchemas()).thenReturn(schemaMap);
 
-    @Test (expected = TypedException.class)
-    public void invalidStringPayloadUsingParserV1() throws TypedException
-    {
-        Message.Builder messageBuilder = Message.builder().payload("{ \"naazame\": \"Major League Soccer\" }");
-        ParameterMap headers = new ParameterMap();
-        headers.put("content-type", "application/json");
-        HttpRequestAttributes attributes = new HttpRequestAttributes(headers, null, null, null, null, null, null, null, null, null, null, null, null);
-        messageBuilder.attributes(attributes);
+    when(mimeType.getType()).thenReturn("application/json");
+    when(mimeType.getSchema()).thenReturn("scheme-json");
+    body.put("application/json", mimeType);
 
-        Message message = messageBuilder.build();
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestSchemaV1Validator validator = new RestSchemaV1Validator(config.getJsonSchemaCache(), config.getXmlSchemaCache(), mockedAction);
-        Message newMessage = validator.validate(message);
-        assertTrue(newMessage != null);
-    }
+    mockedAction = Mockito.mock(IAction.class);
+    when(mockedAction.getBody()).thenReturn(body);
 
-    @Test
-    public void validStreamPayloadUsingParserV1() throws TypedException
-    {
-        InputStream is = new ByteArrayInputStream("{ \"name\": \"Major League Soccer\" }".getBytes());
-        Message.Builder messageBuilder = Message.builder().payload(is);
-        ParameterMap headers = new ParameterMap();
-        headers.put("content-type", "application/json");
-        HttpRequestAttributes attributes = new HttpRequestAttributes(headers, null, null, null, null, null, null, null, null, null, null, null, null);
-        messageBuilder.attributes(attributes);
-        Message message = messageBuilder.build();
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestSchemaV1Validator validator = new RestSchemaV1Validator(config.getJsonSchemaCache(), config.getXmlSchemaCache(), mockedAction);
-        Message newMessage = validator.validate(message);
-        assertTrue(newMessage != null);
-    }
+    IResource mockedResource = Mockito.mock(IResource.class);
 
-    @Test (expected = TypedException.class)
-    public void invalidStreamPayloadUsingParserV1() throws TypedException
-    {
-        InputStream is = new ByteArrayInputStream("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>".getBytes());
-        Message.Builder messageBuilder = Message.builder().payload(is);
-        ParameterMap headers = new ParameterMap();
-        headers.put("content-type", "application/json");
-        HttpRequestAttributes attributes = new HttpRequestAttributes(headers, null, null, null, null, null, null, null, null, null, null, null, null);
-        messageBuilder.attributes(attributes);
+    when(mockedResource.getAction("POST")).thenReturn(mockedAction);
+    when(mockedResource.getUri()).thenReturn("/leagues");
 
-        Message message = messageBuilder.build();
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestSchemaV1Validator validator = new RestSchemaV1Validator(config.getJsonSchemaCache(), config.getXmlSchemaCache(), mockedAction);
-        Message newMessage = validator.validate(message);
-        assertTrue(newMessage != null);
-    }
+    when(mockedAction.getResource()).thenReturn(mockedResource);
+    when(mockedAction.getType()).thenReturn(IActionType.POST);
 
-    @Test
-    public void validByteArrayPayloadUsingParserV1() throws TypedException
-    {
-        byte[] byteArray = "{ \"name\": \"Major League Soccer\" }".getBytes();
-        Message.Builder messageBuilder = Message.builder().payload(byteArray);
-        ParameterMap headers = new ParameterMap();
-        headers.put("content-type", "application/json");
-        HttpRequestAttributes attributes = new HttpRequestAttributes(headers, null, null, null, null, null, null, null, null, null, null, null, null);
-        messageBuilder.attributes(attributes);
-        Message message = messageBuilder.build();
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestSchemaV1Validator validator = new RestSchemaV1Validator(config.getJsonSchemaCache(), config.getXmlSchemaCache(), mockedAction);
-        Message newMessage = validator.validate(message);
-        assertTrue(newMessage != null);
-    }
+    when(api.getResource("/leagues")).thenReturn(mockedResource);
+  }
 
-    @Test (expected = TypedException.class)
-    public void invalidByteArrayPayloadUsingParserV1() throws TypedException
-    {
-        byte[] byteArray = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>".getBytes();
-        Message.Builder messageBuilder = Message.builder().payload(byteArray);
-        ParameterMap headers = new ParameterMap();
-        headers.put("content-type", "application/json");
-        HttpRequestAttributes attributes = new HttpRequestAttributes(headers, null, null, null, null, null, null, null, null, null, null, null, null);
-        messageBuilder.attributes(attributes);
-        Message message = messageBuilder.build();
-        Configuration config = new Configuration();
-        RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
-        when(ramlHandler.getApi()).thenReturn(api);
-        config.setRamlHandler(ramlHandler);
-        RestSchemaV1Validator validator = new RestSchemaV1Validator(config.getJsonSchemaCache(), config.getXmlSchemaCache(), mockedAction);
-        Message newMessage = validator.validate(message);
-        assertTrue(newMessage != null);
-    }
+  @Test
+  public void validStringPayloadUsingParser() throws TypedException, ExecutionException, BadRequestException {
+
+    String payload = "{ \"name\": \"Major League Soccer\" }";
+    RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
+
+    Configuration config = new Configuration();
+    when(ramlHandler.getApi()).thenReturn(api);
+    config.setRamlHandler(ramlHandler);
+
+    RestJsonSchemaValidator JsonSchemavalidator =
+        new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json"));
+
+    JsonSchemavalidator.validate(payload);
+}
+
+  @Test(expected = TypedException.class)
+  public void invalidStringPayloadUsingParser() throws TypedException, BadRequestException, ExecutionException {
+    String payload = "{ \"naazame\": \"Major League Soccer\" }";
+    Configuration config = new Configuration();
+    RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
+
+    when(ramlHandler.getApi()).thenReturn(api);
+    config.setRamlHandler(ramlHandler);
+
+    RestJsonSchemaValidator jsonSchemavalidator =
+        new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json"));
+    jsonSchemavalidator.validate(payload);
+  }
+
 }

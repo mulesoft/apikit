@@ -4,12 +4,10 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.validation.body.schema;
+package org.mule.module.apikit.validation.body.form;
 
 import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.runtime.api.message.Message;
 
-public interface IRestSchemaValidator
-{
-    Message validate(Message message) throws BadRequestException;
+public interface FormValidatorStrategy<T> {
+  T validate(T payload) throws BadRequestException;
 }

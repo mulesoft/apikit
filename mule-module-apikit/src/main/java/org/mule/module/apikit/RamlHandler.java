@@ -7,6 +7,7 @@
 package org.mule.module.apikit;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.parser.ParserService;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;

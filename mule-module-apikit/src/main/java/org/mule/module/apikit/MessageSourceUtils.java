@@ -5,7 +5,6 @@
  * LICENSE.txt file.
  */
 package org.mule.module.apikit;
-
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 
 import org.mule.runtime.api.connection.ConnectionProvider;
@@ -21,8 +20,13 @@ import org.mule.runtime.module.extension.internal.runtime.source.SourceAdapter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+
+import org.apache.log4j.Logger;
 
 public class MessageSourceUtils {
+
+    private static final Logger LOGGER = Logger.getLogger(MessageSourceUtils.class);
 
     /**
      * TODO super hack cause when flow is initialised it starts appending the base path
@@ -37,7 +41,6 @@ public class MessageSourceUtils {
                 String listenerPath = getListenerPath(httpExtensionMessageSource);
                 return buildListenerUri(getConnectionParams(httpConfiguration), listenerPath);
             } catch (Exception e) {
-
             }
         }
 
@@ -59,7 +62,7 @@ public class MessageSourceUtils {
                 String listenerPath = getListenerPath(httpExtensionMessageSource);
                 return buildListenerUri(getConnectionParams(httpConfiguration), getResolvedPath(httpConfiguration, listenerPath));
             } catch (Exception e) {
-
+                LOGGER.warn("Error getting uri from flow " + flow.getName(), e);
             }
         }
 
@@ -82,10 +85,10 @@ public class MessageSourceUtils {
 
     private static ConfigurationInstance getConfiguration(ExtensionMessageSource httpExtensionMessageSource)
             throws IllegalAccessException {
-        ConfigurationProvider configProvider =
-                (ConfigurationProvider) readField(httpExtensionMessageSource, "configurationProvider", true);
+        AtomicReference<ConfigurationProvider> configProvider =
+                (AtomicReference<ConfigurationProvider>) readField(httpExtensionMessageSource, "configurationProvider", true);
 
-        return configProvider.get(null);
+        return configProvider.get().get(null);
     }
 
     private static Object getConnectionParams(ConfigurationInstance configurationInstance)

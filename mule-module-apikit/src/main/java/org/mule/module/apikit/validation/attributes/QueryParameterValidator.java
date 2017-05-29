@@ -7,12 +7,11 @@
 package org.mule.module.apikit.validation.attributes;
 
 import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.AttributesHelper;
-import org.mule.module.apikit.exception.InvalidQueryParameterException;
+import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.core.exception.TypedException;
-import org.mule.service.http.api.domain.ParameterMap;
+import org.mule.runtime.http.api.domain.ParameterMap;
 
 import java.util.Collection;
 

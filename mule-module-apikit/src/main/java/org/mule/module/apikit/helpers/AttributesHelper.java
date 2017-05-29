@@ -4,14 +4,15 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit;
-
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.service.http.api.domain.ParameterMap;
+package org.mule.module.apikit.helpers;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.HeaderNames;
+import org.mule.runtime.http.api.domain.ParameterMap;
 
 public class AttributesHelper
 {

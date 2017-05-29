@@ -8,7 +8,8 @@ package org.mule.module.apikit;
 
 import org.apache.commons.lang.StringUtils;
 import org.mule.extension.http.api.HttpHeaders;
-import org.mule.service.http.api.HttpConstants;
+import org.mule.module.apikit.helpers.EventHelper;
+import org.mule.runtime.http.api.HttpConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
