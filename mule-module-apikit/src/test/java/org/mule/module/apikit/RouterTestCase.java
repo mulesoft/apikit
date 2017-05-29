@@ -65,4 +65,15 @@ public class RouterTestCase extends MuleArtifactFunctionalTestCase
                 .when().post("/api/types-test");
     }
 
+    @Test
+    public void routingReusingPayload() throws Exception
+    {
+        given().header("Content-Type", "application/json")
+                .body("{\"name\": \"Fede\"}")
+                .expect()
+                .response().body(is("{\"name\": \"Fede\"}"))
+                .statusCode(200)
+                .when().post("/api/reusing-payload");
+    }
+
 }

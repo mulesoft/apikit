@@ -36,4 +36,9 @@
         <set-payload value="hello"/>
     </flow>
 
+    <flow name="post:/reusing-payload">
+        <logger level="INFO" message="inside of post:/reusing-payload"/>
+        <set-payload value="#[payload]"/>
+    </flow>
+
 </mule>
