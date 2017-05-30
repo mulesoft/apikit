@@ -6,13 +6,16 @@
  */
 package org.mule.module.apikit.validation;
 
-import java.util.concurrent.ExecutionException;
+import com.github.fge.jsonschema.main.JsonSchema;
 
-import javax.xml.validation.Schema;
+public class ApiKitJsonSchema {
+  JsonSchema jsonSchema;
 
-public interface ValidationConfig {
+  public ApiKitJsonSchema(JsonSchema jsonSchema) {
+    this.jsonSchema = jsonSchema;
+  }
 
-  boolean isParserV2();
-  ApiKitJsonSchema getJsonSchema(String schemaPath) throws ExecutionException;
-  Schema getXmlSchema( String schemaPath) throws ExecutionException;
+  public JsonSchema getSchema() {
+    return jsonSchema;
+  }
 }

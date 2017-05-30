@@ -16,6 +16,7 @@ import javax.xml.validation.Schema;
 
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
+import org.mule.module.apikit.validation.ApiKitJsonSchema;
 import org.mule.module.apikit.validation.ValidationConfig;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
@@ -251,8 +252,8 @@ public class Configuration implements Initialisable, ValidationConfig
     }
 
     @Override
-    public JsonSchema getJsonSchema(String schemaPath) throws ExecutionException {
-        return getJsonSchemaCache().get(schemaPath);
+    public ApiKitJsonSchema getJsonSchema(String schemaPath) throws ExecutionException {
+        return new ApiKitJsonSchema(getJsonSchemaCache().get(schemaPath));
     }
 
     @Override
