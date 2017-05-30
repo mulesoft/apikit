@@ -74,17 +74,17 @@ public class ApikitExtensionDeclarer
         OperationDeclarer routerDeclarer = apikitConfig.withOperation("router");
         routerDeclarer.withOutputAttributes().ofType(typeLoader.load(HttpRequestAttributes.class));
         routerDeclarer.withOutput().ofType(typeLoader.load(Object.class));
-        routerDeclarer.withError(badRequestErrorModel)
-            .withError(notAcceptableErrorModel)
-            .withError(unsupportedMediaTypeErrorModel)
-            .withError(methodNotAllowedErrorModel)
-            .withError(notFoundErrorModel);
+        routerDeclarer.withErrorModel(badRequestErrorModel)
+            .withErrorModel(notAcceptableErrorModel)
+            .withErrorModel(unsupportedMediaTypeErrorModel)
+            .withErrorModel(methodNotAllowedErrorModel)
+            .withErrorModel(notFoundErrorModel);
 
         //console
         OperationDeclarer consoleDeclarer = apikitConfig.withOperation("console");
         consoleDeclarer.withOutputAttributes().ofType(typeLoader.load(HttpRequestAttributes.class));
         consoleDeclarer.withOutput().ofType(typeLoader.load(Object.class));
-        consoleDeclarer.withError(notFoundErrorModel);
+        consoleDeclarer.withErrorModel(notFoundErrorModel);
 
         return extensionDeclarer;
     }
