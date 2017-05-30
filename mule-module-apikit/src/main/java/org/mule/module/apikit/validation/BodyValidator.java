@@ -80,7 +80,7 @@ public class BodyValidator {
       try {
         if (requestMimeTypeName.contains("json")) {
 
-          schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(config.getJsonSchema(schemaPath)));
+          schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(config.getJsonSchema(schemaPath).getSchema()));
 
         } else {
           schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));

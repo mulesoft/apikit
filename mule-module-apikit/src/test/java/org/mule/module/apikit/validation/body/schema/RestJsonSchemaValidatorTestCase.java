@@ -92,7 +92,7 @@ public class RestJsonSchemaValidatorTestCase {
     config.setRamlHandler(ramlHandler);
 
     RestJsonSchemaValidator JsonSchemavalidator =
-        new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json"));
+        new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json").getSchema());
 
     JsonSchemavalidator.validate(payload);
 }
@@ -107,7 +107,7 @@ public class RestJsonSchemaValidatorTestCase {
     config.setRamlHandler(ramlHandler);
 
     RestJsonSchemaValidator jsonSchemavalidator =
-        new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json"));
+        new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json").getSchema());
     jsonSchemavalidator.validate(payload);
   }
 

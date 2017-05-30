@@ -18,7 +18,8 @@
         "org.mule.module.apikit.uri",
         "org.mule.module.apikit.validation",
         "org.mule.module.apikit",
-        "org.raml.parser.loader"
+        "org.raml.parser.loader",
+        "org.mule.raml.interfaces.model"
       ],
       "exportedResources":[
         "/META-INF/",
