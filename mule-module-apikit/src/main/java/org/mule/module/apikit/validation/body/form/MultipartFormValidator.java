@@ -79,7 +79,7 @@ public class MultipartFormValidator implements FormValidatorStrategy<MultiPartPa
         }
       }
     }
-    return null;
+    return payload;
   }
 
 }
