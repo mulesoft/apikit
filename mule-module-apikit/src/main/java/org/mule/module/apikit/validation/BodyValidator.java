@@ -114,7 +114,7 @@ public class BodyValidator {
   }
 
   private static ValidBody validateAsMultiPart(ValidationConfig config, IMimeType mimeType, String requestMimeTypeName, Object payload) throws BadRequestException {
-    ValidBody validBody = null;
+    ValidBody validBody = new ValidBody(payload);
     FormParametersValidator formParametersValidator = null;
 
     if (mimeType.getFormParameters() != null) {
