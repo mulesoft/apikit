@@ -82,7 +82,7 @@ public class BodyValidator {
 
           schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(config.getJsonSchema(schemaPath).getSchema()));
 
-        } else {
+        } else if(requestMimeTypeName.contains("xml")) {
           schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));
         }
       } catch (ExecutionException e) {
