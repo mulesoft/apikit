@@ -70,6 +70,22 @@ public class BodyValidator {
 
 
     IMimeType mimeType = foundMimeType.getValue();
+
+
+    if(requestMimeTypeName.contains("json") || requestMimeTypeName.contains("xml")) {
+
+      validateAsString(config, mimeType, action, requestMimeTypeName, payload, charset);
+
+    } else if(requestMimeTypeName.contains("multipart/form-data") || requestMimeTypeName.contains("application/x-www-form-urlencoded")) {
+
+      validBody = validateAsMultiPart(config, mimeType, requestMimeTypeName, payload);
+
+    }
+
+    return validBody;
+  }
+
+  private static void validateAsString(ValidationConfig config, IMimeType mimeType, IAction action, String requestMimeTypeName, Object payload, String charset) throws BadRequestException {
     RestSchemaValidator schemaValidator = null;
 
     if (config.isParserV2()) {
@@ -82,7 +98,7 @@ public class BodyValidator {
 
           schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(config.getJsonSchema(schemaPath).getSchema()));
 
-        } else {
+        } else if(requestMimeTypeName.contains("xml")) {
           schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));
         }
       } catch (ExecutionException e) {
@@ -95,6 +111,10 @@ public class BodyValidator {
 
     schemaValidator.validate(strPayload);
 
+  }
+
+  private static ValidBody validateAsMultiPart(ValidationConfig config, IMimeType mimeType, String requestMimeTypeName, Object payload) throws BadRequestException {
+    ValidBody validBody = new ValidBody(payload);
     FormParametersValidator formParametersValidator = null;
 
     if (mimeType.getFormParameters() != null) {
@@ -118,4 +138,5 @@ public class BodyValidator {
 
     return validBody;
   }
+
 }

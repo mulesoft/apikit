@@ -6,14 +6,14 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import java.util.Collection;
+
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.core.exception.TypedException;
 import org.mule.runtime.http.api.domain.ParameterMap;
-
-import java.util.Collection;
 
 public class QueryParameterValidator {
 
@@ -28,8 +28,7 @@ public class QueryParameterValidator {
 
   public void validateAndAddDefaults(ParameterMap queryParams, String queryString) throws TypedException
   {
-    this.queryParams = queryParams;
-    this.queryString = queryString;
+
     for (String expectedKey : action.getQueryParameters().keySet()) {
       IParameter expected = action.getQueryParameters().get(expectedKey);
       Collection<?> actual = queryParams.getAll(expectedKey);
@@ -63,6 +62,9 @@ public class QueryParameterValidator {
         }
       }
     }
+
+    this.queryParams = queryParams;
+    this.queryString = queryString;
   }
 
   public ParameterMap getQueryParams() {
