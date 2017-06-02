@@ -12,11 +12,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.IOUtils;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
-import org.mule.runtime.core.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,14 +28,22 @@ public class PayloadHelper {
   {
     if (input instanceof CursorStreamProvider)
     {
-      return IOUtils.toString(((CursorStreamProvider) input).openCursor());
+      try {
+        return IOUtils.toString(((CursorStreamProvider) input).openCursor());
+      } catch (IOException e) {
+        throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Error processing request: " + e.getMessage());
+      }
     }
 
     if (input instanceof InputStream)
     {
       logger.debug("transforming payload to perform Schema validation");
       RewindableInputStream rewindableInputStream = new RewindableInputStream((InputStream) input);
-      input = IOUtils.toString(rewindableInputStream);
+      try {
+        input = IOUtils.toString(rewindableInputStream);
+      } catch (IOException e) {
+        throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Error processing request: " + e.getMessage());
+      }
       rewindableInputStream.rewind();
 
     }
