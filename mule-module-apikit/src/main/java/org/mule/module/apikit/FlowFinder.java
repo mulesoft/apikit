@@ -6,6 +6,12 @@
  */
 package org.mule.module.apikit;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
@@ -13,14 +19,6 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.construct.Flow;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +30,7 @@ public class FlowFinder
     private Map<String, Flow> restFlowMap;
     private Map<String, Flow> restFlowMapUnwrapped;
 
-    protected Map<URIPattern, IResource> routingTable;
+    protected RoutingTable routingTable;
 
     private RamlHandler ramlHandler;
     private String configName;
@@ -220,25 +218,11 @@ public class FlowFinder
 
     private void loadRoutingTable() {
         if (routingTable == null) {
-            routingTable = new ConcurrentHashMap<>();
+            routingTable = new RoutingTable(ramlHandler.getApi());
         }
-        buildRoutingTable(ramlHandler.getApi().getResources());
+
     }
 
-    private void buildRoutingTable(Map<String, IResource> resources) {
-        for (IResource resource : resources.values()) {
-            String parentUri = resource.getParentUri();
-            if (parentUri.contains("{version}")) {
-                resource.setParentUri(parentUri.replaceAll("\\{version}", ramlHandler.getApi().getVersion()));
-            }
-            String uri = resource.getUri();
-            //  logger.debug("Adding URI to the routing table: " + uri);
-            routingTable.put(new URIPattern(uri), resource);
-            if (resource.getResources() != null) {
-                buildRoutingTable(resource.getResources());
-            }
-        }
-    }
 
     public Flow getFlow(IResource resource, String method, String contentType) throws UnsupportedMediaTypeException
     {
@@ -259,7 +243,7 @@ public class FlowFinder
 
     public IResource getResource(URIPattern uriPattern)
     {
-        return routingTable.get(uriPattern);
+        return routingTable.getResource(uriPattern);
     }
 
     private boolean isFlowDeclaredWithDifferentMediaType(Map<String, Flow> map, String baseKey)
