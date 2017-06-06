@@ -59,17 +59,24 @@ public class ErrorHandlerScope implements Scope {
             transform.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
             transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(), XSI_NAMESPACE.getNamespace());
 
-            // Set Payload and Variable Element
+            // Payload
+            Element message = new Element("message", EE_NAMESPACE.getNamespace());
             Element setPayload = new Element("set-payload", EE_NAMESPACE.getNamespace());
             CDATA cDataSection = new CDATA(getTransformText(statusCodeMapping.getMessage()));
 
+            // Variables
+            Element variables = new Element("variables", EE_NAMESPACE.getNamespace());
             Element statusCodeVariable = new Element("set-variable", EE_NAMESPACE.getNamespace());
             statusCodeVariable.setAttribute("variableName", "httpStatus");
 
             setPayload.addContent(cDataSection);
             statusCodeVariable.addContent(statusCodeMapping.getStatusCode());
-            transform.addContent(setPayload);
-            transform.addContent(statusCodeVariable);
+            message.addContent(setPayload);
+            variables.addContent(statusCodeVariable);
+
+            transform.addContent(message);
+            transform.addContent(variables);
+
             errorMapping.addContent(transform);
             errorHandler.addContent(errorMapping);
 
@@ -82,9 +89,10 @@ public class ErrorHandlerScope implements Scope {
     }
 
     private String getTransformText(String message) {
-        return "\n             %output application/json\n" +
-                "             ---\n" +
-                "             {message: \"" + message + "\"\n";
+        return "\n\t\t\t\t%dw 2.0\n" +
+                "\t\t\t\toutput application/json\n" +
+                "\t\t\t\t---\n" +
+                "\t\t\t\t{message: \"" + message + "\"}\n";
     }
 
     public static class StatusCodeMapping {
