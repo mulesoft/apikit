@@ -34,6 +34,10 @@
                 <set-payload value="{message: 'Unsupported media type'}"/>
                 <set-variable variableName="httpStatus" value="415"/>
             </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <set-payload value="{message: 'Resource Not Found'}"/>
+                <set-variable variableName="httpStatus" value="404"/>
+            </on-error-propagate>
         </error-handler>
     </flow>
 
