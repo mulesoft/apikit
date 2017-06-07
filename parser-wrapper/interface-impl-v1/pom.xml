@@ -43,6 +43,11 @@
             <!--required by raml-parser. Workaround for MULE-12439-->
         </dependency>
         <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <!--required by raml-parser. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
             <groupId>org.mule.raml</groupId>
             <artifactId>parser-interface</artifactId>
             <version>${project.version}</version>
