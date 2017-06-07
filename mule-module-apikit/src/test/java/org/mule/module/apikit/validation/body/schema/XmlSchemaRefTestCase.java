@@ -54,7 +54,6 @@ public class XmlSchemaRefTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS FIXED
     public void invalidSchema() throws Exception
     {
         given()

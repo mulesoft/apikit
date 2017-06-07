@@ -8,6 +8,7 @@ package org.mule.module.apikit;
 
 import org.apache.commons.lang.StringUtils;
 import org.mule.extension.http.api.HttpHeaders;
+import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.runtime.http.api.HttpConstants;
 import org.slf4j.Logger;
@@ -107,7 +108,7 @@ public class Console implements Processor
                 String raml = config.getRamlHandler().getRamlV2(resourceRelativePath);
                 if (raml == null)
                 {
-                    throw ApikitErrorTypes.NOT_FOUND.throwErrorType(resourceRelativePath);
+                    throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(resourceRelativePath));
                 }
 
                 return EventHelper.setPayload(event, raml, RamlHandler.APPLICATION_RAML);
@@ -124,7 +125,7 @@ public class Console implements Processor
         }
         catch (IOException e)
         {
-            throw ApikitErrorTypes.NOT_FOUND.throwErrorType(resourceRelativePath);
+            throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(resourceRelativePath));
         }
         finally
         {

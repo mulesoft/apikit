@@ -23,8 +23,17 @@
             <http:response statusCode="#[variables.httpStatus default 200]">
                 <http:headers>#[variables.outboundHeaders default {}]</http:headers>
             </http:response>
+            <http:error-response statusCode="#[variables.httpStatus default 500]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:error-response>
         </http:listener>
         <apikit:router config-ref="api-config"/>
+        <error-handler>
+        <on-error-propagate type="APIKIT:BAD_REQUEST">
+            <set-payload value="{message: 'Bad request'}"/>
+            <set-variable variableName="httpStatus" value="400"/>
+        </on-error-propagate>
+        </error-handler>
     </flow>
 
     <flow name="post:/test:application/xml:api-config">

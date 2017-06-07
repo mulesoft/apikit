@@ -14,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 import javax.xml.validation.Schema;
 
+import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
 import org.mule.module.apikit.validation.ApiKitJsonSchema;
@@ -191,7 +192,7 @@ public class Configuration implements Initialisable, ValidationConfig
 
                                 if (match == null) {
                                     logger.warn("No matching patterns for URI " + path);
-                                    throw ApikitErrorTypes.NOT_FOUND.throwErrorType(path);
+                                    throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(path));
                                 }
                                 return match;
                             }

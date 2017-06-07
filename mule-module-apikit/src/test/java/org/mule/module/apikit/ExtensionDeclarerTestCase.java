@@ -26,8 +26,9 @@ public class ExtensionDeclarerTestCase
     @Test
     public void getApikitExtensionDeclarer()
     {
-        ApikitExtensionDeclarer apikitExtensionDeclarer = new ApikitExtensionDeclarer();
-        ExtensionDeclarer extensionDeclarer = apikitExtensionDeclarer.generateDeclarer();
+        ApikitExtensionLoadingDelegate apikitExtensionLoadingDelegate = new ApikitExtensionLoadingDelegate();
+        ExtensionDeclarer extensionDeclarer = new ExtensionDeclarer();
+        apikitExtensionLoadingDelegate.accept(extensionDeclarer, null);
         ExtensionModelJsonSerializer serializer = new ExtensionModelJsonSerializer(true);
         ExtensionLoadingContext ctx = new DefaultExtensionLoadingContext(extensionDeclarer, Thread.currentThread().getContextClassLoader(),
                                                                          DslResolvingContext.getDefault(emptySet()));

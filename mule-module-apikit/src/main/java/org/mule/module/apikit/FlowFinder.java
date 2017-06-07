@@ -235,7 +235,7 @@ public class FlowFinder
             if (flow == null && isFlowDeclaredWithDifferentMediaType(rawRestFlowMap, baseKey))
             {
                 //throw new UnsupportedMediaTypeException();
-                throw ApikitErrorTypes.UNSUPPORTED_MEDIA_TYPE.throwErrorType("");
+                throw ApikitErrorTypes.throwErrorTypeNew(new UnsupportedMediaTypeException());
             }
         }
         return flow;

@@ -15,4 +15,10 @@ public class ConflictException extends MuleRestException {
     public ConflictException(String message) {
         super(message);
     }
+
+    @Override
+    public String getStringRepresentation()
+    {
+        return "CUSTOM:CONFLICT";
+    }
 }

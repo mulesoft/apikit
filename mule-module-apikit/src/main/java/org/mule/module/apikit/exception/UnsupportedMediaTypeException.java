@@ -8,6 +8,8 @@ package org.mule.module.apikit.exception;
 
 public class UnsupportedMediaTypeException extends MuleRestException {
 
+    private static String STRING_REPRESENTATION = "APIKIT:UNSUPPORTED_MEDIA_TYPE";
+
     public UnsupportedMediaTypeException(String path) {
         super(path);
     }
@@ -18,5 +20,11 @@ public class UnsupportedMediaTypeException extends MuleRestException {
 
     public UnsupportedMediaTypeException(){
         super();
+    }
+
+    @Override
+    public String getStringRepresentation()
+    {
+        return STRING_REPRESENTATION;
     }
 }

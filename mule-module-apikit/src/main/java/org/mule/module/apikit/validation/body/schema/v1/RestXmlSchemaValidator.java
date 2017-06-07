@@ -58,7 +58,7 @@ public class RestXmlSchemaValidator implements IRestSchemaValidatorStrategy
 
         } catch (IOException|SAXException e) {
             logger.info("Schema validation failed: " + e.getMessage());
-            throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(e);
+            throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(e));
         }
 
     }

@@ -6,6 +6,12 @@
     "attributes": {
     }
   },
+  "extensionModelLoaderDescriptor": {
+    "id": "crafted",
+    "attributes": {
+      "type": "org.mule.module.apikit.ApikitExtensionLoadingDelegate"
+    }
+  },
   "classLoaderModelLoaderDescriptor":{
     "id":"maven",
     "attributes":{

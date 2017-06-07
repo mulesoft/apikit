@@ -9,6 +9,7 @@ package org.mule.module.apikit.validation.attributes;
 import java.util.Collection;
 
 import org.mule.module.apikit.ApikitErrorTypes;
+import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -35,7 +36,7 @@ public class QueryParameterValidator {
 
       if (actual.isEmpty()) {
         if (expected.isRequired()) {
-          throw ApikitErrorTypes.INVALID_QUERY_PARAMETER.throwErrorType("Required query parameter " + expectedKey + " not specified");
+          throw ApikitErrorTypes.throwErrorTypeNew(new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified"));
         }
 
         if (expected.getDefaultValue() != null) {
@@ -47,7 +48,7 @@ public class QueryParameterValidator {
       } else {
 
         if (actual.size() > 1 && !(expected.isRepeat() || expected.isArray())) {
-          throw ApikitErrorTypes.INVALID_QUERY_PARAMETER.throwErrorType("Query parameter " + expectedKey + " is not repeatable");
+          throw ApikitErrorTypes.throwErrorTypeNew(new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable"));
         }
 
         if (expected.isArray()) {
@@ -125,7 +126,7 @@ public class QueryParameterValidator {
     if (!expected.validate(paramValue)) {
       String msg = String.format("Invalid value '%s' for query parameter %s. %s",
                                  paramValue, paramKey, expected.message(paramValue));
-      throw ApikitErrorTypes.INVALID_QUERY_PARAMETER.throwErrorType(msg);
+      throw ApikitErrorTypes.throwErrorTypeNew(new InvalidQueryParameterException(msg));
     }
   }
 

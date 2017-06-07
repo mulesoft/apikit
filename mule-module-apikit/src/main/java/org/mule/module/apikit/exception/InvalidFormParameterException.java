@@ -8,6 +8,8 @@ package org.mule.module.apikit.exception;
 
 public class InvalidFormParameterException extends BadRequestException {
 
+  public static final String STRING_REPRESENTATION = "APIKIT:BAD_REQUEST";
+
   public InvalidFormParameterException(String message) {
     super(message);
   }
@@ -18,5 +20,11 @@ public class InvalidFormParameterException extends BadRequestException {
 
   public InvalidFormParameterException(){
     super();
+  }
+
+  @Override
+  public String getStringRepresentation()
+  {
+    return STRING_REPRESENTATION;
   }
 }

@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.exception.InvalidFormParameterException;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.message.MultiPartPayload;
@@ -54,7 +55,7 @@ public class MultipartFormValidator implements FormValidatorStrategy<MultiPartPa
       if (data == null && expected.isRequired())
       {
         //perform only 'required' validation to avoid consuming the stream
-        throw ApikitErrorTypes.INVALID_FORM_PARAMETER.throwErrorType("Required form parameter " + expectedKey + " not specified");
+        throw ApikitErrorTypes.throwErrorTypeNew(new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified"));
       }
       if (data == null && expected.getDefaultValue() != null)
       {

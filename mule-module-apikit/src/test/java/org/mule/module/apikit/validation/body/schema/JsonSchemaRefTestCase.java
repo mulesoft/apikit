@@ -55,7 +55,6 @@ public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS FIXED
     public void invalidSchema() throws Exception
     {
         given()
@@ -76,7 +75,6 @@ public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS FIXED
     public void invalidGlobalSchema() throws Exception
     {
         given()
@@ -97,7 +95,6 @@ public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS FIXED
     public void invalidGlobalIncludeSchema() throws Exception
     {
         given()

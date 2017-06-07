@@ -19,8 +19,16 @@
             <http:response statusCode="#[variables.httpStatus default 200]">
                 <http:headers>#[variables.outboundHeaders default {}]</http:headers>
             </http:response>
+            <http:error-response statusCode="#[variables.httpStatus default 500]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:error-response>
         </http:listener>
         <apikit:router />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <set-variable variableName="httpStatus" value="400"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
 
     <flow name="put:/currentuser">

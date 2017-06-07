@@ -8,6 +8,7 @@ package org.mule.module.apikit.exception;
 
 public class InvalidHeaderException extends BadRequestException
 {
+  public static final String STRING_REPRESENTATION = "APIKIT:BAD_REQUEST";
 
   public InvalidHeaderException(String message) {
     super(message);
@@ -19,5 +20,11 @@ public class InvalidHeaderException extends BadRequestException
 
   public InvalidHeaderException(){
     super();
+  }
+
+  @Override
+  public String getStringRepresentation()
+  {
+    return STRING_REPRESENTATION;
   }
 }

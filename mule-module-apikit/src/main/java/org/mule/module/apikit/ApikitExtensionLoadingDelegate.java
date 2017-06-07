@@ -21,20 +21,26 @@ import org.mule.runtime.api.meta.model.declaration.fluent.ParameterGroupDeclarer
 import org.mule.runtime.api.meta.model.error.ErrorModel;
 import org.mule.runtime.api.meta.model.error.ErrorModelBuilder;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
+import org.mule.runtime.extension.api.loader.ExtensionLoadingContext;
+import org.mule.runtime.extension.api.loader.ExtensionLoadingDelegate;
 
-public class ApikitExtensionDeclarer
+public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
 {
-    public static final String EXTENSION_NAME = "http";
-    public static final String EXTENSION_DESCRIPTION = "Http Connector";
+    public static final String EXTENSION_NAME = "apikit";
+    public static final String EXTENSION_DESCRIPTION = "APIKit plugin";
     public static final String VENDOR = "Mulesoft";
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "4.0.0";
     public static final MuleVersion MIN_MULE_VERSION = new MuleVersion("4.0");
+    public static final String XSD_FILE_NAME = "mule-apikit.xsd";
+    private static final String UNESCAPED_LOCATION_PREFIX = "http://";
+    private static final String SCHEMA_LOCATION = "mulesoft.com/extension";
 
     protected final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(JAVA);
 
-    public ExtensionDeclarer generateDeclarer()
+    @Override
+    public void accept(ExtensionDeclarer extensionDeclarer, ExtensionLoadingContext extensionLoadingContext)
     {
-        ErrorModel muleAnyErrorType = ErrorModelBuilder.newError("ANY", "MULE").build();//TODO CHECK IF THIS ERROR TYPE HAS TO BE DECLARED AT EXTENSION LEVEL
+        ErrorModel muleAnyErrorType = ErrorModelBuilder.newError("ANY", "MULE").build();
         ErrorModel apikitAnyErrorType = ErrorModelBuilder.newError("ANY", "APIKIT").withParent(muleAnyErrorType).build();
         ErrorModel badRequestErrorModel = ErrorModelBuilder.newError("BAD_REQUEST", "APIKIT").withParent(apikitAnyErrorType).build();
         ErrorModel notAcceptableErrorModel = ErrorModelBuilder.newError("NOT_ACCEPTABLE", "APIKIT").withParent(apikitAnyErrorType).build();
@@ -42,14 +48,21 @@ public class ApikitExtensionDeclarer
         ErrorModel methodNotAllowedErrorModel = ErrorModelBuilder.newError("METHOD_NOT_ALLOWED", "APIKIT").withParent(apikitAnyErrorType).build();
         ErrorModel notFoundErrorModel = ErrorModelBuilder.newError("NOT_FOUND", "APIKIT").withParent(apikitAnyErrorType).build();
 
-        ExtensionDeclarer extensionDeclarer = new ExtensionDeclarer();
+        XmlDslModel xmlDslModel = XmlDslModel.builder()
+                .setPrefix(EXTENSION_NAME)
+                .setXsdFileName(XSD_FILE_NAME)
+                .setSchemaVersion(VERSION)
+                .setSchemaLocation(String.format("%s/%s/%s", UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, VERSION, XSD_FILE_NAME))
+                .setNamespace(UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION)
+                .build();
+
         extensionDeclarer.named(EXTENSION_NAME)
                 .describedAs(EXTENSION_DESCRIPTION)
                 .fromVendor(VENDOR)
                 .onVersion(VERSION)
                 .withCategory(COMMUNITY)
                 .withMinMuleVersion(MIN_MULE_VERSION)
-                .withXmlDsl(XmlDslModel.builder().build())
+                .withXmlDsl(xmlDslModel)
                 .withErrorModel(badRequestErrorModel)
                 .withErrorModel(apikitAnyErrorType)
                 .withErrorModel(notAcceptableErrorModel)
@@ -86,6 +99,5 @@ public class ApikitExtensionDeclarer
         consoleDeclarer.withOutput().ofType(typeLoader.load(Object.class));
         consoleDeclarer.withErrorModel(notFoundErrorModel);
 
-        return extensionDeclarer;
     }
 }

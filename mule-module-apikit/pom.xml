@@ -25,6 +25,7 @@
         <mule.app.plugins.maven.plugin.version>1.0.0-SNAPSHOT</mule.app.plugins.maven.plugin.version>
         <mule.http.connector.version>1.0.0-SNAPSHOT</mule.http.connector.version>
         <mule.sockets.connector.version>1.0.0-SNAPSHOT</mule.sockets.connector.version>
+        <testExtensionModelLoaderId>crafted</testExtensionModelLoaderId>
     </properties>
 
     <build>

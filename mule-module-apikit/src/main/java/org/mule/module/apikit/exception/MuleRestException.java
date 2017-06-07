@@ -10,9 +10,8 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.i18n.I18nMessage;
 import org.mule.runtime.api.i18n.I18nMessageFactory;
 
-public class MuleRestException extends MuleException
+public abstract class MuleRestException extends MuleException
 {
-
   public MuleRestException(String message) {
     super(I18nMessageFactory.createStaticMessage(message));
   }
@@ -26,4 +25,6 @@ public class MuleRestException extends MuleException
   }
 
   public MuleRestException() {}
+
+  public abstract String getStringRepresentation();
 }

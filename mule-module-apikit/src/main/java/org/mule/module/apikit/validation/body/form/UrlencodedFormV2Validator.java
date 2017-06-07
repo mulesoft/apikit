@@ -12,6 +12,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.exception.InvalidFormParameterException;
 import org.mule.raml.implv2.v10.model.MimeTypeImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -58,7 +59,7 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<Map<Stri
       {
         resultString += result.getMessage() + "\n";
       }
-      throw ApikitErrorTypes.INVALID_FORM_PARAMETER.throwErrorType(resultString);
+      throw ApikitErrorTypes.throwErrorTypeNew(new InvalidFormParameterException(resultString));
     }
 
     return payload;

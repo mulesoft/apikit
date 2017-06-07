@@ -8,6 +8,8 @@ package org.mule.module.apikit.exception;
 
 public class BadRequestException extends MuleRestException {
 
+  public static final String STRING_REPRESENTATION = "APIKIT:BAD_REQUEST";
+
   public BadRequestException(String message) {
     super(message);
   }
@@ -18,5 +20,11 @@ public class BadRequestException extends MuleRestException {
 
   public BadRequestException(){
     super();
+  }
+
+  @Override
+  public String getStringRepresentation()
+  {
+    return STRING_REPRESENTATION;
   }
 }

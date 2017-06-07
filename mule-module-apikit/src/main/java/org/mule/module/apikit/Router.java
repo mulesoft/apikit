@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
@@ -113,7 +115,7 @@ public class Router extends AbstractInterceptingMessageProcessor implements Init
         try {
             charset = getEncoding(event.getMessage(), event.getMessage().getPayload().getValue(), logger);
         } catch (IOException e) {
-            throw ApikitErrorTypes.BAD_REQUEST.throwErrorType("Error processing request: " + e.getMessage());
+            throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException("Error processing request: " + e.getMessage()));
         }
 
         ValidRequest validRequest = RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload().getValue(), charset);
@@ -125,7 +127,7 @@ public class Router extends AbstractInterceptingMessageProcessor implements Init
     {
         IResource resource = configuration.getFlowFinder().getResource(uriPattern);
         if (resource.getAction(method) == null) {
-            throw ApikitErrorTypes.METHOD_NOT_ALLOWED.throwErrorType(resource.getUri() + " : " + method);
+            throw ApikitErrorTypes.throwErrorTypeNew(new MethodNotAllowedException(resource.getUri() + " : " + method));
         }
         return resource;
     }

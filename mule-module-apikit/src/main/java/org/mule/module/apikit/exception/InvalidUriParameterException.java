@@ -8,6 +8,8 @@ package org.mule.module.apikit.exception;
 
 public class InvalidUriParameterException extends BadRequestException {
 
+  public static final String STRING_REPRESENTATION = "APIKIT:BAD_REQUEST";
+
   public InvalidUriParameterException(String message) {
     super(message);
   }
@@ -18,5 +20,11 @@ public class InvalidUriParameterException extends BadRequestException {
 
   public InvalidUriParameterException(){
     super();
+  }
+
+  @Override
+  public String getStringRepresentation()
+  {
+    return STRING_REPRESENTATION;
   }
 }

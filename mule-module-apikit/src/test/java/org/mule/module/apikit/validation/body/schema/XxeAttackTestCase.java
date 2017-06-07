@@ -49,7 +49,6 @@ public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS FIXED
     public void xxeAttack() throws Exception
     {
         Response post = given().log().all()
@@ -62,7 +61,6 @@ public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore //TODO UNIGNORE ONCE ERROR HANDLER IS FIXED
     public void xxeAttack2() throws Exception
     {
         given().log().all()

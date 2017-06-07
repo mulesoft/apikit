@@ -49,7 +49,7 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy
             report = jsonSchema.validate(data);
         } catch (IOException|ProcessingException e)
         {
-            throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(e);
+            throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(e));
         }
 
 
@@ -67,7 +67,7 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy
             if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning))
             {
                 logger.info("Schema validation failed: " + logMessage);
-                throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(logMessage);
+                throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(logMessage));
             }
         }
 

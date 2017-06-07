@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.PayloadHelper;
 import org.mule.module.apikit.validation.body.form.FormParametersValidator;
@@ -65,7 +66,7 @@ public class BodyValidator {
           .get();
 
     } catch (NoSuchElementException e) {
-      throw ApikitErrorTypes.UNSUPPORTED_MEDIA_TYPE.throwErrorType("");
+      throw ApikitErrorTypes.throwErrorTypeNew(new UnsupportedMediaTypeException());
     }
 
 
@@ -102,7 +103,7 @@ public class BodyValidator {
           schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));
         }
       } catch (ExecutionException e) {
-        throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(e);
+        throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(e));
       }
     }
 

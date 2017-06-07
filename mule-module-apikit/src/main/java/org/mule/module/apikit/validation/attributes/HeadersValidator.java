@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation.attributes;
 
 import org.mule.module.apikit.ApikitErrorTypes;
+import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -32,13 +33,13 @@ public class HeadersValidator {
           if (incoming.matches(regex) && !expected.validate(incomingValue)) {
             String msg = String.format("Invalid value '%s' for header %s. %s",
                                        incomingValue, expectedKey, expected.message(incomingValue));
-            throw ApikitErrorTypes.INVALID_HEADER.throwErrorType(msg);
+            throw ApikitErrorTypes.throwErrorTypeNew(new InvalidHeaderException(msg));
           }
         }
       } else {
         String actual = AttributesHelper.getParamIgnoreCase(headers, expectedKey);
         if (actual == null && expected.isRequired()) {
-          throw ApikitErrorTypes.INVALID_HEADER.throwErrorType("Required header " + expectedKey + " not specified");
+          throw ApikitErrorTypes.throwErrorTypeNew(new InvalidHeaderException("Required header " + expectedKey + " not specified"));
         }
         if (actual == null && expected.getDefaultValue() != null) {
           headers = AttributesHelper.addParam(headers, expectedKey, expected.getDefaultValue());
@@ -47,7 +48,7 @@ public class HeadersValidator {
           if (!expected.validate(actual)) {
             String msg = String.format("Invalid value '%s' for header %s. %s",
                                        actual, expectedKey, expected.message(actual));
-            throw ApikitErrorTypes.INVALID_HEADER.throwErrorType(msg);
+            throw ApikitErrorTypes.throwErrorTypeNew(new InvalidHeaderException(msg));
           }
         }
       }

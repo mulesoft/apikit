@@ -39,7 +39,7 @@ public class RestSchemaV2Validator implements IRestSchemaValidatorStrategy {
     if (!validationResults.isEmpty()) {
       String logMessage = validationResults.get(0).getMessage();
       logger.info("Schema validation failed: " + logMessage);
-      throw ApikitErrorTypes.BAD_REQUEST.throwErrorType(logMessage);
+      throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(logMessage));
     }
   }
 }

@@ -8,6 +8,8 @@ package org.mule.module.apikit.exception;
 
 public class MethodNotAllowedException extends MuleRestException {
 
+  public static final String STRING_REPRESENTATION = "APIKIT:METHOD_NOT_ALLOWED";
+
   public MethodNotAllowedException(String message) {
     super(message);
   }
@@ -18,5 +20,11 @@ public class MethodNotAllowedException extends MuleRestException {
 
   public MethodNotAllowedException(){
     super();
+  }
+
+  @Override
+  public String getStringRepresentation()
+  {
+    return STRING_REPRESENTATION;
   }
 }

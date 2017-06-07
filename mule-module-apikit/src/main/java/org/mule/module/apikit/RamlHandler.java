@@ -7,6 +7,7 @@
 package org.mule.module.apikit;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.parser.ParserService;
 import org.mule.raml.interfaces.model.IAction;
@@ -92,7 +93,7 @@ public class RamlHandler
         resourceRelativePath = sanitarizeResourceRelativePath(resourceRelativePath);
         if (resourceRelativePath.contains(".."))
         {
-            throw ApikitErrorTypes.NOT_FOUND.throwErrorType("\"..\" is not allowed");
+            throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException("\"..\" is not allowed"));
         }
         if (apiResourcesRelativePath.equals(resourceRelativePath))
         {
@@ -109,7 +110,7 @@ public class RamlHandler
             //the resource should be in a subfolder, otherwise it could be requesting the properties file
             if (!resourceRelativePath.contains("/"))
             {
-                throw ApikitErrorTypes.NOT_FOUND.throwErrorType("Requested resources should be in a subfolder");
+                throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException("Requested resources should be in a subfolder"));
             }
             //resource
             InputStream apiResource = null;
@@ -120,7 +121,7 @@ public class RamlHandler
 
                 if (apiResource == null)
                 {
-                    throw ApikitErrorTypes.NOT_FOUND.throwErrorType(resourceRelativePath);
+                    throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(resourceRelativePath));
                 }
 
                 baos = new ByteArrayOutputStream();
@@ -129,7 +130,7 @@ public class RamlHandler
             catch (IOException e)
             {
                 logger.debug(e.getMessage());
-                throw ApikitErrorTypes.NOT_FOUND.throwErrorType(resourceRelativePath);
+                throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(resourceRelativePath));
             }
             finally
             {
