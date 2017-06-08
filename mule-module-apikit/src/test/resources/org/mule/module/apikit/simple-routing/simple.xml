@@ -20,6 +20,7 @@
                 <http:headers>#[variables.outboundHeaders default {}]</http:headers>
             </http:response>
             <http:error-response statusCode="#[variables.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
                 <http:headers>#[variables.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
@@ -28,6 +29,10 @@
             <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
                 <set-payload value="{message: 'Not acceptable'}"/>
                 <set-variable variableName="httpStatus" value="406"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <set-payload value="{message: 'Unsupported media type'}"/>
+                <set-variable variableName="httpStatus" value="415"/>
             </on-error-propagate>
         </error-handler>
     </flow>

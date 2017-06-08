@@ -90,7 +90,17 @@ public class RouterTestCase extends MuleArtifactFunctionalTestCase
     @Test
     public void validMultipleAcceptHeader() throws Exception
     {
-        given().header("Accept", "application/json; text/plain")
+        given().header("Accept", "application/json, text/plain")
+                .expect()
+                .response().body(is("hello"))
+                .statusCode(200)
+                .when().get("/api/resources");
+    }
+
+    @Test
+    public void validMultipleAcceptHeader2() throws Exception
+    {
+        given().header("Accept", "text/plain, application/json")
                 .expect()
                 .response().body(is("hello"))
                 .statusCode(200)
@@ -102,8 +112,29 @@ public class RouterTestCase extends MuleArtifactFunctionalTestCase
     {
         given().header("Accept", "application/pepe")
                 .expect()
-                .response()//.body(is("hello"))
+                .response().body(is("{message: 'Not acceptable'}"))
                 .statusCode(406)
                 .when().get("/api/resources");
+    }
+
+    @Test
+    public void invalidMultipleAcceptHeader() throws Exception
+    {
+        given().header("Accept", "application/pepe, text/plain")
+                .expect()
+                .response().body(is("{message: 'Not acceptable'}"))
+                .statusCode(406)
+                .when().get("/api/resources");
+    }
+
+    @Test
+    public void unsupportedMediaType() throws Exception
+    {
+        given().header("Content-Type", "application/xml")
+                .body("<name>Fede</name>")
+                .expect()
+                .response().body(is("{message: 'Unsupported media type'}"))
+                .statusCode(415)
+                .when().post("/api/types-test");
     }
 }
