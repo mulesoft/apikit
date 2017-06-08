@@ -104,8 +104,10 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             }
 
             JsonSchema schema = JsonSchemaCache.getJsonSchemaCache(muleContext, configId, api).get(schemaPath);
-            ProcessingReport report = schema.validate(data);
+            ProcessingReport report = schema.validate(data, true);
             Iterator<ProcessingMessage> iterator = report.iterator();
+
+            final StringBuilder messageBuilder = new StringBuilder();
 
             while (iterator.hasNext())
             {
@@ -118,9 +120,15 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
 
                 if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning))
                 {
-                    logger.info("Schema validation failed: " + message);
-                    throw new BadRequestException(message);
+                    messageBuilder.append(message).append("\n");
                 }
+            }
+
+            if (messageBuilder.length() > 0)
+            {
+                String message = messageBuilder.toString();
+                logger.info("Schema validation failed: " + message);
+                throw new BadRequestException(message);
             }
         }
         catch (ExecutionException e)
