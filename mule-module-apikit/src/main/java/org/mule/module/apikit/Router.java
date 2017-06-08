@@ -37,6 +37,9 @@ import org.mule.runtime.core.exception.TypedException;
 import org.mule.runtime.core.processor.AbstractInterceptingMessageProcessor;
 import java.net.URI;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Router extends AbstractInterceptingMessageProcessor implements Initialisable
 
 {
@@ -47,10 +50,17 @@ public class Router extends AbstractInterceptingMessageProcessor implements Init
 
     private String name;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
+
     @Override
     public void initialise() throws InitialisationException
     {
         URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
+        if (uri == null)
+        {
+            LOGGER.error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
+            return;
+        }
         registry.setApiSource(configRef, uri.toString().replace("*",""));
     }
 
