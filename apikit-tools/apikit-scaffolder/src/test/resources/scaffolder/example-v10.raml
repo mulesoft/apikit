@@ -1,4 +1,4 @@
-#%RAML 0.8
+#%RAML 1.0
 ---
 title: Sample API
 version: v1
@@ -29,3 +29,14 @@ baseUri: http://localhost/api
                 <address>Juana Manso 999</address>
                 <country>Argentina</country>
               </Person>
+/books:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              title: In Cold Blood
+              author: Truman Capote
+              year: 1966
+

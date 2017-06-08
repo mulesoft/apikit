@@ -522,13 +522,44 @@ public class ScaffolderMule4Test {
         assertEquals(6, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
-        assertEquals(7, countOccurences(s, "<ee:set-payload>"));
+        assertEquals(8, countOccurences(s, "<ee:set-payload>"));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
         assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
         assertEquals(7, countOccurences(s, "application/json"));
-        assertEquals(1, countOccurences(s, "{\n" +
+        assertEquals(1, countOccurences(s,
+                "{\n" +
                 "  name: \"Bobby\",\n" +
                 "  food: \"Ice Cream\"\n" +
+                "}"));
+        assertEquals(1, countOccurences(s, "{\n" +
+                "  Person: {\n" +
+                "    name: \"Underwood\",\n" +
+                "    address: \"Juana Manso 999\",\n" +
+                "    country: \"Argentina\"\n" +
+                "  }\n" +
+                "}"));
+    }
+
+    @Test
+    public void testExampleGenerateWithRamlType() throws Exception {
+        File muleXmlSimple = simpleGeneration("example-v10", null);
+        assertTrue(muleXmlSimple.exists());
+        String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "{\n" +
+                        "  name: \"Bobby\",\n" +
+                        "  food: \"Ice Cream\"\n" +
+                        "}"));
+        assertEquals(1, countOccurences(s, "{\n" +
+                "  Person: {\n" +
+                "    name: \"Underwood\",\n" +
+                "    address: \"Juana Manso 999\",\n" +
+                "    country: \"Argentina\"\n" +
+                "  }\n" +
+                "}"));
+        assertEquals(1, countOccurences(s, "{\n" +
+                "  title: \"In Cold Blood\",\n" +
+                "  author: \"Truman Capote\",\n" +
+                "  year: 1966\n" +
                 "}"));
     }
 
