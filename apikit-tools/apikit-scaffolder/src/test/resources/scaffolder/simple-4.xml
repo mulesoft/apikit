@@ -13,10 +13,18 @@
         <http:listener-connection host="0.0.0.0" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config raml="simple.raml" />
+    <apikit:config outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" raml="simple.raml" />
 
     <flow name="main">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*">
+            <http:response statusCode="#[variables.httpStatus default 200]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[variables.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
         <apikit:router />
     </flow>
 

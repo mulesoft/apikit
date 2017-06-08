@@ -78,6 +78,8 @@ public class ScaffolderMule4Test {
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
         assertEquals(6, countOccurences(s, "<ee:set-payload>"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(8, countOccurences(s, "http:headers"));
         assertEquals(2, countOccurences(s, "get:/:" + name + "-config"));
         assertEquals(2, countOccurences(s, "get:/pet:" + name + "-config"));
@@ -118,6 +120,8 @@ public class ScaffolderMule4Test {
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
         assertEquals(6, countOccurences(s, "<ee:set-payload>"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
         assertEquals(2, countOccurences(s, "post:/Queue:application/json:api-config"));
         assertEquals(2, countOccurences(s, "post:/Queue:text/xml:api-config"));
@@ -144,6 +148,8 @@ public class ScaffolderMule4Test {
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
         assertEquals(6, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
         assertEquals(6, countOccurences(s, "<ee:set-payload>"));
         assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
@@ -171,6 +177,8 @@ public class ScaffolderMule4Test {
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
         assertEquals(6, countOccurences(s, "<ee:set-payload>"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(1, countOccurences(s, "<http:listener-config"));
         assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
         assertEquals(2, countOccurences(s, "get:/:simple-config"));
@@ -206,6 +214,8 @@ public class ScaffolderMule4Test {
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
         assertEquals(6, countOccurences(s, "<ee:set-payload>"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(1, countOccurences(s, "<http:listener-config"));
         assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
         assertEquals(2, countOccurences(s, "get:/:simple-config"));
@@ -241,6 +251,8 @@ public class ScaffolderMule4Test {
         assertEquals(6, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(6, countOccurences(s, "<ee:set-payload>"));
         assertEquals(1, countOccurences(s, "<http:listener-config"));
         assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
@@ -277,6 +289,8 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(6, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
@@ -312,6 +326,8 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(6, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
@@ -348,6 +364,8 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(6, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
@@ -383,6 +401,8 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(6, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
@@ -419,6 +439,8 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(6, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
@@ -456,6 +478,8 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
+        assertEquals(4, countOccurences(s, "http:body"));
+        assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(6, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));

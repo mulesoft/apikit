@@ -12,10 +12,18 @@
     </http:listener-config>
     <configuration defaultErrorHandler-ref="defaultErrorHandler"/>
 
-    <apikit:config raml="multipleMimeTypes.raml" />
+    <apikit:config httpStatusVarName="httpStatus" outboundHeadersMapName="outboundHeaders" raml="multipleMimeTypes.raml" />
 
     <flow name="main">
-        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*"/>
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*">
+            <http:response statusCode="#[variables.httpStatus default 200]">
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[variables.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
         <apikit:router />
     </flow>
 

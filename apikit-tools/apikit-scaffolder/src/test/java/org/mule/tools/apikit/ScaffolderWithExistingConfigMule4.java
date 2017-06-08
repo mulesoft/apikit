@@ -200,6 +200,8 @@ public class ScaffolderWithExistingConfigMule4
         assertEquals(2, countOccurences(s, "post:/pet"));
         assertEquals(1, countOccurences(s, "get:/\""));
         assertEquals(0, countOccurences(s, "extensionEnabled"));
+        assertEquals(1, countOccurences(s, "#[payload]"));
+        assertEquals(2, countOccurences(s, "http:body"));
         assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message="));
     }
 

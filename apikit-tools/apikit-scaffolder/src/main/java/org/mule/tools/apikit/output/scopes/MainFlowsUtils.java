@@ -12,13 +12,14 @@ import org.mule.tools.apikit.model.APIKitConfig;
 
 import org.jdom2.Element;
 
-public class MainFlowsUtils
+public class  MainFlowsUtils
 {
     private MainFlowsUtils() {}
 
     public static final String DEFAULT_STATUS_CODE_SUCCESS_VALUE = "#[variables." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 200]";
     public static final String DEFAULT_STATUS_CODE_ERROR_VALUE = "#[variables." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 500]";
     public static final String DEFAULT_OUTBOUND_HEADERS_MAP_VALUE = "#[variables." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + " default {}]";
+    public static final String DEFAULT_ERROR_BODY_CONTENT = "#[payload]";
 
     public static void generateListenerSource(String httpListenerConfigRef, String path, Element main)
     {
@@ -37,8 +38,12 @@ public class MainFlowsUtils
         responseBuilder.addContent(headers);
         httpListener.addContent(responseBuilder);
 
+        Element errorBody = new Element("body", HTTP_NAMESPACE.getNamespace());
+        errorBody.addContent(DEFAULT_ERROR_BODY_CONTENT);
+
         Element errorResponseBuilder = new Element("error-response", HTTP_NAMESPACE.getNamespace());
         errorResponseBuilder.setAttribute("statusCode", DEFAULT_STATUS_CODE_ERROR_VALUE);
+        errorResponseBuilder.addContent(errorBody);
         errorResponseBuilder.addContent(errorHeaders);
         httpListener.addContent(errorResponseBuilder);
 
