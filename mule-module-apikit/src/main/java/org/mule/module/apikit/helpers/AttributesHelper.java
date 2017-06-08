@@ -140,9 +140,9 @@ public class AttributesHelper
     return contentType != null ? contentType.split(";")[0] : null;
   }
 
-  public static String getAcceptedResponseMediaTypes(HttpRequestAttributes attributes)
+  public static String getAcceptedResponseMediaTypes(ParameterMap headers)
   {
-    String acceptableResponseMediaTypes = getParamIgnoreCase(attributes.getHeaders(), "accept");
+    String acceptableResponseMediaTypes = getParamIgnoreCase(headers, "accept");
     if (acceptableResponseMediaTypes == null || acceptableResponseMediaTypes == "")
     {
       return ANY_RESPONSE_MEDIA_TYPE;
@@ -152,7 +152,7 @@ public class AttributesHelper
 
   public static boolean isAnAcceptedResponseMediaType(HttpRequestAttributes attributes, String candidateMediaType)
   {
-    String acceptedResponseMediaTypes = getAcceptedResponseMediaTypes(attributes);
+    String acceptedResponseMediaTypes = getAcceptedResponseMediaTypes(attributes.getHeaders());
     if (acceptedResponseMediaTypes.equals(ANY_RESPONSE_MEDIA_TYPE))
     {
       return true;

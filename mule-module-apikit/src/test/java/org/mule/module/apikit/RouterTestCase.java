@@ -77,4 +77,33 @@ public class RouterTestCase extends MuleArtifactFunctionalTestCase
                 .when().post("/api/reusing-payload");
     }
 
+    @Test
+    public void validSingleAcceptHeader() throws Exception
+    {
+        given().header("Accept", "application/json")
+                .expect()
+                .response().body(is("hello"))
+                .statusCode(200)
+                .when().get("/api/resources");
+    }
+
+    @Test
+    public void validMultipleAcceptHeader() throws Exception
+    {
+        given().header("Accept", "application/json; text/plain")
+                .expect()
+                .response().body(is("hello"))
+                .statusCode(200)
+                .when().get("/api/resources");
+    }
+
+    @Test
+    public void invalidSingleAcceptHeader() throws Exception
+    {
+        given().header("Accept", "application/pepe")
+                .expect()
+                .response()//.body(is("hello"))
+                .statusCode(406)
+                .when().get("/api/resources");
+    }
 }

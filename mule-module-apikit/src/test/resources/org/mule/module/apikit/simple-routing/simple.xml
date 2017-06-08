@@ -24,6 +24,12 @@
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="apikitConfig"/>
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <set-payload value="{message: 'Not acceptable'}"/>
+                <set-variable variableName="httpStatus" value="406"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
 
     <flow name="get:/resources">
