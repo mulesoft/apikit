@@ -34,6 +34,10 @@
                 <set-payload value="{message: 'Unsupported media type'}"/>
                 <set-variable variableName="httpStatus" value="415"/>
             </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <set-payload value="{message: 'Method Not Allowed'}"/>
+                <set-variable variableName="httpStatus" value="405"/>
+            </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <set-payload value="{message: 'Resource Not Found'}"/>
                 <set-variable variableName="httpStatus" value="404"/>

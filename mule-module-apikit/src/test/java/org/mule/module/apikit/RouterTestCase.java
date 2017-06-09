@@ -10,7 +10,6 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.runtime.core.exception.TypedException;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import org.junit.Rule;
@@ -136,6 +135,16 @@ public class RouterTestCase extends MuleArtifactFunctionalTestCase
                 .response().body(is("{message: 'Unsupported media type'}"))
                 .statusCode(415)
                 .when().post("/api/types-test");
+    }
+
+    @Test
+    public void methodNotAllowed() throws Exception
+    {
+        given().expect()
+                .response()
+                    .body(is("{message: 'Method Not Allowed'}"))
+                .statusCode(405)
+                .when().post("/api/resources");
     }
 
     @Test
