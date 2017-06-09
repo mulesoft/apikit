@@ -137,4 +137,15 @@ public class RouterTestCase extends MuleArtifactFunctionalTestCase
                 .statusCode(415)
                 .when().post("/api/types-test");
     }
+
+    @Test
+    public void answerWith404WhenHittingInexistentResource()
+    {
+        given().expect()
+                .response()
+                    .body(is("{message: 'Resource Not Found'}"))
+                    .statusCode(404)
+                .when().get("/api/nothing");
+    }
+
 }
