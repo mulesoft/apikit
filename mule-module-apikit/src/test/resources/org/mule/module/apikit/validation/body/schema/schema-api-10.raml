@@ -1,13 +1,19 @@
-#%RAML 0.8
+#%RAML 1.0
 title: sample api
+types:
+  User:
+    type: object
+    properties:
+      firstname: string
+      lastname:  string
+      age:       number
 /currentuser:
     put:
         body:
             application/json:
-                schema: |
+                schema:
                     {
                        "type":"object",
-                       "id":"urn:jsonschema:org:mule:module:apikit:schema:User",
                        "properties":{
                           "firstName":{
                              "type":"string",
@@ -53,4 +59,8 @@ title: sample api
         responses:
             201: ~
             204: ~
-
+/ramluser:
+    post:
+        body:
+            application/json:
+                type: User

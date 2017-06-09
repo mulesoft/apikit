@@ -89,7 +89,7 @@ public class Router extends AbstractInterceptingMessageProcessor implements Init
         {
             event = validateRequest(event, config, resource, attributes, resolvedVariables);
         }
-        String contentType = AttributesHelper.getHeaderIgnoreCase((HttpRequestAttributes) event.getMessage().getAttributes().getValue(), HeaderNames.CONTENT_TYPE);
+        String contentType = AttributesHelper.getMediaType(attributes);
         Flow flow = config.getFlowFinder().getFlow(resource,attributes.getMethod().toLowerCase(), contentType);
         String successStatusCode = config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
         event = EventHelper.addVariable(event, config.getHttpStatusVarName(), successStatusCode);

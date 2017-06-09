@@ -20,7 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class Schema08TestCase extends MuleArtifactFunctionalTestCase
+public class Schema10TestCase extends MuleArtifactFunctionalTestCase
 {
     @Rule
     public DynamicPort serverPort = new DynamicPort("serverPort");
@@ -41,7 +41,7 @@ public class Schema08TestCase extends MuleArtifactFunctionalTestCase
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/validation/body/schema/schema-config-08.xml";
+        return "org/mule/module/apikit/validation/body/schema/schema-config-10.xml";
     }
 
     @Test
@@ -49,10 +49,10 @@ public class Schema08TestCase extends MuleArtifactFunctionalTestCase
     {
         given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\",\"emailAddresses\":[\"gbs@ie\"]}")
                 .contentType("application/json")
-            .expect()
+                .expect()
                 .statusCode(201)
                 .body(is("hello"))
-            .when().put("/api/currentuser");
+                .when().put("/api/currentuser");
     }
 
     @Test
@@ -71,10 +71,10 @@ public class Schema08TestCase extends MuleArtifactFunctionalTestCase
         given().body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">" +
                      "<email-addresses><email-address>gbs@ie</email-address></email-addresses></user>")
                 .contentType("text/xml")
-            .expect()
+                .expect()
                 .statusCode(201)
                 .body(is("hello"))
-            .when().put("/api/currentuser");
+                .when().put("/api/currentuser");
     }
 
     @Test
@@ -83,8 +83,42 @@ public class Schema08TestCase extends MuleArtifactFunctionalTestCase
         given().body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">" +
                      "<email-addresses></email-addresses></user>")
                 .contentType("text/xml")
-            .expect()
+                .expect()
                 .statusCode(400)
-            .when().put("/api/currentuser");
+                .when().put("/api/currentuser");
     }
+
+    @Test
+    public void postValidJsonUsingRamlType() throws Exception
+    {
+        given().body("{\"firstname\":\"george\",\"lastname\":\"bernard shaw\",\"age\":\"30\"}")
+                .contentType("application/json")
+                .expect()
+                .statusCode(200)
+                .body(is("hello"))
+                .when().post("/api/ramluser");
+    }
+
+    @Test
+    public void postInvalidJsonUsingRamlTypeMissingRequiredParam() throws Exception
+    {
+        given().body("{\"firstname\":\"george\",\"age\":\"30\"}")
+                .contentType("application/json")
+                .expect()
+                .statusCode(400)
+                //.body(is("hello"))
+                .when().post("/api/ramluser");
+    }
+
+    @Test
+    public void postValidJsonUsingRamlTypeSendingOtherParam() throws Exception
+    {
+        given().body("{\"firstaname\":\"george\",\"lastname\":\"bernard shaw\",\"age\":\"30\"}")
+                .contentType("application/json")
+                .expect()
+                .statusCode(400)
+                //.body(is("hello"))
+                .when().post("/api/ramluser");
+    }
+
 }

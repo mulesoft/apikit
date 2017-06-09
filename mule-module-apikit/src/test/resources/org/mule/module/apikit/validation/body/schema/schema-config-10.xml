@@ -11,7 +11,7 @@
         <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config raml="org/mule/module/apikit/validation/body/schema/schema-api.raml"
+    <apikit:config raml="org/mule/module/apikit/validation/body/schema/schema-api-10.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">
@@ -35,4 +35,7 @@
         <set-payload value="hello"/>
     </flow>
 
+    <flow name="post:/ramluser">
+        <set-payload value="hello"/>
+    </flow>
 </mule>
