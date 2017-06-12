@@ -38,11 +38,13 @@ public class APIKitFlowScope implements Scope {
         {
             Element transform = new Element("transform", EE_NAMESPACE.getNamespace());
             Element setPayload = new Element("set-payload", EE_NAMESPACE.getNamespace());
+            Element message = new Element("message", EE_NAMESPACE.getNamespace());
             CDATA cdataSection = new CDATA(generateTransformTextForExample(flowEntry.getExampleWrapper().trim()));
             setPayload.addContent(cdataSection);
+            message.setContent(setPayload);
             transform.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
             transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(), XSI_NAMESPACE.getNamespace());
-            transform.addContent(setPayload);
+            transform.addContent(message);
             flow.addContent(transform);
         }
     }
