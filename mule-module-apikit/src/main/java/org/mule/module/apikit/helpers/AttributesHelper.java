@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.helpers;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -97,9 +99,18 @@ public class AttributesHelper
 
   public static String addQueryString(String oldQueryString, int queryStringSize, String key, String value) {
     String newParam = queryStringSize != 0 ? "&" : "";
-    newParam += key;
-    if (value != null) {
-      newParam += "=" + value;
+    try
+    {
+      newParam += URLEncoder.encode(key, "UTF-8");
+      if (value != null)
+      {
+
+        newParam += "=" + URLEncoder.encode(value, "UTF-8");
+      }
+    }
+    catch (UnsupportedEncodingException e)
+    {
+      //UTF-8 will never be unsupported
     }
     return oldQueryString + newParam;
   }
