@@ -543,7 +543,7 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
-        assertEquals(6, countOccurences(s, "<ee:message>"));
+        assertEquals(8, countOccurences(s, "<ee:message>"));
         assertEquals(6, countOccurences(s, "<ee:variables>"));
         assertEquals(6, countOccurences(s, "<ee:set-variable"));
         assertEquals(8, countOccurences(s, "<ee:set-payload>"));
