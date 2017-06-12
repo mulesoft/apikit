@@ -27,6 +27,7 @@ import org.mule.runtime.extension.api.loader.ExtensionLoadingDelegate;
 public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
 {
     public static final String EXTENSION_NAME = "APIKit";
+    public static final String PREFIX_NAME = "apikit";
     public static final String EXTENSION_DESCRIPTION = "APIKit plugin";
     public static final String VENDOR = "Mulesoft";
     public static final String VERSION = "4.0.0";
@@ -49,7 +50,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
         ErrorModel notFoundErrorModel = ErrorModelBuilder.newError("NOT_FOUND", "APIKIT").withParent(apikitAnyErrorType).build();
 
         XmlDslModel xmlDslModel = XmlDslModel.builder()
-                .setPrefix(EXTENSION_NAME)
+                .setPrefix(PREFIX_NAME)
                 .setXsdFileName(XSD_FILE_NAME)
                 .setSchemaVersion(VERSION)
                 .setSchemaLocation(String.format("%s/%s/%s", UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, VERSION, XSD_FILE_NAME))
@@ -74,7 +75,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
 
         //config
         ConfigurationDeclarer apikitConfig = extensionDeclarer.withConfig("config")
-                .describedAs("apikit");
+                .describedAs(PREFIX_NAME);
         ParameterGroupDeclarer parameterGroupDeclarer = apikitConfig.onDefaultParameterGroup();
         parameterGroupDeclarer.withRequiredParameter("raml").ofType(typeLoader.load(String.class));
         parameterGroupDeclarer.withRequiredParameter("outboundHeadersMapName").ofType(typeLoader.load(String.class));
