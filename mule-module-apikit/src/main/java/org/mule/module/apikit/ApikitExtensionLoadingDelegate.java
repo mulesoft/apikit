@@ -26,7 +26,7 @@ import org.mule.runtime.extension.api.loader.ExtensionLoadingDelegate;
 
 public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
 {
-    public static final String EXTENSION_NAME = "apikit";
+    public static final String EXTENSION_NAME = "APIKit";
     public static final String EXTENSION_DESCRIPTION = "APIKit plugin";
     public static final String VENDOR = "Mulesoft";
     public static final String VERSION = "4.0.0";
