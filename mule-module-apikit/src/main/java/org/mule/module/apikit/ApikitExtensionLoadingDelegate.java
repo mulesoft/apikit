@@ -35,6 +35,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
     public static final String XSD_FILE_NAME = "mule-apikit.xsd";
     private static final String UNESCAPED_LOCATION_PREFIX = "http://";
     private static final String SCHEMA_LOCATION = "mulesoft.com/extension";
+    private static final String SCHEMA_VERSION = "current";
 
     protected final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(JAVA);
 
@@ -53,7 +54,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
                 .setPrefix(PREFIX_NAME)
                 .setXsdFileName(XSD_FILE_NAME)
                 .setSchemaVersion(VERSION)
-                .setSchemaLocation(String.format("%s/%s/%s", UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, VERSION, XSD_FILE_NAME))
+                .setSchemaLocation(String.format("%s/%s/%s", UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, SCHEMA_VERSION, XSD_FILE_NAME))
                 .setNamespace(UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION)
                 .build();
 
