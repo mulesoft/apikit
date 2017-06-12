@@ -81,8 +81,8 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
         parameterGroupDeclarer.withRequiredParameter("raml").ofType(typeLoader.load(String.class));
         parameterGroupDeclarer.withRequiredParameter("outboundHeadersMapName").ofType(typeLoader.load(String.class));
         parameterGroupDeclarer.withRequiredParameter("httpStatusVarName").ofType(typeLoader.load(String.class));
-        parameterGroupDeclarer.withRequiredParameter("keepRamlBaseUri").ofType(typeLoader.load(String.class));
-        parameterGroupDeclarer.withRequiredParameter("disableValidations").ofType(typeLoader.load(String.class));
+        parameterGroupDeclarer.withOptionalParameter("keepRamlBaseUri").defaultingTo(false).ofType(typeLoader.load(String.class));
+        parameterGroupDeclarer.withOptionalParameter("disableValidations").defaultingTo(false).ofType(typeLoader.load(String.class));
         parameterGroupDeclarer.withOptionalParameter("flowMappings").ofType(typeBuilder.arrayType().of(typeLoader.load(FlowMapping.class)).build());
 
         //router
