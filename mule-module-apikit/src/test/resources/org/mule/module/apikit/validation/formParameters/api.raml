@@ -1,0 +1,71 @@
+#%RAML 0.8
+---
+title: Parameters API
+
+/multipart:
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          first:
+            type: string
+            required: true
+          second:
+            type: string
+            default: segundo
+          third:
+            type: boolean
+    responses:
+      201: ~
+
+/url-encoded:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          first:
+            type: string
+            default: primo
+          second:
+            type: string
+            required: true
+          third:
+            type: boolean
+    responses:
+      201: ~
+
+/uploadImage:
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          image:
+            required: true
+            type: file
+
+/uploadFile:
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          document:
+            required: true
+            type: file
+/users:
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          userId:
+            required: true
+            type: integer
+
+/announcements:
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          content:
+            required: false
+            type: string
+            maxLength: 10
