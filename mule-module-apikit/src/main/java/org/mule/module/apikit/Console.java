@@ -6,11 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.apache.commons.lang.StringUtils;
 import org.mule.extension.http.api.HttpHeaders;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.EventHelper;
-import org.mule.runtime.http.api.HttpConstants;
+import org.mule.module.apikit.helpers.EventWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,6 @@ import java.util.HashMap;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
 
 import java.io.ByteArrayOutputStream;
@@ -54,7 +52,7 @@ public class Console implements Processor
     public Event process(Event event) throws MuleException
     {
         config = registry.getConfiguration(getConfigRef());
-        event = addEventVariables(event);
+        EventWrapper eventWrapper = new EventWrapper(event, config.getOutboundHeadersMapName(), config.getHttpStatusVarName());
 
         HttpRequestAttributes attributes = EventHelper.getHttpRequestAttributes(event);
 
@@ -67,20 +65,21 @@ public class Console implements Processor
         // If the request was made to, for example, /console, we must redirect the client to /console/
         if (!consoleBasePath.endsWith("/"))
         {
-            return getClientRedirectEvent(event, attributes);
+            eventWrapper.doClientRedirect();
+            return eventWrapper.build();
         }
 
         // For getting RAML resources
-        Event ramlResourceEvent = getRamlResourceIfRequested(event, attributes, resourceRelativePath);
-        if (ramlResourceEvent != null)
+        String raml = getRamlResourceIfRequested(EventHelper.getHttpRequestAttributes(event), resourceRelativePath);
+        if (raml != null)
         {
-            return ramlResourceEvent;
+            return eventWrapper.setPayload(raml, RamlHandler.APPLICATION_RAML).build();
         }
 
-        return getConsoleResource(event, resourceRelativePath);
+        return getConsoleResource(eventWrapper, resourceRelativePath);
     }
 
-    private Event getConsoleResource(Event event, String resourceRelativePath)
+    private Event getConsoleResource(EventWrapper eventWrapper, String resourceRelativePath)
     {
         String consoleResourcePath;
         InputStream inputStream = null;
@@ -110,8 +109,7 @@ public class Console implements Processor
                 {
                     throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(resourceRelativePath));
                 }
-
-                return EventHelper.setPayload(event, raml, RamlHandler.APPLICATION_RAML);
+                return eventWrapper.setPayload(raml, RamlHandler.APPLICATION_RAML).build();
             }
 
             if (updateConsoleIndex) {
@@ -132,39 +130,36 @@ public class Console implements Processor
             IOUtils.closeQuietly(inputStream);
             IOUtils.closeQuietly(byteArrayOutputStream);
         }
+        MediaType mediaType = getRequestMediaType(consoleResourcePath);
+        eventWrapper.setPayload(buffer, mediaType);
+        // Adds necessary headers for the output event
+        Map<String, String> headers = new HashMap<>();
+        headers.put(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 
-        return getOutputEvent(event, config.getOutboundHeadersMapName(), buffer, getRequestMediaType(consoleResourcePath));
+        if(mediaType.equals(MediaType.HTML))
+        {
+            headers.put(HttpHeaders.Names.EXPIRES, "-1");
+        }
+        eventWrapper.addOutboundProperties(headers);
+        return eventWrapper.build();
     }
 
-    private Event getRamlResourceIfRequested(Event event, HttpRequestAttributes attributes, String resourceRelativePath)
+    private String getRamlResourceIfRequested(HttpRequestAttributes attributes, String resourceRelativePath)
     {
         if (config.getRamlHandler().isRequestingRamlV1ForConsole(attributes))
         {
-            String raml = config.getRamlHandler().getRamlV1();
-            return EventHelper.setPayload(event, raml, RamlHandler.APPLICATION_RAML);
+            return config.getRamlHandler().getRamlV1();
         }
 
         if (config.getRamlHandler().isRequestingRamlV2(attributes))
         {
-            String raml = config.getRamlHandler().getRamlV2(resourceRelativePath);
-            return EventHelper.setPayload(event, raml, RamlHandler.APPLICATION_RAML);
+            return config.getRamlHandler().getRamlV2(resourceRelativePath);
         }
 
         return null;
     }
 
-    private Event getClientRedirectEvent(Event event, HttpRequestAttributes attributes)
-    {
-        event = EventHelper.addVariable(event, config.getHttpStatusVarName(),
-                String.valueOf(HttpConstants.HttpStatus.MOVED_PERMANENTLY.getStatusCode()));
 
-        String redirectLocation = getRedirectLocation(attributes);
-
-        Map<String, String> headers = new HashMap<>();
-        headers.put(HttpHeaders.Names.LOCATION, redirectLocation);
-        event = EventHelper.addOutboundProperties(event, config.getOutboundHeadersMapName(), headers);
-        return event;
-    }
 
     /**
      * Updates index file with the location of the root Raml, so it can load it later.
@@ -193,37 +188,6 @@ public class Console implements Processor
         return inputStream;
     }
 
-    /**
-     * Creates the output event containing the data that must be sent in the response
-     *
-     * @param inputEvent
-     * @param outboundHeadersMapName
-     * @param payload Payload to be sent
-     * @param mediaType Payload's Media Type
-     * @return
-     */
-    private Event getOutputEvent(Event inputEvent, String outboundHeadersMapName, byte[] payload, MediaType mediaType)
-    {
-        Message.Builder messageBuilder = Message.builder(inputEvent.getMessage());
-        messageBuilder.mediaType(mediaType);
-        messageBuilder.payload(payload);
-
-        Event.Builder eventBuilder = Event.builder(inputEvent);
-        eventBuilder.message(messageBuilder.build());
-        inputEvent = eventBuilder.build();
-
-        // Adds necessary headers for the output event
-        Map<String, String> headers = new HashMap<>();
-        headers.put(HttpHeaders.Names.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-
-        if(mediaType.equals(MediaType.HTML))
-        {
-            headers.put(HttpHeaders.Names.EXPIRES, "-1");
-        }
-        inputEvent = EventHelper.addOutboundProperties(inputEvent, outboundHeadersMapName, headers);
-
-        return inputEvent;
-    }
 
     /**
      * Validates if the path specified in the listener is a valid one. In order to this to be valid,
@@ -256,40 +220,7 @@ public class Console implements Processor
     }
 
 
-    /**
-     * Creates variables to set the outbound headers and status code
-     * @param event
-     * @return The modified event
-     */
-    private Event addEventVariables(Event event)
-    {
-        event = EventHelper.addVariable(event, config.getOutboundHeadersMapName(), new HashMap<>());
-        event = EventHelper.addVariable(event, config.getHttpStatusVarName(),
-                    String.valueOf(HttpConstants.HttpStatus.OK.getStatusCode()));
 
-        return event;
-    }
-
-
-    /**
-     * Creates URL where the server must redirect the client
-     * @param attributes
-     * @return The redirect URL
-     */
-    private String getRedirectLocation(HttpRequestAttributes attributes)
-    {
-        String scheme = attributes.getScheme();
-        String remoteAddress = attributes.getHeaders().get("host");
-        String redirectLocation = scheme + "://" + remoteAddress + attributes.getRequestPath() + "/";
-        String queryString = attributes.getQueryString();
-
-        if (StringUtils.isNotEmpty(queryString))
-        {
-            redirectLocation += "?" + queryString;
-        }
-
-        return redirectLocation;
-    }
 
     public String getConfigRef()
     {

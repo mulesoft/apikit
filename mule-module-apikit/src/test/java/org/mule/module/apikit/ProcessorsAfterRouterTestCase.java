@@ -42,23 +42,22 @@ public class ProcessorsAfterRouterTestCase extends MuleArtifactFunctionalTestCas
     @Override
     protected String getConfigResources()
     {
-        return "org/mule/module/apikit/simple-routing/simple.xml";
+        return "org/mule/module/apikit/simple-routing/processors-after-router.xml";
     }
 
 
     @Test
-    @Ignore //Not supported yet
     public void simpleRoutingAndSettingPayloadAfterwards() throws Exception
     {
         given().header("Accept", "*/*")
                 .expect()
+                .header("headerName","value")
                 .response().body(is("goodbye"))
                 .statusCode(200)
                 .when().get("/api/resources");
     }
 
     @Test
-    @Ignore //Not supported yet
     public void invalidSingleAcceptHeader() throws Exception
     {
         given().header("Accept", "application/pepe")

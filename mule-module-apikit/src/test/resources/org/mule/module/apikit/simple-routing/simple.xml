@@ -25,6 +25,7 @@
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="apikitConfig"/>
+        <logger level="INFO" message="post routing"/>
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
                 <set-payload value="{message: 'Not acceptable'}"/>

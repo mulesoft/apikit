@@ -30,17 +30,23 @@ import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.core.DefaultEventContext;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.EventContext;
 import org.mule.runtime.core.api.construct.Flow;
+import org.mule.runtime.core.api.construct.FlowConstruct;
+import org.mule.runtime.core.api.construct.FlowConstructAware;
+import org.mule.runtime.core.api.processor.Processor;
 import org.mule.runtime.core.exception.TypedException;
-import org.mule.runtime.core.processor.AbstractInterceptingMessageProcessor;
+import org.mule.runtime.core.message.DefaultEventBuilder;
+
 import java.net.URI;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Router extends AbstractInterceptingMessageProcessor implements Initialisable
+public class Router implements  Processor, Initialisable, FlowConstructAware
 
 {
     @Inject
@@ -64,10 +70,11 @@ public class Router extends AbstractInterceptingMessageProcessor implements Init
         registry.setApiSource(configRef, uri.toString().replace("*",""));
     }
 
-    public Event process(Event event) throws MuleException {
+    public Event process(final Event event) throws MuleException {
         Configuration config = registry.getConfiguration(getConfigRef());
-        event = EventHelper.addVariable(event, config.getOutboundHeadersMapName(), new HashMap<>());
-//        event = EventHelper.addVariable(event, config.getHttpStatusVarName(), "201");
+        Event.Builder eventBuilder = Event.builder(DefaultEventContext.child(event.getContext()), event);
+
+        eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
         HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes().getValue());
 
@@ -87,16 +94,15 @@ public class Router extends AbstractInterceptingMessageProcessor implements Init
         IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
         if (!config.isDisableValidations())
         {
-            event = validateRequest(event, config, resource, attributes, resolvedVariables);
+            eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
         }
         String contentType = AttributesHelper.getMediaType(attributes);
         Flow flow = config.getFlowFinder().getFlow(resource,attributes.getMethod().toLowerCase(), contentType);
         String successStatusCode = config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
-        event = EventHelper.addVariable(event, config.getHttpStatusVarName(), successStatusCode);
-
-        event = flow.process(event);
-
-        return event;
+        eventBuilder.addVariable(config.getHttpStatusVarName(), successStatusCode);
+        Event newEvent = flow.process(eventBuilder.build());
+        Event.Builder resultEvent = Event.builder(event.getContext(), newEvent);
+        return resultEvent.build();
     }
 
     public String getConfigRef()
@@ -119,18 +125,18 @@ public class Router extends AbstractInterceptingMessageProcessor implements Init
         this.name = name;
     }
 
-    public Event validateRequest(Event event, ValidationConfig config, IResource resource, HttpRequestAttributes attributes, ResolvedVariables resolvedVariables) throws DefaultMuleException, MuleRestException {
+    public Event.Builder validateRequest(Event event, Event.Builder eventbuilder, ValidationConfig config, IResource resource, HttpRequestAttributes attributes, ResolvedVariables resolvedVariables) throws DefaultMuleException, MuleRestException {
 
         String charset = null;
         try {
-            charset = getEncoding(event.getMessage(), event.getMessage().getPayload().getValue(), logger);
+            charset = getEncoding(event.getMessage(), event.getMessage().getPayload().getValue(), LOGGER);
         } catch (IOException e) {
             throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException("Error processing request: " + e.getMessage()));
         }
 
         ValidRequest validRequest = RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload().getValue(), charset);
 
-        return EventHelper.regenerateEvent(event, validRequest);
+        return EventHelper.regenerateEvent(event.getMessage(), eventbuilder, validRequest);
     }
 
     private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException
@@ -142,4 +148,10 @@ public class Router extends AbstractInterceptingMessageProcessor implements Init
         return resource;
     }
 
+    FlowConstruct flowConstruct;
+    @Override
+    public void setFlowConstruct(FlowConstruct flowConstruct)
+    {
+        this.flowConstruct = flowConstruct;
+    }
 }
