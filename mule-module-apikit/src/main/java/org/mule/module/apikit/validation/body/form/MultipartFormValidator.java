@@ -63,7 +63,7 @@ public class MultipartFormValidator implements FormValidatorStrategy<MultiPartPa
       if (data == null && expected.isRequired())
       {
         //perform only 'required' validation to avoid consuming the stream
-        throw ApikitErrorTypes.throwErrorTypeNew(new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified"));
+        throw ApikitErrorTypes.throwErrorType(new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified"));
       }
       if (data == null && expected.getDefaultValue() != null)
       {

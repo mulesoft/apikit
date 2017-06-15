@@ -6,16 +6,18 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-import java.util.List;
-import java.util.Map;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.exception.InvalidFormParameterException;
 import org.mule.raml.implv2.v10.model.MimeTypeImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.List;
+import java.util.Map;
+
 import org.raml.v2.api.model.common.ValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +61,7 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<Map<Stri
       {
         resultString += result.getMessage() + "\n";
       }
-      throw ApikitErrorTypes.throwErrorTypeNew(new InvalidFormParameterException(resultString));
+      throw ApikitErrorTypes.throwErrorType(new InvalidFormParameterException(resultString));
     }
 
     return payload;

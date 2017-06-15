@@ -7,30 +7,28 @@
 package org.mule.module.apikit;
 
 import org.mule.extension.http.api.HttpHeaders;
+import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.helpers.EventWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.processor.Processor;
 
-import javax.inject.Inject;
-
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.mule.runtime.api.metadata.MediaType;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Console implements Processor
 {
@@ -107,7 +105,7 @@ public class Console implements Processor
                 String raml = config.getRamlHandler().getRamlV2(resourceRelativePath);
                 if (raml == null)
                 {
-                    throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(resourceRelativePath));
+                    throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
                 }
                 return eventWrapper.setPayload(raml, RamlHandler.APPLICATION_RAML).build();
             }
@@ -123,7 +121,7 @@ public class Console implements Processor
         }
         catch (IOException e)
         {
-            throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(resourceRelativePath));
+            throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
         }
         finally
         {

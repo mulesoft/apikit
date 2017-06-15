@@ -6,15 +6,15 @@
  */
 package org.mule.module.apikit.helpers;
 
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.HeaderNames;
+import org.mule.runtime.http.api.domain.ParameterMap;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.HeaderNames;
-import org.mule.runtime.http.api.domain.ParameterMap;
 
 public class AttributesHelper
 {
@@ -22,67 +22,6 @@ public class AttributesHelper
   {
       // Prevents instantiation :)
   }
-
-  //public static HttpRequestAttributes addHeader(HttpRequestAttributes oldHttpRequestAttributes, String key, String value) {
-  //  Map<String, LinkedList<String>> mapHeaders = new HashMap<>();
-  //  LinkedList<String> valueList = new LinkedList<>();
-  //  valueList.add(value);
-  //  mapHeaders.put(key, valueList);
-  //  for (Map.Entry<String, String> entry : oldHttpRequestAttributes.getHeaders().entrySet()) {
-  //    LinkedList<String> list = new LinkedList<>();
-  //    list.add(entry.getValue());
-  //    mapHeaders.put(entry.getKey(), list);
-  //  }
-  //  ParameterMap headers = new ParameterMap(mapHeaders);
-  //  return new HttpRequestAttributes(headers, oldHttpRequestAttributes.getListenerPath(),
-  //                                   oldHttpRequestAttributes.getRelativePath(), oldHttpRequestAttributes.getVersion(),
-  //                                   oldHttpRequestAttributes.getScheme(), oldHttpRequestAttributes.getMethod(),
-  //                                   oldHttpRequestAttributes.getRequestPath(), oldHttpRequestAttributes.getRequestUri(),
-  //                                   oldHttpRequestAttributes.getQueryString(), oldHttpRequestAttributes.getQueryParams(),
-  //                                   oldHttpRequestAttributes.getUriParams(), oldHttpRequestAttributes.getRemoteAddress(),
-  //                                   oldHttpRequestAttributes.getClientCertificate());
-  //}
-  //
-  //public static ParameterMap addHeader(ParameterMap oldHeaders, String key, String value) {
-  //  Map<String, LinkedList<String>> mapHeaders = new HashMap<>();
-  //  LinkedList<String> valueList = new LinkedList<>();
-  //  valueList.add(value);
-  //  mapHeaders.put(key, valueList);
-  //  for (Map.Entry<String, String> entry : oldHeaders.entrySet()) {
-  //    LinkedList<String> list = new LinkedList<>();
-  //    list.add(entry.getValue());
-  //    mapHeaders.put(entry.getKey(), list);
-  //  }
-  //  return new ParameterMap(mapHeaders);
-  //  //return new HttpRequestAttributes(headers, oldHttpRequestAttributes.getListenerPath(), oldHttpRequestAttributes.getRelativePath(), oldHttpRequestAttributes.getVersion(), oldHttpRequestAttributes.getScheme(), oldHttpRequestAttributes.getMethod(), oldHttpRequestAttributes.getRequestPath(), oldHttpRequestAttributes.getRequestUri(), oldHttpRequestAttributes.getQueryString(), oldHttpRequestAttributes.getQueryParams(), oldHttpRequestAttributes.getUriParams(), oldHttpRequestAttributes.getRemoteAddress(), oldHttpRequestAttributes.getClientCertificate());
-  //}
-  //
-  //public static HttpRequestAttributes addQueryParam(HttpRequestAttributes oldHttpRequestAttributes, String key, String value) {
-  //  Map<String, LinkedList<String>> mapQueryParam = new HashMap<>();
-  //  LinkedList<String> valueList = new LinkedList<>();
-  //  valueList.add(value);
-  //  mapQueryParam.put(key, valueList);
-  //  for (Map.Entry<String, String> entry : oldHttpRequestAttributes.getQueryParams().entrySet()) {
-  //    LinkedList<String> list = new LinkedList<>();
-  //    list.add(entry.getValue());
-  //    mapQueryParam.put(entry.getKey(), list);
-  //  }
-  //  String newParam = oldHttpRequestAttributes.getQueryParams().size() != 0 ? "&" : "";
-  //  newParam += key;
-  //  if (value != null) {
-  //    newParam += "=" + value;
-  //  }
-  //  ParameterMap queryParam = new ParameterMap(mapQueryParam);
-  //
-  //  String newQueryString = oldHttpRequestAttributes.getQueryString() + newParam;
-  //  return new HttpRequestAttributes(oldHttpRequestAttributes.getHeaders(), oldHttpRequestAttributes.getListenerPath(),
-  //                                   oldHttpRequestAttributes.getRelativePath(), oldHttpRequestAttributes.getVersion(),
-  //                                   oldHttpRequestAttributes.getScheme(), oldHttpRequestAttributes.getMethod(),
-  //                                   oldHttpRequestAttributes.getRequestPath(), oldHttpRequestAttributes.getRequestUri(),
-  //                                   newQueryString, queryParam, oldHttpRequestAttributes.getUriParams(),
-  //                                   oldHttpRequestAttributes.getRemoteAddress(),
-  //                                   oldHttpRequestAttributes.getClientCertificate());
-  //}
 
   public static ParameterMap addParam(ParameterMap oldParams, String key, String value) {
     Map<String, LinkedList<String>> mapParam = new HashMap<>();
@@ -159,16 +98,6 @@ public class AttributesHelper
       return ANY_RESPONSE_MEDIA_TYPE;
     }
     return acceptableResponseMediaTypes;
-  }
-
-  public static boolean isAnAcceptedResponseMediaType(HttpRequestAttributes attributes, String candidateMediaType)
-  {
-    String acceptedResponseMediaTypes = getAcceptedResponseMediaTypes(attributes.getHeaders());
-    if (acceptedResponseMediaTypes.equals(ANY_RESPONSE_MEDIA_TYPE))
-    {
-      return true;
-    }
-    return acceptedResponseMediaTypes.contains(candidateMediaType);
   }
 
 }

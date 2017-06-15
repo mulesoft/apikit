@@ -6,8 +6,6 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import java.util.Collection;
-
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.helpers.AttributesHelper;
@@ -15,6 +13,8 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.core.exception.TypedException;
 import org.mule.runtime.http.api.domain.ParameterMap;
+
+import java.util.Collection;
 
 public class QueryParameterValidator {
 
@@ -36,7 +36,7 @@ public class QueryParameterValidator {
 
       if (actual.isEmpty()) {
         if (expected.isRequired()) {
-          throw ApikitErrorTypes.throwErrorTypeNew(new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified"));
+          throw ApikitErrorTypes.throwErrorType(new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified"));
         }
 
         if (expected.getDefaultValue() != null) {
@@ -48,7 +48,7 @@ public class QueryParameterValidator {
       } else {
 
         if (actual.size() > 1 && !(expected.isRepeat() || expected.isArray())) {
-          throw ApikitErrorTypes.throwErrorTypeNew(new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable"));
+          throw ApikitErrorTypes.throwErrorType(new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable"));
         }
 
         if (expected.isArray()) {
@@ -76,30 +76,6 @@ public class QueryParameterValidator {
     return queryString;
   }
 
-  //private Collection<?> getActualQueryParam(String expectedKey)
-  //{
-  //    //Object queryParamsMap = ((HttpRequestAttributes)requestEvent.getMessage().getAttributes()).getQueryParams(); // requestEvent.getMessage().getInboundProperty("http.query.params");
-  //    Collection<?> actual;
-  //    actual = Collections.emptyList();
-  //    if (queryParamsMap instanceof ParameterMap)
-  //    {
-  //        actual = ((ParameterMap) queryParamsMap).getAll(expectedKey);
-  //    }
-  //    else
-  //    {
-  //        Object param = ((Map) queryParamsMap).get(expectedKey);
-  //        if (param instanceof Collection)
-  //        {
-  //            actual = (Collection<?>) param;
-  //        }
-  //        else if (param != null)
-  //        {
-  //            actual = ImmutableList.of(param);
-  //        }
-  //    }
-  //    return actual;
-  //}
-
   //only for raml 1.0
   private void validateQueryParamArray(String paramKey, IParameter expected, Collection<?> paramValue)
           throws TypedException
@@ -111,22 +87,12 @@ public class QueryParameterValidator {
     validateQueryParam(paramKey, expected, builder.toString());
   }
 
-  //private void validateQueryParam(String paramKey, IParameter expected, Collection<?> paramValue) throws InvalidQueryParameterException
-  //{
-  //    StringBuilder builder = new StringBuilder();
-  //    for (Object item : paramValue)
-  //    {
-  //        builder.append("- ").append(String.valueOf(item)).append("\n");
-  //    }
-  //    validateQueryParam(paramKey, expected, builder.toString());
-  //}
-
   private void validateQueryParam(String paramKey, IParameter expected, String paramValue) throws TypedException
   {
     if (!expected.validate(paramValue)) {
       String msg = String.format("Invalid value '%s' for query parameter %s. %s",
                                  paramValue, paramKey, expected.message(paramValue));
-      throw ApikitErrorTypes.throwErrorTypeNew(new InvalidQueryParameterException(msg));
+      throw ApikitErrorTypes.throwErrorType(new InvalidQueryParameterException(msg));
     }
   }
 

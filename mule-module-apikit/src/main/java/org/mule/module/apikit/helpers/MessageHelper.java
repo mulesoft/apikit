@@ -11,12 +11,6 @@ import org.mule.runtime.api.metadata.MediaType;
 
 public class MessageHelper
 {
-    public static Message setPayload(Message message, Object payload)
-    {
-        MediaType mediaType = null;
-        return setPayload(message, payload, mediaType);
-    }
-
     public static Message setPayload(Message message, Object payload, String mimetype)
     {
         return setPayload(message, payload, MediaType.parse(mimetype));

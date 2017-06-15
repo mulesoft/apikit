@@ -6,12 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
@@ -19,6 +13,13 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.construct.Flow;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -235,7 +236,7 @@ public class FlowFinder
             if (flow == null && isFlowDeclaredWithDifferentMediaType(rawRestFlowMap, baseKey))
             {
                 //throw new UnsupportedMediaTypeException();
-                throw ApikitErrorTypes.throwErrorTypeNew(new UnsupportedMediaTypeException());
+                throw ApikitErrorTypes.throwErrorType(new UnsupportedMediaTypeException());
             }
         }
         return flow;

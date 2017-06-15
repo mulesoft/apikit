@@ -8,12 +8,6 @@ package org.mule.module.apikit;
 
 //import org.mule.module.apikit.exception.NotFoundException;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Inject;
-import javax.xml.validation.Schema;
-
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.module.apikit.uri.URIResolver;
@@ -25,13 +19,20 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.config.MuleProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
+import javax.xml.validation.Schema;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class Configuration implements Initialisable, ValidationConfig
@@ -192,7 +193,7 @@ public class Configuration implements Initialisable, ValidationConfig
 
                                 if (match == null) {
                                     logger.warn("No matching patterns for URI " + path);
-                                    throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(path));
+                                    throw ApikitErrorTypes.throwErrorType(new NotFoundException(path));
                                 }
                                 return match;
                             }

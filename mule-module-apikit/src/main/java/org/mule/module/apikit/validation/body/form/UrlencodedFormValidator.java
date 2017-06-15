@@ -6,13 +6,13 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-import java.util.List;
-import java.util.Map;
-
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.exception.InvalidFormParameterException;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+
+import java.util.List;
+import java.util.Map;
 
 public class UrlencodedFormValidator implements FormValidatorStrategy<Map<String, String>> {
 
@@ -39,7 +39,7 @@ public class UrlencodedFormValidator implements FormValidatorStrategy<Map<String
 
       if (actual == null && expected.isRequired())
       {
-        throw ApikitErrorTypes.throwErrorTypeNew(new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified"));
+        throw ApikitErrorTypes.throwErrorType(new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified"));
       }
 
       if (actual == null && expected.getDefaultValue() != null)
@@ -53,7 +53,7 @@ public class UrlencodedFormValidator implements FormValidatorStrategy<Map<String
         {
           String msg = String.format("Invalid value '%s' for form parameter %s. %s",
               actual, expectedKey, expected.message((String) actual));
-          throw ApikitErrorTypes.throwErrorTypeNew(new InvalidFormParameterException(msg));
+          throw ApikitErrorTypes.throwErrorType(new InvalidFormParameterException(msg));
         }
       }
     }

@@ -12,9 +12,7 @@ import org.mule.raml.interfaces.model.IRaml;
 
 import java.io.InputStream;
 
-import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
-import org.raml.v2.api.loader.FileResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
@@ -31,19 +29,10 @@ public class ParserService {
 
   public ParserService(String ramlPath) {
     this.ramlPath = ramlPath;
-//    setupV2ResourceLoader(appHome);
     resourceLoaderV2 = new DefaultResourceLoader();
     checkParserVersion();
     setupParserWrapper(ramlPath);
   }
-
-  //private void setupV2ResourceLoader(String appHome) {
-  //  if (appHome != null) {
-  //    resourceLoaderV2 = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(appHome));
-  //  } else {
-  //    resourceLoaderV2 = new DefaultResourceLoader();
-  //  }
-  //}
 
   public boolean isParserV2() {
     return parserV2;

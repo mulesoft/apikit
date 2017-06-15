@@ -7,8 +7,8 @@
 package org.mule.module.apikit.validation.attributes;
 
 import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
+import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -31,36 +31,20 @@ public class UriParametersValidator {
           throws InvalidUriParameterException
   {
     this.uriParams = uriParams;
-    //ParameterMap resolvedVariables = ((HttpRequestAttributes)event.getMessage().getAttributes()).getUriParams();
-    //if (logger.isDebugEnabled())
-    //{
-    //    for (String name : resolvedVariables.names())
-    //    {
-    //        logger.debug("        uri parameter: " + name + "=" + resolvedVariables.get(name));
-    //    }
-    //}
-
-    //if (!config.isDisableValidations())
-    //{
     for (Map.Entry<String, IParameter> entry : resource.getResolvedUriParameters().entrySet()) {
       String value = (String) resolvedVariables.get(entry.getKey());
       IParameter uriParameter = entry.getValue();
       if (!uriParameter.validate(value)) {
         String msg = String.format("Invalid value '%s' for uri parameter %s. %s",
                                    value, entry.getKey(), uriParameter.message(value));
-        throw ApikitErrorTypes.throwErrorTypeNew(new InvalidUriParameterException(msg));
+        throw ApikitErrorTypes.throwErrorType(new InvalidUriParameterException(msg));
       }
     }
-    //}
 
     for (String name : resolvedVariables.names()) {
       String value = String.valueOf(resolvedVariables.get(name));
       uriParams = AttributesHelper.addParam(uriParams, name, value);
     }
-    return uriParams;
-  }
-
-  public ParameterMap getNewUriParams() {
     return uriParams;
   }
 

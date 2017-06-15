@@ -6,13 +6,13 @@
  */
 package org.mule.module.apikit;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.mule.module.apikit.uri.URIPattern;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class RoutingTable {
 

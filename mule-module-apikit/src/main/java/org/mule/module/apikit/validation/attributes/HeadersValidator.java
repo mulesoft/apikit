@@ -54,13 +54,13 @@ public class HeadersValidator {
           if (incoming.matches(regex) && !expected.validate(incomingValue)) {
             String msg = String.format("Invalid value '%s' for header %s. %s",
                                        incomingValue, expectedKey, expected.message(incomingValue));
-            throw ApikitErrorTypes.throwErrorTypeNew(new InvalidHeaderException(msg));
+            throw ApikitErrorTypes.throwErrorType(new InvalidHeaderException(msg));
           }
         }
       } else {
         String actual = AttributesHelper.getParamIgnoreCase(headers, expectedKey);
         if (actual == null && expected.isRequired()) {
-          throw ApikitErrorTypes.throwErrorTypeNew(new InvalidHeaderException("Required header " + expectedKey + " not specified"));
+          throw ApikitErrorTypes.throwErrorType(new InvalidHeaderException("Required header " + expectedKey + " not specified"));
         }
         if (actual == null && expected.getDefaultValue() != null) {
           headers = AttributesHelper.addParam(headers, expectedKey, expected.getDefaultValue());
@@ -69,7 +69,7 @@ public class HeadersValidator {
           if (!expected.validate(actual)) {
             String msg = String.format("Invalid value '%s' for header %s. %s",
                                        actual, expectedKey, expected.message(actual));
-            throw ApikitErrorTypes.throwErrorTypeNew(new InvalidHeaderException(msg));
+            throw ApikitErrorTypes.throwErrorType(new InvalidHeaderException(msg));
           }
         }
       }
@@ -87,7 +87,7 @@ public class HeadersValidator {
     MediaType bestMatch = MimeTypeParser.bestMatch(mimeTypes, AttributesHelper.getAcceptedResponseMediaTypes(incomingHeaders));
     if (bestMatch == null)
     {
-      throw ApikitErrorTypes.throwErrorTypeNew(new NotAcceptableException());
+      throw ApikitErrorTypes.throwErrorType(new NotAcceptableException());
     }
     logger.debug("=== negotiated response content-type: " + bestMatch.toString());
     for (String representation : mimeTypes)
@@ -98,7 +98,7 @@ public class HeadersValidator {
         return;
       }
     }
-    throw ApikitErrorTypes.throwErrorTypeNew(new NotAcceptableException());
+    throw ApikitErrorTypes.throwErrorType(new NotAcceptableException());
   }
 
   private List<String> getResponseMimeTypes(IAction action)

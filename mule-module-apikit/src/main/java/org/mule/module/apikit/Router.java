@@ -8,12 +8,6 @@ package org.mule.module.apikit;
 
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Inject;
-
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
@@ -33,15 +27,18 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.DefaultEventContext;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
-import org.mule.runtime.core.api.EventContext;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.construct.FlowConstruct;
 import org.mule.runtime.core.api.construct.FlowConstructAware;
 import org.mule.runtime.core.api.processor.Processor;
 import org.mule.runtime.core.exception.TypedException;
-import org.mule.runtime.core.message.DefaultEventBuilder;
 
+import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +128,7 @@ public class Router implements  Processor, Initialisable, FlowConstructAware
         try {
             charset = getEncoding(event.getMessage(), event.getMessage().getPayload().getValue(), LOGGER);
         } catch (IOException e) {
-            throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException("Error processing request: " + e.getMessage()));
+            throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
         }
 
         ValidRequest validRequest = RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload().getValue(), charset);
@@ -143,7 +140,7 @@ public class Router implements  Processor, Initialisable, FlowConstructAware
     {
         IResource resource = configuration.getFlowFinder().getResource(uriPattern);
         if (resource.getAction(method) == null) {
-            throw ApikitErrorTypes.throwErrorTypeNew(new MethodNotAllowedException(resource.getUri() + " : " + method));
+            throw ApikitErrorTypes.throwErrorType(new MethodNotAllowedException(resource.getUri() + " : " + method));
         }
         return resource;
     }

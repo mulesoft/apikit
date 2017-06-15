@@ -6,9 +6,9 @@
  */
 package org.mule.module.apikit.validation;
 
-import java.util.Map;
-
 import org.mule.runtime.api.message.MultiPartPayload;
+
+import java.util.Map;
 
 public class ValidBody {
   Object payload;

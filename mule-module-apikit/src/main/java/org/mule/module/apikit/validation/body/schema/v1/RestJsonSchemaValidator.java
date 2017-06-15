@@ -9,9 +9,10 @@ package org.mule.module.apikit.validation.body.schema.v1;
 import static com.github.fge.jsonschema.core.report.LogLevel.ERROR;
 import static com.github.fge.jsonschema.core.report.LogLevel.WARNING;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Iterator;
+import org.mule.module.apikit.ApikitErrorTypes;
+import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
+import org.mule.module.apikit.validation.body.schema.v1.io.JsonUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
@@ -19,10 +20,11 @@ import com.github.fge.jsonschema.core.report.LogLevel;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
-import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
-import org.mule.module.apikit.validation.body.schema.v1.io.JsonUtils;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Iterator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +51,7 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy
             report = jsonSchema.validate(data);
         } catch (IOException|ProcessingException e)
         {
-            throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(e));
+            throw ApikitErrorTypes.throwErrorType(new BadRequestException(e));
         }
 
 
@@ -67,7 +69,7 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy
             if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning))
             {
                 logger.info("Schema validation failed: " + logMessage);
-                throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(logMessage));
+                throw ApikitErrorTypes.throwErrorType(new BadRequestException(logMessage));
             }
         }
 

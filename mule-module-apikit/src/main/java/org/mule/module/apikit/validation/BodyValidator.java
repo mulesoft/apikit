@@ -6,10 +6,6 @@
  */
 package org.mule.module.apikit.validation;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.concurrent.ExecutionException;
-
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.BadRequestException;
@@ -27,6 +23,11 @@ import org.mule.module.apikit.validation.body.schema.v1.cache.SchemaCacheUtils;
 import org.mule.module.apikit.validation.body.schema.v2.RestSchemaV2Validator;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
+
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.concurrent.ExecutionException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +67,7 @@ public class BodyValidator {
           .get();
 
     } catch (NoSuchElementException e) {
-      throw ApikitErrorTypes.throwErrorTypeNew(new UnsupportedMediaTypeException());
+      throw ApikitErrorTypes.throwErrorType(new UnsupportedMediaTypeException());
     }
 
 
@@ -103,7 +104,7 @@ public class BodyValidator {
           schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));
         }
       } catch (ExecutionException e) {
-        throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(e));
+        throw ApikitErrorTypes.throwErrorType(new BadRequestException(e));
       }
     }
 

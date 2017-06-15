@@ -15,7 +15,6 @@ import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.core.exception.TypedException;
 
 import java.io.ByteArrayOutputStream;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -93,7 +92,7 @@ public class RamlHandler
         resourceRelativePath = sanitarizeResourceRelativePath(resourceRelativePath);
         if (resourceRelativePath.contains(".."))
         {
-            throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException("\"..\" is not allowed"));
+            throw ApikitErrorTypes.throwErrorType(new NotFoundException("\"..\" is not allowed"));
         }
         if (apiResourcesRelativePath.equals(resourceRelativePath))
         {
@@ -110,7 +109,7 @@ public class RamlHandler
             //the resource should be in a subfolder, otherwise it could be requesting the properties file
             if (!resourceRelativePath.contains("/"))
             {
-                throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException("Requested resources should be in a subfolder"));
+                throw ApikitErrorTypes.throwErrorType(new NotFoundException("Requested resources should be in a subfolder"));
             }
             //resource
             InputStream apiResource = null;
@@ -121,7 +120,7 @@ public class RamlHandler
 
                 if (apiResource == null)
                 {
-                    throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(resourceRelativePath));
+                    throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
                 }
 
                 baos = new ByteArrayOutputStream();
@@ -130,7 +129,7 @@ public class RamlHandler
             catch (IOException e)
             {
                 logger.debug(e.getMessage());
-                throw ApikitErrorTypes.throwErrorTypeNew(new NotFoundException(resourceRelativePath));
+                throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
             }
             finally
             {

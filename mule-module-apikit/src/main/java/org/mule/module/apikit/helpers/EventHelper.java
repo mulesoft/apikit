@@ -7,15 +7,13 @@
 package org.mule.module.apikit.helpers;
 
 
-import java.nio.charset.Charset;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.validation.ValidRequest;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.Event;
+
+import java.nio.charset.Charset;
+import java.util.Optional;
 
 public class EventHelper
 {

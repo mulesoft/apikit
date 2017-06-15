@@ -6,15 +6,7 @@
  */
 package org.mule.module.apikit.config;
 
-import org.mule.module.apikit.Configuration;
-import org.mule.module.apikit.Console;
-import org.mule.module.apikit.FlowMapping;
-import org.mule.module.apikit.Router;
 import org.mule.runtime.config.spring.handlers.AbstractMuleNamespaceHandler;
-import org.mule.runtime.config.spring.handlers.MuleNamespaceHandler;
-import org.mule.runtime.config.spring.parsers.collection.ChildListEntryDefinitionParser;
-import org.mule.runtime.config.spring.parsers.generic.ChildDefinitionParser;
-import org.mule.runtime.config.spring.parsers.generic.MuleOrphanDefinitionParser;
 
 public class ApikitNamespaceHandler extends AbstractMuleNamespaceHandler
 {

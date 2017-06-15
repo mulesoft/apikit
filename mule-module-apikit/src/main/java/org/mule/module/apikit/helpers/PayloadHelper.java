@@ -8,15 +8,16 @@ package org.mule.module.apikit.helpers;
 
 import static org.mule.module.apikit.CharsetUtils.trimBom;
 
+import org.mule.module.apikit.ApikitErrorTypes;
+import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.input.stream.RewindableInputStream;
+import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.input.stream.RewindableInputStream;
-import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +32,7 @@ public class PayloadHelper {
       try {
         return IOUtils.toString(((CursorStreamProvider) input).openCursor());
       } catch (IOException e) {
-        throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException("Error processing request: " + e.getMessage()));
+        throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
       }
     }
 
@@ -42,7 +43,7 @@ public class PayloadHelper {
       try {
         input = IOUtils.toString(rewindableInputStream);
       } catch (IOException e) {
-        throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException("Error processing request: " + e.getMessage()));
+        throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
       }
       rewindableInputStream.rewind();
 
@@ -55,7 +56,7 @@ public class PayloadHelper {
       }
       catch (IOException e)
       {
-        throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException("Error processing request: " + e.getMessage()));
+        throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
       }
     }
     else if (input instanceof String)
@@ -69,7 +70,7 @@ public class PayloadHelper {
       {
         errorMessage = "Don't know how to parse " + input.getClass().getName();
       }
-      throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(errorMessage));
+      throw ApikitErrorTypes.throwErrorType(new BadRequestException(errorMessage));
 
     }
     return (String) input;

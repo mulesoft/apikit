@@ -6,6 +6,11 @@
  */
 package org.mule.module.apikit.validation.body.schema.v1;
 
+import org.mule.module.apikit.ApikitErrorTypes;
+import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
+import org.mule.runtime.core.api.config.MuleProperties;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
@@ -18,10 +23,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
-import org.mule.runtime.core.api.config.MuleProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -58,7 +59,7 @@ public class RestXmlSchemaValidator implements IRestSchemaValidatorStrategy
 
         } catch (IOException|SAXException e) {
             logger.info("Schema validation failed: " + e.getMessage());
-            throw ApikitErrorTypes.throwErrorTypeNew(new BadRequestException(e));
+            throw ApikitErrorTypes.throwErrorType(new BadRequestException(e));
         }
 
     }

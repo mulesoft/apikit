@@ -22,7 +22,7 @@ public class ApikitErrorTypes
         ApikitErrorTypes.muleContext = muleContext;
     }
 
-    public static TypedException throwErrorTypeNew(MuleRestException exception)
+    public static TypedException throwErrorType(MuleRestException exception)
     {
         ComponentIdentifier componentIdentifier = ComponentIdentifier.buildFromStringRepresentation(exception.getStringRepresentation());
         if (muleContext != null)
