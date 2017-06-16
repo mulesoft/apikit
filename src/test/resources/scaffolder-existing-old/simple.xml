@@ -1,0 +1,17 @@
+<mule xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd"
+      xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <apikit:config raml="simple.raml"/>
+    <flow name="main">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <apikit:router/>
+    </flow>
+    <flow name="get:/pet">
+        <set-payload value="Hello world!" xmlns=""/>
+    </flow>
+</mule>

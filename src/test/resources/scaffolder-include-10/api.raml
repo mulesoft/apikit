@@ -1,0 +1,57 @@
+#%RAML 1.0
+title: Rest Test 3
+version: v1.0
+mediaType: application/json
+baseUri: http://localhost:8081/api
+
+schemas:
+ jsonSchema: |
+    {
+    "$schema": "http://json-schema.org/draft-03/schema#",
+    "title": "JSON Schema for Saas Transaction",
+    "required": true,
+    "properties": {
+    "tenant": {
+    "type": "integer",
+    "description": "The Tenant ID of the transaction",
+    "required": true
+    },
+    "objectType": {
+    "type": "string",
+    "description": "The type of object being added to the queue",
+    "required": true
+    },
+    "objectKey": {
+    "type": "string",
+    "description": "The unique key of the object being added to the queue",
+    "required": true 
+    },
+    "txnType": {
+    "type": "string",
+    "description": "Create, Update, Delete",
+    "required": true 
+    }
+    }
+    }
+ xmlSchema: |
+    <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="saasTxn">
+    <xs:complexType>
+    <xs:annotation>
+    <xs:documentation>XML Schema for Saas Transaction</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+    <xs:element name="tenant" minOccurs="1" type="xs:positiveInteger"/>
+    <xs:element name="objectType" minOccurs="1" type="xs:string"/>
+    <xs:element name="objectKey" minOccurs="1" type="xs:string"/>
+    <xs:element name="txnType" minOccurs="1" type="xs:string"/>
+    </xs:sequence>
+    </xs:complexType>
+    </xs:element>
+    </xs:schema>
+
+documentation:
+- title: Saas Transaction Queue API
+  content: 
+        This API provides a means for adding transactions to the queue for processing.
+/Queue: !include included.raml

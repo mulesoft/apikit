@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+    <configuration defaultErrorHandler-ref="defaultErrorHandler"/>
+
+    <http:listener-config name="HTTP_Listener_Configuration">
+        <http:listener-connection host="0.0.0.0" port="${serverPort}"/>
+    </http:listener-config>
+
+    <apikit:config raml="simple.raml" extensionEnabled="true"/>
+
+    <flow name="main">
+        <http:listener config-ref="HTTP_Listener_Configuration" path="/api/*"/>
+        <apikit:router />
+    </flow>
+
+    <flow name="get:/">
+        <set-payload value="Root!"/>
+    </flow>
+
+    <flow name="get:/pet">
+        <set-payload value="Hello world!"/>
+    </flow>
+
+    <error-handler name="defaultErrorHandler">
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotFoundException)]">
+            <set-variable variableName="httpStatus" value="404"/>
+            <set-payload value="resource not found"/>
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.MethodNotAllowedException)]">
+            <set-variable variableName="httpStatus" value="405"/>
+            <set-payload value="method not allowed"/>
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.UnsupportedMediaTypeException)]">
+            <set-variable variableName="httpStatus" value="415"/>
+            <set-payload value="unsupported media type"/>
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.NotAcceptableException)]">
+            <set-variable variableName="httpStatus" value="406"/>
+            <set-payload value="not acceptable"/>
+        </on-error-propagate>
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.BadRequestException)]">
+            <set-variable variableName="httpStatus" value="400"/>
+            <set-payload value="bad request"/>
+        </on-error-propagate>
+        <on-error-propagate>
+            <set-variable variableName="httpStatus" value="500"/>
+            <set-payload value="Server error" mimeType="text/plain"/>
+        </on-error-propagate>
+    </error-handler>
+
+</mule>

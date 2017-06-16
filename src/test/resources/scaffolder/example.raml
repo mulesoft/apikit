@@ -1,0 +1,31 @@
+#%RAML 0.8
+---
+title: Sample API
+version: v1
+baseUri: http://localhost/api
+/pet:
+  displayName: Pets
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "name": "Bobby",
+                "food": "Ice Cream"
+              }
+
+          text/xml: !!null
+/person:
+  get:
+    responses:
+      200:
+        body:
+          application/xml:
+            example: |
+              <Person>
+                <name>Underwood</name>
+                <address>Juana Manso 999</address>
+                <country>Argentina</country>
+              </Person>

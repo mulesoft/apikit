@@ -1,0 +1,37 @@
+#%RAML 0.8
+---
+title: Sample API
+version: v1
+baseUri: http://localhost/api
+/pet:
+    get:
+        responses:
+            200:
+                body:
+                    application/json: !!null
+                    text/xml: !!null
+    post:
+        responses:
+            200:
+                body:
+                    application/json: !!null
+                    text/xml: !!null
+    /owner:
+        get:
+            responses:
+                200:
+                    body:
+                        application/json: !!null
+/car:
+    get:
+        responses:
+            200:
+                body:
+                    application/json: !!null
+                    text/xml: !!null
+    post:
+        responses:
+            200:
+                body:
+                    application/json: !!null
+                    text/xml: !!null

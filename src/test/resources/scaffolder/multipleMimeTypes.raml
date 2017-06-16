@@ -1,0 +1,70 @@
+#%RAML 0.8
+---
+title: Sample API
+version: v1
+baseUri: http://localhost/api
+/pet:
+    displayName: Leagues
+    get:
+        responses:
+            200:
+                body:
+                    application/json: !!null
+                    text/xml: !!null
+    post:
+            body: &league-schema
+                application/json:
+                    schema: |
+                        {
+                            "title": "League Schema",
+                            "type": "object",
+                            "properties": {
+                                "id": {
+                                    "type": "string"
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "required": true
+                                }
+                            }
+                        }
+                text/xml:
+                    schema: |
+                        <?xml version="1.0" encoding="ISO-8859-1" ?>
+                        <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                         elementFormDefault="qualified" xmlns="http://mulesoft.com/schemas/soccer"
+                         targetNamespace="http://mulesoft.com/schemas/soccer">
+                        <xs:element name="league">
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element name="name" type="xs:string"/>
+                            </xs:sequence>
+                          </xs:complexType>
+                        </xs:element>
+                        </xs:schema>
+                application/xml: !!null
+                application/x-www-form-urlencoded:
+                     formParameters:
+                       From:
+                         description: testDescription
+                         type: string
+                         required: true
+                         pattern: ([a-z]+)
+                         example: dog
+
+            responses:
+                200:
+                    body:
+                        application/json: !!null
+                        text/xml: !!null
+/vet:
+    post:
+            body: &league-schema
+                application/json: !!null
+                text/xml: !!null
+                application/xml: !!null
+            responses:
+                200:
+                    body:
+                        application/json: !!null
+                        text/xml: !!null
