@@ -26,12 +26,10 @@
         <mule.test.functional.version>${runtime.version}</mule.test.functional.version>
         <mule.module.service.version>${runtime.version}</mule.module.service.version>
         <mule.service.http.api.version>${runtime.version}</mule.service.http.api.version>
-        <mule.service.weave.version>${runtime.version}</mule.service.weave.version>
         <mule.module.extensions.support.version>${runtime.version}</mule.module.extensions.support.version>
         <mule.module.extensions.spring.support.version>${runtime.version}</mule.module.extensions.spring.support.version>
-        <mule.module.scripting.version>${runtime.version}</mule.module.scripting.version>
-        <mule.module.spring.security.version>${runtime.version}</mule.module.spring.security.version>
 
+        <mule.service.weave.version>2.0.0-SNAPSHOT</mule.service.weave.version>
         <mule.api.version>1.0.0-SNAPSHOT</mule.api.version>
         <mule.app.plugins.maven.plugin.version>1.0.0-SNAPSHOT</mule.app.plugins.maven.plugin.version>
         <mule.http.connector.version>1.0.0-SNAPSHOT</mule.http.connector.version>
