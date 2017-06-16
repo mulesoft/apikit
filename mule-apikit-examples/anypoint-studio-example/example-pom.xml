@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.examples</groupId>
-    <artifactId>leagues</artifactId>
+    <artifactId>leagues-example</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>mule</packaging>
     <name>Leagues</name>

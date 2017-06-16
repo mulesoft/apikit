@@ -2,17 +2,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
-    <artifactId>apikit-parent</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <artifactId>mule-apikit-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
     <modules>
         <module>parser-wrapper</module>
-        <module>apikit-spi</module>
-        <module>mule-module-apikit</module>
-        <module>apikit-tools</module>
-        <module>apikit-examples</module>
+        <module>mule-apikit-module-spi</module>
+        <module>mule-apikit-module</module>
+        <module>mule-apikit-tools</module>
+        <module>mule-apikit-examples</module>
     </modules>
 
     <properties>

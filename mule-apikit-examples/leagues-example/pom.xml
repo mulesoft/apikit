@@ -4,11 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mule.tools</groupId>
-        <artifactId>apikit-examples</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <artifactId>mule-apikit-examples</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <groupId>org.mule.examples</groupId>
-    <artifactId>leagues</artifactId>
+    <artifactId>leagues-example</artifactId>
     <packaging>mule</packaging>
     <name>Leagues</name>
     <description>Mule APIKit sample application</description>
@@ -272,7 +272,7 @@
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-apikit</artifactId>
+            <artifactId>mule-apikit-module</artifactId>
             <version>${project.version}</version>
             <classifier>mule-plugin</classifier>
             <exclusions>

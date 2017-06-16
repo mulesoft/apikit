@@ -3,16 +3,21 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mule.tools</groupId>
-        <artifactId>apikit-parent</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <artifactId>mule-apikit-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>apikit-examples</artifactId>
+    <artifactId>mule-apikit-tools</artifactId>
     <packaging>pom</packaging>
-    <name>APIKit examples</name>
+    <name>APIKit tools</name>
+
+    <properties>
+        <licensePath>../LICENSE_HEADER.txt</licensePath>
+    </properties>
 
     <modules>
-        <module>leagues</module>
-        <module>studio-example</module>
+        <module>mule-apikit-scaffolder</module>
+        <module>mule-apikit-maven-plugin</module>
+        <module>mule-apikit-archetype</module>
     </modules>
 
 </project>

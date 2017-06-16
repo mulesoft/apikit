@@ -10,8 +10,6 @@
     <name>Mule APIKit Application</name>
 
     <properties>
-        <apikit.version>4.0.0-SNAPSHOT</apikit.version>
-        <mule.version>4.0.0-SNAPSHOT</mule.version>
         <mule.maven.plugin.version>3.0.0-SNAPSHOT</mule.maven.plugin.version>
         <mule.http.connector.version>1.0.0-SNAPSHOT</mule.http.connector.version>
     </properties>
@@ -29,8 +27,8 @@
     <dependencies>
         <dependency>
             <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-apikit</artifactId>
-            <version>${apikit.version}</version>
+            <artifactId>mule-apikit-module</artifactId>
+            <version>${project.version}</version>
             <classifier>mule-plugin</classifier>
         </dependency>
 

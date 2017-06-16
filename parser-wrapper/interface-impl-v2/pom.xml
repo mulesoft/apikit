@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.mule.raml</groupId>
-        <artifactId>parser-interface-parent</artifactId>
-        <version>4.0.0-SNAPSHOT</version>
+        <artifactId>raml-parser-interface-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>parser-interface-impl-v2</artifactId>
+    <artifactId>raml-parser-interface-impl-v2</artifactId>
     <name>RAML parser v2 interface implemention</name>
     <packaging>jar</packaging>
 
@@ -49,7 +49,7 @@
         </dependency>
         <dependency>
             <groupId>org.mule.raml</groupId>
-            <artifactId>parser-interface</artifactId>
+            <artifactId>raml-parser-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
 

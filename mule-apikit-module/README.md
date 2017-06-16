@@ -33,7 +33,7 @@ Configuration using Maven Mule Plugin
 
     <dependency>
         <groupId>org.mule.modules</groupId>
-        <artifactId>mule-module-apikit</artifactId>
+        <artifactId>mule-apikit-module</artifactId>
         <version>${project.version}</version>
         <exclusions>
             <exclusion>
