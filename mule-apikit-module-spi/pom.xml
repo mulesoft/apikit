@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-core</artifactId>
-            <version>${mule.version}</version>
+            <version>${mule.core.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>
