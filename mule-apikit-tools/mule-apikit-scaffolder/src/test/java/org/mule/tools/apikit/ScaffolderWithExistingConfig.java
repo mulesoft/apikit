@@ -223,7 +223,7 @@ public class ScaffolderWithExistingConfig
         }
         File file = folder.newFile(s);
         file.createNewFile();
-        InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
+        InputStream resourceAsStream = ScaffolderWithExistingConfig.class.getClassLoader().getResourceAsStream(s);
         IOUtils.copy(resourceAsStream,
                      new FileOutputStream(file));
         return file;

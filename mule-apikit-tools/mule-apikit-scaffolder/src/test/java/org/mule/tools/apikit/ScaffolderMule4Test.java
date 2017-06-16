@@ -102,7 +102,7 @@ public class ScaffolderMule4Test {
 
     @Test
     public void generateWithIncludes08() throws Exception {
-        String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-08/api.raml").getFile();
+        String filepath = ScaffolderMule4Test.class.getClassLoader().getResource("scaffolder-include-08/api.raml").getFile();
         File file = new File(filepath);
         List<File> ramls = Arrays.asList(file);
         List<File> xmls = Arrays.asList();
@@ -132,7 +132,7 @@ public class ScaffolderMule4Test {
 
     @Test
     public void generateWithIncludes10() throws Exception {
-        String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-10/api.raml").getFile();
+        String filepath = ScaffolderMule4Test.class.getClassLoader().getResource("scaffolder-include-10/api.raml").getFile();
         File file = new File(filepath);
         List<File> ramls = Arrays.asList(file);
         List<File> xmls = Arrays.asList();
@@ -683,7 +683,7 @@ public class ScaffolderMule4Test {
         }
         File file = folder.newFile(s);
         file.createNewFile();
-        InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
+        InputStream resourceAsStream = ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(s);
         IOUtils.copy(resourceAsStream,
                      new FileOutputStream(file));
         return file;
