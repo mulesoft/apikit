@@ -3,22 +3,20 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>mule-apikit-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-BETA-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
     <modules>
         <module>parser-wrapper</module>
-        <module>mule-apikit-module-spi</module>
         <module>mule-apikit-module</module>
         <module>mule-apikit-tools</module>
-        <module>mule-apikit-examples</module>
     </modules>
 
     <properties>
         <!--mule community version-->
-        <mule.version>4.0.0-SNAPSHOT</mule.version>
-        <mule.core.version>4.0.0-SNAPSHOT</mule.core.version>
+        <mule.version>4.0.0-BETA-SNAPSHOT</mule.version>
+        <mule.core.version>4.0.0-BETA-SNAPSHOT</mule.core.version>
         <cors.module.version>2.1.2</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
