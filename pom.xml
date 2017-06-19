@@ -54,7 +54,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.10-SNAPSHOT</version>
+                <version>1.0.11-SNAPSHOT</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
