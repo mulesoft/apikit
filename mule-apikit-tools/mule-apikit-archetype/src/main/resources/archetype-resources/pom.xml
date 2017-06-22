@@ -11,7 +11,7 @@
 
     <properties>
         <mule.maven.plugin.version>3.0.0-SNAPSHOT</mule.maven.plugin.version>
-        <mule.http.connector.version>1.0.0-SNAPSHOT</mule.http.connector.version>
+        <mule.http.connector.version>0.8.0-SNAPSHOT</mule.http.connector.version>
     </properties>
     <build>
         <plugins>
@@ -54,4 +54,21 @@
             <layout>default</layout>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>mulesoft-releases</id>
+            <name>mulesoft release repository</name>
+            <layout>default</layout>
+            <url>http://repository.mulesoft.org/releases/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>mulesoft-snapshots</id>
+            <name>mulesoft snapshots repository</name>
+            <layout>default</layout>
+            <url>http://repository.mulesoft.org/snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>
