@@ -8,11 +8,9 @@ package org.mule.module.apikit.validation.attributes;
 
 import static org.junit.Assert.assertEquals;
 
-import org.mule.module.apikit.exception.InvalidQueryParameterException;
-import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
 import org.mule.raml.implv1.model.ActionImpl;
+import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.exception.TypedException;
-import org.mule.runtime.http.api.domain.ParameterMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,7 +35,7 @@ public class QueryParametersValidatorTestCase {
     action.setQueryParameters(expectedQueryParams);
     ActionImpl actionImpl = new ActionImpl(action);
 
-    ParameterMap incomingQueryParams = new ParameterMap();
+    MultiMap<String, String> incomingQueryParams = new MultiMap<>();
     incomingQueryParams.put("first", "first");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
@@ -57,7 +55,7 @@ public class QueryParametersValidatorTestCase {
     action.setQueryParameters(expectedQueryParams);
     ActionImpl actionImpl = new ActionImpl(action);
 
-    ParameterMap incomingQueryParams = new ParameterMap();
+    MultiMap<String, String> incomingQueryParams = new MultiMap<>();
     incomingQueryParams.put("first", "a");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
@@ -83,7 +81,7 @@ public class QueryParametersValidatorTestCase {
     action.setQueryParameters(expectedQueryParams);
     ActionImpl actionImpl = new ActionImpl(action);
 
-    ParameterMap incomingQueryParams = new ParameterMap();
+    MultiMap<String, String> incomingQueryParams = new MultiMap<>();
     incomingQueryParams.put("first", "a");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
@@ -112,7 +110,7 @@ public class QueryParametersValidatorTestCase {
     action.setQueryParameters(expectedQueryParams);
     ActionImpl actionImpl = new ActionImpl(action);
 
-    ParameterMap incomingQueryParams = new ParameterMap();
+    MultiMap<String, String> incomingQueryParams = new MultiMap<>();
     incomingQueryParams.put("first", "a");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);

@@ -11,14 +11,14 @@ import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.exception.TypedException;
-import org.mule.runtime.http.api.domain.ParameterMap;
 
 import java.util.Collection;
 
 public class QueryParameterValidator {
 
-  ParameterMap queryParams;
+  MultiMap<String, String> queryParams;
   String queryString;
   IAction action;
 
@@ -27,7 +27,7 @@ public class QueryParameterValidator {
 
   }
 
-  public void validateAndAddDefaults(ParameterMap queryParams, String queryString) throws TypedException
+  public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString) throws TypedException
   {
 
     for (String expectedKey : action.getQueryParameters().keySet()) {
@@ -68,7 +68,7 @@ public class QueryParameterValidator {
     this.queryString = queryString;
   }
 
-  public ParameterMap getQueryParams() {
+  public MultiMap<String, String> getQueryParams() {
     return queryParams;
   }
 

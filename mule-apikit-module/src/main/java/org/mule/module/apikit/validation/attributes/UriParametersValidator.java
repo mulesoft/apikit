@@ -12,13 +12,13 @@ import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-import org.mule.runtime.http.api.domain.ParameterMap;
+import org.mule.runtime.api.util.MultiMap;
 
 import java.util.Map;
 
 public class UriParametersValidator {
 
-  ParameterMap uriParams;
+  MultiMap<String, String> uriParams;
   IResource resource;
   ResolvedVariables resolvedVariables;
 
@@ -27,7 +27,7 @@ public class UriParametersValidator {
     this.resolvedVariables = resolvedVariables;
   }
 
-  public ParameterMap validateAndAddDefaults(ParameterMap uriParams)
+  public MultiMap<String, String> validateAndAddDefaults(MultiMap<String, String> uriParams)
           throws InvalidUriParameterException
   {
     this.uriParams = uriParams;

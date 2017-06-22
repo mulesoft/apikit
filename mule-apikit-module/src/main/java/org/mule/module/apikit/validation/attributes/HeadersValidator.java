@@ -14,8 +14,8 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.exception.TypedException;
-import org.mule.runtime.http.api.domain.ParameterMap;
 
 import com.google.common.net.MediaType;
 
@@ -31,11 +31,11 @@ public class HeadersValidator {
 
   private static final Logger logger = LoggerFactory.getLogger(HeadersValidator.class);
 
-  private ParameterMap headers;
+  private MultiMap<String, String> headers;
 
   public HeadersValidator() {}
 
-  public void validateAndAddDefaults(ParameterMap incomingHeaders, IAction action) throws TypedException
+  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action) throws TypedException
   {
     this.headers = incomingHeaders;
     analyseRequestHeaders(action);
@@ -76,7 +76,7 @@ public class HeadersValidator {
     }
   }
 
-  private void analyseAcceptHeader(ParameterMap incomingHeaders, IAction action)
+  private void analyseAcceptHeader(MultiMap<String, String> incomingHeaders, IAction action)
   {
     List<String> mimeTypes = getResponseMimeTypes(action);
     if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
@@ -135,7 +135,7 @@ public class HeadersValidator {
     return 200;
   }
 
-  public ParameterMap getNewHeaders() {
+  public MultiMap<String, String> getNewHeaders() {
     return headers;
   }
 }

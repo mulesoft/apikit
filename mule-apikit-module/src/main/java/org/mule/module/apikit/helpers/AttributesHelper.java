@@ -8,11 +8,10 @@ package org.mule.module.apikit.helpers;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.HeaderNames;
-import org.mule.runtime.http.api.domain.ParameterMap;
+import org.mule.runtime.api.util.MultiMap;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
@@ -23,8 +22,8 @@ public class AttributesHelper
       // Prevents instantiation :)
   }
 
-  public static ParameterMap addParam(ParameterMap oldParams, String key, String value) {
-    Map<String, LinkedList<String>> mapParam = new HashMap<>();
+  public static MultiMap addParam(MultiMap<String, String> oldParams, String key, String value) {
+    MultiMap<String, String> mapParam = new MultiMap<>();
     LinkedList<String> valueList = new LinkedList<>();
     valueList.add(value);
     mapParam.put(key, valueList);
@@ -33,7 +32,7 @@ public class AttributesHelper
       list.add(entry.getValue());
       mapParam.put(entry.getKey(), list);
     }
-    return new ParameterMap(mapParam);
+    return mapParam;
   }
 
   public static String addQueryString(String oldQueryString, int queryStringSize, String key, String value) {
@@ -54,7 +53,7 @@ public class AttributesHelper
     return oldQueryString + newParam;
   }
 
-  public static HttpRequestAttributes replaceParams(HttpRequestAttributes attributes, ParameterMap headers, ParameterMap queryParams, String queryString, ParameterMap uriParams)
+  public static HttpRequestAttributes replaceParams(HttpRequestAttributes attributes, MultiMap<String, String> headers, MultiMap<String, String> queryParams, String queryString, MultiMap<String, String> uriParams)
   {
     return new HttpRequestAttributes(headers, attributes.getListenerPath(), attributes.getRelativePath(),
                                      attributes.getVersion(), attributes.getScheme(),
@@ -68,11 +67,11 @@ public class AttributesHelper
 
   public static String getHeaderIgnoreCase(HttpRequestAttributes attributes, String name)
   {
-    ParameterMap headers = attributes.getHeaders();
+    MultiMap<String, String> headers = attributes.getHeaders();
     return getParamIgnoreCase(headers, name);
   }
 
-  public static String getParamIgnoreCase(ParameterMap parameters, String name)
+  public static String getParamIgnoreCase(MultiMap<String, String> parameters, String name)
   {
     for (String header : parameters.keySet())
     {
@@ -90,7 +89,7 @@ public class AttributesHelper
     return contentType != null ? contentType.split(";")[0] : null;
   }
 
-  public static String getAcceptedResponseMediaTypes(ParameterMap headers)
+  public static String getAcceptedResponseMediaTypes(MultiMap<String, String> headers)
   {
     String acceptableResponseMediaTypes = getParamIgnoreCase(headers, "accept");
     if (acceptableResponseMediaTypes == null || acceptableResponseMediaTypes == "")

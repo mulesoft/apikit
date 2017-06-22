@@ -14,8 +14,8 @@ import org.mule.module.apikit.validation.attributes.HeadersValidator;
 import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
 import org.mule.module.apikit.validation.attributes.UriParametersValidator;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.api.DefaultMuleException;
-import org.mule.runtime.http.api.domain.ParameterMap;
 
 public class AttributesValidator {
 
@@ -23,10 +23,10 @@ public class AttributesValidator {
                                                              ResolvedVariables resolvedVariables)
       throws MuleRestException, DefaultMuleException {
 
-    ParameterMap headers;
-    ParameterMap queryParams;
+    MultiMap<String, String> headers;
+    MultiMap<String, String> queryParams;
     String queryString;
-    ParameterMap uriParams;
+    MultiMap<String, String> uriParams;
 
     // uriparams
     UriParametersValidator uriParametersValidator = new UriParametersValidator(resource, resolvedVariables);

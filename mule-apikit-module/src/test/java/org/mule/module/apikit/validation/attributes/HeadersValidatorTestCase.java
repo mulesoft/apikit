@@ -7,11 +7,9 @@
 package org.mule.module.apikit.validation.attributes;
 
 
-import org.mule.module.apikit.exception.InvalidHeaderException;
-import org.mule.module.apikit.validation.attributes.HeadersValidator;
 import org.mule.raml.implv1.model.ActionImpl;
+import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.exception.TypedException;
-import org.mule.runtime.http.api.domain.ParameterMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +49,7 @@ public class HeadersValidatorTestCase {
     ActionImpl actionv1 = new ActionImpl(action);
     HeadersValidator validator = new HeadersValidator();
 
-    ParameterMap incomingHeaders = new ParameterMap();
+    MultiMap<String, String> incomingHeaders = new MultiMap<>();
     incomingHeaders.put("one", "foo");
     incomingHeaders.put("mule-special", "dough");
 
@@ -84,7 +82,7 @@ public class HeadersValidatorTestCase {
     ActionImpl actionv1 = new ActionImpl(action);
     HeadersValidator validator = new HeadersValidator();
 
-    ParameterMap incomingHeaders = new ParameterMap();
+    MultiMap<String, String> incomingHeaders = new MultiMap<>();
     incomingHeaders.put("one", "foo");
     incomingHeaders.put("mule-special", "wow");
 

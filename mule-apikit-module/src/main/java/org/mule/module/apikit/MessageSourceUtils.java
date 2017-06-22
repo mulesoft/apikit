@@ -33,10 +33,10 @@ public class MessageSourceUtils {
      * TODO to the listener one, OMG
      **/
     public static URI getUriFromFlowWhenHTTPIsInitialised(Flow flow) {
-        if (isHttpExtensionSource(flow.getMessageSource())) {
+        if (isHttpExtensionSource(flow.getSource())) {
             try {
 
-                ExtensionMessageSource httpExtensionMessageSource = (ExtensionMessageSource) flow.getMessageSource();
+                ExtensionMessageSource httpExtensionMessageSource = (ExtensionMessageSource) flow.getSource();
                 ConfigurationInstance httpConfiguration = getConfiguration(httpExtensionMessageSource);
                 String listenerPath = getListenerPath(httpExtensionMessageSource);
                 return buildListenerUri(getConnectionParams(httpConfiguration), listenerPath);
@@ -54,10 +54,10 @@ public class MessageSourceUtils {
      * @return the URI
      */
     public static URI getUriFromFlow(Flow flow) {
-        if (isHttpExtensionSource(flow.getMessageSource())) {
+        if (isHttpExtensionSource(flow.getSource())) {
             try {
 
-                ExtensionMessageSource httpExtensionMessageSource = (ExtensionMessageSource) flow.getMessageSource();
+                ExtensionMessageSource httpExtensionMessageSource = (ExtensionMessageSource) flow.getSource();
                 ConfigurationInstance httpConfiguration = getConfiguration(httpExtensionMessageSource);
                 String listenerPath = getListenerPath(httpExtensionMessageSource);
                 return buildListenerUri(getConnectionParams(httpConfiguration), getResolvedPath(httpConfiguration, listenerPath));
