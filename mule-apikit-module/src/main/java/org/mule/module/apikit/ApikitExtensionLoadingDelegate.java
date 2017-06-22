@@ -13,6 +13,7 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.runtime.api.meta.MuleVersion;
+import org.mule.runtime.api.meta.model.ImportedTypeModel;
 import org.mule.runtime.api.meta.model.XmlDslModel;
 import org.mule.runtime.api.meta.model.declaration.fluent.ConfigurationDeclarer;
 import org.mule.runtime.api.meta.model.declaration.fluent.ExtensionDeclarer;
@@ -57,6 +58,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
                 .setSchemaLocation(String.format("%s/%s/%s", UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, SCHEMA_VERSION, XSD_FILE_NAME))
                 .setNamespace(UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION)
                 .build();
+        ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
 
         extensionDeclarer.named(EXTENSION_NAME)
                 .describedAs(EXTENSION_DESCRIPTION)
@@ -71,8 +73,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
                 .withErrorModel(unsupportedMediaTypeErrorModel)
                 .withErrorModel(methodNotAllowedErrorModel)
                 .withErrorModel(notFoundErrorModel);
-
-        ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
+        extensionDeclarer.withImportedType(new ImportedTypeModel("HTTP",typeLoader.load(HttpRequestAttributes.class)));
 
         //config
         ConfigurationDeclarer apikitConfig = extensionDeclarer.withConfig("config")
