@@ -9,7 +9,7 @@
     <Loggers>
 
         <!-- Mule classes -->
-        <AsyncLogger name="org.mule" level="WARN"/>
+        <AsyncLogger name="org.mule" level="INFO"/>
         <AsyncLogger name="com.mulesoft" level="WARN"/>
 
         <AsyncRoot level="INFO">
