@@ -12,14 +12,21 @@ import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.helpers.EventWrapper;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.construct.Flow;
+import org.mule.runtime.core.api.construct.FlowConstruct;
+import org.mule.runtime.core.api.construct.FlowConstructAware;
 import org.mule.runtime.core.api.processor.Processor;
+import org.mule.runtime.core.api.util.StringMessageUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Console implements Processor
+public class Console implements Processor, Initialisable, FlowConstructAware
 {
     @Inject
     private ApikitRegistry registry;
@@ -45,6 +52,25 @@ public class Console implements Processor
     private String configRef;
     private String name;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    FlowConstruct flowConstruct;
+    @Override
+    public void setFlowConstruct(FlowConstruct flowConstruct)
+    {
+        this.flowConstruct = flowConstruct;
+    }
+
+    @Override
+    public void initialise() throws InitialisationException
+    {
+        URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
+        if (uri == null)
+        {
+            logger.error("There was an error retrieving console source.");
+            return;
+        }
+        logger.info(StringMessageUtils.getBoilerPlate("APIKit Console URL: " + uri.toString().replace("*", "")));
+    }
 
     @Override
     public Event process(Event event) throws MuleException
