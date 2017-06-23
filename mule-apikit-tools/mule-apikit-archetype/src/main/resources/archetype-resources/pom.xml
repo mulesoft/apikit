@@ -20,6 +20,9 @@
                 <artifactId>mule-maven-plugin</artifactId>
                 <version>${mule.maven.plugin.version}</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <lightweightPackage>${lightweightMode}</lightweightPackage>
+                </configuration>
             </plugin>
         </plugins>
     </build>
