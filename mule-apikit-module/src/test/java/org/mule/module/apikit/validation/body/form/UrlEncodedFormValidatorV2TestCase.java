@@ -22,7 +22,8 @@ import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.raml.implv2.v10.model.MimeTypeImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-import org.mule.runtime.core.exception.TypedException;
+import org.mule.runtime.core.api.exception.TypedException;
+
 import org.raml.model.ParamType;
 import org.raml.model.parameter.AbstractParam;
 import org.raml.v2.api.model.common.ValidationResult;

@@ -30,8 +30,8 @@ import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.construct.FlowConstruct;
 import org.mule.runtime.core.api.construct.FlowConstructAware;
+import org.mule.runtime.core.api.exception.TypedException;
 import org.mule.runtime.core.api.processor.Processor;
-import org.mule.runtime.core.exception.TypedException;
 
 import java.io.IOException;
 import java.net.URI;

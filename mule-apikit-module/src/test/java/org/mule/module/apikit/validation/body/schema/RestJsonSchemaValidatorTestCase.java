@@ -26,7 +26,7 @@ import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
-import org.mule.runtime.core.exception.TypedException;
+import org.mule.runtime.core.api.exception.TypedException;
 
 public class RestJsonSchemaValidatorTestCase {
 

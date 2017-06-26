@@ -12,7 +12,7 @@ import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.core.exception.TypedException;
+import org.mule.runtime.core.api.exception.TypedException;
 
 import java.util.Collection;
 

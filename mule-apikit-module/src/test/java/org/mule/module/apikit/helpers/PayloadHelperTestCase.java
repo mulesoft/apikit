@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
 import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.runtime.core.exception.TypedException;
+import org.mule.runtime.core.api.exception.TypedException;
 
 public class PayloadHelperTestCase {
 

@@ -12,7 +12,7 @@ import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.parser.ParserService;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
-import org.mule.runtime.core.exception.TypedException;
+import org.mule.runtime.core.api.exception.TypedException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -15,7 +15,7 @@ import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.core.exception.TypedException;
+import org.mule.runtime.core.api.exception.TypedException;
 
 import com.google.common.net.MediaType;
 

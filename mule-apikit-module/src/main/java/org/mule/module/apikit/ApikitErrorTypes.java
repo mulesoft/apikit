@@ -10,8 +10,9 @@ import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.runtime.api.component.ComponentIdentifier;
 import org.mule.runtime.api.message.ErrorType;
 import org.mule.runtime.core.api.MuleContext;
-import org.mule.runtime.core.exception.ErrorTypeRepositoryFactory;
-import org.mule.runtime.core.exception.TypedException;
+import org.mule.runtime.core.api.exception.TypedException;
+import org.mule.runtime.core.internal.exception.ErrorTypeRepositoryFactory;
+
 
 public class ApikitErrorTypes
 {

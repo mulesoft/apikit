@@ -9,7 +9,7 @@ package org.mule.module.apikit.validation.attributes;
 
 import org.mule.raml.implv1.model.ActionImpl;
 import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.core.exception.TypedException;
+import org.mule.runtime.core.api.exception.TypedException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
