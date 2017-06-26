@@ -1,1 +1,1 @@
-http\://www.mulesoft.org/schema/mule/apikit=org.mule.module.apikit.config.ApikitNamespaceHandler
+http\://www.mulesoft.org/schema/mule/mule-apikit=org.mule.module.apikit.config.ApikitNamespaceHandler
