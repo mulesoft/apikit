@@ -31,11 +31,11 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
     public static final String PREFIX_NAME = "apikit";
     public static final String EXTENSION_DESCRIPTION = "APIKit plugin";
     public static final String VENDOR = "Mulesoft";
-    public static final String VERSION = "4.0.0";
+    public static final String VERSION = "1.0.0-SNAPSHOT";
     public static final MuleVersion MIN_MULE_VERSION = new MuleVersion("4.0");
     public static final String XSD_FILE_NAME = "mule-apikit.xsd";
     private static final String UNESCAPED_LOCATION_PREFIX = "http://";
-    private static final String SCHEMA_LOCATION = "www.mulesoft.org/schema/mule/apikit";
+    private static final String SCHEMA_LOCATION = "www.mulesoft.org/schema/mule/mule-apikit";
     private static final String SCHEMA_VERSION = "current";
     
     protected final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(JAVA);

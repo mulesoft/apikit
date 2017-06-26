@@ -24,7 +24,7 @@ public class ApikitXmlNamespaceInfoProvider implements XmlNamespaceInfoProvider
 
             @Override
             public String getNamespaceUriPrefix() {
-                return "http://www.mulesoft.org/schema/mule/apikit";
+                return "http://www.mulesoft.org/schema/mule/mule-apikit";
             }
 
             @Override

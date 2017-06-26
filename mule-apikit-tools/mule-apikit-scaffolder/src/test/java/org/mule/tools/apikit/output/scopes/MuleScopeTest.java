@@ -29,11 +29,11 @@ public class MuleScopeTest {
                 "<mule xmlns=\"http://www.mulesoft.org/schema/mule/core\" \n" +
                 "      xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \n" +
                 "      xmlns:http=\"http://www.mulesoft.org/schema/mule/http\" \n" +
-                "      xmlns:apikit=\"http://www.mulesoft.org/schema/mule/apikit\" \n" +
+                "      xmlns:apikit=\"http://www.mulesoft.org/schema/mule/mule-apikit\" \n" +
                 "      xmlns:spring=\"http://www.springframework.org/schema/beans\" \n" +
                 "      xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd \n" +
                 "        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd \n" +
-                "        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd \n" +
+                "        http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd \n" +
                 "        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd\" />\n";
 
         Diff diff = XMLUnit.compareXML(control, s);
