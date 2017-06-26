@@ -9,6 +9,7 @@ package org.mule.module.apikit.validation.body.schema.v1.cache;
 import static org.mule.module.apikit.validation.body.schema.v1.cache.SchemaCacheUtils.resolveJsonSchema;
 
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.uri.URICoder;
 import org.mule.raml.interfaces.model.IRaml;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,6 +24,8 @@ import com.google.common.cache.CacheLoader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
 {
@@ -54,7 +57,8 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
      */
     private String formatUri(String location)
     {
-        URI uri = URI.create(location);
+        String encodedLocation = getEncodedPath(location);
+        URI uri = URI.create(encodedLocation);
 
         if (uri.getScheme() == null)
         {
@@ -71,11 +75,12 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
 
     /*
      * in order to find the resource in the application classpath
-     *  the reseource:/ url is translated to a file:/ url
+     *  the resource:/ url is translated to a file:/ url
      */
     private String resolveLocationIfNecessary(String path)
     {
-        URI uri = URI.create(path);
+        String encodedUri = getEncodedPath(path);
+        URI uri = URI.create(encodedUri);
 
         String scheme = uri.getScheme();
         if (scheme == null || "resource".equals(scheme))
@@ -83,6 +88,15 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
             return openSchema(uri.getPath()).toString();
         }
         return path;
+    }
+
+    private String getEncodedPath(String path)
+    {
+        Set<Character> ignoredCharacters = new HashSet<>();
+        ignoredCharacters.add('/');
+        ignoredCharacters.add(':');
+
+        return URICoder.encode(path, ignoredCharacters);
     }
 
     private URL openSchema(String path)
@@ -112,7 +126,10 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
     {
         try
         {
-            return getSchemaFactory().getJsonSchema(uri);
+            // Uri might be previously encoded. In order to avoid encoding the relative part again,
+            // we previously decode the it, and then we encode the absolute Uri again
+            String decodedURI = URICoder.decode(uri);
+            return getSchemaFactory().getJsonSchema(getEncodedPath(decodedURI));
         }
         catch (ProcessingException e)
         {
