@@ -21,7 +21,7 @@
                 <version>${mule.maven.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <lightweightPackage>${lightweightMode}</lightweightPackage>
+                    <lightweightPackage>${lightweightPackage}</lightweightPackage>
                 </configuration>
             </plugin>
         </plugins>

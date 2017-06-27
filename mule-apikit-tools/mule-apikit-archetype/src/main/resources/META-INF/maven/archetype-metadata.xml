@@ -12,7 +12,7 @@
         <requiredProperty key="domainName">
             <defaultValue>default</defaultValue>
         </requiredProperty>
-        <requiredProperty key="lightweightMode">
+        <requiredProperty key="lightweightPackage">
             <defaultValue>true</defaultValue>
         </requiredProperty>
     </requiredProperties>
