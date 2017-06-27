@@ -89,10 +89,10 @@ public class ErrorHandlerScope implements Scope {
     }
 
     private String getTransformText(String message) {
-        return "\n\t\t\t\t%dw 2.0\n" +
-                "\t\t\t\toutput application/json\n" +
-                "\t\t\t\t---\n" +
-                "\t\t\t\t{message: \"" + message + "\"}\n";
+        return "%dw 2.0\n" +
+                "output application/json\n" +
+                "---\n" +
+                "{message: \"" + message + "\"}\n";
     }
 
     public static class StatusCodeMapping {
