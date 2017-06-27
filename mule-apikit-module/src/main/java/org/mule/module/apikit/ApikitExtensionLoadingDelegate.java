@@ -12,6 +12,7 @@ import static org.mule.runtime.api.meta.Category.COMMUNITY;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
+import org.mule.metadata.api.model.ObjectType;
 import org.mule.runtime.api.meta.MuleVersion;
 import org.mule.runtime.api.meta.model.ImportedTypeModel;
 import org.mule.runtime.api.meta.model.XmlDslModel;
@@ -73,7 +74,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
                 .withErrorModel(unsupportedMediaTypeErrorModel)
                 .withErrorModel(methodNotAllowedErrorModel)
                 .withErrorModel(notFoundErrorModel);
-        extensionDeclarer.withImportedType(new ImportedTypeModel("HTTP",typeLoader.load(HttpRequestAttributes.class)));
+        extensionDeclarer.withImportedType(new ImportedTypeModel((ObjectType) typeLoader.load(HttpRequestAttributes.class)));
 
         //config
         ConfigurationDeclarer apikitConfig = extensionDeclarer.withConfig("config")

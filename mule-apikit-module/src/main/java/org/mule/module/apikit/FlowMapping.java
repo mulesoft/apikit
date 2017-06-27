@@ -7,6 +7,8 @@
 package org.mule.module.apikit;
 
 import org.mule.runtime.core.api.construct.Flow;
+import org.mule.runtime.extension.api.annotation.Alias;
+import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
 
@@ -17,8 +19,10 @@ public class FlowMapping
     @Parameter
     private String action;
     @Parameter
+    @Optional
     private String contentType;
     @Parameter
+    @Alias("flow-ref")
     private String flowRef;
     private Flow flow;
 

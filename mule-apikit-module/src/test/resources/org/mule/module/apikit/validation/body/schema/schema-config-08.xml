@@ -11,7 +11,7 @@
         <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config raml="org/mule/module/apikit/validation/body/schema/schema-api-08.raml"
+    <apikit:config name="apiConfig" raml="org/mule/module/apikit/validation/body/schema/schema-api-08.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">
@@ -23,7 +23,7 @@
                 <http:headers>#[variables.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router />
+        <apikit:router config-ref="apiConfig"/>
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <set-variable variableName="httpStatus" value="400"/>
