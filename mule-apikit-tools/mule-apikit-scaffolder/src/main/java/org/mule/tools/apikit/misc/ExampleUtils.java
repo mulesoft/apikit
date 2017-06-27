@@ -51,10 +51,9 @@ public class ExampleUtils
         runner.setOutputType(DW_OUTPUT_TYPE);
         String weaveResult = runner.execute(DW_INPUT_TYPE).toString();
 
-        return "\t\t\t%dw 2.0" +
-                "\t\t\toutput "+ transformContentType +"\n" +
-                "\t\t\t---\n" +
-                "\t\t\t" + weaveResult + "\n";
+        return "%dw 2.0\n" +
+                "output "+ transformContentType +"\n" +
+                "---\n" + weaveResult + "\n";
     }
 
     private static String transformYamlExampleIntoJSON(String example)
