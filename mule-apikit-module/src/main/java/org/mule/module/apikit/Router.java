@@ -43,7 +43,7 @@ import javax.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Router implements  Processor, Initialisable, FlowConstructAware
+public class Router implements  Processor, FlowConstructAware //Initialisable,
 
 {
     @Inject
@@ -55,17 +55,17 @@ public class Router implements  Processor, Initialisable, FlowConstructAware
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
 
-    @Override
-    public void initialise() throws InitialisationException
-    {
-        URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
-        if (uri == null)
-        {
-            LOGGER.error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
-            return;
-        }
-        registry.setApiSource(configRef, uri.toString().replace("*",""));
-    }
+    //@Override
+    //public void initialise() throws InitialisationException
+    //{
+    //    URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
+    //    if (uri == null)
+    //    {
+    //        LOGGER.error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
+    //        return;
+    //    }
+    //    registry.setApiSource(configRef, uri.toString().replace("*",""));
+    //}
 
     public Event process(final Event event) throws MuleException {
         Configuration config = registry.getConfiguration(getConfigRef());

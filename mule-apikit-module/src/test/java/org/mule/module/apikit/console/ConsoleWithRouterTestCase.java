@@ -19,6 +19,7 @@ import com.jayway.restassured.RestAssured;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -127,6 +128,7 @@ public class ConsoleWithRouterTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
+    @Ignore
     public void getRootRaml()
     {
         given().port(serverPort.getNumber())

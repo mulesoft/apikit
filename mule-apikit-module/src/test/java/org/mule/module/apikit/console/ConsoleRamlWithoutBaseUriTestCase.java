@@ -16,6 +16,7 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import com.jayway.restassured.RestAssured;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -73,6 +74,7 @@ public class ConsoleRamlWithoutBaseUriTestCase extends MuleArtifactFunctionalTes
     }
 
     @Test
+    @Ignore
     public void getRootRamConsolelWithRouter()
     {
         given().port(serverPort.getNumber())

@@ -37,7 +37,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Console implements Processor, Initialisable, FlowConstructAware
+public class Console implements Processor, FlowConstructAware//Initialisable, 
 {
     @Inject
     private ApikitRegistry registry;
@@ -60,17 +60,17 @@ public class Console implements Processor, Initialisable, FlowConstructAware
         this.flowConstruct = flowConstruct;
     }
 
-    @Override
-    public void initialise() throws InitialisationException
-    {
-        URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
-        if (uri == null)
-        {
-            logger.error("There was an error retrieving console source.");
-            return;
-        }
-        logger.info(StringMessageUtils.getBoilerPlate("APIKit Console URL: " + uri.toString().replace("*", "")));
-    }
+    //@Override
+    //public void initialise() throws InitialisationException
+    //{
+    //    URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
+    //    if (uri == null)
+    //    {
+    //        logger.error("There was an error retrieving console source.");
+    //        return;
+    //    }
+    //    logger.info(StringMessageUtils.getBoilerPlate("APIKit Console URL: " + uri.toString().replace("*", "")));
+    //}
 
     @Override
     public Event process(Event event) throws MuleException
