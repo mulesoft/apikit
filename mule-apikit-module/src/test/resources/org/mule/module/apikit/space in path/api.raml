@@ -1,0 +1,13 @@
+#%RAML 0.8
+title: Sample API
+
+/schema:
+    put:
+      body:
+          application/json:
+                schema: !include more spaces/schema.json
+                #schema: !include refs/fstab.json
+                example: !include example.json
+      responses:
+            200:
+                body:
