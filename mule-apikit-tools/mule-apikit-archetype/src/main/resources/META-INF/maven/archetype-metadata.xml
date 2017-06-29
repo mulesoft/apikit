@@ -12,6 +12,9 @@
         <requiredProperty key="domainName">
             <defaultValue>default</defaultValue>
         </requiredProperty>
+        <requiredProperty key="lightweightPackage">
+            <defaultValue>true</defaultValue>
+        </requiredProperty>
     </requiredProperties>
     <fileSets>
         <fileSet filtered="true" encoding="UTF-8">

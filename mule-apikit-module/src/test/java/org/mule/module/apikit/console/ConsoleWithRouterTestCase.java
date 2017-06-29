@@ -53,7 +53,6 @@ public class ConsoleWithRouterTestCase extends MuleArtifactFunctionalTestCase
     public void getConsoleIndex() throws Exception
     {
         Map<String, String> headers = new HashMap<>();
-        headers.put("Content-Length", "2471");
         headers.put("Access-Control-Allow-Origin", "*");
         headers.put("Expires", "-1");
 
