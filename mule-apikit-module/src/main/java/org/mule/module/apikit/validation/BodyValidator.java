@@ -98,7 +98,8 @@ public class BodyValidator {
       try {
         if (requestMimeTypeName.contains("json")) {
 
-          schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(config.getJsonSchema(schemaPath).getSchema()));
+          ApiKitJsonSchema schema = config.getJsonSchema(schemaPath);
+          schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(schema != null? schema.getSchema() : null));
 
         } else if(requestMimeTypeName.contains("xml")) {
           schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));
