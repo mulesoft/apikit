@@ -211,6 +211,15 @@
         </pluginManagement>
     </build>
 
+    <profiles>
+        <profile>
+            <id>integration-tests</id>
+            <modules>
+                <module>mule-apikit-it-tests</module>
+            </modules>
+        </profile>
+    </profiles>
+
     <repositories>
         <repository>
             <id>mulesoft-snapshots</id>
