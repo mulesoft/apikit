@@ -1,0 +1,2 @@
+var notifyResize=function(){window.top.postMessage({"preview-window-height":document.body.clientHeight},"*")},messageHandler=function(a){a=a.data;if(a.rawResponse){var b=document.querySelector("#preview");b.innerHTML=a.rawResponse;window.setTimeout(notifyResize,2)}else a.cleanUp&&(b=document.querySelector("#preview"),b.innerHTML="")};window.addEventListener("message",messageHandler);window.addEventListener("resize",notifyResize);
+document.querySelector("#closeButton").addEventListener("click",function(){window.top.postMessage({"preview-window-close":!0},"*")});
