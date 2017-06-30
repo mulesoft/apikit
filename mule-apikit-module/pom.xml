@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>mule-apikit-parent</artifactId>
-        <version>1.0.0-BETA-SNAPSHOT</version>
+        <version>1.0.0-BETA</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-apikit-module</artifactId>
-    <version>1.0.0-BETA-SNAPSHOT</version>
+    <version>1.0.0-BETA</version>
     <packaging>mule-plugin</packaging>
 
     <name>APIKit Module</name>
