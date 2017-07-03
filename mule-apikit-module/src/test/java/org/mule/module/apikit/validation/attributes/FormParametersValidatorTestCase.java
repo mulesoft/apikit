@@ -48,6 +48,7 @@ public class FormParametersValidatorTestCase extends MuleArtifactFunctionalTestC
     }
 
     @Test
+    @Ignore("APIKIT-859: Reimplement form-data and url-encoded parameters validation")
     public void answer400WhenRequiredFormParameterIsNotProvided() throws Exception
     {
         given().multiPart("Unnecessary", "Form Parameter")
@@ -71,6 +72,7 @@ public class FormParametersValidatorTestCase extends MuleArtifactFunctionalTestC
     }
 
     @Test
+    @Ignore("APIKIT-859: Reimplement form-data and url-encoded parameters validation")
     public void answer200WhenRequiredFormParameterIsValid() throws Exception
     {
         given().multiPart("userId", 5101)
@@ -82,6 +84,7 @@ public class FormParametersValidatorTestCase extends MuleArtifactFunctionalTestC
     }
 
     @Test
+    @Ignore("APIKIT-859: Reimplement form-data and url-encoded parameters validation")
     public void answer200WhenOptionalFormParameterIsNotProvided() throws Exception
     {
         given().multiPart("Unnecessary", "Form Parameter")
@@ -105,6 +108,7 @@ public class FormParametersValidatorTestCase extends MuleArtifactFunctionalTestC
     }
 
     @Test
+    @Ignore("APIKIT-859: Reimplement form-data and url-encoded parameters validation")
     public void answer200WhenOptionalFormParameterIsValid() throws Exception
     {
         given().multiPart("content", "Is Valid")
@@ -116,6 +120,7 @@ public class FormParametersValidatorTestCase extends MuleArtifactFunctionalTestC
     }
 
     @Test
+    @Ignore("APIKIT-859: Reimplement form-data and url-encoded parameters validation")
     public void setDefaultFormParameterForMultipartRequest() throws Exception
     {
         given().multiPart("first", "primero", "application/json")
@@ -127,6 +132,7 @@ public class FormParametersValidatorTestCase extends MuleArtifactFunctionalTestC
     }
 
     @Test
+    @Ignore("APIKIT-859: Reimplement form-data and url-encoded parameters validation")
     public void setDefaultFormParameterForUrlencodedRequest() throws Exception
     {
         given().header("Content-Type", "application/x-www-form-urlencoded")
@@ -140,6 +146,7 @@ public class FormParametersValidatorTestCase extends MuleArtifactFunctionalTestC
     }
 
     @Test
+    @Ignore("APIKIT-859: Reimplement form-data and url-encoded parameters validation")
     public void postTextFileResourceIntoMultiPartFormData() throws Exception
     {
         given().multiPart("document", "lorem.txt", this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/validation/formParameters/lorem.txt"))
@@ -153,6 +160,7 @@ public class FormParametersValidatorTestCase extends MuleArtifactFunctionalTestC
 
 
     @Test
+    @Ignore("APIKIT-859: Reimplement form-data and url-encoded parameters validation")
     public void postImageResourceIntoMultiPartFormData() throws Exception
     {
         byte[] imageInByteArray = IOUtils.toByteArray(this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/validation/formParameters/bbva.jpg"));
