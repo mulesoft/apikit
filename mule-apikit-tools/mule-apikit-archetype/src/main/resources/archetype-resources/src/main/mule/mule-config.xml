@@ -7,6 +7,8 @@
       http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd" >
 
+    <configuration-properties file="mule-artifact.properties"/>
+
     <apikit:config name="router-config" raml="api.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 
