@@ -66,6 +66,7 @@ public class ScaffolderMule4Test {
         File muleXmlSimple = simpleGeneration("scaffolder", name, null);
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(1, countOccurences(s, "http:listener-config name=\"simple"));
         assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"8081\""));
         assertEquals(2, countOccurences(s, "http:listener "));
@@ -113,6 +114,7 @@ public class ScaffolderMule4Test {
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
         assertNotNull(s);
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
@@ -143,6 +145,7 @@ public class ScaffolderMule4Test {
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
         assertNotNull(s);
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
@@ -170,6 +173,7 @@ public class ScaffolderMule4Test {
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
@@ -207,6 +211,7 @@ public class ScaffolderMule4Test {
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
@@ -244,6 +249,7 @@ public class ScaffolderMule4Test {
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
@@ -282,6 +288,7 @@ public class ScaffolderMule4Test {
         File muleXmlSimple = simpleGeneration("simple", "custom-domain-4/mule-domain-config.xml");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(0, countOccurences(s, "<http:listener-config"));
         assertEquals(2, countOccurences(s, "<http:listener "));
         assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
@@ -322,6 +329,7 @@ public class ScaffolderMule4Test {
         File xmlOut = new File (muleXmlFolderOut, "simple.xml");
         assertTrue(xmlOut.exists());
         String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
@@ -360,6 +368,7 @@ public class ScaffolderMule4Test {
         File muleXmlSimple = simpleGeneration("simple", "custom-domain-multiple-lc-4/mule-domain-config.xml");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
@@ -397,6 +406,7 @@ public class ScaffolderMule4Test {
         File muleXmlSimple = simpleGeneration("simple", "empty-domain/mule-domain-config.xml");
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
@@ -435,6 +445,7 @@ public class ScaffolderMule4Test {
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
 
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
@@ -474,6 +485,7 @@ public class ScaffolderMule4Test {
         File muleXmlSimple = simpleGeneration("nested", null);
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
@@ -510,6 +522,7 @@ public class ScaffolderMule4Test {
         File muleXmlSimple = simpleGeneration("no-name", null);
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "<http:headers>#[variables.outboundHeaders default {}]</http:headers>"));
@@ -540,6 +553,7 @@ public class ScaffolderMule4Test {
         File muleXmlSimple = simpleGeneration("example", null);
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[variables.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[variables.httpStatus default 500]\""));
         assertEquals(6, countOccurences(s, "<on-error-propagate"));
@@ -613,6 +627,7 @@ public class ScaffolderMule4Test {
         File muleXmlTwo = new File(muleXmlOut, "two.xml");
 
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(1, countOccurences(s, "<http:listener-config"));
         assertEquals(2, countOccurences(s, "get:/:simple-config"));
         assertEquals(2, countOccurences(s, "get:/pet:simple-config"));
@@ -629,6 +644,7 @@ public class ScaffolderMule4Test {
         assertEquals(6, countOccurences(s, "<ee:set-payload>"));
 
         String s2 = IOUtils.toString(new FileInputStream(muleXmlTwo));
+        assertEquals(1, countOccurences(s2, "<configuration-properties file=\"mule-artifact.properties\" />"));
         assertEquals(2, countOccurences(s2, "get:/pet:two-config"));
         assertEquals(2, countOccurences(s2, "post:/pet:two-config"));
         assertEquals(2, countOccurences(s2, "get:/car:two-config"));
