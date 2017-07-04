@@ -20,6 +20,7 @@ public class ResponseImpl implements IResponse
 {
 
     private Response response;
+    private Map<String, IMimeType> body;
 
     public ResponseImpl(Response response)
     {
@@ -29,12 +30,21 @@ public class ResponseImpl implements IResponse
     @Override
     public boolean hasBody()
     {
-        return !response.body().isEmpty();
+        return !getBody().isEmpty();
     }
 
     @Override
     public Map<String, IMimeType> getBody()
     {
+        if (body == null)
+        {
+            body = loadBody(response);
+        }
+
+        return body;
+    }
+
+    private static Map<String, IMimeType> loadBody(Response response) {
         Map<String, IMimeType> result = new LinkedHashMap<>();
         for (TypeDeclaration typeDeclaration : response.body())
         {

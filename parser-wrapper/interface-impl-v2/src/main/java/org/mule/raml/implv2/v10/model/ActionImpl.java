@@ -57,6 +57,14 @@ public class ActionImpl implements IAction
     @Override
     public Map<String, IResponse> getResponses()
     {
+        if (responses == null)
+        {
+            responses = loadResponses(method);
+        }
+        return responses;
+    }
+
+    private static Map<String, IResponse> loadResponses(Method method) {
         Map<String, IResponse> result = new CaseInsensitiveMap();
         for (Response response : method.responses())
         {
@@ -94,6 +102,13 @@ public class ActionImpl implements IAction
     @Override
     public Map<String, IParameter> getQueryParameters()
     {
+        if (queryParameters == null) {
+            queryParameters = loadQueryParameters(method);
+        }
+        return queryParameters;
+    }
+
+    private static Map<String, IParameter> loadQueryParameters(Method method) {
         Map<String, IParameter> result = new HashMap<>();
         for (TypeDeclaration typeDeclaration : method.queryParameters())
         {
@@ -111,6 +126,13 @@ public class ActionImpl implements IAction
     @Override
     public Map<String, IParameter> getHeaders()
     {
+        if (headers == null) {
+            headers = loadHeaders(method);
+        }
+        return headers;
+    }
+
+    private Map<String, IParameter> loadHeaders(Method method) {
         Map<String, IParameter> result = new HashMap<>();
         for (TypeDeclaration typeDeclaration : method.headers())
         {
