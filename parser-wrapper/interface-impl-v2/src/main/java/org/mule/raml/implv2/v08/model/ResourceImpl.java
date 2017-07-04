@@ -24,6 +24,8 @@ public class ResourceImpl implements IResource
 {
 
     private Resource resource;
+    private Map<IActionType, IAction> actions;
+    private Map<String, IParameter> resolvedUriParameters;
 
     public ResourceImpl(Resource resource)
     {
@@ -51,25 +53,29 @@ public class ResourceImpl implements IResource
     @Override
     public IAction getAction(String name)
     {
-        for (Method method : resource.methods())
-        {
-            if (method.method().equals(name))
-            {
-                return new ActionImpl(method);
-            }
-        }
-        return null;
+        return getActions().get(getActionKey(name));
     }
 
     @Override
     public Map<IActionType, IAction> getActions()
     {
+        if (actions == null) {
+            actions = loadActions(resource);
+        }
+        return actions;
+    }
+
+    private static Map<IActionType, IAction> loadActions(Resource resource) {
         Map<IActionType, IAction> map = new LinkedHashMap<>();
         for (Method method : resource.methods())
         {
-            map.put(IActionType.valueOf(method.method().toUpperCase()), new ActionImpl(method));
+            map.put(getActionKey(method.method()), new ActionImpl(method));
         }
         return map;
+    }
+
+    private static IActionType getActionKey(String method) {
+        return IActionType.valueOf(method.toUpperCase());
     }
 
     @Override
@@ -92,6 +98,15 @@ public class ResourceImpl implements IResource
     @Override
     public Map<String, IParameter> getResolvedUriParameters()
     {
+        if (resolvedUriParameters == null)
+        {
+            resolvedUriParameters = loadResolvedUriParameters(resource);
+        }
+
+        return resolvedUriParameters;
+    }
+
+    private static Map<String, IParameter> loadResolvedUriParameters(Resource resource) {
         Map<String, IParameter> result = new HashMap<>();
         Resource current = resource;
         while (current != null)
