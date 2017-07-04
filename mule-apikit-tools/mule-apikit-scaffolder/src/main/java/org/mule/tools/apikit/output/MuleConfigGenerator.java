@@ -185,6 +185,9 @@ public class MuleConfigGenerator {
         XPathExpression muleExp = XPathFactory.instance().compile("//*[local-name()='mule']");
         List<Element> mules = muleExp.evaluate(doc);
         Element mule = mules.get(0);
+
+        addConfigurationProperties(mule);
+
         String listenerConfigRef = null;
         if (!domainHttpListenerConfigs.containsKey(api.getHttpListenerConfig().getName()))
         {
@@ -192,11 +195,7 @@ public class MuleConfigGenerator {
         }
         listenerConfigRef = api.getHttpListenerConfig().getName();
         api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
-        //TODO GLOBAL EXCEPTION STRATEGY REFERENCE
-//        if (!api.useListenerMule3() && !api.useInboundEndpoint())
-//        {
-//            addGlobalExceptionStrategy(mule, api.getId());
-//        }
+
         new APIKitConfigScope(api.getConfig(), mule).generate();
         //Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
         String configRef = api.getConfig() != null? api.getConfig().getName() : null;
@@ -207,7 +206,13 @@ public class MuleConfigGenerator {
 
         new ConsoleFlowScope(mule, api, configRef, listenerConfigRef).generate();
 
-        //mule.addContent(exceptionStrategy);
+    }
+
+    private void addConfigurationProperties(Element mule)
+    {
+        Element configurationProperties = new Element("configuration-properties", XMLNS_NAMESPACE.getNamespace());
+        configurationProperties.setAttribute("file", "mule-artifact.properties");
+        mule.addContent(configurationProperties);
     }
 
     private void addGlobalExceptionStrategy(Element mule, String apiId)

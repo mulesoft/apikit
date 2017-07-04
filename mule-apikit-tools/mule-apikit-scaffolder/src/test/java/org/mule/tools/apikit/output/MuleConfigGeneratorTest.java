@@ -165,10 +165,14 @@ public class MuleConfigGeneratorTest {
 
         Element rootElement = document.getRootElement();
         assertEquals("mule", rootElement.getName());
-        Element xmlListenerConfig = rootElement.getChildren().get(0);
+
+        Element configurationProperties = rootElement.getChildren().get(0);
+        assertEquals("configuration-properties", configurationProperties.getName());
+
+        Element xmlListenerConfig = rootElement.getChildren().get(1);
         assertEquals("listener-config",xmlListenerConfig.getName());
 
-        Element mainFlow = rootElement.getChildren().get(1);
+        Element mainFlow = rootElement.getChildren().get(2);
 
         assertEquals("flow", mainFlow.getName());
         assertEquals("hello-main", mainFlow.getAttribute("name").getValue());
@@ -178,7 +182,7 @@ public class MuleConfigGeneratorTest {
         Element apikitConfig = mainFlow.getChildren().get(1);
         assertEquals(0, apikitConfig.getChildren().size());
 
-        Element consoleFlow = rootElement.getChildren().get(2);
+        Element consoleFlow = rootElement.getChildren().get(3);
         assertEquals("flow", consoleFlow.getName());
         assertEquals("hello-console", consoleFlow.getAttribute("name").getValue());
         assertEquals("httpListenerConfig", consoleFlow.getChildren().get(0).getAttribute("config-ref").getValue());
@@ -213,10 +217,14 @@ public class MuleConfigGeneratorTest {
 
         Element rootElement = document.getRootElement();
         assertEquals("mule", rootElement.getName());
-        Element xmlListenerConfig = rootElement.getChildren().get(0);
+
+        Element configurationProperties = rootElement.getChildren().get(0);
+        assertEquals("configuration-properties", configurationProperties.getName());
+
+        Element xmlListenerConfig = rootElement.getChildren().get(1);
         assertEquals("listener-config",xmlListenerConfig.getName());
 
-        Element mainFlow = rootElement.getChildren().get(1);
+        Element mainFlow = rootElement.getChildren().get(2);
 
         assertEquals("flow", mainFlow.getName());
         assertEquals("hello-main", mainFlow.getAttribute("name").getValue());
@@ -226,7 +234,7 @@ public class MuleConfigGeneratorTest {
         Element apikitConfig = mainFlow.getChildren().get(1);
         assertEquals(0, apikitConfig.getChildren().size());
 
-        Element consoleFlow = rootElement.getChildren().get(2);
+        Element consoleFlow = rootElement.getChildren().get(3);
         assertEquals("flow", consoleFlow.getName());
         assertEquals("hello-console", consoleFlow.getAttribute("name").getValue());
         assertEquals("httpListenerConfig", consoleFlow.getChildren().get(0).getAttribute("config-ref").getValue());
