@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.api.exception.BadRequestException;
 
 public class RestSchemaValidator
 {

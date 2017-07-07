@@ -168,7 +168,7 @@ public class URITemplate implements Expandable
    *
    * @return The underlying list of tokens.
    */
-  protected List<Token> tokens() {
+  public List<Token> tokens() {
     return this._tokens;
   }
 

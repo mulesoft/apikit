@@ -5,7 +5,7 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.uri;
+package org.mule.module.apikit.api.uri;
 
 import java.util.Set;
 

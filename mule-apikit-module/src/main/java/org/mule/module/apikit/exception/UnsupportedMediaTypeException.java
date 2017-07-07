@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.exception;
 
+import org.mule.module.apikit.api.exception.MuleRestException;
+
 public class UnsupportedMediaTypeException extends MuleRestException {
 
     private static String STRING_REPRESENTATION = "APIKIT:UNSUPPORTED_MEDIA_TYPE";

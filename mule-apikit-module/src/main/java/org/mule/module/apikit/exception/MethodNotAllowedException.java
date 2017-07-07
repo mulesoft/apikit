@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.exception;
 
+import org.mule.module.apikit.api.exception.MuleRestException;
+
 public class MethodNotAllowedException extends MuleRestException {
 
   public static final String STRING_REPRESENTATION = "APIKIT:METHOD_NOT_ALLOWED";

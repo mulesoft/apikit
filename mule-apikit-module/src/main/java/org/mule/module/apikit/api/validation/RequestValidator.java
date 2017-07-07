@@ -4,11 +4,14 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.validation;
+package org.mule.module.apikit.api.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.exception.MuleRestException;
-import org.mule.module.apikit.uri.ResolvedVariables;
+import org.mule.module.apikit.api.config.ValidationConfig;
+import org.mule.module.apikit.api.uri.ResolvedVariables;
+import org.mule.module.apikit.api.exception.MuleRestException;
+import org.mule.module.apikit.validation.AttributesValidator;
+import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.DefaultMuleException;
 

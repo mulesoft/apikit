@@ -8,6 +8,7 @@ package org.mule.module.apikit;
 
 import static junit.framework.TestCase.assertTrue;
 
+import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.exception.NotFoundException;
 
 import java.io.IOException;

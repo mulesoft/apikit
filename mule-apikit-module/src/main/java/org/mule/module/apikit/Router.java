@@ -9,21 +9,19 @@ package org.mule.module.apikit;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
-import org.mule.module.apikit.exception.MuleRestException;
+import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
-import org.mule.module.apikit.uri.ResolvedVariables;
-import org.mule.module.apikit.uri.URIPattern;
-import org.mule.module.apikit.uri.URIResolver;
-import org.mule.module.apikit.validation.RequestValidator;
-import org.mule.module.apikit.validation.ValidRequest;
-import org.mule.module.apikit.validation.ValidationConfig;
+import org.mule.module.apikit.api.uri.ResolvedVariables;
+import org.mule.module.apikit.api.uri.URIPattern;
+import org.mule.module.apikit.api.uri.URIResolver;
+import org.mule.module.apikit.api.validation.RequestValidator;
+import org.mule.module.apikit.api.validation.ValidRequest;
+import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.lifecycle.Initialisable;
-import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.DefaultEventContext;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
@@ -34,7 +32,6 @@ import org.mule.runtime.core.api.exception.TypedException;
 import org.mule.runtime.core.api.processor.Processor;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 

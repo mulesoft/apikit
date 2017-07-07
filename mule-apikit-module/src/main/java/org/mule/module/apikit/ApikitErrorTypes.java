@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.module.apikit.exception.MuleRestException;
+import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.runtime.api.component.ComponentIdentifier;
 import org.mule.runtime.api.message.ErrorType;
 import org.mule.runtime.core.api.MuleContext;

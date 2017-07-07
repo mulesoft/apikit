@@ -15,8 +15,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.exception.InvalidFormParameterException;
+import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.message.MultiPartPayload;

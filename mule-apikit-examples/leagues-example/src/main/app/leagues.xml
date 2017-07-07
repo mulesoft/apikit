@@ -38,7 +38,7 @@
             <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" />
         </apikit:mapping>
         <apikit:mapping statusCode="400">
-            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <apikit:exception value="org.mule.module.apikit.api.exception.BadRequestException" />
             <set-property propertyName="Content-Type" value="application/json"/>
             <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }" />
         </apikit:mapping>

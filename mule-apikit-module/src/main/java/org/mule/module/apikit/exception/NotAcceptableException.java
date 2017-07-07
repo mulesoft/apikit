@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.exception;
 
+import org.mule.module.apikit.api.exception.MuleRestException;
+
 public class NotAcceptableException extends MuleRestException {
 
     public static final String STRING_REPRESENTATION = "APIKIT:NOT_ACCEPTABLE";

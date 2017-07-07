@@ -51,7 +51,7 @@
             <set-variable variableName="httpStatus" value="406"/>
             <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }" mimeType="application/json"/>
         </on-error-propagate>
-        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.exception.BadRequestException)]">
+        <on-error-propagate when="#[mel:exception.causedBy(org.mule.module.apikit.api.exception.BadRequestException)]">
             <set-variable variableName="httpStatus" value="400"/>
             <set-payload value="#[mel:exception.causeException.message]"/>
         </on-error-propagate>

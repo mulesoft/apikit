@@ -24,7 +24,7 @@
             <set-payload value="not acceptable"/>
         </apikit:mapping>
         <apikit:mapping statusCode="400">
-            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException"/>
+            <apikit:exception value="org.mule.module.apikit.api.exception.BadRequestException"/>
             <set-payload value="bad request"/>
         </apikit:mapping>
     </apikit:mapping-exception-strategy>

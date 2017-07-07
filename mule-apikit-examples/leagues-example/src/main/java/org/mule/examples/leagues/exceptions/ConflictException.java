@@ -6,7 +6,7 @@
  */
 package org.mule.examples.leagues.exceptions;
 
-import org.mule.module.apikit.exception.MuleRestException;
+import org.mule.module.apikit.api.exception.MuleRestException;
 
 public class ConflictException extends MuleRestException {
 

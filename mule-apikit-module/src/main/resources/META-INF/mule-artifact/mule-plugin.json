@@ -16,15 +16,11 @@
     "id":"maven",
     "attributes":{
       "exportedPackages":[
-        "org.mule.module.apikit.config",
-        "org.mule.module.apikit.exception",
-        "org.mule.module.apikit.injector",
-        "org.mule.module.apikit.parser",
-        "org.mule.module.apikit.transform",
-        "org.mule.module.apikit.uri",
-        "org.mule.module.apikit.validation",
-        "org.mule.module.apikit",
-        "org.raml.parser.loader",
+        "org.mule.module.apikit.api",
+        "org.mule.module.apikit.api.config",
+        "org.mule.module.apikit.api.exception",
+        "org.mule.module.apikit.api.uri",
+        "org.mule.module.apikit.api.validation",
         "org.mule.raml.interfaces.model"
       ],
       "exportedResources":[

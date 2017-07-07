@@ -7,7 +7,7 @@
 package org.mule.module.apikit.validation.body.schema.v1;
 
 import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.runtime.core.api.config.MuleProperties;
 

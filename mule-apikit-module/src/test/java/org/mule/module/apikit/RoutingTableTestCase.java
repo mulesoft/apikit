@@ -12,7 +12,9 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mule.module.apikit.uri.URIPattern;
+import org.mule.module.apikit.api.RamlHandler;
+import org.mule.module.apikit.api.RoutingTable;
+import org.mule.module.apikit.api.uri.URIPattern;
 
 public class RoutingTableTestCase {
   RamlHandler ramlHandler = new RamlHandler("org/mule/module/apikit/routing-table-sample.raml", true);
