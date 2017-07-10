@@ -38,7 +38,7 @@ public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProv
 
         List<ComponentBuildingDefinition> definitions = new ArrayList<>();
 
-        definitions.add(baseDefinition.copy().withIdentifier("config")
+        definitions.add(baseDefinition.withIdentifier("config")
                                 .withTypeDefinition(fromType(Configuration.class))
                                 .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
                                 .withSetterParameterDefinition("raml", fromSimpleParameter("raml").build())
@@ -49,12 +49,12 @@ public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProv
                                 .withSetterParameterDefinition("flowMappings", fromChildConfiguration(FlowMappings.class).build())
                                 .build());
 
-        definitions.add(baseDefinition.copy().withIdentifier("flow-mappings")
+        definitions.add(baseDefinition.withIdentifier("flow-mappings")
                                 .withTypeDefinition(fromType(FlowMappings.class))
                                 .withSetterParameterDefinition("flowMappings", fromChildCollectionConfiguration(FlowMapping.class).build())
                                 .build());
 
-        definitions.add(baseDefinition.copy().withIdentifier("flow-mapping")
+        definitions.add(baseDefinition.withIdentifier("flow-mapping")
                                 .withTypeDefinition(fromType(FlowMapping.class))
                                 .withSetterParameterDefinition("resource", fromSimpleParameter("resource").build())
                                 .withSetterParameterDefinition("action", fromSimpleParameter("action").build())
@@ -62,12 +62,12 @@ public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProv
                                 .withSetterParameterDefinition("flowRef", fromSimpleParameter("flow-ref").build())
                                 .build());
 
-        definitions.add(baseDefinition.copy().withIdentifier("router")
+        definitions.add(baseDefinition.withIdentifier("router")
                                 .withTypeDefinition(fromType(Router.class))
                                 .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
                                 .withSetterParameterDefinition("configRef", fromSimpleParameter("config-ref").build()).build());
 
-        definitions.add(baseDefinition.copy().withIdentifier("console")
+        definitions.add(baseDefinition.withIdentifier("console")
                                 .withTypeDefinition(fromType(Console.class))
                                 .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
                                 .withSetterParameterDefinition("configRef", fromSimpleParameter("config-ref").build()).build());
