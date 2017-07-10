@@ -1,0 +1,27 @@
+#%RAML 1.0
+title: Bookshop Demo
+version: 1.0
+
+types:
+  Book:
+    properties:
+      title: string
+      author: string
+      available?: boolean
+
+/books:
+  post:
+    description: Creates a new book in the store
+    headers:
+      X-Amount:
+        type: integer
+        required: true
+    body:
+      application/json:
+        type: Book
+        example: {
+          "title" : "El Salvaje",
+          "author" : "Guillermo Arriaga"
+        }
+    responses:
+      200:
