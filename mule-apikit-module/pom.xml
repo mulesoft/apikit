@@ -4,19 +4,19 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>mule-apikit-parent</artifactId>
-        <version>1.0.0-BETA-SNAPSHOT</version>
+        <version>1.0.0-BETA.2</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-apikit-module</artifactId>
-    <version>1.0.0-BETA-SNAPSHOT</version>
+    <version>1.0.0-BETA.2</version>
     <packaging>mule-plugin</packaging>
 
     <name>APIKit Module</name>
     <description>Module for creating API's using REST/SOAP Web Services</description>
 
     <properties>
-        <runtime.version>4.0.0-BETA</runtime.version>
+        <runtime.version>4.0.0-BETA.2</runtime.version>
         <rest.assured.version>1.7.2</rest.assured.version>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
         <testExtensionModelLoaderId>crafted</testExtensionModelLoaderId>
@@ -29,14 +29,14 @@
         <mule.module.extensions.support.version>${runtime.version}</mule.module.extensions.support.version>
         <mule.module.extensions.spring.support.version>${runtime.version}</mule.module.extensions.spring.support.version>
 
-        <mule.service.weave.version>2.0.0-BETA</mule.service.weave.version>
-        <mule.api.version>1.0.0-BETA</mule.api.version>
-        <mule.app.plugins.maven.plugin.version>1.0.0-BETA</mule.app.plugins.maven.plugin.version>
-        <mule.http.connector.version>0.8.0-BETA</mule.http.connector.version>
-        <mule.sockets.connector.version>0.8.0-BETA</mule.sockets.connector.version>
-        <mule.http.service.version>1.0.0-BETA</mule.http.service.version>
-        <mule.extensions.api.version>1.0.0-BETA</mule.extensions.api.version>
-        <mule.service.scheduler.version>1.0.0-BETA</mule.service.scheduler.version>
+        <mule.service.weave.version>2.0.0-BETA.2</mule.service.weave.version>
+        <mule.api.version>1.0.0-BETA.2</mule.api.version>
+        <mule.app.plugins.maven.plugin.version>1.0.0-BETA.2</mule.app.plugins.maven.plugin.version>
+        <mule.http.connector.version>0.8.0-BETA.2</mule.http.connector.version>
+        <mule.sockets.connector.version>0.8.0-BETA.2</mule.sockets.connector.version>
+        <mule.http.service.version>1.0.0-BETA.2</mule.http.service.version>
+        <mule.extensions.api.version>1.0.0-BETA.2</mule.extensions.api.version>
+        <mule.service.scheduler.version>1.0.0-BETA.2</mule.service.scheduler.version>
     </properties>
 
     <build>
