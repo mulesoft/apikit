@@ -7,8 +7,8 @@
 package org.mule.module.apikit.validation.body.form;
 
 import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.exception.BadRequestException;
-import org.mule.module.apikit.exception.InvalidFormParameterException;
+import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.List;

@@ -16,7 +16,7 @@ import org.mule.examples.leagues.response.Position;
 import org.mule.examples.leagues.response.Positions;
 import org.mule.examples.leagues.response.Team;
 import org.mule.examples.leagues.response.Teams;
-import org.mule.module.apikit.exception.MuleRestException;
+import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotFoundException;
 
 import java.util.ArrayList;

@@ -10,7 +10,7 @@ import static com.github.fge.jsonschema.core.report.LogLevel.ERROR;
 import static com.github.fge.jsonschema.core.report.LogLevel.WARNING;
 
 import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.module.apikit.validation.body.schema.v1.io.JsonUtils;
 

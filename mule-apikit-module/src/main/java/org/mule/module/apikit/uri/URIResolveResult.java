@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.mule.module.apikit.api.uri.ResolvedVariables;
+import org.mule.module.apikit.api.uri.URIPattern;
+
 
 /**
  * Holds the results of a URI resolver.
@@ -45,7 +48,7 @@ public class URIResolveResult implements ResolvedVariables {
   /**
    * Constructs an instance of this class with fields initialised to null.
    */
-  protected URIResolveResult(URIPattern pattern) {
+  public URIResolveResult(URIPattern pattern) {
     this._pattern = pattern;
   }
 
@@ -89,7 +92,7 @@ public class URIResolveResult implements ResolvedVariables {
    * @param name The name of the variable.
    * @param o    The corresponding object.
    */
-  protected void put(String name, Object o) {
+  public void put(String name, Object o) {
     this.values.put(name, o);
   }
 
@@ -98,7 +101,7 @@ public class URIResolveResult implements ResolvedVariables {
    *
    * @param status The status of the result.
    */
-  protected void setStatus(Status status) {
+  public void setStatus(Status status) {
     this._status = status;
   }
 

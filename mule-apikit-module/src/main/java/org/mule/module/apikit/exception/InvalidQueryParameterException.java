@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.exception;
 
+import org.mule.module.apikit.api.exception.BadRequestException;
+
 public class InvalidQueryParameterException extends BadRequestException
 {
 

@@ -4,15 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit;
-
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.module.apikit.helpers.AttributesHelper;
-import org.mule.module.apikit.parser.ParserService;
-import org.mule.raml.interfaces.model.IAction;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.runtime.core.api.exception.TypedException;
+package org.mule.module.apikit.api;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -20,6 +12,16 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.ApikitErrorTypes;
+import org.mule.module.apikit.StreamUtils;
+import org.mule.module.apikit.UrlUtils;
+import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.module.apikit.helpers.AttributesHelper;
+import org.mule.module.apikit.parser.ParserService;
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.runtime.core.api.exception.TypedException;
 import org.raml.model.ActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

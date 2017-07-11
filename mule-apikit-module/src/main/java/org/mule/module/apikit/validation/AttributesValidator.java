@@ -7,9 +7,9 @@
 package org.mule.module.apikit.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.exception.MuleRestException;
+import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.helpers.AttributesHelper;
-import org.mule.module.apikit.uri.ResolvedVariables;
+import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.validation.attributes.HeadersValidator;
 import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
 import org.mule.module.apikit.validation.attributes.UriParametersValidator;

@@ -9,7 +9,7 @@ package org.mule.module.apikit.validation.attributes;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.helpers.AttributesHelper;
-import org.mule.module.apikit.uri.ResolvedVariables;
+import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;

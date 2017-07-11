@@ -4,11 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.validation;
-
-import org.mule.runtime.api.message.MultiPartPayload;
+package org.mule.module.apikit.api.validation;
 
 import java.util.Map;
+
+import org.mule.runtime.api.message.MultiPartPayload;
 
 public class ValidBody {
   Object payload;

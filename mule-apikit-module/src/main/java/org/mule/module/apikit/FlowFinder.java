@@ -6,9 +6,11 @@
  */
 package org.mule.module.apikit;
 
+import org.mule.module.apikit.api.RamlHandler;
+import org.mule.module.apikit.api.RoutingTable;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
-import org.mule.module.apikit.uri.URIPattern;
-import org.mule.module.apikit.uri.URIResolver;
+import org.mule.module.apikit.api.uri.URIPattern;
+import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.MuleContext;

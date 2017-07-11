@@ -5,13 +5,20 @@
  * LICENSE.txt file.
  */
 
-package org.mule.module.apikit.uri;
+package org.mule.module.apikit.api.uri;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.mule.module.apikit.uri.Matchable;
+import org.mule.module.apikit.uri.Token;
+import org.mule.module.apikit.uri.TokenLiteral;
+import org.mule.module.apikit.uri.URICoder;
+import org.mule.module.apikit.uri.URITemplate;
+import org.mule.module.apikit.uri.URITemplateSyntaxException;
 
 
 /**

@@ -9,7 +9,7 @@ package org.mule.module.apikit.helpers;
 import static org.mule.module.apikit.CharsetUtils.trimBom;
 
 import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.exception.BadRequestException;
+import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 

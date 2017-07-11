@@ -8,11 +8,12 @@ package org.mule.module.apikit;
 
 //import org.mule.module.apikit.exception.NotFoundException;
 
+import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.module.apikit.uri.URIPattern;
-import org.mule.module.apikit.uri.URIResolver;
-import org.mule.module.apikit.validation.ApiKitJsonSchema;
-import org.mule.module.apikit.validation.ValidationConfig;
+import org.mule.module.apikit.api.uri.URIPattern;
+import org.mule.module.apikit.api.uri.URIResolver;
+import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
+import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
 import org.mule.runtime.api.lifecycle.Initialisable;

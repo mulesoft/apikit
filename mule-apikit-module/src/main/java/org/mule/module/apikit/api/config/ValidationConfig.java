@@ -4,11 +4,13 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.validation;
+package org.mule.module.apikit.api.config;
 
 import java.util.concurrent.ExecutionException;
 
 import javax.xml.validation.Schema;
+
+import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 
 public interface ValidationConfig {
 

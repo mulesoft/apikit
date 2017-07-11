@@ -4,15 +4,15 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit;
-
-import org.mule.module.apikit.uri.URIPattern;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.raml.interfaces.model.IResource;
+package org.mule.module.apikit.api;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import org.mule.module.apikit.api.uri.URIPattern;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.IResource;
 
 public class RoutingTable {
 
