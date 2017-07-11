@@ -29,19 +29,22 @@ import org.junit.Test;
 
 public class ToolingClientTestCase
 {
+    String toolingRuntimeVersion = "4.0.0-BETA.x-SNAPSHOT";
+    String apikitRuntimeVersion = "1.0.0-BETA.x-SNAPSHOT";
+
     @Test
     public void loadExtensionModel()
     {
-        ToolingRuntimeClientBootstrap toolingRuntimeClientBootstrap = new ToolingRuntimeClientBootstrap("4.0.0-BETA.1-SNAPSHOT", createMavenConfiguration());
+        ToolingRuntimeClientBootstrap toolingRuntimeClientBootstrap = new ToolingRuntimeClientBootstrap(toolingRuntimeVersion, createMavenConfiguration());
         ExtensionModelService extensionModelService = toolingRuntimeClientBootstrap.newToolingRuntimeClientBuilder().build().extensionModelService();
-        ArtifactDescriptor artifactDescriptor = ArtifactDescriptor.newBuilder().withGroupId("org.mule.modules").withArtifactId("mule-apikit-module").withClassifier("mule-plugin").withVersion("1.0.0-BETA-SNAPSHOT").build();
+        ArtifactDescriptor artifactDescriptor = ArtifactDescriptor.newBuilder().withGroupId("org.mule.modules").withArtifactId("mule-apikit-module").withClassifier("mule-plugin").withVersion(apikitRuntimeVersion).build();
         assertEquals("APIKit",extensionModelService.loadExtensionModel(artifactDescriptor).get().getName());
     }
 
     @Test
     public void loadDataSense()
     {
-        ToolingRuntimeClientBootstrap toolingRuntimeClientBootstrap = new ToolingRuntimeClientBootstrap("4.0.0-BETA.1-SNAPSHOT", createMavenConfiguration());
+        ToolingRuntimeClientBootstrap toolingRuntimeClientBootstrap = new ToolingRuntimeClientBootstrap(toolingRuntimeVersion, createMavenConfiguration());
         ToolingRuntimeClient toolingRuntimeClient = toolingRuntimeClientBootstrap.newToolingRuntimeClientBuilder().build();
         ToolingArtifact toolingArtifact = toolingRuntimeClient.newToolingArtifact(() -> this.getClass().getClassLoader().getResource("app"));
         assertNotNull(toolingArtifact);
