@@ -9,7 +9,6 @@ package org.mule.tools.apikit.output;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
-import org.mule.tools.apikit.output.deployer.MuleDeployWriter;
 import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
 import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
 import org.mule.tools.apikit.output.scopes.ConsoleFlowScope;
@@ -125,8 +124,6 @@ public class MuleConfigGenerator {
             }
         }
 
-        // Generate mule deploy properties file
-        new MuleDeployWriter(rootDirectory).generate();
     }
 
     private int getLastFlowIndex(Document doc)
