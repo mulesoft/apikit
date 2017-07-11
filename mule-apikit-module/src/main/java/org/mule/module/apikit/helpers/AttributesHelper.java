@@ -6,14 +6,14 @@
  */
 package org.mule.module.apikit.helpers;
 
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.HeaderNames;
-import org.mule.runtime.api.util.MultiMap;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.Map;
+
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.HeaderNames;
+import org.mule.runtime.api.util.MultiMap;
 
 public class AttributesHelper
 {

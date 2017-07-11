@@ -4,11 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit;
+package org.mule.module.apikit.api;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mule.extension.http.api.HttpRequestAttributes;
 
-import org.apache.commons.lang.StringUtils;
 
 //import org.mule.runtime.api.message.Message;
 //import org.mule.runtime.core.api.Event;
@@ -87,10 +87,7 @@ public class UrlUtils
     return character;
   }
 
-  public static String getRelativePath(HttpRequestAttributes attributes) {
-    String baseAndApiPath = attributes.getListenerPath();
-    String requestPath = attributes.getRequestPath();
-
+  public static String getRelativePath(String baseAndApiPath, String requestPath ) {
     int character = getEndOfBasePathIndex(baseAndApiPath, requestPath);
     String relativePath = requestPath.substring(character);
     if (!"".equals(relativePath)) {
@@ -105,10 +102,9 @@ public class UrlUtils
     return relativePath;
   }
 
-  public static String  getListenerPath(HttpRequestAttributes attributes)
+  public static String  getListenerPath(String listenerPath, String requestPath)
   {
-    String listenerPath =  attributes.getListenerPath();
-    String requestPath = attributes.getRequestPath();
+
     if (!listenerPath.startsWith("/"))
     {
       listenerPath = "/" + listenerPath;
@@ -146,9 +142,7 @@ public class UrlUtils
   }
 
 
-  public static String getBasePath(HttpRequestAttributes attributes) {
-    String baseAndApiPath = attributes.getListenerPath();
-    String requestPath = attributes.getRequestPath();
+  public static String getBasePath(String baseAndApiPath, String requestPath) {
     int character = getEndOfBasePathIndex(baseAndApiPath, requestPath);
     return requestPath.substring(0, character);
   }
@@ -202,5 +196,21 @@ public class UrlUtils
       }
     }
     return StringUtils.join(split, "\n");
+  }
+
+  /**
+   * Creates URL where the server must redirect the client
+   * @return The redirect URL
+   */
+  public static String getRedirectLocation(String scheme, String remoteAddress, String requestPath, String queryString )
+  {
+    String redirectLocation = scheme + "://" + remoteAddress + requestPath  + "/";
+
+    if (StringUtils.isNotEmpty(queryString))
+    {
+      redirectLocation += "?" + queryString;
+    }
+
+    return redirectLocation;
   }
 }

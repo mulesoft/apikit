@@ -12,12 +12,9 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
-import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.StreamUtils;
-import org.mule.module.apikit.UrlUtils;
 import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.parser.ParserService;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
@@ -146,29 +143,20 @@ public class RamlHandler
         }
     }
 
-    public boolean isRequestingRamlV1(HttpRequestAttributes messageAttributes)
+    public boolean isRequestingRamlV1ForConsole(String listenerPath, String requestPath, String queryString, String method, String aceptHeader)
     {
-        String listenerPath = UrlUtils.getListenerPath(messageAttributes);// messageAttributes.getRequestPath();
+        String postalistenerPath = UrlUtils.getListenerPath(listenerPath, requestPath);
+
         return (!isParserV2() &&
-                listenerPath.equals(messageAttributes.getRequestPath()) &&
-                ActionType.GET.toString().equals(messageAttributes.getMethod().toUpperCase()) &&
-                APPLICATION_RAML.equals(AttributesHelper.getHeaderIgnoreCase(messageAttributes,"Accept")));
+                (postalistenerPath.equals(requestPath) || (postalistenerPath + "/").equals(requestPath)) &&
+                ActionType.GET.toString().equals(method.toUpperCase()) &&
+                (APPLICATION_RAML.equals(aceptHeader)
+                        || queryString.equals(RAML_QUERY_STRING)));
     }
 
-    public boolean isRequestingRamlV1ForConsole(HttpRequestAttributes messageAttributes)
+    public boolean isRequestingRamlV2(String listenerPath, String requestPath, String queryString, String method)
     {
-        String listenerPath = UrlUtils.getListenerPath(messageAttributes);
-        return (!isParserV2() &&
-                (listenerPath.equals(messageAttributes.getRequestPath()) ||
-                        (listenerPath + "/").equals(messageAttributes.getRequestPath())) &&
-                ActionType.GET.toString().equals(messageAttributes.getMethod().toUpperCase()) &&
-                (APPLICATION_RAML.equals(AttributesHelper.getHeaderIgnoreCase(messageAttributes,"Accept"))
-                        || messageAttributes.getQueryString().equals(RAML_QUERY_STRING)));
-    }
-
-    public boolean isRequestingRamlV2(HttpRequestAttributes messageAttributes)
-    {
-        String consolePath = UrlUtils.getListenerPath(messageAttributes);
+        String consolePath = UrlUtils.getListenerPath(listenerPath, requestPath);
         String resourcesFullPath = consolePath;
         if (!consolePath.endsWith("/"))
         {
@@ -185,9 +173,9 @@ public class RamlHandler
                 resourcesFullPath += apiResourcesRelativePath.substring(1);
             }
         }
-        return isParserV2() && messageAttributes.getQueryString().equals(RAML_QUERY_STRING)
-               && ActionType.GET.toString().equals(messageAttributes.getMethod().toUpperCase())
-                && messageAttributes.getRequestPath().startsWith(resourcesFullPath);
+        return isParserV2() && queryString.equals(RAML_QUERY_STRING)
+               && ActionType.GET.toString().equals(method.toUpperCase())
+                && requestPath.startsWith(resourcesFullPath);
     }
 
     private String sanitarizeResourceRelativePath(String resourceRelativePath)

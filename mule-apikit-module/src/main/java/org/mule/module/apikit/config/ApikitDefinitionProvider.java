@@ -11,6 +11,9 @@ import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fro
 import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromSimpleParameter;
 import static org.mule.runtime.dsl.api.component.TypeDefinition.fromType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.Console;
 import org.mule.module.apikit.FlowMapping;
@@ -18,9 +21,6 @@ import org.mule.module.apikit.FlowMappings;
 import org.mule.module.apikit.Router;
 import org.mule.runtime.dsl.api.component.ComponentBuildingDefinition;
 import org.mule.runtime.dsl.api.component.ComponentBuildingDefinitionProvider;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProvider
 {
