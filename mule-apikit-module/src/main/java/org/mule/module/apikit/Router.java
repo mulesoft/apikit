@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit;
 
+import static java.util.Optional.empty;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
@@ -66,7 +67,7 @@ public class Router implements  Processor, FlowConstructAware //Initialisable,
 
     public Event process(final Event event) throws MuleException {
         Configuration config = registry.getConfiguration(getConfigRef());
-        Event.Builder eventBuilder = Event.builder(DefaultEventContext.child(event.getContext()), event);
+        Event.Builder eventBuilder = Event.builder(DefaultEventContext.child(event.getContext(),empty()), event);
 
         eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
