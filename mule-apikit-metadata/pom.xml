@@ -27,6 +27,16 @@
             <artifactId>mule-message-metadata-model</artifactId>
             <version>${metadata.api.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-metadata-model-json</artifactId>
+            <version>${metadata.api.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-metadata-model-xml</artifactId>
+            <version>${metadata.api.version}</version>
+        </dependency>
 
         <!-- RAML Parser Interfaces -->
         <dependency>
@@ -48,6 +58,11 @@
             <artifactId>mockito-all</artifactId>
             <version>1.9.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-module-spring-config</artifactId>
+            <version>RELEASE</version>
         </dependency>
     </dependencies>
 

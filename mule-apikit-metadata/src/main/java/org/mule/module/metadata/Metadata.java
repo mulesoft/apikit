@@ -6,99 +6,55 @@
  */
 package org.mule.module.metadata;
 
-import org.mule.metadata.api.builder.BaseTypeBuilder;
-import org.mule.metadata.api.builder.FunctionTypeBuilder;
-import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.FunctionType;
-import org.mule.metadata.api.model.MetadataFormat;
-import org.mule.metadata.api.model.MetadataType;
-import org.mule.metadata.message.MessageMetadataType;
-import org.mule.metadata.message.MessageMetadataTypeBuilder;
-import org.mule.metadata.message.MuleEventMetadataType;
-import org.mule.metadata.message.MuleEventMetadataTypeBuilder;
+import org.mule.module.metadata.interfaces.ResourceLoader;
+import org.mule.runtime.config.spring.dsl.model.ApplicationModel;
+
+import java.util.Optional;
 
 public class Metadata
 {
-    private Metadata() { }
+    private MetadataHandler metadataHandler;
 
-    // TODO: 7/10/17 Add parameters
-    public static FunctionType of() {
-
-        MetadataType payloadMetadata = createPayloadMetadata();
-        MetadataType headersMetadata = createHeadersMetadata();
-
-        // Input Message Metadata
-        MessageMetadataType messageMetadata = new MessageMetadataTypeBuilder()
-                .payload(payloadMetadata)
-                .attributes(headersMetadata)
-                .build();
-
-        // Input Event Metadata
-        MuleEventMetadataType inputMetadata = new MuleEventMetadataTypeBuilder()
-                .message(messageMetadata)
-                .build();
-
-        MuleEventMetadataType outputMetadata = new MuleEventMetadataTypeBuilder()
-                .build();
-
-        // FunctionType
-        FunctionTypeBuilder functionTypeBuilder = BaseTypeBuilder.create(MetadataFormat.JSON).functionType();
-        FunctionType function = functionTypeBuilder
-                .addParameterOf("inputMetadata", inputMetadata)
-                .returnType(outputMetadata)
-                .build();
-
-        return function;
+    private Metadata(ApplicationModel applicationModel, ResourceLoader resourceLoader) {
+        init(applicationModel, resourceLoader);
     }
 
-    private static MetadataType createHeadersMetadata()
-    {
+    public Optional<FunctionType> getMetadataForFlow(String flowName) {
+        return metadataHandler.getMetadataForFlow(flowName);
+    }
 
-//        headers:
-//          X-Amount:
-//            type: integer
-//            required: true
-
-        ObjectTypeBuilder headersBuilder = BaseTypeBuilder.create(MetadataFormat.JSON).objectType();
-
-        headersBuilder.addField()
-                .key("X-Amount")
-                .value().objectType().addField()
-                    .required(true)
-                    .value().numberType().integer();
-
-        return headersBuilder.build();
+    private void init(ApplicationModel applicationModel, ResourceLoader resourceLoader) {
+        metadataHandler = new MetadataHandler(applicationModel, resourceLoader);
     }
 
 
-    private static MetadataType createPayloadMetadata() {
+    /**
+     * Builder for Metadata module
+     */
+    public static class Builder {
 
-//        body:
-//          application/json:
-//            type: Book
-//            example: {
-//              "title" : "El Salvaje",
-//              "author" : "Guillermo Arriaga"
-//            }
+        private ResourceLoader resourceLoader;
+        private ApplicationModel applicationModel;
 
-        ObjectTypeBuilder objectBuilder = BaseTypeBuilder.create(MetadataFormat.JSON).objectType();
+        public Builder () {
 
-        objectBuilder.addField()
-                .required(true)
-                .key("title")
-                .value().stringType();
+        }
 
-        objectBuilder.addField()
-                .required(true)
-                .key("author")
-                .value().stringType();
+        public Builder withResourceLoader(ResourceLoader resourceLoader) {
+            this.resourceLoader = resourceLoader;
+            return this;
+        }
 
-        objectBuilder.addField()
-                .required(false)
-                .key("available")
-                .value().booleanType();
+        public Builder withApplicationModel(ApplicationModel applicationModel) {
+            this.applicationModel = applicationModel;
+            return this;
+        }
 
-        return objectBuilder.build();
+        public Metadata build() {
+            return new Metadata(applicationModel, resourceLoader);
+        }
+
     }
 
 }

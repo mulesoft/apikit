@@ -88,7 +88,7 @@ public class RamlImpl10V2 implements IRaml
             return null;
         }
         //return non-null value in order to detect that a schema was defined
-        return "[yaml-type-flag]";
+        return typeDeclaration.toJsonSchema();
     }
 
     @Override
