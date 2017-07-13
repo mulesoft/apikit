@@ -12,10 +12,6 @@ import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.PayloadHelper;
-import org.mule.module.apikit.validation.body.form.FormParametersValidator;
-import org.mule.module.apikit.validation.body.form.MultipartFormValidator;
-import org.mule.module.apikit.validation.body.form.UrlencodedFormV2Validator;
-import org.mule.module.apikit.validation.body.form.UrlencodedFormValidator;
 import org.mule.module.apikit.validation.body.schema.RestSchemaValidator;
 import org.mule.module.apikit.validation.body.schema.v1.RestJsonSchemaValidator;
 import org.mule.module.apikit.validation.body.schema.v1.RestXmlSchemaValidator;
@@ -78,10 +74,6 @@ public class BodyValidator {
 
       validateAsString(config, mimeType, action, requestMimeTypeName, payload, charset);
 
-    } else if(requestMimeTypeName.contains("multipart/form-data") || requestMimeTypeName.contains("application/x-www-form-urlencoded")) {
-
-      validBody = validateAsMultiPart(config, mimeType, requestMimeTypeName, payload);
-
     }
 
     return validBody;
@@ -113,32 +105,6 @@ public class BodyValidator {
 
     schemaValidator.validate(strPayload);
 
-  }
-
-  private static ValidBody validateAsMultiPart(ValidationConfig config, IMimeType mimeType, String requestMimeTypeName, Object payload) throws BadRequestException {
-    ValidBody validBody = new ValidBody(payload);
-    FormParametersValidator formParametersValidator = null;
-
-    if (mimeType.getFormParameters() != null) {
-
-      if (requestMimeTypeName.contains("multipart/form-data")) {
-
-        formParametersValidator = new FormParametersValidator(new MultipartFormValidator(mimeType.getFormParameters()));
-        validBody.setFormParameters(formParametersValidator.validate(payload));
-
-      } else if (requestMimeTypeName.contains("application/x-www-form-urlencoded")) {
-        if (config.isParserV2()) {
-          formParametersValidator = new FormParametersValidator(new UrlencodedFormV2Validator(mimeType));
-
-        } else {
-          formParametersValidator = new FormParametersValidator(new UrlencodedFormValidator(mimeType.getFormParameters()));
-        }
-
-        validBody.setFormParameters(formParametersValidator.validate(payload));
-      }
-    }
-
-    return validBody;
   }
 
 }
