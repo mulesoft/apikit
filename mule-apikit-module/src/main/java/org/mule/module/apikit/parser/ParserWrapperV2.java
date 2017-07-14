@@ -12,11 +12,14 @@ import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
+import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
+import org.raml.v2.api.loader.RootRamlResourceLoader;
 import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +33,15 @@ public class ParserWrapperV2 implements ParserWrapper {
 
   public ParserWrapperV2(String ramlPath) {
     this.ramlPath = ramlPath;
-    this.resourceLoader = new DefaultResourceLoader();
+    if (ramlPath != null && new File(ramlPath).getParent() != null)
+    {
+      File ramlFile = new File(Thread.currentThread().getContextClassLoader().getResource(ramlPath).getFile());
+      this.resourceLoader = new org.raml.v2.api.loader.CompositeResourceLoader(new RootRamlResourceLoader(ramlFile.getParentFile()), new DefaultResourceLoader());
+    }
+    else
+    {
+      this.resourceLoader = new DefaultResourceLoader();
+    }
   }
 
   @Override
