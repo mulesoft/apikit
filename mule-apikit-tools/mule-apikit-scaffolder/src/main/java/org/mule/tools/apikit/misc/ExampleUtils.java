@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mule.weave.v2.module.reader.StringSourceProvider;
 import org.mule.weave.v2.runtime.utils.WeaveSimpleRunner;
 import org.yaml.snakeyaml.Yaml;
+import scala.Option;
 
 import java.io.IOException;
 
@@ -47,7 +48,7 @@ public class ExampleUtils
         example = getExampleAsJSONIfNeeded(example);
 
         WeaveSimpleRunner runner = new WeaveSimpleRunner();
-        runner.addInput(DW_INPUT_TYPE, transformContentType, new StringSourceProvider(example));
+        runner.addInput(DW_INPUT_TYPE, transformContentType, new StringSourceProvider(example, Option.empty()));
         runner.setOutputType(DW_OUTPUT_TYPE);
         String weaveResult = runner.execute(DW_INPUT_TYPE).toString();
 
