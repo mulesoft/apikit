@@ -32,6 +32,7 @@ import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.FileResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
+import org.raml.v2.api.loader.RootRamlResourceLoader;
 
 public class RAMLFilesParser
 {
@@ -60,9 +61,11 @@ public class RAMLFilesParser
             }
             String rootRamlName = ramlFile.getName();
             String ramlFolderPath = null;
+            File ramlFileParent = null;
             if (ramlFile.getParentFile() != null)
             {
                 ramlFolderPath = ramlFile.getParentFile().getPath();
+                ramlFileParent = ramlFile.getParentFile();
             }
             if (isValidRaml(rootRamlName, content, ramlFolderPath))
             {
@@ -71,7 +74,7 @@ public class RAMLFilesParser
                     IRaml raml;
                     if (ParserV2Utils.useParserV2(content))
                     {
-                        ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFolderPath));
+                        ResourceLoader resourceLoader = new CompositeResourceLoader( new RootRamlResourceLoader(ramlFileParent), new DefaultResourceLoader(), new FileResourceLoader(ramlFolderPath));
                         raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
                     }
                     else
@@ -105,7 +108,7 @@ public class RAMLFilesParser
         List<String> errors;
         if (ParserV2Utils.useParserV2(content))
         {
-            ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(filePath));
+            ResourceLoader resourceLoader = new CompositeResourceLoader( new RootRamlResourceLoader(new File(filePath)), new DefaultResourceLoader(), new FileResourceLoader(filePath));
             errors = ParserV2Utils.validate(resourceLoader, fileName, content);
         }
         else
