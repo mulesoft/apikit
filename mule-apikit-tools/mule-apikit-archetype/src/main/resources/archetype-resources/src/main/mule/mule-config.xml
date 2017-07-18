@@ -14,7 +14,7 @@
 #if( !$useSharedHttpListener )
 #set( $configRefName = "httpListenerConfigDefault" )
     <http:listener-config name="httpListenerConfigDefault">
-        <http:listener-connection host="localhost" port="${http.port}"/>
+        <http:listener-connection host="0.0.0.0" port="${http.port}"/>
     </http:listener-config>
 #else
 #set( $configRefName = $sharedHttpListener )
