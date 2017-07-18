@@ -1,0 +1,18 @@
+#%RAML 0.8
+---
+title: Simple API
+baseUri: http://www.google.com
+
+/resources:
+  get:
+    responses:
+        200:
+            body:
+                application/json: !!null
+                text/xml: !!null
+/types-test:
+  post:
+    body:
+        application/json: !!null
+    responses:
+      200: ~

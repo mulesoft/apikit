@@ -11,10 +11,10 @@
     <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config name="apikitConfigWithoutRouter" raml="org/mule/module/apikit/console/simple-with-baseuri.raml"
+    <apikit:config name="apikitConfigWithoutRouter" raml="org/mule/module/apikit/console/simple-with-baseuri10.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" keepRamlBaseUri="true"/>
 
-    <apikit:config name="apikitConfigWithRouter" raml="org/mule/module/apikit/console/simple-with-baseuri.raml"
+    <apikit:config name="apikitConfigWithRouter" raml="org/mule/module/apikit/console/simple-with-baseuri10.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" keepRamlBaseUri="true"/>
 
     <flow name="api-consoleWithoutRouter">
