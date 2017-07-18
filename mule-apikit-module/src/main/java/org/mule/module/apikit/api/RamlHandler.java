@@ -27,6 +27,7 @@ public class RamlHandler
 {
     public static final String APPLICATION_RAML = "application/raml+yaml";
     private static final String RAML_QUERY_STRING = "raml";
+    private static final String BIND_TO_ALL_INTERFACES = "0.0.0.0";
 
     private boolean keepRamlBaseUri;
     private String apiServer;
@@ -80,7 +81,8 @@ public class RamlHandler
         }
         else
         {
-            return parserService.dumpRaml(api, apiServer);
+            String baseUriReplacement = getBaseUriReplacement(apiServer);
+            return parserService.dumpRaml(api, baseUriReplacement);
         }
     }
 
@@ -101,7 +103,8 @@ public class RamlHandler
             {
                 return rootRaml;
             }
-            return UrlUtils.replaceBaseUri(rootRaml, apiServer);
+            String baseUriReplacement = getBaseUriReplacement(apiServer);
+            return UrlUtils.replaceBaseUri(rootRaml, baseUriReplacement);
         }
         else
         {
@@ -141,6 +144,62 @@ public class RamlHandler
             }
             return null;
         }
+    }
+
+    public String getBaseUriReplacement(String apiServer)
+    {
+        if (apiServer == null)
+        {
+            return null;
+        }
+        String baseUriReplacement = apiServer;
+        if (apiServer.contains(BIND_TO_ALL_INTERFACES))
+        {
+            if (System.getProperty("fullDomain") != null)
+            {
+                String fullDomain = System.getProperty("fullDomain");
+                URL url = null;
+                try
+                {
+                    url = new URL(apiServer);
+                }
+                catch (Exception e)
+                {
+                    return apiServer;
+                }
+                String path = url.getPath();
+                if (fullDomain.endsWith("/") && path.length() > 0 && path.startsWith("/"))
+                {
+                    if (path.length()>1)
+                    {
+                        path = path.substring(1);
+                    }
+                    else
+                    {
+                        path = "";
+                    }
+                }
+                else if (!fullDomain.endsWith("/") && path.length() > 0 && !path.startsWith("/"))
+                {
+                    fullDomain += "/";
+                }
+                if (fullDomain.contains("://"))
+                {
+                    baseUriReplacement = fullDomain + path;
+
+                }
+                else
+                {
+                    baseUriReplacement = "http://" + fullDomain + path;
+                }
+
+            }
+            else
+            {
+                baseUriReplacement = baseUriReplacement.replace(BIND_TO_ALL_INTERFACES, "localhost");
+            }
+        }
+        return baseUriReplacement;
     }
 
     public boolean isRequestingRamlV1ForConsole(String listenerPath, String requestPath, String queryString, String method, String aceptHeader)
