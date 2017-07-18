@@ -15,7 +15,7 @@
         <http:listener-connection host="localhost" port="${serverPort2}"/>
     </http:listener-config>
 
-    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/console/simple-with-baseuri.raml"
+    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/console/simple-with-baseuri10.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="api-console">

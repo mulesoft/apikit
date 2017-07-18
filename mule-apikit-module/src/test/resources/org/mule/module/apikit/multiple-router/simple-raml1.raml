@@ -1,0 +1,18 @@
+#%RAML 1.0
+---
+title: Simple API 1
+baseUri: http://localhost:8081
+types:
+  Dog:
+    type: object
+    properties:
+      age:
+        required: true
+        type: string
+/typesDog:
+  post:
+    body:
+        application/json:
+            type: Dog
+    responses:
+      200: ~

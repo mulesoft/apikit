@@ -110,7 +110,7 @@ public class ConsoleWithRouterTestCase extends MuleArtifactFunctionalTestCase
                 .response()
                 .statusCode(200)
                 .body(containsString("/types-test:"))
-                .when().get("console/org/mule/module/apikit/console/simple-with-baseuri.raml?raml");
+                .when().get("console/org/mule/module/apikit/console/simple-with-baseuri10.raml?raml");
     }
 
     @Test
@@ -123,7 +123,7 @@ public class ConsoleWithRouterTestCase extends MuleArtifactFunctionalTestCase
                 .response()
                 .statusCode(200)
                 .body(containsString("/types-test:"))
-                .when().get("console/org/mule/module/apikit/console/simple-with-baseuri.raml");
+                .when().get("console/org/mule/module/apikit/console/simple-with-baseuri10.raml");
     }
 
     @Test
