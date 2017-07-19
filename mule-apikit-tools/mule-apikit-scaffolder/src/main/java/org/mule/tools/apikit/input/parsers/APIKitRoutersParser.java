@@ -59,7 +59,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
             APIKitConfig config = getApikitConfig(element);
 
             for (File ramlPath : ramlPaths) {
-                if (ramlPath.getName().equals(config.getRaml()))
+                if (ramlPath.getPath().endsWith(config.getRaml()))
                 {
                     Element source = findListenerOrInboundEndpoint(element.getParentElement().getChildren());
                     String configId = config.getName() != null ? config.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
