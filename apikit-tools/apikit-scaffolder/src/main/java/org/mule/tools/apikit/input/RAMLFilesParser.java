@@ -30,8 +30,8 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
-import org.raml.v2.api.loader.FileResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
+import org.raml.v2.api.loader.RootRamlResourceLoader;
 
 public class RAMLFilesParser
 {
@@ -73,7 +73,7 @@ public class RAMLFilesParser
                     IRaml raml;
                     if (ParserV2Utils.useParserV2(content))
                     {
-                        ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFolderPath));
+                        ResourceLoader resourceLoader = getResourceLoader(ramlFolderPath);
                         raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
                     }
                     else
@@ -108,7 +108,7 @@ public class RAMLFilesParser
         List<String> errors;
         if (ParserV2Utils.useParserV2(content))
         {
-            ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(filePath));
+            ResourceLoader resourceLoader = getResourceLoader(filePath);
             errors = ParserV2Utils.validate(resourceLoader, fileName, content);
         }
         else
@@ -134,6 +134,11 @@ public class RAMLFilesParser
         }
         log.info("File '" + fileName + "' is a VALID root RAML file.");
         return true;
+    }
+
+    private ResourceLoader getResourceLoader(String filePath)
+    {
+        return new CompositeResourceLoader(new RootRamlResourceLoader(new File(filePath)), new DefaultResourceLoader());
     }
 
     void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version)
