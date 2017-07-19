@@ -32,8 +32,8 @@
         <mule.service.weave.version>2.0.0-BETA.4</mule.service.weave.version>
         <mule.api.version>1.0.0-BETA.4</mule.api.version>
         <mule.app.plugins.maven.plugin.version>1.0.0-BETA.4</mule.app.plugins.maven.plugin.version>
-        <mule.http.connector.version>0.8.0-BETA.4</mule.http.connector.version>
-        <mule.sockets.connector.version>0.8.0-BETA.4</mule.sockets.connector.version>
+        <mule.http.connector.version>0.8.0</mule.http.connector.version>
+        <mule.sockets.connector.version>0.8.0</mule.sockets.connector.version>
         <mule.http.service.version>1.0.0-BETA.4</mule.http.service.version>
         <mule.extensions.api.version>1.0.0-BETA.4</mule.extensions.api.version>
         <mule.service.scheduler.version>1.0.0-BETA.4</mule.service.scheduler.version>

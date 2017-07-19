@@ -11,7 +11,7 @@
 
     <properties>
         <mule.maven.plugin.version>3.0.0-BETA</mule.maven.plugin.version>
-        <mule.http.connector.version>0.8.0-BETA.4</mule.http.connector.version>
+        <mule.http.connector.version>0.8.0</mule.http.connector.version>
     </properties>
     <build>
         <plugins>
