@@ -13,9 +13,12 @@ import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
 
+import com.google.common.collect.Lists;
+
 import java.io.InputStream;
 import java.util.List;
 
+import org.raml.v2.api.loader.ClassPathResourceLoader;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.FileResourceLoader;
@@ -35,13 +38,22 @@ public class ParserWrapperV2 implements ParserWrapper
     public ParserWrapperV2(String ramlPath, String appHome)
     {
         this.ramlPath = ramlPath;
+        List<ResourceLoader> resourceLoaders = Lists.newArrayList((ResourceLoader) new DefaultResourceLoader());
         if (appHome != null)
         {
-            this.resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(appHome));
+            resourceLoaders.add(new FileResourceLoader(appHome));
+        }
+        if (ramlPath.matches(".+/.+"))
+        {
+            resourceLoaders.add(0, new ClassPathResourceLoader(ramlPath.substring(0, ramlPath.lastIndexOf("/"))));
+        }
+        if (resourceLoaders.size() > 1)
+        {
+            this.resourceLoader = new CompositeResourceLoader(resourceLoaders.toArray(new ResourceLoader[]{}));
         }
         else
         {
-            this.resourceLoader = new DefaultResourceLoader();
+            this.resourceLoader = resourceLoaders.get(0);
         }
     }
 
