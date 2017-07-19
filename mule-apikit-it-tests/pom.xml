@@ -6,12 +6,12 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>mule-apikit-parent</artifactId>
-        <version>1.0.0-BETA.x-SNAPSHOT</version>
+        <version>1.0.0-BETA.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.mule.tools</groupId>
     <artifactId>mule-apikit-it-tests</artifactId>
-    <version>1.0.0-BETA.x-SNAPSHOT</version>
+    <version>1.0.0-BETA.4-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -34,12 +34,12 @@
         <dependency>
             <groupId>org.mule.tooling</groupId>
             <artifactId>mule-runtime-tooling-bootstrap</artifactId>
-            <version>1.0.0-BETA.x-SNAPSHOT</version>
+            <version>1.0.0-BETA.4</version>
         </dependency>
         <dependency>
             <groupId>org.mule.tooling</groupId>
             <artifactId>mule-runtime-tooling-api</artifactId>
-            <version>1.0.0-BETA.x-SNAPSHOT</version>
+            <version>1.0.0-BETA.4</version>
         </dependency>
     </dependencies>
 

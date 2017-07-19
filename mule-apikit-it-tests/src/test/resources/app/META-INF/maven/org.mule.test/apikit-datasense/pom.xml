@@ -12,7 +12,7 @@
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-apikit-module</artifactId>
-            <version>1.0.0-BETA.x-SNAPSHOT</version>
+            <version>1.0.0-BETA.4-SNAPSHOT</version>
             <classifier>mule-plugin</classifier>
         </dependency>
 
