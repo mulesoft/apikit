@@ -46,6 +46,8 @@ public class ScaffolderMule4Test {
         folder.newFolder("scaffolder");
         folder.newFolder("double-root-raml");
         folder.newFolder("custom-domain-4");
+        folder.newFolder("raml-inside-folder");
+        folder.newFolder("raml-inside-folder/folder");
         folder.newFolder("empty-domain");
         folder.newFolder("custom-domain-multiple-lc-4");
     }
@@ -491,6 +493,25 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "get:/car:nested-config"));
         assertEquals(2, countOccurences(s, "post:/car:nested-config"));
         assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
+    }
+
+    @Test
+    public void testSimpleGenerationWithRamlInsideAFolder() throws Exception
+    {
+        File ramlFile = getFile("raml-inside-folder/folder/api.raml");
+        List<File> ramls = Arrays.asList(ramlFile);
+        File xmlFile = getFile("raml-inside-folder/api.xml");
+        List<File> xmls = Arrays.asList(xmlFile);
+        File muleXmlOut = folder.newFolder("raml-inside-folder");
+
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
+        scaffolder.run();
+
+        assertTrue(xmlFile.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlFile));
+        assertEquals(1, countOccurences(s, "<error-handler name="));
+        assertEquals(1, countOccurences(s, "<flow name=\"post:/oneResource:api-config\">"));
+        assertEquals(1, countOccurences(s, "<http:listener-config name="));
     }
 
     @Test
