@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.parser;
 
-import org.mule.module.apikit.UrlUtils;
+import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.implv2.ParserV2Utils;

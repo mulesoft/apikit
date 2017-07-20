@@ -21,6 +21,7 @@
         "org.mule.module.apikit.api.exception",
         "org.mule.module.apikit.api.uri",
         "org.mule.module.apikit.api.validation",
+        "org.mule.module.apikit.api.console",
         "org.mule.raml.interfaces.model"
       ],
       "exportedResources":[

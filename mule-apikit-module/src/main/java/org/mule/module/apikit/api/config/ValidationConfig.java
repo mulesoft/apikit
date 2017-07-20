@@ -15,6 +15,8 @@ import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 public interface ValidationConfig {
 
   boolean isParserV2();
+
   ApiKitJsonSchema getJsonSchema(String schemaPath) throws ExecutionException;
-  Schema getXmlSchema( String schemaPath) throws ExecutionException;
+
+  Schema getXmlSchema(String schemaPath) throws ExecutionException;
 }

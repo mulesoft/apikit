@@ -6,16 +6,16 @@
  */
 package org.mule.module.apikit.helpers;
 
+import static org.mule.module.apikit.api.UrlUtils.getRedirectLocation;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import org.mule.extension.http.api.HttpHeaders;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.http.api.HttpConstants;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 
 public class EventWrapper
 {
@@ -52,39 +52,21 @@ public class EventWrapper
     public EventWrapper doClientRedirect()
     {
         httpStatus = String.valueOf(HttpConstants.HttpStatus.MOVED_PERMANENTLY.getStatusCode());
-        String redirectLocation = getRedirectLocation(EventHelper.getHttpRequestAttributes(inputEvent));
+
+        HttpRequestAttributes attributes = EventHelper.getHttpRequestAttributes(inputEvent);
+        String scheme = attributes.getScheme();
+        String remoteAddress = attributes.getHeaders().get("host");
+        String queryString = attributes.getQueryString();
+        String requestPath = attributes.getRequestPath();
+
+        String redirectLocation = getRedirectLocation(scheme, remoteAddress, requestPath, queryString);
         outboundHeaders.put(HttpHeaders.Names.LOCATION, redirectLocation);
         return this;
     }
 
-    /**
-     * Creates URL where the server must redirect the client
-     * @param attributes
-     * @return The redirect URL
-     */
-    private String getRedirectLocation(HttpRequestAttributes attributes)
-    {
-        String scheme = attributes.getScheme();
-        String remoteAddress = attributes.getHeaders().get("host");
-        String redirectLocation = scheme + "://" + remoteAddress + attributes.getRequestPath() + "/";
-        String queryString = attributes.getQueryString();
 
-        if (StringUtils.isNotEmpty(queryString))
-        {
-            redirectLocation += "?" + queryString;
-        }
 
-        return redirectLocation;
-    }
-
-    public EventWrapper setPayload(String payload, String mimeType)
-    {
-        outputBuilder.message(MessageHelper.setPayload(inputEvent.getMessage(), payload, mimeType));
-        return this;
-    }
-
-    public EventWrapper setPayload(byte[] payload, MediaType mediaType)
-    {
+    public EventWrapper setPayload(Object payload, MediaType mediaType) {
         outputBuilder.message(MessageHelper.setPayload(inputEvent.getMessage(), payload, mediaType));
         return this;
     }
