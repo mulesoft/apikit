@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>apikit-tools</artifactId>
-        <version>3.8.5</version>
+        <version>3.8.5-HF1-SNAPSHOT</version>
     </parent>
     <artifactId>apikit-archetype</artifactId>
     <packaging>maven-archetype</packaging>
