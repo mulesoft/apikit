@@ -8,7 +8,7 @@ package org.mule.module.apikit.console;
 
 import static org.junit.Assert.assertEquals;
 
-import org.mule.module.apikit.RamlHandler;
+import org.mule.module.apikit.api.RamlHandler;
 
 import org.junit.AfterClass;
 import org.junit.Test;
