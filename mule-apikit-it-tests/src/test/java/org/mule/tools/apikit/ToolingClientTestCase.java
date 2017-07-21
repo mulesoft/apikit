@@ -30,7 +30,7 @@ import org.junit.Test;
 public class ToolingClientTestCase
 {
     String toolingRuntimeVersion = "4.0.0-BETA.4";
-    String apikitRuntimeVersion = "1.0.0-BETA.4-SNAPSHOT";
+    String apikitRuntimeVersion = "1.0.0-BETA.4";
 
     @Test
     public void loadExtensionModel()
