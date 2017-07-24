@@ -10,6 +10,7 @@ import static java.util.Optional.empty;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
@@ -30,6 +31,8 @@ import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.lifecycle.Initialisable;
+import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.DefaultEventContext;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
@@ -41,7 +44,7 @@ import org.mule.runtime.core.api.processor.Processor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Router implements  Processor, FlowConstructAware //Initialisable,
+public class Router implements  Processor, FlowConstructAware, Initialisable
 
 {
     @Inject
@@ -53,17 +56,17 @@ public class Router implements  Processor, FlowConstructAware //Initialisable,
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
 
-    //@Override
-    //public void initialise() throws InitialisationException
-    //{
-    //    URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
-    //    if (uri == null)
-    //    {
-    //        LOGGER.error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
-    //        return;
-    //    }
-    //    registry.setApiSource(configRef, uri.toString().replace("*",""));
-    //}
+    @Override
+    public void initialise() throws InitialisationException
+    {
+        URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
+        if (uri == null)
+        {
+            LOGGER.error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
+            return;
+        }
+        registry.setApiSource(configRef, uri.toString().replace("*",""));
+    }
 
     public Event process(final Event event) throws MuleException {
         Configuration config = registry.getConfiguration(getConfigRef());

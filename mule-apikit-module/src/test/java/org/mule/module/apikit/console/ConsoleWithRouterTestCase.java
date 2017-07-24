@@ -127,7 +127,6 @@ public class ConsoleWithRouterTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
-    @Ignore
     public void getRootRaml()
     {
         given().port(serverPort.getNumber())

@@ -14,8 +14,7 @@ import org.mule.runtime.core.internal.connection.ConnectionProviderWrapper;
 import org.mule.runtime.core.internal.connection.ReconnectableConnectionProviderWrapper;
 import org.mule.runtime.extension.api.runtime.ConfigurationInstance;
 import org.mule.runtime.extension.api.runtime.ConfigurationProvider;
-import org.mule.runtime.module.extension.internal.runtime.source.ExtensionMessageSource;
-import org.mule.runtime.module.extension.internal.runtime.source.SourceAdapter;
+import org.mule.runtime.module.extension.internal.runtime.ExtensionComponent;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,7 +35,7 @@ public class MessageSourceUtils {
         if (isHttpExtensionSource(flow.getSource())) {
             try {
 
-                ExtensionMessageSource httpExtensionMessageSource = (ExtensionMessageSource) flow.getSource();
+                ExtensionComponent httpExtensionMessageSource = (ExtensionComponent) flow.getSource();
                 ConfigurationInstance httpConfiguration = getConfiguration(httpExtensionMessageSource);
                 String listenerPath = getListenerPath(httpExtensionMessageSource);
                 return buildListenerUri(getConnectionParams(httpConfiguration), listenerPath);
@@ -57,7 +56,7 @@ public class MessageSourceUtils {
         if (isHttpExtensionSource(flow.getSource())) {
             try {
 
-                ExtensionMessageSource httpExtensionMessageSource = (ExtensionMessageSource) flow.getSource();
+                ExtensionComponent httpExtensionMessageSource = (ExtensionComponent) flow.getSource();
                 ConfigurationInstance httpConfiguration = getConfiguration(httpExtensionMessageSource);
                 String listenerPath = getListenerPath(httpExtensionMessageSource);
                 return buildListenerUri(getConnectionParams(httpConfiguration), getResolvedPath(httpConfiguration, listenerPath));
@@ -69,9 +68,10 @@ public class MessageSourceUtils {
         return null;
     }
 
-    private static String getListenerPath(ExtensionMessageSource httpExtensionMessageSource) throws IllegalAccessException {
-        SourceAdapter sourceAdapter = (SourceAdapter) readField(httpExtensionMessageSource, "sourceAdapter", true);
-        return (String) readField(sourceAdapter.getDelegate(), "path", true);
+    private static String getListenerPath(ExtensionComponent httpExtensionMessageSource) throws IllegalAccessException {
+        Object object = readField(httpExtensionMessageSource, "sourceAdapter", true);
+        Object source = readField(object, "source", true);
+        return (String) readField(source, "path", true);
     }
 
     private static String getResolvedPath(ConfigurationInstance configurationInstance, String listenerPath)
@@ -83,7 +83,7 @@ public class MessageSourceUtils {
         return basePath == null ? listenerPath : basePath + listenerPath;
     }
 
-    private static ConfigurationInstance getConfiguration(ExtensionMessageSource httpExtensionMessageSource)
+    private static ConfigurationInstance getConfiguration(ExtensionComponent httpExtensionMessageSource)
             throws IllegalAccessException {
         AtomicReference<ConfigurationProvider> configProvider =
                 (AtomicReference<ConfigurationProvider>) readField(httpExtensionMessageSource, "configurationProvider", true);
@@ -108,8 +108,8 @@ public class MessageSourceUtils {
     }
 
     private static boolean isHttpExtensionSource(MessageSource messageSource) {
-        if (messageSource instanceof ExtensionMessageSource) {
-            ExtensionMessageSource extensionMessageSource = (ExtensionMessageSource) messageSource;
+        if (messageSource instanceof ExtensionComponent) {
+            ExtensionComponent extensionMessageSource = (ExtensionComponent) messageSource;
             return "HTTP".equals(extensionMessageSource.getExtensionModel().getName());
         }
 

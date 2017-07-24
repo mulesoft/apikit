@@ -74,7 +74,6 @@ public class ConsoleRamlWithoutBaseUriTestCase extends MuleArtifactFunctionalTes
     }
 
     @Test
-    @Ignore
     public void getRootRamConsolelWithRouter()
     {
         given().port(serverPort.getNumber())
