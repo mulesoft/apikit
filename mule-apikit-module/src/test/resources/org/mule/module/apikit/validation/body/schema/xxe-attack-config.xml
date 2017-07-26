@@ -20,11 +20,12 @@
 
     <flow name="api-main">
         <http:listener config-ref="api-httpListenerConfig" path="/api/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
-            <http:error-response statusCode="#[variables.httpStatus default 500]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="api-config"/>
@@ -32,21 +33,18 @@
         <on-error-propagate type="APIKIT:BAD_REQUEST">
             <set-payload value="{message: 'Bad request'}"/>
             <set-variable variableName="httpStatus" value="400"/>
+            <logger level="INFO" message="Throwing error..."/>
         </on-error-propagate>
         </error-handler>
     </flow>
 
     <flow name="post:/test:application/xml:api-config">
-        <set-payload value="#[NullPayload.getInstance()]"/>
+        <set-payload value="response"/>
     </flow>
 
     <flow name="should-not-be-called-flow">
-        <http:listener config-ref="http-8086" path="/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
-            </http:response>
-        </http:listener>
-        <set-property propertyName="invalidheader" value="invalid"/>
+        <http:listener config-ref="http-8086" path="/*"/>
+        <logger level="INFO" message="Accessing restricted flow. This should not be happening"/>
     </flow>
 
 </mule>

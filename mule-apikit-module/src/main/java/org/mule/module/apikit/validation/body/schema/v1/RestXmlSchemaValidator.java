@@ -9,7 +9,7 @@ package org.mule.module.apikit.validation.body.schema.v1;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
-import org.mule.runtime.core.api.config.MuleProperties;
+import org.mule.runtime.core.api.util.xmlsecurity.XMLSecureFactories;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -22,7 +22,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.Validator;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -31,15 +30,11 @@ import org.xml.sax.SAXException;
 
 public class RestXmlSchemaValidator implements IRestSchemaValidatorStrategy
 {
-    protected static int bufferSize = NumberUtils.toInt(System.getProperty(MuleProperties.MULE_STREAMING_BUFFER_SIZE), 4 * 1024);
+    public static final String RAML_EXTERNAL_ENTITIES_PROPERTY = "raml.xml.expandExternalEntities";
+    public static final String RAML_EXPAND_ENTITIES_PROPERTY = "raml.xml.expandInternalEntities";
+    public static final String MULE_EXTERNAL_ENTITIES_PROPERTY = "mule.xml.expandExternalEntities";
+    public static final String MULE_EXPAND_ENTITIES_PROPERTY = "mule.xml.expandInternalEntities";
 
-    public static final String EXTERNAL_ENTITIES_PROPERTY = "raml.xml.expandExternalEntities";
-    public static final String EXPAND_ENTITIES_PROPERTY = "raml.xml.expandInternalEntities";
-
-    private static final Boolean externalEntities =
-            Boolean.parseBoolean(System.getProperty(EXTERNAL_ENTITIES_PROPERTY, "false"));
-    private static final Boolean expandEntities =
-            Boolean.parseBoolean(System.getProperty(EXPAND_ENTITIES_PROPERTY, "false"));
     protected static final Logger logger = LoggerFactory.getLogger(RestXmlSchemaValidator.class);
 
     private Schema schema;
@@ -51,6 +46,14 @@ public class RestXmlSchemaValidator implements IRestSchemaValidatorStrategy
 
     @Override
     public void validate(String payload) throws BadRequestException {
+        if (System.getProperty(MULE_EXTERNAL_ENTITIES_PROPERTY) == null)
+        {
+            System.setProperty(MULE_EXTERNAL_ENTITIES_PROPERTY, System.getProperty(RAML_EXTERNAL_ENTITIES_PROPERTY, "false"));
+        }
+        if (System.getProperty(MULE_EXPAND_ENTITIES_PROPERTY) == null)
+        {
+            System.setProperty(MULE_EXPAND_ENTITIES_PROPERTY, System.getProperty(RAML_EXPAND_ENTITIES_PROPERTY, "false"));
+        }
         try {
             Document data = loadDocument(new StringReader(payload));
 
@@ -78,8 +81,7 @@ public class RestXmlSchemaValidator implements IRestSchemaValidatorStrategy
      */
     private static Document loadDocument(InputSource source) throws IOException
     {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        setFeatures(factory);
+        DocumentBuilderFactory factory = XMLSecureFactories.createDefault().getDocumentBuilderFactory();
         factory.setNamespaceAware(true);
         try
         {
@@ -98,39 +100,5 @@ public class RestXmlSchemaValidator implements IRestSchemaValidatorStrategy
         }
     }
 
-    /*
-     * Prevent XXE attacks
-     * <code>https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing</code>
-     */
-    private static void setFeatures(DocumentBuilderFactory dbf)
-    {
-        String feature = null;
-        try
-        {
 
-            // This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all XML entity attacks are prevented
-            //feature  = "http://apache.org/xml/features/disallow-doctype-decl";
-            //dbf.setFeature(feature, true);
-
-            // If you can't completely disable DTDs, then at least do the following:
-            feature = "http://xml.org/sax/features/external-general-entities";
-            dbf.setFeature(feature, externalEntities);
-
-            feature = "http://xml.org/sax/features/external-parameter-entities";
-            dbf.setFeature(feature, externalEntities);
-
-            feature = "http://apache.org/xml/features/disallow-doctype-decl";
-            dbf.setFeature(feature, !expandEntities);
-
-            // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks" (see reference below)
-            dbf.setXIncludeAware(expandEntities);
-            dbf.setExpandEntityReferences(expandEntities);
-
-        }
-        catch (ParserConfigurationException e)
-        {
-            logger.info("ParserConfigurationException was thrown. The feature '" + feature +
-                        "' is probably not supported by your XML processor.");
-        }
-    }
 }

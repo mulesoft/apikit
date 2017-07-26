@@ -10,6 +10,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -61,6 +62,7 @@ public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase
     }
 
     @Test
+    //TODO This test needs to be checked manually. The test will throw  a 400 as DOCTYPE is disabled, but also it shouldn't display the log located in the second flow.
     public void xxeAttack2() throws Exception
     {
         given().log().all()
@@ -68,5 +70,6 @@ public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase
                 .contentType("application/xml")
                 .expect().statusCode(400)
                 .when().post("/api/test");
+
     }
 }
