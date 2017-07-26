@@ -51,7 +51,8 @@ public class ProcessorsAfterRouterTestCase extends MuleArtifactFunctionalTestCas
     {
         given().header("Accept", "*/*")
                 .expect()
-                .header("headerName","value")
+                .header("firstHeader","value1")
+                .header("secondHeader","value2")
                 .response().body(is("goodbye"))
                 .statusCode(200)
                 .when().get("/api/resources");

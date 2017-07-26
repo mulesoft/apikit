@@ -24,12 +24,12 @@
 
     <flow name="main-api">
         <http:listener config-ref="$configRefName" path="/api/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
-            <http:error-response statusCode="#[variables.httpStatus default 500]">
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
                 <http:body>#[payload]</http:body>
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
 
@@ -107,12 +107,12 @@ output application/json
 
     <flow name="main-console">
         <http:listener config-ref="$configRefName" path="/console/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
-            <http:error-response statusCode="#[variables.httpStatus default 500]">
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
                 <http:body>#[payload]</http:body>
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
 

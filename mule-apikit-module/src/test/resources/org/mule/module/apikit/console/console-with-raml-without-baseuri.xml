@@ -22,8 +22,8 @@
 
     <flow name="api-consoleWithoutRouterKRBUTrue">
         <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithoutRouterKRBUTrue/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:console config-ref="apikitConfigWithoutRouterKRBUTrue" />
@@ -31,8 +31,8 @@
 
     <flow name="api-consoleWithoutRouterKRBUFalse">
         <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithoutRouterKRBUFalse/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:console config-ref="apikitConfigWithoutRouterKRBUFalse" />
@@ -40,8 +40,8 @@
 
     <flow name="api-apiWithRouter">
         <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:router config-ref="apikitConfigWithRouter" />
@@ -49,8 +49,8 @@
 
     <flow name="api-consoleWithRouter">
         <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithRouter/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:console config-ref="apikitConfigWithRouter" />

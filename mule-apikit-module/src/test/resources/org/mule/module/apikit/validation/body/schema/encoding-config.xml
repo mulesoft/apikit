@@ -18,8 +18,8 @@
 
     <flow name="doorway10">
         <http:listener config-ref="httpListenerConfigDefault" path="/api10/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:router config-ref="raml10"/>
@@ -27,8 +27,8 @@
 
     <flow name="doorway08">
         <http:listener config-ref="httpListenerConfigDefault" path="/api08/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:router config-ref="raml08"/>
@@ -36,8 +36,8 @@
 
     <flow name="doorway10string">
         <http:listener config-ref="httpListenerConfigDefault" path="/api10str/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <object-to-string-transformer/>
@@ -46,8 +46,8 @@
 
     <flow name="doorway08string">
         <http:listener config-ref="httpListenerConfigDefault" path="/api08str/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <object-to-string-transformer/>
@@ -56,8 +56,8 @@
 
     <flow name="doorway10byte">
         <http:listener config-ref="httpListenerConfigDefault" path="/api10byte/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <object-to-byte-array-transformer/>
@@ -66,8 +66,8 @@
 
     <flow name="doorway08byte">
         <http:listener config-ref="httpListenerConfigDefault" path="/api08byte/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <object-to-byte-array-transformer/>

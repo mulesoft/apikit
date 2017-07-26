@@ -19,8 +19,8 @@
 
     <flow name="api-consoleWithoutRouter">
         <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithoutRouter/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:console config-ref="apikitConfigWithoutRouter" />
@@ -29,8 +29,8 @@
 
     <flow name="api-apiWithRouter">
         <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:router config-ref="apikitConfigWithRouter" />
@@ -38,8 +38,8 @@
 
     <flow name="api-consoleWithRouter">
         <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithRouter/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:console config-ref="apikitConfigWithRouter" />

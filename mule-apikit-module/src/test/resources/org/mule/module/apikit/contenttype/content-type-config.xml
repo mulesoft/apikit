@@ -16,8 +16,8 @@
 
     <flow name="doorway">
         <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
-            <http:response statusCode="#[variables.httpStatus]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
         </http:listener>
         <apikit:router config-ref="apikitConfig"/>

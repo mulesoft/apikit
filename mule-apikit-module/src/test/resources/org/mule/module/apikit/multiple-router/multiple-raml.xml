@@ -20,12 +20,12 @@
 
     <flow name="doorway1">
         <http:listener config-ref="httpListenerConfigDefault" path="/api1/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
-            <http:error-response statusCode="#[variables.httpStatus default 500]">
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
                 <http:body>#[payload]</http:body>
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="apikitConfig1"/>
@@ -52,12 +52,12 @@
 
     <flow name="doorway2">
         <http:listener config-ref="httpListenerConfigDefault" path="/api2/*">
-            <http:response statusCode="#[variables.httpStatus default 200]">
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
-            <http:error-response statusCode="#[variables.httpStatus default 500]">
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
                 <http:body>#[payload]</http:body>
-                <http:headers>#[variables.outboundHeaders default {}]</http:headers>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="apikitConfig2"/>
