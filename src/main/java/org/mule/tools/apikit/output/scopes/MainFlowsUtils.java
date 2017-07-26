@@ -16,9 +16,9 @@ public class  MainFlowsUtils
 {
     private MainFlowsUtils() {}
 
-    public static final String DEFAULT_STATUS_CODE_SUCCESS_VALUE = "#[variables." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 200]";
-    public static final String DEFAULT_STATUS_CODE_ERROR_VALUE = "#[variables." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 500]";
-    public static final String DEFAULT_OUTBOUND_HEADERS_MAP_VALUE = "#[variables." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + " default {}]";
+    public static final String DEFAULT_STATUS_CODE_SUCCESS_VALUE = "#[vars." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 200]";
+    public static final String DEFAULT_STATUS_CODE_ERROR_VALUE = "#[vars." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 500]";
+    public static final String DEFAULT_OUTBOUND_HEADERS_MAP_VALUE = "#[vars." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + " default {}]";
     public static final String DEFAULT_ERROR_BODY_CONTENT = "#[payload]";
 
     public static void generateListenerSource(String httpListenerConfigRef, String path, Element main)
