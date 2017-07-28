@@ -38,7 +38,7 @@ import org.junit.rules.TemporaryFolder;
 
 public class ScaffolderMule4Test {
 
-    private static final String MULE_EE = "4.0.0-EE";
+    private static final String MULE_CE = "4.0.0-CE";
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     private FileListUtils fileListUtils = new FileListUtils();
@@ -79,7 +79,7 @@ public class ScaffolderMule4Test {
     }
 
     public void testSimpleGenerateForCE(String name) throws Exception {
-        File muleXmlSimple = simpleGeneration("scaffolder", name, null, DEFAULT_MULE_VERSION);
+        File muleXmlSimple = simpleGeneration("scaffolder", name, null, MULE_CE);
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
         assertEquals(1, countOccurences(s, "http:listener-config name=\"simple"));
@@ -89,11 +89,11 @@ public class ScaffolderMule4Test {
         assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
         assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
         assertEquals(4, countOccurences(s, "#[vars.outboundHeaders default {}]"));
-        assertEquals(7, countOccurences(s, "<on-error-propagate"));
+        assertEquals(6, countOccurences(s, "<on-error-propagate"));
         assertEquals(0, countOccurences(s, "<ee:"));
-        assertEquals(7, countOccurences(s, "<set-variable variableName=\"outboundHeaders\" value=\"#[{'Content-Type':'application/json'}]\" />"));
-        assertEquals(7, countOccurences(s, "<set-variable variableName=\"httpStatus\""));
-        assertEquals(7, countOccurences(s, "<set-payload"));
+        assertEquals(6, countOccurences(s, "<set-variable variableName=\"outboundHeaders\" value=\"#[{'Content-Type':'application/json'}]\" />"));
+        assertEquals(6, countOccurences(s, "<set-variable variableName=\"httpStatus\""));
+        assertEquals(6, countOccurences(s, "<set-payload"));
         assertEquals(4, countOccurences(s, "http:body"));
         assertEquals(2, countOccurences(s, "#[payload]"));
         assertEquals(8, countOccurences(s, "http:headers"));
@@ -658,7 +658,7 @@ public class ScaffolderMule4Test {
     @Test
     public void testExampleGenerateForCE() throws Exception {
         String name = "example-v10";
-        File muleXmlSimple = simpleGeneration("scaffolder", name, null, DEFAULT_MULE_VERSION);
+        File muleXmlSimple = simpleGeneration("scaffolder", name, null, MULE_CE);
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
 
@@ -753,7 +753,7 @@ public class ScaffolderMule4Test {
         return createScaffolder(ramls, xmls, muleXmlOut, domainFile, null);
     }
     private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, Set<File> ramlsWithExtensionEnabled) throws FileNotFoundException {
-        return createScaffolder(ramls, xmls, muleXmlOut, domainFile, ramlsWithExtensionEnabled, MULE_EE);
+        return createScaffolder(ramls, xmls, muleXmlOut, domainFile, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION);
     }
     private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, Set<File> ramlsWithExtensionEnabled, String muleVersion)
             throws FileNotFoundException {
@@ -791,7 +791,7 @@ public class ScaffolderMule4Test {
 
     private File simpleGeneration(String name, String domainPath) throws Exception
     {
-        return simpleGeneration("scaffolder", name, domainPath, MULE_EE);
+        return simpleGeneration("scaffolder", name, domainPath, DEFAULT_MULE_VERSION);
     }
 
     private File simpleGeneration(String apiPath, String name, String domainPath, String muleVersion) throws Exception {

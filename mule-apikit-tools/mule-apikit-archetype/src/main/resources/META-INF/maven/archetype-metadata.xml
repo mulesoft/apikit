@@ -4,7 +4,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <requiredProperties>
         <requiredProperty key="minMuleVersion">
-            <defaultValue>4.0.0</defaultValue>
+            <defaultValue>4.0.0-EE</defaultValue>
         </requiredProperty>
         <requiredProperty key="sharedHttpListener">
             <defaultValue>empty</defaultValue>
