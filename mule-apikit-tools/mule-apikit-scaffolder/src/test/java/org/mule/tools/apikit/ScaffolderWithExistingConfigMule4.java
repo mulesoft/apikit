@@ -10,6 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Helper.countOccurences;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
@@ -425,7 +426,7 @@ public class ScaffolderWithExistingConfigMule4
         {
             domainStream = new FileInputStream(domainFile);
         }
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled);
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION);
     }
 
     private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {

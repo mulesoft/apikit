@@ -20,7 +20,7 @@ public class ConsoleFlowScope implements Scope {
     private final Element consoleFlow;
 
 
-    public ConsoleFlowScope(Element mule, API api, String configRef, String httpListenerConfigRef){
+    public ConsoleFlowScope(Element mule, API api, String configRef, String httpListenerConfigRef, boolean isMuleEE){
 
         consoleFlow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
         consoleFlow.setAttribute("name", api.getId() + "-" + "console");
@@ -33,7 +33,7 @@ public class ConsoleFlowScope implements Scope {
         }
         consoleFlow.addContent(restProcessor);
 
-        Element errorHandler = ErrorHandlerScope.createForConsoleFlow().generate();
+        Element errorHandler = ErrorHandlerScope.createForConsoleFlow(isMuleEE).generate();
         consoleFlow.addContent(errorHandler);
 
         mule.addContent(consoleFlow);

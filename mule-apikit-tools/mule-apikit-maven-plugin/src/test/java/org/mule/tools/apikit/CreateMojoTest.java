@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import static org.mockito.Mockito.mock;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 
 
 @RunWith(JUnit4.class)
@@ -96,6 +97,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject(mojo, "muleXmlDirectory", app);
         setVariableValueToObject(mojo, "specDirectory", project);
         setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
+        setVariableValueToObject(mojo, "muleVersion", DEFAULT_MULE_VERSION);
 
         IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
                 new FileOutputStream(apiFile));
@@ -128,6 +130,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject(mojo, "specDirectory", project);
         setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
         setVariableValueToObject(mojo, "domainDirectory", domainProject);
+        setVariableValueToObject(mojo, "muleVersion", DEFAULT_MULE_VERSION);
 
         domainFile.createNewFile();
         IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("custom-domain/mule-domain-config.xml"),
@@ -163,6 +166,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject(mojo, "specDirectory", project);
         setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
         setVariableValueToObject(mojo, "domainDirectory", domainProject);
+        setVariableValueToObject(mojo, "muleVersion", DEFAULT_MULE_VERSION);
         IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
                      new FileOutputStream(apiFile));
 
@@ -193,6 +197,7 @@ public class CreateMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject(mojo, "specDirectory", project);
         setVariableValueToObject(mojo, "muleXmlOutputDirectory", app);
         setVariableValueToObject(mojo, "domainDirectory", domainProject);
+        setVariableValueToObject(mojo, "muleVersion", DEFAULT_MULE_VERSION);
         IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
                      new FileOutputStream(apiFile));
         mojo.execute();

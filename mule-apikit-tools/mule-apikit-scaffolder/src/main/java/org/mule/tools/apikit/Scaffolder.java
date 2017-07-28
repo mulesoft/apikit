@@ -29,7 +29,7 @@ import org.apache.maven.plugin.logging.Log;
 
 public class Scaffolder
 {
-    private final static String DEFAULT_MULE_VERSION = "4.0.0";
+    public final static String DEFAULT_MULE_VERSION = "4.0.0-EE";
 
     private final MuleConfigGenerator muleConfigGenerator;
 
@@ -62,17 +62,17 @@ public class Scaffolder
             }
         }
         InputStream domainStream = getDomainStream(log, domainPath);
-        return new Scaffolder(log, muleXmlOutputDirectory, ramlStreams, muleStreams, domainStream, ramlWithExtensionEnabled);
+        return new Scaffolder(log, muleXmlOutputDirectory, ramlStreams, muleStreams, domainStream, ramlWithExtensionEnabled, muleVersion);
     }
 
-    public Scaffolder(Log log, File muleXmlOutputDirectory, Map<File, InputStream> ramls, Map<File, InputStream> xmls, InputStream domainStream, Set<File> ramlsWithExtensionEnabled)
+    public Scaffolder(Log log, File muleXmlOutputDirectory, Map<File, InputStream> ramls, Map<File, InputStream> xmls, InputStream domainStream, Set<File> ramlsWithExtensionEnabled, String muleVersion)
     {
         MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
         APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
         MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(ramls.keySet(), xmls);
         RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
         List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
-        muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(), ramlsWithExtensionEnabled);
+        muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(), ramlsWithExtensionEnabled, muleVersion);
     }
 
     private static InputStream getDomainStream(Log log, String domainPath)
