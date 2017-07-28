@@ -74,7 +74,7 @@
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
-            <artifactId>mule-module-spring-config</artifactId>
+            <artifactId>mule-module-springq-config</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
         </dependency>
@@ -87,12 +87,6 @@
             <artifactId>mule-module-json</artifactId>
             <version>${mule.version}</version>
             <scope>provided</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.github.fge</groupId>
-                    <artifactId>json-schema-validator</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
