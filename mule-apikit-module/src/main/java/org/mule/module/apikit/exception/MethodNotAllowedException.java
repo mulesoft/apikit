@@ -21,7 +21,7 @@ public class MethodNotAllowedException extends MuleRestException {
   }
 
   public MethodNotAllowedException(){
-    super();
+    super("Method not allowed");
   }
 
   @Override

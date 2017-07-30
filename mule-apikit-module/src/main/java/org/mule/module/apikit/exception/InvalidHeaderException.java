@@ -21,7 +21,7 @@ public class InvalidHeaderException extends BadRequestException
   }
 
   public InvalidHeaderException(){
-    super();
+    super("Invalid Header");
   }
 
   @Override

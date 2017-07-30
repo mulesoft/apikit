@@ -21,7 +21,7 @@ public class NotAcceptableException extends MuleRestException {
     }
 
     public NotAcceptableException(){
-        super();
+        super("Not Acceptable");
     }
 
     @Override

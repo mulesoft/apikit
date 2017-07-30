@@ -21,7 +21,7 @@ public class NotFoundException extends MuleRestException
   }
 
   public NotFoundException(){
-    super();
+    super("Not found");
   }
 
   @Override

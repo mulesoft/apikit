@@ -21,7 +21,7 @@ public class InvalidUriParameterException extends BadRequestException {
   }
 
   public InvalidUriParameterException(){
-    super();
+    super("Invalid Uri Parameter");
   }
 
   @Override

@@ -22,7 +22,7 @@ public class InvalidQueryParameterException extends BadRequestException
   }
 
   public InvalidQueryParameterException(){
-    super();
+    super("Invalid Query Parameter");
   }
 
   @Override

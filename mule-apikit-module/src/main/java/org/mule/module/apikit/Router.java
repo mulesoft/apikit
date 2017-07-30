@@ -6,43 +6,48 @@
  */
 package org.mule.module.apikit;
 
-import static java.util.Optional.empty;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Inject;
+import static org.mule.runtime.core.api.processor.MessageProcessors.processToApply;
+import static org.mule.runtime.core.api.processor.MessageProcessors.processWithChildContext;
+import static reactor.core.publisher.Flux.from;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
-import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.api.exception.MuleRestException;
+import org.mule.module.apikit.helpers.AttributesHelper;
+import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.RequestValidator;
 import org.mule.module.apikit.api.validation.ValidRequest;
-import org.mule.module.apikit.exception.MethodNotAllowedException;
-import org.mule.module.apikit.helpers.AttributesHelper;
-import org.mule.module.apikit.helpers.EventHelper;
+import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.core.DefaultEventContext;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.construct.FlowConstruct;
 import org.mule.runtime.core.api.construct.FlowConstructAware;
+import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.runtime.core.api.exception.TypedException;
 import org.mule.runtime.core.api.processor.Processor;
+
+import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 
 public class Router implements  Processor, FlowConstructAware, Initialisable
 
@@ -69,38 +74,45 @@ public class Router implements  Processor, FlowConstructAware, Initialisable
     }
 
     public Event process(final Event event) throws MuleException {
-        Configuration config = registry.getConfiguration(getConfigRef());
-        Event.Builder eventBuilder = Event.builder(DefaultEventContext.child(event.getContext(),empty()), event);
+        return processToApply(event, this);
+    }
 
-        eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
+    @Override
+    public Publisher<Event> apply(Publisher<Event> publisher)
+    {
+        return from(publisher).flatMap(event -> {
+            try
+            {
+                Configuration config = registry.getConfiguration(getConfigRef());
+                Event.Builder eventBuilder = Event.builder(event);
+                eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
-        HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes().getValue());
+                HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes().getValue());
 
-        String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRequestPath());
-        path = path.isEmpty() ? "/" : path;
+                String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRequestPath());
+                path = path.isEmpty() ? "/" : path;
 
-        //Get uriPattern, uriResolver, and the resolvedVariables
-        URIPattern uriPattern;
-        URIResolver uriResolver;
-        try {
-            uriPattern = config.getUriPatternCache().get(path);
-            uriResolver = config.getUriResolverCache().get(path);
-        } catch (ExecutionException e) {
-            throw new DefaultMuleException(e);
-        }
-        ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
-        IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
-        if (!config.isDisableValidations())
-        {
-            eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
-        }
-        String contentType = AttributesHelper.getMediaType(attributes);
-        Flow flow = config.getFlowFinder().getFlow(resource,attributes.getMethod().toLowerCase(), contentType);
-        String successStatusCode = config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
-        eventBuilder.addVariable(config.getHttpStatusVarName(), successStatusCode);
-        Event newEvent = flow.process(eventBuilder.build());
-        Event.Builder resultEvent = Event.builder(event.getContext(), newEvent);
-        return resultEvent.build();
+                //Get uriPattern, uriResolver, and the resolvedVariables
+                URIPattern uriPattern = config.getUriPatternCache().get(path);
+                URIResolver uriResolver = config.getUriResolverCache().get(path);
+
+                ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
+                IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
+                if (!config.isDisableValidations())
+                {
+                    eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
+                }
+                String contentType = AttributesHelper.getMediaType(attributes);
+                Flow flow = config.getFlowFinder().getFlow(resource, attributes.getMethod().toLowerCase(), contentType);
+                String successStatusCode = config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
+                eventBuilder.addVariable(config.getHttpStatusVarName(), successStatusCode);
+                return processWithChildContext(eventBuilder.build(), flow, Optional.empty());
+            }
+            catch (Exception e)
+            {
+                return Flux.error(new MessagingException(event, e));
+            }
+        });
     }
 
     public String getConfigRef()

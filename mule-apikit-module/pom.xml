@@ -37,6 +37,8 @@
         <mule.http.service.version>1.0.0-SNAPSHOT</mule.http.service.version>
         <mule.extensions.api.version>1.0.0-SNAPSHOT</mule.extensions.api.version>
         <mule.service.scheduler.version>1.0.0-SNAPSHOT</mule.service.scheduler.version>
+        <projectReactorVersion>3.0.7.RELEASE</projectReactorVersion>
+
     </properties>
 
     <build>
@@ -77,6 +79,11 @@
             <artifactId>mule-api</artifactId>
             <version>${mule.api.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.projectreactor</groupId>
+            <artifactId>reactor-core</artifactId>
+            <version>${projectReactorVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>

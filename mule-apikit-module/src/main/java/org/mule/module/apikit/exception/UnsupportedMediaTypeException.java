@@ -21,7 +21,7 @@ public class UnsupportedMediaTypeException extends MuleRestException {
     }
 
     public UnsupportedMediaTypeException(){
-        super();
+        super("Unsupported mediaType");
     }
 
     @Override
