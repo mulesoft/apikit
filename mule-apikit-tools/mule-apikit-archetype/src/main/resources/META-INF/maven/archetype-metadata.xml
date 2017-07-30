@@ -20,7 +20,7 @@
         <fileSet filtered="true" encoding="UTF-8">
             <directory/>
             <includes>
-                <include>mule-application.json</include>
+                <include>mule-artifact.json</include>
             </includes>
         </fileSet>
         <fileSet filtered="true" encoding="UTF-8">
