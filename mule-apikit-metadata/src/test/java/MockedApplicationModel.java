@@ -4,9 +4,10 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-
 import com.google.common.base.Preconditions;
 import org.apache.commons.io.IOUtils;
+import org.mule.datasense.api.metadataprovider.ApplicationModel;
+import org.mule.datasense.api.metadataprovider.XmlConfigurationDocumentLoader;
 import org.mule.runtime.api.meta.model.ExtensionModel;
 import org.mule.runtime.config.spring.dsl.model.ComponentBuildingDefinitionRegistry;
 import org.mule.runtime.config.spring.dsl.processor.ArtifactConfig;
@@ -32,10 +33,10 @@ import java.util.Set;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
-public class MockedApplicationModel implements ApplicationModel
-{
+public class MockedApplicationModel implements ApplicationModel {
 
     private final String name;
+    //  private final File appDir;
     private org.mule.runtime.config.spring.dsl.model.ApplicationModel applicationModel;
     private String typesData;
 
