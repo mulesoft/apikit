@@ -6,14 +6,7 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import javax.xml.validation.Schema;
-
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -27,6 +20,13 @@ import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.exception.TypedException;
+
+import javax.xml.validation.Schema;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import static org.mockito.Mockito.when;
 
 public class RestJsonSchemaValidatorTestCase {
 
@@ -109,6 +109,24 @@ public class RestJsonSchemaValidatorTestCase {
     RestJsonSchemaValidator jsonSchemavalidator =
         new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json").getSchema());
     jsonSchemavalidator.validate(payload);
+  }
+
+  @Test
+  public void showAllSchemaValidationErrors() throws TypedException, BadRequestException, ExecutionException{
+    String payload = "{ \"name\": 1 }";
+    Configuration config = new Configuration();
+    RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
+
+    when(ramlHandler.getApi()).thenReturn(api);
+    config.setRamlHandler(ramlHandler);
+
+    try {
+      RestJsonSchemaValidator jsonSchemavalidator =
+              new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json").getSchema());
+      jsonSchemavalidator.validate(payload);
+    } catch (TypedException e) {
+      Assert.assertEquals("", e.getMessage());
+    }
   }
 
 }
