@@ -1,6 +1,5 @@
 package org.mule.module.metadata;
 
-import org.mule.module.metadata.interfaces.ResourceLoader;
 import org.mule.module.metadata.model.ApikitConfig;
 import org.mule.module.metadata.model.Flow;
 import org.mule.module.metadata.model.FlowMapping;
@@ -27,14 +26,14 @@ public class ApplicationModelWrapper
     private final static String PARAMETER_FLOW_REF = "flow-ref";
 
     private ApplicationModel applicationModel;
-    private ResourceLoader resourceLoader;
+    private RamlHandler ramlHandler;
 
     private Map<String, ApikitConfig> apikitConfigMap;
     private Map<String, RamlCoordinate> metadataFlows;
 
-    public ApplicationModelWrapper(ApplicationModel applicationModel, ResourceLoader resourceLoader) {
+    public ApplicationModelWrapper(ApplicationModel applicationModel, RamlHandler ramlHandler) {
         this.applicationModel = applicationModel;
-        this.resourceLoader = resourceLoader;
+        this.ramlHandler = ramlHandler;
         initialize();
     }
 
@@ -117,7 +116,7 @@ public class ApplicationModelWrapper
         String configRaml = parameters.get(PARAMETER_RAML);
 
         // Loading the corresponding RAML for this configuration
-        IRaml ramlApi = resourceLoader.getRamlApi(configRaml);
+        IRaml ramlApi = ramlHandler.getRamlApi(configRaml);
 
         List<FlowMapping> flowMappings = unwrappedApikitConfig.getInnerComponents()
                 .stream()
@@ -160,12 +159,18 @@ public class ApplicationModelWrapper
     }
 
 
-
-    public Map<String, ApikitConfig> getConfigs() {
-        return apikitConfigMap;
+    public RamlCoordinate getRamlCoordinatesForFlow(String flowName) {
+        return metadataFlows.get(flowName);
     }
 
-    public Map<String, RamlCoordinate> getRamlCoordinates() {
-        return metadataFlows;
+    public ApikitConfig getApikitConfigWithName(String apikitConfigName) {
+        ApikitConfig config = apikitConfigMap.get(apikitConfigName);
+
+        // If the flow is not explicitly naming the config it belongs, we assume there is only one API
+        if (config == null) {
+            config = apikitConfigMap.values().iterator().next();
+        }
+
+        return config;
     }
 }
