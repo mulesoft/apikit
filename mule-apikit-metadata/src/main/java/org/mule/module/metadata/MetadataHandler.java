@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public class MetadataHandler
 {
-    ApplicationModelWrapper applicationModelWrapper;
+    private ApplicationModelWrapper applicationModelWrapper;
 
     public MetadataHandler(ApplicationModelWrapper applicationModelWrapper) {
         this.applicationModelWrapper = applicationModelWrapper;
@@ -26,6 +26,6 @@ public class MetadataHandler
 
         // If there exists metadata for the flow, we get the Api
         ApikitConfig api = applicationModelWrapper.getApikitConfigWithName(coordinate.getConfigName());
-        return api.getMetadata(coordinate);
+        return api.getApi().getMetadataForCoordinate(coordinate);
     }
 }

@@ -126,7 +126,7 @@ public class ApplicationModelWrapper
                 .map(unwrappedFlowMapping -> createFlowMapping(configName, unwrappedFlowMapping))
                 .collect(Collectors.toList());
 
-        return new ApikitConfig(configName, configRaml, flowMappings, ramlApi);
+        return new ApikitConfig(configName, configRaml, flowMappings, new RamlApiWrapper(ramlApi));
     }
 
 
