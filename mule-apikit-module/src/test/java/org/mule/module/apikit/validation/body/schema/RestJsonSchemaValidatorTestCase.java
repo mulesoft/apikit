@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -26,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class RestJsonSchemaValidatorTestCase {
@@ -125,8 +125,7 @@ public class RestJsonSchemaValidatorTestCase {
               new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json").getSchema());
       jsonSchemavalidator.validate(payload);
     } catch (TypedException e) {
-      Assert.assertEquals("", e.getMessage());
+      assertEquals("", e.getMessage());
     }
   }
-
 }
