@@ -78,9 +78,9 @@ public class MultipartFormValidator implements FormValidatorStrategy<MultiPartPa
                 headers);
 
         Message part = Message.builder()
-                .payload(new ByteArrayInputStream(expected.getDefaultValue().getBytes()))
+                .value(new ByteArrayInputStream(expected.getDefaultValue().getBytes()))
                 .mediaType(MediaType.create("text", "plain"))
-                .attributes(part1Attributes).build();
+                .attributesValue(part1Attributes).build();
 
 
         try

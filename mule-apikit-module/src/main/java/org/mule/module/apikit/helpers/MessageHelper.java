@@ -8,6 +8,7 @@ package org.mule.module.apikit.helpers;
 
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
+import org.mule.runtime.api.metadata.TypedValue;
 
 public class MessageHelper
 {
@@ -19,7 +20,7 @@ public class MessageHelper
     public static Message setPayload(Message message, Object payload, MediaType mediatype)
     {
         Message.Builder messageBuilder = Message.builder(message);
-        messageBuilder.payload(payload);
+        messageBuilder.value(payload);
         if (mediatype != null)
         {
             messageBuilder.mediaType(mediatype);
