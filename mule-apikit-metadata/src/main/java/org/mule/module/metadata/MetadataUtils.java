@@ -13,10 +13,12 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class MetadataUtils
 {
+    private static final MetadataType DEFAULT_METADATA =
+            BaseTypeBuilder.create(MetadataFormat.JAVA).anyType().build();
+
 
     private MetadataUtils() {}
 
@@ -32,7 +34,7 @@ public class MetadataUtils
         final Optional<MetadataType> root = jsonTypeLoader.load(null);
 
         // We didn't managed to parse the schema.
-        return root.orElse(null);
+        return root.orElse(defaultMetadata());
     }
 
 
@@ -57,7 +59,7 @@ public class MetadataUtils
         }
 
         // We didn't managed to parse the schema.
-        return root.orElse(null);
+        return root.orElse(defaultMetadata());
     }
 
     /**
@@ -67,7 +69,7 @@ public class MetadataUtils
      */
     public static MetadataType fromXSDSchema(String xsdSchema) {
         // TODO: 7/26/17  
-        return null;
+        return defaultMetadata();
     }
 
     public static MetadataType fromXMLExample(String xmlExample) {
@@ -75,16 +77,7 @@ public class MetadataUtils
         ModelFactory modelFactory = ModelFactory.fromExample(xmlExample);
         Optional<MetadataType> metadata = new XmlTypeLoader(modelFactory).load(null);
         
-        return metadata.orElse(null);
-    }
-
-    /**
-     * Creates default metadata
-     * @return The newly created MetadataType
-     */
-    public static MetadataType defaultMetadata() {
-        return null;
-//        return Optional.empty();
+        return metadata.orElse(defaultMetadata());
     }
 
     public static MetadataType fromFormMetadata(Map<String, List<IParameter>> formParameters)
@@ -92,12 +85,19 @@ public class MetadataUtils
         ObjectTypeBuilder parameters = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
         for (Map.Entry<String, List<IParameter>> entry : formParameters.entrySet()) {
-
             parameters.addField()
                     .key(entry.getKey())
                     .value().anyType();
         }
 
         return parameters.build();
+    }
+
+    /**
+     * Creates default metadata, that can be of any type
+     * @return The newly created MetadataType
+     */
+    public static MetadataType defaultMetadata() {
+        return DEFAULT_METADATA;
     }
 }
