@@ -28,6 +28,9 @@
         <mule.service.http.api.version>${runtime.version}</mule.service.http.api.version>
         <mule.module.extensions.support.version>${runtime.version}</mule.module.extensions.support.version>
         <mule.module.extensions.spring.support.version>${runtime.version}</mule.module.extensions.spring.support.version>
+        <mule.test.runner.version>${runtime.version}</mule.test.runner.version>
+        <mule.test.unit.version>${runtime.version}</mule.test.unit.version>
+        <mule.tests.component.plugin.version>${runtime.version}</mule.tests.component.plugin.version>
 
         <mule.service.weave.version>2.0.0-SNAPSHOT</mule.service.weave.version>
         <mule.api.version>1.0.0-SNAPSHOT</mule.api.version>
@@ -37,7 +40,7 @@
         <mule.http.service.version>1.0.0-SNAPSHOT</mule.http.service.version>
         <mule.extensions.api.version>1.0.0-SNAPSHOT</mule.extensions.api.version>
         <mule.service.scheduler.version>1.0.0-SNAPSHOT</mule.service.scheduler.version>
-        <projectReactorVersion>3.0.7.RELEASE</projectReactorVersion>
+        <project.reactor.version>3.0.7.RELEASE</project.reactor.version>
 
     </properties>
 
@@ -83,7 +86,7 @@
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
-            <version>${projectReactorVersion}</version>
+            <version>${project.reactor.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>
@@ -264,6 +267,24 @@
             <version>${mule.service.weave.version}</version>
             <scope>test</scope>
             <!--used to get the muleContext in the tests-->
+        </dependency>
+        <dependency>
+            <groupId>org.mule.tests</groupId>
+            <artifactId>mule-tests-runner</artifactId>
+            <version>${mule.test.runner.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.tests</groupId>
+            <artifactId>mule-tests-unit</artifactId>
+            <version>${mule.test.unit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.tests.plugin</groupId>
+            <artifactId>mule-tests-component-plugin</artifactId>
+            <version>${mule.tests.component.plugin.version}</version>
+            <classifier>mule-plugin</classifier>
         </dependency>
     </dependencies>
 

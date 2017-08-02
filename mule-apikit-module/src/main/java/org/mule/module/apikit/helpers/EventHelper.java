@@ -10,6 +10,7 @@ package org.mule.module.apikit.helpers;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.runtime.api.message.Message;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.Event;
 
 import java.nio.charset.Charset;
@@ -35,8 +36,8 @@ public class EventHelper
 
     public static Event.Builder regenerateEvent(Message message, Event.Builder builder, ValidRequest validRequest) {
         Message.Builder messageBuilder = Message.builder(message);
-        messageBuilder.payload(validRequest.getBody().getPayload());
-        messageBuilder.attributes(validRequest.getAttributes());
+        messageBuilder.value(validRequest.getBody().getPayload());
+        messageBuilder.attributesValue(validRequest.getAttributes());
 
         return builder.message(messageBuilder.build());
     }
