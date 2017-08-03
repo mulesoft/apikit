@@ -1,4 +1,4 @@
-package org.mule.module.metadata;
+package org.mule.module.metadata.raml;
 
 import org.mule.module.metadata.model.FlowMapping;
 import org.mule.module.metadata.model.RamlCoordinate;

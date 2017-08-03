@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class MetadataUtils
+public class MetadataFactory
 {
     private static final MetadataType DEFAULT_METADATA =
             BaseTypeBuilder.create(MetadataFormat.JAVA).anyType().build();
 
 
-    private MetadataUtils() {}
+    private MetadataFactory() {}
 
     /**
      * Creates metadata from a JSON Schema

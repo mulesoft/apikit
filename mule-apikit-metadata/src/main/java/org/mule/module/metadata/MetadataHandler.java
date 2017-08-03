@@ -1,6 +1,7 @@
 package org.mule.module.metadata;
 
 import org.mule.metadata.api.model.FunctionType;
+import org.mule.module.metadata.interfaces.MetadataSource;
 import org.mule.module.metadata.model.ApikitConfig;
 import org.mule.module.metadata.model.RamlCoordinate;
 
@@ -8,6 +9,7 @@ import java.util.Optional;
 
 public class MetadataHandler
 {
+
     private ApplicationModelWrapper applicationModelWrapper;
 
     public MetadataHandler(ApplicationModelWrapper applicationModelWrapper) {
@@ -26,6 +28,7 @@ public class MetadataHandler
 
         // If there exists metadata for the flow, we get the Api
         ApikitConfig api = applicationModelWrapper.getApikitConfigWithName(coordinate.getConfigName());
-        return api.getApi().getMetadataForCoordinate(coordinate);
+        MetadataSource metadataSource = api.getApi().getActionForCoordinate(coordinate);
+        return metadataSource.getMetadata();
     }
 }

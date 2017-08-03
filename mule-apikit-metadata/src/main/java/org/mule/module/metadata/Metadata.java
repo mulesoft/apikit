@@ -8,6 +8,7 @@ package org.mule.module.metadata;
 
 import org.mule.metadata.api.model.FunctionType;
 import org.mule.module.metadata.interfaces.ResourceLoader;
+import org.mule.module.metadata.raml.RamlHandler;
 import org.mule.runtime.config.spring.dsl.model.ApplicationModel;
 
 import java.util.Optional;
@@ -20,14 +21,19 @@ public class Metadata
         init(applicationModel, resourceLoader);
     }
 
-    public Optional<FunctionType> getMetadataForFlow(String flowName) {
-        return metadataHandler.getMetadataForFlow(flowName);
-    }
-
     private void init(ApplicationModel applicationModel, ResourceLoader resourceLoader) {
 
         metadataHandler = new MetadataHandler(
                 new ApplicationModelWrapper(applicationModel, new RamlHandler(resourceLoader)));
+    }
+
+    /**
+     * Gets the metadata for a Flow
+     * @param flowName Name of the flow
+     * @return The Metadata
+     */
+    public Optional<FunctionType> getMetadataForFlow(String flowName) {
+        return metadataHandler.getMetadataForFlow(flowName);
     }
 
 

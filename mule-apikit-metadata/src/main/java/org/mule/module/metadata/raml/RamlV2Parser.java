@@ -1,4 +1,4 @@
-package org.mule.module.metadata;
+package org.mule.module.metadata.raml;
 
 import org.mule.module.metadata.interfaces.Parseable;
 import org.mule.raml.implv2.v08.model.RamlImpl08V2;

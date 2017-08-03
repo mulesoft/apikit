@@ -1,4 +1,4 @@
-package org.mule.module.metadata;
+package org.mule.module.metadata.raml;
 
 import org.apache.commons.io.IOUtils;
 import org.mule.module.metadata.interfaces.Parseable;

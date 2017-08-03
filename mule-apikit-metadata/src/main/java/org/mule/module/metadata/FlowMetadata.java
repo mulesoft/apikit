@@ -11,43 +11,36 @@ import org.mule.metadata.message.MessageMetadataType;
 import org.mule.metadata.message.MessageMetadataTypeBuilder;
 import org.mule.metadata.message.MuleEventMetadataType;
 import org.mule.metadata.message.MuleEventMetadataTypeBuilder;
+import org.mule.module.metadata.interfaces.MetadataSource;
+import org.mule.module.metadata.model.Payload;
 import org.mule.module.metadata.model.RamlCoordinate;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class RamlApiWrapper
+public class FlowMetadata implements MetadataSource
 {
+
     private static final String PARAMETER_INPUT_METADATA = "inputMetadata";
     private static final String ATTRIBUTES_QUERY_PARAMETERS = "queryParameters";
     private static final String ATTRIBUTES_HEADERS = "headers";
     private static final String ATTRIBUTES_URI_PARAMETERS = "uriParameters";
 
-    private Map<String, IResource> ramlResources = new HashMap<>();
 
-    public RamlApiWrapper(IRaml ramlApi) {
-        collectResourcesRecursively(ramlApi.getResources());
+    private IAction action;
+    private RamlCoordinate coordinate;
+
+    public FlowMetadata(IAction action, RamlCoordinate coordinate) {
+        this.action = action;
+        this.coordinate = coordinate;
     }
 
-    private void collectResourcesRecursively(Map<String, IResource> resources)
+    @Override
+    public Optional<FunctionType> getMetadata()
     {
-        for (IResource resource : resources.values()) {
-            ramlResources.put(resource.getUri(), resource);
-            collectResourcesRecursively(resource.getResources());
-        }
-    }
-
-    public Optional<FunctionType> getMetadataForCoordinate(RamlCoordinate coordinate)
-    {
-        IResource resource = ramlResources.get(coordinate.getResource());
-        IAction action = resource.getAction(coordinate.getMethod());
-
         MuleEventMetadataType muleInputEventMetadata = inputMetadata(action, coordinate);
         MuleEventMetadataType muleOutputEventMetadata = outputMetadata(action, coordinate);
 
@@ -135,7 +128,7 @@ public class RamlApiWrapper
                 .findFirst()
                 .orElse(null);
 
-        return Body.payloadMetadata(mimeType);
+        return Payload.metadata(mimeType);
     }
 
     private MetadataType getInputPayload(IAction action, RamlCoordinate coordinate) {
@@ -155,13 +148,9 @@ public class RamlApiWrapper
                 mimeType = action.getBody().get(coordinate.getMediaType());
             }
 
-            return Body.payloadMetadata(mimeType);
+            return Payload.metadata(mimeType);
         }
 
         return null;
     }
 }
-
-
-
-

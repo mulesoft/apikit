@@ -1,6 +1,6 @@
 package org.mule.module.metadata.model;
 
-import org.mule.module.metadata.RamlApiWrapper;
+import org.mule.module.metadata.raml.RamlApiWrapper;
 
 import java.util.List;
 
