@@ -43,6 +43,10 @@
                 <set-payload value="{message: 'Resource Not Found'}"/>
                 <set-variable variableName="httpStatus" value="404"/>
             </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <set-payload value="{message: 'Not implemented'}"/>
+                <set-variable variableName="httpStatus" value="501"/>
+            </on-error-propagate>
         </error-handler>
     </flow>
 
