@@ -255,7 +255,16 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
     @Override
     public ApiKitJsonSchema getJsonSchema(String schemaPath) throws ExecutionException {
-        return new ApiKitJsonSchema(getJsonSchemaCache().get(schemaPath));
+
+        try
+        {
+            return new ApiKitJsonSchema(getJsonSchemaCache().get(schemaPath));
+
+        } catch (CacheLoader.InvalidCacheLoadException e) {
+
+            // Schema is not defined in the RAML
+            return null;
+        }
     }
 
     @Override

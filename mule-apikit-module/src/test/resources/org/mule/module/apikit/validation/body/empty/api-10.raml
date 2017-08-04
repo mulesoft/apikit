@@ -1,0 +1,24 @@
+#%RAML 1.0
+title: Empty body test in Raml 1.0
+
+/method-without-body:
+  post:
+  put:
+
+/method-and-body-without-content-type:
+  post:
+    body:
+  put:
+    body:
+
+/body-with-empty-content-type:
+  post:
+    body:
+      application/json: !!null
+    responses:
+      200: ~
+  put:
+    body:
+      application/json: !!null
+    responses:
+      200: ~
