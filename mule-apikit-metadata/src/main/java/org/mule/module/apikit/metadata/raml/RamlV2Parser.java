@@ -4,9 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata.raml;
+package org.mule.module.apikit.metadata.raml;
 
-import org.mule.module.metadata.interfaces.Parseable;
+import org.mule.module.apikit.metadata.interfaces.Parseable;
 import org.mule.raml.implv2.v08.model.RamlImpl08V2;
 import org.mule.raml.implv2.v10.model.RamlImpl10V2;
 import org.mule.raml.interfaces.model.IRaml;

@@ -4,11 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata.raml;
+package org.mule.module.apikit.metadata.raml;
 
-import org.mule.module.metadata.interfaces.MetadataSource;
-import org.mule.module.metadata.FlowMetadata;
-import org.mule.module.metadata.model.RamlCoordinate;
+import org.mule.module.apikit.metadata.interfaces.MetadataSource;
+import org.mule.module.apikit.metadata.FlowMetadata;
+import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;

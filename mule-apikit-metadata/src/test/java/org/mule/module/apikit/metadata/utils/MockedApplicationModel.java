@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata.utils;
+package org.mule.module.apikit.metadata.utils;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;

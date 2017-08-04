@@ -4,9 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata;
+package org.mule.module.apikit.metadata;
 
-import org.mule.module.metadata.interfaces.ResourceLoader;
+import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 
 import java.io.File;
 import java.net.URISyntaxException;

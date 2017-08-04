@@ -4,9 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata.model;
+package org.mule.module.apikit.metadata.model;
 
-import org.mule.module.metadata.raml.RamlApiWrapper;
+import org.mule.module.apikit.metadata.raml.RamlApiWrapper;
 
 import java.util.List;
 

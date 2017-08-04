@@ -4,11 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata;
+package org.mule.module.apikit.metadata;
 
 import org.mule.metadata.api.model.FunctionType;
-import org.mule.module.metadata.interfaces.ResourceLoader;
-import org.mule.module.metadata.raml.RamlHandler;
+import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
+import org.mule.module.apikit.metadata.raml.RamlHandler;
 import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
 
 import java.util.Optional;

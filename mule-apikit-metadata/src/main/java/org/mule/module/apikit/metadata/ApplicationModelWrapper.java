@@ -4,15 +4,15 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata;
+package org.mule.module.apikit.metadata;
 
-import org.mule.module.metadata.model.ApikitConfig;
-import org.mule.module.metadata.model.Flow;
-import org.mule.module.metadata.model.FlowMapping;
-import org.mule.module.metadata.raml.RamlApiWrapper;
-import org.mule.module.metadata.model.RamlCoordinate;
-import org.mule.module.metadata.raml.RamlCoordsSimpleFactory;
-import org.mule.module.metadata.raml.RamlHandler;
+import org.mule.module.apikit.metadata.model.ApikitConfig;
+import org.mule.module.apikit.metadata.model.Flow;
+import org.mule.module.apikit.metadata.model.FlowMapping;
+import org.mule.module.apikit.metadata.model.RamlCoordinate;
+import org.mule.module.apikit.metadata.raml.RamlApiWrapper;
+import org.mule.module.apikit.metadata.raml.RamlCoordsSimpleFactory;
+import org.mule.module.apikit.metadata.raml.RamlHandler;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
 import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;

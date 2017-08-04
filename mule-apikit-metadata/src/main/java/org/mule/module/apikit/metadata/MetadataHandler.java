@@ -4,12 +4,12 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata;
+package org.mule.module.apikit.metadata;
 
 import org.mule.metadata.api.model.FunctionType;
-import org.mule.module.metadata.interfaces.MetadataSource;
-import org.mule.module.metadata.model.ApikitConfig;
-import org.mule.module.metadata.model.RamlCoordinate;
+import org.mule.module.apikit.metadata.interfaces.MetadataSource;
+import org.mule.module.apikit.metadata.model.ApikitConfig;
+import org.mule.module.apikit.metadata.model.RamlCoordinate;
 
 import java.util.Optional;
 

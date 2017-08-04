@@ -4,11 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata.raml;
+package org.mule.module.apikit.metadata.raml;
 
 import org.apache.commons.io.IOUtils;
-import org.mule.module.metadata.interfaces.Parseable;
-import org.mule.module.metadata.interfaces.ResourceLoader;
+import org.mule.module.apikit.metadata.interfaces.Parseable;
+import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import org.mule.raml.interfaces.model.IRaml;
 
 import java.io.File;

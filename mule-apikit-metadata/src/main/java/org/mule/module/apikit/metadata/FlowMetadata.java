@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata;
+package org.mule.module.apikit.metadata;
 
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.builder.FunctionTypeBuilder;
@@ -17,9 +17,9 @@ import org.mule.metadata.message.MessageMetadataType;
 import org.mule.metadata.message.MessageMetadataTypeBuilder;
 import org.mule.metadata.message.MuleEventMetadataType;
 import org.mule.metadata.message.MuleEventMetadataTypeBuilder;
-import org.mule.module.metadata.interfaces.MetadataSource;
-import org.mule.module.metadata.model.Payload;
-import org.mule.module.metadata.model.RamlCoordinate;
+import org.mule.module.apikit.metadata.interfaces.MetadataSource;
+import org.mule.module.apikit.metadata.model.Payload;
+import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;

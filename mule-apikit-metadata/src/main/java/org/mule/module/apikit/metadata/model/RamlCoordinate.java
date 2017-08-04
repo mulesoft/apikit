@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata.model;
+package org.mule.module.apikit.metadata.model;
 
 /**
  * A RAML coordinate. It is composed by a method, a resource, a media type (optional), and a APIkit config name (optional).

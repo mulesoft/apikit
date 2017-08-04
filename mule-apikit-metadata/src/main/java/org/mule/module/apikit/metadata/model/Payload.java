@@ -4,10 +4,10 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.metadata.model;
+package org.mule.module.apikit.metadata.model;
 
 import org.mule.metadata.api.model.MetadataType;
-import org.mule.module.metadata.MetadataFactory;
+import org.mule.module.apikit.metadata.MetadataFactory;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
