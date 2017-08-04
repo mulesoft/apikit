@@ -6,16 +6,10 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import static org.mockito.Mockito.when;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import javax.xml.validation.Schema;
-
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.api.RamlHandler;
@@ -27,6 +21,13 @@ import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.exception.TypedException;
+
+import javax.xml.validation.Schema;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+
+import static org.mockito.Mockito.when;
 
 public class RestJsonSchemaValidatorTestCase {
 
@@ -46,6 +47,10 @@ public class RestJsonSchemaValidatorTestCase {
       "}\n";
   private static IRaml api;
   private static IAction mockedAction;
+
+
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
 
   @BeforeClass
   public static void mockApi() {
@@ -111,4 +116,39 @@ public class RestJsonSchemaValidatorTestCase {
     jsonSchemavalidator.validate(payload);
   }
 
+  @Test
+  public void showAllSchemaValidationErrors() throws TypedException, BadRequestException, ExecutionException{
+    expectedException.expect(TypedException.class);
+    expectedException.expectMessage(VALIDATION_ERRORS_EXPECTED_MESSAGE);
+
+    String payload = "{ \"id\": 1 }";
+    Configuration config = new Configuration();
+    RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
+
+    when(ramlHandler.getApi()).thenReturn(api);
+    config.setRamlHandler(ramlHandler);
+
+    RestJsonSchemaValidator jsonSchemavalidator =
+        new RestJsonSchemaValidator(config.getJsonSchema("/leagues,POST,application/json").getSchema());
+    jsonSchemavalidator.validate(payload);
+  }
+
+  private static final String VALIDATION_ERRORS_EXPECTED_MESSAGE = "org.mule.module.apikit.api.exception.BadRequestException: error: object has missing required properties ([\"name\"])\n" +
+      "    level: \"error\"\n" +
+      "    schema: {\"loadingURI\":\"#\",\"pointer\":\"\"}\n" +
+      "    instance: {\"pointer\":\"\"}\n" +
+      "    domain: \"validation\"\n" +
+      "    keyword: \"properties\"\n" +
+      "    required: [\"name\"]\n" +
+      "    missing: [\"name\"]\n" +
+      "\n" +
+      "error: instance type (integer) does not match any allowed primitive type (allowed: [\"string\"])\n" +
+      "    level: \"error\"\n" +
+      "    schema: {\"loadingURI\":\"#\",\"pointer\":\"/properties/id\"}\n" +
+      "    instance: {\"pointer\":\"/id\"}\n" +
+      "    domain: \"validation\"\n" +
+      "    keyword: \"type\"\n" +
+      "    found: \"integer\"\n" +
+      "    expected: [\"string\"]\n" +
+      "\n";
 }
