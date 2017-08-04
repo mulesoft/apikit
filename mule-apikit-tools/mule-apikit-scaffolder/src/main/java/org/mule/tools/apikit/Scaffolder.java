@@ -29,7 +29,7 @@ import org.apache.maven.plugin.logging.Log;
 
 public class Scaffolder
 {
-    public final static String DEFAULT_MULE_VERSION = "4.0.0-EE";
+    public final static String DEFAULT_MULE_VERSION = "4.0.0";
 
     private final MuleConfigGenerator muleConfigGenerator;
 
