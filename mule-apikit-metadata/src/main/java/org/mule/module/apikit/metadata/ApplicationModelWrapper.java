@@ -71,7 +71,7 @@ public class ApplicationModelWrapper
 
         apikitConfigMap = applicationModel.getRootComponentModel().getInnerComponents()
                 .stream()
-                .filter((element) -> ApikitIdentifiers.isApikitConfig(element.getIdentifier()))
+                .filter((element) -> ApikitElementIdentifiers.isApikitConfig(element.getIdentifier()))
                 .map(this::createApikitConfig)
                 .collect(Collectors.toMap(ApikitConfig::getName, config -> config));
     }
@@ -129,9 +129,9 @@ public class ApplicationModelWrapper
 
         List<FlowMapping> flowMappings = unwrappedApikitConfig.getInnerComponents()
                 .stream()
-                .filter(config -> ApikitIdentifiers.isFlowMappings(config.getIdentifier()))
+                .filter(config -> ApikitElementIdentifiers.isFlowMappings(config.getIdentifier()))
                 .flatMap(flowMappingsElement -> flowMappingsElement.getInnerComponents().stream())
-                .filter(flowMapping -> ApikitIdentifiers.isFlowMapping(flowMapping.getIdentifier()))
+                .filter(flowMapping -> ApikitElementIdentifiers.isFlowMapping(flowMapping.getIdentifier()))
                 .map(unwrappedFlowMapping -> createFlowMapping(configName, unwrappedFlowMapping))
                 .collect(Collectors.toList());
 
@@ -155,7 +155,7 @@ public class ApplicationModelWrapper
 
         return applicationModel.getRootComponentModel().getInnerComponents()
                 .stream()
-                .filter(element -> ApikitIdentifiers.isFlow(element.getIdentifier()))
+                .filter(element -> ApikitElementIdentifiers.isFlow(element.getIdentifier()))
                 .map(this::createFlow)
                 .collect(Collectors.toList());
     }

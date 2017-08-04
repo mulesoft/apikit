@@ -8,8 +8,19 @@ package org.mule.module.apikit.metadata;
 
 import org.mule.runtime.api.component.ComponentIdentifier;
 
-public class ApikitIdentifiers
+/**
+ * Helper class that tells if a given XML Component is some of the valid APIKit
+ * XML Elements.
+ *
+ * Related Clases:
+ * {@link org.mule.module.apikit.metadata.model.ApikitConfig}
+ * {@link org.mule.module.apikit.metadata.model.Flow}
+ * {@link org.mule.module.apikit.metadata.model.FlowMapping}
+ */
+public class ApikitElementIdentifiers
 {
+    private ApikitElementIdentifiers() {}
+
     private static final ComponentIdentifier FLOW =
             ComponentIdentifier.buildFromStringRepresentation("flow");
 
@@ -24,7 +35,7 @@ public class ApikitIdentifiers
 
 
     public static boolean isFlow(ComponentIdentifier identifier) {
-        return identifier.equals(FLOW)   ;
+        return identifier.equals(FLOW);
     }
 
     public static boolean isApikitConfig(ComponentIdentifier identifier) {

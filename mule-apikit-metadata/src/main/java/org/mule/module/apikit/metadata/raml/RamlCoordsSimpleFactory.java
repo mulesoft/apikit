@@ -25,7 +25,6 @@ public class RamlCoordsSimpleFactory
 
         if (parts.length < 2 || parts.length > 4) {
             return null;
-//            throw new IllegalStateException("flowName must have at least resourceName and methodName");
         }
 
         String flowMethodName = parts[0];
@@ -33,22 +32,18 @@ public class RamlCoordsSimpleFactory
         String flowMediaType = null;
         String flowApiConfigName = null;
 
-        // Can be method:resource:configName or method:resource:mediaType
         if (parts.length == 3) {
 
             if (apiConfigNames.contains(parts[2])) {
-                // El tercer parámetro es el nombre de la api a la que pertenece
                 flowApiConfigName = parts[2];
             } else {
-                // Es el mediaType
                 flowMediaType = parts[2];
             }
         }
 
-        // Full example
         if (parts.length == 4) {
             flowMediaType = parts[2];
-            flowApiConfigName = parts[3]; // TODO: 7/19/17 VALIDAR?
+            flowApiConfigName = parts[3];
         }
 
         return new RamlCoordinate(flowMethodName, flowResourceName, flowMediaType, flowApiConfigName);

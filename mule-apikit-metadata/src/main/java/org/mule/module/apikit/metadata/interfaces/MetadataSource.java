@@ -10,7 +10,18 @@ import org.mule.metadata.api.model.FunctionType;
 
 import java.util.Optional;
 
+/**
+ * Represents a source of Metadata
+ *
+ * Related clases:
+ * {@link org.mule.module.apikit.metadata.FlowMetadata}
+ */
 public interface MetadataSource
 {
+    /**
+     * Generates the input and output metadata
+     * @return A FunctionType that represents the input and output metadata. If
+     * the source has nothing to show, it will return {@link Optional#empty()}
+     */
     Optional<FunctionType> getMetadata();
 }
