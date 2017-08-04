@@ -1,3 +1,5 @@
+package org.mule.module.metadata;
+
 import org.mule.module.metadata.interfaces.ResourceLoader;
 
 import java.io.File;
@@ -11,7 +13,7 @@ public class TestResourceLoader implements ResourceLoader
     {
         try
         {
-            return new File(TestResourceLoader.class.getResource(relativePath).toURI());
+            return new File(this.getClass().getResource(relativePath).toURI());
 
         } catch (URISyntaxException e)
         {

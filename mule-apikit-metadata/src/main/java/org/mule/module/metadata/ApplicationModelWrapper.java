@@ -8,8 +8,8 @@ import org.mule.module.metadata.model.RamlCoordinate;
 import org.mule.module.metadata.raml.RamlCoordsSimpleFactory;
 import org.mule.module.metadata.raml.RamlHandler;
 import org.mule.raml.interfaces.model.IRaml;
-import org.mule.runtime.config.spring.dsl.model.ApplicationModel;
-import org.mule.runtime.config.spring.dsl.model.ComponentModel;
+import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
+import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;
 
 import java.util.AbstractMap;
 import java.util.List;

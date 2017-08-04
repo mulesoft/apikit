@@ -4,11 +4,13 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
+package org.mule.module.metadata;
+
 import org.junit.Test;
 import org.mule.metadata.api.model.FunctionType;
-import org.mule.module.metadata.Metadata;
 import org.mule.module.metadata.interfaces.ResourceLoader;
-import org.mule.runtime.config.spring.dsl.model.ApplicationModel;
+import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
+import org.mule.module.metadata.utils.MockedApplicationModel;
 
 import java.util.Optional;
 

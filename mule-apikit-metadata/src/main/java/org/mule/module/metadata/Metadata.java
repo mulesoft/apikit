@@ -9,7 +9,7 @@ package org.mule.module.metadata;
 import org.mule.metadata.api.model.FunctionType;
 import org.mule.module.metadata.interfaces.ResourceLoader;
 import org.mule.module.metadata.raml.RamlHandler;
-import org.mule.runtime.config.spring.dsl.model.ApplicationModel;
+import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
 
 import java.util.Optional;
 

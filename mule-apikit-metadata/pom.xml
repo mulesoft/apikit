@@ -44,18 +44,6 @@
             <artifactId>mule-core</artifactId>
             <version>${mule.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.mule</groupId>
-            <artifactId>mule-datasense-api</artifactId>
-            <version>${mule.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule</groupId>
-            <artifactId>mule-datasense</artifactId>
-            <version>${mule.version}</version>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.mule.raml</groupId>

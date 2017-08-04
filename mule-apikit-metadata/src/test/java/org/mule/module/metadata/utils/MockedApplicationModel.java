@@ -1,26 +1,27 @@
-/*
+package org.mule.module.metadata.utils;/*
  * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
  * The software in this package is published under the terms of the CPAL v1.0
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-import com.google.common.base.Preconditions;
-import org.apache.commons.io.IOUtils;
-import org.mule.datasense.api.metadataprovider.ApplicationModel;
-import org.mule.datasense.api.metadataprovider.XmlConfigurationDocumentLoader;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
+import static org.mule.runtime.config.spring.api.XmlConfigurationDocumentLoader.noValidationDocumentLoader;
+
 import org.mule.runtime.api.meta.model.ExtensionModel;
-import org.mule.runtime.config.spring.dsl.model.ComponentBuildingDefinitionRegistry;
-import org.mule.runtime.config.spring.dsl.processor.ArtifactConfig;
-import org.mule.runtime.config.spring.dsl.processor.ConfigFile;
-import org.mule.runtime.config.spring.dsl.processor.ConfigLine;
-import org.mule.runtime.config.spring.dsl.processor.xml.XmlApplicationParser;
+import org.mule.runtime.config.spring.api.dsl.model.ComponentBuildingDefinitionRegistry;
+import org.mule.runtime.config.spring.api.dsl.model.ResourceProvider;
+import org.mule.runtime.config.spring.api.dsl.processor.ArtifactConfig;
+import org.mule.runtime.config.spring.api.dsl.processor.ConfigFile;
+import org.mule.runtime.config.spring.api.dsl.processor.ConfigLine;
+import org.mule.runtime.config.spring.api.dsl.processor.xml.XmlApplicationParser;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.registry.ServiceRegistry;
-import org.mule.runtime.config.spring.dsl.model.ResourceProvider;
 import org.mule.runtime.core.api.registry.SpiServiceRegistry;
 import org.mule.runtime.dsl.api.component.ComponentBuildingDefinitionProvider;
 import org.mule.runtime.module.extension.internal.config.ExtensionBuildingDefinitionProvider;
-import org.w3c.dom.Document;
+
+import com.google.common.base.Preconditions;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,18 +31,19 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
+import org.apache.commons.io.IOUtils;
+import org.w3c.dom.Document;
 
-public class MockedApplicationModel implements ApplicationModel {
+public class MockedApplicationModel implements ApplicationModelWrapper
+{
 
     private final String name;
-    //  private final File appDir;
-    private org.mule.runtime.config.spring.dsl.model.ApplicationModel applicationModel;
+    private org.mule.runtime.config.spring.api.dsl.model.ApplicationModel applicationModel;
     private String typesData;
 
     private MockedApplicationModel(String name,
-                                   org.mule.runtime.config.spring.dsl.model.ApplicationModel applicationModel, String typesData) {
+                                   org.mule.runtime.config.spring.api.dsl.model.ApplicationModel applicationModel,
+                                   String typesData) {
         this.name = name;
         this.applicationModel = applicationModel;
         this.typesData = typesData;
@@ -51,15 +53,15 @@ public class MockedApplicationModel implements ApplicationModel {
         return name;
     }
 
-    public org.mule.runtime.config.spring.dsl.model.ApplicationModel getApplicationModel() {
+    public org.mule.runtime.config.spring.api.dsl.model.ApplicationModel getApplicationModel() {
         return applicationModel;
     }
 
-    public static ApplicationModel load(String name, String content) throws Exception {
+    public static ApplicationModelWrapper load(String name, String content) throws Exception {
         return load(name, content, null);
     }
 
-    public static ApplicationModel load(String name, String content, String typesData) throws Exception {
+    public static ApplicationModelWrapper load(String name, String content, String typesData) throws Exception {
         Builder builder = new Builder();
         builder.addConfig(name, IOUtils.toInputStream(content));
         if (typesData != null) {
@@ -69,19 +71,19 @@ public class MockedApplicationModel implements ApplicationModel {
 
     }
 
-    public static ApplicationModel load(String name, File appDir) throws Exception {
+    public static ApplicationModelWrapper load(String name, File appDir) throws Exception {
         return load(name, appDir, null, null);
     }
 
-    public static ApplicationModel load(String name, File appDir, MuleContext muleContext) throws Exception {
+    public static ApplicationModelWrapper load(String name, File appDir, MuleContext muleContext) throws Exception {
         return load(name, appDir, null, muleContext);
     }
 
-    public static ApplicationModel load(String name, File appDir, File typesDataFile) throws Exception {
+    public static ApplicationModelWrapper load(String name, File appDir, File typesDataFile) throws Exception {
         return load(name, appDir, typesDataFile, null);
     }
 
-    public static ApplicationModel load(String name, File appDir, File typesDataFile, MuleContext muleContext) throws Exception {
+    public static ApplicationModelWrapper load(String name, File appDir, File typesDataFile, MuleContext muleContext) throws Exception {
         Builder builder = new Builder();
         builder.addConfig(name, new File(appDir, name));
         if (typesDataFile != null) {
@@ -94,12 +96,12 @@ public class MockedApplicationModel implements ApplicationModel {
     }
 
     @Override
-    public org.mule.runtime.config.spring.dsl.model.ComponentModel findRootComponentModel() {
+    public org.mule.runtime.config.spring.api.dsl.model.ComponentModel findRootComponentModel() {
         return getApplicationModel().getRootComponentModel();
     }
 
     @Override
-    public Optional<org.mule.runtime.config.spring.dsl.model.ComponentModel> findNamedComponent(String name) {
+    public Optional<org.mule.runtime.config.spring.api.dsl.model.ComponentModel> findNamedComponent(String name) {
         return getApplicationModel().findTopLevelNamedComponent(name);
     }
 
@@ -169,8 +171,7 @@ public class MockedApplicationModel implements ApplicationModel {
         }
 
         private Optional<ConfigLine> loadConfigLines(InputStream inputStream) {
-            XmlConfigurationDocumentLoader xmlConfigurationDocumentLoader = new XmlConfigurationDocumentLoader();
-            Document document = xmlConfigurationDocumentLoader.loadDocument(inputStream);
+            Document document = noValidationDocumentLoader().loadDocument("config", inputStream);
             return xmlApplicationParser.parse(document.getDocumentElement());
         }
 
@@ -207,10 +208,12 @@ public class MockedApplicationModel implements ApplicationModel {
                     createComponentBuildingDefinitionRegistry(extensionModels, muleContext != null ? muleContext.getClass().getClassLoader()
                             : Thread.currentThread().getContextClassLoader());
 
-            org.mule.runtime.config.spring.dsl.model.ApplicationModel applicationModel =
-                    new org.mule.runtime.config.spring.dsl.model.ApplicationModel(artifactConfigBuilder.build(), null,
-                            extensionModels, Collections.emptyMap(), Optional.empty(),
-                            Optional.of(componentBuildingDefinitionRegistry), false,
+            org.mule.runtime.config.spring.api.dsl.model.ApplicationModel applicationModel =
+                    new org.mule.runtime.config.spring.api.dsl.model.ApplicationModel(artifactConfigBuilder.build(), null,
+                            extensionModels, Collections.emptyMap(),
+                            Optional.empty(),
+                            Optional.of(componentBuildingDefinitionRegistry),
+                            false,
                             getResourceProvider());
             return new MockedApplicationModel("", applicationModel, typesData);
         }

@@ -2,7 +2,7 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd       http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
 
-    <apikit:config name="router-config" raml="org/mule/module/metadata/flow-mappings/api.raml"
+    <apikit:config name="router-config" raml="flow-mappings/api.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" >
 
         <apikit:flow-mappings>
@@ -15,7 +15,7 @@
         </apikit:flow-mappings>
     </apikit:config>
 
-    <apikit:config name="petshop-api" raml="org/mule/module/metadata/flow-mappings/petshop-api.raml"
+    <apikit:config name="petshop-api" raml="flow-mappings/petshop-api.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 
 
