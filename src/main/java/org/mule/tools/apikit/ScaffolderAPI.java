@@ -13,12 +13,12 @@ import java.util.List;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+
 public class ScaffolderAPI {
 
     private final static List<String> apiExtensions = Arrays.asList(".yaml", ".raml", ".yml");
     private final static List<String> appExtensions = Arrays.asList(".xml");
-
-    private final static String DEFAULT_MULE_VERSION = "4.0.0";
 
     public ScaffolderAPI() {
 

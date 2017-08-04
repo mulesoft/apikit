@@ -24,41 +24,53 @@ public class APIKitFlowScope implements Scope {
     private static final String LOGGER_ATTRIBUTE_LEVEL_VALUE = "INFO";
 
     public APIKitFlowScope(GenerationModel flowEntry) {
+        this(flowEntry, true);
+    }
+
+    public APIKitFlowScope(GenerationModel flowEntry, boolean isMuleEE) {
         flow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
         flow.setAttribute("name", flowEntry.getFlowName());
+        flow.addContent(generateFlowContent(flowEntry, isMuleEE));
+    }
 
-        if (flowEntry.getExampleWrapper() == null)
-        {
-            generateLogger();
-        }
-        else
+    private Element generateFlowContent(GenerationModel flowEntry, boolean isMuleEE)
+    {
+        if (isMuleEE && flowEntry.getExampleWrapper() != null)
         {
             try
             {
-                Element transform = new Element("transform", EE_NAMESPACE.getNamespace());
-                Element setPayload = new Element("set-payload", EE_NAMESPACE.getNamespace());
-                Element message = new Element("message", EE_NAMESPACE.getNamespace());
-                CDATA cdataSection = new CDATA(generateTransformTextForExample(flowEntry.getExampleWrapper().trim()));
-                setPayload.addContent(cdataSection);
-                message.setContent(setPayload);
-                transform.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
-                transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(), XSI_NAMESPACE.getNamespace());
-                transform.addContent(message);
-                flow.addContent(transform);
+                return generateTransform(flowEntry);
             }
             catch (Exception e)
             {
-                generateLogger();
+                return generateLogger(flowEntry.getFlowName());
             }
+        }
+        else
+        {
+            return generateLogger(flowEntry.getFlowName());
         }
     }
 
-    private void generateLogger()
+    private Element generateTransform(GenerationModel flowEntry) {
+        Element transform = new Element("transform", EE_NAMESPACE.getNamespace());
+        Element setPayload = new Element("set-payload", EE_NAMESPACE.getNamespace());
+        Element message = new Element("message", EE_NAMESPACE.getNamespace());
+        CDATA cdataSection = new CDATA(generateTransformTextForExample(flowEntry.getExampleWrapper().trim()));
+        setPayload.addContent(cdataSection);
+        message.setContent(setPayload);
+        transform.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
+        transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(), XSI_NAMESPACE.getNamespace());
+        transform.addContent(message);
+        return transform;
+    }
+
+    private Element generateLogger(String message)
     {
         Element logger = new Element("logger", XMLNS_NAMESPACE.getNamespace());
         logger.setAttribute(LOGGER_ATTRIBUTE_LEVEL, LOGGER_ATTRIBUTE_LEVEL_VALUE);
-        logger.setAttribute(LOGGER_ATTRIBUTE_MESSAGE, flow.getAttribute("name").getValue());
-        flow.addContent(logger);
+        logger.setAttribute(LOGGER_ATTRIBUTE_MESSAGE, message);
+        return logger;
     }
 
     private String generateTransformTextForExample(String example)

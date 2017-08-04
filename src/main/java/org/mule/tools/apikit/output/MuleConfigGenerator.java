@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,12 +71,14 @@ public class MuleConfigGenerator {
     private final File rootDirectory;
     private final Map<String, HttpListener4xConfig> domainHttpListenerConfigs;
     private final Set<File> ramlsWithExtensionEnabled;
+    private final String muleVersion;
 
-    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListener4xConfig> domainHttpListenerConfigs, Set<File> ramlsWithExtensionEnabled) {
+    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListener4xConfig> domainHttpListenerConfigs, Set<File> ramlsWithExtensionEnabled, String muleVersion) {
         this.log = log;
         this.flowEntries = flowEntries;
         this.rootDirectory = muleConfigOutputDirectory;
         this.domainHttpListenerConfigs = domainHttpListenerConfigs;
+        this.muleVersion = muleVersion;
         if (ramlsWithExtensionEnabled == null)
         {
             this.ramlsWithExtensionEnabled = new TreeSet<>();
@@ -102,7 +105,7 @@ public class MuleConfigGenerator {
 
             // Generate each of the APIKit flows and insert them after the last flow
             int index = getLastFlowIndex(doc) + 1;
-            doc.getRootElement().addContent(index, new APIKitFlowScope(flowEntry).generate());
+            doc.getRootElement().addContent(index, new APIKitFlowScope(flowEntry, isMuleEE()).generate());
         }
 
         // Write everything to files
@@ -200,9 +203,9 @@ public class MuleConfigGenerator {
 
         String exceptionStrategyRef = null;//exceptionStrategy.getAttribute("name").getValue()
         new FlowScope(mule, exceptionStrategyRef,
-                      api, configRef, listenerConfigRef).generate();
+                      api, configRef, listenerConfigRef, isMuleEE()).generate();
 
-        new ConsoleFlowScope(mule, api, configRef, listenerConfigRef).generate();
+        new ConsoleFlowScope(mule, api, configRef, listenerConfigRef, isMuleEE()).generate();
 
         //mule.addContent(exceptionStrategy);
     }
@@ -214,6 +217,11 @@ public class MuleConfigGenerator {
         globalExceptionStrategy.setAttribute("name", apiId + "-" + "apiKitGlobalExceptionMapping");
         mule.addContent(globalExceptionStrategy);
 
+    }
+
+    private boolean isMuleEE()
+    {
+        return Arrays.asList(muleVersion.toUpperCase().split("-")).contains("EE");
     }
 
 }

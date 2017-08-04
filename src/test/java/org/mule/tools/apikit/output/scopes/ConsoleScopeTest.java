@@ -45,7 +45,7 @@ public class ConsoleScopeTest {
                 mule,
                 api,
                 api.getConfig().getName(),
-                api.getHttpListenerConfig().getName()).generate();
+                api.getHttpListenerConfig().getName(), true).generate();
 
         String s = Helper.nonSpaceOutput(mule);
 
