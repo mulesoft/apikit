@@ -35,7 +35,8 @@ public class ErrorHandlerScope implements Scope {
                 new StatusCodeMapping(404, "APIKIT:NOT_FOUND", "Resource not found"),
                 new StatusCodeMapping(405, "APIKIT:METHOD_NOT_ALLOWED", "Method not allowed"),
                 new StatusCodeMapping(406, "APIKIT:NOT_ACCEPTABLE", "Not acceptable"),
-                new StatusCodeMapping(415, "APIKIT:UNSUPPORTED_MEDIA_TYPE", "Unsupported media type")
+                new StatusCodeMapping(415, "APIKIT:UNSUPPORTED_MEDIA_TYPE", "Unsupported media type"),
+                new StatusCodeMapping(501, "APIKIT:NOT_IMPLEMENTED", "Not Implemented")
         );
 
         return new ErrorHandlerScope(statusCodeMappings);

@@ -157,4 +157,15 @@ public class RouterTestCase extends MuleArtifactFunctionalTestCase
                 .when().get("/api/nothing");
     }
 
+    @Test
+    public void notImplemented() throws Exception
+    {
+        given().header("Content-Type", "application/json")
+                .body("{\"name\": \"Fede\"}")
+                .expect()
+                .response().body(is("{message: 'Not implemented'}"))
+                .statusCode(501)
+                .when().put("/api/types-test");
+    }
+
 }
