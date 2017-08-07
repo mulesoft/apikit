@@ -8,6 +8,7 @@ package org.mule.module.apikit.metadata;
 
 import org.junit.Test;
 import org.mule.metadata.api.model.FunctionType;
+import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import org.mule.module.apikit.metadata.utils.MockedApplicationModel;
 import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
@@ -25,6 +26,7 @@ public class MetadataModuleTestCase
     public void testBasicMetadataModule() throws Exception {
 
         ResourceLoader resourceLoader = new TestResourceLoader();
+        Notifier notifier = new TestNotifier();
 
         ApplicationModel applicationModel = createApplicationModel("org/mule/module/apikit/metadata/flow-mappings/app.xml");
         assertThat(applicationModel, notNullValue());
@@ -32,6 +34,7 @@ public class MetadataModuleTestCase
         Metadata metadata = new Metadata.Builder()
                 .withApplicationModel(applicationModel)
                 .withResourceLoader(resourceLoader)
+                .withNotifier(notifier)
                 .build();
 
         Optional<FunctionType> createNewBookFlow = metadata.getMetadataForFlow("createNewBook");
@@ -52,12 +55,15 @@ public class MetadataModuleTestCase
     public void singleApiWithFlowsWithoutConfigRef() throws Exception {
 
         ResourceLoader resourceLoader = new TestResourceLoader();
+        Notifier notifier = new TestNotifier();
+
         ApplicationModel applicationModel = createApplicationModel("org/mule/module/apikit/metadata/single-api-with-no-name/mule-config.xml");
         assertThat(applicationModel, notNullValue());
 
         Metadata metadata = new Metadata.Builder()
                 .withApplicationModel(applicationModel)
                 .withResourceLoader(resourceLoader)
+                .withNotifier(notifier)
                 .build();
 
         Optional<FunctionType> getAllCustomersPets = metadata.getMetadataForFlow("get:/customers/pets");
@@ -71,12 +77,15 @@ public class MetadataModuleTestCase
     public void ramlApplicationInRaml08() throws Exception {
 
         ResourceLoader resourceLoader = new TestResourceLoader();
+        Notifier notifier = new TestNotifier();
+
         ApplicationModel applicationModel = createApplicationModel("org/mule/module/apikit/metadata/api-in-raml08/mule-config.xml");
         assertThat(applicationModel, notNullValue());
 
         Metadata metadata = new Metadata.Builder()
                 .withApplicationModel(applicationModel)
                 .withResourceLoader(resourceLoader)
+                .withNotifier(notifier)
                 .build();
 
         Optional<FunctionType> putResources = metadata.getMetadataForFlow("put:/resources:application/json:router-config");

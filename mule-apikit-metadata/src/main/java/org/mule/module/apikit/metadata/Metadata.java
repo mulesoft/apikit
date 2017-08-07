@@ -7,6 +7,7 @@
 package org.mule.module.apikit.metadata;
 
 import org.mule.metadata.api.model.FunctionType;
+import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import org.mule.module.apikit.metadata.raml.RamlHandler;
 import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
@@ -17,11 +18,11 @@ public class Metadata
 {
     private MetadataHandler metadataHandler;
 
-    private Metadata(ApplicationModel applicationModel, ResourceLoader resourceLoader) {
-        init(applicationModel, resourceLoader);
+    private Metadata(ApplicationModel applicationModel, ResourceLoader resourceLoader, Notifier notifier) {
+        init(applicationModel, resourceLoader, notifier);
     }
 
-    private void init(ApplicationModel applicationModel, ResourceLoader resourceLoader) {
+    private void init(ApplicationModel applicationModel, ResourceLoader resourceLoader, Notifier notifier) {
 
         metadataHandler = new MetadataHandler(
                 new ApplicationModelWrapper(applicationModel, new RamlHandler(resourceLoader)));
@@ -44,6 +45,7 @@ public class Metadata
 
         private ResourceLoader resourceLoader;
         private ApplicationModel applicationModel;
+        private Notifier notifier;
 
         public Builder () {
 
@@ -59,8 +61,13 @@ public class Metadata
             return this;
         }
 
+        public Builder withNotifier(Notifier notifier) {
+            this.notifier = notifier;
+            return this;
+        }
+
         public Metadata build() {
-            return new Metadata(applicationModel, resourceLoader);
+            return new Metadata(applicationModel, resourceLoader, notifier);
         }
 
     }
