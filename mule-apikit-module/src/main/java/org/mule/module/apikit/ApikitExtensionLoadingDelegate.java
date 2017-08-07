@@ -51,6 +51,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
         ErrorModel unsupportedMediaTypeErrorModel = ErrorModelBuilder.newError("UNSUPPORTED_MEDIA_TYPE", "APIKIT").withParent(apikitAnyErrorType).build();
         ErrorModel methodNotAllowedErrorModel = ErrorModelBuilder.newError("METHOD_NOT_ALLOWED", "APIKIT").withParent(apikitAnyErrorType).build();
         ErrorModel notFoundErrorModel = ErrorModelBuilder.newError("NOT_FOUND", "APIKIT").withParent(apikitAnyErrorType).build();
+        ErrorModel notImplementedErrorModel = ErrorModelBuilder.newError("NOT_IMPLEMENTED", "APIKIT").withParent(apikitAnyErrorType).build();
 
         XmlDslModel xmlDslModel = XmlDslModel.builder()
                 .setPrefix(PREFIX_NAME)
@@ -73,7 +74,8 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
                 .withErrorModel(notAcceptableErrorModel)
                 .withErrorModel(unsupportedMediaTypeErrorModel)
                 .withErrorModel(methodNotAllowedErrorModel)
-                .withErrorModel(notFoundErrorModel);
+                .withErrorModel(notFoundErrorModel)
+                .withErrorModel(notImplementedErrorModel);
         extensionDeclarer.withImportedType(new ImportedTypeModel((ObjectType) typeLoader.load(HttpRequestAttributes.class)));
 
         //config

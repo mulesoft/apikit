@@ -8,6 +8,7 @@ package org.mule.module.apikit;
 
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.RoutingTable;
+import org.mule.module.apikit.exception.NotImplementedException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
@@ -235,10 +236,16 @@ public class FlowFinder
         if (flow == null)
         {
             flow = rawRestFlowMap.get(baseKey);
-            if (flow == null && isFlowDeclaredWithDifferentMediaType(rawRestFlowMap, baseKey))
+            if (flow == null)
             {
-                //throw new UnsupportedMediaTypeException();
-                throw ApikitErrorTypes.throwErrorType(new UnsupportedMediaTypeException());
+                if (isFlowDeclaredWithDifferentMediaType(rawRestFlowMap, baseKey))
+                {
+                    throw ApikitErrorTypes.throwErrorType(new UnsupportedMediaTypeException());
+                }
+                else
+                {
+                    throw ApikitErrorTypes.throwErrorType(new NotImplementedException());
+                }
             }
         }
         return flow;
