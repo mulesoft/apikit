@@ -53,6 +53,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -68,6 +69,7 @@ import org.slf4j.LoggerFactory;
 public class HttpRestRequest
 {
 
+    private static final List<Integer> DEFAULT_SUCCESS_STATUS = Arrays.asList(200);
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MuleEvent requestEvent;
@@ -645,9 +647,7 @@ public class HttpRestRequest
     private List<String> getResponseMimeTypes()
     {
         List<String> mimeTypes = new ArrayList<>();
-        int status = getSuccessStatus();
-        if (status != -1)
-        {
+        for (Integer status : getSuccessStatusList()) {
             IResponse response = action.getResponses().get(String.valueOf(status));
             if (response != null && response.hasBody())
             {
@@ -664,15 +664,20 @@ public class HttpRestRequest
 
     protected int getSuccessStatus()
     {
+        return getSuccessStatusList().get(0);
+    }
+
+    protected List<Integer> getSuccessStatusList()
+    {
+        List<Integer> statuses = new ArrayList<>();
         for (String status : action.getResponses().keySet())
         {
             int code = Integer.parseInt(status);
             if (code >= 200 && code < 300)
             {
-                return code;
+                statuses.add(code);
             }
         }
-        //default success status
-        return 200;
+        return statuses.isEmpty()? DEFAULT_SUCCESS_STATUS : statuses;
     }
 }
