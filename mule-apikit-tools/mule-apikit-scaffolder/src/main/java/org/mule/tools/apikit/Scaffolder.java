@@ -72,6 +72,11 @@ public class Scaffolder
         MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(ramls.keySet(), xmls);
         RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
         List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
+
+        if (muleVersion == null) {
+            muleVersion = DEFAULT_MULE_VERSION;
+        }
+
         muleConfigGenerator = new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(), ramlsWithExtensionEnabled, muleVersion);
     }
 
