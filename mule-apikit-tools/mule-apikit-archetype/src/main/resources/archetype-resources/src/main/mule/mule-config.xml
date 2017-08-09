@@ -134,6 +134,7 @@ output application/json
 #end
             </on-error-propagate>
             <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+#if($isMuleEE)
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
                     <ee:message>
                         <ee:set-payload><![CDATA[%dw 2.0
@@ -145,6 +146,11 @@ output application/json
                         <ee:set-variable variableName="httpStatus">501</ee:set-variable>
                     </ee:variables>
                 </ee:transform>
+#else
+                <set-variable variableName="outboundHeaders" value="#[{Content-Type:'application/json'}]"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Not implemented&quot; }"/>
+                <set-variable variableName="httpStatus" value="501"/>
+#end
             </on-error-propagate>
         </error-handler>
     </flow>
