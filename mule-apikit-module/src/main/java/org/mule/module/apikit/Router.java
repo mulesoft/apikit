@@ -25,9 +25,12 @@ import org.mule.module.apikit.api.validation.RequestValidator;
 import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
+import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.meta.AbstractAnnotatedObject;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.Event;
 import org.mule.runtime.core.api.construct.Flow;
@@ -49,11 +52,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
-public class Router implements  Processor, FlowConstructAware, Initialisable
+public class Router extends AbstractAnnotatedObject implements Processor, Initialisable
 
 {
-    @Inject
-    private ApikitRegistry registry;
+    private final ApikitRegistry registry;
+
+    private final ConfigurationComponentLocator locator;
 
     private String configRef;
 
@@ -61,16 +65,25 @@ public class Router implements  Processor, FlowConstructAware, Initialisable
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
 
+    @Inject
+    public Router(ApikitRegistry registry, ConfigurationComponentLocator locator) {
+        this.registry = registry;
+        this.locator = locator;
+    }
+
     @Override
     public void initialise() throws InitialisationException
     {
-        URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
-        if (uri == null)
+        final String name = getLocation().getRootContainerName();
+        final Optional<URI> url = locator.find(Location.builder().globalName(name).addSourcePart().build())
+                .map(MessageSourceUtils::getUriFromFlow);
+
+        if (!url.isPresent())
         {
             LOGGER.error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
             return;
         }
-        registry.setApiSource(configRef, uri.toString().replace("*",""));
+        registry.setApiSource(configRef, url.get().toString().replace("*",""));
     }
 
     public Event process(final Event event) throws MuleException {
@@ -158,10 +171,4 @@ public class Router implements  Processor, FlowConstructAware, Initialisable
         return resource;
     }
 
-    FlowConstruct flowConstruct;
-    @Override
-    public void setFlowConstruct(FlowConstruct flowConstruct)
-    {
-        this.flowConstruct = flowConstruct;
-    }
 }
