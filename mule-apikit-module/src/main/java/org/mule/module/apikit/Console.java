@@ -6,8 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import javax.inject.Inject;
-
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.console.ConsoleResources;
@@ -15,50 +13,52 @@ import org.mule.module.apikit.api.console.Resource;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.helpers.EventWrapper;
+import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
+import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.meta.AbstractAnnotatedObject;
 import org.mule.runtime.core.api.Event;
-import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.construct.FlowConstruct;
-import org.mule.runtime.core.api.construct.FlowConstructAware;
 import org.mule.runtime.core.api.processor.Processor;
 import org.mule.runtime.core.api.util.StringMessageUtils;
-
-import java.net.URI;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Console implements Processor, FlowConstructAware, Initialisable
+import javax.inject.Inject;
+import java.net.URI;
+import java.util.Optional;
+
+public class Console extends AbstractAnnotatedObject implements Processor, Initialisable
 {
-    @Inject
-    private ApikitRegistry registry;
+    private final ApikitRegistry registry;
+    private final ConfigurationComponentLocator locator;
     private Configuration config;
 
     private String configRef;
     private String name;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    FlowConstruct flowConstruct;
-
-    @Override
-    public void setFlowConstruct(FlowConstruct flowConstruct)
-    {
-        this.flowConstruct = flowConstruct;
+    @Inject
+    public Console(ApikitRegistry registry, ConfigurationComponentLocator locator) {
+        this.registry = registry;
+        this.locator = locator;
     }
 
     @Override
     public void initialise() throws InitialisationException
     {
-        URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
-        if (uri == null)
-        {
+        final String name = getLocation().getRootContainerName();
+
+        final Optional<URI> url = locator.find(Location.builder().globalName(name).addSourcePart().build())
+                .map(MessageSourceUtils::getUriFromFlow);
+
+        if (!url.isPresent()) {
             logger.error("There was an error retrieving console source.");
             return;
         }
-        logger.info(StringMessageUtils.getBoilerPlate("APIKit Console URL: " + uri.toString().replace("*", "")));
+
+        url.ifPresent(uri -> logger.info(StringMessageUtils.getBoilerPlate("APIKit ConsoleURL : " + uri.toString().replace("*", ""))));
     }
 
     @Override
@@ -71,11 +71,11 @@ public class Console implements Processor, FlowConstructAware, Initialisable
         HttpRequestAttributes attributes = EventHelper.getHttpRequestAttributes(event);
         String listenerPath = attributes.getListenerPath();
         String requestPath= attributes.getRequestPath();
-        String aceptHeader = AttributesHelper.getHeaderIgnoreCase(attributes,"Accept");
+        String acceptHeader = AttributesHelper.getHeaderIgnoreCase(attributes,"Accept");
         String queryString = attributes.getQueryString();
         String method = attributes.getMethod();
 
-        ConsoleResources consoleResources = new ConsoleResources(config, listenerPath, requestPath, queryString, method, aceptHeader);
+        ConsoleResources consoleResources = new ConsoleResources(config, listenerPath, requestPath, queryString, method, acceptHeader);
 
         // Listener path MUST end with /*
         consoleResources.isValidPath(attributes.getListenerPath());
@@ -117,5 +117,4 @@ public class Console implements Processor, FlowConstructAware, Initialisable
     {
         this.name = name;
     }
-
 }
