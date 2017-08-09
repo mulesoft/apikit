@@ -122,4 +122,24 @@ public class ContentTypeTestCase extends FunctionalTestCase
             .when().get("/api/multitype");
     }
 
+    @Test
+    public void getOnUsingMultipleHttpStatus() throws Exception
+    {
+        given()
+                .header("Accept", "")
+                .header("ctype", "zip")
+                .expect()
+                .response().contentType(is("application/zip"))
+                .body(is(""))
+                .statusCode(200)
+                .when().get("/api/multistatus");
+
+        given()
+                .header("Accept", "")
+                .expect()
+                .response().contentType(is("application/json"))
+                .body(is("{ \"message\": \"Data request accepted.\" }"))
+                .statusCode(202)
+                .when().get("/api/multistatus");
+    }
 }

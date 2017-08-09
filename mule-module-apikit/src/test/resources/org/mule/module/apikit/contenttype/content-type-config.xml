@@ -64,4 +64,21 @@
         <set-payload value="never mind"/>
     </flow>
 
+    <flow name="get:/multistatus">
+        <choice>
+            <when expression="#[message.inboundProperties.ctype == 'zip']">
+                <set-property propertyName="http.status" value="#[200]" />
+                <logger level="INFO" message="returning zip with 200 Ok"/>
+                <set-property propertyName="Content-Type" value="application/zip"/>
+                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+            </when>
+            <otherwise>
+                <set-property propertyName="http.status" value="#[202]"/>
+                <set-property propertyName="Content-Type" value="application/json"/>
+                <logger level="INFO" message="returning json with 202 Accepted"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Data request accepted.&quot; }"/>
+            </otherwise>
+        </choice>
+    </flow>
+
 </mule>
