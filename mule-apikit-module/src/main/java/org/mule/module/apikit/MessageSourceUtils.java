@@ -71,6 +71,7 @@ public class MessageSourceUtils {
         return new URI(scheme, null, host, port, path, null, null);
     }
 
+    @SuppressWarnings("unchecked")
     private static <A, B> A cast(B b) {
         return (A) b;
     }
