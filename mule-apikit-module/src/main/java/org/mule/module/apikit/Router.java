@@ -32,10 +32,8 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.meta.AbstractAnnotatedObject;
 import org.mule.runtime.core.api.DefaultMuleException;
-import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.construct.FlowConstruct;
-import org.mule.runtime.core.api.construct.FlowConstructAware;
 import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.runtime.core.api.exception.TypedException;
 import org.mule.runtime.core.api.processor.Processor;
@@ -86,18 +84,18 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
         registry.setApiSource(configRef, url.get().toString().replace("*",""));
     }
 
-    public Event process(final Event event) throws MuleException {
+    public InternalEvent process(final InternalEvent event) throws MuleException {
         return processToApply(event, this);
     }
 
     @Override
-    public Publisher<Event> apply(Publisher<Event> publisher)
+    public Publisher<InternalEvent> apply(Publisher<InternalEvent> publisher)
     {
         return from(publisher).flatMap(event -> {
             try
             {
                 Configuration config = registry.getConfiguration(getConfigRef());
-                Event.Builder eventBuilder = Event.builder(event);
+                InternalEvent.Builder eventBuilder = InternalEvent.builder(event);
                 eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
                 HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes().getValue());
@@ -148,7 +146,7 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
         this.name = name;
     }
 
-    public Event.Builder validateRequest(Event event, Event.Builder eventbuilder, ValidationConfig config, IResource resource, HttpRequestAttributes attributes, ResolvedVariables resolvedVariables) throws DefaultMuleException, MuleRestException {
+    public InternalEvent.Builder validateRequest(InternalEvent event, InternalEvent.Builder eventbuilder, ValidationConfig config, IResource resource, HttpRequestAttributes attributes, ResolvedVariables resolvedVariables) throws DefaultMuleException, MuleRestException {
 
         String charset = null;
         try {

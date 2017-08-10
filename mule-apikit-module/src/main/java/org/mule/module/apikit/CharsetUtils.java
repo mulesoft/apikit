@@ -10,7 +10,7 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.core.api.util.IOUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -39,7 +39,7 @@ public class CharsetUtils
      * @param logger where to log
      * @return payload encoding
      */
-    public static String getEncoding(Event event, byte[] bytes, Logger logger)
+    public static String getEncoding(InternalEvent event, byte[] bytes, Logger logger)
     {
 
         String encoding = getHeaderCharset(event.getMessage(), logger);
@@ -157,7 +157,7 @@ public class CharsetUtils
      * @param logger where to log
      * @return xml payload encoding
      */
-    public static String getXmlEncoding(Event muleEvent, byte[] payload, Document document, Logger logger)
+    public static String getXmlEncoding(InternalEvent muleEvent, byte[] payload, Document document, Logger logger)
     {
         String encoding = document.getXmlEncoding();
         logger.debug("Xml declaration encoding: " + logEncoding(encoding));
