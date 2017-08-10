@@ -11,7 +11,7 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 
 
 //import org.mule.runtime.api.message.Message;
-//import org.mule.runtime.core.api.Event;
+//import org.mule.runtime.core.api.InternalEvent;
 //import org.mule.runtime.core.util.StringUtils;
 
 public class UrlUtils
