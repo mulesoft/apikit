@@ -10,6 +10,7 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 import org.mule.module.apikit.api.validation.ValidBody;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.helpers.AttributesHelper;
@@ -100,7 +101,8 @@ public class BodyValidator {
       try {
         if (requestMimeTypeName.contains("json")) {
 
-          schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(config.getJsonSchema(schemaPath).getSchema()));
+          ApiKitJsonSchema schema = config.getJsonSchema(schemaPath);
+          schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(schema != null? schema.getSchema() : null));
 
         } else if(requestMimeTypeName.contains("xml")) {
           schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));

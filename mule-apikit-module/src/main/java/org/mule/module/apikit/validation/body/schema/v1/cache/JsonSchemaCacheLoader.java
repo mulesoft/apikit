@@ -43,11 +43,16 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
     public JsonSchema load(String schemaLocation) throws IOException
     {
         Object pathOrSchema = resolveJsonSchema(schemaLocation, api);
+
+        if (pathOrSchema == null) {
+            return null;
+        }
+
         if (pathOrSchema instanceof String)
         {
             return parseSchema(resolveLocationIfNecessary(formatUri((String) pathOrSchema)));
-
         }
+
         return parseSchema((JsonNode) pathOrSchema);
     }
 
