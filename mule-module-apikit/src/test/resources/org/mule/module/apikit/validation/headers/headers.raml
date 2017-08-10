@@ -1,0 +1,14 @@
+#%RAML 1.0
+title: Headers Test Case
+
+/datetime2616:
+  get:
+    headers:
+      X-ModifiedSince:
+        type: datetime
+        format: rfc2616
+  post:
+    headers:
+      X-MaxRows:
+        type: integer
+        required: false
