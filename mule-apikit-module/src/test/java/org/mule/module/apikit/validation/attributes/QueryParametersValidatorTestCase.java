@@ -8,9 +8,9 @@ package org.mule.module.apikit.validation.attributes;
 
 import static org.junit.Assert.assertEquals;
 
+import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.raml.implv1.model.ActionImpl;
 import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.core.api.exception.TypedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,8 +22,8 @@ import org.raml.model.parameter.QueryParameter;
 
 public class QueryParametersValidatorTestCase {
 
-  @Test(expected = TypedException.class)
-  public void invalidQueryParamMaxLength() throws TypedException
+  @Test(expected = InvalidQueryParameterException.class)
+  public void invalidQueryParamMaxLength() throws InvalidQueryParameterException
   {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();
@@ -43,7 +43,7 @@ public class QueryParametersValidatorTestCase {
   }
 
   @Test
-  public void validQueryParamMaxLength() throws TypedException
+  public void validQueryParamMaxLength() throws InvalidQueryParameterException
   {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();
@@ -63,7 +63,7 @@ public class QueryParametersValidatorTestCase {
   }
 
   @Test
-  public void validQueryParamAddingDefault() throws TypedException
+  public void validQueryParamAddingDefault() throws InvalidQueryParameterException
   {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();
@@ -92,7 +92,7 @@ public class QueryParametersValidatorTestCase {
   }
 
   @Test
-  public void validQueryParamAddingDefaultWithSpaces() throws TypedException
+  public void validQueryParamAddingDefaultWithSpaces() throws InvalidQueryParameterException
   {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();

@@ -7,7 +7,6 @@
 package org.mule.module.apikit.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
@@ -41,7 +40,8 @@ public class BodyValidator {
 
   public static ValidBody validate(IAction action, HttpRequestAttributes attributes, Object payload,
                                    ValidationConfig config, String charset)
-      throws BadRequestException {
+          throws BadRequestException, UnsupportedMediaTypeException
+  {
 
     ValidBody validBody = new ValidBody(payload);
 
@@ -70,7 +70,7 @@ public class BodyValidator {
           .get();
 
     } catch (NoSuchElementException e) {
-      throw ApikitErrorTypes.throwErrorType(new UnsupportedMediaTypeException());
+      throw new UnsupportedMediaTypeException();
     }
 
 
@@ -108,7 +108,7 @@ public class BodyValidator {
           schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));
         }
       } catch (ExecutionException e) {
-        throw ApikitErrorTypes.throwErrorType(new BadRequestException(e));
+        throw new BadRequestException(e);
       }
     }
 

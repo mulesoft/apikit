@@ -6,13 +6,11 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.core.api.exception.TypedException;
 
 import java.util.Collection;
 
@@ -27,7 +25,7 @@ public class QueryParameterValidator {
 
   }
 
-  public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString) throws TypedException
+  public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString) throws InvalidQueryParameterException
   {
 
     for (String expectedKey : action.getQueryParameters().keySet()) {
@@ -36,7 +34,7 @@ public class QueryParameterValidator {
 
       if (actual.isEmpty()) {
         if (expected.isRequired()) {
-          throw ApikitErrorTypes.throwErrorType(new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified"));
+          throw new InvalidQueryParameterException("Required query parameter " + expectedKey + " not specified");
         }
 
         if (expected.getDefaultValue() != null) {
@@ -48,7 +46,7 @@ public class QueryParameterValidator {
       } else {
 
         if (actual.size() > 1 && !(expected.isRepeat() || expected.isArray())) {
-          throw ApikitErrorTypes.throwErrorType(new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable"));
+          throw new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable");
         }
 
         if (expected.isArray()) {
@@ -78,7 +76,7 @@ public class QueryParameterValidator {
 
   //only for raml 1.0
   private void validateQueryParamArray(String paramKey, IParameter expected, Collection<?> paramValue)
-          throws TypedException
+          throws InvalidQueryParameterException
   {
     StringBuilder builder = new StringBuilder();
     for (Object item : paramValue) {
@@ -87,12 +85,13 @@ public class QueryParameterValidator {
     validateQueryParam(paramKey, expected, builder.toString());
   }
 
-  private void validateQueryParam(String paramKey, IParameter expected, String paramValue) throws TypedException
+  private void validateQueryParam(String paramKey, IParameter expected, String paramValue) throws InvalidQueryParameterException
   {
     if (!expected.validate(paramValue)) {
       String msg = String.format("Invalid value '%s' for query parameter %s. %s",
                                  paramValue, paramKey, expected.message(paramValue));
-      throw ApikitErrorTypes.throwErrorType(new InvalidQueryParameterException(msg));
+
+      throw new InvalidQueryParameterException(msg);
     }
   }
 

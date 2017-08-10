@@ -193,7 +193,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
                                 if (match == null) {
                                     logger.warn("No matching patterns for URI " + path);
-                                    throw ApikitErrorTypes.throwErrorType(new NotFoundException(path));
+                                    throw new IllegalStateException("No matching patterns for URI " + path);
                                 }
                                 return match;
                             }

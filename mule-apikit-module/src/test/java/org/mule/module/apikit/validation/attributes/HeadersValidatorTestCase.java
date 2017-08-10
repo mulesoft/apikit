@@ -7,6 +7,8 @@
 package org.mule.module.apikit.validation.attributes;
 
 
+import org.mule.module.apikit.exception.InvalidHeaderException;
+import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.raml.implv1.model.ActionImpl;
 import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.api.exception.TypedException;
@@ -23,8 +25,8 @@ import org.raml.model.parameter.Header;
 
 public class HeadersValidatorTestCase {
 
-  @Test(expected = TypedException.class)
-  public void invalidHeader() throws TypedException
+  @Test(expected = InvalidHeaderException.class)
+  public void invalidHeader() throws TypedException, InvalidHeaderException, NotAcceptableException
   {
     Map<String, Header> expectedHeaders = new HashMap<>();
     Header header1 = new Header();
@@ -57,7 +59,7 @@ public class HeadersValidatorTestCase {
   }
 
   @Test
-  public void validHeader() throws TypedException
+  public void validHeader() throws InvalidHeaderException, NotAcceptableException
   {
     Map<String, Header> expectedHeaders = new HashMap<>();
     Header header1 = new Header();
