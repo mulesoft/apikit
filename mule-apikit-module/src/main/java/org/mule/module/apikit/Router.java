@@ -16,6 +16,7 @@ import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.api.exception.MuleRestException;
+import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
@@ -104,7 +105,14 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
                 path = path.isEmpty() ? "/" : path;
 
                 //Get uriPattern, uriResolver, and the resolvedVariables
-                URIPattern uriPattern = config.getUriPatternCache().get(path);
+                URIPattern uriPattern = null;
+                try
+                {
+                    uriPattern = config.getUriPatternCache().get(path);
+                } catch (Exception e) {
+                    throw ApikitErrorTypes.throwErrorType(new NotFoundException(path));
+                }
+
                 URIResolver uriResolver = config.getUriResolverCache().get(path);
 
                 ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
@@ -121,6 +129,11 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
             }
             catch (Exception e)
             {
+                if (e instanceof MuleRestException) {
+                    return Flux.error(
+                            new MessagingException(event, ApikitErrorTypes.throwErrorType((MuleRestException) e)));
+                }
+
                 return Flux.error(new MessagingException(event, e));
             }
         });
