@@ -16,3 +16,13 @@ title: Parameters API
                 application/json: ~
                 application/xml: ~
                 text/html: ~
+
+/multistatus:
+  get:
+    responses:
+        200:
+            body:
+                application/zip: ~
+        202:
+            body:
+                application/json: ~
