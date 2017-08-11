@@ -50,7 +50,7 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy
             try {
                 boolean isEmpty = StringUtils.isEmpty(payload);
                 data = JsonUtils.parseJson(new StringReader(isEmpty? "null" : payload));
-                report = jsonSchema.validate(data);
+                report = jsonSchema.validate(data, true);
             } catch (IOException|ProcessingException e)
             {
                 throw ApikitErrorTypes.throwErrorType(new BadRequestException(e));
@@ -58,6 +58,7 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy
 
 
             Iterator<ProcessingMessage> iterator = report.iterator();
+            final StringBuilder messageBuilder = new StringBuilder();
 
             while (iterator.hasNext())
             {
@@ -70,9 +71,15 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy
 
                 if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning))
                 {
-                    logger.info("Schema validation failed: " + logMessage);
-                    throw ApikitErrorTypes.throwErrorType(new BadRequestException(logMessage));
+                    messageBuilder.append(logMessage).append("\n");
                 }
+            }
+
+            if (messageBuilder.length() > 0)
+            {
+                String message = messageBuilder.toString();
+                logger.info("Schema validation failed: " + message);
+                throw ApikitErrorTypes.throwErrorType(new BadRequestException(message));
             }
         }
     }
