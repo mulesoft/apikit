@@ -12,7 +12,7 @@
     <apikit:config name="router-config" raml="api.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 #if ($runtimeEdition != "EE" && $runtimeEdition != "CE")
-#stop("Unexpected value for 'runtimeEdition'. Valid values: CE, EE")
+#set ($runtimeEdition = "CE")
 #end
 #set ($isMuleEE = $runtimeEdition == "EE")
 
