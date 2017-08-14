@@ -1,0 +1,66 @@
+#%RAML 1.0
+---
+title: Parameters API
+
+/url-encoded-simple:
+    post:
+        body:
+            application/x-www-form-urlencoded:
+                properties:
+                    first:
+                        type: string
+        responses:
+            201: ~
+/url-encoded-simple-integer:
+    post:
+        body:
+            application/x-www-form-urlencoded:
+                properties:
+                    first:
+                        type: integer
+        responses:
+            201: ~
+/url-encoded-with-default:
+    post:
+        body:
+            application/x-www-form-urlencoded:
+                properties:
+                    first:
+                        type: string
+                        default: primo
+                        required: false
+                    second:
+                        type: string
+                        required: true
+                    third:
+                        type: boolean
+        responses:
+            201: ~
+/url-encoded-duplicated-key:
+    post:
+        body:
+            application/x-www-form-urlencoded:
+                properties:
+                    second:
+                        type: string
+                        required: true
+                    third:
+                        type: boolean
+        responses:
+            201: ~
+/url-encoded-enum:
+    post:
+        body:
+            application/x-www-form-urlencoded:
+                properties:
+                    first:
+                        type: string
+                        required: true
+                    second:
+                        type: string
+                        required: false
+                        enum: [ segundo, secondo ]
+                    third:
+                        type: boolean
+        responses:
+            201: ~

@@ -6,39 +6,38 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.exception.InvalidFormParameterException;
+import org.mule.module.apikit.validation.body.form.transformation.DataWeaveDefaultsBuilder;
+import org.mule.module.apikit.validation.body.form.transformation.DataWeaveTransformer;
+import org.mule.module.apikit.validation.body.form.transformation.TextPlainPart;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.message.MultiPartPayload;
-import org.mule.runtime.api.metadata.MediaType;
-import org.mule.runtime.core.api.message.DefaultMultiPartPayload;
-import org.mule.runtime.core.api.message.PartAttributes;
-import org.mule.runtime.http.api.HttpHeaders;
+import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.el.ExpressionManager;
+import org.mule.runtime.core.api.exception.TypedException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MultipartFormValidator implements FormValidatorStrategy<MultiPartPayload> {
+public class MultipartFormValidator implements FormValidatorStrategy<TypedValue> {
   protected final Logger logger = LoggerFactory.getLogger(MultipartFormValidator.class);
   Map<String, List<IParameter>> formParameters;
+  DataWeaveTransformer dataWeaveTransformer;
 
-  public MultipartFormValidator(Map<String, List<IParameter>> formParameters) {
+  public MultipartFormValidator(Map<String, List<IParameter>> formParameters, ExpressionManager expressionManager) {
     this.formParameters = formParameters;
+    this.dataWeaveTransformer = new DataWeaveTransformer(expressionManager);
+
   }
 
   @Override
-  public MultiPartPayload validate(MultiPartPayload payload) throws BadRequestException {
+  public TypedValue validate(TypedValue originalPayload) throws InvalidFormParameterException {
 
-    List<Message> parts = new ArrayList<>(payload.getParts());
+    List<String> actualKeys = dataWeaveTransformer.getKeysFromPayload(originalPayload);
+    DataWeaveDefaultsBuilder defaultsBuilder = new DataWeaveDefaultsBuilder();
 
     for (String expectedKey : formParameters.keySet())
     {
@@ -49,51 +48,26 @@ public class MultipartFormValidator implements FormValidatorStrategy<MultiPartPa
       }
 
       IParameter expected = formParameters.get(expectedKey).get(0);
-      Message data;
-
-      try
+      if (!actualKeys.contains(expectedKey) )
       {
-        data = payload.getPart(expectedKey);
-      }
-      catch (NoSuchElementException e)
-      {
-        data = null;
-      }
-
-      if (data == null && expected.isRequired())
-      {
-        //perform only 'required' validation to avoid consuming the stream
-        throw ApikitErrorTypes.throwErrorType(new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified"));
-      }
-      if (data == null && expected.getDefaultValue() != null)
-      {
-        Map<String, LinkedList<String>> headers = new HashMap<>();
-        LinkedList<String> list = new LinkedList<>();
-        list.add("form-data; name=\"" + expected.getDefaultValue() + "\"");
-        headers.put(HttpHeaders.Names.CONTENT_DISPOSITION, list);
-
-        PartAttributes part1Attributes = new PartAttributes(expectedKey,
-                null,
-                expected.getDefaultValue().length(),
-                headers);
-
-        Message part = Message.builder()
-                .value(new ByteArrayInputStream(expected.getDefaultValue().getBytes()))
-                .mediaType(MediaType.create("text", "plain"))
-                .attributesValue(part1Attributes).build();
-
-
-        try
+        if (expected.isRequired())
         {
-          parts.add(part);
+          throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
         }
-        catch (Exception e)
+        if (expected.getDefaultValue() != null)
         {
-          logger.warn("Cannot set default part " + expectedKey, e);
+          defaultsBuilder.addPart(new TextPlainPart().setName(expectedKey).setValue(expected.getDefaultValue()));
         }
       }
     }
-    return new DefaultMultiPartPayload(parts);
+    if (defaultsBuilder.areDefaultsToAdd())
+    {
+      return dataWeaveTransformer.runDataWeaveScript(defaultsBuilder.build(), originalPayload.getDataType(), originalPayload);
+    }
+    else
+    {
+      return originalPayload;
+    }
   }
 
 }

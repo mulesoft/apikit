@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 import javax.xml.validation.Schema;
 
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
+import org.mule.runtime.core.api.el.ExpressionManager;
 
 public interface ValidationConfig {
 
@@ -19,4 +20,6 @@ public interface ValidationConfig {
   ApiKitJsonSchema getJsonSchema(String schemaPath) throws ExecutionException;
 
   Schema getXmlSchema(String schemaPath) throws ExecutionException;
+
+  ExpressionManager getExpressionManager();
 }

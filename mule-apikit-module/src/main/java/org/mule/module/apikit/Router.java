@@ -168,7 +168,7 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
             throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
         }
 
-        ValidRequest validRequest = RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload().getValue(), charset);
+        ValidRequest validRequest = RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload(), charset);
 
         return EventHelper.regenerateEvent(event.getMessage(), eventbuilder, validRequest);
     }
