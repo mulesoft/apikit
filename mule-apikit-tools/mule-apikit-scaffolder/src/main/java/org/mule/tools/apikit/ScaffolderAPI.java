@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.mule.tools.apikit.model.RuntimeEdition;
 
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
@@ -62,11 +63,11 @@ public class ScaffolderAPI {
      * @param minMuleVersion currently unused, will be useful in future improvements
      * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
      */
-    public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, String runtimeEdition)
+    public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition)
     {
         if (ExtensionManager.isScaffolderExtensionEnabled())
         {
-            ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
+            ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition.name());
         }
         else
         {
@@ -84,7 +85,7 @@ public class ScaffolderAPI {
      * @param minMuleVersion currently unused, will be useful in future improvements
      * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
      */
-    public void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, String runtimeEdition) {
+    public void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
         List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
         List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
         SystemStreamLog log = new SystemStreamLog();

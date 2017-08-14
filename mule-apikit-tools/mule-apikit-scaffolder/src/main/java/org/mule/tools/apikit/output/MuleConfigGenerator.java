@@ -9,6 +9,7 @@ package org.mule.tools.apikit.output;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
+import org.mule.tools.apikit.model.RuntimeEdition;
 import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
 import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
 import org.mule.tools.apikit.output.scopes.ConsoleFlowScope;
@@ -40,6 +41,8 @@ import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+
 public class MuleConfigGenerator {
     public static final NamespaceWithLocation XMLNS_NAMESPACE = new NamespaceWithLocation(
             Namespace.getNamespace("http://www.mulesoft.org/schema/mule/core"),
@@ -70,9 +73,9 @@ public class MuleConfigGenerator {
     private final File rootDirectory;
     private final Map<String, HttpListener4xConfig> domainHttpListenerConfigs;
     private final Set<File> ramlsWithExtensionEnabled;
-    private final String runtimeEdition;
+    private final RuntimeEdition runtimeEdition;
 
-    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListener4xConfig> domainHttpListenerConfigs, Set<File> ramlsWithExtensionEnabled, String minMuleVersion, String runtimeEdition) {
+    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListener4xConfig> domainHttpListenerConfigs, Set<File> ramlsWithExtensionEnabled, String minMuleVersion, RuntimeEdition runtimeEdition) {
         this.log = log;
         this.flowEntries = flowEntries;
         this.rootDirectory = muleConfigOutputDirectory;
@@ -220,7 +223,7 @@ public class MuleConfigGenerator {
 
     private boolean isMuleEE()
     {
-        return "EE".equals(runtimeEdition);
+        return runtimeEdition == EE;
     }
 
 }

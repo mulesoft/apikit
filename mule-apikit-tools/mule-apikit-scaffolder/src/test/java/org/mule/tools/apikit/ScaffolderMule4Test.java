@@ -14,6 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
@@ -36,10 +37,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mule.tools.apikit.model.RuntimeEdition;
 
 public class ScaffolderMule4Test {
 
-    private static final String MULE_EE = "EE";
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     private FileListUtils fileListUtils = new FileListUtils();
@@ -754,9 +755,9 @@ public class ScaffolderMule4Test {
         return createScaffolder(ramls, xmls, muleXmlOut, domainFile, null);
     }
     private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, Set<File> ramlsWithExtensionEnabled) throws FileNotFoundException {
-        return createScaffolder(ramls, xmls, muleXmlOut, domainFile, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION, MULE_EE);
+        return createScaffolder(ramls, xmls, muleXmlOut, domainFile, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION, EE);
     }
-    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, Set<File> ramlsWithExtensionEnabled, String muleVersion, String runtimeEdition)
+    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, Set<File> ramlsWithExtensionEnabled, String muleVersion, RuntimeEdition runtimeEdition)
             throws FileNotFoundException {
         Log log = mock(Log.class);
         Map<File, InputStream> ramlMap = null;
@@ -792,10 +793,10 @@ public class ScaffolderMule4Test {
 
     private File simpleGeneration(String name, String domainPath) throws Exception
     {
-        return simpleGeneration("scaffolder", name, domainPath, DEFAULT_MULE_VERSION, MULE_EE);
+        return simpleGeneration("scaffolder", name, domainPath, DEFAULT_MULE_VERSION, EE);
     }
 
-    private File simpleGeneration(String apiPath, String name, String domainPath, String muleVersion, String runtimeEdition) throws Exception {
+    private File simpleGeneration(String apiPath, String name, String domainPath, String muleVersion, RuntimeEdition runtimeEdition) throws Exception {
         List<File> ramls = Arrays.asList(getFile(apiPath + "/" + name + ".raml"));
         File domainFile = getFile(domainPath);
 
