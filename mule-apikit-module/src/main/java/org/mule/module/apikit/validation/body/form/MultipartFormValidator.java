@@ -9,7 +9,6 @@ package org.mule.module.apikit.validation.body.form;
 import java.util.List;
 import java.util.Map;
 
-import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.module.apikit.validation.body.form.transformation.DataWeaveDefaultsBuilder;
 import org.mule.module.apikit.validation.body.form.transformation.DataWeaveTransformer;
@@ -17,7 +16,6 @@ import org.mule.module.apikit.validation.body.form.transformation.TextPlainPart;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.el.ExpressionManager;
-import org.mule.runtime.core.api.exception.TypedException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

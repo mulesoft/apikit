@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.validation.body.schema.v2;
 
-import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -40,7 +39,7 @@ public class RestSchemaV2Validator implements IRestSchemaValidatorStrategy {
     if (!validationResults.isEmpty()) {
       String logMessage = validationResults.get(0).getMessage();
       logger.info("Schema validation failed: " + logMessage);
-      throw ApikitErrorTypes.throwErrorType(new BadRequestException(logMessage));
+      throw new BadRequestException(logMessage);
     }
   }
 }

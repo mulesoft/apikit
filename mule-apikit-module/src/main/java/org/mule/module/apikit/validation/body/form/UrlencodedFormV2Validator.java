@@ -63,7 +63,7 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
       for (ValidationResult result : validationResult) {
         resultString += result.getMessage() + "\n";
       }
-      throw ApikitErrorTypes.throwErrorType(new InvalidFormParameterException(resultString));
+      throw new InvalidFormParameterException(resultString);
     }
 
     return dataWeaveTransformer.getXFormUrlEncodedStream(requestMap, originalPayload.getDataType());

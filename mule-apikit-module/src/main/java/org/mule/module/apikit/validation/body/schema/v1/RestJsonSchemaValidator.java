@@ -13,7 +13,6 @@ import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
 import org.apache.commons.lang.StringUtils;
-import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.module.apikit.validation.body.schema.v1.io.JsonUtils;
@@ -51,7 +50,7 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy {
         data = JsonUtils.parseJson(new StringReader(isEmpty ? "null" : payload));
         report = jsonSchema.validate(data, true);
       } catch (IOException | ProcessingException e) {
-        throw ApikitErrorTypes.throwErrorType(new BadRequestException(e));
+          throw new BadRequestException(e);
       }
 
 
@@ -74,7 +73,7 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy {
       if (messageBuilder.length() > 0) {
         String message = messageBuilder.toString();
         logger.info("Schema validation failed: " + message);
-        throw ApikitErrorTypes.throwErrorType(new BadRequestException(message));
+        throw new BadRequestException(message);
       }
     }
   }

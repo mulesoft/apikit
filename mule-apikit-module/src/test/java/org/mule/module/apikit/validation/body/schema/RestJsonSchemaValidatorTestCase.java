@@ -102,7 +102,7 @@ public class RestJsonSchemaValidatorTestCase {
     JsonSchemavalidator.validate(payload);
   }
 
-  @Test(expected = TypedException.class)
+  @Test(expected = BadRequestException.class)
   public void invalidStringPayloadUsingParser() throws TypedException, BadRequestException, ExecutionException {
     String payload = "{ \"naazame\": \"Major League Soccer\" }";
     Configuration config = new Configuration();
@@ -118,7 +118,7 @@ public class RestJsonSchemaValidatorTestCase {
 
   @Test
   public void showAllSchemaValidationErrors() throws TypedException, BadRequestException, ExecutionException {
-    expectedException.expect(TypedException.class);
+    expectedException.expect(BadRequestException.class);
     expectedException.expectMessage(VALIDATION_ERRORS_EXPECTED_MESSAGE);
 
     String payload = "{ \"id\": 1 }";
@@ -134,7 +134,7 @@ public class RestJsonSchemaValidatorTestCase {
   }
 
   private static final String VALIDATION_ERRORS_EXPECTED_MESSAGE =
-      "org.mule.module.apikit.api.exception.BadRequestException: error: object has missing required properties ([\"name\"])\n" +
+      "error: object has missing required properties ([\"name\"])\n" +
           "    level: \"error\"\n" +
           "    schema: {\"loadingURI\":\"#\",\"pointer\":\"\"}\n" +
           "    instance: {\"pointer\":\"\"}\n" +
