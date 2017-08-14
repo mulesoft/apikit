@@ -11,7 +11,10 @@
 
     <apikit:config name="router-config" raml="api.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-#set ($isMuleEE = $minMuleVersion.toUpperCase().split("-").contains("EE"))
+#if ($runtimeEdition != "EE" && $runtimeEdition != "CE")
+#set ($runtimeEdition = "CE")
+#end
+#set ($isMuleEE = $runtimeEdition == "EE")
 
 #set ( $useSharedHttpListener = !($sharedHttpListener.isEmpty() || $sharedHttpListener.equals("empty")))
 #if( !$useSharedHttpListener )

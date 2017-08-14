@@ -23,6 +23,6 @@ public interface ScaffolderService
      * @param appDir    the directory which contained the generated Mule config files
      * @param domainDir the directory which contained the domain used by the mule config files
      */
-    void executeScaffolder(List<File> ramlFiles, File appDir, File domainDir, String muleVersion);
+    void executeScaffolder(List<File> ramlFiles, File appDir, File domainDir, String muleVersion, String runtimeEdition);
 
 }
