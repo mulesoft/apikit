@@ -80,8 +80,14 @@ public class CreateMojo
     /**
      * Mule version that is being used.
      */
-    @Parameter (property = "muleVersion")
-    private String muleVersion;
+    @Parameter (property = "minMuleVersion")
+    private String minMuleVersion;
+
+    /**
+     * Mule runtime edition that is being used.
+     */
+    @Parameter (property = "runtimeEdition", defaultValue = "CE")
+    private String runtimeEdition;
 
     private Log log;
 
@@ -111,16 +117,16 @@ public class CreateMojo
         List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
         List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
         String domainFile = processDomain();
-        if (muleVersion != null)
+        if (minMuleVersion != null)
         {
-            log.info("Mule version provided: " + muleVersion);
+            log.info("Mule version provided: " + minMuleVersion);
         }
         log.info("Processing the following RAML files: " + specFiles);
         log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
 
         try
         {
-            Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, muleVersion);
+            Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, minMuleVersion, runtimeEdition);
             scaffolder.run();
         }
         catch (IOException e)

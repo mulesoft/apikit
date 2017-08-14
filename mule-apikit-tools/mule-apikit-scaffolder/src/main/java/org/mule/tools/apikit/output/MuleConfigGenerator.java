@@ -21,7 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,14 +70,14 @@ public class MuleConfigGenerator {
     private final File rootDirectory;
     private final Map<String, HttpListener4xConfig> domainHttpListenerConfigs;
     private final Set<File> ramlsWithExtensionEnabled;
-    private final String muleVersion;
+    private final String runtimeEdition;
 
-    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListener4xConfig> domainHttpListenerConfigs, Set<File> ramlsWithExtensionEnabled, String muleVersion) {
+    public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries, Map<String, HttpListener4xConfig> domainHttpListenerConfigs, Set<File> ramlsWithExtensionEnabled, String minMuleVersion, String runtimeEdition) {
         this.log = log;
         this.flowEntries = flowEntries;
         this.rootDirectory = muleConfigOutputDirectory;
         this.domainHttpListenerConfigs = domainHttpListenerConfigs;
-        this.muleVersion = muleVersion;
+        this.runtimeEdition = runtimeEdition;
         if (ramlsWithExtensionEnabled == null)
         {
             this.ramlsWithExtensionEnabled = new TreeSet<>();
@@ -221,7 +220,7 @@ public class MuleConfigGenerator {
 
     private boolean isMuleEE()
     {
-        return Arrays.asList(muleVersion.toUpperCase().split("-")).contains("EE");
+        return "EE".equals(runtimeEdition);
     }
 
 }

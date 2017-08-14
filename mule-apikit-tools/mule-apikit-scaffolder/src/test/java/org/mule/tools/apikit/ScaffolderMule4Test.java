@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
@@ -38,7 +39,7 @@ import org.junit.rules.TemporaryFolder;
 
 public class ScaffolderMule4Test {
 
-    private static final String MULE_EE = "4.0.0-EE";
+    private static final String MULE_EE = "EE";
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     private FileListUtils fileListUtils = new FileListUtils();
@@ -79,7 +80,7 @@ public class ScaffolderMule4Test {
     }
 
     public void testSimpleGenerateForCE(String name) throws Exception {
-        File muleXmlSimple = simpleGeneration("scaffolder", name, null, DEFAULT_MULE_VERSION);
+        File muleXmlSimple = simpleGeneration("scaffolder", name, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
         assertEquals(1, countOccurences(s, "http:listener-config name=\"simple"));
@@ -658,7 +659,7 @@ public class ScaffolderMule4Test {
     @Test
     public void testExampleGenerateForCE() throws Exception {
         String name = "example-v10";
-        File muleXmlSimple = simpleGeneration("scaffolder", name, null, DEFAULT_MULE_VERSION);
+        File muleXmlSimple = simpleGeneration("scaffolder", name, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
         assertTrue(muleXmlSimple.exists());
         String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
 
@@ -753,9 +754,9 @@ public class ScaffolderMule4Test {
         return createScaffolder(ramls, xmls, muleXmlOut, domainFile, null);
     }
     private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, Set<File> ramlsWithExtensionEnabled) throws FileNotFoundException {
-        return createScaffolder(ramls, xmls, muleXmlOut, domainFile, ramlsWithExtensionEnabled, MULE_EE);
+        return createScaffolder(ramls, xmls, muleXmlOut, domainFile, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION, MULE_EE);
     }
-    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, Set<File> ramlsWithExtensionEnabled, String muleVersion)
+    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, Set<File> ramlsWithExtensionEnabled, String muleVersion, String runtimeEdition)
             throws FileNotFoundException {
         Log log = mock(Log.class);
         Map<File, InputStream> ramlMap = null;
@@ -769,7 +770,7 @@ public class ScaffolderMule4Test {
         {
             domainStream = new FileInputStream(domainFile);
         }
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion);
+        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion, runtimeEdition);
     }
 
     private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
@@ -791,17 +792,17 @@ public class ScaffolderMule4Test {
 
     private File simpleGeneration(String name, String domainPath) throws Exception
     {
-        return simpleGeneration("scaffolder", name, domainPath, MULE_EE);
+        return simpleGeneration("scaffolder", name, domainPath, DEFAULT_MULE_VERSION, MULE_EE);
     }
 
-    private File simpleGeneration(String apiPath, String name, String domainPath, String muleVersion) throws Exception {
+    private File simpleGeneration(String apiPath, String name, String domainPath, String muleVersion, String runtimeEdition) throws Exception {
         List<File> ramls = Arrays.asList(getFile(apiPath + "/" + name + ".raml"));
         File domainFile = getFile(domainPath);
 
         List<File> xmls = Arrays.asList();
         File muleXmlOut = folder.newFolder("mule-xml-out");
 
-        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, domainFile, null, muleVersion);
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, domainFile, null, muleVersion, runtimeEdition);
         scaffolder.run();
 
         return new File(muleXmlOut, name + ".xml");
