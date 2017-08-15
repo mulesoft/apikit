@@ -11,6 +11,7 @@ import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.google.common.base.Strings;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.HeaderNames;
 import org.mule.runtime.api.util.MultiMap;
@@ -92,7 +93,7 @@ public class AttributesHelper
   public static String getAcceptedResponseMediaTypes(MultiMap<String, String> headers)
   {
     String acceptableResponseMediaTypes = getParamIgnoreCase(headers, "accept");
-    if (acceptableResponseMediaTypes == null || acceptableResponseMediaTypes == "")
+    if (Strings.isNullOrEmpty(acceptableResponseMediaTypes))
     {
       return ANY_RESPONSE_MEDIA_TYPE;
     }
