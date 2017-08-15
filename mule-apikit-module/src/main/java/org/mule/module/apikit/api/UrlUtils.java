@@ -9,6 +9,8 @@ package org.mule.module.apikit.api;
 import org.apache.commons.lang3.StringUtils;
 import org.mule.extension.http.api.HttpRequestAttributes;
 
+import java.net.URL;
+
 
 //import org.mule.runtime.api.message.Message;
 //import org.mule.runtime.core.api.InternalEvent;
@@ -19,8 +21,11 @@ public class UrlUtils
 
   public static final String HTTP_CONTEXT_PATH_PROPERTY = "http.context.path";
   public static final String HTTP_REQUEST_PATH_PROPERTY = "http.request.path";
+    private static final String BIND_TO_ALL_INTERFACES = "0.0.0.0";
+    public static final String FULL_DOMAIN = "fullDomain";
 
-  private UrlUtils() {}
+
+    private UrlUtils() {}
 
   //public static String getBaseSchemeHostPort(Event event) {
   //  String host = ((HttpRequestAttributes) event.getMessage().getAttributes()).getHeaders().get("host");
@@ -213,4 +218,54 @@ public class UrlUtils
 
     return redirectLocation;
   }
+
+  public static String getBaseUriReplacement(String apiServer)
+  {
+        if (apiServer == null)
+        {
+            return null;
+        }
+
+        String baseUriReplacement = apiServer;
+        if (apiServer.contains(BIND_TO_ALL_INTERFACES))
+        {
+            String fullDomain = System.getProperty(FULL_DOMAIN);
+            if (fullDomain != null)
+            {
+                URL url = null;
+                try
+                {
+                    url = new URL(apiServer);
+                }
+                catch (Exception e)
+                {
+                    return apiServer;
+                }
+                String path = url.getPath();
+                if (fullDomain.endsWith("/") && path.length() > 0 && path.startsWith("/"))
+                {
+                    path = path.length() > 1 ? path.substring(1) : "";
+                }
+                else if (!fullDomain.endsWith("/") && path.length() > 0 && !path.startsWith("/"))
+                {
+                    fullDomain += "/";
+                }
+                if (fullDomain.contains("://"))
+                {
+                    baseUriReplacement = fullDomain + path;
+                }
+                else
+                {
+                    baseUriReplacement = "http://" + fullDomain + path;
+                }
+            }
+            else
+            {
+                baseUriReplacement = baseUriReplacement.replace(BIND_TO_ALL_INTERFACES, "localhost");
+            }
+        }
+        return baseUriReplacement;
+    }
+
+
 }

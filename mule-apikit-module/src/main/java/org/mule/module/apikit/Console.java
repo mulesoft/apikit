@@ -20,12 +20,18 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.meta.AbstractAnnotatedObject;
 import org.mule.runtime.core.api.InternalEvent;
+import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.processor.Processor;
+import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.api.util.StringMessageUtils;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 
@@ -33,11 +39,15 @@ public class Console extends AbstractAnnotatedObject implements Processor, Initi
 {
     private final ApikitRegistry registry;
     private final ConfigurationComponentLocator locator;
-    private Configuration config;
 
     private String configRef;
     private String name;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final String CONSOLE_URL_FILE = "consoleurl";
+
+    @Inject
+    private MuleContext muleContext;
 
     @Inject
     public Console(ApikitRegistry registry, ConfigurationComponentLocator locator) {
@@ -53,18 +63,22 @@ public class Console extends AbstractAnnotatedObject implements Processor, Initi
         final Optional<URI> url = locator.find(Location.builder().globalName(name).addSourcePart().build())
                 .map(MessageSourceUtils::getUriFromFlow);
 
-        if (!url.isPresent()) {
-            logger.error("There was an error retrieving console source.");
-            return;
+        if (url.isPresent()) {
+            URI uri = url.get();
+            String consoleUrl = uri.toString().replace("*", "");
+            String consoleUrlFixed = UrlUtils.getBaseUriReplacement(consoleUrl);
+            logger.info(StringMessageUtils.getBoilerPlate("APIKit ConsoleURL : " + consoleUrlFixed));
+            publishConsoleUrls(consoleUrlFixed);
         }
-
-        url.ifPresent(uri -> logger.info(StringMessageUtils.getBoilerPlate("APIKit ConsoleURL : " + uri.toString().replace("*", ""))));
+        else {
+            logger.error("There was an error retrieving console source.");
+        }
     }
 
     @Override
     public InternalEvent process(InternalEvent event) throws MuleException
     {
-        config = registry.getConfiguration(getConfigRef());
+        Configuration config = registry.getConfiguration(getConfigRef());
 
         EventWrapper eventWrapper = new EventWrapper(event, config.getOutboundHeadersMapName(), config.getHttpStatusVarName());
 
@@ -117,4 +131,35 @@ public class Console extends AbstractAnnotatedObject implements Processor, Initi
     {
         this.name = name;
     }
+
+    private void publishConsoleUrls(final String consoleUrl)
+    {
+        final String parentDirectory = muleContext.getConfiguration().getWorkingDirectory();
+        dumpUrlsFile(parentDirectory, consoleUrl);
+    }
+
+    private void dumpUrlsFile(String parentDirectory, final String consoleUrl)
+    {
+        File urlFile = new File(parentDirectory, CONSOLE_URL_FILE);
+        FileWriter writer = null;
+        try
+        {
+            if (!urlFile.exists())
+            {
+                urlFile.createNewFile();
+            }
+            writer = new FileWriter(urlFile, true);
+            writer.write(consoleUrl + "\n");
+            writer.flush();
+        }
+        catch (IOException e)
+        {
+            logger.error("cannot publish console url for studio", e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(writer);
+        }
+    }
+
 }
