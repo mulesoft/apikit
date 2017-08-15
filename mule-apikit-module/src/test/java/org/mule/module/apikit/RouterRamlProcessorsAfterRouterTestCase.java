@@ -9,8 +9,12 @@ package org.mule.module.apikit;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.mule.module.apikit.api.RamlHandler.APPLICATION_RAML;
 
+import com.jayway.restassured.response.Response;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.module.apikit.api.RamlHandler;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import org.junit.Rule;
@@ -47,10 +51,23 @@ public class RouterRamlProcessorsAfterRouterTestCase extends MuleArtifactFunctio
     @Test
     public void getRamlV1() throws Exception
     {
-        given().header("Accept", "application/raml+yaml")
+        given().header("Accept", APPLICATION_RAML)
                 .expect()
                 .response().body(containsString("#%RAML 0.8"))
+                .contentType(APPLICATION_RAML)
                 .statusCode(200)
+                .header("secondHeader", is(nullValue()))
                 .when().get("/api");
+    }
+
+    @Test
+    public void simpleRouting() throws Exception
+    {
+        given().expect()
+                .response().body(is("goodbye")) //payload is crushed by the processor located after Router
+                .header("firstHeader", "value1")
+                .header("secondHeader", "value2")
+                .statusCode(200)
+                .when().get("/api/resources");
     }
 }

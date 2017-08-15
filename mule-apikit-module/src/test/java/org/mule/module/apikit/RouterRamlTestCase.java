@@ -9,8 +9,10 @@ package org.mule.module.apikit;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.mule.module.apikit.api.RamlHandler.APPLICATION_RAML;
 
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.module.apikit.api.RamlHandler;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import org.junit.Rule;
@@ -58,10 +60,11 @@ public class RouterRamlTestCase extends MuleArtifactFunctionalTestCase
     @Test
     public void getRamlV1() throws Exception
     {
-        given().header("Accept", "application/raml+yaml")
+        given().header("Accept", APPLICATION_RAML)
                 .expect()
                 .response().body(containsString("#%RAML 0.8"))
                 .statusCode(200)
+                .contentType(APPLICATION_RAML)
                 .when().get("/api");
     }
 }
