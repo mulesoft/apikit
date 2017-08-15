@@ -9,9 +9,11 @@ package org.mule.module.apikit;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.runtime.core.api.processor.MessageProcessors.processToApply;
 import static org.mule.runtime.core.api.processor.MessageProcessors.processWithChildContext;
+import static reactor.core.publisher.Flux.empty;
 import static reactor.core.publisher.Flux.from;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
@@ -25,12 +27,14 @@ import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.RequestValidator;
 import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.module.apikit.api.config.ValidationConfig;
+import org.mule.module.apikit.helpers.MessageHelper;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.meta.AbstractAnnotatedObject;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.InternalEvent;
@@ -42,6 +46,7 @@ import org.mule.runtime.core.api.processor.Processor;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -100,6 +105,11 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
                 eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
                 HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes().getValue());
+
+                if (isRequestingRamlV1(attributes, config, event, eventBuilder)){
+                    event.getContext().success(eventBuilder.build());
+                    return empty();
+                }
 
                 String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRequestPath());
                 path = path.isEmpty() ? "/" : path;
@@ -182,4 +192,17 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
         return resource;
     }
 
+    public boolean isRequestingRamlV1(HttpRequestAttributes attributes, Configuration config, InternalEvent event, InternalEvent.Builder eventBuilder)
+    {
+        if(config.getRamlHandler().isRequestingRamlV1ForRouter(attributes.getListenerPath(), attributes.getRequestPath(), attributes.getMethod(), AttributesHelper.getHeaderIgnoreCase(attributes,"Accept")))
+        {
+            Message message = MessageHelper.setPayload(event.getMessage(), config.getRamlHandler().getRamlV1(), RamlHandler.APPLICATION_RAML);
+            eventBuilder.message(message);
+            Map<String, String> header = new HashMap<>();
+            header.put("Content-Type", RamlHandler.APPLICATION_RAML);
+            eventBuilder.addVariable(config.getOutboundHeadersMapName(), header);
+            return true;
+        }
+        return false;
+    }
 }
