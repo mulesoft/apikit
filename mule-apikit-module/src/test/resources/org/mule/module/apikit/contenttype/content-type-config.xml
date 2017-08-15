@@ -11,7 +11,7 @@
         <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/contenttype/content-type.raml"
+    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/contenttype/content-type.yaml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">
@@ -19,13 +19,50 @@
             <http:response statusCode="#[vars.httpStatus]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
         </http:listener>
         <apikit:router config-ref="apikitConfig"/>
+
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }"/>
+                <set-variable variableName="httpStatus" value="400"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }"/>
+                <set-variable variableName="httpStatus" value="404"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }"/>
+                <set-variable variableName="httpStatus" value="405"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }"/>
+                <set-variable variableName="httpStatus" value="406"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }"/>
+                <set-variable variableName="httpStatus" value="415"/>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Not implemented&quot; }"/>
+                <set-variable variableName="httpStatus" value="501"/>
+            </on-error-propagate>
+        </error-handler>
     </flow>
 
     <flow name="get:/resources">
         <logger level="INFO" message="siamo qui"/>
-        <set-payload value="hello"/>
+        <set-payload value="#[mel:null]"/>
     </flow>
 
     <flow name="get:/multitype">
@@ -33,25 +70,36 @@
         <choice>
             <when expression="#[mel:message.getAttributes().getHeaders()['ctype'] == 'json']">
                 <logger level="INFO" message="returning json"/>
-                <expression-component>mel:flowVars['outboundHeaders'].put('Content-Type', 'application/json')</expression-component>
-
-                <!--<set-property propertyName="Content-Type" value="application/json"/>-->
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
             </when>
             <when expression="#[mel:message.getAttributes().getHeaders()['ctype'] == 'xml']">
                 <logger level="INFO" message="returning xml"/>
-                <expression-component>mel:flowVars['outboundHeaders'].put('Content-Type', 'application/xml')</expression-component>
-
-                <!--<set-property propertyName="Content-Type" value="application/xml"/>-->
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/xml'}]"/>
             </when>
             <otherwise>
                 <logger level="INFO" message="returning html"/>
-                <expression-component>mel:flowVars['_outboundHeaders_'].put('Content-Type', 'text/html')</expression-component>
-
-                <!--<set-property propertyName="Content-Type" value="text/html"/>-->
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'text/html'}]"/>
             </otherwise>
         </choice>
         <set-payload value="#[mel:null]"/>
         <set-payload value="never mind"/>
+    </flow>
+
+    <flow name="get:/multistatus">
+        <choice>
+            <when expression="#[mel:message.getAttributes().getHeaders()['ctype'] == 'zip']">
+                <set-variable variableName="httpStatus" value="200"/>
+                <logger level="INFO" message="returning zip with 200 Ok"/>
+                <set-variable variableName="outboundHeaders" value="#[vars.outboundHeaders ++ {'Content-Type':'application/zip'}]"/>
+                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+            </when>
+            <otherwise>
+                <set-variable variableName="httpStatus" value="202"/>
+                <set-variable variableName="outboundHeaders" value="#[vars.outboundHeaders ++ {'Content-Type':'application/json'}]"/>
+                <logger level="INFO" message="returning json with 202 Accepted"/>
+                <set-payload value="{ &quot;message&quot;: &quot;Data request accepted.&quot; }"/>
+            </otherwise>
+        </choice>
     </flow>
 
 </mule>

@@ -92,7 +92,7 @@ public class AttributesHelper
   public static String getAcceptedResponseMediaTypes(MultiMap<String, String> headers)
   {
     String acceptableResponseMediaTypes = getParamIgnoreCase(headers, "accept");
-    if (acceptableResponseMediaTypes == null || acceptableResponseMediaTypes == "")
+    if (acceptableResponseMediaTypes == null || "".equals(acceptableResponseMediaTypes))
     {
       return ANY_RESPONSE_MEDIA_TYPE;
     }
