@@ -134,16 +134,12 @@ public class Console extends AbstractAnnotatedObject implements Processor, Initi
 
     private void publishConsoleUrls(final String consoleUrl)
     {
-        final String parentDirectory = muleContext.getConfiguration().getWorkingDirectory();
-        dumpUrlsFile(parentDirectory, consoleUrl);
-    }
-
-    private void dumpUrlsFile(String parentDirectory, final String consoleUrl)
-    {
-        File urlFile = new File(parentDirectory, CONSOLE_URL_FILE);
         FileWriter writer = null;
+
         try
         {
+            final String parentDirectory = muleContext.getConfiguration().getWorkingDirectory();
+            File urlFile = new File(parentDirectory, CONSOLE_URL_FILE);
             if (!urlFile.exists())
             {
                 urlFile.createNewFile();
@@ -152,7 +148,7 @@ public class Console extends AbstractAnnotatedObject implements Processor, Initi
             writer.write(consoleUrl + "\n");
             writer.flush();
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             logger.error("cannot publish console url for studio", e);
         }
@@ -161,5 +157,4 @@ public class Console extends AbstractAnnotatedObject implements Processor, Initi
             IOUtils.closeQuietly(writer);
         }
     }
-
 }
