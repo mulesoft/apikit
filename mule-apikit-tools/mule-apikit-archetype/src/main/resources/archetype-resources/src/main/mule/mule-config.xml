@@ -54,7 +54,7 @@ output application/json
                     </ee:variables>
                 </ee:transform>
 #else
-                <set-variable variableName="outboundHeaders" value="#[{Content-Type:'application/json'}]"/>
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
                 <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }"/>
                 <set-variable variableName="httpStatus" value="400"/>
 #end
@@ -73,7 +73,7 @@ output application/json
                     </ee:variables>
                 </ee:transform>
 #else
-                <set-variable variableName="outboundHeaders" value="#[{Content-Type:'application/json'}]"/>
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
                 <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }"/>
                 <set-variable variableName="httpStatus" value="404"/>
 #end
@@ -93,7 +93,7 @@ output application/json
                     </ee:variables>
                 </ee:transform>
 #else
-                <set-variable variableName="outboundHeaders" value="#[{Content-Type:'application/json'}]"/>
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
                 <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }"/>
                 <set-variable variableName="httpStatus" value="405"/>
 #end
@@ -112,7 +112,7 @@ output application/json
                     </ee:variables>
                 </ee:transform>
 #else
-                <set-variable variableName="outboundHeaders" value="#[{Content-Type:'application/json'}]"/>
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
                 <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }"/>
                 <set-variable variableName="httpStatus" value="406"/>
 #end
@@ -131,7 +131,7 @@ output application/json
                     </ee:variables>
                 </ee:transform>
 #else
-                <set-variable variableName="outboundHeaders" value="#[{Content-Type:'application/json'}]"/>
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
                 <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }"/>
                 <set-variable variableName="httpStatus" value="415"/>
 #end
@@ -150,7 +150,7 @@ output application/json
                     </ee:variables>
                 </ee:transform>
 #else
-                <set-variable variableName="outboundHeaders" value="#[{Content-Type:'application/json'}]"/>
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
                 <set-payload value="{ &quot;message&quot;: &quot;Not implemented&quot; }"/>
                 <set-variable variableName="httpStatus" value="501"/>
 #end
@@ -187,7 +187,7 @@ output application/json
                     </ee:variables>
                 </ee:transform>
 #else
-                <set-variable variableName="outboundHeaders" value="#[{Content-Type:'application/json'}]"/>
+                <set-variable variableName="outboundHeaders" value="#[{'Content-Type':'application/json'}]"/>
                 <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }"/>
                 <set-variable variableName="httpStatus" value="404"/>
 #end
