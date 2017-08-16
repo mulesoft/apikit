@@ -77,7 +77,7 @@ public class ErrorHandlerScope implements Scope {
 
         // Payload
         Element setPayload = new Element("set-payload", XMLNS_NAMESPACE.getNamespace());
-        setPayload.setAttribute("value", "{ &quot;message&quot;: &quot;" + statusCodeMapping.getMessage() + "&quot; }");
+        setPayload.setAttribute("value", "{ \"message\": \"" + statusCodeMapping.getMessage() + "\" }");
         errorMapping.addContent(setPayload);
 
         // Variables
