@@ -15,6 +15,7 @@ import com.github.fge.jackson.JsonLoader;
 
 import java.io.IOException;
 
+import javax.annotation.Nullable;
 import javax.xml.validation.Schema;
 
 public class SchemaCacheUtils
@@ -68,6 +69,7 @@ public class SchemaCacheUtils
      * may return either a string representing the path to the schema
      * or a JsonNode for inline schema definitions
      */
+    @Nullable
     public static Object resolveJsonSchema(String schemaCacheKey, IRaml api)
     {
         IMimeType mimeType = getMimeType(schemaCacheKey, api);
@@ -91,7 +93,12 @@ public class SchemaCacheUtils
             {
                 return path;
             }
-            return JsonLoader.fromString(schemaOrGlobalReference);
+
+            if (schemaOrGlobalReference != null) {
+                return JsonLoader.fromString(schemaOrGlobalReference);
+            }
+            return null;
+
         }
         catch (IOException e)
         {

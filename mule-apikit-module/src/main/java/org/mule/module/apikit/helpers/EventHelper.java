@@ -11,7 +11,7 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
-import org.mule.runtime.core.api.Event;
+import org.mule.runtime.core.api.InternalEvent;
 
 import java.nio.charset.Charset;
 import java.util.Optional;
@@ -23,7 +23,7 @@ public class EventHelper
 
     }
 
-    public static Charset getEncoding(Event event)
+    public static Charset getEncoding(InternalEvent event)
     {
         return getEncoding(event.getMessage());
     }
@@ -34,7 +34,7 @@ public class EventHelper
         return payloadEncoding.orElse(Charset.defaultCharset());// TODO Should we get default charset from mule?
     }
 
-    public static Event.Builder regenerateEvent(Message message, Event.Builder builder, ValidRequest validRequest) {
+    public static InternalEvent.Builder regenerateEvent(Message message, InternalEvent.Builder builder, ValidRequest validRequest) {
         Message.Builder messageBuilder = Message.builder(message);
         messageBuilder.value(validRequest.getBody().getPayload());
         messageBuilder.attributesValue(validRequest.getAttributes());
@@ -42,7 +42,7 @@ public class EventHelper
         return builder.message(messageBuilder.build());
     }
 
-    public static HttpRequestAttributes getHttpRequestAttributes(Event event)
+    public static HttpRequestAttributes getHttpRequestAttributes(InternalEvent event)
     {
         return ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
     }

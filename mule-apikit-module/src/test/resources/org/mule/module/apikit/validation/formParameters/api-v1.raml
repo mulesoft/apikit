@@ -17,8 +17,16 @@ title: Parameters API
             type: boolean
     responses:
       201: ~
-
-/url-encoded:
+/url-encoded-simple:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          first:
+            type: string
+    responses:
+      201: ~
+/url-encoded-with-default:
   post:
     body:
       application/x-www-form-urlencoded:
@@ -33,7 +41,21 @@ title: Parameters API
             type: boolean
     responses:
       201: ~
-
+/url-encoded-duplicated-key:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          first:
+            type: string
+            default: primo
+          second:
+            type: string
+            required: true
+          third:
+            type: boolean
+    responses:
+      201: ~
 /uploadImage:
   post:
     body:
@@ -69,3 +91,35 @@ title: Parameters API
             required: false
             type: string
             maxLength: 10
+/multiple-required-multipart:
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          userId:
+            type: string
+            required: true
+          second:
+            type: string
+            required: true
+          third:
+            type: boolean
+            required: true
+    responses:
+      201: ~
+/multiple-optional-multipart:
+  post:
+    body:
+      multipart/form-data:
+        formParameters:
+          first:
+            type: string
+            required: false
+          second:
+            type: string
+            default: segundo
+          third:
+            type: boolean
+            default: true
+    responses:
+      201: ~

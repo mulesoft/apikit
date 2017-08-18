@@ -6,25 +6,36 @@
  */
 package org.mule.module.apikit.api.validation;
 
-import java.util.Map;
-
-import org.mule.runtime.api.message.MultiPartPayload;
+import org.mule.runtime.api.metadata.TypedValue;
 
 public class ValidBody {
   Object payload;
   Object formParameters;
 
   public ValidBody(Object payload) {
-    this.payload = payload;
+    setPayload(payload);
+  }
+
+  public TypedValue getPayloadAsTypedValue()
+  {
+    if (payload instanceof TypedValue) {
+      return (TypedValue) payload;
+    }
+    return new TypedValue(payload, null);
   }
 
   public Object getPayload() {
     if(formParameters == null) {
-      return payload;
-    } else if(formParameters instanceof Map || formParameters instanceof MultiPartPayload){
+      if (payload instanceof TypedValue) {
+        return ((TypedValue)payload).getValue();
+      }
+      else {
+        return payload;
+      }
+    }
+    else {
       return formParameters;
     }
-    return null;
   }
 
   public void setPayload(Object payload) {
@@ -32,7 +43,14 @@ public class ValidBody {
   }
 
   public void setFormParameters(Object formParameters) {
-    this.formParameters = formParameters;
+    if (formParameters instanceof TypedValue)
+    {
+      this.formParameters = ((TypedValue) formParameters).getValue();
+    }
+    else
+    {
+      this.formParameters = formParameters;
+    }
   }
 
 }

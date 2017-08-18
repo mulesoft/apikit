@@ -6,8 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import javax.inject.Inject;
-
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.console.ConsoleResources;
@@ -15,67 +13,83 @@ import org.mule.module.apikit.api.console.Resource;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.helpers.EventWrapper;
+import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
+import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.core.api.Event;
-import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.construct.FlowConstruct;
-import org.mule.runtime.core.api.construct.FlowConstructAware;
+import org.mule.runtime.api.meta.AbstractAnnotatedObject;
+import org.mule.runtime.core.api.InternalEvent;
+import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.processor.Processor;
+import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.api.util.StringMessageUtils;
-
-import java.net.URI;
-
-
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Console implements Processor, FlowConstructAware, Initialisable
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+
+public class Console extends AbstractAnnotatedObject implements Processor, Initialisable
 {
-    @Inject
-    private ApikitRegistry registry;
-    private Configuration config;
+    private final ApikitRegistry registry;
+    private final ConfigurationComponentLocator locator;
 
     private String configRef;
     private String name;
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    FlowConstruct flowConstruct;
+    private static final String CONSOLE_URL_FILE = "consoleurl";
 
-    @Override
-    public void setFlowConstruct(FlowConstruct flowConstruct)
-    {
-        this.flowConstruct = flowConstruct;
+    @Inject
+    private MuleContext muleContext;
+
+    @Inject
+    public Console(ApikitRegistry registry, ConfigurationComponentLocator locator) {
+        this.registry = registry;
+        this.locator = locator;
     }
 
     @Override
     public void initialise() throws InitialisationException
     {
-        URI uri = MessageSourceUtils.getUriFromFlow((Flow) flowConstruct);
-        if (uri == null)
-        {
-            logger.error("There was an error retrieving console source.");
-            return;
+        final String name = getLocation().getRootContainerName();
+
+        final Optional<URI> url = locator.find(Location.builder().globalName(name).addSourcePart().build())
+                .map(MessageSourceUtils::getUriFromFlow);
+
+        if (url.isPresent()) {
+            URI uri = url.get();
+            String consoleUrl = uri.toString().replace("*", "");
+            String consoleUrlFixed = UrlUtils.getBaseUriReplacement(consoleUrl);
+            logger.info(StringMessageUtils.getBoilerPlate("APIKit ConsoleURL : " + consoleUrlFixed));
+            publishConsoleUrls(consoleUrlFixed);
         }
-        logger.info(StringMessageUtils.getBoilerPlate("APIKit Console URL: " + uri.toString().replace("*", "")));
+        else {
+            logger.error("There was an error retrieving console source.");
+        }
     }
 
     @Override
-    public Event process(Event event) throws MuleException
+    public InternalEvent process(InternalEvent event) throws MuleException
     {
-        config = registry.getConfiguration(getConfigRef());
+        Configuration config = registry.getConfiguration(getConfigRef());
 
         EventWrapper eventWrapper = new EventWrapper(event, config.getOutboundHeadersMapName(), config.getHttpStatusVarName());
 
         HttpRequestAttributes attributes = EventHelper.getHttpRequestAttributes(event);
         String listenerPath = attributes.getListenerPath();
         String requestPath= attributes.getRequestPath();
-        String aceptHeader = AttributesHelper.getHeaderIgnoreCase(attributes,"Accept");
+        String acceptHeader = AttributesHelper.getHeaderIgnoreCase(attributes,"Accept");
         String queryString = attributes.getQueryString();
         String method = attributes.getMethod();
 
-        ConsoleResources consoleResources = new ConsoleResources(config, listenerPath, requestPath, queryString, method, aceptHeader);
+        ConsoleResources consoleResources = new ConsoleResources(config, listenerPath, requestPath, queryString, method, acceptHeader);
 
         // Listener path MUST end with /*
         consoleResources.isValidPath(attributes.getListenerPath());
@@ -118,4 +132,29 @@ public class Console implements Processor, FlowConstructAware, Initialisable
         this.name = name;
     }
 
+    private void publishConsoleUrls(final String consoleUrl)
+    {
+        FileWriter writer = null;
+
+        try
+        {
+            final String parentDirectory = muleContext.getConfiguration().getWorkingDirectory();
+            File urlFile = new File(parentDirectory, CONSOLE_URL_FILE);
+            if (!urlFile.exists())
+            {
+                urlFile.createNewFile();
+            }
+            writer = new FileWriter(urlFile, true);
+            writer.write(consoleUrl + "\n");
+            writer.flush();
+        }
+        catch (Exception e)
+        {
+            logger.error("cannot publish console url for studio", e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(writer);
+        }
+    }
 }

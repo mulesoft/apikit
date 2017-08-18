@@ -37,7 +37,8 @@ public class UriParametersValidator {
       if (!uriParameter.validate(value)) {
         String msg = String.format("Invalid value '%s' for uri parameter %s. %s",
                                    value, entry.getKey(), uriParameter.message(value));
-        throw ApikitErrorTypes.throwErrorType(new InvalidUriParameterException(msg));
+
+        throw new InvalidUriParameterException(msg);
       }
     }
 

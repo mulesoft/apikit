@@ -27,7 +27,7 @@ public class InterfaceV10TestCase
         IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v10/full-1.0.raml");
         assertThat(raml.getVersion(), is("1.0"));
         assertThat(raml.getSchemas().get(0).size(), is(2));
-        assertThat(raml.getSchemas().get(0).get("User"), is("[yaml-type-flag]"));
+        assertThat(raml.getSchemas().get(0).get("User"), is("{\"$ref\":\"#/definitions/User\",\"definitions\":{\"User\":{\"type\":\"object\",\"properties\":{\"firstname\":{\"type\":\"string\"},\"lastname\":{\"type\":\"string\"},\"age\":{\"type\":\"number\"}}}},\"$schema\":\"http://json-schema.org/draft-04/schema#\"}"));
         assertThat(raml.getSchemas().get(0).get("UserJson"), containsString("firstname"));
     }
 }

@@ -6,6 +6,9 @@
         <requiredProperty key="minMuleVersion">
             <defaultValue>4.0.0</defaultValue>
         </requiredProperty>
+        <requiredProperty key="runtimeEdition">
+            <defaultValue>CE</defaultValue>
+        </requiredProperty>
         <requiredProperty key="sharedHttpListener">
             <defaultValue>empty</defaultValue>
         </requiredProperty>

@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.helpers.AttributesHelper;
@@ -15,7 +14,6 @@ import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.core.api.exception.TypedException;
 
 import com.google.common.net.MediaType;
 
@@ -35,14 +33,14 @@ public class HeadersValidator {
 
   public HeadersValidator() {}
 
-  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action) throws TypedException
+  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action) throws InvalidHeaderException, NotAcceptableException
   {
     this.headers = incomingHeaders;
     analyseRequestHeaders(action);
     analyseAcceptHeader(incomingHeaders, action);
   }
 
-  private void analyseRequestHeaders(IAction action)
+  private void analyseRequestHeaders(IAction action) throws InvalidHeaderException
   {
     for (String expectedKey : action.getHeaders().keySet()) {
       IParameter expected = action.getHeaders().get(expectedKey);
@@ -54,13 +52,13 @@ public class HeadersValidator {
           if (incoming.matches(regex) && !expected.validate(incomingValue)) {
             String msg = String.format("Invalid value '%s' for header %s. %s",
                                        incomingValue, expectedKey, expected.message(incomingValue));
-            throw ApikitErrorTypes.throwErrorType(new InvalidHeaderException(msg));
+            throw new InvalidHeaderException(msg);
           }
         }
       } else {
         String actual = AttributesHelper.getParamIgnoreCase(headers, expectedKey);
         if (actual == null && expected.isRequired()) {
-          throw ApikitErrorTypes.throwErrorType(new InvalidHeaderException("Required header " + expectedKey + " not specified"));
+          throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
         }
         if (actual == null && expected.getDefaultValue() != null) {
           headers = AttributesHelper.addParam(headers, expectedKey, expected.getDefaultValue());
@@ -69,14 +67,14 @@ public class HeadersValidator {
           if (!expected.validate(actual)) {
             String msg = String.format("Invalid value '%s' for header %s. %s",
                                        actual, expectedKey, expected.message(actual));
-            throw ApikitErrorTypes.throwErrorType(new InvalidHeaderException(msg));
+            throw new InvalidHeaderException(msg);
           }
         }
       }
     }
   }
 
-  private void analyseAcceptHeader(MultiMap<String, String> incomingHeaders, IAction action)
+  private void analyseAcceptHeader(MultiMap<String, String> incomingHeaders, IAction action) throws NotAcceptableException
   {
     List<String> mimeTypes = getResponseMimeTypes(action);
     if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
@@ -87,7 +85,7 @@ public class HeadersValidator {
     MediaType bestMatch = MimeTypeParser.bestMatch(mimeTypes, AttributesHelper.getAcceptedResponseMediaTypes(incomingHeaders));
     if (bestMatch == null)
     {
-      throw ApikitErrorTypes.throwErrorType(new NotAcceptableException());
+      throw new NotAcceptableException();
     }
     logger.debug("=== negotiated response content-type: " + bestMatch.toString());
     for (String representation : mimeTypes)
@@ -98,7 +96,7 @@ public class HeadersValidator {
         return;
       }
     }
-    throw ApikitErrorTypes.throwErrorType(new NotAcceptableException());
+    throw new NotAcceptableException();
   }
 
   private List<String> getResponseMimeTypes(IAction action)

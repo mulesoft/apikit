@@ -24,13 +24,14 @@ import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
-import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.config.MuleProperties;
+import org.mule.runtime.core.api.el.ExpressionManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +69,10 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
     @Inject
     private ApikitRegistry registry;
+
+    @Inject
+    public ExpressionManager expressionManager;
+
 
     public void initialise() throws InitialisationException
     {
@@ -193,7 +198,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
                                 if (match == null) {
                                     logger.warn("No matching patterns for URI " + path);
-                                    throw ApikitErrorTypes.throwErrorType(new NotFoundException(path));
+                                    throw new IllegalStateException("No matching patterns for URI " + path);
                                 }
                                 return match;
                             }
@@ -255,11 +260,25 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
     @Override
     public ApiKitJsonSchema getJsonSchema(String schemaPath) throws ExecutionException {
-        return new ApiKitJsonSchema(getJsonSchemaCache().get(schemaPath));
+
+        try
+        {
+            return new ApiKitJsonSchema(getJsonSchemaCache().get(schemaPath));
+
+        } catch (CacheLoader.InvalidCacheLoadException e) {
+
+            // Schema is not defined in the RAML
+            return null;
+        }
     }
 
     @Override
     public Schema getXmlSchema(String schemaPath) throws ExecutionException {
         return getXmlSchemaCache().get(schemaPath);
+    }
+
+    @Override
+    public ExpressionManager getExpressionManager(){
+        return expressionManager;
     }
 }
