@@ -26,6 +26,7 @@ import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
+import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
@@ -71,7 +72,10 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     private ApikitRegistry registry;
 
     @Inject
-    public ExpressionManager expressionManager;
+    private ExpressionManager expressionManager;
+
+    @Inject
+    private ConfigurationComponentLocator locator;
 
 
     public void initialise() throws InitialisationException
@@ -84,7 +88,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
         {
             throw new InitialisationException(e.fillInStackTrace(), this);
         }
-        flowFinder = new FlowFinder(ramlHandler, getName(), muleContext, flowMappings.getFlowMappings());
+        flowFinder = new FlowFinder(ramlHandler, getName(), locator, flowMappings.getFlowMappings());
         buildResourcePatternCaches();
         registry.registerConfiguration(this);
         ApikitErrorTypes.initialise(muleContext);
