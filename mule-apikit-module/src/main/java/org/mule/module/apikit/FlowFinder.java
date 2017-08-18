@@ -14,11 +14,12 @@ import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IResource;
-import org.mule.runtime.core.api.MuleContext;
+import org.mule.runtime.api.component.ComponentIdentifier;
+import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
+import org.mule.runtime.api.meta.AnnotatedObject;
 import org.mule.runtime.core.api.construct.Flow;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,14 +40,14 @@ public class FlowFinder
     private RamlHandler ramlHandler;
     private String configName;
     private List<FlowMapping> flowMappings;
-    private MuleContext muleContext;
+    private ConfigurationComponentLocator locator;
 
-    public FlowFinder(RamlHandler ramlHandler, String configName, MuleContext muleContext, List<FlowMapping> flowMappings)
+    public FlowFinder(RamlHandler ramlHandler, String configName, ConfigurationComponentLocator locator, List<FlowMapping> flowMappings)
     {
-        this.muleContext = muleContext;
         this.ramlHandler = ramlHandler;
         this.configName = configName;
         this.flowMappings = flowMappings;
+        this.locator = locator;
         initializeRestFlowMap();
         loadRoutingTable();
     }
@@ -59,11 +60,9 @@ public class FlowFinder
         {
             restFlowMap = new HashMap<>();
 
+            List<Flow> flows = getFlows();
+
             //init flows by convention
-            Collection<Flow> flows = muleContext.getRegistry().lookupObjects(Flow.class);
-
-
-
             for (Flow flow : flows)
             {
                 String key = getRestFlowKey(flow.getName());
@@ -90,6 +89,11 @@ public class FlowFinder
 
             restFlowMapUnwrapped = new HashMap<>(restFlowMap);
         }
+    }
+
+    private List<Flow> getFlows() {
+        List<? extends AnnotatedObject> annotatedObjects = locator.find(ComponentIdentifier.builder().name("flow").namespace("mule").build());
+        return (List<Flow>) annotatedObjects;
     }
 
     private void flattenResourceTree(Map<String, IResource> resources)
