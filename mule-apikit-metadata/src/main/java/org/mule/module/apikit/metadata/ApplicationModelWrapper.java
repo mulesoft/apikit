@@ -148,12 +148,12 @@ public class ApplicationModelWrapper
         private String configRaml;
         private RamlHandler handler;
 
-        RamlHandlerSupplier(String configRaml, RamlHandler handler) {
+        private RamlHandlerSupplier(String configRaml, RamlHandler handler) {
             this.configRaml = configRaml;
             this.handler = handler;
         }
 
-        static RamlHandlerSupplier create(String configRaml, RamlHandler handler) {
+        private static RamlHandlerSupplier create(String configRaml, RamlHandler handler) {
             return new RamlHandlerSupplier(configRaml, handler);
         }
 
