@@ -14,7 +14,6 @@ import org.mule.module.apikit.metadata.model.RamlCoordinate;
 
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static java.util.Optional.empty;
 
 public class MetadataHandler {
