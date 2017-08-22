@@ -11,6 +11,7 @@
     <artifactId>mule-apikit-scaffolder</artifactId>
     <properties>
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
+        <formatterConfigPath>../../formatter.xml</formatterConfigPath>
     </properties>
 
     <dependencies>

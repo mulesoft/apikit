@@ -12,6 +12,7 @@
 
     <properties>
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
+        <formatterConfigPath>../../formatter.xml</formatterConfigPath>
         <meta.groupId>groupId</meta.groupId>
         <meta.artifactId>artifactId</meta.artifactId>
         <meta.version>version</meta.version>

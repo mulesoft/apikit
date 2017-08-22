@@ -15,4 +15,8 @@
         <module>anypoint-studio-example</module>
     </modules>
 
+    <properties>
+        <formatterConfigPath>../formatter.xml</formatterConfigPath>
+    </properties>
+
 </project>
