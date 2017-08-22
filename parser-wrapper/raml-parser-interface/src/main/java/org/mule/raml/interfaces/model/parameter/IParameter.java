@@ -8,17 +8,27 @@ package org.mule.raml.interfaces.model.parameter;
 
 import java.util.Map;
 
-public interface IParameter
-{
-    boolean isRequired();
-    String getDefaultValue();
-    boolean isRepeat();
-    boolean isArray();
-    boolean validate(String value);
-    String message(String value);
-    String getDisplayName();
-    String getDescription();
-    String getExample();
-    Map<String, String> getExamples();
-    Object getInstance();
+public interface IParameter {
+
+  boolean isRequired();
+
+  String getDefaultValue();
+
+  boolean isRepeat();
+
+  boolean isArray();
+
+  boolean validate(String value);
+
+  String message(String value);
+
+  String getDisplayName();
+
+  String getDescription();
+
+  String getExample();
+
+  Map<String, String> getExamples();
+
+  Object getInstance();
 }

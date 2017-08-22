@@ -20,67 +20,61 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class UrlEncodedV1FunctionalTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class UrlEncodedV1FunctionalTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/validation/formParameters/mule-config-v1.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Test
-    public void simpleUrlencodedRequest() throws Exception
-    {
-        given().header("Content-Type", "application/x-www-form-urlencoded")
-                .formParam("first", "primo")
-                .expect()
-                .response()
-                .body(is("first=primo"))
-                .statusCode(201)
-                .when().post("/api/url-encoded-simple");
-    }
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/validation/formParameters/mule-config-v1.xml";
+  }
 
-    @Test
-    public void setDefaultFormParameterForUrlencodedRequest() throws Exception
-    {
-        given().header("Content-Type", "application/x-www-form-urlencoded")
-                .formParam("second", "segundo")
-                .formParam("third", "true")
-                .expect()
-                .response()
-                .body(is("second=segundo&third=true&first=primo"))
-                .statusCode(201)
-                .when().post("/api/url-encoded-with-default");
-    }
+  @Test
+  public void simpleUrlencodedRequest() throws Exception {
+    given().header("Content-Type", "application/x-www-form-urlencoded")
+        .formParam("first", "primo")
+        .expect()
+        .response()
+        .body(is("first=primo"))
+        .statusCode(201)
+        .when().post("/api/url-encoded-simple");
+  }
 
-    @Test
-    public void getKeyWithMultipleValuesUrlencodedRequest() throws Exception
-    {
-        given().header("Content-Type", "application/x-www-form-urlencoded")
-                .formParam("second", "segundo")
-                .formParam("second", "segundo2")
-                .formParam("third", "true")
-                .expect()
-                .response()
-                .body(is("second=segundo&second=segundo2&third=true&first=primo"))
-                .statusCode(201)
-                .when().post("/api/url-encoded-duplicated-key");
-    }
+  @Test
+  public void setDefaultFormParameterForUrlencodedRequest() throws Exception {
+    given().header("Content-Type", "application/x-www-form-urlencoded")
+        .formParam("second", "segundo")
+        .formParam("third", "true")
+        .expect()
+        .response()
+        .body(is("second=segundo&third=true&first=primo"))
+        .statusCode(201)
+        .when().post("/api/url-encoded-with-default");
+  }
+
+  @Test
+  public void getKeyWithMultipleValuesUrlencodedRequest() throws Exception {
+    given().header("Content-Type", "application/x-www-form-urlencoded")
+        .formParam("second", "segundo")
+        .formParam("second", "segundo2")
+        .formParam("third", "true")
+        .expect()
+        .response()
+        .body(is("second=segundo&second=segundo2&third=true&first=primo"))
+        .statusCode(201)
+        .when().post("/api/url-encoded-duplicated-key");
+  }
 
 }

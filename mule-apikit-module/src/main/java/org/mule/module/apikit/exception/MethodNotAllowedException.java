@@ -20,13 +20,12 @@ public class MethodNotAllowedException extends MuleRestException {
     super(t);
   }
 
-  public MethodNotAllowedException(){
+  public MethodNotAllowedException() {
     super("Method not allowed");
   }
 
   @Override
-  public String getStringRepresentation()
-  {
+  public String getStringRepresentation() {
     return STRING_REPRESENTATION;
   }
 }

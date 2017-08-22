@@ -9,23 +9,20 @@ package org.mule.raml.implv1.model;
 import org.mule.raml.interfaces.model.ITemplate;
 import org.raml.model.Template;
 
-public class TemplateImpl implements ITemplate
-{
-    Template template;
+public class TemplateImpl implements ITemplate {
 
-    public TemplateImpl(Template template)
-    {
-        this.template = template;
-    }
+  Template template;
 
-    public void setDisplayName(String s)
-    {
-        template.setDisplayName(s);
-    }
+  public TemplateImpl(Template template) {
+    this.template = template;
+  }
 
-    public String getDisplayName()
-    {
-        return template.getDisplayName();
-    }
+  public void setDisplayName(String s) {
+    template.setDisplayName(s);
+  }
+
+  public String getDisplayName() {
+    return template.getDisplayName();
+  }
 
 }

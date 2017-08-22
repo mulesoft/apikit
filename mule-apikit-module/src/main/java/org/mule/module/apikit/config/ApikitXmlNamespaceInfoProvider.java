@@ -12,25 +12,23 @@ import org.mule.runtime.dsl.api.xml.XmlNamespaceInfoProvider;
 import java.util.Arrays;
 import java.util.Collection;
 
-public class ApikitXmlNamespaceInfoProvider implements XmlNamespaceInfoProvider
-{
+public class ApikitXmlNamespaceInfoProvider implements XmlNamespaceInfoProvider {
 
-    public static final String APIKIT_NAMESPACE = "apikit";
+  public static final String APIKIT_NAMESPACE = "apikit";
 
-    @Override
-    public Collection<XmlNamespaceInfo> getXmlNamespacesInfo()
-    {
-        return Arrays.asList(new XmlNamespaceInfo() {
+  @Override
+  public Collection<XmlNamespaceInfo> getXmlNamespacesInfo() {
+    return Arrays.asList(new XmlNamespaceInfo() {
 
-            @Override
-            public String getNamespaceUriPrefix() {
-                return "http://www.mulesoft.org/schema/mule/mule-apikit";
-            }
+      @Override
+      public String getNamespaceUriPrefix() {
+        return "http://www.mulesoft.org/schema/mule/mule-apikit";
+      }
 
-            @Override
-            public String getNamespace() {
-                return APIKIT_NAMESPACE;
-            }
-        });
-    }
+      @Override
+      public String getNamespace() {
+        return APIKIT_NAMESPACE;
+      }
+    });
+  }
 }

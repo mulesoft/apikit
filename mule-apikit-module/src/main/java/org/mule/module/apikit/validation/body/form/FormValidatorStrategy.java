@@ -9,5 +9,6 @@ package org.mule.module.apikit.validation.body.form;
 import org.mule.module.apikit.api.exception.BadRequestException;
 
 public interface FormValidatorStrategy<T> {
+
   T validate(T payload) throws BadRequestException;
 }

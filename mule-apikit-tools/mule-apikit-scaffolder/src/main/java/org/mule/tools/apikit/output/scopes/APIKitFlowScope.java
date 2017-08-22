@@ -17,69 +17,62 @@ import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
 
 public class APIKitFlowScope implements Scope {
-    private final Element flow;
 
-    private static final String LOGGER_ATTRIBUTE_LEVEL = "level";
-    private static final String LOGGER_ATTRIBUTE_MESSAGE = "message";
-    private static final String LOGGER_ATTRIBUTE_LEVEL_VALUE = "INFO";
+  private final Element flow;
 
-    public APIKitFlowScope(GenerationModel flowEntry) {
-        this(flowEntry, true);
+  private static final String LOGGER_ATTRIBUTE_LEVEL = "level";
+  private static final String LOGGER_ATTRIBUTE_MESSAGE = "message";
+  private static final String LOGGER_ATTRIBUTE_LEVEL_VALUE = "INFO";
+
+  public APIKitFlowScope(GenerationModel flowEntry) {
+    this(flowEntry, true);
+  }
+
+  public APIKitFlowScope(GenerationModel flowEntry, boolean isMuleEE) {
+    flow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
+    flow.setAttribute("name", flowEntry.getFlowName());
+    flow.addContent(generateFlowContent(flowEntry, isMuleEE));
+  }
+
+  private Element generateFlowContent(GenerationModel flowEntry, boolean isMuleEE) {
+    if (isMuleEE && flowEntry.getExampleWrapper() != null) {
+      try {
+        return generateTransform(flowEntry);
+      } catch (Exception e) {
+        return generateLogger(flowEntry.getFlowName());
+      }
+    } else {
+      return generateLogger(flowEntry.getFlowName());
     }
+  }
 
-    public APIKitFlowScope(GenerationModel flowEntry, boolean isMuleEE) {
-        flow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
-        flow.setAttribute("name", flowEntry.getFlowName());
-        flow.addContent(generateFlowContent(flowEntry, isMuleEE));
-    }
+  private Element generateTransform(GenerationModel flowEntry) {
+    Element transform = new Element("transform", EE_NAMESPACE.getNamespace());
+    Element setPayload = new Element("set-payload", EE_NAMESPACE.getNamespace());
+    Element message = new Element("message", EE_NAMESPACE.getNamespace());
+    CDATA cdataSection = new CDATA(generateTransformTextForExample(flowEntry.getExampleWrapper().trim()));
+    setPayload.addContent(cdataSection);
+    message.setContent(setPayload);
+    transform.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
+    transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(),
+                           XSI_NAMESPACE.getNamespace());
+    transform.addContent(message);
+    return transform;
+  }
 
-    private Element generateFlowContent(GenerationModel flowEntry, boolean isMuleEE)
-    {
-        if (isMuleEE && flowEntry.getExampleWrapper() != null)
-        {
-            try
-            {
-                return generateTransform(flowEntry);
-            }
-            catch (Exception e)
-            {
-                return generateLogger(flowEntry.getFlowName());
-            }
-        }
-        else
-        {
-            return generateLogger(flowEntry.getFlowName());
-        }
-    }
+  private Element generateLogger(String message) {
+    Element logger = new Element("logger", XMLNS_NAMESPACE.getNamespace());
+    logger.setAttribute(LOGGER_ATTRIBUTE_LEVEL, LOGGER_ATTRIBUTE_LEVEL_VALUE);
+    logger.setAttribute(LOGGER_ATTRIBUTE_MESSAGE, message);
+    return logger;
+  }
 
-    private Element generateTransform(GenerationModel flowEntry) {
-        Element transform = new Element("transform", EE_NAMESPACE.getNamespace());
-        Element setPayload = new Element("set-payload", EE_NAMESPACE.getNamespace());
-        Element message = new Element("message", EE_NAMESPACE.getNamespace());
-        CDATA cdataSection = new CDATA(generateTransformTextForExample(flowEntry.getExampleWrapper().trim()));
-        setPayload.addContent(cdataSection);
-        message.setContent(setPayload);
-        transform.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
-        transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(), XSI_NAMESPACE.getNamespace());
-        transform.addContent(message);
-        return transform;
-    }
+  private String generateTransformTextForExample(String example) {
+    return ExampleUtils.getDataWeaveExpressionText(example);
+  }
 
-    private Element generateLogger(String message)
-    {
-        Element logger = new Element("logger", XMLNS_NAMESPACE.getNamespace());
-        logger.setAttribute(LOGGER_ATTRIBUTE_LEVEL, LOGGER_ATTRIBUTE_LEVEL_VALUE);
-        logger.setAttribute(LOGGER_ATTRIBUTE_MESSAGE, message);
-        return logger;
-    }
-
-    private String generateTransformTextForExample(String example)
-    {
-        return ExampleUtils.getDataWeaveExpressionText(example);
-    }
-
-    @Override
-    public Element generate() {
-        return flow;
-    }
+  @Override
+  public Element generate() {
+    return flow;
+  }
 }

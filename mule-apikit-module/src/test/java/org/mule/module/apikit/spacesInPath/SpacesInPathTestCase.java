@@ -14,37 +14,34 @@ import org.mule.tck.junit4.rule.DynamicPort;
 
 import static com.jayway.restassured.RestAssured.given;
 
-public class SpacesInPathTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class SpacesInPathTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigFile()
-    {
-        return "org/mule/module/apikit/space in path/mule-config.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Test
-    public void successWhenRamlResourcePathContainsSpaces() {
-        given()
-                .body("{\"response\": {\"name\": \"eleo\",\"age\": 15}}")
-                .contentType("application/json")
-                .expect().statusCode(200)
-                .when().put("/api/schema");
-    }
+  @Override
+  protected String getConfigFile() {
+    return "org/mule/module/apikit/space in path/mule-config.xml";
+  }
+
+  @Test
+  public void successWhenRamlResourcePathContainsSpaces() {
+    given()
+        .body("{\"response\": {\"name\": \"eleo\",\"age\": 15}}")
+        .contentType("application/json")
+        .expect().statusCode(200)
+        .when().put("/api/schema");
+  }
 
 }

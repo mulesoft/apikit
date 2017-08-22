@@ -21,132 +21,125 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 
 @ArtifactClassLoaderRunnerConfig
-public class ConsoleWithoutRouterTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule public DynamicPort serverPort = new DynamicPort("serverPort");
-    @Rule public DynamicPort serverPort2 = new DynamicPort("serverPort2");
+public class ConsoleWithoutRouterTestCase extends MuleArtifactFunctionalTestCase {
 
-    private String CONSOLE_BASE_PATH = "/console/";
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
+  @Rule
+  public DynamicPort serverPort2 = new DynamicPort("serverPort2");
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  private String CONSOLE_BASE_PATH = "/console/";
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/console/console-without-router.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Test
-    public void getConsoleIndex() throws Exception
-    {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Access-Control-Allow-Origin", "*");
-        headers.put("Expires", "-1");
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/console/console-without-router.xml";
+  }
 
-        given().port(serverPort.getNumber())
-                .header("Accept", "text/html")
-                .expect()
-                    .statusCode(200)
-                    .headers(headers)
-                    .contentType("text/html")
-                    .body(startsWith("<!doctype html>"))
-                    .body(containsString("this.location.href + 'org/mule/module/apikit/console/?raml'"))
-                .when().get(CONSOLE_BASE_PATH);
-    }
+  @Test
+  public void getConsoleIndex() throws Exception {
+    Map<String, String> headers = new HashMap<>();
+    headers.put("Access-Control-Allow-Origin", "*");
+    headers.put("Expires", "-1");
 
-    @Test
-    public void getConsoleIndexWithInvalidListenerPath() throws Exception
-    {
-        RestAssured.port = serverPort2.getNumber();
-        given().header("Accept", "*/*")
-                .expect()
-                .statusCode(500)
-                .when().get("/konsole");
-    }
+    given().port(serverPort.getNumber())
+        .header("Accept", "text/html")
+        .expect()
+        .statusCode(200)
+        .headers(headers)
+        .contentType("text/html")
+        .body(startsWith("<!doctype html>"))
+        .body(containsString("this.location.href + 'org/mule/module/apikit/console/?raml'"))
+        .when().get(CONSOLE_BASE_PATH);
+  }
 
-    @Test
-    public void getConsoleJavascriptResource() throws Exception {
-        given().port(serverPort.getNumber())
-                .header("Accept", "*/*")
-                .expect()
-                    .statusCode(200)
-                    .header("Access-Control-Allow-Origin", "*")
-                    .contentType("application/x-javascript")
-                .when().get(CONSOLE_BASE_PATH + "bower_components/webcomponentsjs/webcomponents-lite.min.js");
-    }
+  @Test
+  public void getConsoleIndexWithInvalidListenerPath() throws Exception {
+    RestAssured.port = serverPort2.getNumber();
+    given().header("Accept", "*/*")
+        .expect()
+        .statusCode(500)
+        .when().get("/konsole");
+  }
+
+  @Test
+  public void getConsoleJavascriptResource() throws Exception {
+    given().port(serverPort.getNumber())
+        .header("Accept", "*/*")
+        .expect()
+        .statusCode(200)
+        .header("Access-Control-Allow-Origin", "*")
+        .contentType("application/x-javascript")
+        .when().get(CONSOLE_BASE_PATH + "bower_components/webcomponentsjs/webcomponents-lite.min.js");
+  }
 
 
-    @Test
-    public void consoleFileNotFound() throws Exception {
-        RestAssured.port = serverPort.getNumber();
-        given().port(serverPort.getNumber())
-                .header("Accept", "*/*")
-                .expect()
-                    .statusCode(500)
-                .when().get(CONSOLE_BASE_PATH + "not/found/file.html");
-    }
+  @Test
+  public void consoleFileNotFound() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    given().port(serverPort.getNumber())
+        .header("Accept", "*/*")
+        .expect()
+        .statusCode(500)
+        .when().get(CONSOLE_BASE_PATH + "not/found/file.html");
+  }
 
-    @Test
-    public void getIndexWithRedirect()
-    {
-        given().port(serverPort.getNumber()).redirects().follow(false)
-                .header("Accept", "text/html")
-                .expect()
-                    .header("Location", "http://localhost:" + serverPort.getNumber() + "/console/")
-                    .response().statusCode(301)
-                .when().get("/console");
-    }
+  @Test
+  public void getIndexWithRedirect() {
+    given().port(serverPort.getNumber()).redirects().follow(false)
+        .header("Accept", "text/html")
+        .expect()
+        .header("Location", "http://localhost:" + serverPort.getNumber() + "/console/")
+        .response().statusCode(301)
+        .when().get("/console");
+  }
 
-    @Test
-    public void getRamlFile()
-    {
-        given().port(serverPort.getNumber())
-                .header("Accept", "application/raml+yaml")
-                .expect()
-                    .header("Content-Type", "application/raml+yaml")
-                .response()
-                    .statusCode(200)
-                    .body(containsString("/types-test:"))
-                .when().get("console/org/mule/module/apikit/console/simple-with-baseuri10.raml?raml");
-    }
+  @Test
+  public void getRamlFile() {
+    given().port(serverPort.getNumber())
+        .header("Accept", "application/raml+yaml")
+        .expect()
+        .header("Content-Type", "application/raml+yaml")
+        .response()
+        .statusCode(200)
+        .body(containsString("/types-test:"))
+        .when().get("console/org/mule/module/apikit/console/simple-with-baseuri10.raml?raml");
+  }
 
-    @Test
-    public void getRamlFileWithoutQueryParameter()
-    {
-        given().port(serverPort.getNumber())
-                .header("Accept", "application/raml+yaml")
-                .expect()
-                    .header("Content-Type", "application/raml+yaml")
-                .response()
-                    .statusCode(200)
-                    .body(containsString("/types-test:"))
-                .when().get("console/org/mule/module/apikit/console/simple-with-baseuri10.raml");
-    }
+  @Test
+  public void getRamlFileWithoutQueryParameter() {
+    given().port(serverPort.getNumber())
+        .header("Accept", "application/raml+yaml")
+        .expect()
+        .header("Content-Type", "application/raml+yaml")
+        .response()
+        .statusCode(200)
+        .body(containsString("/types-test:"))
+        .when().get("console/org/mule/module/apikit/console/simple-with-baseuri10.raml");
+  }
 
-    @Test
-    public void getRootRaml()
-    {
-        given().port(serverPort.getNumber())
-                .header("Accept", "application/raml+yaml")
-                .expect()
-                    .header("Content-Type", "application/raml+yaml")
-                .response()
-                    .statusCode(200)
-                    .body(containsString("/types-test:"))
-                    .body(containsString("baseUri: http://www.google.com"))
-                    //keepRamlBaseUri is false, but there is no router to retrieve the api source. The raml baseUri is returned.
+  @Test
+  public void getRootRaml() {
+    given().port(serverPort.getNumber())
+        .header("Accept", "application/raml+yaml")
+        .expect()
+        .header("Content-Type", "application/raml+yaml")
+        .response()
+        .statusCode(200)
+        .body(containsString("/types-test:"))
+        .body(containsString("baseUri: http://www.google.com"))
+        //keepRamlBaseUri is false, but there is no router to retrieve the api source. The raml baseUri is returned.
         .when().get("console/org/mule/module/apikit/console/?raml");
-    }
+  }
 
 }

@@ -14,44 +14,37 @@ import org.mule.raml.interfaces.parser.visitor.IRamlValidationService;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
-public class RamlFactoryHelper
-{
-    private static IRamlFactory iRamlFactory;
+public class RamlFactoryHelper {
 
-    private static IRamlFactory loadFactory()
-    {
-        if (iRamlFactory != null)
-        {
-            return iRamlFactory;
-        }
-        ServiceLoader<IRamlFactory> loader = ServiceLoader.load(IRamlFactory.class);
-        Iterator<IRamlFactory> it = loader.iterator();
-        if (it.hasNext())
-        {
-            iRamlFactory = it.next();
-            return iRamlFactory;
-        }
-        throw new RuntimeException("RamlFactoryLoader couldn't find any RamlFactory");
-    }
+  private static IRamlFactory iRamlFactory;
 
-    public static IRamlEmitter createRamlEmitter()
-    {
-        return loadFactory().createRamlEmitter();
+  private static IRamlFactory loadFactory() {
+    if (iRamlFactory != null) {
+      return iRamlFactory;
     }
+    ServiceLoader<IRamlFactory> loader = ServiceLoader.load(IRamlFactory.class);
+    Iterator<IRamlFactory> it = loader.iterator();
+    if (it.hasNext()) {
+      iRamlFactory = it.next();
+      return iRamlFactory;
+    }
+    throw new RuntimeException("RamlFactoryLoader couldn't find any RamlFactory");
+  }
 
-    public static IRamlDocumentBuilder createRamlDocumentBuilder()
-    {
-        return loadFactory().createRamlDocumentBuilder();
-    }
+  public static IRamlEmitter createRamlEmitter() {
+    return loadFactory().createRamlEmitter();
+  }
 
-    public static IRamlValidationService createRamlValidationService(IRamlDocumentBuilder ramlDocumentBuilder)
-    {
-        return loadFactory().createRamlValidationService(ramlDocumentBuilder);
-    }
+  public static IRamlDocumentBuilder createRamlDocumentBuilder() {
+    return loadFactory().createRamlDocumentBuilder();
+  }
 
-    public static IRamlCloningService createRamlCloningService()
-    {
-        return loadFactory().createRamlCloningService();
-    }
+  public static IRamlValidationService createRamlValidationService(IRamlDocumentBuilder ramlDocumentBuilder) {
+    return loadFactory().createRamlValidationService(ramlDocumentBuilder);
+  }
+
+  public static IRamlCloningService createRamlCloningService() {
+    return loadFactory().createRamlCloningService();
+  }
 
 }

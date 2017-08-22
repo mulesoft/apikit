@@ -34,155 +34,131 @@ import org.raml.v2.api.loader.FileResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.loader.RootRamlResourceLoader;
 
-public class RAMLFilesParser
-{
-    private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-    private final APIFactory apiFactory;
-    private final Log log;
+public class RAMLFilesParser {
 
-    public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory)
-    {
-        this.log = log;
-        this.apiFactory = apiFactory;
-        List<File> processedFiles = new ArrayList<>();
-        for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet())
-        {
-            String content;
-            File ramlFile = fileInputStreamEntry.getKey();
-            try
-            {
-                content = IOUtils.toString(fileInputStreamEntry.getValue());
-            }
-            catch (IOException ioe)
-            {
-                this.log.info("Error loading file " + ramlFile.getName());
-                break;
+  private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries =
+      new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+  private final APIFactory apiFactory;
+  private final Log log;
 
-            }
-            String rootRamlName = ramlFile.getName();
-            String ramlFolderPath = null;
-            File ramlFileParent = null;
-            if (ramlFile.getParentFile() != null)
-            {
-                ramlFolderPath = ramlFile.getParentFile().getPath();
-                ramlFileParent = ramlFile.getParentFile();
-            }
-            if (isValidRaml(rootRamlName, content, ramlFolderPath))
-            {
-                try
-                {
-                    IRaml raml;
-                    if (ParserV2Utils.useParserV2(content))
-                    {
-                        ResourceLoader resourceLoader = new CompositeResourceLoader( new RootRamlResourceLoader(ramlFileParent), new DefaultResourceLoader(), new FileResourceLoader(ramlFolderPath));
-                        raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
-                    }
-                    else
-                    {
-                        raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
-                    }
-                    collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);
-                    processedFiles.add(ramlFile);
-                }
-                catch (Exception e)
-                {
-                    log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());
-                    log.debug(e);
-                }
-            }
+  public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
+    this.log = log;
+    this.apiFactory = apiFactory;
+    List<File> processedFiles = new ArrayList<>();
+    for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet()) {
+      String content;
+      File ramlFile = fileInputStreamEntry.getKey();
+      try {
+        content = IOUtils.toString(fileInputStreamEntry.getValue());
+      } catch (IOException ioe) {
+        this.log.info("Error loading file " + ramlFile.getName());
+        break;
 
+      }
+      String rootRamlName = ramlFile.getName();
+      String ramlFolderPath = null;
+      File ramlFileParent = null;
+      if (ramlFile.getParentFile() != null) {
+        ramlFolderPath = ramlFile.getParentFile().getPath();
+        ramlFileParent = ramlFile.getParentFile();
+      }
+      if (isValidRaml(rootRamlName, content, ramlFolderPath)) {
+        try {
+          IRaml raml;
+          if (ParserV2Utils.useParserV2(content)) {
+            ResourceLoader resourceLoader =
+                new CompositeResourceLoader(new RootRamlResourceLoader(ramlFileParent), new DefaultResourceLoader(),
+                                            new FileResourceLoader(ramlFolderPath));
+            raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
+          } else {
+            raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
+          }
+          collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);
+          processedFiles.add(ramlFile);
+        } catch (Exception e) {
+          log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());
+          log.debug(e);
         }
-        if (processedFiles.size() > 0)
-        {
-            this.log.info("The following RAML files were parsed correctly: " +
-                          processedFiles);
-        }
-        else
-        {
-            this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
-        }
+      }
+
     }
+    if (processedFiles.size() > 0) {
+      this.log.info("The following RAML files were parsed correctly: " +
+          processedFiles);
+    } else {
+      this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
+    }
+  }
 
-    private boolean isValidRaml(String fileName, String content, String filePath)
-    {
-        List<String> errors;
-        if (ParserV2Utils.useParserV2(content))
-        {
-            ResourceLoader resourceLoader = new CompositeResourceLoader( new RootRamlResourceLoader(new File(filePath)), new DefaultResourceLoader(), new FileResourceLoader(filePath));
-            errors = ParserV2Utils.validate(resourceLoader, fileName, content);
+  private boolean isValidRaml(String fileName, String content, String filePath) {
+    List<String> errors;
+    if (ParserV2Utils.useParserV2(content)) {
+      ResourceLoader resourceLoader = new CompositeResourceLoader(new RootRamlResourceLoader(new File(filePath)),
+                                                                  new DefaultResourceLoader(), new FileResourceLoader(filePath));
+      errors = ParserV2Utils.validate(resourceLoader, fileName, content);
+    } else {
+      errors = ParserV1Utils.validate(filePath, fileName, content);
+    }
+    if (!errors.isEmpty()) {
+      if (errors.size() == 1 && errors.get(0).toLowerCase().contains("root")) {
+        log.info("File '" + fileName + "' is not a root RAML file.");
+      } else {
+        log.info("File '" + fileName + "' is not a valid root RAML file. It contains some errors/warnings. See below: ");
+        int problemCount = 0;
+        for (String error : errors) {
+          log.info("ERROR " + (++problemCount) + ": " + error);
         }
-        else
-        {
-            errors = ParserV1Utils.validate(filePath, fileName, content);
-        }
-        if (!errors.isEmpty())
-        {
-            if (errors.size() == 1 && errors.get(0).toLowerCase().contains("root"))
-            {
-                log.info("File '" + fileName + "' is not a root RAML file.");
+      }
+      return false;
+    }
+    log.info("File '" + fileName + "' is a VALID root RAML file.");
+    return true;
+  }
+
+  void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri) {
+    for (IResource resource : resourceMap.values()) {
+      for (IAction action : resource.getActions().values()) {
+
+
+        API api = apiFactory.createAPIBinding(filename, null, baseUri, APIKitTools.getPathFromUri(baseUri, false), null, null);
+
+        Map<String, IMimeType> mimeTypes = action.getBody();
+        boolean addGenericAction = false;
+        if (mimeTypes != null && !mimeTypes.isEmpty()) {
+          for (IMimeType mimeType : mimeTypes.values()) {
+            if (mimeType.getSchema() != null
+                || (mimeType.getFormParameters() != null && !mimeType.getFormParameters().isEmpty())) {
+              addResource(api, resource, action, mimeType.getType());
+            } else {
+              addGenericAction = true;
             }
-            else
-            {
-                log.info("File '" + fileName + "' is not a valid root RAML file. It contains some errors/warnings. See below: ");
-                int problemCount = 0;
-                for (String error : errors)
-                {
-                    log.info("ERROR " + (++problemCount) + ": " + error);
-                }
-            }
-            return false;
+          }
+        } else {
+          addGenericAction = true;
         }
-        log.info("File '" + fileName + "' is a VALID root RAML file.");
-        return true;
-    }
 
-    void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri)
-    {
-        for (IResource resource : resourceMap.values())
-        {
-            for (IAction action : resource.getActions().values())
-            {
-
-
-                API api = apiFactory.createAPIBinding(filename,null, baseUri, APIKitTools.getPathFromUri(baseUri,false), null, null);
-
-                Map<String, IMimeType> mimeTypes = action.getBody();
-                boolean addGenericAction = false;
-                if (mimeTypes != null && !mimeTypes.isEmpty())
-                {
-                    for (IMimeType mimeType : mimeTypes.values())
-                    {
-                        if (mimeType.getSchema() != null || (mimeType.getFormParameters() != null && !mimeType.getFormParameters().isEmpty()))
-                        {
-                            addResource(api, resource, action, mimeType.getType());
-                        }
-                        else { addGenericAction = true; }
-                    }
-                }
-                else { addGenericAction = true; }
-
-                if (addGenericAction) {
-                    addResource(api, resource, action, null);
-                }
-            }
-
-            collectResources(filename, resource.getResources(), baseUri);
+        if (addGenericAction) {
+          addResource(api, resource, action, null);
         }
+      }
+
+      collectResources(filename, resource.getResources(), baseUri);
     }
+  }
 
-    void addResource(API api, IResource resource, IAction action, String mimeType) {
+  void addResource(API api, IResource resource, IAction action, String mimeType) {
 
-        String completePath = APIKitTools
-                .getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
+    String completePath = APIKitTools
+        .getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
 
-        ResourceActionMimeTypeTriplet resourceActionTriplet = new ResourceActionMimeTypeTriplet(api, completePath + resource.getUri(),
-                    action.getType().toString(), mimeType);
-        entries.put(resourceActionTriplet, new GenerationModel(api, resource, action, mimeType));
-    }
+    ResourceActionMimeTypeTriplet resourceActionTriplet = new ResourceActionMimeTypeTriplet(api, completePath + resource.getUri(),
+                                                                                            action.getType().toString(),
+                                                                                            mimeType);
+    entries.put(resourceActionTriplet, new GenerationModel(api, resource, action, mimeType));
+  }
 
-    public Map<ResourceActionMimeTypeTriplet, GenerationModel> getEntries()
-    {
-        return entries;
-    }
+  public Map<ResourceActionMimeTypeTriplet, GenerationModel> getEntries() {
+    return entries;
+  }
 
 }

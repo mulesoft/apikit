@@ -28,8 +28,7 @@ import java.util.List;
  * @version 11 June 2009
  * @see VariableBinder
  */
-public class VariableResolverList implements VariableResolver
-{
+public class VariableResolverList implements VariableResolver {
 
   /**
    * The list of values.

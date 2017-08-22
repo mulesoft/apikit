@@ -20,90 +20,89 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class MetadataFactory
-{
-    private static final MetadataType DEFAULT_METADATA =
-            BaseTypeBuilder.create(MetadataFormat.JAVA).anyType().build();
+public class MetadataFactory {
+
+  private static final MetadataType DEFAULT_METADATA =
+      BaseTypeBuilder.create(MetadataFormat.JAVA).anyType().build();
 
 
-    private MetadataFactory() {}
+  private MetadataFactory() {}
 
-    /**
-     * Creates metadata from a JSON Schema
-     *
-     * @param jsonSchema The schema we want to create metadata from
-     * @return The metadata if the Schema is valid, null otherwise
-     */
-    public static MetadataType fromJsonSchema(String jsonSchema) {
+  /**
+   * Creates metadata from a JSON Schema
+   *
+   * @param jsonSchema The schema we want to create metadata from
+   * @return The metadata if the Schema is valid, null otherwise
+   */
+  public static MetadataType fromJsonSchema(String jsonSchema) {
 
-        JsonTypeLoader jsonTypeLoader = new JsonTypeLoader(jsonSchema);
-        final Optional<MetadataType> root = jsonTypeLoader.load(null);
+    JsonTypeLoader jsonTypeLoader = new JsonTypeLoader(jsonSchema);
+    final Optional<MetadataType> root = jsonTypeLoader.load(null);
 
-        // We didn't managed to parse the schema.
-        return root.orElse(defaultMetadata());
+    // We didn't managed to parse the schema.
+    return root.orElse(defaultMetadata());
+  }
+
+
+  /**
+   * Creates metadata from the specified JSON Example
+   *
+   * @param jsonExample
+   * @return The metadata if the example is valid, null otherwise
+   */
+  public static MetadataType fromJsonExample(String jsonExample) {
+
+    Optional<MetadataType> root = Optional.empty();
+
+    try {
+
+      JsonExampleTypeLoader jsonExampleTypeLoader = new JsonExampleTypeLoader(jsonExample);
+      root = jsonExampleTypeLoader.load(null);
+
+    } catch (Exception e) {
+
+      System.out.println("[ ERROR ] There was a problem when trying to parse example : " + jsonExample);
     }
 
+    // We didn't managed to parse the schema.
+    return root.orElse(defaultMetadata());
+  }
 
-    /**
-     * Creates metadata from the specified JSON Example
-     *
-     * @param jsonExample
-     * @return The metadata if the example is valid, null otherwise
-     */
-    public static MetadataType fromJsonExample(String jsonExample) {
+  /**
+   *
+   * @param xsdSchema
+   * @return
+   */
+  public static MetadataType fromXSDSchema(String xsdSchema) {
+    // TODO: 7/26/17  
+    return defaultMetadata();
+  }
 
-        Optional<MetadataType> root = Optional.empty();
+  public static MetadataType fromXMLExample(String xmlExample) {
 
-        try {
+    ModelFactory modelFactory = ModelFactory.fromExample(xmlExample);
+    Optional<MetadataType> metadata = new XmlTypeLoader(modelFactory).load(null);
 
-            JsonExampleTypeLoader jsonExampleTypeLoader = new JsonExampleTypeLoader(jsonExample);
-            root = jsonExampleTypeLoader.load(null);
+    return metadata.orElse(defaultMetadata());
+  }
 
-        } catch (Exception e) {
+  public static MetadataType fromFormMetadata(Map<String, List<IParameter>> formParameters) {
+    ObjectTypeBuilder parameters = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-            System.out.println("[ ERROR ] There was a problem when trying to parse example : " + jsonExample);
-        }
-
-        // We didn't managed to parse the schema.
-        return root.orElse(defaultMetadata());
+    for (Map.Entry<String, List<IParameter>> entry : formParameters.entrySet()) {
+      parameters.addField()
+          .key(entry.getKey())
+          .value().anyType();
     }
 
-    /**
-     *
-     * @param xsdSchema
-     * @return
-     */
-    public static MetadataType fromXSDSchema(String xsdSchema) {
-        // TODO: 7/26/17  
-        return defaultMetadata();
-    }
+    return parameters.build();
+  }
 
-    public static MetadataType fromXMLExample(String xmlExample) {
-
-        ModelFactory modelFactory = ModelFactory.fromExample(xmlExample);
-        Optional<MetadataType> metadata = new XmlTypeLoader(modelFactory).load(null);
-        
-        return metadata.orElse(defaultMetadata());
-    }
-
-    public static MetadataType fromFormMetadata(Map<String, List<IParameter>> formParameters)
-    {
-        ObjectTypeBuilder parameters = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
-
-        for (Map.Entry<String, List<IParameter>> entry : formParameters.entrySet()) {
-            parameters.addField()
-                    .key(entry.getKey())
-                    .value().anyType();
-        }
-
-        return parameters.build();
-    }
-
-    /**
-     * Creates default metadata, that can be of any type
-     * @return The newly created MetadataType
-     */
-    public static MetadataType defaultMetadata() {
-        return DEFAULT_METADATA;
-    }
+  /**
+   * Creates default metadata, that can be of any type
+   * @return The newly created MetadataType
+   */
+  public static MetadataType defaultMetadata() {
+    return DEFAULT_METADATA;
+  }
 }

@@ -23,12 +23,11 @@ import org.slf4j.LoggerFactory;
 
 
 public class PayloadHelper {
+
   protected static final Logger logger = LoggerFactory.getLogger(PayloadHelper.class);
 
-  public static String getPayloadAsString(Object input, String charset, boolean trimBom) throws BadRequestException
-  {
-    if (input instanceof CursorStreamProvider)
-    {
+  public static String getPayloadAsString(Object input, String charset, boolean trimBom) throws BadRequestException {
+    if (input instanceof CursorStreamProvider) {
       try {
         return IOUtils.toString(((CursorStreamProvider) input).openCursor());
       } catch (IOException e) {
@@ -36,8 +35,7 @@ public class PayloadHelper {
       }
     }
 
-    if (input instanceof InputStream)
-    {
+    if (input instanceof InputStream) {
       logger.debug("transforming payload to perform Schema validation");
       RewindableInputStream rewindableInputStream = new RewindableInputStream((InputStream) input);
       try {
@@ -47,27 +45,17 @@ public class PayloadHelper {
       }
       rewindableInputStream.rewind();
 
-    }
-    else if (input instanceof byte[])
-    {
-      try
-      {
+    } else if (input instanceof byte[]) {
+      try {
         input = byteArrayToString((byte[]) input, charset, trimBom);
-      }
-      catch (IOException e)
-      {
+      } catch (IOException e) {
         throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
       }
-    }
-    else if (input instanceof String)
-    {
+    } else if (input instanceof String) {
       // already in the right format
-    }
-    else
-    {
+    } else {
       String errorMessage = "Don't know how to parse payload";
-      if (input != null)
-      {
+      if (input != null) {
         errorMessage = "Don't know how to parse " + input.getClass().getName();
       }
       throw ApikitErrorTypes.throwErrorType(new BadRequestException(errorMessage));
@@ -76,15 +64,11 @@ public class PayloadHelper {
     return (String) input;
   }
 
-  private static String byteArrayToString(byte[] bytes, String charset, boolean trimBom) throws IOException
-  {
+  private static String byteArrayToString(byte[] bytes, String charset, boolean trimBom) throws IOException {
     String result;
-    if (trimBom)
-    {
+    if (trimBom) {
       result = IOUtils.toString(new ByteArrayInputStream(trimBom(bytes)), charset);
-    }
-    else
-    {
+    } else {
       result = IOUtils.toString(bytes, charset);
     }
     return result;

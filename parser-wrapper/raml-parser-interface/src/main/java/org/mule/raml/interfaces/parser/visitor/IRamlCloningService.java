@@ -8,8 +8,9 @@ package org.mule.raml.interfaces.parser.visitor;
 
 import org.mule.raml.interfaces.model.IRaml;
 
-public interface IRamlCloningService
-{
-    IRaml deepCloneRaml(IRaml source);
-    IRaml shallowCloneRaml(IRaml source);
+public interface IRamlCloningService {
+
+  IRaml deepCloneRaml(IRaml source);
+
+  IRaml shallowCloneRaml(IRaml source);
 }

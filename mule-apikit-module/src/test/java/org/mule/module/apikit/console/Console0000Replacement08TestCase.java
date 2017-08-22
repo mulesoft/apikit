@@ -23,62 +23,57 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class Console0000Replacement08TestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class Console0000Replacement08TestCase extends MuleArtifactFunctionalTestCase {
 
-    private String CONSOLE_BASE_PATH = "/console/";
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  private String CONSOLE_BASE_PATH = "/console/";
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/console/console-0000-replacement-raml08.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Test
-    public void getConsoleIndex() throws Exception
-    {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Access-Control-Allow-Origin", "*");
-        headers.put("Expires", "-1");
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/console/console-0000-replacement-raml08.xml";
+  }
 
-        given().port(serverPort.getNumber())
-                .header("Accept", "text/html")
-                .expect()
-                .statusCode(200)
-                .headers(headers)
-                .contentType("text/html")
-                .body(startsWith("<!doctype html>"))
-                .body(containsString("this.location.href + '?raml'"))
-                .when().get(CONSOLE_BASE_PATH);
-    }
+  @Test
+  public void getConsoleIndex() throws Exception {
+    Map<String, String> headers = new HashMap<>();
+    headers.put("Access-Control-Allow-Origin", "*");
+    headers.put("Expires", "-1");
 
-    @Test
-    public void getRootRaml()
-    {
-        given().port(serverPort.getNumber())
-                .header("Accept", "application/raml+yaml")
-                .expect()
-                .header("Content-Type", "application/raml+yaml")
-                .response()
-                .statusCode(200)
-                .body(containsString("/types-test:"))
-                .body(containsString("baseUri: http://localhost"))
-                .when().get("console/org/mule/module/apikit/console/?raml");
-    }
+    given().port(serverPort.getNumber())
+        .header("Accept", "text/html")
+        .expect()
+        .statusCode(200)
+        .headers(headers)
+        .contentType("text/html")
+        .body(startsWith("<!doctype html>"))
+        .body(containsString("this.location.href + '?raml'"))
+        .when().get(CONSOLE_BASE_PATH);
+  }
+
+  @Test
+  public void getRootRaml() {
+    given().port(serverPort.getNumber())
+        .header("Accept", "application/raml+yaml")
+        .expect()
+        .header("Content-Type", "application/raml+yaml")
+        .response()
+        .statusCode(200)
+        .body(containsString("/types-test:"))
+        .body(containsString("baseUri: http://localhost"))
+        .when().get("console/org/mule/module/apikit/console/?raml");
+  }
 
 }

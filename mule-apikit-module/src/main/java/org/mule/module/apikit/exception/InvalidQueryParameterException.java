@@ -8,8 +8,7 @@ package org.mule.module.apikit.exception;
 
 import org.mule.module.apikit.api.exception.BadRequestException;
 
-public class InvalidQueryParameterException extends BadRequestException
-{
+public class InvalidQueryParameterException extends BadRequestException {
 
   public static final String STRING_REPRESENTATION = "APIKIT:BAD_REQUEST";
 
@@ -21,13 +20,12 @@ public class InvalidQueryParameterException extends BadRequestException
     super(t);
   }
 
-  public InvalidQueryParameterException(){
+  public InvalidQueryParameterException() {
     super("Invalid Query Parameter");
   }
 
   @Override
-  public String getStringRepresentation()
-  {
+  public String getStringRepresentation() {
     return STRING_REPRESENTATION;
   }
 }

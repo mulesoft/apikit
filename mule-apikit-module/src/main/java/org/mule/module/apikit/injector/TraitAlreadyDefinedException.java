@@ -8,8 +8,7 @@ package org.mule.module.apikit.injector;
 
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 
-public class TraitAlreadyDefinedException extends ApikitRuntimeException
-{
+public class TraitAlreadyDefinedException extends ApikitRuntimeException {
 
   public TraitAlreadyDefinedException(String message) {
     super(message);

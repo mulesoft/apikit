@@ -6,11 +6,10 @@
  */
 package org.mule.module.apikit.parameters;
 
-public class ParametersInboundTestCase extends ParametersTestCase
-{
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/parameters/parameters-config-inbound.xml";
-    }
+public class ParametersInboundTestCase extends ParametersTestCase {
+
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/parameters/parameters-config-inbound.xml";
+  }
 }

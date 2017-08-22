@@ -18,42 +18,38 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class SchemaCachingTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class SchemaCachingTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/validation/body/schema/schema-cache-config.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Test
-    public void putOnBoth() throws Exception
-    {
-        given()
-            .body("{\"name\":\"gbs\"}").contentType("application/json")
-            .expect().statusCode(204)//204
-            .when().put("/cam/currentuser");
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/validation/body/schema/schema-cache-config.xml";
+  }
 
-        given()
-            .body("{\"id\":\"gbs\"}").contentType("application/json")
-            .expect().statusCode(204)//204
-            .when().put("/peaks/currentuser");
-    }
+  @Test
+  public void putOnBoth() throws Exception {
+    given()
+        .body("{\"name\":\"gbs\"}").contentType("application/json")
+        .expect().statusCode(204)//204
+        .when().put("/cam/currentuser");
+
+    given()
+        .body("{\"id\":\"gbs\"}").contentType("application/json")
+        .expect().statusCode(204)//204
+        .when().put("/peaks/currentuser");
+  }
 
 }

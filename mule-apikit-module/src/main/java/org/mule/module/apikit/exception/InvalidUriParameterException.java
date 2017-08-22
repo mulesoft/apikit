@@ -20,13 +20,12 @@ public class InvalidUriParameterException extends BadRequestException {
     super(t);
   }
 
-  public InvalidUriParameterException(){
+  public InvalidUriParameterException() {
     super("Invalid Uri Parameter");
   }
 
   @Override
-  public String getStringRepresentation()
-  {
+  public String getStringRepresentation() {
     return STRING_REPRESENTATION;
   }
 }

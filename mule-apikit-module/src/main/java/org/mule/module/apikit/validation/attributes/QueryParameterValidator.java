@@ -25,8 +25,8 @@ public class QueryParameterValidator {
 
   }
 
-  public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString) throws InvalidQueryParameterException
-  {
+  public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString)
+      throws InvalidQueryParameterException {
 
     for (String expectedKey : action.getQueryParameters().keySet()) {
       IParameter expected = action.getQueryParameters().get(expectedKey);
@@ -76,8 +76,7 @@ public class QueryParameterValidator {
 
   //only for raml 1.0
   private void validateQueryParamArray(String paramKey, IParameter expected, Collection<?> paramValue)
-          throws InvalidQueryParameterException
-  {
+      throws InvalidQueryParameterException {
     StringBuilder builder = new StringBuilder();
     for (Object item : paramValue) {
       builder.append("- ").append(String.valueOf(item)).append("\n");
@@ -85,8 +84,7 @@ public class QueryParameterValidator {
     validateQueryParam(paramKey, expected, builder.toString());
   }
 
-  private void validateQueryParam(String paramKey, IParameter expected, String paramValue) throws InvalidQueryParameterException
-  {
+  private void validateQueryParam(String paramKey, IParameter expected, String paramValue) throws InvalidQueryParameterException {
     if (!expected.validate(paramValue)) {
       String msg = String.format("Invalid value '%s' for query parameter %s. %s",
                                  paramValue, paramKey, expected.message(paramValue));

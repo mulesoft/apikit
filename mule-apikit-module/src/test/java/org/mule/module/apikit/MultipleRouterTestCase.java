@@ -19,58 +19,54 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class MultipleRouterTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class MultipleRouterTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/multiple-router/multiple-raml.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
+
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/multiple-router/multiple-raml.xml";
+  }
 
 
-    @Test
-    public void simpleRouting() throws Exception
-    {
-        given().header("Accept", "*/*").body("{\"age\": \"1\"}").contentType("application/json")
-                .expect()
-                .response().body(is("typesDog"))
-                .statusCode(200)
-                .when().post("/api1/typesDog");
+  @Test
+  public void simpleRouting() throws Exception {
+    given().header("Accept", "*/*").body("{\"age\": \"1\"}").contentType("application/json")
+        .expect()
+        .response().body(is("typesDog"))
+        .statusCode(200)
+        .when().post("/api1/typesDog");
 
-        given().header("Accept", "*/*").body("{\"name\": \"a\"}").contentType("application/json")
-                .expect()
-                .response().body(is("typesPerson"))
-                .statusCode(200)
-                .when().post("/api2/typesPerson");
+    given().header("Accept", "*/*").body("{\"name\": \"a\"}").contentType("application/json")
+        .expect()
+        .response().body(is("typesPerson"))
+        .statusCode(200)
+        .when().post("/api2/typesPerson");
 
-        given().header("Accept", "*/*").body("hello").contentType("application/xml")
-                .expect()
-                .response().body(is("{message: 'Unsupported media type'}"))
-                .statusCode(415)
-                .when().post("/api1/typesDog");
+    given().header("Accept", "*/*").body("hello").contentType("application/xml")
+        .expect()
+        .response().body(is("{message: 'Unsupported media type'}"))
+        .statusCode(415)
+        .when().post("/api1/typesDog");
 
-        given().header("Accept", "*/*").body("hello").contentType("application/xml")
-                .expect()
-                .response().body(is("{message: 'Unsupported media type'}"))
-                .statusCode(415)
-                .when().post("/api2/typesPerson");
-    }
+    given().header("Accept", "*/*").body("hello").contentType("application/xml")
+        .expect()
+        .response().body(is("{message: 'Unsupported media type'}"))
+        .statusCode(415)
+        .when().post("/api2/typesPerson");
+  }
 
 
 }

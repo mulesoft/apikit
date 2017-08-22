@@ -9,29 +9,29 @@ package org.mule.module.apikit.metadata.interfaces;
 /**
  * Interface to send information
  */
-public interface Notifier
-{
-    /**
-     * Level ERROR
-     * @param message
-     */
-    void error(String message);
+public interface Notifier {
 
-    /**
-     * Level WARNING
-     * @param message
-     */
-    void warn(String message);
+  /**
+   * Level ERROR
+   * @param message
+   */
+  void error(String message);
 
-    /**
-     * Level INFO
-     * @param message
-     */
-    void info(String message);
+  /**
+   * Level WARNING
+   * @param message
+   */
+  void warn(String message);
 
-    /**
-     * Level DEBUG
-     * @param message
-     */
-    void debug(String message);
+  /**
+   * Level INFO
+   * @param message
+   */
+  void info(String message);
+
+  /**
+   * Level DEBUG
+   * @param message
+   */
+  void debug(String message);
 }

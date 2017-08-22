@@ -18,7 +18,8 @@
     <properties>
         <runtime.version>4.0.0-SNAPSHOT</runtime.version>
         <rest.assured.version>1.7.2</rest.assured.version>
-        <formatterConfigPath>formatter.xml</formatterConfigPath>
+        <licensePath>../LICENSE_HEADER.txt</licensePath>
+        <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <testExtensionModelLoaderId>crafted</testExtensionModelLoaderId>
 
         <mule.tests.infrastructure.version>${runtime.version}</mule.tests.infrastructure.version>

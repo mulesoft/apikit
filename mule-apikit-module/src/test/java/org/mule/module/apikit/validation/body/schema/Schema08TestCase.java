@@ -20,71 +20,68 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class Schema08TestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class Schema08TestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/validation/body/schema/schema-config-08.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Test
-    public void putValidJson() throws Exception
-    {
-        given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\",\"emailAddresses\":[\"gbs@ie\"]}")
-                .contentType("application/json")
-            .expect()
-                .statusCode(201)
-                .body(is("hello"))
-            .when().put("/api/currentuser");
-    }
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/validation/body/schema/schema-config-08.xml";
+  }
 
-    @Test
-    public void putInvalidJson() throws Exception
-    {
-        given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
-                .contentType("application/json")
-                .expect()
-                .statusCode(400)//.body(is("bad request"))
-                .when().put("/api/currentuser");
-    }
+  @Test
+  public void putValidJson() throws Exception {
+    given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\",\"emailAddresses\":[\"gbs@ie\"]}")
+        .contentType("application/json")
+        .expect()
+        .statusCode(201)
+        .body(is("hello"))
+        .when().put("/api/currentuser");
+  }
 
-    @Test
-    public void putValidXml() throws Exception
-    {
-        given().body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">" +
-                     "<email-addresses><email-address>gbs@ie</email-address></email-addresses></user>")
-                .contentType("text/xml")
-            .expect()
-                .statusCode(201)
-                .body(is("hello"))
-            .when().put("/api/currentuser");
-    }
+  @Test
+  public void putInvalidJson() throws Exception {
+    given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
+        .contentType("application/json")
+        .expect()
+        .statusCode(400)//.body(is("bad request"))
+        .when().put("/api/currentuser");
+  }
 
-    @Test
-    public void putInvalidXml() throws Exception
-    {
-        given().body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">" +
-                     "<email-addresses></email-addresses></user>")
-                .contentType("text/xml")
-            .expect()
-                .statusCode(400)
-            .when().put("/api/currentuser");
-    }
+  @Test
+  public void putValidXml() throws Exception {
+    given()
+        .body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">"
+            +
+            "<email-addresses><email-address>gbs@ie</email-address></email-addresses></user>")
+        .contentType("text/xml")
+        .expect()
+        .statusCode(201)
+        .body(is("hello"))
+        .when().put("/api/currentuser");
+  }
+
+  @Test
+  public void putInvalidXml() throws Exception {
+    given()
+        .body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">"
+            +
+            "<email-addresses></email-addresses></user>")
+        .contentType("text/xml")
+        .expect()
+        .statusCode(400)
+        .when().put("/api/currentuser");
+  }
 }

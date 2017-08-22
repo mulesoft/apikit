@@ -21,114 +21,92 @@ import org.raml.model.ActionType;
 import org.raml.model.Resource;
 import org.raml.model.parameter.UriParameter;
 
-public class ResourceImpl implements IResource
-{
-    Resource resource;
+public class ResourceImpl implements IResource {
 
-    public ResourceImpl (Resource resource)
-    {
-        this.resource = resource;
+  Resource resource;
+
+  public ResourceImpl(Resource resource) {
+    this.resource = resource;
+  }
+
+  public IAction getAction(String s) {
+    Action action = resource.getAction(s);
+    if (action == null) {
+      return null;
     }
+    return new ActionImpl(action);
 
-    public IAction getAction(String s)
-    {
-        Action action = resource.getAction(s);
-        if (action == null)
-        {
-            return null;
-        }
-        return new ActionImpl(action);
+  }
 
+  public String getUri() {
+    return resource.getUri();
+  }
+
+  public void setParentUri(String s) {
+    resource.setParentUri(s);
+  }
+
+  public Map<String, IResource> getResources() {
+    if (resource.getResources() == null) {
+      return null;
     }
-
-    public String getUri()
-    {
-        return resource.getUri();
+    Map<String, IResource> map = new LinkedHashMap<String, IResource>();
+    for (Map.Entry<String, Resource> entry : resource.getResources().entrySet()) {
+      map.put(entry.getKey(), new ResourceImpl(entry.getValue()));
     }
+    return map;
+  }
 
-    public void setParentUri(String s)
-    {
-        resource.setParentUri(s);
-    }
+  public String getParentUri() {
+    return resource.getParentUri();
+  }
 
-    public Map<String, IResource> getResources()
-    {
-        if (resource.getResources() == null)
-        {
-            return null;
-        }
-        Map<String, IResource> map = new LinkedHashMap<String, IResource>();
-        for(Map.Entry<String, Resource> entry : resource.getResources().entrySet())
-        {
-            map.put(entry.getKey(), new ResourceImpl(entry.getValue()));
-        }
-        return map;
+  public Map<IActionType, IAction> getActions() {
+    if (resource.getActions() == null) {
+      return null;
     }
+    Map<IActionType, IAction> map = new LinkedHashMap<IActionType, IAction>();
+    for (Map.Entry<ActionType, Action> entry : resource.getActions().entrySet()) {
+      map.put(IActionType.valueOf(entry.getKey().name()), new ActionImpl(entry.getValue()));
+    }
+    return map;
+  }
 
-    public String getParentUri()
-    {
-        return resource.getParentUri();
+  public Map<String, List<IParameter>> getBaseUriParameters() {
+    if (resource.getBaseUriParameters() == null) {
+      return null;
     }
+    Map<String, List<IParameter>> map = new LinkedHashMap<String, List<IParameter>>();
+    for (Map.Entry<String, List<UriParameter>> entry : resource.getBaseUriParameters().entrySet()) {
+      List<IParameter> list = new ArrayList<IParameter>();
+      for (UriParameter parameter : entry.getValue()) {
+        list.add(new ParameterImpl(parameter));
+      }
+      map.put(entry.getKey(), list);
+    }
+    return map;
+  }
 
-    public Map<IActionType, IAction> getActions()
-    {
-        if (resource.getActions() == null)
-        {
-            return null;
-        }
-        Map<IActionType, IAction> map = new LinkedHashMap<IActionType, IAction>();
-        for(Map.Entry<ActionType, Action> entry : resource.getActions().entrySet())
-        {
-            map.put(IActionType.valueOf(entry.getKey().name()), new ActionImpl(entry.getValue()));
-        }
-        return map;
+  public Map<String, IParameter> getResolvedUriParameters() {
+    if (resource.getResolvedUriParameters() == null) {
+      return null;
     }
+    Map<String, IParameter> map = new LinkedHashMap<String, IParameter>();
+    for (Map.Entry<String, UriParameter> entry : resource.getResolvedUriParameters().entrySet()) {
+      map.put(entry.getKey(), new ParameterImpl(entry.getValue()));
+    }
+    return map;
+  }
 
-    public Map<String, List<IParameter>> getBaseUriParameters()
-    {
-        if (resource.getBaseUriParameters() == null)
-        {
-            return null;
-        }
-        Map<String, List<IParameter>> map = new LinkedHashMap<String, List<IParameter>>();
-        for (Map.Entry<String, List<UriParameter>> entry : resource.getBaseUriParameters().entrySet())
-        {
-            List<IParameter> list = new ArrayList<IParameter>();
-            for (UriParameter parameter : entry.getValue())
-            {
-                list.add(new ParameterImpl(parameter));
-            }
-            map.put(entry.getKey(), list);
-        }
-        return map;
-    }
+  public String getDisplayName() {
+    return resource.getDisplayName();
+  }
 
-    public Map<String, IParameter> getResolvedUriParameters()
-    {
-        if (resource.getResolvedUriParameters() == null)
-        {
-            return null;
-        }
-        Map<String, IParameter> map = new LinkedHashMap<String, IParameter>();
-        for(Map.Entry<String, UriParameter> entry : resource.getResolvedUriParameters().entrySet())
-        {
-            map.put(entry.getKey(), new ParameterImpl(entry.getValue()));
-        }
-        return map;
-    }
+  public String getRelativeUri() {
+    return resource.getRelativeUri();
+  }
 
-    public String getDisplayName()
-    {
-        return resource.getDisplayName();
-    }
-
-    public String getRelativeUri()
-    {
-        return resource.getRelativeUri();
-    }
-
-    public void cleanBaseUriParameters()
-    {
-        resource.getBaseUriParameters().clear();
-    }
+  public void cleanBaseUriParameters() {
+    resource.getBaseUriParameters().clear();
+  }
 }

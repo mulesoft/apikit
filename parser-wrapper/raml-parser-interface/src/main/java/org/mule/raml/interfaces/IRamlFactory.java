@@ -11,14 +11,14 @@ import org.mule.raml.interfaces.parser.visitor.IRamlCloningService;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
 import org.mule.raml.interfaces.parser.visitor.IRamlValidationService;
 
-public interface IRamlFactory
-{
-    IRamlEmitter createRamlEmitter();
+public interface IRamlFactory {
 
-    IRamlDocumentBuilder createRamlDocumentBuilder();
+  IRamlEmitter createRamlEmitter();
 
-    IRamlValidationService createRamlValidationService(IRamlDocumentBuilder ramlDocumentBuilder);
+  IRamlDocumentBuilder createRamlDocumentBuilder();
 
-    IRamlCloningService createRamlCloningService();
+  IRamlValidationService createRamlValidationService(IRamlDocumentBuilder ramlDocumentBuilder);
+
+  IRamlCloningService createRamlCloningService();
 
 }

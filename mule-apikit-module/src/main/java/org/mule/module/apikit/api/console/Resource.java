@@ -10,7 +10,10 @@ import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.util.MultiMap;
 
 public interface Resource {
+
   MediaType getMediaType();
+
   Object getContent();
+
   MultiMap<String, String> getHeaders();
 }

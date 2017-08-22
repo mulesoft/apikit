@@ -26,78 +26,66 @@ import org.springframework.core.io.AbstractFileResolvingResource;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
-public class XmlSchemaResource extends AbstractFileResolvingResource
-{
+public class XmlSchemaResource extends AbstractFileResolvingResource {
 
-    private String className;
+  private String className;
 
-    private ClassLoader classLoader;
+  private ClassLoader classLoader;
 
-    private static LoadingCache<Class<?>, byte[]> schemaCache;
+  private static LoadingCache<Class<?>, byte[]> schemaCache;
 
-    static
-    {
-        schemaCache = CacheBuilder.newBuilder()
-                .maximumSize(1000)
-                .build(
-                        new CacheLoader<Class<?>, byte[]>()
-                        {
-                            public byte[] load(Class<?> clazz) throws JAXBException, IOException
-                            {
-                                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+  static {
+    schemaCache = CacheBuilder.newBuilder()
+        .maximumSize(1000)
+        .build(
+               new CacheLoader<Class<?>, byte[]>() {
 
-                                // grab the context
-                                JAXBContext context = JAXBContext.newInstance(clazz);
-                                context.generateSchema(new SchemaOutputResolver()
-                                {
-                                    @Override
-                                    public Result createOutput(String namespaceURI, String suggestedFileName) throws IOException
-                                    {
-                                        StreamResult result = new StreamResult(baos);
-                                        result.setSystemId("001");
-                                        return result;
-                                    }
-                                });
+                 public byte[] load(Class<?> clazz) throws JAXBException, IOException {
+                   final ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-                                return baos.toByteArray();
-                            }
-                        });
+                   // grab the context
+                   JAXBContext context = JAXBContext.newInstance(clazz);
+                   context.generateSchema(new SchemaOutputResolver() {
 
+                     @Override
+                     public Result createOutput(String namespaceURI, String suggestedFileName) throws IOException {
+                       StreamResult result = new StreamResult(baos);
+                       result.setSystemId("001");
+                       return result;
+                     }
+                   });
+
+                   return baos.toByteArray();
+                 }
+               });
+
+  }
+
+
+  public XmlSchemaResource(String className, ClassLoader classLoader) {
+    Assert.notNull(className, "Class name must not be null");
+    this.className = className;
+    this.classLoader = (classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader());
+  }
+
+  @Override
+  public String getDescription() {
+    StringBuilder builder = new StringBuilder("annotated class resource [");
+    builder.append(this.className);
+    builder.append(']');
+    return builder.toString();
+  }
+
+  @Override
+  public InputStream getInputStream() throws IOException {
+    try {
+      Class<?> clazz = this.classLoader.loadClass(className);
+
+      return new ByteArrayInputStream(schemaCache.get(clazz));
+    } catch (ClassNotFoundException e) {
+      throw new IOException(getDescription() + " cannot be found", e);
+    } catch (ExecutionException e) {
+      throw new IOException(getDescription() + " execution exception", e.getCause());
     }
-
-
-    public XmlSchemaResource(String className, ClassLoader classLoader)
-    {
-        Assert.notNull(className, "Class name must not be null");
-        this.className = className;
-        this.classLoader = (classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader());
-    }
-
-    @Override
-    public String getDescription()
-    {
-        StringBuilder builder = new StringBuilder("annotated class resource [");
-        builder.append(this.className);
-        builder.append(']');
-        return builder.toString();
-    }
-
-    @Override
-    public InputStream getInputStream() throws IOException
-    {
-        try
-        {
-            Class<?> clazz = this.classLoader.loadClass(className);
-
-            return new ByteArrayInputStream(schemaCache.get(clazz));
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new IOException(getDescription() + " cannot be found", e);
-        }
-        catch (ExecutionException e)
-        {
-            throw new IOException(getDescription() + " execution exception", e.getCause());
-        }
-    }
+  }
 }

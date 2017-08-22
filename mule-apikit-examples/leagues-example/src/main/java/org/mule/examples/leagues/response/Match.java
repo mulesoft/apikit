@@ -17,71 +17,62 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonAutoDetect
 @XmlRootElement(namespace = "http://mulesoft.com/schemas/soccer")
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class Match {
 
-    private String homeTeam;
-    private String awayTeam;
+  private String homeTeam;
+  private String awayTeam;
 
-    @JsonSerialize(using = org.mule.examples.leagues.serializer.JsonDateSerializer.class, include=JsonSerialize.Inclusion.NON_NULL)
-    private Date date;
-    private Integer homeTeamScore;
-    private Integer awayTeamScore;
+  @JsonSerialize(using = org.mule.examples.leagues.serializer.JsonDateSerializer.class,
+      include = JsonSerialize.Inclusion.NON_NULL)
+  private Date date;
+  private Integer homeTeamScore;
+  private Integer awayTeamScore;
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public String getHomeTeam()
-    {
-        return homeTeam;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public String getHomeTeam() {
+    return homeTeam;
+  }
 
-    public void setHomeTeam(String homeTeam)
-    {
-        this.homeTeam = homeTeam;
-    }
+  public void setHomeTeam(String homeTeam) {
+    this.homeTeam = homeTeam;
+  }
 
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public String getAwayTeam()
-    {
-        return awayTeam;
-    }
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public String getAwayTeam() {
+    return awayTeam;
+  }
 
-    public void setAwayTeam(String awayTeam)
-    {
-        this.awayTeam = awayTeam;
-    }
+  public void setAwayTeam(String awayTeam) {
+    this.awayTeam = awayTeam;
+  }
 
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public Date getDate()
-    {
-        return date;
-    }
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public Date getDate() {
+    return date;
+  }
 
-    public void setDate(Date date)
-    {
-        this.date = date;
-    }
+  public void setDate(Date date) {
+    this.date = date;
+  }
 
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public Integer getHomeTeamScore()
-    {
-        return homeTeamScore;
-    }
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public Integer getHomeTeamScore() {
+    return homeTeamScore;
+  }
 
-    public void setHomeTeamScore(Integer homeTeamScore)
-    {
-        this.homeTeamScore = homeTeamScore;
-    }
+  public void setHomeTeamScore(Integer homeTeamScore) {
+    this.homeTeamScore = homeTeamScore;
+  }
 
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public Integer getAwayTeamScore()
-    {
-        return awayTeamScore;
-    }
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public Integer getAwayTeamScore() {
+    return awayTeamScore;
+  }
 
-    public void setAwayTeamScore(Integer awayTeamScore)
-    {
-        this.awayTeamScore = awayTeamScore;
-    }
+  public void setAwayTeamScore(Integer awayTeamScore) {
+    this.awayTeamScore = awayTeamScore;
+  }
 
 }

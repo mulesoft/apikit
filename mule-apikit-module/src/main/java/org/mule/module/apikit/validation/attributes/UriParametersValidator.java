@@ -28,8 +28,7 @@ public class UriParametersValidator {
   }
 
   public MultiMap<String, String> validateAndAddDefaults(MultiMap<String, String> uriParams)
-          throws InvalidUriParameterException
-  {
+      throws InvalidUriParameterException {
     this.uriParams = uriParams;
     for (Map.Entry<String, IParameter> entry : resource.getResolvedUriParameters().entrySet()) {
       String value = (String) resolvedVariables.get(entry.getKey());

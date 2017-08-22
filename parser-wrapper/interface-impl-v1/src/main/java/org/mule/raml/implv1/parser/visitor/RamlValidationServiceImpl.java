@@ -17,47 +17,40 @@ import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.visitor.RamlValidationService;
 
-public class RamlValidationServiceImpl implements IRamlValidationService
-{
-    RamlDocumentBuilderImpl ramlDocumentBuilderImpl;
-    List<IValidationResult> errors;
-    List<IValidationResult> warnings;
+public class RamlValidationServiceImpl implements IRamlValidationService {
 
-    public RamlValidationServiceImpl(IRamlDocumentBuilder ramlDocumentBuilder)
-    {
-        ramlDocumentBuilderImpl = (RamlDocumentBuilderImpl) ramlDocumentBuilder.getInstance();
+  RamlDocumentBuilderImpl ramlDocumentBuilderImpl;
+  List<IValidationResult> errors;
+  List<IValidationResult> warnings;
+
+  public RamlValidationServiceImpl(IRamlDocumentBuilder ramlDocumentBuilder) {
+    ramlDocumentBuilderImpl = (RamlDocumentBuilderImpl) ramlDocumentBuilder.getInstance();
+  }
+
+  public IRamlValidationService validate(String resource) {
+    return validate(null, resource);
+  }
+
+  public IRamlValidationService validate(String resourceContent, String resource) {
+    ResourceLoader resourceLoader = ramlDocumentBuilderImpl.getResourceLoader();
+    List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader).validate(resourceContent, resource);
+    errors = new ArrayList<IValidationResult>();
+    for (ValidationResult validationResult : ValidationResult.getLevel(ValidationResult.Level.ERROR, results)) {
+      errors.add(new ValidationResultImpl(validationResult));
     }
 
-    public IRamlValidationService validate(String resource)
-    {
-        return validate(null, resource);
+    warnings = new ArrayList<IValidationResult>();
+    for (ValidationResult validationResult : ValidationResult.getLevel(ValidationResult.Level.WARN, results)) {
+      warnings.add(new ValidationResultImpl(validationResult));
     }
+    return this;
+  }
 
-    public IRamlValidationService validate(String resourceContent, String resource)
-    {
-        ResourceLoader resourceLoader = ramlDocumentBuilderImpl.getResourceLoader();
-        List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader).validate(resourceContent, resource);
-        errors = new ArrayList<IValidationResult>();
-        for (ValidationResult validationResult : ValidationResult.getLevel(ValidationResult.Level.ERROR, results))
-        {
-            errors.add(new ValidationResultImpl(validationResult));
-        }
+  public List<IValidationResult> getErrors() {
+    return errors;
+  }
 
-        warnings = new ArrayList<IValidationResult>();
-        for (ValidationResult validationResult : ValidationResult.getLevel(ValidationResult.Level.WARN, results))
-        {
-            warnings.add(new ValidationResultImpl(validationResult));
-        }
-        return this;
-    }
-
-    public List<IValidationResult> getErrors()
-    {
-        return errors;
-    }
-
-    public List<IValidationResult> getWarnings()
-    {
-        return warnings;
-    }
+  public List<IValidationResult> getWarnings() {
+    return warnings;
+  }
 }

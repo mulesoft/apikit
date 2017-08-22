@@ -16,31 +16,27 @@ import org.mule.raml.interfaces.model.IResource;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RamlApiWrapper
-{
+public class RamlApiWrapper {
 
-    private Map<String, IResource> ramlResources = new HashMap<>();
+  private Map<String, IResource> ramlResources = new HashMap<>();
 
 
-    public RamlApiWrapper(IRaml ramlApi) {
-        collectResourcesRecursively(ramlApi.getResources());
+  public RamlApiWrapper(IRaml ramlApi) {
+    collectResourcesRecursively(ramlApi.getResources());
+  }
+
+  private void collectResourcesRecursively(Map<String, IResource> resources) {
+    for (IResource resource : resources.values()) {
+      ramlResources.put(resource.getUri(), resource);
+      collectResourcesRecursively(resource.getResources());
     }
+  }
 
-    private void collectResourcesRecursively(Map<String, IResource> resources)
-    {
-        for (IResource resource : resources.values()) {
-            ramlResources.put(resource.getUri(), resource);
-            collectResourcesRecursively(resource.getResources());
-        }
-    }
-
-    public MetadataSource getActionForCoordinate(RamlCoordinate coordinate) {
-        IResource resource = ramlResources.get(coordinate.getResource());
-        IAction action = resource.getAction(coordinate.getMethod());
-        return new FlowMetadata(action, coordinate);
-    }
+  public MetadataSource getActionForCoordinate(RamlCoordinate coordinate) {
+    IResource resource = ramlResources.get(coordinate.getResource());
+    IAction action = resource.getAction(coordinate.getMethod());
+    return new FlowMetadata(action, coordinate);
+  }
 }
-
-
 
 

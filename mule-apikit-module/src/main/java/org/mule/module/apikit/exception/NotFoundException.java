@@ -8,8 +8,8 @@ package org.mule.module.apikit.exception;
 
 import org.mule.module.apikit.api.exception.MuleRestException;
 
-public class NotFoundException extends MuleRestException
-{
+public class NotFoundException extends MuleRestException {
+
   public static final String STRING_REPRESENTATION = "APIKIT:NOT_FOUND";
 
   public NotFoundException(String path) {
@@ -20,13 +20,12 @@ public class NotFoundException extends MuleRestException
     super(t);
   }
 
-  public NotFoundException(){
+  public NotFoundException() {
     super("Not found");
   }
 
   @Override
-  public String getStringRepresentation()
-  {
+  public String getStringRepresentation() {
     return STRING_REPRESENTATION;
   }
 }

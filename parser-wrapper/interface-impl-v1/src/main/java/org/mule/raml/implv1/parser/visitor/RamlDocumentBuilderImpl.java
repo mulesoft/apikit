@@ -15,58 +15,48 @@ import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 
-public class RamlDocumentBuilderImpl implements IRamlDocumentBuilder
-{
+public class RamlDocumentBuilderImpl implements IRamlDocumentBuilder {
 
-    RamlDocumentBuilder ramlDocumentBuilder;
+  RamlDocumentBuilder ramlDocumentBuilder;
 
-    public RamlDocumentBuilderImpl(ResourceLoader resourceLoader)
-    {
-        ramlDocumentBuilder = new RamlDocumentBuilder(resourceLoader);
+  public RamlDocumentBuilderImpl(ResourceLoader resourceLoader) {
+    ramlDocumentBuilder = new RamlDocumentBuilder(resourceLoader);
+  }
+
+  public RamlDocumentBuilderImpl() {
+    ramlDocumentBuilder = new RamlDocumentBuilder();
+  }
+
+  public IRaml build(String content, String resourceLocation) {
+    return new RamlImplV1(ramlDocumentBuilder.build(content, resourceLocation));
+  }
+
+  public IRaml build(String resourceLocation) {
+    return new RamlImplV1(ramlDocumentBuilder.build(resourceLocation));
+  }
+
+  public IRamlDocumentBuilder addPathLookupFirst(String path) {
+    if (path != null) {
+      ResourceLoader loader = ramlDocumentBuilder.getResourceLoader();
+      loader = new CompositeResourceLoader(new FileResourceLoader(path), loader);
+      ramlDocumentBuilder = new RamlDocumentBuilder(loader);
     }
+    return this;
 
-    public RamlDocumentBuilderImpl()
-    {
-        ramlDocumentBuilder = new RamlDocumentBuilder();
-    }
+  }
 
-    public IRaml build(String content, String resourceLocation)
-    {
-        return new RamlImplV1(ramlDocumentBuilder.build(content, resourceLocation));
-    }
+  public IRamlDocumentBuilder addClassPathLookup(ClassLoader customClassPath) {
+    ResourceLoader loader = ramlDocumentBuilder.getResourceLoader();
+    loader = new CompositeResourceLoader(loader, new ClassPathResourceLoader(customClassPath));
+    ramlDocumentBuilder = new RamlDocumentBuilder(loader);
+    return this;
+  }
 
-    public IRaml build(String resourceLocation)
-    {
-        return new RamlImplV1(ramlDocumentBuilder.build(resourceLocation));
-    }
+  public RamlDocumentBuilderImpl getInstance() {
+    return this;
+  }
 
-    public IRamlDocumentBuilder addPathLookupFirst(String path)
-    {
-        if (path != null)
-        {
-            ResourceLoader loader = ramlDocumentBuilder.getResourceLoader();
-            loader = new CompositeResourceLoader(new FileResourceLoader(path), loader);
-            ramlDocumentBuilder = new RamlDocumentBuilder(loader);
-        }
-        return this;
-
-    }
-
-    public IRamlDocumentBuilder addClassPathLookup(ClassLoader customClassPath)
-    {
-        ResourceLoader loader = ramlDocumentBuilder.getResourceLoader();
-        loader = new CompositeResourceLoader(loader, new ClassPathResourceLoader(customClassPath));
-        ramlDocumentBuilder = new RamlDocumentBuilder(loader);
-        return this;
-    }
-
-    public RamlDocumentBuilderImpl getInstance()
-    {
-        return this;
-    }
-
-    public ResourceLoader getResourceLoader()
-    {
-        return ramlDocumentBuilder.getResourceLoader();
-    }
+  public ResourceLoader getResourceLoader() {
+    return ramlDocumentBuilder.getResourceLoader();
+  }
 }

@@ -12,6 +12,8 @@
     <properties>
         <metadata.api.version>1.0.0-SNAPSHOT</metadata.api.version>
         <mule.version>4.0.0-SNAPSHOT</mule.version>
+        <licensePath>../LICENSE_HEADER.txt</licensePath>
+        <formatterConfigPath>../formatter.xml</formatterConfigPath>
     </properties>
 
     <artifactId>mule-apikit-metadata</artifactId>

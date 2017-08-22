@@ -16,26 +16,23 @@ import org.mule.runtime.core.api.exception.TypedException;
 import java.util.Optional;
 
 
-public class ApikitErrorTypes
-{
-    private static MuleContext muleContext;
+public class ApikitErrorTypes {
 
-    public static void initialise(MuleContext muleContext)
-    {
-        ApikitErrorTypes.muleContext = muleContext;
-    }
+  private static MuleContext muleContext;
 
-    public static TypedException throwErrorType(MuleRestException exception)
-    {
-        ComponentIdentifier componentIdentifier = ComponentIdentifier.buildFromStringRepresentation(exception.getStringRepresentation());
-        if (muleContext != null)
-        {
-            Optional<ErrorType> errorType = muleContext.getErrorTypeRepository().getErrorType(componentIdentifier);
-            if (errorType.isPresent())
-            {
-                return new TypedException(exception, errorType.get());
-            }
-        }
-        return new TypedException(exception, new DefaultErrorTypeRepository().getAnyErrorType());
+  public static void initialise(MuleContext muleContext) {
+    ApikitErrorTypes.muleContext = muleContext;
+  }
+
+  public static TypedException throwErrorType(MuleRestException exception) {
+    ComponentIdentifier componentIdentifier =
+        ComponentIdentifier.buildFromStringRepresentation(exception.getStringRepresentation());
+    if (muleContext != null) {
+      Optional<ErrorType> errorType = muleContext.getErrorTypeRepository().getErrorType(componentIdentifier);
+      if (errorType.isPresent()) {
+        return new TypedException(exception, errorType.get());
+      }
     }
+    return new TypedException(exception, new DefaultErrorTypeRepository().getAnyErrorType());
+  }
 }

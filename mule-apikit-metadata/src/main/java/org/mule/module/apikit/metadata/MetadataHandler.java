@@ -17,30 +17,29 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.util.Optional.empty;
 
-public class MetadataHandler
-{
+public class MetadataHandler {
 
-    private ApplicationModelWrapper modelWrapper;
-    private Notifier notifier;
+  private ApplicationModelWrapper modelWrapper;
+  private Notifier notifier;
 
-    public MetadataHandler(ApplicationModelWrapper modelWrapper, Notifier notifier) {
-        this.modelWrapper = modelWrapper;
-        this.notifier = notifier;
+  public MetadataHandler(ApplicationModelWrapper modelWrapper, Notifier notifier) {
+    this.modelWrapper = modelWrapper;
+    this.notifier = notifier;
+  }
+
+  public Optional<FunctionType> getMetadataForFlow(String flowName) {
+    // Getting the RAML Coordinate for the specified flowName
+    final RamlCoordinate coordinate = modelWrapper.getRamlCoordinatesForFlow(flowName);
+
+    if (coordinate == null) {
+      notifier.error(format("There is no metadata for flow '%s'", flowName));
+      return empty();
     }
 
-    public Optional<FunctionType> getMetadataForFlow(String flowName) {
-        // Getting the RAML Coordinate for the specified flowName
-        final RamlCoordinate coordinate = modelWrapper.getRamlCoordinatesForFlow(flowName);
-
-        if (coordinate == null) {
-            notifier.error(format("There is no metadata for flow '%s'", flowName));
-            return empty();
-        }
-
-        // If there exists metadata for the flow, we get the Api
-        final ApikitConfig config = modelWrapper.getApikitConfigWithName(coordinate.getConfigName());
-        return config.getApi()
-                .map(api -> api.getActionForCoordinate(coordinate))
-                .flatMap(MetadataSource::getMetadata);
-    }
+    // If there exists metadata for the flow, we get the Api
+    final ApikitConfig config = modelWrapper.getApikitConfigWithName(coordinate.getConfigName());
+    return config.getApi()
+        .map(api -> api.getActionForCoordinate(coordinate))
+        .flatMap(MetadataSource::getMetadata);
+  }
 }

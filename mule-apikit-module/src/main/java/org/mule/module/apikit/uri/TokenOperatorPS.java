@@ -503,8 +503,7 @@ public class TokenOperatorPS extends TokenBase implements TokenOperator, Matchab
    * @return The corresponding token.
    * @throws URITemplateSyntaxException If the string cannot be parsed as a valid
    */
-  public static TokenOperatorPS parse(String exp) throws URITemplateSyntaxException
-  {
+  public static TokenOperatorPS parse(String exp) throws URITemplateSyntaxException {
     String sexp = strip(exp);
     if (sexp.length() < 2) {
       throw new URITemplateSyntaxException(exp, "Cannot produce a valid token operator.");

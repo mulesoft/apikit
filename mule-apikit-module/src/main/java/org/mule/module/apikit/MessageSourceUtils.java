@@ -22,57 +22,57 @@ import static org.mule.runtime.api.component.ComponentIdentifier.buildFromString
 
 public class MessageSourceUtils {
 
-    private static final Logger LOGGER = Logger.getLogger(MessageSourceUtils.class);
+  private static final Logger LOGGER = Logger.getLogger(MessageSourceUtils.class);
 
-    /**
-     * Extracts the configured HTTP URI from a flow. It only works for flows that uses the HTTP extension.
-     *
-//     * @param flow where to extract the URI
-     * @return the URI
-     */
-    public static URI getUriFromFlow(AnnotatedObject source) {
-        if (source != null && isHttpExtensionSource(source)) {
-            try {
-                String resolvedPath = getListenerPath(source);
-                return buildListenerUri(getConfigState(source).getConnectionParameters(), resolvedPath);
-            } catch (Exception e) {
-                LOGGER.warn("Error getting uri from flow " + source.getLocation().getRootContainerName(), e);
-            }
-        }
-
-        return null;
+  /**
+   * Extracts the configured HTTP URI from a flow. It only works for flows that uses the HTTP extension.
+   *
+  //     * @param flow where to extract the URI
+   * @return the URI
+   */
+  public static URI getUriFromFlow(AnnotatedObject source) {
+    if (source != null && isHttpExtensionSource(source)) {
+      try {
+        String resolvedPath = getListenerPath(source);
+        return buildListenerUri(getConfigState(source).getConnectionParameters(), resolvedPath);
+      } catch (Exception e) {
+        LOGGER.warn("Error getting uri from flow " + source.getLocation().getRootContainerName(), e);
+      }
     }
 
-    private static String getListenerPath(AnnotatedObject source) {
-        final ParameterizedSource parameterizedSource = cast(source);
-        String listenerPath = cast(parameterizedSource.getInitialisationParameters().get("path"));
-        final String basePath = cast(getConfigState(source).getConfigParameters().get("basePath"));
-        listenerPath = prependIfMissing(listenerPath, "/");
-        return basePath == null ? listenerPath : prependIfMissing(basePath, "/") + listenerPath;
-    }
+    return null;
+  }
 
-    private static ConfigurationState getConfigState(AnnotatedObject source) {
-        final ConfiguredComponent configuredComponent = cast(source);
-        return configuredComponent.getConfigurationInstance()
-                    .orElseThrow(() -> new RuntimeException("Source does not contain a configuration instance"))
-                    .getState();
-    }
+  private static String getListenerPath(AnnotatedObject source) {
+    final ParameterizedSource parameterizedSource = cast(source);
+    String listenerPath = cast(parameterizedSource.getInitialisationParameters().get("path"));
+    final String basePath = cast(getConfigState(source).getConfigParameters().get("basePath"));
+    listenerPath = prependIfMissing(listenerPath, "/");
+    return basePath == null ? listenerPath : prependIfMissing(basePath, "/") + listenerPath;
+  }
 
-    private static boolean isHttpExtensionSource(AnnotatedObject source) {
-        final ComponentIdentifier identifier = source.getLocation().getComponentIdentifier().getIdentifier();
-        return identifier.equals(buildFromStringRepresentation("http:listener"));
-    }
+  private static ConfigurationState getConfigState(AnnotatedObject source) {
+    final ConfiguredComponent configuredComponent = cast(source);
+    return configuredComponent.getConfigurationInstance()
+        .orElseThrow(() -> new RuntimeException("Source does not contain a configuration instance"))
+        .getState();
+  }
 
-    private static URI buildListenerUri(Map<String, Object> connectionParams, String path)
-            throws URISyntaxException  {
-        String host = cast(connectionParams.get("host"));
-        Integer port = cast(connectionParams.get("port"));
-        String scheme = connectionParams.get("protocol").toString().toLowerCase();
-        return new URI(scheme, null, host, port, path, null, null);
-    }
+  private static boolean isHttpExtensionSource(AnnotatedObject source) {
+    final ComponentIdentifier identifier = source.getLocation().getComponentIdentifier().getIdentifier();
+    return identifier.equals(buildFromStringRepresentation("http:listener"));
+  }
 
-    @SuppressWarnings("unchecked")
-    private static <A, B> A cast(B b) {
-        return (A) b;
-    }
+  private static URI buildListenerUri(Map<String, Object> connectionParams, String path)
+      throws URISyntaxException {
+    String host = cast(connectionParams.get("host"));
+    Integer port = cast(connectionParams.get("port"));
+    String scheme = connectionParams.get("protocol").toString().toLowerCase();
+    return new URI(scheme, null, host, port, path, null, null);
+  }
+
+  @SuppressWarnings("unchecked")
+  private static <A, B> A cast(B b) {
+    return (A) b;
+  }
 }

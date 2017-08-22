@@ -27,8 +27,8 @@ import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.exception.TypedException;
 
-public class RestXMLSchemaValidatorTestCase
-{
+public class RestXMLSchemaValidatorTestCase {
+
   private static final String xmlSchema = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?>" +
       "<xs:schema xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"" +
       " elementFormDefault=\"qualified\" xmlns=\"http://mulesoft.com/schemas/soccer\"" +
@@ -45,8 +45,7 @@ public class RestXMLSchemaValidatorTestCase
   private static IRaml api;
 
   @BeforeClass
-  public static void mockApi()
-  {
+  public static void mockApi() {
     api = Mockito.mock(IRaml.class);
 
     Map<String, Object> compiledSchemaMap = new HashMap<>();
@@ -55,7 +54,7 @@ public class RestXMLSchemaValidatorTestCase
     when(api.getCompiledSchemas()).thenReturn(compiledSchemaMap);
 
     Map<String, String> schemaMap = new HashMap<>();
-    schemaMap.put("scheme-xml",xmlSchema);
+    schemaMap.put("scheme-xml", xmlSchema);
     when(api.getConsolidatedSchemas()).thenReturn(schemaMap);
 
     Map<String, IMimeType> body = new HashMap<>();
@@ -85,7 +84,7 @@ public class RestXMLSchemaValidatorTestCase
     xmlValidator.validate(payload);
   }
 
-  @Test (expected = TypedException.class)
+  @Test(expected = TypedException.class)
   public void invalidStringPayloadUsingParser() throws TypedException, BadRequestException, ExecutionException {
     String payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
     String schemaPath = "/leagues,POST,application/xml";

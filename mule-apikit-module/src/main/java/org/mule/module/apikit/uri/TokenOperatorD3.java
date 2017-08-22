@@ -33,8 +33,7 @@ import java.util.Map;
  *      href="http://bitworking.org/projects/URI-Templates/spec/draft-gregorio-uritemplate-03.html">URI
  *      Template (draft 3)</a>
  */
-public class TokenOperatorD3 extends TokenBase implements TokenOperator
-{
+public class TokenOperatorD3 extends TokenBase implements TokenOperator {
 
   /**
    * The list of operators currently supported.
@@ -368,8 +367,7 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator
    * @return The corresponding token.
    * @throws URITemplateSyntaxException If the string cannot be parsed as a valid
    */
-  public static TokenOperatorD3 parse(String exp) throws URITemplateSyntaxException
-  {
+  public static TokenOperatorD3 parse(String exp) throws URITemplateSyntaxException {
     String sexp = strip(exp);
     String[] parts = sexp.split("\\|");
     if (parts.length != 3) {

@@ -20,52 +20,49 @@ import static java.lang.String.format;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-public class RamlHandler
-{
-    private static final String PARSER_V2_PROPERTY = "apikit.raml.parser.v2";
+public class RamlHandler {
 
-    private final ResourceLoader resourceLoader;
-    private final Notifier notifier;
+  private static final String PARSER_V2_PROPERTY = "apikit.raml.parser.v2";
 
-    public RamlHandler(ResourceLoader resourceLoader, Notifier notifier) {
-        this.resourceLoader = resourceLoader;
-        this.notifier = notifier;
-    }
+  private final ResourceLoader resourceLoader;
+  private final Notifier notifier;
 
-    public Optional<IRaml> getRamlApi(String uri) {
-        try
-        {
-            final File resource = resourceLoader.getRamlResource(uri);
+  public RamlHandler(ResourceLoader resourceLoader, Notifier notifier) {
+    this.resourceLoader = resourceLoader;
+    this.notifier = notifier;
+  }
 
-            if (resource == null) {
-                notifier.warn(format("RAML document '%s' not found.", uri));
-                return empty();
-            }
+  public Optional<IRaml> getRamlApi(String uri) {
+    try {
+      final File resource = resourceLoader.getRamlResource(uri);
 
-            final String content = getRamlContent(resource);
-            final Parseable parser = getParser(content);
-
-            return of(parser.build(resource, content));
-        } catch (IOException e) {
-            notifier.error(format("Error reading RAML document '%s'. Detail: %s", uri, e.getMessage()));
-        }
-
+      if (resource == null) {
+        notifier.warn(format("RAML document '%s' not found.", uri));
         return empty();
+      }
+
+      final String content = getRamlContent(resource);
+      final Parseable parser = getParser(content);
+
+      return of(parser.build(resource, content));
+    } catch (IOException e) {
+      notifier.error(format("Error reading RAML document '%s'. Detail: %s", uri, e.getMessage()));
     }
 
-    private Parseable getParser(String ramlContent)
-    {
-        return useParserV2(ramlContent) ? new RamlV2Parser() : new RamlV1Parser();
-    }
+    return empty();
+  }
 
-    private String getRamlContent(File uri) throws IOException {
-        try(final InputStream is = new FileInputStream(uri))
-        {
-            return IOUtils.toString(is);
-        }
-    }
+  private Parseable getParser(String ramlContent) {
+    return useParserV2(ramlContent) ? new RamlV2Parser() : new RamlV1Parser();
+  }
 
-    private static boolean useParserV2(String content) {
-        return getBoolean(PARSER_V2_PROPERTY) || content.startsWith("#%RAML 1.0");
+  private String getRamlContent(File uri) throws IOException {
+    try (final InputStream is = new FileInputStream(uri)) {
+      return IOUtils.toString(is);
     }
+  }
+
+  private static boolean useParserV2(String content) {
+    return getBoolean(PARSER_V2_PROPERTY) || content.startsWith("#%RAML 1.0");
+  }
 }

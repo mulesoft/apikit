@@ -21,116 +21,98 @@ import org.raml.v2.api.model.v08.api.Api;
 import org.raml.v2.api.model.v08.api.GlobalSchema;
 import org.raml.v2.api.model.v08.resources.Resource;
 
-public class RamlImpl08V2 implements IRaml
-{
-    private Api api;
+public class RamlImpl08V2 implements IRaml {
 
-    public RamlImpl08V2(Api api)
-    {
-        this.api = api;
-    }
+  private Api api;
 
-    @Override
-    public Map<String, IResource> getResources()
-    {
-        Map<String, IResource> map = new LinkedHashMap<>();
-        List<Resource> resources = api.resources();
-        for (Resource resource : resources)
-        {
-            map.put(resource.relativeUri().value(), new ResourceImpl(resource));
-        }
-        return map;
-    }
+  public RamlImpl08V2(Api api) {
+    this.api = api;
+  }
 
-    @Override
-    public String getVersion()
-    {
-        return api.version();
+  @Override
+  public Map<String, IResource> getResources() {
+    Map<String, IResource> map = new LinkedHashMap<>();
+    List<Resource> resources = api.resources();
+    for (Resource resource : resources) {
+      map.put(resource.relativeUri().value(), new ResourceImpl(resource));
     }
+    return map;
+  }
 
-    @Override
-    public IResource getResource(String path)
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public String getVersion() {
+    return api.version();
+  }
 
-    @Override
-    public Map<String, String> getConsolidatedSchemas()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public IResource getResource(String path) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Map<String, Object> getCompiledSchemas()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Map<String, String> getConsolidatedSchemas() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public String getBaseUri()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Map<String, Object> getCompiledSchemas() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Map<String, IParameter> getBaseUriParameters()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public String getBaseUri() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<Map<String, ISecurityScheme>> getSecuritySchemes()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Map<String, IParameter> getBaseUriParameters() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<Map<String, ITemplate>> getTraits()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public List<Map<String, ISecurityScheme>> getSecuritySchemes() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public String getUri()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public List<Map<String, ITemplate>> getTraits() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public List<Map<String, String>> getSchemas()
-    {
-        Map<String, String> map = new LinkedHashMap<>();
-        List<GlobalSchema> schemas = api.schemas();
-        for (GlobalSchema schema : schemas)
-        {
-            map.put(schema.key(), schema.value() != null ? schema.value().value() : null);
-        }
-        List<Map<String, String>> result = new ArrayList<>();
-        result.add(map);
-        return result;
-    }
+  @Override
+  public String getUri() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Object getInstance()
-    {
-        throw new UnsupportedOperationException();
+  @Override
+  public List<Map<String, String>> getSchemas() {
+    Map<String, String> map = new LinkedHashMap<>();
+    List<GlobalSchema> schemas = api.schemas();
+    for (GlobalSchema schema : schemas) {
+      map.put(schema.key(), schema.value() != null ? schema.value().value() : null);
     }
+    List<Map<String, String>> result = new ArrayList<>();
+    result.add(map);
+    return result;
+  }
 
-    @Override
-    public void cleanBaseUriParameters()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Object getInstance() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public void injectTrait(String name)
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void cleanBaseUriParameters() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme)
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void injectTrait(String name) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme) {
+    throw new UnsupportedOperationException();
+  }
 }

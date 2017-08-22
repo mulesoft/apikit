@@ -9,6 +9,7 @@ package org.mule.module.apikit.api.validation;
 import com.github.fge.jsonschema.main.JsonSchema;
 
 public class ApiKitJsonSchema {
+
   JsonSchema jsonSchema;
 
   public ApiKitJsonSchema(JsonSchema jsonSchema) {

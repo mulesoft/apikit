@@ -12,23 +12,37 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface IRaml extends Serializable
-{
-    IResource getResource(String path);
-    Map<String, String> getConsolidatedSchemas();
-    Map<String, Object> getCompiledSchemas();// TODO THIS MUST BE REMOVED
-    String getBaseUri();
-    Map<String, IResource> getResources();
-    String getVersion();
-    //void setBaseUri(String baseUri);
-    Map<String, IParameter> getBaseUriParameters();
-    //void setCompiledSchemas(Map<String, Object> compiledSchemas);
-    List<Map<String, ISecurityScheme>> getSecuritySchemes();
-    List<Map<String, ITemplate>> getTraits();
-    String getUri();
-    List<Map<String, String>> getSchemas();
-    Object getInstance();
-    void cleanBaseUriParameters();
-    void injectTrait(String name);
-    void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme);
+public interface IRaml extends Serializable {
+
+  IResource getResource(String path);
+
+  Map<String, String> getConsolidatedSchemas();
+
+  Map<String, Object> getCompiledSchemas();// TODO THIS MUST BE REMOVED
+
+  String getBaseUri();
+
+  Map<String, IResource> getResources();
+
+  String getVersion();
+
+  //void setBaseUri(String baseUri);
+  Map<String, IParameter> getBaseUriParameters();
+
+  //void setCompiledSchemas(Map<String, Object> compiledSchemas);
+  List<Map<String, ISecurityScheme>> getSecuritySchemes();
+
+  List<Map<String, ITemplate>> getTraits();
+
+  String getUri();
+
+  List<Map<String, String>> getSchemas();
+
+  Object getInstance();
+
+  void cleanBaseUriParameters();
+
+  void injectTrait(String name);
+
+  void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme);
 }

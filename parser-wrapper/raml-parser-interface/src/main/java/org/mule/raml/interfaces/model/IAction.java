@@ -11,23 +11,39 @@ import java.util.Map;
 
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
-public interface IAction
-{
-    IActionType getType();
-    IResource getResource();
-    Map<String, IMimeType> getBody();
-    Map<String, List<IParameter>> getBaseUriParameters();
-    Map<String, IParameter> getQueryParameters();
-    boolean hasBody();
-    Map<String, IResponse> getResponses();
-    Map<String, IParameter> getHeaders();
-    List<ISecurityReference> getSecuredBy();
-    List<String> getIs();
-    void cleanBaseUriParameters();
-    void setHeaders(Map<String, IParameter> headers);
-    void setQueryParameters(Map<String, IParameter> queryParameters);
-    void setBody(Map<String, IMimeType> body);
-    void addResponse(String key, IResponse response);
-    void addSecurityReference(String securityReferenceName);
-    void addIs(String is);
+public interface IAction {
+
+  IActionType getType();
+
+  IResource getResource();
+
+  Map<String, IMimeType> getBody();
+
+  Map<String, List<IParameter>> getBaseUriParameters();
+
+  Map<String, IParameter> getQueryParameters();
+
+  boolean hasBody();
+
+  Map<String, IResponse> getResponses();
+
+  Map<String, IParameter> getHeaders();
+
+  List<ISecurityReference> getSecuredBy();
+
+  List<String> getIs();
+
+  void cleanBaseUriParameters();
+
+  void setHeaders(Map<String, IParameter> headers);
+
+  void setQueryParameters(Map<String, IParameter> queryParameters);
+
+  void setBody(Map<String, IMimeType> body);
+
+  void addResponse(String key, IResponse response);
+
+  void addSecurityReference(String securityReferenceName);
+
+  void addIs(String is);
 }

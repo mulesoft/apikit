@@ -16,81 +16,81 @@ import org.apache.commons.lang.StringUtils;
 
 public class APIKitFlow {
 
-    public static final String UNNAMED_CONFIG_NAME = "noNameConfig";
-    private final String action;
-    private final String resource;
-    private final String configRef;
-    private final String mimeType;
+  public static final String UNNAMED_CONFIG_NAME = "noNameConfig";
+  private final String action;
+  private final String resource;
+  private final String configRef;
+  private final String mimeType;
 
-    public static final String APIKIT_FLOW_NAME_FORMAT = "^([^:]+):(/[^:]*)(:([^:]+))?(:(.*))?$";
+  public static final String APIKIT_FLOW_NAME_FORMAT = "^([^:]+):(/[^:]*)(:([^:]+))?(:(.*))?$";
 
-    public APIKitFlow(final String action, final String resource, final String mimeType, String configRef) {
-        this.action = action;
-        this.resource = resource;
-        this.mimeType = mimeType;
-        this.configRef = configRef != null ? configRef : UNNAMED_CONFIG_NAME;
+  public APIKitFlow(final String action, final String resource, final String mimeType, String configRef) {
+    this.action = action;
+    this.resource = resource;
+    this.mimeType = mimeType;
+    this.configRef = configRef != null ? configRef : UNNAMED_CONFIG_NAME;
+  }
+
+  public String getAction() {
+    return action;
+  }
+
+  public String getResource() {
+    return resource;
+  }
+
+  public String getMimeType() {
+    return mimeType;
+  }
+
+  public String getConfigRef() {
+    return configRef;
+  }
+
+  public static APIKitFlow buildFromName(String name, Collection<String> existingConfigs) {
+    if (StringUtils.isEmpty(name)) {
+      throw new IllegalArgumentException("Flow name cannot be null or empty");
     }
 
-    public String getAction() {
-        return action;
+    Pattern flowNamePattern = Pattern.compile(APIKIT_FLOW_NAME_FORMAT);
+    Matcher flowNameMatcher = flowNamePattern.matcher(name);
+
+    if (!flowNameMatcher.find()) {
+      throw new IllegalArgumentException("Invalid apikit flow name, expected format is: action:resource[:config]");
     }
 
-    public String getResource() {
-        return resource;
+    String action = flowNameMatcher.group(1);
+    if (!isValidAction(action)) {
+      throw new IllegalArgumentException(action + " is not a valid action type");
     }
 
-    public String getMimeType() { return mimeType; }
+    String resource = flowNameMatcher.group(2);
 
-    public String getConfigRef() {
-        return configRef;
-    }
+    String mimeType = null;
+    String config = null;
 
-    public static APIKitFlow  buildFromName(String name, Collection<String> existingConfigs) {
-        if(StringUtils.isEmpty(name)) {
-            throw new IllegalArgumentException("Flow name cannot be null or empty");
+    if (flowNameMatcher.groupCount() > 5) {
+      if (flowNameMatcher.group(6) == null) {
+        if (existingConfigs != null && existingConfigs.contains(flowNameMatcher.group(4))) {
+          config = flowNameMatcher.group(4);
+        } else {
+          mimeType = flowNameMatcher.group(4);
         }
-
-        Pattern flowNamePattern = Pattern.compile(APIKIT_FLOW_NAME_FORMAT);
-        Matcher flowNameMatcher = flowNamePattern.matcher(name);
-
-        if(!flowNameMatcher.find()) {
-            throw new IllegalArgumentException("Invalid apikit flow name, expected format is: action:resource[:config]");
-        }
-
-        String action = flowNameMatcher.group(1);
-        if(!isValidAction(action)) {
-            throw new IllegalArgumentException(action + " is not a valid action type");
-        }
-
-        String resource = flowNameMatcher.group(2);
-
-        String mimeType = null;
-        String config = null;
-
-        if(flowNameMatcher.groupCount() > 5) {
-            if (flowNameMatcher.group(6) == null) {
-                if (existingConfigs != null && existingConfigs.contains(flowNameMatcher.group(4))) {
-                    config = flowNameMatcher.group(4);
-                }
-                else {
-                    mimeType = flowNameMatcher.group(4);
-                }
-            }
-            else {
-                mimeType = flowNameMatcher.group(4);
-                config = flowNameMatcher.group(6);
-            }
-        }
-
-        return new APIKitFlow(action, resource, mimeType, config);
+      } else {
+        mimeType = flowNameMatcher.group(4);
+        config = flowNameMatcher.group(6);
+      }
     }
 
-    private static boolean isValidAction(String name) {
-        for(IActionType actionType : IActionType.values()) {
-            if(actionType.toString().equals(name.toUpperCase())) {
-                return true;
-            }
-        }
-        return false;
+    return new APIKitFlow(action, resource, mimeType, config);
+  }
+
+  private static boolean isValidAction(String name) {
+    for (IActionType actionType : IActionType.values()) {
+      if (actionType.toString().equals(name.toUpperCase())) {
+        return true;
+      }
     }
+    return false;
+  }
 }

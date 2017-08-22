@@ -11,22 +11,19 @@ import org.mule.runtime.extension.api.annotation.param.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FlowMappings
-{
-    @Parameter
-    private List<FlowMapping> flowMappings;
+public class FlowMappings {
 
-    public List<FlowMapping> getFlowMappings()
-    {
-        if (flowMappings == null)
-        {
-            return new ArrayList<>();
-        }
-        return flowMappings;
-    }
+  @Parameter
+  private List<FlowMapping> flowMappings;
 
-    public void setFlowMappings(List<FlowMapping> flowMappings)
-    {
-        this.flowMappings = flowMappings;
+  public List<FlowMapping> getFlowMappings() {
+    if (flowMappings == null) {
+      return new ArrayList<>();
     }
+    return flowMappings;
+  }
+
+  public void setFlowMappings(List<FlowMapping> flowMappings) {
+    this.flowMappings = flowMappings;
+  }
 }

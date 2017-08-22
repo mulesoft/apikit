@@ -26,84 +26,88 @@ import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFacto
 import org.mule.runtime.extension.api.loader.ExtensionLoadingContext;
 import org.mule.runtime.extension.api.loader.ExtensionLoadingDelegate;
 
-public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate
-{
-    public static final String EXTENSION_NAME = "APIKit";
-    public static final String PREFIX_NAME = "apikit";
-    public static final String EXTENSION_DESCRIPTION = "APIKit plugin";
-    public static final String VENDOR = "Mulesoft";
-    public static final String VERSION = "1.0.0-SNAPSHOT";
-    public static final MuleVersion MIN_MULE_VERSION = new MuleVersion("4.0");
-    public static final String XSD_FILE_NAME = "mule-apikit.xsd";
-    private static final String UNESCAPED_LOCATION_PREFIX = "http://";
-    private static final String SCHEMA_LOCATION = "www.mulesoft.org/schema/mule/mule-apikit";
-    private static final String SCHEMA_VERSION = "current";
-    
-    protected final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(JAVA);
+public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate {
 
-    @Override
-    public void accept(ExtensionDeclarer extensionDeclarer, ExtensionLoadingContext extensionLoadingContext)
-    {
-        ErrorModel muleAnyErrorType = ErrorModelBuilder.newError("ANY", "MULE").build();
-        ErrorModel apikitAnyErrorType = ErrorModelBuilder.newError("ANY", "APIKIT").withParent(muleAnyErrorType).build();
-        ErrorModel badRequestErrorModel = ErrorModelBuilder.newError("BAD_REQUEST", "APIKIT").withParent(apikitAnyErrorType).build();
-        ErrorModel notAcceptableErrorModel = ErrorModelBuilder.newError("NOT_ACCEPTABLE", "APIKIT").withParent(apikitAnyErrorType).build();
-        ErrorModel unsupportedMediaTypeErrorModel = ErrorModelBuilder.newError("UNSUPPORTED_MEDIA_TYPE", "APIKIT").withParent(apikitAnyErrorType).build();
-        ErrorModel methodNotAllowedErrorModel = ErrorModelBuilder.newError("METHOD_NOT_ALLOWED", "APIKIT").withParent(apikitAnyErrorType).build();
-        ErrorModel notFoundErrorModel = ErrorModelBuilder.newError("NOT_FOUND", "APIKIT").withParent(apikitAnyErrorType).build();
-        ErrorModel notImplementedErrorModel = ErrorModelBuilder.newError("NOT_IMPLEMENTED", "APIKIT").withParent(apikitAnyErrorType).build();
+  public static final String EXTENSION_NAME = "APIKit";
+  public static final String PREFIX_NAME = "apikit";
+  public static final String EXTENSION_DESCRIPTION = "APIKit plugin";
+  public static final String VENDOR = "Mulesoft";
+  public static final String VERSION = "1.0.0-SNAPSHOT";
+  public static final MuleVersion MIN_MULE_VERSION = new MuleVersion("4.0");
+  public static final String XSD_FILE_NAME = "mule-apikit.xsd";
+  private static final String UNESCAPED_LOCATION_PREFIX = "http://";
+  private static final String SCHEMA_LOCATION = "www.mulesoft.org/schema/mule/mule-apikit";
+  private static final String SCHEMA_VERSION = "current";
 
-        XmlDslModel xmlDslModel = XmlDslModel.builder()
-                .setPrefix(PREFIX_NAME)
-                .setXsdFileName(XSD_FILE_NAME)
-                .setSchemaVersion(VERSION)
-                .setSchemaLocation(String.format("%s/%s/%s", UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, SCHEMA_VERSION, XSD_FILE_NAME))
-                .setNamespace(UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION)
-                .build();
-        ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
+  protected final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(JAVA);
 
-        extensionDeclarer.named(EXTENSION_NAME)
-                .describedAs(EXTENSION_DESCRIPTION)
-                .fromVendor(VENDOR)
-                .onVersion(VERSION)
-                .withCategory(COMMUNITY)
-                .withMinMuleVersion(MIN_MULE_VERSION)
-                .withXmlDsl(xmlDslModel)
-                .withErrorModel(badRequestErrorModel)
-                .withErrorModel(apikitAnyErrorType)
-                .withErrorModel(notAcceptableErrorModel)
-                .withErrorModel(unsupportedMediaTypeErrorModel)
-                .withErrorModel(methodNotAllowedErrorModel)
-                .withErrorModel(notFoundErrorModel)
-                .withErrorModel(notImplementedErrorModel);
-        extensionDeclarer.withImportedType(new ImportedTypeModel((ObjectType) typeLoader.load(HttpRequestAttributes.class)));
+  @Override
+  public void accept(ExtensionDeclarer extensionDeclarer, ExtensionLoadingContext extensionLoadingContext) {
+    ErrorModel muleAnyErrorType = ErrorModelBuilder.newError("ANY", "MULE").build();
+    ErrorModel apikitAnyErrorType = ErrorModelBuilder.newError("ANY", "APIKIT").withParent(muleAnyErrorType).build();
+    ErrorModel badRequestErrorModel = ErrorModelBuilder.newError("BAD_REQUEST", "APIKIT").withParent(apikitAnyErrorType).build();
+    ErrorModel notAcceptableErrorModel =
+        ErrorModelBuilder.newError("NOT_ACCEPTABLE", "APIKIT").withParent(apikitAnyErrorType).build();
+    ErrorModel unsupportedMediaTypeErrorModel =
+        ErrorModelBuilder.newError("UNSUPPORTED_MEDIA_TYPE", "APIKIT").withParent(apikitAnyErrorType).build();
+    ErrorModel methodNotAllowedErrorModel =
+        ErrorModelBuilder.newError("METHOD_NOT_ALLOWED", "APIKIT").withParent(apikitAnyErrorType).build();
+    ErrorModel notFoundErrorModel = ErrorModelBuilder.newError("NOT_FOUND", "APIKIT").withParent(apikitAnyErrorType).build();
+    ErrorModel notImplementedErrorModel =
+        ErrorModelBuilder.newError("NOT_IMPLEMENTED", "APIKIT").withParent(apikitAnyErrorType).build();
 
-        //config
-        ConfigurationDeclarer apikitConfig = extensionDeclarer.withConfig("config")
-                .describedAs(PREFIX_NAME);
-        ParameterGroupDeclarer parameterGroupDeclarer = apikitConfig.onDefaultParameterGroup();
-        parameterGroupDeclarer.withRequiredParameter("raml").ofType(typeLoader.load(String.class));
-        parameterGroupDeclarer.withRequiredParameter("outboundHeadersMapName").ofType(typeLoader.load(String.class));
-        parameterGroupDeclarer.withRequiredParameter("httpStatusVarName").ofType(typeLoader.load(String.class));
-        parameterGroupDeclarer.withOptionalParameter("keepRamlBaseUri").defaultingTo(false).ofType(typeLoader.load(String.class));
-        parameterGroupDeclarer.withOptionalParameter("disableValidations").defaultingTo(false).ofType(typeLoader.load(String.class));
-        parameterGroupDeclarer.withOptionalParameter("flowMappings").ofType(typeBuilder.arrayType().of(typeLoader.load(FlowMapping.class)).build());
+    XmlDslModel xmlDslModel = XmlDslModel.builder()
+        .setPrefix(PREFIX_NAME)
+        .setXsdFileName(XSD_FILE_NAME)
+        .setSchemaVersion(VERSION)
+        .setSchemaLocation(String.format("%s/%s/%s", UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, SCHEMA_VERSION, XSD_FILE_NAME))
+        .setNamespace(UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION)
+        .build();
+    ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
 
-        //router
-        OperationDeclarer routerDeclarer = apikitConfig.withOperation("router");
-        routerDeclarer.withOutputAttributes().ofType(typeLoader.load(HttpRequestAttributes.class));
-        routerDeclarer.withOutput().ofType(typeLoader.load(Object.class));
-        routerDeclarer.withErrorModel(badRequestErrorModel)
-            .withErrorModel(notAcceptableErrorModel)
-            .withErrorModel(unsupportedMediaTypeErrorModel)
-            .withErrorModel(methodNotAllowedErrorModel)
-            .withErrorModel(notFoundErrorModel);
+    extensionDeclarer.named(EXTENSION_NAME)
+        .describedAs(EXTENSION_DESCRIPTION)
+        .fromVendor(VENDOR)
+        .onVersion(VERSION)
+        .withCategory(COMMUNITY)
+        .withMinMuleVersion(MIN_MULE_VERSION)
+        .withXmlDsl(xmlDslModel)
+        .withErrorModel(badRequestErrorModel)
+        .withErrorModel(apikitAnyErrorType)
+        .withErrorModel(notAcceptableErrorModel)
+        .withErrorModel(unsupportedMediaTypeErrorModel)
+        .withErrorModel(methodNotAllowedErrorModel)
+        .withErrorModel(notFoundErrorModel)
+        .withErrorModel(notImplementedErrorModel);
+    extensionDeclarer.withImportedType(new ImportedTypeModel((ObjectType) typeLoader.load(HttpRequestAttributes.class)));
 
-        //console
-        OperationDeclarer consoleDeclarer = apikitConfig.withOperation("console");
-        consoleDeclarer.withOutputAttributes().ofType(typeLoader.load(HttpRequestAttributes.class));
-        consoleDeclarer.withOutput().ofType(typeLoader.load(Object.class));
-        consoleDeclarer.withErrorModel(notFoundErrorModel);
+    //config
+    ConfigurationDeclarer apikitConfig = extensionDeclarer.withConfig("config")
+        .describedAs(PREFIX_NAME);
+    ParameterGroupDeclarer parameterGroupDeclarer = apikitConfig.onDefaultParameterGroup();
+    parameterGroupDeclarer.withRequiredParameter("raml").ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withRequiredParameter("outboundHeadersMapName").ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withRequiredParameter("httpStatusVarName").ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withOptionalParameter("keepRamlBaseUri").defaultingTo(false).ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withOptionalParameter("disableValidations").defaultingTo(false).ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withOptionalParameter("flowMappings")
+        .ofType(typeBuilder.arrayType().of(typeLoader.load(FlowMapping.class)).build());
 
-    }
+    //router
+    OperationDeclarer routerDeclarer = apikitConfig.withOperation("router");
+    routerDeclarer.withOutputAttributes().ofType(typeLoader.load(HttpRequestAttributes.class));
+    routerDeclarer.withOutput().ofType(typeLoader.load(Object.class));
+    routerDeclarer.withErrorModel(badRequestErrorModel)
+        .withErrorModel(notAcceptableErrorModel)
+        .withErrorModel(unsupportedMediaTypeErrorModel)
+        .withErrorModel(methodNotAllowedErrorModel)
+        .withErrorModel(notFoundErrorModel);
+
+    //console
+    OperationDeclarer consoleDeclarer = apikitConfig.withOperation("console");
+    consoleDeclarer.withOutputAttributes().ofType(typeLoader.load(HttpRequestAttributes.class));
+    consoleDeclarer.withOutput().ofType(typeLoader.load(Object.class));
+    consoleDeclarer.withErrorModel(notFoundErrorModel);
+
+  }
 }

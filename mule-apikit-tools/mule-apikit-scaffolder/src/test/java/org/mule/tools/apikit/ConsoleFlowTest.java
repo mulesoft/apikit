@@ -35,78 +35,76 @@ import org.junit.rules.TemporaryFolder;
 
 public class ConsoleFlowTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-    private FileListUtils fileListUtils = new FileListUtils();
+  @Rule
+  public TemporaryFolder folder = new TemporaryFolder();
+  private FileListUtils fileListUtils = new FileListUtils();
 
-    @Before
-    public void setUp() throws Exception {
-        folder.newFolder("console-flow");
+  @Before
+  public void setUp() throws Exception {
+    folder.newFolder("console-flow");
+  }
+
+  @Test
+  public void testAlreadyExistWithConsole() throws Exception {
+    List<File> ramls = Arrays.asList(getFile("console-flow/simple-console.raml"));
+    File xmlFile = getFile("console-flow/simple.xml");
+    List<File> xmls = Arrays.asList(xmlFile);
+    File muleXmlOut = folder.newFolder("mule-xml-out");
+
+    Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
+    scaffolder.run();
+
+    assertTrue(xmlFile.exists());
+    String s = IOUtils.toString(new FileInputStream(xmlFile));
+    assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+    assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+    assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
+    assertEquals(1, countOccurences(s, "get:/pet:simpleV10-config"));
+    assertEquals(2, countOccurences(s, "post:/pet:simpleV10-config"));
+    assertEquals(1, countOccurences(s, "get:/:simpleV10-config\""));
+    assertEquals(2, countOccurences(s, "get:/users"));
+    assertEquals(0, countOccurences(s, "extensionEnabled"));
+    assertEquals(0, countOccurences(s, "<flow name=\"simple-enabled-console\">"));
+    assertEquals(0, countOccurences(s, "apikit:console"));
+    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+  }
+
+  private File getFile(String s) throws Exception {
+    if (s == null) {
+      return null;
+    }
+    File file = folder.newFile(s);
+    file.createNewFile();
+    InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
+    IOUtils.copy(resourceAsStream,
+                 new FileOutputStream(file));
+    return file;
+  }
+
+  private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile,
+                                      boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled)
+      throws FileNotFoundException {
+    Log log = mock(Log.class);
+    Map<File, InputStream> ramlMap = null;
+    if (ramls != null) {
+      ramlMap = getFileInputStreamMap(ramls);
+    }
+    Map<File, InputStream> xmlMap = getFileInputStreamMap(xmls);
+    InputStream domainStream = null;
+    if (domainFile != null) {
+      domainStream = new FileInputStream(domainFile);
     }
 
-    @Test
-    public void testAlreadyExistWithConsole() throws Exception {
-        List<File> ramls = Arrays.asList(getFile("console-flow/simple-console.raml"));
-        File xmlFile = getFile("console-flow/simple.xml");
-        List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+    return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION,
+                          DEFAULT_RUNTIME_EDITION);
+  }
 
-        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
-        scaffolder.run();
+  private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
+      throws FileNotFoundException {
+    return createScaffolder(ramls, xmls, muleXmlOut, null, false, null);
+  }
 
-        assertTrue(xmlFile.exists());
-        String s = IOUtils.toString(new FileInputStream(xmlFile));
-        assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
-        assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
-        assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
-        assertEquals(1, countOccurences(s, "get:/pet:simpleV10-config"));
-        assertEquals(2, countOccurences(s, "post:/pet:simpleV10-config"));
-        assertEquals(1, countOccurences(s, "get:/:simpleV10-config\""));
-        assertEquals(2, countOccurences(s, "get:/users"));
-        assertEquals(0, countOccurences(s, "extensionEnabled"));
-        assertEquals(0, countOccurences(s, "<flow name=\"simple-enabled-console\">"));
-        assertEquals(0, countOccurences(s, "apikit:console"));
-        assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
-    }
-
-    private File getFile(String s) throws  Exception {
-        if (s == null)
-        {
-            return null;
-        }
-        File file = folder.newFile(s);
-        file.createNewFile();
-        InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
-        IOUtils.copy(resourceAsStream,
-                new FileOutputStream(file));
-        return file;
-    }
-
-    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile, boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled)
-            throws FileNotFoundException {
-        Log log = mock(Log.class);
-        Map<File, InputStream> ramlMap = null;
-        if (ramls != null)
-        {
-            ramlMap = getFileInputStreamMap(ramls);
-        }
-        Map<File, InputStream> xmlMap = getFileInputStreamMap(xmls);
-        InputStream domainStream = null;
-        if (domainFile != null)
-        {
-            domainStream = new FileInputStream(domainFile);
-        }
-
-        return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
-    }
-
-    private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
-            throws FileNotFoundException
-    {
-        return createScaffolder(ramls, xmls, muleXmlOut, null, false, null);
-    }
-
-    private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
-        return fileListUtils.toStreamFromFiles(ramls);
-    }
+  private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
+    return fileListUtils.toStreamFromFiles(ramls);
+  }
 }

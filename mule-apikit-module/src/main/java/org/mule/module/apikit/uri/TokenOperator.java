@@ -16,8 +16,7 @@ import java.util.List;
  * @author Christophe Lauret
  * @version 9 February 2009
  */
-public interface TokenOperator extends Token
-{
+public interface TokenOperator extends Token {
 
   /**
    * Returns the list of variables used in this token.

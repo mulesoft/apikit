@@ -17,31 +17,31 @@ import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 
 public class ConsoleFlowScope implements Scope {
 
-    private final Element consoleFlow;
+  private final Element consoleFlow;
 
 
-    public ConsoleFlowScope(Element mule, API api, String configRef, String httpListenerConfigRef, boolean isMuleEE){
+  public ConsoleFlowScope(Element mule, API api, String configRef, String httpListenerConfigRef, boolean isMuleEE) {
 
-        consoleFlow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
-        consoleFlow.setAttribute("name", api.getId() + "-" + "console");
+    consoleFlow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
+    consoleFlow.setAttribute("name", api.getId() + "-" + "console");
 
-        MainFlowsUtils.generateListenerSource(httpListenerConfigRef, API.DEFAULT_CONSOLE_PATH, consoleFlow);
+    MainFlowsUtils.generateListenerSource(httpListenerConfigRef, API.DEFAULT_CONSOLE_PATH, consoleFlow);
 
-        Element restProcessor = new Element("console", APIKitTools.API_KIT_NAMESPACE.getNamespace());
-        if(!StringUtils.isEmpty(configRef)) {
-            restProcessor.setAttribute("config-ref", configRef);
-        }
-        consoleFlow.addContent(restProcessor);
-
-        Element errorHandler = ErrorHandlerScope.createForConsoleFlow(isMuleEE).generate();
-        consoleFlow.addContent(errorHandler);
-
-        mule.addContent(consoleFlow);
-
+    Element restProcessor = new Element("console", APIKitTools.API_KIT_NAMESPACE.getNamespace());
+    if (!StringUtils.isEmpty(configRef)) {
+      restProcessor.setAttribute("config-ref", configRef);
     }
+    consoleFlow.addContent(restProcessor);
 
-    @Override
-    public Element generate() {
-        return consoleFlow;
-    }
+    Element errorHandler = ErrorHandlerScope.createForConsoleFlow(isMuleEE).generate();
+    consoleFlow.addContent(errorHandler);
+
+    mule.addContent(consoleFlow);
+
+  }
+
+  @Override
+  public Element generate() {
+    return consoleFlow;
+  }
 }

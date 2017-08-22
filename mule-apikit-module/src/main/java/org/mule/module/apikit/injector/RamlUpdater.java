@@ -50,7 +50,7 @@ public class RamlUpdater {
 
   public void resetAndUpdate() {
     //TODO update api using config
-//    config.updateApi(new RamlImplV1(raml));
+    //    config.updateApi(new RamlImplV1(raml));
   }
 
   public void reset() {
