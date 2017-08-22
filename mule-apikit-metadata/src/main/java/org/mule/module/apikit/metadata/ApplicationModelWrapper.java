@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.metadata;
 
+import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.model.ApikitConfig;
 import org.mule.module.apikit.metadata.model.Flow;
 import org.mule.module.apikit.metadata.model.FlowMapping;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
-import org.mule.module.apikit.metadata.raml.RamlApiWrapper;
 import org.mule.module.apikit.metadata.raml.RamlCoordsSimpleFactory;
 import org.mule.module.apikit.metadata.raml.RamlHandler;
 import org.mule.raml.interfaces.model.IRaml;
@@ -21,9 +21,13 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 public class ApplicationModelWrapper
 {
@@ -36,13 +40,15 @@ public class ApplicationModelWrapper
 
     private ApplicationModel applicationModel;
     private RamlHandler ramlHandler;
+    private Notifier notifier;
 
     private Map<String, ApikitConfig> apikitConfigMap;
     private Map<String, RamlCoordinate> metadataFlows;
 
-    public ApplicationModelWrapper(ApplicationModel applicationModel, RamlHandler ramlHandler) {
+    public ApplicationModelWrapper(ApplicationModel applicationModel, RamlHandler ramlHandler, Notifier notifier) {
         this.applicationModel = applicationModel;
         this.ramlHandler = ramlHandler;
+        this.notifier = notifier;
         initialize();
     }
 
@@ -54,17 +60,17 @@ public class ApplicationModelWrapper
     private void findAndProcessFlows()
     {
         // Finding all valid flows
-        List<Flow> flows = findFlows();
+        final List<Flow> flows = findFlows();
 
         // Creating a Coords Factory, giving the list of all valid config names
         final RamlCoordsSimpleFactory coordsFactory = new RamlCoordsSimpleFactory(getConfigNames());
-        Map<String, RamlCoordinate> conventionCoordinates = createCoordinatesForConventionFlows(flows, coordsFactory);
-        Map<String, RamlCoordinate> flowMappingCoordinates = createCoordinatesForMappingFlows(flows, coordsFactory);
+        final Map<String, RamlCoordinate> conventionCoordinates = createCoordinatesForConventionFlows(flows, coordsFactory);
+        final Map<String, RamlCoordinate> flowMappingCoordinates = createCoordinatesForMappingFlows(flows, coordsFactory);
 
         // Merging both results
         metadataFlows = Stream.of(conventionCoordinates, flowMappingCoordinates)
                 .flatMap(map -> map.entrySet().stream())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private void findApikitConfigs() {
@@ -73,7 +79,7 @@ public class ApplicationModelWrapper
                 .stream()
                 .filter((element) -> ApikitElementIdentifiers.isApikitConfig(element.getIdentifier()))
                 .map(this::createApikitConfig)
-                .collect(Collectors.toMap(ApikitConfig::getName, config -> config));
+                .collect(toMap(ApikitConfig::getName, config -> config));
     }
 
     private Set<String> getConfigNames()
@@ -100,7 +106,7 @@ public class ApplicationModelWrapper
                     return null;
                 })
                 .filter(Objects::nonNull)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     private Map<String, RamlCoordinate> createCoordinatesForConventionFlows(final List<Flow> flows, final RamlCoordsSimpleFactory coordsFactory)
@@ -114,30 +120,48 @@ public class ApplicationModelWrapper
                     return new AbstractMap.SimpleEntry<>(flowName, coordsFactory.createFromFlowName(flowName));
                 })
                 .filter(entry -> entry.getValue() != null)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
 
     private ApikitConfig createApikitConfig(ComponentModel unwrappedApikitConfig)
     {
-        Map<String, String> parameters = unwrappedApikitConfig.getParameters();
-        String configName = parameters.get(PARAMETER_NAME);
-        String configRaml = parameters.get(PARAMETER_RAML);
+        final Map<String, String> parameters = unwrappedApikitConfig.getParameters();
+        final String configName = parameters.get(PARAMETER_NAME);
+        final String configRaml = parameters.get(PARAMETER_RAML);
 
-        // Loading the corresponding RAML for this configuration
-        IRaml ramlApi = ramlHandler.getRamlApi(configRaml);
-
-        List<FlowMapping> flowMappings = unwrappedApikitConfig.getInnerComponents()
+        final List<FlowMapping> flowMappings = unwrappedApikitConfig.getInnerComponents()
                 .stream()
                 .filter(config -> ApikitElementIdentifiers.isFlowMappings(config.getIdentifier()))
                 .flatMap(flowMappingsElement -> flowMappingsElement.getInnerComponents().stream())
                 .filter(flowMapping -> ApikitElementIdentifiers.isFlowMapping(flowMapping.getIdentifier()))
                 .map(unwrappedFlowMapping -> createFlowMapping(configName, unwrappedFlowMapping))
-                .collect(Collectors.toList());
+                .collect(toList());
 
-        return new ApikitConfig(configName, configRaml, flowMappings, new RamlApiWrapper(ramlApi));
+        final RamlHandlerSupplier ramlSupplier = RamlHandlerSupplier.create(configRaml, ramlHandler);
+
+        return new ApikitConfig(configName, configRaml, flowMappings, ramlSupplier);
     }
 
+    private static class RamlHandlerSupplier implements Supplier<Optional<IRaml>> {
+
+        private String configRaml;
+        private RamlHandler handler;
+
+        private RamlHandlerSupplier(String configRaml, RamlHandler handler) {
+            this.configRaml = configRaml;
+            this.handler = handler;
+        }
+
+        private static RamlHandlerSupplier create(String configRaml, RamlHandler handler) {
+            return new RamlHandlerSupplier(configRaml, handler);
+        }
+
+        @Override
+        public Optional<IRaml> get() {
+            return handler.getRamlApi(configRaml);
+        }
+    }
 
     private FlowMapping createFlowMapping(String configName, ComponentModel unwrappedFlowMapping)
     {
@@ -157,7 +181,7 @@ public class ApplicationModelWrapper
                 .stream()
                 .filter(element -> ApikitElementIdentifiers.isFlow(element.getIdentifier()))
                 .map(this::createFlow)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     private Flow createFlow(ComponentModel componentModel)

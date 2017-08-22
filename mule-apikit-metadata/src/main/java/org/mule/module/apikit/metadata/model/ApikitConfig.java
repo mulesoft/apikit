@@ -7,21 +7,27 @@
 package org.mule.module.apikit.metadata.model;
 
 import org.mule.module.apikit.metadata.raml.RamlApiWrapper;
+import org.mule.raml.interfaces.model.IRaml;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import static java.util.Optional.ofNullable;
 
 public class ApikitConfig
 {
-    private String name;
-    private String raml;
-    private List<FlowMapping> flowMappings;
+    final private String name;
+    final private String raml;
+    final private List<FlowMapping> flowMappings;
+    final private Supplier<Optional<IRaml>> apiSupplier;
     private RamlApiWrapper ramlApi;
 
-    public ApikitConfig(String name, String raml, List<FlowMapping> flowMappings, RamlApiWrapper ramlApi) {
+    public ApikitConfig(String name, String raml, List<FlowMapping> flowMappings, Supplier<Optional<IRaml>> apiSupplier) {
         this.name = name;
         this.raml = raml;
         this.flowMappings = flowMappings;
-        this.ramlApi = ramlApi;
+        this.apiSupplier = apiSupplier;
     }
 
     public String getName()
@@ -39,8 +45,11 @@ public class ApikitConfig
         return flowMappings;
     }
 
-    public RamlApiWrapper getApi() {
-        return ramlApi;
+    public Optional<RamlApiWrapper> getApi() {
+        if (ramlApi == null) {
+            ramlApi = apiSupplier.get().map(RamlApiWrapper::new).orElse(null);
+        }
+        return ofNullable(ramlApi);
     }
 
 }
