@@ -38,7 +38,6 @@ public class Metadata
         return metadataHandler.getMetadataForFlow(flowName);
     }
 
-
     /**
      * Builder for Metadata module
      */
