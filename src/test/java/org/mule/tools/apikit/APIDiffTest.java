@@ -31,89 +31,93 @@ import org.junit.Test;
 
 public class APIDiffTest {
 
-    private APIFactory apiFactory;
+  private APIFactory apiFactory;
 
-    @Before
-    public void setUp() {
-        this.apiFactory = new APIFactory();
-    }
+  @Before
+  public void setUp() {
+    this.apiFactory = new APIFactory();
+  }
 
-    private Set<ResourceActionMimeTypeTriplet> computeDifferenceSetHelper(HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a, HashSet<ResourceActionMimeTypeTriplet> b) {
-        RAMLFilesParser RAMLFilesParser = mock(RAMLFilesParser.class);
-        when(RAMLFilesParser.getEntries()).thenReturn(a);
+  private Set<ResourceActionMimeTypeTriplet> computeDifferenceSetHelper(HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a,
+                                                                        HashSet<ResourceActionMimeTypeTriplet> b) {
+    RAMLFilesParser RAMLFilesParser = mock(RAMLFilesParser.class);
+    when(RAMLFilesParser.getEntries()).thenReturn(a);
 
-        MuleConfigParser muleConfigParser = mock(MuleConfigParser.class);
-        when(muleConfigParser.getEntries()).thenReturn(b);
+    MuleConfigParser muleConfigParser = mock(MuleConfigParser.class);
+    when(muleConfigParser.getEntries()).thenReturn(b);
 
-        return new APIDiff(RAMLFilesParser.getEntries().keySet(), muleConfigParser.getEntries()).getEntries();
-    }
+    return new APIDiff(RAMLFilesParser.getEntries().keySet(), muleConfigParser.getEntries()).getEntries();
+  }
 
-    @Test
-    public void testComputeDifferenceEmpty() throws Exception {
-        HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
+  @Test
+  public void testComputeDifferenceEmpty() throws Exception {
+    HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+    HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
 
-        Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
+    Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
 
-        assertNotNull(heavenFlowEntries);
-        assertTrue(heavenFlowEntries.isEmpty());
-    }
+    assertNotNull(heavenFlowEntries);
+    assertTrue(heavenFlowEntries.isEmpty());
+  }
 
-    @Test
-    public void testComputeDifference() throws Exception {
-        API fromRAMLFile = apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), null, "http://localhost:8080", "/api/*",  null);
+  @Test
+  public void testComputeDifference() throws Exception {
+    API fromRAMLFile =
+        apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), null, "http://localhost:8080", "/api/*", null);
 
-        HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
-        a.put(fab, mock(GenerationModel.class));
+    HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+    ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
+    a.put(fab, mock(GenerationModel.class));
 
-        HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
-        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
-        b.add(feb);
+    HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
+    ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
+    b.add(feb);
 
-        Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
+    Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
 
-        assertEquals(feb, fab);
-        assertNotNull(heavenFlowEntries);
-        assertEquals(0, heavenFlowEntries.size());
-    }
+    assertEquals(feb, fab);
+    assertNotNull(heavenFlowEntries);
+    assertEquals(0, heavenFlowEntries.size());
+  }
 
-    @Test
-    public void testComputeDifferenceMismatching() throws Exception {
-        API fromRAMLFile = apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), null, "http://localhost:8080", "/api/*",  null);
+  @Test
+  public void testComputeDifferenceMismatching() throws Exception {
+    API fromRAMLFile =
+        apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), null, "http://localhost:8080", "/api/*", null);
 
-        HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromRAMLFile, "b", "b");
-        a.put(fab, mock(GenerationModel.class));
-        a.put(new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b"), mock(GenerationModel.class));
+    HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+    ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromRAMLFile, "b", "b");
+    a.put(fab, mock(GenerationModel.class));
+    a.put(new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b"), mock(GenerationModel.class));
 
-        HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
-        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
-        b.add(feb);
+    HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
+    ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
+    b.add(feb);
 
-        Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
+    Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
 
-        assertNotNull(heavenFlowEntries);
-        assertEquals(1, heavenFlowEntries.size());
-        assertEquals(heavenFlowEntries.toArray()[0], fab);
-    }
+    assertNotNull(heavenFlowEntries);
+    assertEquals(1, heavenFlowEntries.size());
+    assertEquals(heavenFlowEntries.toArray()[0], fab);
+  }
 
-    @Test
-    public void testComputeDifferenceAsymetric() throws Exception {
-        API fromRAMLFile = apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), null, "http://localhost:8080", "/api/*",  null);
+  @Test
+  public void testComputeDifferenceAsymetric() throws Exception {
+    API fromRAMLFile =
+        apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), null, "http://localhost:8080", "/api/*", null);
 
-        HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
-        ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromRAMLFile, "b", "b");
-        a.put(fab, mock(GenerationModel.class));
+    HashMap<ResourceActionMimeTypeTriplet, GenerationModel> a = new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+    ResourceActionMimeTypeTriplet fab = new ResourceActionMimeTypeTriplet(fromRAMLFile, "b", "b");
+    a.put(fab, mock(GenerationModel.class));
 
-        HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
-        ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
-        b.add(feb);
+    HashSet<ResourceActionMimeTypeTriplet> b = new HashSet<ResourceActionMimeTypeTriplet>();
+    ResourceActionMimeTypeTriplet feb = new ResourceActionMimeTypeTriplet(fromRAMLFile, "a", "b");
+    b.add(feb);
 
-        Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
+    Set<ResourceActionMimeTypeTriplet> heavenFlowEntries = computeDifferenceSetHelper(a, b);
 
-        assertNotNull(heavenFlowEntries);
-        assertEquals(1, heavenFlowEntries.size());
-        assertEquals(heavenFlowEntries.toArray()[0], fab);
-    }
+    assertNotNull(heavenFlowEntries);
+    assertEquals(1, heavenFlowEntries.size());
+    assertEquals(heavenFlowEntries.toArray()[0], fab);
+  }
 }

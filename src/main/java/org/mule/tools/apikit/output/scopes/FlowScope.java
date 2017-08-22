@@ -17,34 +17,35 @@ import org.jdom2.Element;
 public class FlowScope implements Scope {
 
 
-    private final Element main;
+  private final Element main;
 
-    public FlowScope(Element mule, String exceptionStrategyRef, API api, String configRef, String httpListenerConfigRef) {
-        this(mule, exceptionStrategyRef, api, configRef, httpListenerConfigRef, true);
+  public FlowScope(Element mule, String exceptionStrategyRef, API api, String configRef, String httpListenerConfigRef) {
+    this(mule, exceptionStrategyRef, api, configRef, httpListenerConfigRef, true);
+  }
+
+  public FlowScope(Element mule, String exceptionStrategyRef, API api, String configRef, String httpListenerConfigRef,
+                   boolean isMuleEE) {
+
+    main = new Element("flow", XMLNS_NAMESPACE.getNamespace());
+    main.setAttribute("name", api.getId() + "-" + "main");
+
+    MainFlowsUtils.generateListenerSource(httpListenerConfigRef, api.getPath(), main);
+
+    Element restProcessor = new Element("router", APIKitTools.API_KIT_NAMESPACE.getNamespace());
+    if (!StringUtils.isEmpty(configRef)) {
+      restProcessor.setAttribute("config-ref", configRef);
     }
 
-    public FlowScope(Element mule, String exceptionStrategyRef, API api, String configRef, String httpListenerConfigRef, boolean isMuleEE) {
+    Element errorHandler = ErrorHandlerScope.createForMainFlow(isMuleEE).generate();
 
-        main = new Element("flow", XMLNS_NAMESPACE.getNamespace());
-        main.setAttribute("name", api.getId() + "-" + "main");
+    main.addContent(restProcessor);
+    main.addContent(errorHandler);
 
-        MainFlowsUtils.generateListenerSource(httpListenerConfigRef, api.getPath(), main);
+    mule.addContent(main);
+  }
 
-        Element restProcessor = new Element("router", APIKitTools.API_KIT_NAMESPACE.getNamespace());
-        if(!StringUtils.isEmpty(configRef)) {
-            restProcessor.setAttribute("config-ref", configRef);
-        }
-
-        Element errorHandler = ErrorHandlerScope.createForMainFlow(isMuleEE).generate();
-
-        main.addContent(restProcessor);
-        main.addContent(errorHandler);
-
-        mule.addContent(main);
-    }
-
-    @Override
-    public Element generate() {
-        return main;
-    }
+  @Override
+  public Element generate() {
+    return main;
+  }
 }

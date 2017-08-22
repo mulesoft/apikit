@@ -10,5 +10,5 @@ import org.jdom2.Element;
 
 public interface Scope {
 
-    Element generate();
+  Element generate();
 }

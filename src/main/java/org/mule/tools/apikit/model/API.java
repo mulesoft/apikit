@@ -13,134 +13,135 @@ import java.io.File;
 import org.apache.commons.io.FilenameUtils;
 
 public class API {
-    public static final String DEFAULT_HOST = "0.0.0.0";
-    public static final int DEFAULT_PORT = 8081;
-    public static final String DEFAULT_BASE_URI = "http://" + DEFAULT_HOST +":" + DEFAULT_PORT + "/api";
-    public static final String DEFAULT_BASE_PATH = "/";
-    public static final String DEFAULT_PROTOCOL = "HTTP";
-    public static final String DEFAULT_CONSOLE_PATH = "/console/*";
-    public static final String DEFAULT_CONSOLE_PATH_INBOUND = "http://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/console";
 
-    private APIKitConfig config;
-    private HttpListener4xConfig httpListenerConfig;
-    private String path;
+  public static final String DEFAULT_HOST = "0.0.0.0";
+  public static final int DEFAULT_PORT = 8081;
+  public static final String DEFAULT_BASE_URI = "http://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/api";
+  public static final String DEFAULT_BASE_PATH = "/";
+  public static final String DEFAULT_PROTOCOL = "HTTP";
+  public static final String DEFAULT_CONSOLE_PATH = "/console/*";
+  public static final String DEFAULT_CONSOLE_PATH_INBOUND = "http://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/console";
 
-    private String baseUri;
-    private File xmlFile;
-    private File ramlFile;
-    private String id;
+  private APIKitConfig config;
+  private HttpListener4xConfig httpListenerConfig;
+  private String path;
 
-    public API(File ramlFile, File xmlFile, String baseUri, String path) {
-        this.path = path;
-        this.ramlFile = ramlFile;
-        this.xmlFile = xmlFile;
-        this.baseUri = baseUri;
-        id = FilenameUtils.removeExtension(ramlFile.getName()).trim();
+  private String baseUri;
+  private File xmlFile;
+  private File ramlFile;
+  private String id;
+
+  public API(File ramlFile, File xmlFile, String baseUri, String path) {
+    this.path = path;
+    this.ramlFile = ramlFile;
+    this.xmlFile = xmlFile;
+    this.baseUri = baseUri;
+    id = FilenameUtils.removeExtension(ramlFile.getName()).trim();
+  }
+
+  public API(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config) {
+    this(ramlFile, xmlFile, baseUri, path);
+    this.config = config;
+  }
+
+  public File getXmlFile() {
+    return xmlFile;
+  }
+
+  public void setXmlFile(File xmlFile) {
+    this.xmlFile = xmlFile;
+  }
+
+  public File getXmlFile(File rootDirectory) {
+    // Case we need to create the file
+    if (xmlFile == null) {
+      xmlFile = new File(rootDirectory,
+                         FilenameUtils.getBaseName(
+                                                   ramlFile.getAbsolutePath())
+                             + ".xml");
     }
+    return xmlFile;
+  }
 
-    public API(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config) {
-        this(ramlFile, xmlFile, baseUri, path);
-        this.config = config;
-    }
+  public File getRamlFile() {
+    return ramlFile;
+  }
 
-    public File getXmlFile() {
-        return xmlFile;
-    }
+  public String getPath() {
+    return path;
+  }
 
-    public void setXmlFile(File xmlFile) {
-        this.xmlFile = xmlFile;
-    }
+  public void setPath(String path) {
+    this.path = path;
+  }
 
-    public File getXmlFile(File rootDirectory) {
-        // Case we need to create the file
-        if (xmlFile == null) {
-            xmlFile = new File(rootDirectory,
-                    FilenameUtils.getBaseName(
-                            ramlFile.getAbsolutePath()) + ".xml");
-        }
-        return xmlFile;
-    }
+  public HttpListener4xConfig getHttpListenerConfig() {
+    return httpListenerConfig;
+  }
 
-    public File getRamlFile() {
-        return ramlFile;
-    }
+  public APIKitConfig getConfig() {
+    return config;
+  }
 
-    public String getPath()
-    {
-        return path;
-    }
+  public void setConfig(APIKitConfig config) {
+    this.config = config;
+  }
 
-    public void setPath(String path)
-    {
-        this.path = path;
-    }
+  public void setHttpListenerConfig(HttpListener4xConfig httpListenerConfig) {
+    this.httpListenerConfig = httpListenerConfig;
+  }
 
-    public HttpListener4xConfig getHttpListenerConfig() {
-        return httpListenerConfig;
-    }
+  public void setDefaultAPIKitConfig() {
+    config = new APIKitConfig();
+    config.setRaml(ramlFile.getName());
+    config.setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME);
+  }
 
-    public APIKitConfig getConfig() {
-        return config;
-    }
+  public void setDefaultHttpListenerConfig() {
+    String httpListenerConfigName =
+        id == null ? HttpListener4xConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListener4xConfig.DEFAULT_CONFIG_NAME;
+    httpListenerConfig = new HttpListener4xConfig(httpListenerConfigName);
+  }
 
-    public void setConfig(APIKitConfig config) {
-        this.config = config;
-    }
+  //public Boolean useInboundEndpoint()
+  //{
+  //    return APIKitTools.defaultIsInboundEndpoint(muleVersion);
+  //}
 
-    public void setHttpListenerConfig(HttpListener4xConfig httpListenerConfig) {
-        this.httpListenerConfig = httpListenerConfig;
-    }
+  //public boolean setUseInboundEndpoint(Boolean useInboundEndpoint)
+  //{
+  //    return this.useInboundEndpoint = useInboundEndpoint;
+  //}
+  public String getBaseUri() {
+    return baseUri;
+  }
 
-    public void setDefaultAPIKitConfig() {
-        config = new APIKitConfig();
-        config.setRaml(ramlFile.getName());
-        config.setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME);
-    }
+  public void setBaseUri(String baseUri) {
+    this.baseUri = baseUri;
+  }
 
-    public void setDefaultHttpListenerConfig()
-    {
-        String httpListenerConfigName = id == null ? HttpListener4xConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListener4xConfig.DEFAULT_CONFIG_NAME;
-        httpListenerConfig = new HttpListener4xConfig(httpListenerConfigName);
-    }
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
 
-    //public Boolean useInboundEndpoint()
-    //{
-    //    return APIKitTools.defaultIsInboundEndpoint(muleVersion);
-    //}
+    API api = (API) o;
 
-    //public boolean setUseInboundEndpoint(Boolean useInboundEndpoint)
-    //{
-    //    return this.useInboundEndpoint = useInboundEndpoint;
-    //}
-    public String getBaseUri()
-    {
-        return baseUri;
-    }
+    if (!ramlFile.equals(api.ramlFile))
+      return false;
 
-    public void setBaseUri(String baseUri)
-    {
-        this.baseUri = baseUri;
-    }
+    return true;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+  @Override
+  public int hashCode() {
+    return ramlFile.hashCode();
+  }
 
-        API api = (API) o;
-
-        if (!ramlFile.equals(api.ramlFile)) return false;
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        return ramlFile.hashCode();
-    }
-
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 
 }
