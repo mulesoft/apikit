@@ -32,7 +32,6 @@ public class MetadataHandler {
     final Optional<RamlCoordinate> coordinate = modelWrapper.getRamlCoordinatesForFlow(flowName);
 
     if (!coordinate.isPresent()) {
-      notifier.error(format("There is no metadata for flow '%s'", flowName));
       return empty();
     }
 

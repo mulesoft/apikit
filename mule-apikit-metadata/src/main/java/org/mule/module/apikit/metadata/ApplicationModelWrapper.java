@@ -13,10 +13,12 @@ import org.mule.module.apikit.metadata.model.FlowMapping;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.module.apikit.metadata.raml.RamlCoordsSimpleFactory;
 import org.mule.module.apikit.metadata.raml.RamlHandler;
+import org.mule.module.apikit.metadata.util.Utils;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
 import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,12 +26,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.mule.module.apikit.metadata.util.Utils.merge;
 
 public class ApplicationModelWrapper {
 
@@ -69,16 +73,7 @@ public class ApplicationModelWrapper {
     final Map<String, RamlCoordinate> flowMappingCoordinates = createCoordinatesForMappingFlows(flows, coordsFactory);
 
     // Merging both results
-    metadataFlows = merge(conventionCoordinates, flowMappingCoordinates);
-  }
-
-  private static <K, V> Map<K, V> merge(Map<K, V> a, Map<K, V> b) {
-    final Map<K, V> map = new HashMap<>();
-
-    map.putAll(a);
-    map.putAll(b);
-
-    return map;
+    metadataFlows = merge(asList(conventionCoordinates, flowMappingCoordinates));
   }
 
   private void findApikitConfigs() {
