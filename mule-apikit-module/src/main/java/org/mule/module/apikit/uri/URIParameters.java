@@ -22,8 +22,7 @@ import java.util.Set;
  * @author Christophe Lauret
  * @version 5 November 2009
  */
-public class URIParameters implements Parameters
-{
+public class URIParameters implements Parameters {
 
   /**
    * Maps the parameter names to the values.

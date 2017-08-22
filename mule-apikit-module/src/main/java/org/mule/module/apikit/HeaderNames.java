@@ -7,7 +7,7 @@
 package org.mule.module.apikit;
 
 //TODO transform to enum
-public class HeaderNames
-{
-    public static final String CONTENT_TYPE = "content-type";
+public class HeaderNames {
+
+  public static final String CONTENT_TYPE = "content-type";
 }

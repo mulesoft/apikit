@@ -24,52 +24,49 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
-    @Rule
-    public DynamicPort serverPort2 = new DynamicPort("serverPort2");
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
+  @Rule
+  public DynamicPort serverPort2 = new DynamicPort("serverPort2");
 
-    @Override
-    protected String getConfigFile()
-    {
-        return "org/mule/module/apikit/validation/body/schema/xxe-attack-config.xml";
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Test
-    public void xxeAttack() throws Exception
-    {
-        Response post = given().log().all()
-                .body("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE foo [<!ENTITY xxead812 SYSTEM \"src/test/resources/org/mule/module/apikit/validation/body/schema/twin-cam.yaml\"> ]><a>&xxead812;</a>")
-                .contentType("application/xml")
-                .expect().statusCode(400)
-                .when().post("/api/test");
-        String response = post.getBody().asString();
-        assertThat(response, not(containsString("League Schema")));
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Test
-    //TODO This test needs to be checked manually. The test will throw  a 400 as DOCTYPE is disabled, but also it shouldn't display the log located in the second flow.
-    public void xxeAttack2() throws Exception
-    {
-        given().log().all()
-                .body("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE xxeattack PUBLIC \"foo\" \"http://localhost:" + serverPort2.getValue() + "/\"><a>1</a>")
-                .contentType("application/xml")
-                .expect().statusCode(400)
-                .when().post("/api/test");
+  @Override
+  protected String getConfigFile() {
+    return "org/mule/module/apikit/validation/body/schema/xxe-attack-config.xml";
+  }
 
-    }
+  @Test
+  public void xxeAttack() throws Exception {
+    Response post = given().log().all()
+        .body("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE foo [<!ENTITY xxead812 SYSTEM \"src/test/resources/org/mule/module/apikit/validation/body/schema/twin-cam.yaml\"> ]><a>&xxead812;</a>")
+        .contentType("application/xml")
+        .expect().statusCode(400)
+        .when().post("/api/test");
+    String response = post.getBody().asString();
+    assertThat(response, not(containsString("League Schema")));
+  }
+
+  @Test
+  //TODO This test needs to be checked manually. The test will throw  a 400 as DOCTYPE is disabled, but also it shouldn't display the log located in the second flow.
+  public void xxeAttack2() throws Exception {
+    given().log().all()
+        .body("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE xxeattack PUBLIC \"foo\" \"http://localhost:"
+            + serverPort2.getValue() + "/\"><a>1</a>")
+        .contentType("application/xml")
+        .expect().statusCode(400)
+        .when().post("/api/test");
+
+  }
 }

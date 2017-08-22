@@ -16,11 +16,10 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.HeaderNames;
 import org.mule.runtime.api.util.MultiMap;
 
-public class AttributesHelper
-{
-  private AttributesHelper()
-  {
-      // Prevents instantiation :)
+public class AttributesHelper {
+
+  private AttributesHelper() {
+    // Prevents instantiation :)
   }
 
   public static MultiMap addParam(MultiMap<String, String> oldParams, String key, String value) {
@@ -38,24 +37,21 @@ public class AttributesHelper
 
   public static String addQueryString(String oldQueryString, int queryStringSize, String key, String value) {
     String newParam = queryStringSize != 0 ? "&" : "";
-    try
-    {
+    try {
       newParam += URLEncoder.encode(key, "UTF-8");
-      if (value != null)
-      {
+      if (value != null) {
 
         newParam += "=" + URLEncoder.encode(value, "UTF-8");
       }
-    }
-    catch (UnsupportedEncodingException e)
-    {
+    } catch (UnsupportedEncodingException e) {
       //UTF-8 will never be unsupported
     }
     return oldQueryString + newParam;
   }
 
-  public static HttpRequestAttributes replaceParams(HttpRequestAttributes attributes, MultiMap<String, String> headers, MultiMap<String, String> queryParams, String queryString, MultiMap<String, String> uriParams)
-  {
+  public static HttpRequestAttributes replaceParams(HttpRequestAttributes attributes, MultiMap<String, String> headers,
+                                                    MultiMap<String, String> queryParams, String queryString,
+                                                    MultiMap<String, String> uriParams) {
     return new HttpRequestAttributes(headers, attributes.getListenerPath(), attributes.getRelativePath(),
                                      attributes.getVersion(), attributes.getScheme(),
                                      attributes.getMethod(), attributes.getRequestPath(),
@@ -66,35 +62,28 @@ public class AttributesHelper
 
   private static String ANY_RESPONSE_MEDIA_TYPE = "*/*";
 
-  public static String getHeaderIgnoreCase(HttpRequestAttributes attributes, String name)
-  {
+  public static String getHeaderIgnoreCase(HttpRequestAttributes attributes, String name) {
     MultiMap<String, String> headers = attributes.getHeaders();
     return getParamIgnoreCase(headers, name);
   }
 
-  public static String getParamIgnoreCase(MultiMap<String, String> parameters, String name)
-  {
-    for (String header : parameters.keySet())
-    {
-      if (header.equalsIgnoreCase(name.toLowerCase()))
-      {
+  public static String getParamIgnoreCase(MultiMap<String, String> parameters, String name) {
+    for (String header : parameters.keySet()) {
+      if (header.equalsIgnoreCase(name.toLowerCase())) {
         return parameters.get(header);
       }
     }
     return null;
   }
 
-  public static String getMediaType(HttpRequestAttributes attributes)
-  {
+  public static String getMediaType(HttpRequestAttributes attributes) {
     String contentType = getHeaderIgnoreCase(attributes, HeaderNames.CONTENT_TYPE);
     return contentType != null ? contentType.split(";")[0] : null;
   }
 
-  public static String getAcceptedResponseMediaTypes(MultiMap<String, String> headers)
-  {
+  public static String getAcceptedResponseMediaTypes(MultiMap<String, String> headers) {
     String acceptableResponseMediaTypes = getParamIgnoreCase(headers, "accept");
-    if (Strings.isNullOrEmpty(acceptableResponseMediaTypes))
-    {
+    if (Strings.isNullOrEmpty(acceptableResponseMediaTypes)) {
       return ANY_RESPONSE_MEDIA_TYPE;
     }
     return acceptableResponseMediaTypes;

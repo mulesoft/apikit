@@ -9,11 +9,11 @@ package org.mule.module.apikit.metadata.utils;
 import java.util.Optional;
 import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;
 
-public interface ApplicationModelWrapper
-{
-    ComponentModel findRootComponentModel();
+public interface ApplicationModelWrapper {
 
-    Optional<ComponentModel> findNamedComponent(String var1);
+  ComponentModel findRootComponentModel();
 
-    Optional<String> findTypesData();
+  Optional<ComponentModel> findNamedComponent(String var1);
+
+  Optional<String> findTypesData();
 }

@@ -19,8 +19,7 @@ import java.util.List;
  * @author Christophe Lauret
  * @version 30 December 2008
  */
-abstract class TokenBase implements Token
-{
+abstract class TokenBase implements Token {
 
   /**
    * The expression for this token.
@@ -117,8 +116,7 @@ abstract class TokenBase implements Token
    * @return A list of variables.
    * @throws URITemplateSyntaxException If thrown by the Variable parse method.
    */
-  protected static final List<Variable> toVariables(String exp) throws URITemplateSyntaxException
-  {
+  protected static final List<Variable> toVariables(String exp) throws URITemplateSyntaxException {
     String[] exps = exp.split(",");
     List<Variable> vars = new ArrayList<Variable>(exps.length);
     for (String e : exps) {

@@ -11,16 +11,15 @@ import org.mule.raml.interfaces.emitter.IRamlEmitter;
 import org.mule.raml.interfaces.model.IRaml;
 import org.raml.model.Raml;
 
-public class RamlEmitterImpl implements IRamlEmitter
-{
-    RamlEmitter ramlEmitter;
-    public RamlEmitterImpl()
-    {
-        ramlEmitter = new RamlEmitter();
-    }
+public class RamlEmitterImpl implements IRamlEmitter {
 
-    public String dump(IRaml iRaml)
-    {
-        return ramlEmitter.dump((Raml) iRaml.getInstance());
-    }
+  RamlEmitter ramlEmitter;
+
+  public RamlEmitterImpl() {
+    ramlEmitter = new RamlEmitter();
+  }
+
+  public String dump(IRaml iRaml) {
+    return ramlEmitter.dump((Raml) iRaml.getInstance());
+  }
 }

@@ -26,8 +26,7 @@ import org.raml.model.parameter.Header;
 public class HeadersValidatorTestCase {
 
   @Test(expected = InvalidHeaderException.class)
-  public void invalidHeader() throws TypedException, InvalidHeaderException, NotAcceptableException
-  {
+  public void invalidHeader() throws TypedException, InvalidHeaderException, NotAcceptableException {
     Map<String, Header> expectedHeaders = new HashMap<>();
     Header header1 = new Header();
     header1.setType(ParamType.STRING);
@@ -59,8 +58,7 @@ public class HeadersValidatorTestCase {
   }
 
   @Test
-  public void validHeader() throws InvalidHeaderException, NotAcceptableException
-  {
+  public void validHeader() throws InvalidHeaderException, NotAcceptableException {
     Map<String, Header> expectedHeaders = new HashMap<>();
     Header header1 = new Header();
     header1.setType(ParamType.STRING);

@@ -9,5 +9,6 @@ package org.mule.module.apikit.api.config;
 import org.mule.module.apikit.api.RamlHandler;
 
 public interface ConsoleConfig {
+
   RamlHandler getRamlHandler();
 }

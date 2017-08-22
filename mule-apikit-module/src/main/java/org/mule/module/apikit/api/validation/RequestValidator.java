@@ -24,7 +24,8 @@ public class RequestValidator {
 
     return ValidRequest.builder()
         .withAttributes(AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables))
-        .withBody(BodyValidator.validate(resource.getAction(attributes.getMethod().toLowerCase()), attributes, payload, config, charset))
+        .withBody(BodyValidator.validate(resource.getAction(attributes.getMethod().toLowerCase()), attributes, payload, config,
+                                         charset))
         .build();
 
   }

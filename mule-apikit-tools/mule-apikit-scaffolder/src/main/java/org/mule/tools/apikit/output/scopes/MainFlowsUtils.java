@@ -12,42 +12,44 @@ import org.mule.tools.apikit.model.APIKitConfig;
 
 import org.jdom2.Element;
 
-public class  MainFlowsUtils
-{
-    private MainFlowsUtils() {}
+public class MainFlowsUtils {
 
-    public static final String DEFAULT_STATUS_CODE_SUCCESS_VALUE = "#[vars." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 200]";
-    public static final String DEFAULT_STATUS_CODE_ERROR_VALUE = "#[vars." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 500]";
-    public static final String DEFAULT_OUTBOUND_HEADERS_MAP_VALUE = "#[vars." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + " default {}]";
-    public static final String DEFAULT_ERROR_BODY_CONTENT = "#[payload]";
+  private MainFlowsUtils() {}
 
-    public static void generateListenerSource(String httpListenerConfigRef, String path, Element main)
-    {
-        Element httpListener = new Element("listener", HTTP_NAMESPACE.getNamespace());
-        httpListener.setAttribute("config-ref", httpListenerConfigRef);
-        httpListener.setAttribute("path", path);
+  public static final String DEFAULT_STATUS_CODE_SUCCESS_VALUE =
+      "#[vars." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 200]";
+  public static final String DEFAULT_STATUS_CODE_ERROR_VALUE =
+      "#[vars." + APIKitConfig.DEFAULT_HTTP_STATUS_NAME + " default 500]";
+  public static final String DEFAULT_OUTBOUND_HEADERS_MAP_VALUE =
+      "#[vars." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + " default {}]";
+  public static final String DEFAULT_ERROR_BODY_CONTENT = "#[payload]";
 
-        Element headers = new Element("headers", HTTP_NAMESPACE.getNamespace());
-        headers.setText(DEFAULT_OUTBOUND_HEADERS_MAP_VALUE);
+  public static void generateListenerSource(String httpListenerConfigRef, String path, Element main) {
+    Element httpListener = new Element("listener", HTTP_NAMESPACE.getNamespace());
+    httpListener.setAttribute("config-ref", httpListenerConfigRef);
+    httpListener.setAttribute("path", path);
 
-        Element errorHeaders = new Element("headers", HTTP_NAMESPACE.getNamespace());
-        errorHeaders.setText(DEFAULT_OUTBOUND_HEADERS_MAP_VALUE);
+    Element headers = new Element("headers", HTTP_NAMESPACE.getNamespace());
+    headers.setText(DEFAULT_OUTBOUND_HEADERS_MAP_VALUE);
 
-        Element responseBuilder = new Element("response", HTTP_NAMESPACE.getNamespace());
-        responseBuilder.setAttribute("statusCode", DEFAULT_STATUS_CODE_SUCCESS_VALUE);
-        responseBuilder.addContent(headers);
-        httpListener.addContent(responseBuilder);
+    Element errorHeaders = new Element("headers", HTTP_NAMESPACE.getNamespace());
+    errorHeaders.setText(DEFAULT_OUTBOUND_HEADERS_MAP_VALUE);
 
-        Element errorBody = new Element("body", HTTP_NAMESPACE.getNamespace());
-        errorBody.addContent(DEFAULT_ERROR_BODY_CONTENT);
+    Element responseBuilder = new Element("response", HTTP_NAMESPACE.getNamespace());
+    responseBuilder.setAttribute("statusCode", DEFAULT_STATUS_CODE_SUCCESS_VALUE);
+    responseBuilder.addContent(headers);
+    httpListener.addContent(responseBuilder);
 
-        Element errorResponseBuilder = new Element("error-response", HTTP_NAMESPACE.getNamespace());
-        errorResponseBuilder.setAttribute("statusCode", DEFAULT_STATUS_CODE_ERROR_VALUE);
-        errorResponseBuilder.addContent(errorBody);
-        errorResponseBuilder.addContent(errorHeaders);
-        httpListener.addContent(errorResponseBuilder);
+    Element errorBody = new Element("body", HTTP_NAMESPACE.getNamespace());
+    errorBody.addContent(DEFAULT_ERROR_BODY_CONTENT);
 
-        main.addContent(httpListener);
-    }
+    Element errorResponseBuilder = new Element("error-response", HTTP_NAMESPACE.getNamespace());
+    errorResponseBuilder.setAttribute("statusCode", DEFAULT_STATUS_CODE_ERROR_VALUE);
+    errorResponseBuilder.addContent(errorBody);
+    errorResponseBuilder.addContent(errorHeaders);
+    httpListener.addContent(errorResponseBuilder);
+
+    main.addContent(httpListener);
+  }
 
 }

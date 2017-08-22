@@ -8,18 +8,16 @@ package org.mule.module.apikit.validation.body.schema;
 
 import org.mule.module.apikit.api.exception.BadRequestException;
 
-public class RestSchemaValidator
-{
-    IRestSchemaValidatorStrategy strategy;
+public class RestSchemaValidator {
 
-    public RestSchemaValidator(IRestSchemaValidatorStrategy schemaValidationStrategy)
-    {
-        this.strategy = schemaValidationStrategy;
-    }
+  IRestSchemaValidatorStrategy strategy;
 
-    public void validate(String payload) throws BadRequestException
-    {
-        this.strategy.validate(payload);
-    }
+  public RestSchemaValidator(IRestSchemaValidatorStrategy schemaValidationStrategy) {
+    this.strategy = schemaValidationStrategy;
+  }
+
+  public void validate(String payload) throws BadRequestException {
+    this.strategy.validate(payload);
+  }
 
 }

@@ -29,7 +29,7 @@ public class PayloadHelperTestCase {
   public void validStringPayload() throws TypedException, BadRequestException {
     String payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
 
-    assertEquals(payload, PayloadHelper.getPayloadAsString(payload, "UTF-8",true));
+    assertEquals(payload, PayloadHelper.getPayloadAsString(payload, "UTF-8", true));
   }
 
   @Test
@@ -37,20 +37,21 @@ public class PayloadHelperTestCase {
     String payloadString = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
 
     InputStream payloadStream = new ByteArrayInputStream(payloadString.getBytes(StandardCharsets.UTF_8));
-    assertEquals(payloadString, PayloadHelper.getPayloadAsString(payloadStream, "UTF-8",true));
+    assertEquals(payloadString, PayloadHelper.getPayloadAsString(payloadStream, "UTF-8", true));
     //re-reading payload to check if it was consumed
     payloadStream = new ByteArrayInputStream(payloadString.getBytes(StandardCharsets.UTF_8));
-    assertEquals(payloadString, PayloadHelper.getPayloadAsString(payloadStream, "UTF-8",true));
+    assertEquals(payloadString, PayloadHelper.getPayloadAsString(payloadStream, "UTF-8", true));
   }
 
   @Test
   public void validBytesPayload() throws TypedException, BadRequestException {
     byte[] payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>".getBytes();
 
-    assertEquals("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>", PayloadHelper.getPayloadAsString(payload, "UTF-8", true));
+    assertEquals("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>",
+                 PayloadHelper.getPayloadAsString(payload, "UTF-8", true));
   }
 
-  @Test (expected = TypedException.class)
+  @Test(expected = TypedException.class)
   public void nullPayload() throws TypedException, BadRequestException {
 
     PayloadHelper.getPayloadAsString(null, "UTF-8", true);

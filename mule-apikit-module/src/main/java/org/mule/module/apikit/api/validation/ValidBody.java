@@ -9,6 +9,7 @@ package org.mule.module.apikit.api.validation;
 import org.mule.runtime.api.metadata.TypedValue;
 
 public class ValidBody {
+
   Object payload;
   Object formParameters;
 
@@ -16,8 +17,7 @@ public class ValidBody {
     setPayload(payload);
   }
 
-  public TypedValue getPayloadAsTypedValue()
-  {
+  public TypedValue getPayloadAsTypedValue() {
     if (payload instanceof TypedValue) {
       return (TypedValue) payload;
     }
@@ -25,15 +25,13 @@ public class ValidBody {
   }
 
   public Object getPayload() {
-    if(formParameters == null) {
+    if (formParameters == null) {
       if (payload instanceof TypedValue) {
-        return ((TypedValue)payload).getValue();
-      }
-      else {
+        return ((TypedValue) payload).getValue();
+      } else {
         return payload;
       }
-    }
-    else {
+    } else {
       return formParameters;
     }
   }
@@ -43,12 +41,9 @@ public class ValidBody {
   }
 
   public void setFormParameters(Object formParameters) {
-    if (formParameters instanceof TypedValue)
-    {
+    if (formParameters instanceof TypedValue) {
       this.formParameters = ((TypedValue) formParameters).getValue();
-    }
-    else
-    {
+    } else {
       this.formParameters = formParameters;
     }
   }

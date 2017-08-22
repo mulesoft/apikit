@@ -27,60 +27,55 @@ import java.util.Iterator;
 import static com.github.fge.jsonschema.core.report.LogLevel.ERROR;
 import static com.github.fge.jsonschema.core.report.LogLevel.WARNING;
 
-public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy
-{
-    private static final String JSON_SCHEMA_FAIL_ON_WARNING_KEY = "raml.json_schema.fail_on_warning";
+public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy {
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private static final String JSON_SCHEMA_FAIL_ON_WARNING_KEY = "raml.json_schema.fail_on_warning";
 
-    private JsonSchema jsonSchema;
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    public RestJsonSchemaValidator(JsonSchema jsonSchema)
-    {
-        this.jsonSchema = jsonSchema;
-    }
+  private JsonSchema jsonSchema;
 
-    @Override
-    public void validate(String payload) throws BadRequestException {
+  public RestJsonSchemaValidator(JsonSchema jsonSchema) {
+    this.jsonSchema = jsonSchema;
+  }
 
-        if (jsonSchema != null) {
-            JsonNode data;
-            ProcessingReport report;
+  @Override
+  public void validate(String payload) throws BadRequestException {
 
-            try {
-                boolean isEmpty = StringUtils.isEmpty(payload);
-                data = JsonUtils.parseJson(new StringReader(isEmpty? "null" : payload));
-                report = jsonSchema.validate(data, true);
-            } catch (IOException|ProcessingException e)
-            {
-                throw ApikitErrorTypes.throwErrorType(new BadRequestException(e));
-            }
+    if (jsonSchema != null) {
+      JsonNode data;
+      ProcessingReport report;
+
+      try {
+        boolean isEmpty = StringUtils.isEmpty(payload);
+        data = JsonUtils.parseJson(new StringReader(isEmpty ? "null" : payload));
+        report = jsonSchema.validate(data, true);
+      } catch (IOException | ProcessingException e) {
+        throw ApikitErrorTypes.throwErrorType(new BadRequestException(e));
+      }
 
 
-            Iterator<ProcessingMessage> iterator = report.iterator();
-            final StringBuilder messageBuilder = new StringBuilder();
+      Iterator<ProcessingMessage> iterator = report.iterator();
+      final StringBuilder messageBuilder = new StringBuilder();
 
-            while (iterator.hasNext())
-            {
-                ProcessingMessage next = iterator.next();
-                LogLevel logLevel = next.getLogLevel();
-                String logMessage = next.toString();
+      while (iterator.hasNext()) {
+        ProcessingMessage next = iterator.next();
+        LogLevel logLevel = next.getLogLevel();
+        String logMessage = next.toString();
 
-                boolean failOnWarning = Boolean.valueOf(
-                        System.getProperty(JSON_SCHEMA_FAIL_ON_WARNING_KEY, "false"));
+        boolean failOnWarning = Boolean.valueOf(
+                                                System.getProperty(JSON_SCHEMA_FAIL_ON_WARNING_KEY, "false"));
 
-                if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning))
-                {
-                    messageBuilder.append(logMessage).append("\n");
-                }
-            }
-
-            if (messageBuilder.length() > 0)
-            {
-                String message = messageBuilder.toString();
-                logger.info("Schema validation failed: " + message);
-                throw ApikitErrorTypes.throwErrorType(new BadRequestException(message));
-            }
+        if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning)) {
+          messageBuilder.append(logMessage).append("\n");
         }
+      }
+
+      if (messageBuilder.length() > 0) {
+        String message = messageBuilder.toString();
+        logger.info("Schema validation failed: " + message);
+        throw ApikitErrorTypes.throwErrorType(new BadRequestException(message));
+      }
     }
+  }
 }

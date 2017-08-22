@@ -16,12 +16,12 @@ import java.util.Optional;
  * Related clases:
  * {@link org.mule.module.apikit.metadata.FlowMetadata}
  */
-public interface MetadataSource
-{
-    /**
-     * Generates the input and output metadata
-     * @return A FunctionType that represents the input and output metadata. If
-     * the source has nothing to show, it will return {@link Optional#empty()}
-     */
-    Optional<FunctionType> getMetadata();
+public interface MetadataSource {
+
+  /**
+   * Generates the input and output metadata
+   * @return A FunctionType that represents the input and output metadata. If
+   * the source has nothing to show, it will return {@link Optional#empty()}
+   */
+  Optional<FunctionType> getMetadata();
 }

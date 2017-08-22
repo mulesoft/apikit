@@ -23,41 +23,41 @@ import org.jdom2.xpath.XPathFactory;
 
 public class APIKitConfigParser implements MuleConfigFileParser {
 
-    @Override
-    public Map<String, APIKitConfig> parse(Document document)   {
-        Map<String, APIKitConfig> apikitConfigs = new HashMap<String, APIKitConfig>();
-        XPathExpression<Element> xp = XPathFactory.instance().compile("//*/*[local-name()='" + APIKitConfig.ELEMENT_NAME + "']",
-                                                                      Filters.element(APIKitTools.API_KIT_NAMESPACE.getNamespace()));
-        List<Element> elements = xp.evaluate(document);
-        for(Element element : elements) {
-            Attribute name = element.getAttribute(APIKitConfig.NAME_ATTRIBUTE);
-            Attribute raml = element.getAttribute(APIKitConfig.RAML_ATTRIBUTE);
-            Attribute extensionEnabled = element.getAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE);
-            Attribute outboundHeadersMapName = element.getAttribute(APIKitConfig.OUTBOUND_HEADERS_MAP_ATTRIBUTE);
-            Attribute httpStatusVarName = element.getAttribute(APIKitConfig.HTTP_STATUS_VAR_ATTRIBUTE);
+  @Override
+  public Map<String, APIKitConfig> parse(Document document) {
+    Map<String, APIKitConfig> apikitConfigs = new HashMap<String, APIKitConfig>();
+    XPathExpression<Element> xp = XPathFactory.instance().compile("//*/*[local-name()='" + APIKitConfig.ELEMENT_NAME + "']",
+                                                                  Filters.element(APIKitTools.API_KIT_NAMESPACE.getNamespace()));
+    List<Element> elements = xp.evaluate(document);
+    for (Element element : elements) {
+      Attribute name = element.getAttribute(APIKitConfig.NAME_ATTRIBUTE);
+      Attribute raml = element.getAttribute(APIKitConfig.RAML_ATTRIBUTE);
+      Attribute extensionEnabled = element.getAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE);
+      Attribute outboundHeadersMapName = element.getAttribute(APIKitConfig.OUTBOUND_HEADERS_MAP_ATTRIBUTE);
+      Attribute httpStatusVarName = element.getAttribute(APIKitConfig.HTTP_STATUS_VAR_ATTRIBUTE);
 
-            if(raml == null) {
-                throw new IllegalArgumentException(APIKitConfig.RAML_ATTRIBUTE + " attribute is required");
-            }
-            APIKitConfig apiKitConfig = new APIKitConfig();
-            apiKitConfig.setRaml(raml.getValue());
-            if(name != null) {
-                apiKitConfig.setName(name.getValue());
-            }
-            if(outboundHeadersMapName != null) {
-                apiKitConfig.setOutboundHeadersMapName(outboundHeadersMapName.getValue());
-            }
-            if(extensionEnabled != null) {
-                apiKitConfig.setExtensionEnabled(Boolean.valueOf(extensionEnabled.getValue()));
-            }
-            if(httpStatusVarName != null) {
-                apiKitConfig.setHttpStatusVarName(httpStatusVarName.getValue());
-            }
+      if (raml == null) {
+        throw new IllegalArgumentException(APIKitConfig.RAML_ATTRIBUTE + " attribute is required");
+      }
+      APIKitConfig apiKitConfig = new APIKitConfig();
+      apiKitConfig.setRaml(raml.getValue());
+      if (name != null) {
+        apiKitConfig.setName(name.getValue());
+      }
+      if (outboundHeadersMapName != null) {
+        apiKitConfig.setOutboundHeadersMapName(outboundHeadersMapName.getValue());
+      }
+      if (extensionEnabled != null) {
+        apiKitConfig.setExtensionEnabled(Boolean.valueOf(extensionEnabled.getValue()));
+      }
+      if (httpStatusVarName != null) {
+        apiKitConfig.setHttpStatusVarName(httpStatusVarName.getValue());
+      }
 
-            String configId = apiKitConfig.getName() != null ? apiKitConfig.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
-            apikitConfigs.put(configId, apiKitConfig);
-        }
-
-        return apikitConfigs;
+      String configId = apiKitConfig.getName() != null ? apiKitConfig.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
+      apikitConfigs.put(configId, apiKitConfig);
     }
+
+    return apikitConfigs;
+  }
 }

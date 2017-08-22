@@ -24,165 +24,140 @@ import org.raml.v2.api.model.v08.bodies.Response;
 import org.raml.v2.api.model.v08.methods.Method;
 import org.raml.v2.api.model.v08.parameters.Parameter;
 
-public class ActionImpl implements IAction
-{
+public class ActionImpl implements IAction {
 
-    private Method method;
+  private Method method;
 
-    private Map<String, IResponse> responses;
-    private Map<String, IParameter> queryParameters;
-    private Map<String, IParameter> headers;
+  private Map<String, IResponse> responses;
+  private Map<String, IParameter> queryParameters;
+  private Map<String, IParameter> headers;
 
-    public ActionImpl(Method method)
-    {
-        this.method = method;
+  public ActionImpl(Method method) {
+    this.method = method;
+  }
+
+  @Override
+  public IActionType getType() {
+    return IActionType.valueOf(method.method().toUpperCase());
+  }
+
+  @Override
+  public boolean hasBody() {
+    return !method.body().isEmpty();
+  }
+
+  @Override
+  public Map<String, IResponse> getResponses() {
+    if (responses == null) {
+      responses = loadResponses(method);
     }
 
-    @Override
-    public IActionType getType()
-    {
-        return IActionType.valueOf(method.method().toUpperCase());
+    return responses;
+  }
+
+  private static Map<String, IResponse> loadResponses(Method method) {
+    Map<String, IResponse> result = new LinkedHashMap<>();
+    for (Response response : method.responses()) {
+      result.put(response.code().value(), new ResponseImpl(response));
+    }
+    return result;
+  }
+
+  @Override
+  public Map<String, IMimeType> getBody() {
+    Map<String, IMimeType> result = new LinkedHashMap<>();
+    for (BodyLike bodyLike : method.body()) {
+      result.put(bodyLike.name(), new MimeTypeImpl(bodyLike));
+    }
+    return result;
+  }
+
+  @Override
+  public IResource getResource() {
+    return new ResourceImpl(method.resource());
+  }
+
+  @Override
+  public Map<String, List<IParameter>> getBaseUriParameters() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Map<String, IParameter> getQueryParameters() {
+    if (queryParameters == null) {
+      queryParameters = loadQueryParameters(method);
+    }
+    return queryParameters;
+  }
+
+
+  private static Map<String, IParameter> loadQueryParameters(Method method) {
+    Map<String, IParameter> result = new HashMap<>();
+    for (Parameter parameter : method.queryParameters()) {
+      result.put(parameter.name(), new ParameterImpl(parameter));
+    }
+    return result;
+  }
+
+  @Override
+  public Map<String, IParameter> getHeaders() {
+    if (headers == null) {
+      headers = loadHeaders(method);
     }
 
-    @Override
-    public boolean hasBody()
-    {
-        return !method.body().isEmpty();
+    return headers;
+  }
+
+  private Map<String, IParameter> loadHeaders(Method method) {
+    Map<String, IParameter> result = new HashMap<>();
+    for (Parameter parameter : method.headers()) {
+      result.put(parameter.name(), new ParameterImpl(parameter));
     }
+    return result;
+  }
 
-    @Override
-    public Map<String, IResponse> getResponses()
-    {
-        if (responses == null)
-        {
-            responses = loadResponses(method);
-        }
+  @Override
+  public List<ISecurityReference> getSecuredBy() {
+    throw new UnsupportedOperationException();
+  }
 
-        return responses;
-    }
+  @Override
+  public List<String> getIs() {
+    throw new UnsupportedOperationException();
+  }
 
-    private static Map<String, IResponse> loadResponses(Method method) {
-        Map<String, IResponse> result = new LinkedHashMap<>();
-        for (Response response : method.responses())
-        {
-            result.put(response.code().value(), new ResponseImpl(response));
-        }
-        return result;
-    }
+  @Override
+  public void cleanBaseUriParameters() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Map<String, IMimeType> getBody()
-    {
-        Map<String, IMimeType> result = new LinkedHashMap<>();
-        for (BodyLike bodyLike : method.body())
-        {
-            result.put(bodyLike.name(),  new MimeTypeImpl(bodyLike));
-        }
-        return result;
-    }
+  @Override
+  public void setHeaders(Map<String, IParameter> headers) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public IResource getResource()
-    {
-        return new ResourceImpl(method.resource());
-    }
+  @Override
+  public void setQueryParameters(Map<String, IParameter> queryParameters) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Map<String, List<IParameter>> getBaseUriParameters()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void setBody(Map<String, IMimeType> body) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Map<String, IParameter> getQueryParameters()
-    {
-        if (queryParameters == null) {
-            queryParameters = loadQueryParameters(method);
-        }
-        return queryParameters;
-    }
+  @Override
+  public void addResponse(String key, IResponse response) {
+    throw new UnsupportedOperationException();
+  }
 
+  @Override
+  public void addSecurityReference(String securityReferenceName) {
+    throw new UnsupportedOperationException();
+  }
 
-    private static Map<String, IParameter> loadQueryParameters(Method method) {
-        Map<String, IParameter> result = new HashMap<>();
-        for (Parameter parameter : method.queryParameters())
-        {
-            result.put(parameter.name(), new ParameterImpl(parameter));
-        }
-        return result;
-    }
-
-    @Override
-    public Map<String, IParameter> getHeaders()
-    {
-        if (headers == null)
-        {
-            headers = loadHeaders(method);
-        }
-
-        return headers;
-    }
-
-    private Map<String, IParameter> loadHeaders(Method method) {
-        Map<String, IParameter> result = new HashMap<>();
-        for (Parameter parameter : method.headers())
-        {
-            result.put(parameter.name(), new ParameterImpl(parameter));
-        }
-        return result;
-    }
-
-    @Override
-    public List<ISecurityReference> getSecuredBy()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<String> getIs()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void cleanBaseUriParameters()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setHeaders(Map<String, IParameter> headers)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setQueryParameters(Map<String, IParameter> queryParameters)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setBody(Map<String, IMimeType> body)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addResponse(String key, IResponse response)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addSecurityReference(String securityReferenceName)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addIs(String is)
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void addIs(String is) {
+    throw new UnsupportedOperationException();
+  }
 }

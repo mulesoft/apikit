@@ -6,48 +6,41 @@
  */
 package org.mule.module.apikit.validation.body.form.transformation;
 
-public class TextPlainPart implements MultipartPart
-{
-    String name;
-    String value;
-    String template = "'<<name>>':{headers: {'Content-Disposition': {name: \"<<name>>\"}, 'Content-Type': \"text/plain\"}, content: \"<<value>>\" }";
+public class TextPlainPart implements MultipartPart {
 
-    public TextPlainPart()
-    {
-        name = "part";
-        value = "";
-    }
+  String name;
+  String value;
+  String template =
+      "'<<name>>':{headers: {'Content-Disposition': {name: \"<<name>>\"}, 'Content-Type': \"text/plain\"}, content: \"<<value>>\" }";
 
-    public TextPlainPart setName(String name)
-    {
-        if (name != null)
-        {
-            this.name = name;
-        }
-        return this;
-    }
+  public TextPlainPart() {
+    name = "part";
+    value = "";
+  }
 
-    public String getName()
-    {
-        return this.name;
+  public TextPlainPart setName(String name) {
+    if (name != null) {
+      this.name = name;
     }
+    return this;
+  }
 
-    public TextPlainPart setValue(String value)
-    {
-        if (value != null)
-        {
-            this.value = value;
-        }
-        return this;
-    }
+  public String getName() {
+    return this.name;
+  }
 
-    public String getValue()
-    {
-        return this.value;
+  public TextPlainPart setValue(String value) {
+    if (value != null) {
+      this.value = value;
     }
+    return this;
+  }
 
-    public String toDataWeaveString()
-    {
-        return template.replace("<<name>>", name).replace("<<value>>", value);
-    }
+  public String getValue() {
+    return this.value;
+  }
+
+  public String toDataWeaveString() {
+    return template.replace("<<name>>", name).replace("<<value>>", value);
+  }
 }

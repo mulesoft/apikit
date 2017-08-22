@@ -26,140 +26,133 @@ import java.util.*;
  */
 @Mojo(name = "create")
 public class CreateMojo
-        extends AbstractMojo {
-    @Component
-    private BuildContext buildContext;
+    extends AbstractMojo {
 
-    /**
-     * Pattern of where to find the spec .raml, .yaml or .yml files.
-     */
-    @Parameter
-    private String[] specIncludes = new String[]{"src/main/resources/api/**/*.yaml", "src/main/resources/api/**/*.yml", "src/main/resources/api/**/*.raml"};
+  @Component
+  private BuildContext buildContext;
 
-    /**
-     * Pattern of what to exclude searching for .yaml files.
-     */
-    @Parameter
-    private String[] specExcludes = new String[]{};
+  /**
+   * Pattern of where to find the spec .raml, .yaml or .yml files.
+   */
+  @Parameter
+  private String[] specIncludes =
+      new String[] {"src/main/resources/api/**/*.yaml", "src/main/resources/api/**/*.yml", "src/main/resources/api/**/*.raml"};
 
-    /**
-     * Spec source directory to use as root of specInclude and specExclude patterns.
-     */
-    @Parameter(defaultValue = "${basedir}")
-    private File specDirectory;
+  /**
+   * Pattern of what to exclude searching for .yaml files.
+   */
+  @Parameter
+  private String[] specExcludes = new String[] {};
 
-    /**
-     * Pattern of where to find the Mule XMLs.
-     */
-    @Parameter
-    private String[] muleXmlIncludes = new String[]{"src/main/mule/**/*.xml", "src/main/resources/**/*.xml"};
+  /**
+   * Spec source directory to use as root of specInclude and specExclude patterns.
+   */
+  @Parameter(defaultValue = "${basedir}")
+  private File specDirectory;
 
-    /**
-     * Pattern of what to exclude searching for Mule XML files.
-     */
-    @Parameter
-    private String[] muleXmlExcludes = new String[]{};
+  /**
+   * Pattern of where to find the Mule XMLs.
+   */
+  @Parameter
+  private String[] muleXmlIncludes = new String[] {"src/main/mule/**/*.xml", "src/main/resources/**/*.xml"};
 
-    /**
-     * Spec source directory to use as root of muleInclude and muleExclude patterns.
-     */
-    @Parameter(defaultValue = "${basedir}")
-    private File muleXmlDirectory;
+  /**
+   * Pattern of what to exclude searching for Mule XML files.
+   */
+  @Parameter
+  private String[] muleXmlExcludes = new String[] {};
 
-    /**
-     * Where to output the generated mule config files.
-     */
-    @Parameter(defaultValue = "${basedir}/src/main/mule")
-    private File muleXmlOutputDirectory;
+  /**
+   * Spec source directory to use as root of muleInclude and muleExclude patterns.
+   */
+  @Parameter(defaultValue = "${basedir}")
+  private File muleXmlDirectory;
 
-    /**
-     * Spec source directory to use as root of muleDomain.
-     */
-    @Parameter (property = "domainDirectory")
-    private File domainDirectory;
+  /**
+   * Where to output the generated mule config files.
+   */
+  @Parameter(defaultValue = "${basedir}/src/main/mule")
+  private File muleXmlOutputDirectory;
 
-    /**
-     * Mule version that is being used.
-     */
-    @Parameter (property = "minMuleVersion")
-    private String minMuleVersion;
+  /**
+   * Spec source directory to use as root of muleDomain.
+   */
+  @Parameter(property = "domainDirectory")
+  private File domainDirectory;
 
-    /**
-     * Mule runtime edition that is being used.
-     */
-    @Parameter (property = "runtimeEdition", defaultValue = "CE")
-    private String runtimeEdition;
+  /**
+   * Mule version that is being used.
+   */
+  @Parameter(property = "minMuleVersion")
+  private String minMuleVersion;
 
-    private Log log;
+  /**
+   * Mule runtime edition that is being used.
+   */
+  @Parameter(property = "runtimeEdition", defaultValue = "CE")
+  private String runtimeEdition;
 
-    List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {
-        Scanner scanner = buildContext.newScanner(sourceDirectory, true);
-        scanner.setIncludes(includes);
-        scanner.setExcludes(excludes);
-        scanner.scan();
+  private Log log;
 
-        String[] includedFiles = scanner.getIncludedFiles();
-        for (int i = 0; i < includedFiles.length; i++) {
-            includedFiles[i] = new File(scanner.getBasedir(), includedFiles[i]).getAbsolutePath();
-        }
+  List<String> getIncludedFiles(File sourceDirectory, String[] includes, String[] excludes) {
+    Scanner scanner = buildContext.newScanner(sourceDirectory, true);
+    scanner.setIncludes(includes);
+    scanner.setExcludes(excludes);
+    scanner.scan();
 
-        String[] result = new String[includedFiles.length];
-        System.arraycopy(includedFiles, 0, result, 0, includedFiles.length);
-        return Arrays.asList(result);
+    String[] includedFiles = scanner.getIncludedFiles();
+    for (int i = 0; i < includedFiles.length; i++) {
+      includedFiles[i] = new File(scanner.getBasedir(), includedFiles[i]).getAbsolutePath();
     }
 
-    public void execute()
-            throws MojoExecutionException {
-        Validate.notNull(muleXmlDirectory, "Error: muleXmlDirectory parameter cannot be null");
-        Validate.notNull(specDirectory, "Error: specDirectory parameter cannot be null");
+    String[] result = new String[includedFiles.length];
+    System.arraycopy(includedFiles, 0, result, 0, includedFiles.length);
+    return Arrays.asList(result);
+  }
 
-        log = getLog();
+  public void execute()
+      throws MojoExecutionException {
+    Validate.notNull(muleXmlDirectory, "Error: muleXmlDirectory parameter cannot be null");
+    Validate.notNull(specDirectory, "Error: specDirectory parameter cannot be null");
 
-        List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
-        List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
-        String domainFile = processDomain();
-        if (minMuleVersion != null)
-        {
-            log.info("Mule version provided: " + minMuleVersion);
-        }
-        log.info("Processing the following RAML files: " + specFiles);
-        log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
+    log = getLog();
 
-        try
-        {
-            final RuntimeEdition muleRuntimeEdition = RuntimeEdition.valueOf(this.runtimeEdition);
-            Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile, minMuleVersion, muleRuntimeEdition);
-            scaffolder.run();
-        }
-        catch (IOException e)
-        {
-            throw new MojoExecutionException(e.getMessage());
-        }
+    List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
+    List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
+    String domainFile = processDomain();
+    if (minMuleVersion != null) {
+      log.info("Mule version provided: " + minMuleVersion);
     }
+    log.info("Processing the following RAML files: " + specFiles);
+    log.info("Processing the following xml files as mule configs: " + muleXmlFiles);
 
-    private String processDomain()
-    {
-        String domainFile = null;
-
-        if (domainDirectory != null)
-        {
-            List<String> domainFiles = getIncludedFiles(domainDirectory, new String[]{"*.xml"}, new String[]{});
-            if (domainFiles.size() > 0)
-            {
-                domainFile = domainFiles.get(0);
-                if (domainFiles.size() > 1) {
-                    log.info("There is more than one domain file inside of the domain folder. The domain: " + domainFile + " will be used.");
-                }
-            }
-            else
-            {
-                log.error("The specified domain directory [" + domainDirectory + "] does not contain any xml file.");
-            }
-        }
-        else
-        {
-            log.info("No domain was provided. To send it, use -DdomainDirectory.");
-        }
-        return domainFile;
+    try {
+      final RuntimeEdition muleRuntimeEdition = RuntimeEdition.valueOf(this.runtimeEdition);
+      Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile,
+                                                          minMuleVersion, muleRuntimeEdition);
+      scaffolder.run();
+    } catch (IOException e) {
+      throw new MojoExecutionException(e.getMessage());
     }
+  }
+
+  private String processDomain() {
+    String domainFile = null;
+
+    if (domainDirectory != null) {
+      List<String> domainFiles = getIncludedFiles(domainDirectory, new String[] {"*.xml"}, new String[] {});
+      if (domainFiles.size() > 0) {
+        domainFile = domainFiles.get(0);
+        if (domainFiles.size() > 1) {
+          log.info("There is more than one domain file inside of the domain folder. The domain: " + domainFile
+              + " will be used.");
+        }
+      } else {
+        log.error("The specified domain directory [" + domainDirectory + "] does not contain any xml file.");
+      }
+    } else {
+      log.info("No domain was provided. To send it, use -DdomainDirectory.");
+    }
+    return domainFile;
+  }
 }

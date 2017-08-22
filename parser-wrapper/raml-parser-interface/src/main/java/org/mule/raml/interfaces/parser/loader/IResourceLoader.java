@@ -8,7 +8,7 @@ package org.mule.raml.interfaces.parser.loader;
 
 import java.io.InputStream;
 
-public interface IResourceLoader
-{
-    InputStream fetchResource(String resourceName);
+public interface IResourceLoader {
+
+  InputStream fetchResource(String resourceName);
 }

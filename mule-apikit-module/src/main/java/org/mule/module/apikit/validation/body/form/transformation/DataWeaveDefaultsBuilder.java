@@ -9,36 +9,33 @@ package org.mule.module.apikit.validation.body.form.transformation;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DataWeaveDefaultsBuilder
-{
-    List<MultipartPart> partsToAppend;
-    private final String template = "output multipart/form-data --- {preamble: payload.preamble default '', parts: payload.parts ++ {<<defaults>>}}";
+public class DataWeaveDefaultsBuilder {
 
-    public DataWeaveDefaultsBuilder()
-    {
-        partsToAppend = new ArrayList<>();
-    }
-    public void addPart(MultipartPart multipartPart)
-    {
-        partsToAppend.add(multipartPart);
-    }
+  List<MultipartPart> partsToAppend;
+  private final String template =
+      "output multipart/form-data --- {preamble: payload.preamble default '', parts: payload.parts ++ {<<defaults>>}}";
 
-    public boolean areDefaultsToAdd()
-    {
-        return partsToAppend.size() > 0;
+  public DataWeaveDefaultsBuilder() {
+    partsToAppend = new ArrayList<>();
+  }
+
+  public void addPart(MultipartPart multipartPart) {
+    partsToAppend.add(multipartPart);
+  }
+
+  public boolean areDefaultsToAdd() {
+    return partsToAppend.size() > 0;
+  }
+
+  public String build() {
+    if (partsToAppend.size() == 0) {
+      return "payload";
     }
-    public String build()
-    {
-        if (partsToAppend.size() == 0)
-        {
-            return "payload";
-        }
-        String codeToAppend = "";
-        for (MultipartPart part : partsToAppend)
-        {
-            codeToAppend += part.toDataWeaveString() + ",";
-        }
-        codeToAppend = codeToAppend.substring(0,codeToAppend.length() -1);
-        return template.replace("<<defaults>>", codeToAppend);
+    String codeToAppend = "";
+    for (MultipartPart part : partsToAppend) {
+      codeToAppend += part.toDataWeaveString() + ",";
     }
+    codeToAppend = codeToAppend.substring(0, codeToAppend.length() - 1);
+    return template.replace("<<defaults>>", codeToAppend);
+  }
 }

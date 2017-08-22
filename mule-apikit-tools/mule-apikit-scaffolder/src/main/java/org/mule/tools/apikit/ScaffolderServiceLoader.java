@@ -11,16 +11,14 @@ import org.mule.module.apikit.spi.ScaffolderService;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
-public class ScaffolderServiceLoader
-{
-    public ScaffolderService loadService()
-    {
-        ServiceLoader<ScaffolderService> loader = ServiceLoader.load(ScaffolderService.class);
-        Iterator<ScaffolderService> it = loader.iterator();
-        if (it.hasNext())
-        {
-            return it.next();
-        }
-        return null;
+public class ScaffolderServiceLoader {
+
+  public ScaffolderService loadService() {
+    ServiceLoader<ScaffolderService> loader = ServiceLoader.load(ScaffolderService.class);
+    Iterator<ScaffolderService> it = loader.iterator();
+    if (it.hasNext()) {
+      return it.next();
     }
+    return null;
+  }
 }

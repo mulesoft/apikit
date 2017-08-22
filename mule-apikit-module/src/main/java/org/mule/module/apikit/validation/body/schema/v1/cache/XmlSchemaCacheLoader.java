@@ -16,20 +16,17 @@ import javax.xml.validation.Schema;
 
 import org.xml.sax.SAXException;
 
-public class XmlSchemaCacheLoader extends CacheLoader<String, Schema>
-{
+public class XmlSchemaCacheLoader extends CacheLoader<String, Schema> {
 
-    private IRaml api;
+  private IRaml api;
 
-    public XmlSchemaCacheLoader(IRaml api)
-    {
-        this.api = api;
-    }
+  public XmlSchemaCacheLoader(IRaml api) {
+    this.api = api;
+  }
 
-    @Override
-    public Schema load(String schemaLocation) throws IOException, SAXException
-    {
-        return SchemaCacheUtils.resolveXmlSchema(schemaLocation, api);
-    }
+  @Override
+  public Schema load(String schemaLocation) throws IOException, SAXException {
+    return SchemaCacheUtils.resolveXmlSchema(schemaLocation, api);
+  }
 
 }

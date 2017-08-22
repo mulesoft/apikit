@@ -19,89 +19,79 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase
-{
+public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Override
-    protected String getConfigFile()
-    {
-        return "org/mule/module/apikit/validation/body/schema/json-schema-ref-config.xml";
-    }
+  @Override
+  protected String getConfigFile() {
+    return "org/mule/module/apikit/validation/body/schema/json-schema-ref-config.xml";
+  }
 
-    @Test
-    public void validSchema() throws Exception
-    {
-        given()
-                .body("{\"/\": {\"fstype\": \"ext4\", \"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
-                .contentType("application/json")
-                .expect().statusCode(200)
-                .when().put("/api/resource");
-    }
+  @Test
+  public void validSchema() throws Exception {
+    given()
+        .body("{\"/\": {\"fstype\": \"ext4\", \"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
+        .contentType("application/json")
+        .expect().statusCode(200)
+        .when().put("/api/resource");
+  }
 
-    @Test
-    public void invalidSchema() throws Exception
-    {
-        given()
-                .body("{\"/\": {\"fstype\": \"ext4\", \"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\"}}")
-                .contentType("application/json")
-                .expect().statusCode(400)
-                .when().put("/api/resource");
-    }
+  @Test
+  public void invalidSchema() throws Exception {
+    given()
+        .body("{\"/\": {\"fstype\": \"ext4\", \"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\"}}")
+        .contentType("application/json")
+        .expect().statusCode(400)
+        .when().put("/api/resource");
+  }
 
-    @Test
-    public void validGlobalSchema() throws Exception
-    {
-        given()
-                .body("{\"/\": {\"fstype\": \"ext4\", \"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
-                .contentType("application/json")
-                .expect().statusCode(200)
-                .when().put("/api/global");
-    }
+  @Test
+  public void validGlobalSchema() throws Exception {
+    given()
+        .body("{\"/\": {\"fstype\": \"ext4\", \"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
+        .contentType("application/json")
+        .expect().statusCode(200)
+        .when().put("/api/global");
+  }
 
-    @Test
-    public void invalidGlobalSchema() throws Exception
-    {
-        given()
-                .body("{\"/\": {\"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
-                .contentType("application/json")
-                .expect().statusCode(400)
-                .when().put("/api/global");
-    }
+  @Test
+  public void invalidGlobalSchema() throws Exception {
+    given()
+        .body("{\"/\": {\"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
+        .contentType("application/json")
+        .expect().statusCode(400)
+        .when().put("/api/global");
+  }
 
-    @Test
-    public void validGlobalIncludeSchema() throws Exception
-    {
-        given()
-                .body("{\"/\": {\"fstype\": \"ext4\", \"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
-                .contentType("application/json")
-                .expect().statusCode(200)
-                .when().put("/api/global-include");
-    }
+  @Test
+  public void validGlobalIncludeSchema() throws Exception {
+    given()
+        .body("{\"/\": {\"fstype\": \"ext4\", \"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
+        .contentType("application/json")
+        .expect().statusCode(200)
+        .when().put("/api/global-include");
+  }
 
-    @Test
-    public void invalidGlobalIncludeSchema() throws Exception
-    {
-        given()
-                .body("{\"/\": {\"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
-                .contentType("application/json")
-                .expect().statusCode(400)
-                .when().put("/api/global-include");
-    }
+  @Test
+  public void invalidGlobalIncludeSchema() throws Exception {
+    given()
+        .body("{\"/\": {\"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
+        .contentType("application/json")
+        .expect().statusCode(400)
+        .when().put("/api/global-include");
+  }
 
 }

@@ -14,63 +14,63 @@ import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
 
 import java.util.Optional;
 
-public class Metadata
-{
-    private MetadataHandler metadataHandler;
+public class Metadata {
 
-    private Metadata(ApplicationModel applicationModel, ResourceLoader resourceLoader, Notifier notifier) {
-        init(applicationModel, resourceLoader, notifier);
-    }
+  private MetadataHandler metadataHandler;
 
-    private void init(ApplicationModel applicationModel, ResourceLoader resourceLoader, Notifier notifier) {
+  private Metadata(ApplicationModel applicationModel, ResourceLoader resourceLoader, Notifier notifier) {
+    init(applicationModel, resourceLoader, notifier);
+  }
 
-        final RamlHandler ramlHandler = new RamlHandler(resourceLoader, notifier);
-        final ApplicationModelWrapper wrapper = new ApplicationModelWrapper(applicationModel, ramlHandler, notifier);
-        metadataHandler = new MetadataHandler(wrapper, notifier);
-    }
+  private void init(ApplicationModel applicationModel, ResourceLoader resourceLoader, Notifier notifier) {
 
-    /**
-     * Gets the metadata for a Flow
-     * @param flowName Name of the flow
-     * @return The Metadata
-     */
-    public Optional<FunctionType> getMetadataForFlow(String flowName) {
-        return metadataHandler.getMetadataForFlow(flowName);
-    }
+    final RamlHandler ramlHandler = new RamlHandler(resourceLoader, notifier);
+    final ApplicationModelWrapper wrapper = new ApplicationModelWrapper(applicationModel, ramlHandler, notifier);
+    metadataHandler = new MetadataHandler(wrapper, notifier);
+  }
+
+  /**
+   * Gets the metadata for a Flow
+   * @param flowName Name of the flow
+   * @return The Metadata
+   */
+  public Optional<FunctionType> getMetadataForFlow(String flowName) {
+    return metadataHandler.getMetadataForFlow(flowName);
+  }
 
 
-    /**
-     * Builder for Metadata module
-     */
-    public static class Builder {
+  /**
+   * Builder for Metadata module
+   */
+  public static class Builder {
 
-        private ResourceLoader resourceLoader;
-        private ApplicationModel applicationModel;
-        private Notifier notifier;
+    private ResourceLoader resourceLoader;
+    private ApplicationModel applicationModel;
+    private Notifier notifier;
 
-        public Builder () {
-
-        }
-
-        public Builder withResourceLoader(ResourceLoader resourceLoader) {
-            this.resourceLoader = resourceLoader;
-            return this;
-        }
-
-        public Builder withApplicationModel(ApplicationModel applicationModel) {
-            this.applicationModel = applicationModel;
-            return this;
-        }
-
-        public Builder withNotifier(Notifier notifier) {
-            this.notifier = notifier;
-            return this;
-        }
-
-        public Metadata build() {
-            return new Metadata(applicationModel, resourceLoader, notifier);
-        }
+    public Builder() {
 
     }
+
+    public Builder withResourceLoader(ResourceLoader resourceLoader) {
+      this.resourceLoader = resourceLoader;
+      return this;
+    }
+
+    public Builder withApplicationModel(ApplicationModel applicationModel) {
+      this.applicationModel = applicationModel;
+      return this;
+    }
+
+    public Builder withNotifier(Notifier notifier) {
+      this.notifier = notifier;
+      return this;
+    }
+
+    public Metadata build() {
+      return new Metadata(applicationModel, resourceLoader, notifier);
+    }
+
+  }
 
 }

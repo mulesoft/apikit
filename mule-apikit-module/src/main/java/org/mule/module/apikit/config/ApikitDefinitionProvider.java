@@ -22,55 +22,53 @@ import org.mule.module.apikit.Router;
 import org.mule.runtime.dsl.api.component.ComponentBuildingDefinition;
 import org.mule.runtime.dsl.api.component.ComponentBuildingDefinitionProvider;
 
-public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProvider
-{
+public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProvider {
 
-    @Override
-    public void init()
-    {
+  @Override
+  public void init() {
 
-    }
+  }
 
-    @Override
-    public List<ComponentBuildingDefinition> getComponentBuildingDefinitions()
-    {
-        ComponentBuildingDefinition.Builder baseDefinition = new ComponentBuildingDefinition.Builder().withNamespace(ApikitXmlNamespaceInfoProvider.APIKIT_NAMESPACE);
+  @Override
+  public List<ComponentBuildingDefinition> getComponentBuildingDefinitions() {
+    ComponentBuildingDefinition.Builder baseDefinition =
+        new ComponentBuildingDefinition.Builder().withNamespace(ApikitXmlNamespaceInfoProvider.APIKIT_NAMESPACE);
 
-        List<ComponentBuildingDefinition> definitions = new ArrayList<>();
+    List<ComponentBuildingDefinition> definitions = new ArrayList<>();
 
-        definitions.add(baseDefinition.withIdentifier("config")
-                                .withTypeDefinition(fromType(Configuration.class))
-                                .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
-                                .withSetterParameterDefinition("raml", fromSimpleParameter("raml").build())
-                                .withSetterParameterDefinition("outboundHeadersMapName", fromSimpleParameter("outboundHeadersMapName").build())
-                                .withSetterParameterDefinition("httpStatusVarName", fromSimpleParameter("httpStatusVarName").build())
-                                .withSetterParameterDefinition("keepRamlBaseUri", fromSimpleParameter("keepRamlBaseUri").build())
-                                .withSetterParameterDefinition("disableValidations", fromSimpleParameter("disableValidations").build())
-                                .withSetterParameterDefinition("flowMappings", fromChildConfiguration(FlowMappings.class).build())
-                                .build());
+    definitions.add(baseDefinition.withIdentifier("config")
+        .withTypeDefinition(fromType(Configuration.class))
+        .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
+        .withSetterParameterDefinition("raml", fromSimpleParameter("raml").build())
+        .withSetterParameterDefinition("outboundHeadersMapName", fromSimpleParameter("outboundHeadersMapName").build())
+        .withSetterParameterDefinition("httpStatusVarName", fromSimpleParameter("httpStatusVarName").build())
+        .withSetterParameterDefinition("keepRamlBaseUri", fromSimpleParameter("keepRamlBaseUri").build())
+        .withSetterParameterDefinition("disableValidations", fromSimpleParameter("disableValidations").build())
+        .withSetterParameterDefinition("flowMappings", fromChildConfiguration(FlowMappings.class).build())
+        .build());
 
-        definitions.add(baseDefinition.withIdentifier("flow-mappings")
-                                .withTypeDefinition(fromType(FlowMappings.class))
-                                .withSetterParameterDefinition("flowMappings", fromChildCollectionConfiguration(FlowMapping.class).build())
-                                .build());
+    definitions.add(baseDefinition.withIdentifier("flow-mappings")
+        .withTypeDefinition(fromType(FlowMappings.class))
+        .withSetterParameterDefinition("flowMappings", fromChildCollectionConfiguration(FlowMapping.class).build())
+        .build());
 
-        definitions.add(baseDefinition.withIdentifier("flow-mapping")
-                                .withTypeDefinition(fromType(FlowMapping.class))
-                                .withSetterParameterDefinition("resource", fromSimpleParameter("resource").build())
-                                .withSetterParameterDefinition("action", fromSimpleParameter("action").build())
-                                .withSetterParameterDefinition("contentType", fromSimpleParameter("content-type").build())
-                                .withSetterParameterDefinition("flowRef", fromSimpleParameter("flow-ref").build())
-                                .build());
+    definitions.add(baseDefinition.withIdentifier("flow-mapping")
+        .withTypeDefinition(fromType(FlowMapping.class))
+        .withSetterParameterDefinition("resource", fromSimpleParameter("resource").build())
+        .withSetterParameterDefinition("action", fromSimpleParameter("action").build())
+        .withSetterParameterDefinition("contentType", fromSimpleParameter("content-type").build())
+        .withSetterParameterDefinition("flowRef", fromSimpleParameter("flow-ref").build())
+        .build());
 
-        definitions.add(baseDefinition.withIdentifier("router")
-                                .withTypeDefinition(fromType(Router.class))
-                                .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
-                                .withSetterParameterDefinition("configRef", fromSimpleParameter("config-ref").build()).build());
+    definitions.add(baseDefinition.withIdentifier("router")
+        .withTypeDefinition(fromType(Router.class))
+        .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
+        .withSetterParameterDefinition("configRef", fromSimpleParameter("config-ref").build()).build());
 
-        definitions.add(baseDefinition.withIdentifier("console")
-                                .withTypeDefinition(fromType(Console.class))
-                                .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
-                                .withSetterParameterDefinition("configRef", fromSimpleParameter("config-ref").build()).build());
-        return definitions;
-    }
+    definitions.add(baseDefinition.withIdentifier("console")
+        .withTypeDefinition(fromType(Console.class))
+        .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
+        .withSetterParameterDefinition("configRef", fromSimpleParameter("config-ref").build()).build());
+    return definitions;
+  }
 }

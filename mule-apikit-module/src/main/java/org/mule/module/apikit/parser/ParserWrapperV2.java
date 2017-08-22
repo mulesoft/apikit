@@ -33,13 +33,12 @@ public class ParserWrapperV2 implements ParserWrapper {
 
   public ParserWrapperV2(String ramlPath) {
     this.ramlPath = ramlPath;
-    if (ramlPath != null && new File(ramlPath).getParent() != null)
-    {
+    if (ramlPath != null && new File(ramlPath).getParent() != null) {
       File ramlFile = new File(Thread.currentThread().getContextClassLoader().getResource(ramlPath).getFile());
-      this.resourceLoader = new org.raml.v2.api.loader.CompositeResourceLoader(new RootRamlResourceLoader(ramlFile.getParentFile()), new DefaultResourceLoader());
-    }
-    else
-    {
+      this.resourceLoader =
+          new org.raml.v2.api.loader.CompositeResourceLoader(new RootRamlResourceLoader(ramlFile.getParentFile()),
+                                                             new DefaultResourceLoader());
+    } else {
       this.resourceLoader = new DefaultResourceLoader();
     }
   }

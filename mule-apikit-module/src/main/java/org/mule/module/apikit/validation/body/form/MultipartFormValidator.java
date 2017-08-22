@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MultipartFormValidator implements FormValidatorStrategy<TypedValue> {
+
   protected final Logger logger = LoggerFactory.getLogger(MultipartFormValidator.class);
   Map<String, List<IParameter>> formParameters;
   DataWeaveTransformer dataWeaveTransformer;
@@ -39,33 +40,25 @@ public class MultipartFormValidator implements FormValidatorStrategy<TypedValue>
     List<String> actualKeys = dataWeaveTransformer.getKeysFromPayload(originalPayload);
     DataWeaveDefaultsBuilder defaultsBuilder = new DataWeaveDefaultsBuilder();
 
-    for (String expectedKey : formParameters.keySet())
-    {
-      if (formParameters.get(expectedKey).size() != 1)
-      {
+    for (String expectedKey : formParameters.keySet()) {
+      if (formParameters.get(expectedKey).size() != 1) {
         //do not perform validation when multi-type parameters are used
         continue;
       }
 
       IParameter expected = formParameters.get(expectedKey).get(0);
-      if (!actualKeys.contains(expectedKey) )
-      {
-        if (expected.isRequired())
-        {
+      if (!actualKeys.contains(expectedKey)) {
+        if (expected.isRequired()) {
           throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
         }
-        if (expected.getDefaultValue() != null)
-        {
+        if (expected.getDefaultValue() != null) {
           defaultsBuilder.addPart(new TextPlainPart().setName(expectedKey).setValue(expected.getDefaultValue()));
         }
       }
     }
-    if (defaultsBuilder.areDefaultsToAdd())
-    {
+    if (defaultsBuilder.areDefaultsToAdd()) {
       return dataWeaveTransformer.runDataWeaveScript(defaultsBuilder.build(), originalPayload.getDataType(), originalPayload);
-    }
-    else
-    {
+    } else {
       return originalPayload;
     }
   }

@@ -10,23 +10,22 @@ import org.mule.module.apikit.api.exception.MuleRestException;
 
 public class NotAcceptableException extends MuleRestException {
 
-    public static final String STRING_REPRESENTATION = "APIKIT:NOT_ACCEPTABLE";
+  public static final String STRING_REPRESENTATION = "APIKIT:NOT_ACCEPTABLE";
 
-    public NotAcceptableException(String message) {
-        super(message);
-    }
+  public NotAcceptableException(String message) {
+    super(message);
+  }
 
-    public NotAcceptableException(Throwable t) {
-        super(t);
-    }
+  public NotAcceptableException(Throwable t) {
+    super(t);
+  }
 
-    public NotAcceptableException(){
-        super("Not Acceptable");
-    }
+  public NotAcceptableException() {
+    super("Not Acceptable");
+  }
 
-    @Override
-    public String getStringRepresentation()
-    {
-        return STRING_REPRESENTATION;
-    }
+  @Override
+  public String getStringRepresentation() {
+    return STRING_REPRESENTATION;
+  }
 }

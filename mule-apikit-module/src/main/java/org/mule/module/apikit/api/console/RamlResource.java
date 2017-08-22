@@ -18,7 +18,7 @@ public class RamlResource implements Resource {
   }
 
   public MediaType getMediaType() {
-    return MediaType.create( "application", "raml+yaml");
+    return MediaType.create("application", "raml+yaml");
   }
 
   public String getContent() {

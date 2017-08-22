@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.validation.body.form.transformation;
 
-public interface MultipartPart
-{
-    String toDataWeaveString();
+public interface MultipartPart {
+
+  String toDataWeaveString();
 }

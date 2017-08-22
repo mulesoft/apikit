@@ -18,39 +18,36 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class Raml08JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class Raml08JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/validation/body/schema/raml-08-with-schema-in-include.xml";
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Test
-    public void JsonSchemaRef()
-    {
-        given().body("{\n" +
-                     "\"response\":\n" +
-                     "{ \"age\": 15 }\n" +
-                     "}")
-                .contentType("application/json")
-                .expect()
-                .statusCode(400)//.body(is("bad request"))
-                .when().put("/api/jsonschema");
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
+
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/validation/body/schema/raml-08-with-schema-in-include.xml";
+  }
+
+  @Test
+  public void JsonSchemaRef() {
+    given().body("{\n" +
+        "\"response\":\n" +
+        "{ \"age\": 15 }\n" +
+        "}")
+        .contentType("application/json")
+        .expect()
+        .statusCode(400)//.body(is("bad request"))
+        .when().put("/api/jsonschema");
+  }
 }

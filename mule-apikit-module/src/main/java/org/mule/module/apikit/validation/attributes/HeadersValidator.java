@@ -33,15 +33,14 @@ public class HeadersValidator {
 
   public HeadersValidator() {}
 
-  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action) throws InvalidHeaderException, NotAcceptableException
-  {
+  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action)
+      throws InvalidHeaderException, NotAcceptableException {
     this.headers = incomingHeaders;
     analyseRequestHeaders(action);
     analyseAcceptHeader(incomingHeaders, action);
   }
 
-  private void analyseRequestHeaders(IAction action) throws InvalidHeaderException
-  {
+  private void analyseRequestHeaders(IAction action) throws InvalidHeaderException {
     for (String expectedKey : action.getHeaders().keySet()) {
       IParameter expected = action.getHeaders().get(expectedKey);
 
@@ -74,24 +73,19 @@ public class HeadersValidator {
     }
   }
 
-  private void analyseAcceptHeader(MultiMap<String, String> incomingHeaders, IAction action) throws NotAcceptableException
-  {
+  private void analyseAcceptHeader(MultiMap<String, String> incomingHeaders, IAction action) throws NotAcceptableException {
     List<String> mimeTypes = getResponseMimeTypes(action);
-    if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
-    {
+    if (action == null || action.getResponses() == null || mimeTypes.isEmpty()) {
       //no response media-types defined, return no body
       return;
     }
     MediaType bestMatch = MimeTypeParser.bestMatch(mimeTypes, AttributesHelper.getAcceptedResponseMediaTypes(incomingHeaders));
-    if (bestMatch == null)
-    {
+    if (bestMatch == null) {
       throw new NotAcceptableException();
     }
     logger.debug("=== negotiated response content-type: " + bestMatch.toString());
-    for (String representation : mimeTypes)
-    {
-      if (representation.equals(bestMatch.withoutParameters().toString()))
-      {
+    for (String representation : mimeTypes) {
+      if (representation.equals(bestMatch.withoutParameters().toString())) {
         //there is a valid representation
         return;
       }
@@ -99,18 +93,14 @@ public class HeadersValidator {
     throw new NotAcceptableException();
   }
 
-  private List<String> getResponseMimeTypes(IAction action)
-  {
+  private List<String> getResponseMimeTypes(IAction action) {
     List<String> mimeTypes = new ArrayList<>();
     int status = getSuccessStatus(action);
-    if (status != -1)
-    {
+    if (status != -1) {
       IResponse response = action.getResponses().get(String.valueOf(status));
-      if (response != null && response.hasBody())
-      {
+      if (response != null && response.hasBody()) {
         Map<String, IMimeType> interfacesOfTypes = response.getBody();
-        for (Map.Entry<String, IMimeType> entry : interfacesOfTypes.entrySet())
-        {
+        for (Map.Entry<String, IMimeType> entry : interfacesOfTypes.entrySet()) {
           mimeTypes.add(entry.getValue().getType());
         }
         logger.debug(String.format("=== adding response mimeTypes for status %d : %s", status, mimeTypes));
@@ -119,13 +109,10 @@ public class HeadersValidator {
     return mimeTypes;
   }
 
-  protected int getSuccessStatus(IAction action)
-  {
-    for (String status : action.getResponses().keySet())
-    {
+  protected int getSuccessStatus(IAction action) {
+    for (String status : action.getResponses().keySet()) {
       int code = Integer.parseInt(status);
-      if (code >= 200 && code < 300)
-      {
+      if (code >= 200 && code < 300) {
         return code;
       }
     }

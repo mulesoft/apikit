@@ -16,35 +16,31 @@ import org.mule.runtime.core.api.InternalEvent;
 import java.nio.charset.Charset;
 import java.util.Optional;
 
-public class EventHelper
-{
-    private EventHelper()
-    {
+public class EventHelper {
 
-    }
+  private EventHelper() {
 
-    public static Charset getEncoding(InternalEvent event)
-    {
-        return getEncoding(event.getMessage());
-    }
+  }
 
-    public static Charset getEncoding(Message message)
-    {
-        Optional<Charset> payloadEncoding = message.getPayload().getDataType().getMediaType().getCharset();
-        return payloadEncoding.orElse(Charset.defaultCharset());// TODO Should we get default charset from mule?
-    }
+  public static Charset getEncoding(InternalEvent event) {
+    return getEncoding(event.getMessage());
+  }
 
-    public static InternalEvent.Builder regenerateEvent(Message message, InternalEvent.Builder builder, ValidRequest validRequest) {
-        Message.Builder messageBuilder = Message.builder(message);
-        messageBuilder.value(validRequest.getBody().getPayload());
-        messageBuilder.attributesValue(validRequest.getAttributes());
+  public static Charset getEncoding(Message message) {
+    Optional<Charset> payloadEncoding = message.getPayload().getDataType().getMediaType().getCharset();
+    return payloadEncoding.orElse(Charset.defaultCharset());// TODO Should we get default charset from mule?
+  }
 
-        return builder.message(messageBuilder.build());
-    }
+  public static InternalEvent.Builder regenerateEvent(Message message, InternalEvent.Builder builder, ValidRequest validRequest) {
+    Message.Builder messageBuilder = Message.builder(message);
+    messageBuilder.value(validRequest.getBody().getPayload());
+    messageBuilder.attributesValue(validRequest.getAttributes());
 
-    public static HttpRequestAttributes getHttpRequestAttributes(InternalEvent event)
-    {
-        return ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
-    }
+    return builder.message(messageBuilder.build());
+  }
+
+  public static HttpRequestAttributes getHttpRequestAttributes(InternalEvent event) {
+    return ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
+  }
 
 }

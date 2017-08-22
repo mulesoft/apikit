@@ -17,10 +17,10 @@ import org.mule.module.apikit.api.RoutingTable;
 import org.mule.module.apikit.api.uri.URIPattern;
 
 public class RoutingTableTestCase {
+
   RamlHandler ramlHandler = new RamlHandler("org/mule/module/apikit/routing-table-sample.raml", true);
 
-  public RoutingTableTestCase() throws IOException {
-  }
+  public RoutingTableTestCase() throws IOException {}
 
   @Test
   public void testResourceFlattenedTree() throws IOException {

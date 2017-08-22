@@ -20,36 +20,35 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 
 public class Positions {
-    private List<Position> positions;
 
-    @XmlElement(name = "positions")
-    public List<Position> getPositions() {
-        return positions;
-    }
+  private List<Position> positions;
 
-    public void setPositions(List<Position> positions) {
-        this.positions = positions;
-    }
+  @XmlElement(name = "positions")
+  public List<Position> getPositions() {
+    return positions;
+  }
 
-    //@Transformer(resultMimeType = "application/json")
-    public String toJson(Positions positions) throws IOException
-    {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(positions);
-    }
+  public void setPositions(List<Position> positions) {
+    this.positions = positions;
+  }
 
-    //@Transformer(resultMimeType = "text/xml")
-    public String toXml(Positions positions) throws IOException, JAXBException
-    {
-        JAXBContext context = JAXBContext.newInstance(getClass());
+  //@Transformer(resultMimeType = "application/json")
+  public String toJson(Positions positions) throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(positions);
+  }
 
-        Marshaller m = context.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+  //@Transformer(resultMimeType = "text/xml")
+  public String toXml(Positions positions) throws IOException, JAXBException {
+    JAXBContext context = JAXBContext.newInstance(getClass());
 
-        ByteArrayOutputStream boas = new ByteArrayOutputStream();
-        m.marshal(positions, boas);
+    Marshaller m = context.createMarshaller();
+    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        return new String(boas.toByteArray());
-    }
+    ByteArrayOutputStream boas = new ByteArrayOutputStream();
+    m.marshal(positions, boas);
+
+    return new String(boas.toByteArray());
+  }
 
 }

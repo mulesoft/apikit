@@ -6,18 +6,17 @@
  */
 package org.mule.module.apikit.metadata.model;
 
-public class Flow
-{
-    private static final String PARAMETER_NAME = "name";
+public class Flow {
 
-    private String name;
+  private static final String PARAMETER_NAME = "name";
 
-    public Flow(String name) {
-        this.name = name;
-    }
+  private String name;
 
-    public String getName()
-    {
-        return name;
-    }
+  public Flow(String name) {
+    this.name = name;
+  }
+
+  public String getName() {
+    return name;
+  }
 }

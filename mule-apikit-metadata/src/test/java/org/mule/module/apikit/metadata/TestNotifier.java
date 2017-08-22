@@ -10,31 +10,27 @@ import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TestNotifier implements Notifier
-{
-    private Logger log = LoggerFactory.getLogger(TestNotifier.class);
+public class TestNotifier implements Notifier {
 
-    @Override
-    public void error(String message)
-    {
-        log.error(message);
-    }
+  private Logger log = LoggerFactory.getLogger(TestNotifier.class);
 
-    @Override
-    public void warn(String message)
-    {
-        log.warn(message);
-    }
+  @Override
+  public void error(String message) {
+    log.error(message);
+  }
 
-    @Override
-    public void info(String message)
-    {
-        log.info(message);
-    }
+  @Override
+  public void warn(String message) {
+    log.warn(message);
+  }
 
-    @Override
-    public void debug(String message)
-    {
-        log.debug(message);
-    }
+  @Override
+  public void info(String message) {
+    log.info(message);
+  }
+
+  @Override
+  public void debug(String message) {
+    log.debug(message);
+  }
 }

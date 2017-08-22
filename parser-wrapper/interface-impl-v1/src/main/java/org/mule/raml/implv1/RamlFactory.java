@@ -16,25 +16,21 @@ import org.mule.raml.interfaces.parser.visitor.IRamlCloningService;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
 import org.mule.raml.interfaces.parser.visitor.IRamlValidationService;
 
-public class RamlFactory implements IRamlFactory
-{
-    public IRamlEmitter createRamlEmitter()
-    {
-        return new RamlEmitterImpl();
-    }
+public class RamlFactory implements IRamlFactory {
 
-    public IRamlDocumentBuilder createRamlDocumentBuilder()
-    {
-        return new RamlDocumentBuilderImpl();
-    }
+  public IRamlEmitter createRamlEmitter() {
+    return new RamlEmitterImpl();
+  }
 
-    public IRamlValidationService createRamlValidationService(IRamlDocumentBuilder ramlDocumentBuilder)
-    {
-        return new RamlValidationServiceImpl(ramlDocumentBuilder);
-    }
+  public IRamlDocumentBuilder createRamlDocumentBuilder() {
+    return new RamlDocumentBuilderImpl();
+  }
 
-    public IRamlCloningService createRamlCloningService()
-    {
-        return new RamlCloningServiceImpl();
-    }
+  public IRamlValidationService createRamlValidationService(IRamlDocumentBuilder ramlDocumentBuilder) {
+    return new RamlValidationServiceImpl(ramlDocumentBuilder);
+  }
+
+  public IRamlCloningService createRamlCloningService() {
+    return new RamlCloningServiceImpl();
+  }
 }

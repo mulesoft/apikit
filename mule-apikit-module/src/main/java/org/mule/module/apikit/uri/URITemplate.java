@@ -27,8 +27,7 @@ import java.util.regex.Pattern;
  *      href="http://bitworking.org/projects/URI-Templates/spec/draft-gregorio-uritemplate-03.html">URI
  *      Template (draft 3)</a>
  */
-public class URITemplate implements Expandable
-{
+public class URITemplate implements Expandable {
 
   /**
    * The regular expression pattern to identify template expansions within the template.
@@ -117,8 +116,7 @@ public class URITemplate implements Expandable
    * @return The corresponding list of URL tokens.
    * @throws URITemplateSyntaxException If the string cannot be parsed.
    */
-  public static List<Token> digest(String template) throws URITemplateSyntaxException
-  {
+  public static List<Token> digest(String template) throws URITemplateSyntaxException {
     return digest(template, TokenFactory.getInstance());
   }
 
@@ -129,8 +127,7 @@ public class URITemplate implements Expandable
    * @return The corresponding list of URL tokens.
    * @throws URITemplateSyntaxException If the string cannot be parsed.
    */
-  public static List<Token> digest(String template, TokenFactory factory) throws URITemplateSyntaxException
-  {
+  public static List<Token> digest(String template, TokenFactory factory) throws URITemplateSyntaxException {
     List<Token> tokens = new ArrayList<Token>();
     Matcher m = EXPANSION_PATTERN.matcher(template);
     int start = 0;

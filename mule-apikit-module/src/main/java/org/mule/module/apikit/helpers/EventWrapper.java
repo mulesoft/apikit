@@ -17,57 +17,53 @@ import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.http.api.HttpConstants;
 
-public class EventWrapper
-{
-    private InternalEvent inputEvent;
-    private InternalEvent.Builder outputBuilder;
-    private HashMap<String, String> outboundHeaders = new HashMap<>();
-    private String httpStatus;
-    private String outboundHeadersMapName;
-    private String httpStatusVarName;
+public class EventWrapper {
+
+  private InternalEvent inputEvent;
+  private InternalEvent.Builder outputBuilder;
+  private HashMap<String, String> outboundHeaders = new HashMap<>();
+  private String httpStatus;
+  private String outboundHeadersMapName;
+  private String httpStatusVarName;
 
 
-    public EventWrapper (InternalEvent input, String outboundHeadersMapName, String httpStatusVarName)
-    {
-        inputEvent = input;
-        outputBuilder = InternalEvent.builder(input);
-        this.outboundHeadersMapName = outboundHeadersMapName;
-        this.httpStatusVarName = httpStatusVarName;
-        httpStatus = String.valueOf(HttpConstants.HttpStatus.OK.getStatusCode());
-    }
+  public EventWrapper(InternalEvent input, String outboundHeadersMapName, String httpStatusVarName) {
+    inputEvent = input;
+    outputBuilder = InternalEvent.builder(input);
+    this.outboundHeadersMapName = outboundHeadersMapName;
+    this.httpStatusVarName = httpStatusVarName;
+    httpStatus = String.valueOf(HttpConstants.HttpStatus.OK.getStatusCode());
+  }
 
-    public void addOutboundProperties(Map<String, String> headers)
-    {
-        outboundHeaders.putAll(headers);
-    }
+  public void addOutboundProperties(Map<String, String> headers) {
+    outboundHeaders.putAll(headers);
+  }
 
-    public InternalEvent build()
-    {
-        outputBuilder.addVariable(httpStatusVarName, httpStatus);
-        outputBuilder.addVariable(outboundHeadersMapName, outboundHeaders);
-        return outputBuilder.build();
-    }
+  public InternalEvent build() {
+    outputBuilder.addVariable(httpStatusVarName, httpStatus);
+    outputBuilder.addVariable(outboundHeadersMapName, outboundHeaders);
+    return outputBuilder.build();
+  }
 
 
-    public EventWrapper doClientRedirect()
-    {
-        httpStatus = String.valueOf(HttpConstants.HttpStatus.MOVED_PERMANENTLY.getStatusCode());
+  public EventWrapper doClientRedirect() {
+    httpStatus = String.valueOf(HttpConstants.HttpStatus.MOVED_PERMANENTLY.getStatusCode());
 
-        HttpRequestAttributes attributes = EventHelper.getHttpRequestAttributes(inputEvent);
-        String scheme = attributes.getScheme();
-        String remoteAddress = attributes.getHeaders().get("host");
-        String queryString = attributes.getQueryString();
-        String requestPath = attributes.getRequestPath();
+    HttpRequestAttributes attributes = EventHelper.getHttpRequestAttributes(inputEvent);
+    String scheme = attributes.getScheme();
+    String remoteAddress = attributes.getHeaders().get("host");
+    String queryString = attributes.getQueryString();
+    String requestPath = attributes.getRequestPath();
 
-        String redirectLocation = getRedirectLocation(scheme, remoteAddress, requestPath, queryString);
-        outboundHeaders.put(HttpHeaders.Names.LOCATION, redirectLocation);
-        return this;
-    }
+    String redirectLocation = getRedirectLocation(scheme, remoteAddress, requestPath, queryString);
+    outboundHeaders.put(HttpHeaders.Names.LOCATION, redirectLocation);
+    return this;
+  }
 
 
 
-    public EventWrapper setPayload(Object payload, MediaType mediaType) {
-        outputBuilder.message(MessageHelper.setPayload(inputEvent.getMessage(), payload, mediaType));
-        return this;
-    }
+  public EventWrapper setPayload(Object payload, MediaType mediaType) {
+    outputBuilder.message(MessageHelper.setPayload(inputEvent.getMessage(), payload, mediaType));
+    return this;
+  }
 }

@@ -20,54 +20,48 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import org.junit.Rule;
 import org.junit.Test;
 
-
 import com.jayway.restassured.RestAssured;
 
 @ArtifactClassLoaderRunnerConfig
-public class RouterRamlProcessorsAfterRouterTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class RouterRamlProcessorsAfterRouterTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/router-raml/processors-after-router.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Test
-    public void getRamlV1() throws Exception
-    {
-        given().header("Accept", APPLICATION_RAML)
-                .expect()
-                .response().body(containsString("#%RAML 0.8"))
-                .contentType(APPLICATION_RAML)
-                .statusCode(200)
-                .header("secondHeader", is(nullValue()))
-                .when().get("/api");
-    }
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/router-raml/processors-after-router.xml";
+  }
 
-    @Test
-    public void simpleRouting() throws Exception
-    {
-        given().expect()
-                .response().body(is("goodbye")) //payload is crushed by the processor located after Router
-                .header("firstHeader", "value1")
-                .header("secondHeader", "value2")
-                .statusCode(200)
-                .when().get("/api/resources");
-    }
+  @Test
+  public void getRamlV1() throws Exception {
+    given().header("Accept", APPLICATION_RAML)
+        .expect()
+        .response().body(containsString("#%RAML 0.8"))
+        .contentType(APPLICATION_RAML)
+        .statusCode(200)
+        .header("secondHeader", is(nullValue()))
+        .when().get("/api");
+  }
+
+  @Test
+  public void simpleRouting() throws Exception {
+    given().expect()
+        .response().body(is("goodbye")) //payload is crushed by the processor located after Router
+        .header("firstHeader", "value1")
+        .header("secondHeader", "value2")
+        .statusCode(200)
+        .when().get("/api/resources");
+  }
 }

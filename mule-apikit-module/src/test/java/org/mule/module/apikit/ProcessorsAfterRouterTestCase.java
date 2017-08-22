@@ -17,54 +17,48 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-
 import com.jayway.restassured.RestAssured;
 
 @ArtifactClassLoaderRunnerConfig
-public class ProcessorsAfterRouterTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class ProcessorsAfterRouterTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/simple-routing/processors-after-router.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
+
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/simple-routing/processors-after-router.xml";
+  }
 
 
-    @Test
-    public void simpleRoutingAndSettingPayloadAfterwards() throws Exception
-    {
-        given().header("Accept", "*/*")
-                .expect()
-                .header("firstHeader","value1")
-                .header("secondHeader","value2")
-                .response().body(is("goodbye"))
-                .statusCode(200)
-                .when().get("/api/resources");
-    }
+  @Test
+  public void simpleRoutingAndSettingPayloadAfterwards() throws Exception {
+    given().header("Accept", "*/*")
+        .expect()
+        .header("firstHeader", "value1")
+        .header("secondHeader", "value2")
+        .response().body(is("goodbye"))
+        .statusCode(200)
+        .when().get("/api/resources");
+  }
 
-    @Test
-    public void invalidSingleAcceptHeader() throws Exception
-    {
-        given().header("Accept", "application/pepe")
-                .expect()
-                .response().body(is("{message: 'Not acceptable'}"))
-                .statusCode(406)
-                .when().get("/api/resources");
-    }
+  @Test
+  public void invalidSingleAcceptHeader() throws Exception {
+    given().header("Accept", "application/pepe")
+        .expect()
+        .response().body(is("{message: 'Not acceptable'}"))
+        .statusCode(406)
+        .when().get("/api/resources");
+  }
 }

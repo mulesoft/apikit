@@ -12,43 +12,37 @@ import static org.junit.Assert.assertTrue;
 import org.junit.After;
 import org.junit.Test;
 
-public class ParserV2UtilsTestCase
-{
+public class ParserV2UtilsTestCase {
 
-    @Test
-    public void chooseWhichParserToUseWithoutSystemProperty()
-    {
-        assertTrue(ParserV2Utils.useParserV2("#%RAML 1.0 this is an api definition"));
-        assertFalse(ParserV2Utils.useParserV2("#%RAML 0.8 this is an api definition"));
-    }
+  @Test
+  public void chooseWhichParserToUseWithoutSystemProperty() {
+    assertTrue(ParserV2Utils.useParserV2("#%RAML 1.0 this is an api definition"));
+    assertFalse(ParserV2Utils.useParserV2("#%RAML 0.8 this is an api definition"));
+  }
 
-    @Test
-    public void chooseWhichParserToUseWithSystemPropertyInTrue()
-    {
-        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
-        assertTrue(ParserV2Utils.useParserV2("#%RAML 0.8 this is an api definition"));
-        assertTrue(ParserV2Utils.useParserV2("#%RAML 1.0 this is an api definition"));
-    }
+  @Test
+  public void chooseWhichParserToUseWithSystemPropertyInTrue() {
+    System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+    assertTrue(ParserV2Utils.useParserV2("#%RAML 0.8 this is an api definition"));
+    assertTrue(ParserV2Utils.useParserV2("#%RAML 1.0 this is an api definition"));
+  }
 
-    @Test
-    public void chooseWhichParserToUseWithSystemPropertyInFalse()
-    {
-        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "false");
-        assertTrue(ParserV2Utils.useParserV2("#%RAML 1.0 this is an api definition"));
-        assertFalse(ParserV2Utils.useParserV2("#%RAML 0.8 this is an api definition"));
-    }
+  @Test
+  public void chooseWhichParserToUseWithSystemPropertyInFalse() {
+    System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "false");
+    assertTrue(ParserV2Utils.useParserV2("#%RAML 1.0 this is an api definition"));
+    assertFalse(ParserV2Utils.useParserV2("#%RAML 0.8 this is an api definition"));
+  }
 
-    @Test
-    public void chooseWhichParserToUseWithSystemPropertyInANonBooleanValue()
-    {
-        System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "non-boolean-value");
-        assertTrue(ParserV2Utils.useParserV2("#%RAML 1.0 this is an api definition"));
-        assertFalse(ParserV2Utils.useParserV2("#%RAML 0.8 this is an api definition"));
-    }
+  @Test
+  public void chooseWhichParserToUseWithSystemPropertyInANonBooleanValue() {
+    System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "non-boolean-value");
+    assertTrue(ParserV2Utils.useParserV2("#%RAML 1.0 this is an api definition"));
+    assertFalse(ParserV2Utils.useParserV2("#%RAML 0.8 this is an api definition"));
+  }
 
-    @After
-    public void after()
-    {
-        System.clearProperty(ParserV2Utils.PARSER_V2_PROPERTY);
-    }
+  @After
+  public void after() {
+    System.clearProperty(ParserV2Utils.PARSER_V2_PROPERTY);
+  }
 }

@@ -6,10 +6,13 @@
  */
 package org.mule.raml.interfaces.parser.rule;
 
-public interface IValidationResult
-{
-    String getMessage();
-    String getIncludeName();
-    int getLine();
-    boolean isLineUnknown();
+public interface IValidationResult {
+
+  String getMessage();
+
+  String getIncludeName();
+
+  int getLine();
+
+  boolean isLineUnknown();
 }

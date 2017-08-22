@@ -16,64 +16,54 @@ import java.util.Map;
 import org.raml.v2.api.model.v08.bodies.BodyLike;
 import org.raml.v2.api.model.v08.bodies.Response;
 
-public class ResponseImpl implements IResponse
-{
+public class ResponseImpl implements IResponse {
 
-    private Response response;
-    private Map<String, IMimeType> body;
+  private Response response;
+  private Map<String, IMimeType> body;
 
-    public ResponseImpl(Response response)
-    {
-        this.response = response;
+  public ResponseImpl(Response response) {
+    this.response = response;
+  }
+
+  @Override
+  public boolean hasBody() {
+    return !response.body().isEmpty();
+  }
+
+  @Override
+  public Map<String, IMimeType> getBody() {
+    if (body == null) {
+      body = loadBody(response);
     }
 
-    @Override
-    public boolean hasBody()
-    {
-        return !response.body().isEmpty();
-    }
+    return body;
+  }
 
-    @Override
-    public Map<String, IMimeType> getBody()
-    {
-        if (body == null)
-        {
-            body = loadBody(response);
-        }
-
-        return body;
+  private static Map<String, IMimeType> loadBody(Response response) {
+    Map<String, IMimeType> result = new LinkedHashMap<>();
+    for (BodyLike bodyLike : response.body()) {
+      result.put(bodyLike.name(), new MimeTypeImpl(bodyLike));
     }
+    return result;
+  }
 
-    private static Map<String, IMimeType> loadBody(Response response) {
-        Map<String, IMimeType> result = new LinkedHashMap<>();
-        for (BodyLike bodyLike : response.body())
-        {
-            result.put(bodyLike.name(), new MimeTypeImpl(bodyLike));
-        }
-        return result;
-    }
+  @Override
+  public Map<String, IParameter> getHeaders() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Map<String, IParameter> getHeaders()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void setBody(Map<String, IMimeType> body) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public void setBody(Map<String, IMimeType> body)
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void setHeaders(Map<String, IParameter> headers) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public void setHeaders(Map<String, IParameter> headers)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getInstance()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Object getInstance() {
+    throw new UnsupportedOperationException();
+  }
 }

@@ -16,103 +16,103 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(namespace = "http://mulesoft.com/schemas/soccer")
 public class Position {
 
-    private int position;
-    private String team;
-    private int points;
-    private int matchesPlayed;
-    private int matchesWon;
-    private int matchesDraw;
-    private int matchesLost;
-    private int goalsInFavor;
-    private int goalsAgainst;
+  private int position;
+  private String team;
+  private int points;
+  private int matchesPlayed;
+  private int matchesWon;
+  private int matchesDraw;
+  private int matchesLost;
+  private int goalsInFavor;
+  private int goalsAgainst;
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public int getPosition() {
-        return position;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public int getPosition() {
+    return position;
+  }
 
-    public void setPosition(int position) {
-        this.position = position;
-    }
+  public void setPosition(int position) {
+    this.position = position;
+  }
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public String getTeam() {
-        return team;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public String getTeam() {
+    return team;
+  }
 
-    public void setTeam(String team) {
-        this.team = team;
-    }
+  public void setTeam(String team) {
+    this.team = team;
+  }
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public int getPoints() {
-        return points;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public int getPoints() {
+    return points;
+  }
 
-    public void setPoints(int points) {
-        this.points = points;
-    }
+  public void setPoints(int points) {
+    this.points = points;
+  }
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public int getMatchesPlayed() {
-        return matchesPlayed;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public int getMatchesPlayed() {
+    return matchesPlayed;
+  }
 
-    public void setMatchesPlayed(int matchesPlayed) {
-        this.matchesPlayed = matchesPlayed;
-    }
+  public void setMatchesPlayed(int matchesPlayed) {
+    this.matchesPlayed = matchesPlayed;
+  }
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public int getMatchesWon() {
-        return matchesWon;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public int getMatchesWon() {
+    return matchesWon;
+  }
 
-    public void setMatchesWon(int matchesWon) {
-        this.matchesWon = matchesWon;
-    }
+  public void setMatchesWon(int matchesWon) {
+    this.matchesWon = matchesWon;
+  }
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public int getMatchesDraw() {
-        return matchesDraw;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public int getMatchesDraw() {
+    return matchesDraw;
+  }
 
-    public void setMatchesDraw(int matchesDraw) {
-        this.matchesDraw = matchesDraw;
-    }
+  public void setMatchesDraw(int matchesDraw) {
+    this.matchesDraw = matchesDraw;
+  }
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public int getMatchesLost() {
-        return matchesLost;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public int getMatchesLost() {
+    return matchesLost;
+  }
 
-    public void setMatchesLost(int matchesLost) {
-        this.matchesLost = matchesLost;
-    }
+  public void setMatchesLost(int matchesLost) {
+    this.matchesLost = matchesLost;
+  }
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public int getGoalsInFavor() {
-        return goalsInFavor;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public int getGoalsInFavor() {
+    return goalsInFavor;
+  }
 
-    public void setGoalsInFavor(int goalsInFavor) {
-        this.goalsInFavor = goalsInFavor;
-    }
+  public void setGoalsInFavor(int goalsInFavor) {
+    this.goalsInFavor = goalsInFavor;
+  }
 
-    @JsonProperty
-    @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
-    public int getGoalsAgainst() {
-        return goalsAgainst;
-    }
+  @JsonProperty
+  @XmlElement(required = true, namespace = "http://mulesoft.com/schemas/soccer")
+  public int getGoalsAgainst() {
+    return goalsAgainst;
+  }
 
-    public void setGoalsAgainst(int goalsAgainst) {
-        this.goalsAgainst = goalsAgainst;
-    }
+  public void setGoalsAgainst(int goalsAgainst) {
+    this.goalsAgainst = goalsAgainst;
+  }
 }

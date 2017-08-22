@@ -18,13 +18,12 @@ public class BadRequestException extends MuleRestException {
     super(e);
   }
 
-  public BadRequestException(){
+  public BadRequestException() {
     super();
   }
 
   @Override
-  public String getStringRepresentation()
-  {
+  public String getStringRepresentation() {
     return STRING_REPRESENTATION;
   }
 }
