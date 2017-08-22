@@ -9,6 +9,7 @@ package org.mule.module.apikit.metadata.raml;
 import org.mule.module.apikit.metadata.model.FlowMapping;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 
+import javax.annotation.Nullable;
 import java.util.Set;
 
 public class RamlCoordsSimpleFactory
@@ -19,7 +20,7 @@ public class RamlCoordsSimpleFactory
         this.apiConfigNames = apiConfigNames;
     }
 
-    public RamlCoordinate createFromFlowName(String flowName) {
+    @Nullable public RamlCoordinate createFromFlowName(String flowName) {
 
         String[] parts = flowName.split(":");
 

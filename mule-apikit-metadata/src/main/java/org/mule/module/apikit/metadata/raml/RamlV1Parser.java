@@ -18,7 +18,7 @@ public class RamlV1Parser implements Parseable
     @Override
     public IRaml build(File ramlFile, String ramlContent)
     {
-        IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
+        final IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
         ramlDocumentBuilder.addPathLookupFirst(ramlFile.getParentFile().getPath());
         return ramlDocumentBuilder.build(ramlContent, ramlFile.getName());
     }

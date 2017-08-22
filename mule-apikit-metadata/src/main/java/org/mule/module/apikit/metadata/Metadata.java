@@ -24,8 +24,9 @@ public class Metadata
 
     private void init(ApplicationModel applicationModel, ResourceLoader resourceLoader, Notifier notifier) {
 
-        metadataHandler = new MetadataHandler(
-                new ApplicationModelWrapper(applicationModel, new RamlHandler(resourceLoader)));
+        final RamlHandler ramlHandler = new RamlHandler(resourceLoader, notifier);
+        final ApplicationModelWrapper wrapper = new ApplicationModelWrapper(applicationModel, ramlHandler, notifier);
+        metadataHandler = new MetadataHandler(wrapper, notifier);
     }
 
     /**
