@@ -9,56 +9,94 @@ package org.mule.module.apikit.metadata.raml;
 import org.mule.module.apikit.metadata.model.FlowMapping;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.Set;
+
+import static java.util.Optional.empty;
 
 public class RamlCoordsSimpleFactory {
 
+  private static final String FLOW_NAME_PART_SEPARATOR = ":";
   private Set<String> apiConfigNames;
 
   public RamlCoordsSimpleFactory(Set<String> apiConfigNames) {
     this.apiConfigNames = apiConfigNames;
   }
 
-  @Nullable
-  public RamlCoordinate createFromFlowName(String flowName) {
+  public Optional<RamlCoordinate> createFromFlowName(String flowName) {
 
-    String[] parts = flowName.split(":");
+    final String[] parts = flowName.split(FLOW_NAME_PART_SEPARATOR);
 
     if (parts.length < 2 || parts.length > 4) {
-      return null;
+      return empty();
     }
 
-    String flowMethodName = parts[0];
-    String flowResourceName = parts[1];
-    String flowMediaType = null;
-    String flowApiConfigName = null;
+    final Builder builder = Builder.create(flowName, parts[0], parts[1]);
 
     if (parts.length == 3) {
-
       if (apiConfigNames.contains(parts[2])) {
-        flowApiConfigName = parts[2];
+        builder.configName(parts[2]);
       } else {
-        flowMediaType = parts[2];
+        builder.mediaType(parts[2]);
       }
+    } else if (parts.length == 4) {
+      builder.mediaType(parts[2]).configName(parts[3]);
     }
 
-    if (parts.length == 4) {
-      flowMediaType = parts[2];
-      flowApiConfigName = parts[3];
+    final RamlCoordinate coord = builder.build();
+
+    if (coord.getConfigName() != null && !apiConfigNames.contains(coord.getConfigName())) {
+      return empty();
     }
 
-    return new RamlCoordinate(flowMethodName, flowResourceName, flowMediaType, flowApiConfigName);
+    if (apiConfigNames.size() > 1 && coord.getConfigName() == null) {
+      return empty();
+    }
+
+    return Optional.of(coord);
   }
 
 
-  public RamlCoordinate createFromFlowMapping(FlowMapping flowMapping) {
+  public RamlCoordinate createFromFlowMapping(FlowMapping mapping) {
 
-    String configName = flowMapping.getConfigName();
-    String action = flowMapping.getAction();
-    String resource = flowMapping.getResource();
-    String contentType = flowMapping.getContentType();
+    final String flowName = mapping.getFlowRef();
+    final String configName = mapping.getConfigName();
+    final String action = mapping.getAction();
+    final String resource = mapping.getResource();
+    final String contentType = mapping.getContentType();
+    return new RamlCoordinate(flowName, action, resource, contentType, configName);
+  }
 
-    return new RamlCoordinate(action, resource, contentType, configName);
+  private static class Builder {
+
+    final private String flowName;
+    final private String methodName;
+    final private String resourceName;
+    private String mediaType = null;
+    private String configName = null;
+
+    private Builder(String flowName, String methodName, String resourceName) {
+      this.flowName = flowName;
+      this.methodName = methodName;
+      this.resourceName = resourceName;
+    }
+
+    static Builder create(String key, String methodName, String resourceName) {
+      return new Builder(key, methodName, resourceName);
+    }
+
+    Builder mediaType(String value) {
+      this.mediaType = value;
+      return this;
+    }
+
+    Builder configName(String value) {
+      this.configName = value;
+      return this;
+    }
+
+    private RamlCoordinate build() {
+      return new RamlCoordinate(flowName, methodName, resourceName, mediaType, configName);
+    }
   }
 }

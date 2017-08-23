@@ -14,7 +14,6 @@ import org.mule.module.apikit.metadata.model.RamlCoordinate;
 
 import java.util.Optional;
 
-import static java.lang.String.format;
 import static java.util.Optional.empty;
 
 public class MetadataHandler {
@@ -29,16 +28,16 @@ public class MetadataHandler {
 
   public Optional<FunctionType> getMetadataForFlow(String flowName) {
     // Getting the RAML Coordinate for the specified flowName
-    final RamlCoordinate coordinate = modelWrapper.getRamlCoordinatesForFlow(flowName);
+    final Optional<RamlCoordinate> coordinate = modelWrapper.getRamlCoordinatesForFlow(flowName);
 
-    if (coordinate == null) {
+    if (!coordinate.isPresent()) {
       return empty();
     }
 
     // If there exists metadata for the flow, we get the Api
-    final ApikitConfig config = modelWrapper.getApikitConfigWithName(coordinate.getConfigName());
-    return config.getApi()
-        .map(api -> api.getActionForCoordinate(coordinate))
+    final Optional<ApikitConfig> config = modelWrapper.getConfig(coordinate.get().getConfigName());
+    return config.flatMap(ApikitConfig::getApi)
+        .map(api -> api.getActionForCoordinate(coordinate.get()))
         .flatMap(MetadataSource::getMetadata);
   }
 }
