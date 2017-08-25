@@ -51,7 +51,7 @@ public class PayloadHelperTestCase {
                  PayloadHelper.getPayloadAsString(payload, "UTF-8", true));
   }
 
-  @Test(expected = TypedException.class)
+  @Test(expected = BadRequestException.class)
   public void nullPayload() throws TypedException, BadRequestException {
 
     PayloadHelper.getPayloadAsString(null, "UTF-8", true);

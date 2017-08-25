@@ -50,7 +50,7 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy {
         data = JsonUtils.parseJson(new StringReader(isEmpty ? "null" : payload));
         report = jsonSchema.validate(data, true);
       } catch (IOException | ProcessingException e) {
-          throw new BadRequestException(e);
+        throw new BadRequestException(e);
       }
 
 
