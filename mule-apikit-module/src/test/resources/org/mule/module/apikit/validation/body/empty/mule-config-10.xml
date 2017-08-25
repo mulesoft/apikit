@@ -27,28 +27,28 @@
         </error-handler>
     </flow>
 
-    <flow name="put:!method-without-body">
-        <logger level="INFO" message="put:!method-without-body"/>
+    <flow name="put:\method-without-body">
+        <logger level="INFO" message="put:\method-without-body"/>
     </flow>
 
-    <flow name="post:!method-without-body">
-        <logger level="INFO" message="post:!method-without-body"/>
+    <flow name="post:\method-without-body">
+        <logger level="INFO" message="post:\method-without-body"/>
     </flow>
 
-    <flow name="post:!method-and-body-without-content-type">
-        <logger level="INFO" message="post:!method-and-body-without-content-type"/>
+    <flow name="post:\method-and-body-without-content-type">
+        <logger level="INFO" message="post:\method-and-body-without-content-type"/>
     </flow>
 
-    <flow name="put:!method-and-body-without-content-type">
-        <logger level="INFO" message="put:!method-and-body-without-content-type"/>
+    <flow name="put:\method-and-body-without-content-type">
+        <logger level="INFO" message="put:\method-and-body-without-content-type"/>
     </flow>
 
-    <flow name="post:!body-with-empty-content-type">
-        <logger level="INFO" message="post:!body-with-empty-content-type"/>
+    <flow name="post:\body-with-empty-content-type">
+        <logger level="INFO" message="post:\body-with-empty-content-type"/>
     </flow>
 
-    <flow name="put:!body-with-empty-content-type">
-        <logger level="INFO" message="put:!body-with-empty-content-type"/>
+    <flow name="put:\body-with-empty-content-type">
+        <logger level="INFO" message="put:\body-with-empty-content-type"/>
     </flow>
 
 </mule>

@@ -31,7 +31,7 @@
         </error-handler>
     </flow>
 
-    <flow name="put:!jsonschema">
+    <flow name="put:\jsonschema">
         <set-payload value="hello"/>
     </flow>
 

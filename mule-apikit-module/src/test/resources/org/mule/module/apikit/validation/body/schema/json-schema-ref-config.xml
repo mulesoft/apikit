@@ -31,15 +31,15 @@
         </error-handler>
     </flow>
 
-    <flow name="put:!resource">
+    <flow name="put:\resource">
         <set-payload value="OK"/>
     </flow>
 
-    <flow name="put:!global">
+    <flow name="put:\global">
         <set-payload value="OK"/>
     </flow>
 
-    <flow name="put:!global-include">
+    <flow name="put:\global-include">
         <set-payload value="OK"/>
     </flow>
 

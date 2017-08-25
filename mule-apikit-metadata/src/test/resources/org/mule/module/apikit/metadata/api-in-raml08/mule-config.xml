@@ -110,19 +110,19 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="put:!resources:application!json:router-config">
-        <logger level="INFO" message="put:!resources:application!json:router-config" />
+    <flow name="put:\resources:application\json:router-config">
+        <logger level="INFO" message="put:\resources:application\json:router-config" />
     </flow>
-    <flow name="get:!resources:router-config">
-        <logger level="INFO" message="get:!resources:router-config" />
+    <flow name="get:\resources:router-config">
+        <logger level="INFO" message="get:\resources:router-config" />
     </flow>
-    <flow name="post:!resources:router-config">
-        <logger level="INFO" message="post:!resources:router-config" />
+    <flow name="post:\resources:router-config">
+        <logger level="INFO" message="post:\resources:router-config" />
     </flow>
-    <flow name="post:!url-encoded:application!x-www-form-urlencoded:router-config">
-        <logger level="INFO" message="post:!url-encoded:application!x-www-form-urlencoded:router-config" />
+    <flow name="post:\url-encoded:application\x-www-form-urlencoded:router-config">
+        <logger level="INFO" message="post:\url-encoded:application\x-www-form-urlencoded:router-config" />
     </flow>
-    <flow name="post:!multipart:multipart!form-data:router-config">
-        <logger level="INFO" message="post:!multipart:multipart!form-data:router-config" />
+    <flow name="post:\multipart:multipart\form-data:router-config">
+        <logger level="INFO" message="post:\multipart:multipart\form-data:router-config" />
     </flow>
 </mule>

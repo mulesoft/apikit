@@ -33,11 +33,11 @@
         </error-handler>
     </flow>
 
-    <flow name="get:!datetime2616">
+    <flow name="get:\datetime2616">
         <set-payload value="#[attributes.headers['x-modifiedsince']]" />
     </flow>
 
-    <flow name="post:!datetime2616">
+    <flow name="post:\datetime2616">
         <set-payload value="#[attributes.headers['x-maxrows']]" />
     </flow>
 

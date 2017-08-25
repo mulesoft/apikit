@@ -60,12 +60,12 @@
         </error-handler>
     </flow>
 
-    <flow name="get:!resources">
+    <flow name="get:\resources">
         <logger level="INFO" message="siamo qui"/>
         <set-payload value="#[mel:null]"/>
     </flow>
 
-    <flow name="get:!multitype">
+    <flow name="get:\multitype">
         <logger level="INFO" message="content type hint: #[mel:message.getAttributes().getHeaders()['ctype']]"/>
         <choice>
             <when expression="#[mel:message.getAttributes().getHeaders()['ctype'] == 'json']">
@@ -85,7 +85,7 @@
         <set-payload value="never mind"/>
     </flow>
 
-    <flow name="get:!multistatus">
+    <flow name="get:\multistatus">
         <choice>
             <when expression="#[mel:message.getAttributes().getHeaders()['ctype'] == 'zip']">
                 <set-variable variableName="httpStatus" value="200"/>

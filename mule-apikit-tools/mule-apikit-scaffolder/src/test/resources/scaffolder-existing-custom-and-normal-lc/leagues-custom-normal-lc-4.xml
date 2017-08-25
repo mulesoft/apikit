@@ -54,11 +54,11 @@
         <apikit:router />
     </flow>
 
-    <flow name="get:!leagues">
+    <flow name="get:\leagues">
         <set-payload value="#[mel:registry:list-of-leagues]"/>
     </flow>
 
-    <flow name="post:!leagues">
+    <flow name="post:\leagues">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
@@ -77,7 +77,7 @@
         </choice>
     </flow>
 
-    <flow name="put:!leagues!{leagueId}:application!json">
+    <flow name="put:\leagues\{leagueId}:application\json">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
@@ -96,7 +96,7 @@
         </choice>
     </flow>
 
-    <flow name="put:!leagues!{leagueId}:application!xml">
+    <flow name="put:\leagues\{leagueId}:application\xml">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
@@ -115,7 +115,7 @@
         </choice>
     </flow>
 
-    <flow name="delete:!leagues!{leagueId}">
+    <flow name="delete:\leagues\{leagueId}">
         <expression-component>
             app.registry['list-of-leagues'].deleteLeague(leagueId)
         </expression-component>

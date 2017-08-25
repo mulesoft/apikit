@@ -130,32 +130,32 @@ output application/json
         </error-handler>
     </flow>
 
-    <flow name="put:!books!{bookId}:router-config">
-        <logger level="INFO" message="put:!books!{bookId}:router-config" />
+    <flow name="put:\books\{bookId}:router-config">
+        <logger level="INFO" message="put:\books\{bookId}:router-config" />
     </flow>
     <flow name="duplicateFlowMapping">
-        <logger level="INFO" message="put:!books!{bookId}:router-config" />
+        <logger level="INFO" message="put:\books\{bookId}:router-config" />
     </flow>
-    <flow name="put:!customers!{customerId}:router-config">
-        <logger level="INFO" message="put:!customers!{customerId}:router-config" />
+    <flow name="put:\customers\{customerId}:router-config">
+        <logger level="INFO" message="put:\customers\{customerId}:router-config" />
     </flow>
-    <flow name="get:!books:router-config">
-        <logger level="INFO" message="get:!books:router-config" />
+    <flow name="get:\books:router-config">
+        <logger level="INFO" message="get:\books:router-config" />
     </flow>
-    <flow name="get:!customers!{customerId}!purchases:router-config">
-        <logger level="INFO" message="get:!customers!{customerId}!purchases:router-config" />
+    <flow name="get:\customers\{customerId}\purchases:router-config">
+        <logger level="INFO" message="get:\customers\{customerId}\purchases:router-config" />
     </flow>
-    <flow name="get:!books!{bookId}:router-config">
-        <logger level="INFO" message="get:!books!{bookId}:router-config" />
+    <flow name="get:\books\{bookId}:router-config">
+        <logger level="INFO" message="get:\books\{bookId}:router-config" />
     </flow>
-    <flow name="get:!customers!{customerId}:router-config">
-        <logger level="INFO" message="get:!customers!{customerId}:router-config" />
+    <flow name="get:\customers\{customerId}:router-config">
+        <logger level="INFO" message="get:\customers\{customerId}:router-config" />
     </flow>
     <flow name="createNewBook">
-        <logger level="INFO" message="post:!books:application!json:router-config" />
+        <logger level="INFO" message="post:\books:application\json:router-config" />
     </flow>
     <flow name="createNewCustomer">
-        <logger level="INFO" message="post:!customers:router-config" />
+        <logger level="INFO" message="post:\customers:router-config" />
     </flow>
 
 
@@ -188,10 +188,10 @@ output application/json
         </error-handler>
     </flow>
 
-    <flow name="get:!customers!pets:petshop-api">
-        <logger level="INFO" message="get:!customers!pets:petshop-api" />
+    <flow name="get:\customers\pets:petshop-api">
+        <logger level="INFO" message="get:\customers\pets:petshop-api" />
     </flow>
-    <flow name="post:!customers:petshop-api">
-        <logger level="INFO" message="post:!customers:petshop-api" />
+    <flow name="post:\customers:petshop-api">
+        <logger level="INFO" message="post:\customers:petshop-api" />
     </flow>
 </mule>

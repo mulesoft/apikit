@@ -54,43 +54,43 @@
         <exception-strategy ref="apiKitGlobalExceptionMapping" />
     </flow>
 
-    <flow name="delete:!teams!{teamId}:leaguesApi">
+    <flow name="delete:\teams\{teamId}:leaguesApi">
         <expression-component>
             app.registry['league-api'].deleteTeam(teamId);
         </expression-component>
     </flow>
 
-    <flow name="get:!teams:leaguesApi">
+    <flow name="get:\teams:leaguesApi">
         <expression-component>
             payload = app.registry['league-api'].getTeams(message.getAttribues().getHeaders()['city']);
         </expression-component>
     </flow>
 
-    <flow name="get:!fixture!{homeTeamId}!{awayTeamId}:leaguesApi">
+    <flow name="get:\fixture\{homeTeamId}\{awayTeamId}:leaguesApi">
         <expression-component>
             payload = app.registry['league-api'].getMatch(homeTeamId, awayTeamId);
         </expression-component>
     </flow>
 
-    <flow name="get:!teams!{teamId}:leaguesApi">
+    <flow name="get:\teams\{teamId}:leaguesApi">
         <expression-component>
             payload = app.registry['league-api'].getTeam(teamId);
         </expression-component>
     </flow>
 
-    <flow name="get:!positions:leaguesApi">
+    <flow name="get:\positions:leaguesApi">
         <expression-component>
             payload = app.registry['league-api'].getPositions();
         </expression-component>
     </flow>
 
-    <flow name="get:!fixture:leaguesApi">
+    <flow name="get:\fixture:leaguesApi">
         <expression-component>
             payload = app.registry['league-api'].getFixture();
         </expression-component>
     </flow>
 
-    <flow name="post:!teams:leaguesApi">
+    <flow name="post:\teams:leaguesApi">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.examples.leagues.request.Team"/>
         <set-property propertyName="Location" value="http://localhost:${http.port}/api/teams/#[mel:payload.id]"/>
@@ -100,7 +100,7 @@
         <set-payload value="#[mel:org.mule.transport.NullPayload.getInstance()]"/>
     </flow>
 
-    <flow name="put:!fixture!{homeTeamId}!{awayTeamId}:leaguesApi">
+    <flow name="put:\fixture\{homeTeamId}\{awayTeamId}:leaguesApi">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.examples.leagues.request.Score"/>
         <expression-component>
@@ -109,7 +109,7 @@
         <set-payload value="#[mel:org.mule.transport.NullPayload.getInstance()]"/>
     </flow>
 
-    <flow name="put:!teams!{teamId}:leaguesApi">
+    <flow name="put:\teams\{teamId}:leaguesApi">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.examples.leagues.request.UpdateTeam"/>
         <expression-component>

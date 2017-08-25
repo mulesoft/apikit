@@ -50,8 +50,8 @@
         </error-handler>
     </flow>
 
-    <flow name="get:!resources">
-        <logger level="INFO" message="inside of get:!resources"/>
+    <flow name="get:\resources">
+        <logger level="INFO" message="inside of get:\resources"/>
         <set-payload value="hello"/>
     </flow>
 

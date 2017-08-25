@@ -20,7 +20,7 @@ public class FlowName {
 
   public static final String FLOW_NAME_SEPARATOR = ":";
   public static final String URL_RESOURCE_SEPARATOR = "/";
-  public static final String RESOURCE_SEPARATOR = "!";
+  public static final String RESOURCE_SEPARATOR = "\\";
   private static final String APIKIT_FLOW_NAME_FORMAT = "^([^:]+):(" + URL_RESOURCE_SEPARATOR + "[^:]*)(:([^:]+))?(:(.*))?$";
 
   private static Pattern flowNamePattern = Pattern.compile(APIKIT_FLOW_NAME_FORMAT);
