@@ -23,14 +23,14 @@ public class FlowName {
   public static final String RESOURCE_SEPARATOR = "\\";
   private static final String APIKIT_FLOW_NAME_FORMAT = "^([^:]+):(" + URL_RESOURCE_SEPARATOR + "[^:]*)(:([^:]+))?(:(.*))?$";
 
-  private static Pattern flowNamePattern = Pattern.compile(APIKIT_FLOW_NAME_FORMAT);
+  private static final Pattern PATTERN = Pattern.compile(APIKIT_FLOW_NAME_FORMAT);
 
   public static Matcher getMatcher(String flowName) {
     if (StringUtils.isEmpty(flowName)) {
       throw new IllegalArgumentException("Flow name cannot be null or empty");
     }
 
-    Matcher flowNameMatcher = flowNamePattern.matcher(flowName);
+    final Matcher flowNameMatcher = PATTERN.matcher(flowName);
 
     if (!flowNameMatcher.find()) {
       throw new IllegalArgumentException("Invalid apikit flow name, expected format is: action:resource[:config]");
@@ -39,12 +39,12 @@ public class FlowName {
     return flowNameMatcher;
   }
 
-  public static String encode(String resource) {
-    return resource.replace(URL_RESOURCE_SEPARATOR, RESOURCE_SEPARATOR);
+  public static String encode(String value) {
+    return value.replace(URL_RESOURCE_SEPARATOR, RESOURCE_SEPARATOR);
   }
 
-  public static String decode(String resource) {
-    return resource.replace(RESOURCE_SEPARATOR, URL_RESOURCE_SEPARATOR);
+  public static String decode(String value) {
+    return value.replace(RESOURCE_SEPARATOR, URL_RESOURCE_SEPARATOR);
   }
 
   public static String getAction(String flowName) {

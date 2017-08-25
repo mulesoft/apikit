@@ -19,7 +19,6 @@ import java.util.List;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 import org.raml.v2.api.loader.RootRamlResourceLoader;
 import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;

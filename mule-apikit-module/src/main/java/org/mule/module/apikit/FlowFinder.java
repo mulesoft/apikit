@@ -108,7 +108,7 @@ public class FlowFinder {
 
   /**
    * validates if name is a valid router flow name according to the following pattern:
-   *  method:!resource[:content-type][:config-name]
+   *  method:\resource[:content-type][:config-name]
    *
    * @param name to be validated
    * @return the name with the config-name stripped or null if it is not a router flow
@@ -131,18 +131,17 @@ public class FlowFinder {
     }
 
     if (coords.length == 4) {
-      final String contentType = coords[2];
-      final String config = coords[3];
-      if (config.equals(configName)) {
+      if (coords[3].equals(configName)) {
+        final String contentType = coords[2];
         return validateRestFlowKeyAgainstApi(method, resource, contentType);
       }
       return null;
     }
 
     if (coords.length == 3) {
-      final String config = coords[2];
-      if (!config.equals(configName)) {
-        return validateRestFlowKeyAgainstApi(method, resource, config);
+      if (!coords[2].equals(configName)) {
+        final String contentType = coords[2];
+        return validateRestFlowKeyAgainstApi(method, resource, contentType);
       }
     }
 

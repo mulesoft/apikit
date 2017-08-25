@@ -153,7 +153,7 @@ public class ScaffolderWithExistingConfig {
     assertEquals(2, countOccurences(s, "delete:\\providers\\{providerId}:complex-config"));
     assertEquals(2, countOccurences(s, "get:\\:complex-config"));
     assertEquals(2, countOccurences(s, "get:\\clients\\{clientId}:complex-config"));
-    assertEquals(2, countOccurences(s, "get:\\#clients:complex-config"));
+    assertEquals(2, countOccurences(s, "get:\\clients:complex-config"));
     assertEquals(1, countOccurences(s, "get:\\invoices\\{invoiceId}:complex-config"));
     assertEquals(1, countOccurences(s, "get:\\invoices:complex-config"));
     assertEquals(1, countOccurences(s, "get:\\items\\{itemId}:complex-config"));
