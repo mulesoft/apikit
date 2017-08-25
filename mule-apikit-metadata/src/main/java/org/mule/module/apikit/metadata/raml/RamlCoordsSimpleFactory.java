@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.metadata.raml;
 
+import org.mule.module.apikit.metadata.FlowName;
 import org.mule.module.apikit.metadata.model.FlowMapping;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 
@@ -13,10 +14,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Optional.empty;
+import static org.mule.module.apikit.metadata.FlowName.FLOW_NAME_SEPARATOR;
 
 public class RamlCoordsSimpleFactory {
 
-  private static final String FLOW_NAME_PART_SEPARATOR = ":";
   private Set<String> apiConfigNames;
 
   public RamlCoordsSimpleFactory(Set<String> apiConfigNames) {
@@ -25,7 +26,7 @@ public class RamlCoordsSimpleFactory {
 
   public Optional<RamlCoordinate> createFromFlowName(String flowName) {
 
-    final String[] parts = flowName.split(FLOW_NAME_PART_SEPARATOR);
+    final String[] parts = FlowName.decode(flowName).split(FLOW_NAME_SEPARATOR);
 
     if (parts.length < 2 || parts.length > 4) {
       return empty();

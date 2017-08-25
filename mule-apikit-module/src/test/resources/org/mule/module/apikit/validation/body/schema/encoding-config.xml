@@ -74,19 +74,19 @@
         <apikit:router config-ref="raml08"/>
     </flow>
 
-    <flow name="post:/testXml:raml10">
+    <flow name="post:!testXml:raml10">
         <set-payload value="#[payload]"/>
     </flow>
 
-    <flow name="post:/testJson:raml10">
+    <flow name="post:!testJson:raml10">
         <set-payload value="#[payload]"/>
     </flow>
 
-    <flow name="post:/testXml:raml08">
+    <flow name="post:!testXml:raml08">
         <set-payload value="#[payload]"/>
     </flow>
 
-    <flow name="post:/testJson:raml08">
+    <flow name="post:!testJson:raml08">
         <set-payload value="#[payload]"/>
     </flow>
 

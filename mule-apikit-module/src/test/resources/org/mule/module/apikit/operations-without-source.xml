@@ -43,18 +43,18 @@
         </error-handler>
     </flow>
 
-    <flow name="get:/resources">
-        <logger level="INFO" message="inside of get:/resources"/>
+    <flow name="get:!resources">
+        <logger level="INFO" message="inside of get:!resources"/>
         <set-payload value="hello"/>
     </flow>
 
-    <flow name="post:/types-test">
-        <logger level="INFO" message="inside of post:/types-test"/>
+    <flow name="post:!types-test">
+        <logger level="INFO" message="inside of post:!types-test"/>
         <set-payload value="hello"/>
     </flow>
 
-    <flow name="post:/reusing-payload">
-        <logger level="INFO" message="inside of post:/reusing-payload"/>
+    <flow name="post:!reusing-payload">
+        <logger level="INFO" message="inside of post:!reusing-payload"/>
         <set-payload value="#[payload]"/>
     </flow>
 

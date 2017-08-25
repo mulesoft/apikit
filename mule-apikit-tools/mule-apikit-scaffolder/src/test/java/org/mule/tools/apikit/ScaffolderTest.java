@@ -69,8 +69,8 @@ public class ScaffolderTest {
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
-    assertEquals(1, countOccurences(s, "get:/:" + name + "-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:" + name + "-config"));
+    assertEquals(1, countOccurences(s, "get:!:" + name + "-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:" + name + "-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
@@ -107,8 +107,8 @@ public class ScaffolderTest {
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertNotNull(s);
-    assertEquals(1, countOccurences(s, "post:/Queue:application/json:api-config"));
-    assertEquals(1, countOccurences(s, "post:/Queue:text/xml:api-config"));
+    assertEquals(1, countOccurences(s, "post:!Queue:application!json:api-config"));
+    assertEquals(1, countOccurences(s, "post:!Queue:text!xml:api-config"));
     assertEquals(0, countOccurences(s, "#[null]"));
   }
 
@@ -126,8 +126,8 @@ public class ScaffolderTest {
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertNotNull(s);
-    assertEquals(1, countOccurences(s, "post:/Queue:application/json:api-config"));
-    assertEquals(1, countOccurences(s, "post:/Queue:text/xml:api-config"));
+    assertEquals(1, countOccurences(s, "post:!Queue:application!json:api-config"));
+    assertEquals(1, countOccurences(s, "post:!Queue:text!xml:api-config"));
     assertEquals(0, countOccurences(s, "#[null]"));
   }
 
@@ -144,8 +144,8 @@ public class ScaffolderTest {
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
@@ -171,8 +171,8 @@ public class ScaffolderTest {
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
@@ -198,8 +198,8 @@ public class ScaffolderTest {
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(2, countOccurences(s, "<http:inbound"));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
@@ -225,8 +225,8 @@ public class ScaffolderTest {
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "<http:inbound"));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
@@ -253,8 +253,8 @@ public class ScaffolderTest {
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "<http:inbound"));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
@@ -280,8 +280,8 @@ public class ScaffolderTest {
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(2, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8081\""));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
@@ -309,8 +309,8 @@ public class ScaffolderTest {
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(2, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8081\""));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
@@ -336,8 +336,8 @@ public class ScaffolderTest {
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(2, countOccurences(s, "config-ref=\"abcd\""));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(0, countOccurences(s, "#[null]"));
@@ -361,8 +361,8 @@ public class ScaffolderTest {
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(0, countOccurences(s, "#[null]"));
@@ -388,11 +388,11 @@ public class ScaffolderTest {
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
 
-    assertEquals(1, countOccurences(s, "get:/pet:two-config"));
-    assertEquals(1, countOccurences(s, "post:/pet:two-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:two-config"));
+    assertEquals(1, countOccurences(s, "post:!pet:two-config"));
 
-    assertEquals(1, countOccurences(s, "get:/car:two-config"));
-    assertEquals(1, countOccurences(s, "post:/car:two-config"));
+    assertEquals(1, countOccurences(s, "get:!car:two-config"));
+    assertEquals(1, countOccurences(s, "post:!car:two-config"));
     assertEquals(0, countOccurences(s, "#[null]"));
   }
 
@@ -413,11 +413,11 @@ public class ScaffolderTest {
     File muleXmlSimple = simpleGeneration("nested", null, false);
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-    assertEquals(1, countOccurences(s, "get:/pet:nested-config"));
-    assertEquals(1, countOccurences(s, "post:/pet:nested-config"));
-    assertEquals(1, countOccurences(s, "get:/pet/owner:nested-config"));
-    assertEquals(1, countOccurences(s, "get:/car:nested-config"));
-    assertEquals(1, countOccurences(s, "post:/car:nested-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:nested-config"));
+    assertEquals(1, countOccurences(s, "post:!pet:nested-config"));
+    assertEquals(1, countOccurences(s, "get:!pet!owner:nested-config"));
+    assertEquals(1, countOccurences(s, "get:!car:nested-config"));
+    assertEquals(1, countOccurences(s, "post:!car:nested-config"));
     assertEquals(0, countOccurences(s, "#[null]"));
   }
 
@@ -493,15 +493,15 @@ public class ScaffolderTest {
 
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
-    assertEquals(1, countOccurences(s, "get:/:simple-config"));
-    assertEquals(1, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!:simple-config"));
+    assertEquals(1, countOccurences(s, "get:!pet:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
 
     String s2 = IOUtils.toString(new FileInputStream(muleXmlTwo));
-    assertEquals(1, countOccurences(s2, "get:/pet:two-config"));
-    assertEquals(1, countOccurences(s2, "post:/pet:two-config"));
-    assertEquals(1, countOccurences(s2, "get:/car:two-config"));
-    assertEquals(1, countOccurences(s2, "post:/car:two-config"));
+    assertEquals(1, countOccurences(s2, "get:!pet:two-config"));
+    assertEquals(1, countOccurences(s2, "post:!pet:two-config"));
+    assertEquals(1, countOccurences(s2, "get:!car:two-config"));
+    assertEquals(1, countOccurences(s2, "post:!car:two-config"));
     assertEquals(0, countOccurences(s2, "extensionEnabled"));
   }
 

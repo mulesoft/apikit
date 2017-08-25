@@ -41,7 +41,7 @@
         </error-handler>
     </flow>
 
-    <flow name="put:/schema:application/json:router-config">
-        <logger level="INFO" message="put:/schema:application/json:router-config" />
+    <flow name="put:!schema:application!json:router-config">
+        <logger level="INFO" message="put:!schema:application!json:router-config" />
     </flow>
 </mule>

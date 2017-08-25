@@ -27,6 +27,9 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.mule.module.apikit.FlowName.FLOW_NAME_SEPARATOR;
+import static org.mule.module.apikit.FlowName.URL_RESOURCE_SEPARATOR;
+
 public class FlowFinder {
 
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -105,32 +108,45 @@ public class FlowFinder {
 
   /**
    * validates if name is a valid router flow name according to the following pattern:
-   *  method:/resource[:content-type][:config-name]
+   *  method:!resource[:content-type][:config-name]
    *
    * @param name to be validated
    * @return the name with the config-name stripped or null if it is not a router flow
    */
   private String getRestFlowKey(String name) {
-    String[] coords = name.split(":");
-    String[] methods = {"get", "put", "post", "delete", "head", "patch", "options"};
-    if (coords.length < 2 || coords.length > 4 ||
-        !Arrays.asList(methods).contains(coords[0]) ||
-        !coords[1].startsWith("/")) {
+    final String[] validMethods = {"get", "put", "post", "delete", "head", "patch", "options"};
+
+    final String[] coords = FlowName.decode(name).split(FLOW_NAME_SEPARATOR);
+
+    if (coords.length < 2)
+      return null;
+
+    final String method = coords[0];
+    final String resource = coords[1];
+
+    if (coords.length > 4 ||
+        !Arrays.asList(validMethods).contains(method) ||
+        !resource.startsWith(URL_RESOURCE_SEPARATOR)) {
       return null;
     }
+
     if (coords.length == 4) {
-      if (coords[3].equals(configName)) {
-        return validateRestFlowKeyAgainstApi(coords[0], coords[1], coords[2]);
+      final String contentType = coords[2];
+      final String config = coords[3];
+      if (config.equals(configName)) {
+        return validateRestFlowKeyAgainstApi(method, resource, contentType);
       }
       return null;
     }
+
     if (coords.length == 3) {
-      if (coords[2].equals(configName)) {
-        return validateRestFlowKeyAgainstApi(coords[0], coords[1]);
+      final String config = coords[2];
+      if (!config.equals(configName)) {
+        return validateRestFlowKeyAgainstApi(method, resource, config);
       }
-      return validateRestFlowKeyAgainstApi(coords[0], coords[1], coords[2]);
     }
-    return validateRestFlowKeyAgainstApi(coords[0], coords[1]);
+
+    return validateRestFlowKeyAgainstApi(method, resource);
   }
 
   private String validateRestFlowKeyAgainstApi(String... coords) {

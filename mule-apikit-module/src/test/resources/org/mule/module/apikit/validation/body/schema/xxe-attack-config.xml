@@ -38,7 +38,7 @@
         </error-handler>
     </flow>
 
-    <flow name="post:/test:application/xml:api-config">
+    <flow name="post:!test:application!xml:api-config">
         <set-payload value="response"/>
     </flow>
 

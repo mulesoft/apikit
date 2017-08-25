@@ -27,11 +27,11 @@
         <apikit:router />
     </flow>
 
-    <flow name="get:/pet">
+    <flow name="get:!pet">
         <set-payload value="Hello world!"/>
     </flow>
 
-    <flow name="post:/vet:text/xml">
+    <flow name="post:!vet:text!xml">
     </flow>
 
     <error-handler name="defaultErrorHandler">

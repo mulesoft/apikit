@@ -113,10 +113,10 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:/customers/pets">
-        <logger level="INFO" message="get:/customers/pets" />
+    <flow name="get:!customers!pets">
+        <logger level="INFO" message="get:!customers!pets" />
     </flow>
-    <flow name="post:/customers">
-        <logger level="INFO" message="post:/customers" />
+    <flow name="post:!customers">
+        <logger level="INFO" message="post:!customers" />
     </flow>
 </mule>

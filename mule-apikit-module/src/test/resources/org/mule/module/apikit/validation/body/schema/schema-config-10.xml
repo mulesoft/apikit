@@ -31,11 +31,11 @@
         </error-handler>
     </flow>
 
-    <flow name="put:/currentuser">
+    <flow name="put:!currentuser">
         <set-payload value="hello"/>
     </flow>
 
-    <flow name="post:/ramluser">
+    <flow name="post:!ramluser">
         <set-payload value="hello"/>
     </flow>
 </mule>

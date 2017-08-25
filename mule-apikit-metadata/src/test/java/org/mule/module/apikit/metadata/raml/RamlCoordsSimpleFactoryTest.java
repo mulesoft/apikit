@@ -23,37 +23,37 @@ public class RamlCoordsSimpleFactoryTest {
   public void twoConfigsTest() {
     final RamlCoordsSimpleFactory factory = new RamlCoordsSimpleFactory(set("config1", "config2"));
 
-    Optional<RamlCoordinate> coord = factory.createFromFlowName("get:/persons:config1");
+    Optional<RamlCoordinate> coord = factory.createFromFlowName("get:!persons:config1");
     assertTrue(coord.isPresent());
-    assertEquals("get:/persons:config1", coord.get().getFlowName());
+    assertEquals("get:!persons:config1", coord.get().getFlowName());
     assertEquals("get", coord.get().getMethod());
     assertEquals("/persons", coord.get().getResource());
     assertNull(coord.get().getMediaType());
     assertEquals("config1", coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("post:/offices:config2");
+    coord = factory.createFromFlowName("post:!offices:config2");
     assertTrue(coord.isPresent());
-    assertEquals("post:/offices:config2", coord.get().getFlowName());
+    assertEquals("post:!offices:config2", coord.get().getFlowName());
     assertEquals("post", coord.get().getMethod());
     assertEquals("/offices", coord.get().getResource());
     assertNull(coord.get().getMediaType());
     assertEquals("config2", coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("post:/offices:application/json:config2");
+    coord = factory.createFromFlowName("post:!offices:application!json:config2");
     assertTrue(coord.isPresent());
-    assertEquals("post:/offices:application/json:config2", coord.get().getFlowName());
+    assertEquals("post:!offices:application!json:config2", coord.get().getFlowName());
     assertEquals("post", coord.get().getMethod());
     assertEquals("/offices", coord.get().getResource());
     assertEquals("application/json", coord.get().getMediaType());
     assertEquals("config2", coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("post:/offices");
+    coord = factory.createFromFlowName("post:!offices");
     assertTrue(!coord.isPresent());
 
-    coord = factory.createFromFlowName("post:/incomplete:application/json:config2:illegal");
+    coord = factory.createFromFlowName("post:!incomplete:application!json:config2:illegal");
     assertTrue(!coord.isPresent());
 
-    coord = factory.createFromFlowName("post:/offices:application/json:unknown-config");
+    coord = factory.createFromFlowName("post:!offices:application!json:unknown-config");
     assertTrue(!coord.isPresent());
   }
 
@@ -61,31 +61,31 @@ public class RamlCoordsSimpleFactoryTest {
   public void oneConfigTest() {
     final RamlCoordsSimpleFactory factory = new RamlCoordsSimpleFactory(set("config"));
 
-    Optional<RamlCoordinate> coord = factory.createFromFlowName("get:/persons");
+    Optional<RamlCoordinate> coord = factory.createFromFlowName("get:!persons");
     assertTrue(coord.isPresent());
-    assertEquals("get:/persons", coord.get().getFlowName());
+    assertEquals("get:!persons", coord.get().getFlowName());
     assertEquals("get", coord.get().getMethod());
     assertEquals("/persons", coord.get().getResource());
     assertNull(coord.get().getMediaType());
     assertNull(coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("get:/persons");
+    coord = factory.createFromFlowName("get:!persons");
     assertTrue(coord.isPresent());
-    assertEquals("get:/persons", coord.get().getFlowName());
+    assertEquals("get:!persons", coord.get().getFlowName());
     assertEquals("get", coord.get().getMethod());
     assertEquals("/persons", coord.get().getResource());
     assertNull(coord.get().getMediaType());
     assertNull(coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("get:/persons:application/json:config");
+    coord = factory.createFromFlowName("get:!persons:application!json:config");
     assertTrue(coord.isPresent());
-    assertEquals("get:/persons:application/json:config", coord.get().getFlowName());
+    assertEquals("get:!persons:application!json:config", coord.get().getFlowName());
     assertEquals("get", coord.get().getMethod());
     assertEquals("/persons", coord.get().getResource());
     assertEquals("application/json", coord.get().getMediaType());
     assertEquals("config", coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("get:/persons:application/json:unknownConfig");
+    coord = factory.createFromFlowName("get:!persons:application!json:unknownConfig");
     assertTrue(!coord.isPresent());
   }
 
