@@ -37,10 +37,10 @@ public class MetadataModuleTestCase {
         .build();
 
     Optional<FunctionType> createNewBookFlow = metadata.getMetadataForFlow("createNewBook");
-    Optional<FunctionType> getAllBooks = metadata.getMetadataForFlow("get:/books:router-config");
+    Optional<FunctionType> getAllBooks = metadata.getMetadataForFlow("get:\\books:router-config");
     Optional<FunctionType> flowMappingDoesNotExist = metadata.getMetadataForFlow("flowMappingDoesNotExist");
-    Optional<FunctionType> petshopApiGetCustomers = metadata.getMetadataForFlow("get:/customers/pets:petshop-api");
-    Optional<FunctionType> petShopApiCreateCustomer = metadata.getMetadataForFlow("post:/customers:petshop-api");
+    Optional<FunctionType> petshopApiGetCustomers = metadata.getMetadataForFlow("get:\\customers\\pets:petshop-api");
+    Optional<FunctionType> petShopApiCreateCustomer = metadata.getMetadataForFlow("post:\\customers:petshop-api");
 
     assertThat(createNewBookFlow.isPresent(), is(true));
     assertThat(getAllBooks.isPresent(), is(true));
@@ -66,8 +66,8 @@ public class MetadataModuleTestCase {
         .withNotifier(notifier)
         .build();
 
-    Optional<FunctionType> getAllCustomersPets = metadata.getMetadataForFlow("get:/customers/pets");
-    Optional<FunctionType> createCustomer = metadata.getMetadataForFlow("post:/customers");
+    Optional<FunctionType> getAllCustomersPets = metadata.getMetadataForFlow("get:\\customers\\pets");
+    Optional<FunctionType> createCustomer = metadata.getMetadataForFlow("post:\\customers");
 
     assertThat(getAllCustomersPets.isPresent(), is(true));
     assertThat(createCustomer.isPresent(), is(true));
@@ -88,12 +88,12 @@ public class MetadataModuleTestCase {
         .withNotifier(notifier)
         .build();
 
-    Optional<FunctionType> putResources = metadata.getMetadataForFlow("put:/resources:application/json:router-config");
-    Optional<FunctionType> getResources = metadata.getMetadataForFlow("get:/resources:router-config");
-    Optional<FunctionType> postResources = metadata.getMetadataForFlow("post:/resources:router-config");
+    Optional<FunctionType> putResources = metadata.getMetadataForFlow("put:\\resources:application\\json:router-config");
+    Optional<FunctionType> getResources = metadata.getMetadataForFlow("get:\\resources:router-config");
+    Optional<FunctionType> postResources = metadata.getMetadataForFlow("post:\\resources:router-config");
     Optional<FunctionType> postUrlEncoded =
-        metadata.getMetadataForFlow("post:/url-encoded:application/x-www-form-urlencoded:router-config");
-    Optional<FunctionType> postMultipart = metadata.getMetadataForFlow("post:/multipart:multipart/form-data:router-config");
+        metadata.getMetadataForFlow("post:\\url-encoded:application\\x-www-form-urlencoded:router-config");
+    Optional<FunctionType> postMultipart = metadata.getMetadataForFlow("post:\\multipart:multipart\\form-data:router-config");
 
     assertThat(putResources.isPresent(), is(true));
     assertThat(getResources.isPresent(), is(true));

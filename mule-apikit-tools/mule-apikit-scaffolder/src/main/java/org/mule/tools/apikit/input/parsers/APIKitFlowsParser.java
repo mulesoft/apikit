@@ -11,6 +11,7 @@ import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.FlowName;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 import java.util.HashSet;
@@ -42,7 +43,7 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
                                                                   Filters.element(XMLNS_NAMESPACE.getNamespace()));
     List<Element> elements = xp.evaluate(document);
     for (Element element : elements) {
-      String name = element.getAttributeValue("name");
+      String name = FlowName.decode(element.getAttributeValue("name"));
       APIKitFlow flow;
       try {
         flow = APIKitFlow.buildFromName(name, includedApis.keySet());

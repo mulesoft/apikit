@@ -11,7 +11,7 @@ http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/m
         <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
         <apikit:router/>
     </flow>
-    <flow name="get:/pet">
+    <flow name="get:\pet">
         <set-payload value="Hello world!" xmlns=""/>
     </flow>
 </mule>

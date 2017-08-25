@@ -97,8 +97,8 @@ public class ScaffolderMule4Test {
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(8, countOccurences(s, "http:headers"));
-    assertEquals(2, countOccurences(s, "get:/:" + name + "-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:" + name + "-config"));
+    assertEquals(2, countOccurences(s, "get:\\:" + name + "-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:" + name + "-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
@@ -133,8 +133,8 @@ public class ScaffolderMule4Test {
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(8, countOccurences(s, "http:headers"));
-    assertEquals(2, countOccurences(s, "get:/:" + name + "-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:" + name + "-config"));
+    assertEquals(2, countOccurences(s, "get:\\:" + name + "-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:" + name + "-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
@@ -178,8 +178,8 @@ public class ScaffolderMule4Test {
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "post:/Queue:application/json:api-config"));
-    assertEquals(2, countOccurences(s, "post:/Queue:text/xml:api-config"));
+    assertEquals(2, countOccurences(s, "post:\\Queue:application\\json:api-config"));
+    assertEquals(2, countOccurences(s, "post:\\Queue:text\\xml:api-config"));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
     assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
 
@@ -208,8 +208,8 @@ public class ScaffolderMule4Test {
     assertEquals(7, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "post:/Queue:application/json:api-config"));
-    assertEquals(2, countOccurences(s, "post:/Queue:text/xml:api-config"));
+    assertEquals(2, countOccurences(s, "post:\\Queue:application\\json:api-config"));
+    assertEquals(2, countOccurences(s, "post:\\Queue:text\\xml:api-config"));
     assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
@@ -235,8 +235,8 @@ public class ScaffolderMule4Test {
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "get:/:simple-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
@@ -270,8 +270,8 @@ public class ScaffolderMule4Test {
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "get:/:simple-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
@@ -307,8 +307,8 @@ public class ScaffolderMule4Test {
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(0, countOccurences(s, "<http:inbound"));
-    assertEquals(2, countOccurences(s, "get:/:simple-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
@@ -344,8 +344,8 @@ public class ScaffolderMule4Test {
     assertEquals(7, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(2, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8081\""));
-    assertEquals(2, countOccurences(s, "get:/:simple-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
@@ -381,8 +381,8 @@ public class ScaffolderMule4Test {
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(2, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8081\""));
-    assertEquals(2, countOccurences(s, "get:/:simple-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
@@ -417,8 +417,8 @@ public class ScaffolderMule4Test {
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(2, countOccurences(s, "config-ref=\"abcd\""));
-    assertEquals(2, countOccurences(s, "get:/:simple-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -451,8 +451,8 @@ public class ScaffolderMule4Test {
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "get:/:simple-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -488,11 +488,11 @@ public class ScaffolderMule4Test {
 
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
 
-    assertEquals(2, countOccurences(s, "get:/pet:two-config"));
-    assertEquals(2, countOccurences(s, "post:/pet:two-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:two-config"));
+    assertEquals(2, countOccurences(s, "post:\\pet:two-config"));
 
-    assertEquals(2, countOccurences(s, "get:/car:two-config"));
-    assertEquals(2, countOccurences(s, "post:/car:two-config"));
+    assertEquals(2, countOccurences(s, "get:\\car:two-config"));
+    assertEquals(2, countOccurences(s, "post:\\car:two-config"));
 
     assertEquals(4, countOccurences(s, "<logger level=\"INFO\" message="));
   }
@@ -523,11 +523,11 @@ public class ScaffolderMule4Test {
     assertEquals(7, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "get:/pet:nested-config"));
-    assertEquals(2, countOccurences(s, "post:/pet:nested-config"));
-    assertEquals(2, countOccurences(s, "get:/pet/owner:nested-config"));
-    assertEquals(2, countOccurences(s, "get:/car:nested-config"));
-    assertEquals(2, countOccurences(s, "post:/car:nested-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:nested-config"));
+    assertEquals(2, countOccurences(s, "post:\\pet:nested-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\owner:nested-config"));
+    assertEquals(2, countOccurences(s, "get:\\car:nested-config"));
+    assertEquals(2, countOccurences(s, "post:\\car:nested-config"));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
@@ -545,7 +545,7 @@ public class ScaffolderMule4Test {
     assertTrue(xmlFile.exists());
     String s = IOUtils.toString(new FileInputStream(xmlFile));
     assertEquals(1, countOccurences(s, "<error-handler name="));
-    assertEquals(1, countOccurences(s, "<flow name=\"post:/oneResource:api-config\">"));
+    assertEquals(1, countOccurences(s, "<flow name=\"post:\\oneResource:api-config\">"));
     assertEquals(1, countOccurences(s, "<http:listener-config name="));
   }
 
@@ -647,13 +647,13 @@ public class ScaffolderMule4Test {
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
 
-    assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message=\"get:/pet:" + name + "-config\" />"));
+    assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message=\"get:\\pet:" + name + "-config\" />"));
     assertEquals(0, countOccurences(s, "{\n" +
         "  name: \"Bobby\",\n" +
         "  food: \"Ice Cream\"\n" +
         "}"));
 
-    assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message=\"get:/person:" + name + "-config\" />"));
+    assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message=\"get:\\person:" + name + "-config\" />"));
     assertEquals(0, countOccurences(s, "{\n" +
         "  Person: {\n" +
         "    name: \"Underwood\",\n" +
@@ -662,7 +662,7 @@ public class ScaffolderMule4Test {
         "  }\n" +
         "}"));
 
-    assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message=\"get:/books:" + name + "-config\" />"));
+    assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message=\"get:\\books:" + name + "-config\" />"));
     assertEquals(0, countOccurences(s, "{\n" +
         "  title: \"In Cold Blood\",\n" +
         "  author: \"Truman Capote\",\n" +
@@ -695,8 +695,8 @@ public class ScaffolderMule4Test {
 
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
-    assertEquals(2, countOccurences(s, "get:/:simple-config"));
-    assertEquals(2, countOccurences(s, "get:/pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -710,10 +710,10 @@ public class ScaffolderMule4Test {
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
 
     String s2 = IOUtils.toString(new FileInputStream(muleXmlTwo));
-    assertEquals(2, countOccurences(s2, "get:/pet:two-config"));
-    assertEquals(2, countOccurences(s2, "post:/pet:two-config"));
-    assertEquals(2, countOccurences(s2, "get:/car:two-config"));
-    assertEquals(2, countOccurences(s2, "post:/car:two-config"));
+    assertEquals(2, countOccurences(s2, "get:\\pet:two-config"));
+    assertEquals(2, countOccurences(s2, "post:\\pet:two-config"));
+    assertEquals(2, countOccurences(s2, "get:\\car:two-config"));
+    assertEquals(2, countOccurences(s2, "post:\\car:two-config"));
     assertEquals(0, countOccurences(s2, "extensionEnabled"));
     assertEquals(0, countOccurences(s2, "interpretRequestErrors=\"true\""));
     assertEquals(4, countOccurences(s2, "<logger level=\"INFO\" message="));

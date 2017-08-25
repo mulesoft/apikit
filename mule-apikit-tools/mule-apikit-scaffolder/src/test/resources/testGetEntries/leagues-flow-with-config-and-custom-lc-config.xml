@@ -40,11 +40,11 @@
         <exception-strategy ref="apiKitGlobalExceptionMapping"/>
     </flow>
 
-    <flow name="get:/leagues:leagues-config">
+    <flow name="get:\leagues:leagues-config">
         <set-payload value="#[mel:registry:list-of-leagues]"/>
     </flow>
 
-    <flow name="post:/leagues:application/xml:leagues-config">
+    <flow name="post:\leagues:application\xml:leagues-config">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
@@ -63,7 +63,7 @@
         </choice>
     </flow>
 
-    <flow name="post:/leagues:application/json:leagues-config">
+    <flow name="post:\leagues:application\json:leagues-config">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
@@ -82,7 +82,7 @@
         </choice>
     </flow>
 
-    <flow name="get:/leagues/{leagueId}:leagues-config">
+    <flow name="get:\leagues\{leagueId}:leagues-config">
         <logger level="WARN" message="leagueId: #[mel:leagueId]"/>
         <choice>
             <when expression="#[mel:app.registry['list-of-leagues'].getLeague(leagueId)]">
@@ -94,7 +94,7 @@
         </choice>
     </flow>
 
-    <flow name="put:/leagues/{leagueId}:leagues-config">
+    <flow name="put:\leagues\{leagueId}:leagues-config">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
@@ -113,7 +113,7 @@
         </choice>
     </flow>
 
-    <flow name="delete:/leagues/{leagueId}:leagues-config">
+    <flow name="delete:\leagues\{leagueId}:leagues-config">
         <expression-component>
             app.registry['list-of-leagues'].deleteLeague(leagueId)
         </expression-component>

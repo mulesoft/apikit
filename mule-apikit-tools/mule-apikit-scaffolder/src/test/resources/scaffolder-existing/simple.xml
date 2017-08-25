@@ -29,7 +29,7 @@
         <apikit:router config-ref="simpleV10-config" />
     </flow>
 
-    <flow name="get:/">
+    <flow name="get:\">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:set-payload><![CDATA[%output application/java
              ---
@@ -37,7 +37,7 @@
         </ee:transform>
     </flow>
 
-    <flow name="get:/pet">
+    <flow name="get:\pet">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
             <ee:set-payload><![CDATA[%output application/java
              ---

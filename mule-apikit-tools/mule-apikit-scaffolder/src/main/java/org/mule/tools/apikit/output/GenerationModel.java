@@ -21,12 +21,11 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.mule.tools.apikit.model.FlowName;
+
+import static org.mule.tools.apikit.model.FlowName.FLOW_NAME_SEPARATOR;
 
 public class GenerationModel implements Comparable<GenerationModel> {
-
-  private static final char FLOW_NAME_SEPARATOR = ':';
-
-  //    public static final String DEFAULT_TEXT_MULE_4 = "";
 
   private final String verb;
   private IAction action;
@@ -195,7 +194,7 @@ public class GenerationModel implements Comparable<GenerationModel> {
       flowName.append(FLOW_NAME_SEPARATOR)
           .append(api.getConfig().getName());
     }
-    return flowName.toString();
+    return FlowName.encode(flowName.toString());
   }
 
   @Override

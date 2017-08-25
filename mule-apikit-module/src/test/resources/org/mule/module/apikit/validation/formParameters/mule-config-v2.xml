@@ -55,35 +55,35 @@
         </http:listener>
         <apikit:console config-ref="router-config" />
     </flow>
-    <flow name="post:/url-encoded-simple:application/x-www-form-urlencoded:router-config">
+    <flow name="post:\url-encoded-simple:application\x-www-form-urlencoded:router-config">
         <set-payload value="#[payload.first as String]"/>
     </flow>
-    <flow name="post:/url-encoded-simple-integer:application/x-www-form-urlencoded:router-config">
+    <flow name="post:\url-encoded-simple-integer:application\x-www-form-urlencoded:router-config">
         <set-payload value="#[payload.first as String]"/>
     </flow>
-    <flow name="post:/url-encoded-with-default:application/x-www-form-urlencoded:router-config">
+    <flow name="post:\url-encoded-with-default:application\x-www-form-urlencoded:router-config">
         <set-payload value="#[payload.first as String]"/>
     </flow>
-    <flow name="post:/url-encoded-duplicated-key:application/x-www-form-urlencoded:router-config">
+    <flow name="post:\url-encoded-duplicated-key:application\x-www-form-urlencoded:router-config">
         <set-payload value="#[payload]"/>
     </flow>
 
-    <flow name="post:/multipart:multipart/form-data:router-config">
+    <flow name="post:\multipart:multipart\form-data:router-config">
         <set-payload value="#[payload.namedParts.second.payload]" />
     </flow>
-    <flow name="post:/users:multipart/form-data:router-config">
+    <flow name="post:\users:multipart\form-data:router-config">
         <set-payload value="#[payload.namedParts.userId.payload]" />
     </flow>
-    <flow name="post:/announcements:multipart/form-data:router-config">
+    <flow name="post:\announcements:multipart\form-data:router-config">
         <set-payload value="#[payload.namedParts.content.payload]" />
     </flow>
-    <flow name="post:/uploadImage:multipart/form-data:router-config">
+    <flow name="post:\uploadImage:multipart\form-data:router-config">
         <set-payload value="#[mel:
             java.util.Arrays.toString(
                 org.mule.runtime.core.api.util.IOUtils.toByteArray(
                     message.payload.getPart('image').payload.value))]"/>
     </flow>
-    <flow name="post:/uploadFile:multipart/form-data:router-config">
+    <flow name="post:\uploadFile:multipart\form-data:router-config">
         <set-payload value="#[payload.namedParts.document.payload]"/>
     </flow>
 </mule>
