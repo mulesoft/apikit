@@ -2,14 +2,14 @@
   "name": "${meta.prefix}${meta.artifactId}${meta.suffix}",
   "minMuleVersion": "${minMuleVersion}",
   "classLoaderModelLoaderDescriptor": {
-    "id": "maven",
+    "id": "mule",
     "attributes": {
       "exportedPackages": [],
       "exportedResources": []
     }
   },
   "bundleDescriptorLoader": {
-    "id": "maven",
+    "id": "mule",
     "attributes": {}
   },
   "configs": [
