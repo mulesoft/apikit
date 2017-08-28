@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import org.mule.module.apikit.exception.InvalidQueryParameterException;
+import org.mule.module.apikit.api.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
