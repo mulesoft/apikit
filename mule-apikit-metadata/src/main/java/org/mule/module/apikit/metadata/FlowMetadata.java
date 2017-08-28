@@ -22,10 +22,12 @@ import org.mule.module.apikit.metadata.model.Payload;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
-import org.mule.raml.interfaces.model.parameter.IParameter;
 
-import java.util.Map;
+import javax.annotation.Nullable;
+import java.util.Iterator;
 import java.util.Optional;
+
+import static java.util.Optional.of;
 
 public class FlowMetadata implements MetadataSource {
 
@@ -34,9 +36,8 @@ public class FlowMetadata implements MetadataSource {
   private static final String ATTRIBUTES_HEADERS = "headers";
   private static final String ATTRIBUTES_URI_PARAMETERS = "uriParameters";
 
-
-  private IAction action;
-  private RamlCoordinate coordinate;
+  final private IAction action;
+  final private RamlCoordinate coordinate;
 
   public FlowMetadata(IAction action, RamlCoordinate coordinate) {
     this.action = action;
@@ -45,115 +46,91 @@ public class FlowMetadata implements MetadataSource {
 
   @Override
   public Optional<FunctionType> getMetadata() {
-    MuleEventMetadataType muleInputEventMetadata = inputMetadata(action, coordinate);
-    MuleEventMetadataType muleOutputEventMetadata = outputMetadata(action, coordinate);
+    final MuleEventMetadataType inputEvent = inputMetadata(action, coordinate);
+    final MuleEventMetadataType outputEvent = outputMetadata(action, coordinate);
 
     // FunctionType
-    FunctionTypeBuilder functionTypeBuilder = BaseTypeBuilder.create(MetadataFormat.JAVA).functionType();
-    FunctionType function = functionTypeBuilder
-        .addParameterOf(PARAMETER_INPUT_METADATA, muleInputEventMetadata)
-        .returnType(muleOutputEventMetadata)
+    final FunctionTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).functionType();
+    final FunctionType function = builder
+        .addParameterOf(PARAMETER_INPUT_METADATA, inputEvent)
+        .returnType(outputEvent)
         .build();
 
-    return Optional.of(function);
+    return of(function);
   }
 
   private MuleEventMetadataType inputMetadata(IAction action, RamlCoordinate coordinate) {
-
-    MessageMetadataType messageMetadataType = new MessageMetadataTypeBuilder()
+    final MessageMetadataType message = new MessageMetadataTypeBuilder()
         .payload(getInputPayload(action, coordinate))
-        .attributes(getInputAttributes(action))
-        .build();
+        .attributes(getInputAttributes(action)).build();
 
-    return new MuleEventMetadataTypeBuilder()
-        .message(messageMetadataType)
-        .build();
+    return new MuleEventMetadataTypeBuilder().message(message).build();
   }
 
   private MuleEventMetadataType outputMetadata(IAction action, RamlCoordinate coordinate) {
-    MessageMetadataType message = new MessageMetadataTypeBuilder()
-        .payload(getOutputPayload(action))
-        .build();
+    final MessageMetadataType message = new MessageMetadataTypeBuilder()
+        .payload(getOutputPayload(action)).build();
 
-    return new MuleEventMetadataTypeBuilder()
-        .message(message)
-        //                .addVariable("outboundHeadersMapName", getHeadersOutputMetadata())
-        .build();
-
+    return new MuleEventMetadataTypeBuilder().message(message).build();
+    // .addVariable("outboundHeadersMapName", getHeadersOutputMetadata()).build();
   }
 
   private ObjectTypeBuilder getQueryParameters(IAction action) {
+    final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-    ObjectTypeBuilder queryParametersMetadataBuilder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
-    for (Map.Entry<String, IParameter> entry : action.getQueryParameters().entrySet()) {
-      queryParametersMetadataBuilder.addField()
-          .key(entry.getKey())
-          .value().anyType();
-    }
+    action.getQueryParameters().forEach((key, value) -> builder.addField().key(key).value().anyType());
 
-    return queryParametersMetadataBuilder;
+    return builder;
   }
 
   private ObjectTypeBuilder getHeaders(IAction action) {
+    final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-    ObjectTypeBuilder headersMetadataBuilder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
-    for (Map.Entry<String, IParameter> entry : action.getHeaders().entrySet()) {
-      headersMetadataBuilder.addField()
-          .key(entry.getKey())
-          .value().anyType();
-    }
+    action.getHeaders().forEach((key, value) -> builder.addField().key(key).value().anyType());
 
-    return headersMetadataBuilder;
+    return builder;
   }
 
   private ObjectType getInputAttributes(IAction action) {
 
-    ObjectTypeBuilder attributesBuilder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
-    attributesBuilder.addField()
+    final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
+    builder.addField()
         .key(ATTRIBUTES_QUERY_PARAMETERS)
         .value(getQueryParameters(action));
-    attributesBuilder.addField()
+    builder.addField()
         .key(ATTRIBUTES_HEADERS)
         .value(getHeaders(action));
-    attributesBuilder.addField()
+    builder.addField()
         .key(ATTRIBUTES_URI_PARAMETERS)
         .value().anyType(); // TODO: Metadata for UriParameters
 
-    return attributesBuilder.build();
+    return builder.build();
   }
 
 
   private MetadataType getOutputPayload(IAction action) {
-
-    IMimeType mimeType = action.getResponses().values().stream()
+    @Nullable
+    final IMimeType mimeType = action.getResponses().values().stream()
         .filter(response -> response.getBody() != null)
         .flatMap(response -> response.getBody().values().stream())
-        .findFirst()
-        .orElse(null);
+        .findFirst().orElse(null);
 
     return Payload.metadata(mimeType);
   }
 
   private MetadataType getInputPayload(IAction action, RamlCoordinate coordinate) {
-
+    @Nullable
     IMimeType mimeType = null;
 
     if (action.hasBody()) {
-
-      if (action.getBody().size() == 1) {
-
-        mimeType = action.getBody().values().stream()
-            .findFirst()
-            .orElse(null);
-
+      final Iterator<IMimeType> it = action.getBody().values().iterator();
+      if (it.hasNext()) {
+        mimeType = it.next();
       } else if (coordinate.getMediaType() != null) {
-
         mimeType = action.getBody().get(coordinate.getMediaType());
       }
-
-      return Payload.metadata(mimeType);
     }
 
-    return null;
+    return Payload.metadata(mimeType);
   }
 }
