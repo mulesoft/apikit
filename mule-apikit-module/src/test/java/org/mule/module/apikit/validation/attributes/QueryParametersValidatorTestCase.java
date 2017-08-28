@@ -8,7 +8,7 @@ package org.mule.module.apikit.validation.attributes;
 
 import static org.junit.Assert.assertEquals;
 
-import org.mule.module.apikit.exception.InvalidQueryParameterException;
+import org.mule.module.apikit.api.exception.InvalidQueryParameterException;
 import org.mule.raml.implv1.model.ActionImpl;
 import org.mule.runtime.api.util.MultiMap;
 
