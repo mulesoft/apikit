@@ -24,168 +24,137 @@ import org.raml.model.parameter.UriParameter;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
 
-public class RamlImplV1 implements IRaml
-{
-    private Raml raml;
+public class RamlImplV1 implements IRaml {
 
-    public RamlImplV1(Raml raml)
-    {
-        this.raml = raml;
+  private Raml raml;
+
+  public RamlImplV1(Raml raml) {
+    this.raml = raml;
+  }
+
+  public Raml getRaml() {
+    return raml;
+  }
+
+  public IResource getResource(String s) {
+    Resource resource = raml.getResource(s);
+    if (resource == null) {
+      return null;
     }
+    return new ResourceImpl(resource);
+  }
 
-    public Raml getRaml()
-    {
-        return raml;
+  public Map<String, String> getConsolidatedSchemas() {
+    return raml.getConsolidatedSchemas();
+  }
+
+  public Map<String, Object> getCompiledSchemas() {
+    return raml.getCompiledSchemas();
+  }
+
+  public String getBaseUri() {
+    return raml.getBaseUri();
+  }
+
+  public Map<String, IResource> getResources() {
+    if (raml.getResources() == null) {
+      return null;
     }
-
-    public IResource getResource(String s)
-    {
-        Resource resource = raml.getResource(s);
-        if (resource == null)
-        {
-            return null;
-        }
-        return new ResourceImpl(resource);
+    Map<String, IResource> map = new LinkedHashMap<String, IResource>();
+    for (Map.Entry<String, Resource> entry : raml.getResources().entrySet()) {
+      map.put(entry.getKey(), new ResourceImpl(entry.getValue()));
     }
+    return map;
+  }
 
-    public Map<String, String> getConsolidatedSchemas()
-    {
-        return raml.getConsolidatedSchemas();
+  public String getVersion() {
+    return raml.getVersion();
+  }
+
+  public void setBaseUri(String s) {
+    raml.setBaseUri(s);
+  }
+
+  public Map<String, IParameter> getBaseUriParameters() {
+    if (raml.getBaseUriParameters() == null) {
+      return null;
     }
-
-    public Map<String, Object> getCompiledSchemas()
-    {
-        return raml.getCompiledSchemas();
+    Map<String, IParameter> map = new LinkedHashMap<String, IParameter>();
+    for (Map.Entry<String, UriParameter> entry : raml.getBaseUriParameters().entrySet()) {
+      map.put(entry.getKey(), new ParameterImpl(entry.getValue()));
     }
+    return map;
+  }
 
-    public String getBaseUri()
-    {
-        return raml.getBaseUri();
+  //public void setCompiledSchemas(Map<String, Object> map)
+  //{
+  //    raml.setCompiledSchemas(map);
+  //}
+
+  public List<Map<String, ISecurityScheme>> getSecuritySchemes() {
+    if (raml.getSecuritySchemes() == null) {
+      return null;
     }
-
-    public Map<String, IResource> getResources()
-    {
-        if (raml.getResources() == null)
-        {
-            return null;
-        }
-        Map<String, IResource> map = new LinkedHashMap<String, IResource>();
-        for (Map.Entry<String, Resource> entry : raml.getResources().entrySet())
-        {
-            map.put(entry.getKey(),new ResourceImpl(entry.getValue()));
-        }
-        return map;
+    List<Map<String, ISecurityScheme>> list = new ArrayList<Map<String, ISecurityScheme>>();
+    for (Map<String, SecurityScheme> map : raml.getSecuritySchemes()) {
+      Map<String, ISecurityScheme> newMap = new LinkedHashMap<String, ISecurityScheme>();
+      for (Map.Entry<String, SecurityScheme> entry : map.entrySet()) {
+        newMap.put(entry.getKey(), new SecuritySchemeImpl(entry.getValue()));
+      }
+      list.add(newMap);
     }
+    return list;
+  }
 
-    public String getVersion()
-    {
-        return raml.getVersion();
+  public List<Map<String, ITemplate>> getTraits() {
+    if (raml.getTraits() == null) {
+      return null;
     }
-
-    public void setBaseUri(String s)
-    {
-        raml.setBaseUri(s);
+    List<Map<String, ITemplate>> list = new ArrayList<Map<String, ITemplate>>();
+    for (Map<String, Template> map : raml.getTraits()) {
+      Map<String, ITemplate> newMap = new LinkedHashMap<String, ITemplate>();
+      for (Map.Entry<String, Template> entry : map.entrySet()) {
+        newMap.put(entry.getKey(), new TemplateImpl(entry.getValue()));
+      }
+      list.add(newMap);
     }
+    return list;
+  }
 
-    public Map<String, IParameter> getBaseUriParameters()
-    {
-        if (raml.getBaseUriParameters() == null)
-        {
-            return null;
-        }
-        Map<String, IParameter> map = new LinkedHashMap<String, IParameter>();
-        for (Map.Entry<String, UriParameter> entry : raml.getBaseUriParameters().entrySet())
-        {
-            map.put(entry.getKey(),new ParameterImpl(entry.getValue()));
-        }
-        return map;
+  public String getUri() {
+    return raml.getUri();
+  }
+
+  public List<Map<String, String>> getSchemas() {
+    return raml.getSchemas();
+  }
+
+  public Object getInstance() {
+    return raml;
+  }
+
+  public void cleanBaseUriParameters() {
+    raml.getBaseUriParameters().clear();
+  }
+
+  public void injectTrait(String name) {
+    Map<String, ITemplate> traitDef = new HashMap<String, ITemplate>();
+    Template template = new Template();
+    template.setDisplayName(name);
+    //ITemplate iTemplate = new TemplateImpl(template);
+    //traitDef.put(name, iTemplate);
+    Map<String, Template> map = new HashMap<String, Template>();
+    for (Map.Entry<String, ITemplate> entry : traitDef.entrySet()) {
+      map.put(entry.getKey(), template);
     }
+    raml.getTraits().add(map);
+  }
 
-    //public void setCompiledSchemas(Map<String, Object> map)
-    //{
-    //    raml.setCompiledSchemas(map);
-    //}
-
-    public List<Map<String, ISecurityScheme>> getSecuritySchemes()
-    {
-        if (raml.getSecuritySchemes() == null)
-        {
-            return null;
-        }
-        List<Map<String, ISecurityScheme>> list = new ArrayList<Map<String, ISecurityScheme>>();
-        for (Map<String, SecurityScheme> map : raml.getSecuritySchemes())
-        {
-            Map<String, ISecurityScheme> newMap = new LinkedHashMap<String, ISecurityScheme>();
-            for (Map.Entry<String, SecurityScheme> entry : map.entrySet())
-            {
-                newMap.put(entry.getKey(), new SecuritySchemeImpl(entry.getValue()));
-            }
-            list.add(newMap);
-        }
-        return list;
+  public void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme) {
+    Map<String, SecurityScheme> map = new HashMap<String, SecurityScheme>();
+    for (Map.Entry<String, ISecurityScheme> entry : securityScheme.entrySet()) {
+      map.put(entry.getKey(), (SecurityScheme) entry.getValue().getInstance());
     }
-
-    public List<Map<String, ITemplate>> getTraits()
-    {
-        if (raml.getTraits() == null)
-        {
-            return null;
-        }
-        List<Map<String, ITemplate>> list = new ArrayList<Map<String, ITemplate>>();
-        for (Map<String, Template> map : raml.getTraits())
-        {
-            Map<String, ITemplate> newMap = new LinkedHashMap<String, ITemplate>();
-            for (Map.Entry<String, Template> entry : map.entrySet())
-            {
-                newMap.put(entry.getKey(), new TemplateImpl(entry.getValue()));
-            }
-            list.add(newMap);
-        }
-        return list;
-    }
-
-    public String getUri()
-    {
-        return raml.getUri();
-    }
-
-    public List<Map<String, String>> getSchemas()
-    {
-        return raml.getSchemas();
-    }
-
-    public Object getInstance()
-    {
-        return raml;
-    }
-
-    public void cleanBaseUriParameters()
-    {
-        raml.getBaseUriParameters().clear();
-    }
-
-    public void injectTrait(String name)
-    {
-        Map<String, ITemplate> traitDef = new HashMap<String, ITemplate>();
-        Template template = new Template();
-        template.setDisplayName(name);
-        //ITemplate iTemplate = new TemplateImpl(template);
-        //traitDef.put(name, iTemplate);
-        Map<String, Template> map = new HashMap<String, Template>();
-        for(Map.Entry<String, ITemplate> entry : traitDef.entrySet())
-        {
-            map.put(entry.getKey(), template);
-        }
-        raml.getTraits().add(map);
-    }
-
-    public void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme)
-    {
-        Map<String, SecurityScheme> map = new HashMap<String, SecurityScheme>();
-        for(Map.Entry<String, ISecurityScheme> entry : securityScheme.entrySet())
-        {
-            map.put(entry.getKey(), (SecurityScheme)entry.getValue().getInstance());
-        }
-        raml.getSecuritySchemes().add(map);
-    }
+    raml.getSecuritySchemes().add(map);
+  }
 }

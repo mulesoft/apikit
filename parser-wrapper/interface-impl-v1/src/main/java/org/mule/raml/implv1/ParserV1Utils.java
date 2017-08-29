@@ -16,26 +16,23 @@ import org.mule.raml.interfaces.parser.visitor.IRamlValidationService;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserV1Utils
-{
-    public static List<String> validate(String resourceFolder, String rootFileName, String resourceContent)
-    {
-        List<String> errorsList = new ArrayList<>();
-        IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
-        ramlDocumentBuilder.addPathLookupFirst(resourceFolder);
-        IRamlValidationService validationService = new RamlValidationServiceImpl(ramlDocumentBuilder);
-        IRamlValidationService result = validationService.validate(resourceContent, rootFileName);
-        for (IValidationResult validationResult : result.getErrors())
-        {
-            errorsList.add(validationResult.getMessage());
-        }
-        return  errorsList;
-    }
+public class ParserV1Utils {
 
-    public static IRaml build(String content, String resourceFolder, String rootFileName)
-    {
-        IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
-        ramlDocumentBuilder.addPathLookupFirst(resourceFolder);
-        return ramlDocumentBuilder.build(content, rootFileName);
+  public static List<String> validate(String resourceFolder, String rootFileName, String resourceContent) {
+    List<String> errorsList = new ArrayList<>();
+    IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
+    ramlDocumentBuilder.addPathLookupFirst(resourceFolder);
+    IRamlValidationService validationService = new RamlValidationServiceImpl(ramlDocumentBuilder);
+    IRamlValidationService result = validationService.validate(resourceContent, rootFileName);
+    for (IValidationResult validationResult : result.getErrors()) {
+      errorsList.add(validationResult.getMessage());
     }
+    return errorsList;
+  }
+
+  public static IRaml build(String content, String resourceFolder, String rootFileName) {
+    IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
+    ramlDocumentBuilder.addPathLookupFirst(resourceFolder);
+    return ramlDocumentBuilder.build(content, rootFileName);
+  }
 }

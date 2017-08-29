@@ -6,44 +6,39 @@
  */
 package org.mule.module.apikit.metadata.model;
 
-public class FlowMapping
-{
-    private String resource;
-    private String action;
-    private String contentType;
-    private String flowRef;
-    private String configName;
+public class FlowMapping {
 
-    public FlowMapping(String configName, String resource, String action, String contentType, String flowRef) {
-        this.configName = configName;
-        this.resource = resource;
-        this.action = action;
-        this.contentType = contentType;
-        this.flowRef = flowRef;
-    }
+  private String resource;
+  private String action;
+  private String contentType;
+  private String flowRef;
+  private String configName;
 
-    public String getResource()
-    {
-        return resource;
-    }
+  public FlowMapping(String configName, String resource, String action, String contentType, String flowRef) {
+    this.configName = configName;
+    this.resource = resource;
+    this.action = action;
+    this.contentType = contentType;
+    this.flowRef = flowRef;
+  }
 
-    public String getAction()
-    {
-        return action;
-    }
+  public String getResource() {
+    return resource;
+  }
 
-    public String getContentType()
-    {
-        return contentType;
-    }
+  public String getAction() {
+    return action;
+  }
 
-    public String getFlowRef()
-    {
-        return flowRef;
-    }
+  public String getContentType() {
+    return contentType;
+  }
 
-    public String getConfigName()
-    {
-        return configName;
-    }
+  public String getFlowRef() {
+    return flowRef;
+  }
+
+  public String getConfigName() {
+    return configName;
+  }
 }

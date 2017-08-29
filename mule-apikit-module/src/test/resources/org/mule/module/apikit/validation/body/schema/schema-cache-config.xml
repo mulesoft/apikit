@@ -34,7 +34,7 @@
         <apikit:router config-ref="peaks"/>
     </flow>
 
-    <flow name="put:/currentuser">
+    <flow name="put:\currentuser">
         <set-payload value="disregard"/>
     </flow>
 

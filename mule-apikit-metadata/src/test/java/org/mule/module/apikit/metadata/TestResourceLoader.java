@@ -11,22 +11,18 @@ import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import java.io.File;
 import java.net.URISyntaxException;
 
-public class TestResourceLoader implements ResourceLoader
-{
+public class TestResourceLoader implements ResourceLoader {
 
-    @Override
-    public File getRamlResource(String relativePath)
-    {
-        try
-        {
-            return new File(this.getClass().getResource(relativePath).toURI());
+  @Override
+  public File getRamlResource(String relativePath) {
+    try {
+      return new File(this.getClass().getResource(relativePath).toURI());
 
-        } catch (URISyntaxException e)
-        {
-            e.printStackTrace();
-        }
-
-        return null;
+    } catch (URISyntaxException e) {
+      e.printStackTrace();
     }
+
+    return null;
+  }
 
 }

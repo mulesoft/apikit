@@ -12,17 +12,16 @@ import java.util.List;
 /**
  * Extension (SPI) for the APIKit Maven Module
  */
-public interface ScaffolderService
-{
+public interface ScaffolderService {
 
-    /**
-     * Modifies or creates the Mule config files which are contained in the appDir directory
-     * by running the scaffolder on the ramlFiles passed as parameter.
-     *
-     * @param ramlFiles the ramlFiles to which the scaffolder will be run on
-     * @param appDir    the directory which contained the generated Mule config files
-     * @param domainDir the directory which contained the domain used by the mule config files
-     */
-    void executeScaffolder(List<File> ramlFiles, File appDir, File domainDir, String muleVersion, String runtimeEdition);
+  /**
+   * Modifies or creates the Mule config files which are contained in the appDir directory
+   * by running the scaffolder on the ramlFiles passed as parameter.
+   *
+   * @param ramlFiles the ramlFiles to which the scaffolder will be run on
+   * @param appDir    the directory which contained the generated Mule config files
+   * @param domainDir the directory which contained the domain used by the mule config files
+   */
+  void executeScaffolder(List<File> ramlFiles, File appDir, File domainDir, String muleVersion, String runtimeEdition);
 
 }

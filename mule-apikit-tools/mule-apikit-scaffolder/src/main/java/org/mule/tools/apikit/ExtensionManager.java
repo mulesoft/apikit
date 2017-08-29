@@ -8,19 +8,17 @@ package org.mule.tools.apikit;
 
 import org.mule.module.apikit.spi.ScaffolderService;
 
-public class ExtensionManager
-{
+public class ExtensionManager {
 
-    private static ScaffolderService scaffolderExtension = null;
-    static ScaffolderServiceLoader serviceLoader = new ScaffolderServiceLoader();
+  private static ScaffolderService scaffolderExtension = null;
+  static ScaffolderServiceLoader serviceLoader = new ScaffolderServiceLoader();
 
-    public static boolean isScaffolderExtensionEnabled()
-    {
-        scaffolderExtension = serviceLoader.loadService();
-        return (scaffolderExtension != null);
-    }
+  public static boolean isScaffolderExtensionEnabled() {
+    scaffolderExtension = serviceLoader.loadService();
+    return (scaffolderExtension != null);
+  }
 
-    public static ScaffolderService getScaffolderExtension() {
-        return scaffolderExtension;
-    }
+  public static ScaffolderService getScaffolderExtension() {
+    return scaffolderExtension;
+  }
 }

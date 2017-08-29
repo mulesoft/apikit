@@ -19,6 +19,7 @@
         <meta.mule.version>mule.version</meta.mule.version>
         <meta.prefix>${</meta.prefix>
         <meta.suffix>}</meta.suffix>
+        <formatterConfigPath>../../formatter.xml</formatterConfigPath>
     </properties>
 
     <build>

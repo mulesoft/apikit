@@ -9,8 +9,7 @@ package org.mule.module.apikit.exception;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.i18n.I18nMessageFactory;
 
-public class ApikitRuntimeException extends MuleRuntimeException
-{
+public class ApikitRuntimeException extends MuleRuntimeException {
 
   public ApikitRuntimeException(String message) {
     super(I18nMessageFactory.createStaticMessage(message));

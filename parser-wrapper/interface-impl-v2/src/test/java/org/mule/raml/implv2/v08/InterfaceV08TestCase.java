@@ -17,16 +17,14 @@ import org.junit.Test;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 
-public class InterfaceV08TestCase
-{
+public class InterfaceV08TestCase {
 
-    @Test
-    public void check()
-    {
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
-        IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v08/full-0.8.raml");
-        assertThat(raml.getVersion(), is("1.0"));
-        assertThat(raml.getSchemas().get(0).size(), is(2));
-        assertThat(raml.getSchemas().get(0).get("UserJson"), containsString("\"firstname\":  { \"type\": \"string\" }"));
-    }
+  @Test
+  public void check() {
+    ResourceLoader resourceLoader = new DefaultResourceLoader();
+    IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v08/full-0.8.raml");
+    assertThat(raml.getVersion(), is("1.0"));
+    assertThat(raml.getSchemas().get(0).size(), is(2));
+    assertThat(raml.getSchemas().get(0).get("UserJson"), containsString("\"firstname\":  { \"type\": \"string\" }"));
+  }
 }

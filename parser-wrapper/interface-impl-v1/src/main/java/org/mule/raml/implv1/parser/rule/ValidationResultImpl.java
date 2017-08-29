@@ -9,31 +9,27 @@ package org.mule.raml.implv1.parser.rule;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.raml.parser.rule.ValidationResult;
 
-public class ValidationResultImpl implements IValidationResult
-{
-    ValidationResult validationResult;
-    public ValidationResultImpl(ValidationResult validationResult)
-    {
-        this.validationResult = validationResult;
-    }
+public class ValidationResultImpl implements IValidationResult {
 
-    public String getMessage()
-    {
-        return validationResult.getMessage();
-    }
+  ValidationResult validationResult;
 
-    public String getIncludeName()
-    {
-        return validationResult.getIncludeName();
-    }
+  public ValidationResultImpl(ValidationResult validationResult) {
+    this.validationResult = validationResult;
+  }
 
-    public int getLine()
-    {
-        return validationResult.getLine();
-    }
+  public String getMessage() {
+    return validationResult.getMessage();
+  }
 
-    public boolean isLineUnknown()
-    {
-        return validationResult.getLine() == ValidationResult.UNKNOWN;
-    }
+  public String getIncludeName() {
+    return validationResult.getIncludeName();
+  }
+
+  public int getLine() {
+    return validationResult.getLine();
+  }
+
+  public boolean isLineUnknown() {
+    return validationResult.getLine() == ValidationResult.UNKNOWN;
+  }
 }

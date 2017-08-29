@@ -10,12 +10,17 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.Map;
 
-public interface IResponse
-{
-    Map<String, IMimeType> getBody();
-    boolean hasBody();
-    Map<String, IParameter> getHeaders();
-    void setBody(Map<String, IMimeType> body);
-    void setHeaders(Map<String, IParameter> headers);
-    Object getInstance();
+public interface IResponse {
+
+  Map<String, IMimeType> getBody();
+
+  boolean hasBody();
+
+  Map<String, IParameter> getHeaders();
+
+  void setBody(Map<String, IMimeType> body);
+
+  void setHeaders(Map<String, IParameter> headers);
+
+  Object getInstance();
 }

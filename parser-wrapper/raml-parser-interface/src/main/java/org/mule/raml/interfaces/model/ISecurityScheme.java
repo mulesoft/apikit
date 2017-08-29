@@ -6,7 +6,7 @@
  */
 package org.mule.raml.interfaces.model;
 
-public interface ISecurityScheme
-{
-    Object getInstance();
+public interface ISecurityScheme {
+
+  Object getInstance();
 }

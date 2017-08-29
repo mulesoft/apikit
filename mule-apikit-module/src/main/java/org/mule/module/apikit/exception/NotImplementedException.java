@@ -8,17 +8,16 @@ package org.mule.module.apikit.exception;
 
 import org.mule.module.apikit.api.exception.MuleRestException;
 
-public class NotImplementedException extends MuleRestException
-{
+public class NotImplementedException extends MuleRestException {
+
   public static final String STRING_REPRESENTATION = "APIKIT:NOT_IMPLEMENTED";
 
-  public NotImplementedException(){
+  public NotImplementedException() {
     super("Not implemented");
   }
 
   @Override
-  public String getStringRepresentation()
-  {
+  public String getStringRepresentation() {
     return STRING_REPRESENTATION;
   }
 }

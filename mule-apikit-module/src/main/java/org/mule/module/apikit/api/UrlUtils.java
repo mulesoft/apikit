@@ -16,16 +16,15 @@ import java.net.URL;
 //import org.mule.runtime.core.api.InternalEvent;
 //import org.mule.runtime.core.util.StringUtils;
 
-public class UrlUtils
-{
+public class UrlUtils {
 
   public static final String HTTP_CONTEXT_PATH_PROPERTY = "http.context.path";
   public static final String HTTP_REQUEST_PATH_PROPERTY = "http.request.path";
-    private static final String BIND_TO_ALL_INTERFACES = "0.0.0.0";
-    public static final String FULL_DOMAIN = "fullDomain";
+  private static final String BIND_TO_ALL_INTERFACES = "0.0.0.0";
+  public static final String FULL_DOMAIN = "fullDomain";
 
 
-    private UrlUtils() {}
+  private UrlUtils() {}
 
   //public static String getBaseSchemeHostPort(Event event) {
   //  String host = ((HttpRequestAttributes) event.getMessage().getAttributes()).getHeaders().get("host");
@@ -92,54 +91,44 @@ public class UrlUtils
     return character;
   }
 
-  public static String getRelativePath(String baseAndApiPath, String requestPath ) {
+  public static String getRelativePath(String baseAndApiPath, String requestPath) {
     int character = getEndOfBasePathIndex(baseAndApiPath, requestPath);
     String relativePath = requestPath.substring(character);
     if (!"".equals(relativePath)) {
       for (; character > 0 && Character.compare(requestPath.charAt(character - 1), '/') == 0; character--) {
         relativePath = "/" + relativePath;
       }
-    }
-    else {
+    } else {
       relativePath += "/";
     }
 
     return relativePath;
   }
 
-  public static String  getListenerPath(String listenerPath, String requestPath)
-  {
+  public static String getListenerPath(String listenerPath, String requestPath) {
 
-    if (!listenerPath.startsWith("/"))
-    {
+    if (!listenerPath.startsWith("/")) {
       listenerPath = "/" + listenerPath;
     }
-    if (!requestPath.startsWith("/"))
-    {
+    if (!requestPath.startsWith("/")) {
       requestPath = "/" + requestPath;
     }
     int slashesAmount = 0;
-    for (int i =0; i < listenerPath.length(); i ++)
-    {
-      if (listenerPath.charAt(i) == '/')
-      {
+    for (int i = 0; i < listenerPath.length(); i++) {
+      if (listenerPath.charAt(i) == '/') {
         slashesAmount++;
       }
     }
     String[] split = requestPath.split("/");
     String result = "";
-    if (split.length == 0)
-    {
+    if (split.length == 0) {
       return "/";
     }
-    if (split.length == 1 && split[0].equals(""))
-    {
+    if (split.length == 1 && split[0].equals("")) {
       return "/";
     }
-    for (int i = 0; i < slashesAmount; i ++)
-    {
-      if (!split[i].equals(""))
-      {
+    for (int i = 0; i < slashesAmount; i++) {
+      if (!split[i].equals("")) {
         result += "/" + split[i];
       }
     }
@@ -162,8 +151,7 @@ public class UrlUtils
   //}
 
   public static String replaceBaseUri(String raml, String newBaseUri) {
-    if (newBaseUri != null)
-    {
+    if (newBaseUri != null) {
       return replaceBaseUri(raml, ".*$", newBaseUri);
     }
     return raml;
@@ -173,28 +161,20 @@ public class UrlUtils
     String[] split = raml.split("\n");
     boolean found = false;
     for (int i = 0; i < split.length; i++) {
-      if (split[i].startsWith("baseUri: "))
-      {
+      if (split[i].startsWith("baseUri: ")) {
         found = true;
         split[i] = split[i].replaceFirst(regex, replacement);
-        if (!split[i].contains("baseUri: "))
-        {
+        if (!split[i].contains("baseUri: ")) {
           split[i] = "baseUri: " + split[i];
         }
       }
     }
-    if (!found)
-    {
-      for (int i = 0; i < split.length; i++)
-      {
-        if (split[i].startsWith("title:"))
-        {
-          if (replacement.contains("baseUri:"))
-          {
+    if (!found) {
+      for (int i = 0; i < split.length; i++) {
+        if (split[i].startsWith("title:")) {
+          if (replacement.contains("baseUri:")) {
             split[i] = split[i] + "\n" + replacement;
-          }
-          else
-          {
+          } else {
             split[i] = split[i] + "\n" + "baseUri: " + replacement;
           }
         }
@@ -207,65 +187,48 @@ public class UrlUtils
    * Creates URL where the server must redirect the client
    * @return The redirect URL
    */
-  public static String getRedirectLocation(String scheme, String remoteAddress, String requestPath, String queryString )
-  {
-    String redirectLocation = scheme + "://" + remoteAddress + requestPath  + "/";
+  public static String getRedirectLocation(String scheme, String remoteAddress, String requestPath, String queryString) {
+    String redirectLocation = scheme + "://" + remoteAddress + requestPath + "/";
 
-    if (StringUtils.isNotEmpty(queryString))
-    {
+    if (StringUtils.isNotEmpty(queryString)) {
       redirectLocation += "?" + queryString;
     }
 
     return redirectLocation;
   }
 
-  public static String getBaseUriReplacement(String apiServer)
-  {
-        if (apiServer == null)
-        {
-            return null;
-        }
-
-        String baseUriReplacement = apiServer;
-        if (apiServer.contains(BIND_TO_ALL_INTERFACES))
-        {
-            String fullDomain = System.getProperty(FULL_DOMAIN);
-            if (fullDomain != null)
-            {
-                URL url = null;
-                try
-                {
-                    url = new URL(apiServer);
-                }
-                catch (Exception e)
-                {
-                    return apiServer;
-                }
-                String path = url.getPath();
-                if (fullDomain.endsWith("/") && path.length() > 0 && path.startsWith("/"))
-                {
-                    path = path.length() > 1 ? path.substring(1) : "";
-                }
-                else if (!fullDomain.endsWith("/") && path.length() > 0 && !path.startsWith("/"))
-                {
-                    fullDomain += "/";
-                }
-                if (fullDomain.contains("://"))
-                {
-                    baseUriReplacement = fullDomain + path;
-                }
-                else
-                {
-                    baseUriReplacement = "http://" + fullDomain + path;
-                }
-            }
-            else
-            {
-                baseUriReplacement = baseUriReplacement.replace(BIND_TO_ALL_INTERFACES, "localhost");
-            }
-        }
-        return baseUriReplacement;
+  public static String getBaseUriReplacement(String apiServer) {
+    if (apiServer == null) {
+      return null;
     }
+
+    String baseUriReplacement = apiServer;
+    if (apiServer.contains(BIND_TO_ALL_INTERFACES)) {
+      String fullDomain = System.getProperty(FULL_DOMAIN);
+      if (fullDomain != null) {
+        URL url = null;
+        try {
+          url = new URL(apiServer);
+        } catch (Exception e) {
+          return apiServer;
+        }
+        String path = url.getPath();
+        if (fullDomain.endsWith("/") && path.length() > 0 && path.startsWith("/")) {
+          path = path.length() > 1 ? path.substring(1) : "";
+        } else if (!fullDomain.endsWith("/") && path.length() > 0 && !path.startsWith("/")) {
+          fullDomain += "/";
+        }
+        if (fullDomain.contains("://")) {
+          baseUriReplacement = fullDomain + path;
+        } else {
+          baseUriReplacement = "http://" + fullDomain + path;
+        }
+      } else {
+        baseUriReplacement = baseUriReplacement.replace(BIND_TO_ALL_INTERFACES, "localhost");
+      }
+    }
+    return baseUriReplacement;
+  }
 
 
 }

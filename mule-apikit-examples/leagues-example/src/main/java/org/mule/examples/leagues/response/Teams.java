@@ -20,34 +20,35 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 
 public class Teams {
-    private List<Team> teams;
 
-    @XmlElement(name = "teams")
-    public List<Team> getTeams() {
-        return teams;
-    }
+  private List<Team> teams;
 
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
-    }
+  @XmlElement(name = "teams")
+  public List<Team> getTeams() {
+    return teams;
+  }
 
-    //@Transformer(resultMimeType = "application/json")
-    public String toJson(Teams teams) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.writeValueAsString(teams);
-    }
+  public void setTeams(List<Team> teams) {
+    this.teams = teams;
+  }
 
-    //@Transformer(resultMimeType = "text/xml")
-    public String toXml(Teams teams) throws IOException, JAXBException {
-        JAXBContext context = JAXBContext.newInstance(getClass());
+  //@Transformer(resultMimeType = "application/json")
+  public String toJson(Teams teams) throws IOException {
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.writeValueAsString(teams);
+  }
 
-        Marshaller m = context.createMarshaller();
-        m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+  //@Transformer(resultMimeType = "text/xml")
+  public String toXml(Teams teams) throws IOException, JAXBException {
+    JAXBContext context = JAXBContext.newInstance(getClass());
 
-        ByteArrayOutputStream boas = new ByteArrayOutputStream();
-        m.marshal(teams, boas);
+    Marshaller m = context.createMarshaller();
+    m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        return new String(boas.toByteArray());
-    }
+    ByteArrayOutputStream boas = new ByteArrayOutputStream();
+    m.marshal(teams, boas);
+
+    return new String(boas.toByteArray());
+  }
 
 }

@@ -32,12 +32,12 @@
     </flow>
 
     <flow name="subflow">
-        <logger level="INFO" message="inside of get:/resources"/>
+        <logger level="INFO" message="inside of get:\resources"/>
         <set-payload value="hello"/>
     </flow>
 
     <flow name="subflow2">
-        <logger level="INFO" message="inside of get:/resources2"/>
+        <logger level="INFO" message="inside of get:\resources2"/>
         <set-payload value="hello2"/>
     </flow>
 

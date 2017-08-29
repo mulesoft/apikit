@@ -13,72 +13,59 @@ import java.util.Map;
 
 import org.raml.model.parameter.AbstractParam;
 
-public class ParameterImpl implements IParameter
-{
+public class ParameterImpl implements IParameter {
 
-    AbstractParam parameter;
+  AbstractParam parameter;
 
-    public ParameterImpl(AbstractParam parameter)
-    {
-        this.parameter = parameter;
-    }
+  public ParameterImpl(AbstractParam parameter) {
+    this.parameter = parameter;
+  }
 
-    public boolean isRequired()
-    {
-        return parameter.isRequired();
-    }
+  public boolean isRequired() {
+    return parameter.isRequired();
+  }
 
-    public String getDefaultValue()
-    {
-        return parameter.getDefaultValue();
-    }
+  public String getDefaultValue() {
+    return parameter.getDefaultValue();
+  }
 
-    public boolean isRepeat()
-    {
-        return parameter.isRepeat();
-    }
+  public boolean isRepeat() {
+    return parameter.isRepeat();
+  }
 
-    public boolean isArray()
-    {
-        // only available in RAML 1.0+
-        return false;
-    }
+  public boolean isArray() {
+    // only available in RAML 1.0+
+    return false;
+  }
 
-    public boolean validate(String s)
-    {
-        return parameter.validate(s);
-    }
+  public boolean validate(String s) {
+    return parameter.validate(s);
+  }
 
-    public String message(String s)
-    {
-        return parameter.message(s);
-    }
+  public String message(String s) {
+    return parameter.message(s);
+  }
 
-    public String getDisplayName()
-    {
-        return parameter.getDisplayName();
-    }
+  public String getDisplayName() {
+    return parameter.getDisplayName();
+  }
 
-    public String getDescription()
-    {
-        return parameter.getDescription();
-    }
+  public String getDescription() {
+    return parameter.getDescription();
+  }
 
-    public String getExample()
-    {
-        return parameter.getExample();
-    }
+  public String getExample() {
+    return parameter.getExample();
+  }
 
-    @Override
-    public Map<String, String> getExamples()
-    {
-        return new HashMap<>();
-    }
+  @Override
+  public Map<String, String> getExamples() {
+    return new HashMap<>();
+  }
 
-    public Object getInstance()
-    {
-        return parameter;
-    }
+  public Object getInstance() {
+    return parameter;
+  }
 
 
 }

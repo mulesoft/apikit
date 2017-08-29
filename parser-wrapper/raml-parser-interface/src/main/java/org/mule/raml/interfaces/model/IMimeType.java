@@ -11,17 +11,20 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import java.util.List;
 import java.util.Map;
 
-public interface IMimeType
-{
-    Object getCompiledSchema();
-    String getSchema();
-    Map<String, List<IParameter>> getFormParameters();
+public interface IMimeType {
 
-    /**
-     * @return the mime type name (e.g: application/json)
-     */
-    String getType();
+  Object getCompiledSchema();
 
-    String getExample();
-    Object getInstance();
+  String getSchema();
+
+  Map<String, List<IParameter>> getFormParameters();
+
+  /**
+   * @return the mime type name (e.g: application/json)
+   */
+  String getType();
+
+  String getExample();
+
+  Object getInstance();
 }

@@ -19,68 +19,56 @@ import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 
-public class MimeTypeImpl implements IMimeType
-{
+public class MimeTypeImpl implements IMimeType {
 
-    private TypeDeclaration typeDeclaration;
+  private TypeDeclaration typeDeclaration;
 
-    public MimeTypeImpl(TypeDeclaration typeDeclaration)
-    {
-        this.typeDeclaration = typeDeclaration;
+  public MimeTypeImpl(TypeDeclaration typeDeclaration) {
+    this.typeDeclaration = typeDeclaration;
+  }
+
+  @Override
+  public String getType() {
+    return typeDeclaration.name();
+  }
+
+  @Override
+  public String getExample() {
+    ExampleSpec example = typeDeclaration.example();
+    if (example != null && example.value() != null) {
+      return example.value();
     }
-
-    @Override
-    public String getType()
-    {
-        return typeDeclaration.name();
+    List<ExampleSpec> examples = typeDeclaration.examples();
+    if (examples != null && !examples.isEmpty()) {
+      if (examples.get(0).value() != null) {
+        return examples.get(0).value();
+      }
     }
+    return null;
+  }
 
-    @Override
-    public String getExample()
-    {
-        ExampleSpec example = typeDeclaration.example();
-        if (example != null && example.value() != null)
-        {
-            return example.value();
-        }
-        List<ExampleSpec> examples = typeDeclaration.examples();
-        if (examples != null && !examples.isEmpty())
-        {
-            if (examples.get(0).value() != null)
-            {
-                return examples.get(0).value();
-            }
-        }
-        return null;
-    }
+  @Override
+  public String getSchema() {
+    return getTypeAsString(typeDeclaration);
+  }
 
-    @Override
-    public String getSchema()
-    {
-        return getTypeAsString(typeDeclaration);
-    }
+  @Override
+  public Map<String, List<IParameter>> getFormParameters() {
+    // no longer supported in RAML 1.0
+    return new HashMap<>();
+  }
 
-    @Override
-    public Map<String, List<IParameter>> getFormParameters()
-    {
-        // no longer supported in RAML 1.0
-        return new HashMap<>();
-    }
+  public List<ValidationResult> validate(String payload) {
+    return typeDeclaration.validate(payload);
+  }
 
-    public List<ValidationResult> validate(String payload)
-    {
-        return typeDeclaration.validate(payload);
-    }
+  @Override
+  public Object getCompiledSchema() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Object getCompiledSchema()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getInstance()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Object getInstance() {
+    throw new UnsupportedOperationException();
+  }
 }

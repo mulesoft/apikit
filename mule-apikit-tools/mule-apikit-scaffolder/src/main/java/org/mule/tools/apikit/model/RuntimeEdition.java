@@ -7,9 +7,9 @@
 package org.mule.tools.apikit.model;
 
 public enum RuntimeEdition {
-    /* Comunity Edition */
-    CE,
+  /* Comunity Edition */
+  CE,
 
-    /* Enterprise Edition */
-    EE
+  /* Enterprise Edition */
+  EE
 }

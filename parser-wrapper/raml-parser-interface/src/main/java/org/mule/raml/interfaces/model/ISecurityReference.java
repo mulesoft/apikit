@@ -6,9 +6,10 @@
  */
 package org.mule.raml.interfaces.model;
 
-public interface ISecurityReference
-{
-    //TODO this class is initialized
-    String getName();
-    Object getInstance();
+public interface ISecurityReference {
+
+  //TODO this class is initialized
+  String getName();
+
+  Object getInstance();
 }

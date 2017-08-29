@@ -12,72 +12,65 @@ import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
 
-public class FlowMapping
-{
-    @Parameter
-    private String resource;
-    @Parameter
-    private String action;
-    @Parameter
-    @Optional
-    private String contentType;
-    @Parameter
-    @Alias("flow-ref")
-    private String flowRef;
-    private Flow flow;
+public class FlowMapping {
 
-    public String getResource()
-    {
-        return resource;
-    }
+  @Parameter
+  private String resource;
+  @Parameter
+  private String action;
+  @Parameter
+  @Optional
+  private String contentType;
+  @Parameter
+  @Alias("flow-ref")
+  private String flowRef;
+  private Flow flow;
 
-    public void setResource(String resource)
-    {
-        this.resource = resource;
-    }
+  public String getResource() {
+    return resource;
+  }
 
-    public String getAction()
-    {
-        return action;
-    }
+  public void setResource(String resource) {
+    this.resource = resource;
+  }
 
-    public void setAction(String action)
-    {
-        this.action = action;
-    }
+  public String getAction() {
+    return action;
+  }
 
-    public String getContentType()
-    {
-        return contentType;
-    }
+  public void setAction(String action) {
+    this.action = action;
+  }
 
-    public void setContentType(String contentType)
-    {
-        this.contentType = contentType;
-    }
+  public String getContentType() {
+    return contentType;
+  }
 
-    public String getKey() {
-        String key = action + ":" + resource;
-        if (contentType != null)
-        {
-            key += ":" + contentType;
-        }
-        return key;
-    }
+  public void setContentType(String contentType) {
+    this.contentType = contentType;
+  }
 
-    public String getFlowRef() {
-        return flowRef;
+  public String getKey() {
+    String key = action + ":" + resource;
+    if (contentType != null) {
+      key += ":" + contentType;
     }
+    return key;
+  }
 
-    public void setFlowRef(String flowRef){
-        this.flowRef = flowRef;
-    }
+  public String getFlowRef() {
+    return flowRef;
+  }
 
-    public void setFlow(Flow flow){
-        this.flow = flow;
-    }
+  public void setFlowRef(String flowRef) {
+    this.flowRef = flowRef;
+  }
 
-    public Flow getFlow(){
-        return flow;
-    }
+  public void setFlow(Flow flow) {
+    this.flow = flow;
+  }
+
+  public Flow getFlow() {
+    return flow;
+  }
 }

@@ -20,23 +20,26 @@ import static org.mockito.Mockito.when;
 
 
 public class APIKitFlowScopeTest {
-    @Test
-    public void testGenerate() throws Exception {
-        GenerationModel flowEntry = mock(GenerationModel.class);
-        when(flowEntry.getFlowName()).thenReturn("get:/pet");
-        when(flowEntry.getName()).thenReturn("retrievePet");
-        when(flowEntry.getExampleWrapper()).thenReturn("Hello world!");
 
-        Document doc = new Document();
-        Element mule = new Element("mule");
+  @Test
+  public void testGenerate() throws Exception {
+    GenerationModel flowEntry = mock(GenerationModel.class);
+    when(flowEntry.getFlowName()).thenReturn("get:\\pet");
+    when(flowEntry.getName()).thenReturn("retrievePet");
+    when(flowEntry.getExampleWrapper()).thenReturn("Hello world!");
 
-        mule.addContent(new APIKitFlowScope(flowEntry).generate());
-        doc.setContent(mule);
+    Document doc = new Document();
+    Element mule = new Element("mule");
 
-        String s = Helper.nonSpaceOutput(doc);
+    mule.addContent(new APIKitFlowScope(flowEntry).generate());
+    doc.setContent(mule);
 
-        Diff diff = XMLUnit.compareXML("<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:/pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:message><ee:set-payload><![CDATA[%dw 2.0 output application/json --- \"Hello world!\"]]></ee:set-payload></ee:message></ee:transform></flow>", s);
+    String s = Helper.nonSpaceOutput(doc);
 
-        assertTrue(diff.toString(), diff.similar());
-    }
+    Diff diff = XMLUnit.compareXML(
+                                   "<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:\\pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:message><ee:set-payload><![CDATA[%dw 2.0 output application/json --- \"Hello world!\"]]></ee:set-payload></ee:message></ee:transform></flow>",
+                                   s);
+
+    assertTrue(diff.toString(), diff.similar());
+  }
 }

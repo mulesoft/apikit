@@ -4,29 +4,26 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.exception;
+package org.mule.module.apikit.api.exception;
 
-import org.mule.module.apikit.api.exception.BadRequestException;
-
-public class InvalidUriParameterException extends BadRequestException {
+public class InvalidHeaderException extends BadRequestException {
 
   public static final String STRING_REPRESENTATION = "APIKIT:BAD_REQUEST";
 
-  public InvalidUriParameterException(String message) {
+  public InvalidHeaderException(String message) {
     super(message);
   }
 
-  public InvalidUriParameterException(Throwable t) {
+  public InvalidHeaderException(Throwable t) {
     super(t);
   }
 
-  public InvalidUriParameterException(){
-    super("Invalid Uri Parameter");
+  public InvalidHeaderException() {
+    super("Invalid Header");
   }
 
   @Override
-  public String getStringRepresentation()
-  {
+  public String getStringRepresentation() {
     return STRING_REPRESENTATION;
   }
 }

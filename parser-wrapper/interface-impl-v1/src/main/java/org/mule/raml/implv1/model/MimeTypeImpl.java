@@ -17,60 +17,50 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.model.MimeType;
 import org.raml.model.parameter.FormParameter;
 
-public class MimeTypeImpl implements IMimeType
-{
-    MimeType mimeType;
-    public MimeTypeImpl(MimeType mimeType)
-    {
-        this.mimeType = mimeType;
-    }
+public class MimeTypeImpl implements IMimeType {
 
-    public MimeTypeImpl(String type)
-    {
-        mimeType = new MimeType(type);
-    }
+  MimeType mimeType;
 
-    public Object getCompiledSchema()
-    {
-        return mimeType.getCompiledSchema();
-    }
+  public MimeTypeImpl(MimeType mimeType) {
+    this.mimeType = mimeType;
+  }
 
-    public String getSchema()
-    {
-        return mimeType.getSchema();
-    }
+  public MimeTypeImpl(String type) {
+    mimeType = new MimeType(type);
+  }
 
-    public Map<String, List<IParameter>> getFormParameters()
-    {
-        if (mimeType.getFormParameters() == null)
-        {
-            return null;
-        }
-        Map<String, List<IParameter>> map = new LinkedHashMap<String, List<IParameter>>();
-        for (Map.Entry<String, List<FormParameter>> entry : mimeType.getFormParameters().entrySet())
-        {
-            List<IParameter> list = new ArrayList<IParameter>();
-            for (FormParameter formparameter : entry.getValue())
-            {
-                list.add(new ParameterImpl(formparameter));
-            }
-            map.put(entry.getKey(), list);
-        }
-        return map;
-    }
+  public Object getCompiledSchema() {
+    return mimeType.getCompiledSchema();
+  }
 
-    public String getType()
-    {
-        return mimeType.getType();
-    }
+  public String getSchema() {
+    return mimeType.getSchema();
+  }
 
-    public String getExample()
-    {
-        return mimeType.getExample();
+  public Map<String, List<IParameter>> getFormParameters() {
+    if (mimeType.getFormParameters() == null) {
+      return null;
     }
+    Map<String, List<IParameter>> map = new LinkedHashMap<String, List<IParameter>>();
+    for (Map.Entry<String, List<FormParameter>> entry : mimeType.getFormParameters().entrySet()) {
+      List<IParameter> list = new ArrayList<IParameter>();
+      for (FormParameter formparameter : entry.getValue()) {
+        list.add(new ParameterImpl(formparameter));
+      }
+      map.put(entry.getKey(), list);
+    }
+    return map;
+  }
 
-    public MimeType getInstance()
-    {
-        return mimeType;
-    }
+  public String getType() {
+    return mimeType.getType();
+  }
+
+  public String getExample() {
+    return mimeType.getExample();
+  }
+
+  public MimeType getInstance() {
+    return mimeType;
+  }
 }

@@ -2,7 +2,7 @@
   "name":"APIKit",
   "minMuleVersion":"4.0.0",
   "bundleDescriptorLoader": {
-    "id": "maven",
+    "id": "mule",
     "attributes": {
     }
   },
@@ -13,7 +13,7 @@
     }
   },
   "classLoaderModelLoaderDescriptor":{
-    "id":"maven",
+    "id":"mule",
     "attributes":{
       "exportedPackages":[
         "org.mule.module.apikit.api",

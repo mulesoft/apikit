@@ -59,150 +59,146 @@ import reactor.core.publisher.Flux;
 public class Router extends AbstractAnnotatedObject implements Processor, Initialisable
 
 {
-    private final ApikitRegistry registry;
 
-    private final ConfigurationComponentLocator locator;
+  private final ApikitRegistry registry;
 
-    private String configRef;
+  private final ConfigurationComponentLocator locator;
 
-    private String name;
+  private String configRef;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
+  private String name;
 
-    @Inject
-    public Router(ApikitRegistry registry, ConfigurationComponentLocator locator) {
-        this.registry = registry;
-        this.locator = locator;
+  private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
+
+  @Inject
+  public Router(ApikitRegistry registry, ConfigurationComponentLocator locator) {
+    this.registry = registry;
+    this.locator = locator;
+  }
+
+  @Override
+  public void initialise() throws InitialisationException {
+    final String name = getLocation().getRootContainerName();
+    final Optional<URI> url = locator.find(Location.builder().globalName(name).addSourcePart().build())
+        .map(MessageSourceUtils::getUriFromFlow);
+
+    if (!url.isPresent()) {
+      LOGGER
+          .error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
+      return;
     }
+    registry.setApiSource(configRef, url.get().toString().replace("*", ""));
+  }
 
-    @Override
-    public void initialise() throws InitialisationException
-    {
-        final String name = getLocation().getRootContainerName();
-        final Optional<URI> url = locator.find(Location.builder().globalName(name).addSourcePart().build())
-                .map(MessageSourceUtils::getUriFromFlow);
+  public InternalEvent process(final InternalEvent event) throws MuleException {
+    return processToApply(event, this);
+  }
 
-        if (!url.isPresent())
-        {
-            LOGGER.error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
-            return;
+  @Override
+  public Publisher<InternalEvent> apply(Publisher<InternalEvent> publisher) {
+    return from(publisher).flatMap(event -> {
+      try {
+        Configuration config = registry.getConfiguration(getConfigRef());
+        InternalEvent.Builder eventBuilder = InternalEvent.builder(event);
+        eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
+
+        HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
+
+        if (isRequestingRamlV1(attributes, config, event, eventBuilder)) {
+          event.getContext().success(eventBuilder.build());
+          return empty();
         }
-        registry.setApiSource(configRef, url.get().toString().replace("*",""));
-    }
 
-    public InternalEvent process(final InternalEvent event) throws MuleException {
-        return processToApply(event, this);
-    }
+        String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRequestPath());
+        path = path.isEmpty() ? "/" : path;
 
-    @Override
-    public Publisher<InternalEvent> apply(Publisher<InternalEvent> publisher)
-    {
-        return from(publisher).flatMap(event -> {
-            try
-            {
-                Configuration config = registry.getConfiguration(getConfigRef());
-                InternalEvent.Builder eventBuilder = InternalEvent.builder(event);
-                eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
-
-                HttpRequestAttributes attributes = ((HttpRequestAttributes)event.getMessage().getAttributes().getValue());
-
-                if (isRequestingRamlV1(attributes, config, event, eventBuilder)){
-                    event.getContext().success(eventBuilder.build());
-                    return empty();
-                }
-
-                String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRequestPath());
-                path = path.isEmpty() ? "/" : path;
-
-                //Get uriPattern, uriResolver, and the resolvedVariables
-                URIPattern uriPattern = null;
-                try
-                {
-                    uriPattern = config.getUriPatternCache().get(path);
-                } catch (Exception e) {
-                    throw ApikitErrorTypes.throwErrorType(new NotFoundException(path));
-                }
-
-                URIResolver uriResolver = config.getUriResolverCache().get(path);
-
-                ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
-                IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
-                if (!config.isDisableValidations())
-                {
-                    eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
-                }
-                String contentType = AttributesHelper.getMediaType(attributes);
-                Flow flow = config.getFlowFinder().getFlow(resource, attributes.getMethod().toLowerCase(), contentType);
-                String successStatusCode = config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
-                eventBuilder.addVariable(config.getHttpStatusVarName(), successStatusCode);
-                return processWithChildContext(eventBuilder.build(), flow, Optional.empty());
-            }
-            catch (Exception e)
-            {
-                if (e instanceof MuleRestException) {
-                    return Flux.error(
-                            new MessagingException(event, ApikitErrorTypes.throwErrorType((MuleRestException) e)));
-                }
-
-                return Flux.error(new MessagingException(event, e));
-            }
-        });
-    }
-
-    public String getConfigRef()
-    {
-        return configRef;
-    }
-
-    public void setConfigRef(String config)
-    {
-        this.configRef = config;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public void setName(String name)
-    {
-        this.name = name;
-    }
-
-    public InternalEvent.Builder validateRequest(InternalEvent event, InternalEvent.Builder eventbuilder, ValidationConfig config, IResource resource, HttpRequestAttributes attributes, ResolvedVariables resolvedVariables) throws DefaultMuleException, MuleRestException {
-
-        String charset = null;
+        //Get uriPattern, uriResolver, and the resolvedVariables
+        URIPattern uriPattern = null;
         try {
-            charset = getEncoding(event.getMessage(), event.getMessage().getPayload().getValue(), LOGGER);
-        } catch (IOException e) {
-            throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
+          uriPattern = config.getUriPatternCache().get(path);
+        } catch (Exception e) {
+          throw ApikitErrorTypes.throwErrorType(new NotFoundException(path));
         }
 
-        ValidRequest validRequest = RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload(), charset);
+        URIResolver uriResolver = config.getUriResolverCache().get(path);
 
-        return EventHelper.regenerateEvent(event.getMessage(), eventbuilder, validRequest);
-    }
-
-    private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException
-    {
-        IResource resource = configuration.getFlowFinder().getResource(uriPattern);
-        if (resource.getAction(method) == null) {
-            throw ApikitErrorTypes.throwErrorType(new MethodNotAllowedException(resource.getUri() + " : " + method));
+        ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
+        IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
+        if (!config.isDisableValidations()) {
+          eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
         }
-        return resource;
+        String contentType = AttributesHelper.getMediaType(attributes);
+        Flow flow = config.getFlowFinder().getFlow(resource, attributes.getMethod().toLowerCase(), contentType);
+        String successStatusCode =
+            config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
+        eventBuilder.addVariable(config.getHttpStatusVarName(), successStatusCode);
+        return processWithChildContext(eventBuilder.build(), flow, Optional.empty());
+      } catch (Exception e) {
+        if (e instanceof MuleRestException) {
+          return Flux.error(
+                            new MessagingException(event, ApikitErrorTypes.throwErrorType((MuleRestException) e)));
+        }
+
+        return Flux.error(new MessagingException(event, e));
+      }
+    });
+  }
+
+  public String getConfigRef() {
+    return configRef;
+  }
+
+  public void setConfigRef(String config) {
+    this.configRef = config;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public InternalEvent.Builder validateRequest(InternalEvent event, InternalEvent.Builder eventbuilder, ValidationConfig config,
+                                               IResource resource, HttpRequestAttributes attributes,
+                                               ResolvedVariables resolvedVariables)
+      throws DefaultMuleException, MuleRestException {
+
+    String charset = null;
+    try {
+      charset = getEncoding(event.getMessage(), event.getMessage().getPayload().getValue(), LOGGER);
+    } catch (IOException e) {
+      throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
     }
 
-    public boolean isRequestingRamlV1(HttpRequestAttributes attributes, Configuration config, InternalEvent event, InternalEvent.Builder eventBuilder)
-    {
-        if(config.getRamlHandler().isRequestingRamlV1ForRouter(attributes.getListenerPath(), attributes.getRequestPath(), attributes.getMethod(), AttributesHelper.getHeaderIgnoreCase(attributes,"Accept")))
-        {
-            Message message = MessageHelper.setPayload(event.getMessage(), config.getRamlHandler().getRamlV1(), RamlHandler.APPLICATION_RAML);
-            eventBuilder.message(message);
-            Map<String, String> header = new HashMap<>();
-            header.put("Content-Type", RamlHandler.APPLICATION_RAML);
-            eventBuilder.addVariable(config.getOutboundHeadersMapName(), header);
-            return true;
-        }
-        return false;
+    ValidRequest validRequest =
+        RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload(), charset);
+
+    return EventHelper.regenerateEvent(event.getMessage(), eventbuilder, validRequest);
+  }
+
+  private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException {
+    IResource resource = configuration.getFlowFinder().getResource(uriPattern);
+    if (resource.getAction(method) == null) {
+      throw ApikitErrorTypes.throwErrorType(new MethodNotAllowedException(resource.getUri() + " : " + method));
     }
+    return resource;
+  }
+
+  public boolean isRequestingRamlV1(HttpRequestAttributes attributes, Configuration config, InternalEvent event,
+                                    InternalEvent.Builder eventBuilder) {
+    if (config.getRamlHandler().isRequestingRamlV1ForRouter(attributes.getListenerPath(), attributes.getRequestPath(),
+                                                            attributes.getMethod(),
+                                                            AttributesHelper.getHeaderIgnoreCase(attributes, "Accept"))) {
+      Message message =
+          MessageHelper.setPayload(event.getMessage(), config.getRamlHandler().getRamlV1(), RamlHandler.APPLICATION_RAML);
+      eventBuilder.message(message);
+      Map<String, String> header = new HashMap<>();
+      header.put("Content-Type", RamlHandler.APPLICATION_RAML);
+      eventBuilder.addVariable(config.getOutboundHeadersMapName(), header);
+      return true;
+    }
+    return false;
+  }
 }

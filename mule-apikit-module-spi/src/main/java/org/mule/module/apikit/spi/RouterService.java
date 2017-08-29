@@ -13,23 +13,22 @@ import org.mule.runtime.core.api.processor.Processor;
 /**
  * Extension (SPI) for the APIKit Module
  */
-public interface RouterService
-{
+public interface RouterService {
 
-    /**
-     * Handles the request and returns a valid MuleEvent
-     *
-     * @param event
-     * @return
-     */
-    InternalEvent processBlockingRequest(InternalEvent event, Processor router) throws MuleException;
+  /**
+   * Handles the request and returns a valid MuleEvent
+   *
+   * @param event
+   * @return
+   */
+  InternalEvent processBlockingRequest(InternalEvent event, Processor router) throws MuleException;
 
-    /**
-     * Returns true if the path of the HTTP request matches a predefined condition
-     *
-     * @param event
-     * @return
-     */
-    boolean isExecutable(InternalEvent event);
+  /**
+   * Returns true if the path of the HTTP request matches a predefined condition
+   *
+   * @param event
+   * @return
+   */
+  boolean isExecutable(InternalEvent event);
 
 }

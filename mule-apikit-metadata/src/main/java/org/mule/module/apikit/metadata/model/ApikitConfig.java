@@ -15,41 +15,38 @@ import java.util.function.Supplier;
 
 import static java.util.Optional.ofNullable;
 
-public class ApikitConfig
-{
-    final private String name;
-    final private String raml;
-    final private List<FlowMapping> flowMappings;
-    final private Supplier<Optional<IRaml>> apiSupplier;
-    private RamlApiWrapper ramlApi;
+public class ApikitConfig {
 
-    public ApikitConfig(String name, String raml, List<FlowMapping> flowMappings, Supplier<Optional<IRaml>> apiSupplier) {
-        this.name = name;
-        this.raml = raml;
-        this.flowMappings = flowMappings;
-        this.apiSupplier = apiSupplier;
-    }
+  final private String name;
+  final private String raml;
+  final private List<FlowMapping> flowMappings;
+  final private Supplier<Optional<IRaml>> apiSupplier;
+  private RamlApiWrapper ramlApi;
 
-    public String getName()
-    {
-        return name;
-    }
+  public ApikitConfig(String name, String raml, List<FlowMapping> flowMappings, Supplier<Optional<IRaml>> apiSupplier) {
+    this.name = name;
+    this.raml = raml;
+    this.flowMappings = flowMappings;
+    this.apiSupplier = apiSupplier;
+  }
 
-    public String getRaml()
-    {
-        return raml;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public List<FlowMapping> getFlowMappings()
-    {
-        return flowMappings;
-    }
+  public String getRaml() {
+    return raml;
+  }
 
-    public Optional<RamlApiWrapper> getApi() {
-        if (ramlApi == null) {
-            ramlApi = apiSupplier.get().map(RamlApiWrapper::new).orElse(null);
-        }
-        return ofNullable(ramlApi);
+  public List<FlowMapping> getFlowMappings() {
+    return flowMappings;
+  }
+
+  public Optional<RamlApiWrapper> getApi() {
+    if (ramlApi == null) {
+      ramlApi = apiSupplier.get().map(RamlApiWrapper::new).orElse(null);
     }
+    return ofNullable(ramlApi);
+  }
 
 }

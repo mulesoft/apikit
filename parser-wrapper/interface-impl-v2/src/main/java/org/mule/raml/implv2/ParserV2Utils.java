@@ -19,75 +19,59 @@ import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.system.types.AnnotableSimpleType;
 
-public class ParserV2Utils
-{
-    public static final String PARSER_V2_PROPERTY = "apikit.raml.parser.v2";
+public class ParserV2Utils {
 
-    public static IRaml build(ResourceLoader resourceLoader, String ramlPath)
-    {
-        RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(ramlPath);
-        return wrapApiModel(ramlModelResult);
+  public static final String PARSER_V2_PROPERTY = "apikit.raml.parser.v2";
+
+  public static IRaml build(ResourceLoader resourceLoader, String ramlPath) {
+    RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(ramlPath);
+    return wrapApiModel(ramlModelResult);
+  }
+
+  public static IRaml build(ResourceLoader resourceLoader, String ramlPath, String content) {
+    RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
+    return wrapApiModel(ramlModelResult);
+  }
+
+  private static IRaml wrapApiModel(RamlModelResult ramlModelResult) {
+    if (ramlModelResult.hasErrors()) {
+      throw new RuntimeException("Invalid RAML descriptor.");
     }
-
-    public static IRaml build(ResourceLoader resourceLoader, String ramlPath, String content)
-    {
-        RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
-        return wrapApiModel(ramlModelResult);
+    if (ramlModelResult.isVersion08()) {
+      return new RamlImpl08V2(ramlModelResult.getApiV08());
     }
+    return new RamlImpl10V2(ramlModelResult.getApiV10());
+  }
 
-    private static IRaml wrapApiModel(RamlModelResult ramlModelResult)
-    {
-        if (ramlModelResult.hasErrors())
-        {
-            throw new RuntimeException("Invalid RAML descriptor.");
-        }
-        if (ramlModelResult.isVersion08())
-        {
-            return new RamlImpl08V2(ramlModelResult.getApiV08());
-        }
-        return new RamlImpl10V2(ramlModelResult.getApiV10());
+  public static List<String> validate(ResourceLoader resourceLoader, String ramlPath, String content) {
+    List<String> result = new ArrayList<>();
+
+    try {
+      RamlModelResult ramlApiResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
+      for (ValidationResult validationResult : ramlApiResult.getValidationResults()) {
+        result.add(validationResult.toString());
+      }
+    } catch (Exception e) {
+      result.add("Raml parser uncaught exception: " + e.getMessage());
     }
+    return result;
+  }
 
-    public static List<String> validate(ResourceLoader resourceLoader, String ramlPath, String content)
-    {
-        List<String> result = new ArrayList<>();
+  public static List<String> validate(ResourceLoader resourceLoader, String ramlPath) {
+    return validate(resourceLoader, ramlPath, null);
+  }
 
-        try
-        {
-            RamlModelResult ramlApiResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
-            for (ValidationResult validationResult : ramlApiResult.getValidationResults())
-            {
-                result.add(validationResult.toString());
-            }
-        }
-        catch (Exception e)
-        {
-            result.add("Raml parser uncaught exception: " + e.getMessage());
-        }
-        return result;
+  public static boolean useParserV2(String content) {
+    String property = System.getProperty(PARSER_V2_PROPERTY);
+    if (property != null && Boolean.valueOf(property)) {
+      return true;
+    } else {
+      return content.startsWith("#%RAML 1.0");
     }
+  }
 
-    public static List<String> validate(ResourceLoader resourceLoader, String ramlPath)
-    {
-        return validate(resourceLoader, ramlPath, null);
-    }
-
-    public static boolean useParserV2(String content)
-    {
-        String property = System.getProperty(PARSER_V2_PROPERTY);
-        if (property != null && Boolean.valueOf(property))
-        {
-            return true;
-        }
-        else
-        {
-            return content.startsWith("#%RAML 1.0");
-        }
-    }
-
-    public static String nullSafe(AnnotableSimpleType<?> simpleType)
-    {
-        return simpleType != null ? String.valueOf(simpleType.value()) : null;
-    }
+  public static String nullSafe(AnnotableSimpleType<?> simpleType) {
+    return simpleType != null ? String.valueOf(simpleType.value()) : null;
+  }
 
 }

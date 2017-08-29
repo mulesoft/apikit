@@ -17,83 +17,80 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 @ArtifactClassLoaderRunnerConfig
-public class HeadersTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class HeadersTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/validation/headers/mule-config.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
 
-    @Test
-    public void answer400WhenRequiredHeaderIsNotSent() throws Exception {
-        given().expect().response()
-                .body(is("{message: 'Bad Request'}"))
-                .statusCode(400)
-                .when().get("/api/datetime2616");
-    }
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/validation/headers/mule-config.xml";
+  }
 
-    @Test
-    public void answer400WhenRequiredHeaderIsInvalid() throws Exception {
-        given().request()
-                .header("X-ModifiedSince", "Invalid Date")
-                .expect().response()
-                .body(is("{message: 'Bad Request'}"))
-                .statusCode(400)
-                .when().get("/api/datetime2616");
-    }
+  @Test
+  public void answer400WhenRequiredHeaderIsNotSent() throws Exception {
+    given().expect().response()
+        .body(is("{message: 'Bad Request'}"))
+        .statusCode(400)
+        .when().get("/api/datetime2616");
+  }
 
-    @Test
-    public void answer200WhenRequiredHeaderIsValid() throws Exception {
-        given().request()
-                .header("X-ModifiedSince", "Sun, 28 Feb 2016 16:41:41 GMT")
-                .expect().response()
-                .body(is("Sun, 28 Feb 2016 16:41:41 GMT"))
-                .statusCode(200)
-                .when().get("/api/datetime2616");
-    }
+  @Test
+  public void answer400WhenRequiredHeaderIsInvalid() throws Exception {
+    given().request()
+        .header("X-ModifiedSince", "Invalid Date")
+        .expect().response()
+        .body(is("{message: 'Bad Request'}"))
+        .statusCode(400)
+        .when().get("/api/datetime2616");
+  }
 
-    @Test
-    public void answer200WhenOptionalHeaderIsNotSent() throws Exception {
-        given().expect().response()
-                .body(is(""))
-                .statusCode(200)
-                .when().post("/api/datetime2616");
-    }
+  @Test
+  public void answer200WhenRequiredHeaderIsValid() throws Exception {
+    given().request()
+        .header("X-ModifiedSince", "Sun, 28 Feb 2016 16:41:41 GMT")
+        .expect().response()
+        .body(is("Sun, 28 Feb 2016 16:41:41 GMT"))
+        .statusCode(200)
+        .when().get("/api/datetime2616");
+  }
 
-    @Test
-    public void answer400WhenOptionalHeaderIsNotValid() throws Exception {
-        given().request()
-                .header("X-MaxRows", "Hello World")
-                .expect().response()
-                .body(is("{message: 'Bad Request'}"))
-                .statusCode(400)
-                .when().post("/api/datetime2616");
-    }
+  @Test
+  public void answer200WhenOptionalHeaderIsNotSent() throws Exception {
+    given().expect().response()
+        .body(is(""))
+        .statusCode(200)
+        .when().post("/api/datetime2616");
+  }
 
-    @Test
-    public void answer200WhenOptionalHeaderIsValid() throws Exception {
-        given().request()
-                .header("X-MaxRows", "200")
-                .expect().response()
-                .body(is("200"))
-                .statusCode(200)
-                .when().post("/api/datetime2616");
-    }
+  @Test
+  public void answer400WhenOptionalHeaderIsNotValid() throws Exception {
+    given().request()
+        .header("X-MaxRows", "Hello World")
+        .expect().response()
+        .body(is("{message: 'Bad Request'}"))
+        .statusCode(400)
+        .when().post("/api/datetime2616");
+  }
+
+  @Test
+  public void answer200WhenOptionalHeaderIsValid() throws Exception {
+    given().request()
+        .header("X-MaxRows", "200")
+        .expect().response()
+        .body(is("200"))
+        .statusCode(200)
+        .when().post("/api/datetime2616");
+  }
 }

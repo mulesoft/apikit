@@ -10,13 +10,13 @@ import org.mule.raml.interfaces.parser.rule.IValidationResult;
 
 import java.util.List;
 
-public interface IRamlValidationService
-{
-    IRamlValidationService validate(String resource);
+public interface IRamlValidationService {
 
-    IRamlValidationService validate(String resourceContent, String resource);
+  IRamlValidationService validate(String resource);
 
-    List<IValidationResult> getErrors();
+  IRamlValidationService validate(String resourceContent, String resource);
 
-    List<IValidationResult> getWarnings();
+  List<IValidationResult> getErrors();
+
+  List<IValidationResult> getWarnings();
 }

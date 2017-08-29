@@ -31,11 +31,11 @@
         </error-handler>
     </flow>
 
-    <flow name="put:/name">
+    <flow name="put:\name">
         <set-payload value="OK"/>
     </flow>
 
-    <flow name="put:/last">
+    <flow name="put:\last">
         <set-payload value="OK"/>
     </flow>
 

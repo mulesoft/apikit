@@ -27,124 +27,105 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema>
-{
+public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema> {
 
-    private static final String RESOURCE_PREFIX = "resource:/";
+  private static final String RESOURCE_PREFIX = "resource:/";
 
-    private IRaml api;
+  private IRaml api;
 
-    public JsonSchemaCacheLoader(IRaml api)
-    {
-        this.api = api;
+  public JsonSchemaCacheLoader(IRaml api) {
+    this.api = api;
+  }
+
+  @Override
+  public JsonSchema load(String schemaLocation) throws IOException {
+    Object pathOrSchema = resolveJsonSchema(schemaLocation, api);
+
+    if (pathOrSchema == null) {
+      return null;
     }
 
-    @Override
-    public JsonSchema load(String schemaLocation) throws IOException
-    {
-        Object pathOrSchema = resolveJsonSchema(schemaLocation, api);
-
-        if (pathOrSchema == null) {
-            return null;
-        }
-
-        if (pathOrSchema instanceof String)
-        {
-            return parseSchema(resolveLocationIfNecessary(formatUri((String) pathOrSchema)));
-        }
-
-        return parseSchema((JsonNode) pathOrSchema);
+    if (pathOrSchema instanceof String) {
+      return parseSchema(resolveLocationIfNecessary(formatUri((String) pathOrSchema)));
     }
 
-    /*
-     * make the location json schema validator friendly appending
-     *  resource:/ if necessary
-     */
-    private String formatUri(String location)
-    {
-        String encodedLocation = getEncodedPath(location);
-        URI uri = URI.create(encodedLocation);
+    return parseSchema((JsonNode) pathOrSchema);
+  }
 
-        if (uri.getScheme() == null)
-        {
-            if (location.charAt(0) == '/')
-            {
-                location = location.substring(1);
-            }
+  /*
+   * make the location json schema validator friendly appending
+   *  resource:/ if necessary
+   */
+  private String formatUri(String location) {
+    String encodedLocation = getEncodedPath(location);
+    URI uri = URI.create(encodedLocation);
 
-            location = RESOURCE_PREFIX + location;
-        }
+    if (uri.getScheme() == null) {
+      if (location.charAt(0) == '/') {
+        location = location.substring(1);
+      }
 
-        return location;
+      location = RESOURCE_PREFIX + location;
     }
 
-    /*
-     * in order to find the resource in the application classpath
-     *  the resource:/ url is translated to a file:/ url
-     */
-    private String resolveLocationIfNecessary(String path)
-    {
-        String encodedUri = getEncodedPath(path);
-        URI uri = URI.create(encodedUri);
+    return location;
+  }
 
-        String scheme = uri.getScheme();
-        if (scheme == null || "resource".equals(scheme))
-        {
-            return openSchema(uri.getPath()).toString();
-        }
-        return path;
+  /*
+   * in order to find the resource in the application classpath
+   *  the resource:/ url is translated to a file:/ url
+   */
+  private String resolveLocationIfNecessary(String path) {
+    String encodedUri = getEncodedPath(path);
+    URI uri = URI.create(encodedUri);
+
+    String scheme = uri.getScheme();
+    if (scheme == null || "resource".equals(scheme)) {
+      return openSchema(uri.getPath()).toString();
+    }
+    return path;
+  }
+
+  private String getEncodedPath(String path) {
+    Set<Character> ignoredCharacters = new HashSet<>();
+    ignoredCharacters.add('/');
+    ignoredCharacters.add(':');
+
+    return URICoder.encode(path, ignoredCharacters);
+  }
+
+  private URL openSchema(String path) {
+    URL url = Thread.currentThread().getContextClassLoader().getResource(path);
+    if (url == null && path.startsWith("/")) {
+      return openSchema(path.substring(1));
     }
 
-    private String getEncodedPath(String path)
-    {
-        Set<Character> ignoredCharacters = new HashSet<>();
-        ignoredCharacters.add('/');
-        ignoredCharacters.add(':');
+    return url;
+  }
 
-        return URICoder.encode(path, ignoredCharacters);
+  private JsonSchema parseSchema(JsonNode jsonNode) {
+    try {
+      return getSchemaFactory().getJsonSchema(jsonNode);
+    } catch (ProcessingException e) {
+      throw new ApikitRuntimeException(e);
     }
+  }
 
-    private URL openSchema(String path)
-    {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(path);
-        if (url == null && path.startsWith("/"))
-        {
-            return openSchema(path.substring(1));
-        }
-
-        return url;
+  private JsonSchema parseSchema(String uri) {
+    try {
+      // Uri might be previously encoded. In order to avoid encoding the relative part again,
+      // we previously decode the it, and then we encode the absolute Uri again
+      String decodedURI = URICoder.decode(uri);
+      return getSchemaFactory().getJsonSchema(getEncodedPath(decodedURI));
+    } catch (ProcessingException e) {
+      throw new ApikitRuntimeException(e);
     }
+  }
 
-    private JsonSchema parseSchema(JsonNode jsonNode)
-    {
-        try
-        {
-            return getSchemaFactory().getJsonSchema(jsonNode);
-        }
-        catch (ProcessingException e)
-        {
-            throw new ApikitRuntimeException(e);
-        }
-    }
-
-    private JsonSchema parseSchema(String uri)
-    {
-        try
-        {
-            // Uri might be previously encoded. In order to avoid encoding the relative part again,
-            // we previously decode the it, and then we encode the absolute Uri again
-            String decodedURI = URICoder.decode(uri);
-            return getSchemaFactory().getJsonSchema(getEncodedPath(decodedURI));
-        }
-        catch (ProcessingException e)
-        {
-            throw new ApikitRuntimeException(e);
-        }
-    }
-
-    private JsonSchemaFactory getSchemaFactory()
-    {
-        ValidationConfiguration validationCfg = ValidationConfiguration.newBuilder().setDefaultVersion(SchemaVersion.DRAFTV3).freeze();
-        return JsonSchemaFactory.newBuilder().setLoadingConfiguration(LoadingConfiguration.byDefault()).setValidationConfiguration(validationCfg).freeze();
-    }
+  private JsonSchemaFactory getSchemaFactory() {
+    ValidationConfiguration validationCfg =
+        ValidationConfiguration.newBuilder().setDefaultVersion(SchemaVersion.DRAFTV3).freeze();
+    return JsonSchemaFactory.newBuilder().setLoadingConfiguration(LoadingConfiguration.byDefault())
+        .setValidationConfiguration(validationCfg).freeze();
+  }
 }

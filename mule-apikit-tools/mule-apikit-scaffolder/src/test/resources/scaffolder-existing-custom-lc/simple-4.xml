@@ -16,11 +16,11 @@
         <apikit:router />
     </flow>
 
-    <flow name="get:/">
+    <flow name="get:\">
         <set-payload value="Root!"/>
     </flow>
 
-    <flow name="get:/pet">
+    <flow name="get:\pet">
         <set-payload value="Hello world!"/>
     </flow>
 

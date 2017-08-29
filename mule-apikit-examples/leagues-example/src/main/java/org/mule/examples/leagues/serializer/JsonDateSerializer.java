@@ -15,15 +15,15 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.SerializerProvider;
 
-public class JsonDateSerializer extends JsonSerializer<Date>
-{
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"); // ISO 8601
+public class JsonDateSerializer extends JsonSerializer<Date> {
 
-    @Override
-    public void serialize(Date date, JsonGenerator gen, SerializerProvider provider)
-            throws IOException, JsonProcessingException {
+  private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ"); // ISO 8601
 
-        String formattedDate = dateFormat.format(date);
-        gen.writeString(formattedDate);
-    }
+  @Override
+  public void serialize(Date date, JsonGenerator gen, SerializerProvider provider)
+      throws IOException, JsonProcessingException {
+
+    String formattedDate = dateFormat.format(date);
+    gen.writeString(formattedDate);
+  }
 }

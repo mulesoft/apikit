@@ -17,17 +17,16 @@ import org.junit.Test;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 
-public class InterfaceV10TestCase
-{
+public class InterfaceV10TestCase {
 
-    @Test
-    public void check()
-    {
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
-        IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v10/full-1.0.raml");
-        assertThat(raml.getVersion(), is("1.0"));
-        assertThat(raml.getSchemas().get(0).size(), is(2));
-        assertThat(raml.getSchemas().get(0).get("User"), is("{\"$ref\":\"#/definitions/User\",\"definitions\":{\"User\":{\"type\":\"object\",\"properties\":{\"firstname\":{\"type\":\"string\"},\"lastname\":{\"type\":\"string\"},\"age\":{\"type\":\"number\"}}}},\"$schema\":\"http://json-schema.org/draft-04/schema#\"}"));
-        assertThat(raml.getSchemas().get(0).get("UserJson"), containsString("firstname"));
-    }
+  @Test
+  public void check() {
+    ResourceLoader resourceLoader = new DefaultResourceLoader();
+    IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v10/full-1.0.raml");
+    assertThat(raml.getVersion(), is("1.0"));
+    assertThat(raml.getSchemas().get(0).size(), is(2));
+    assertThat(raml.getSchemas().get(0).get("User"),
+               is("{\"$ref\":\"#/definitions/User\",\"definitions\":{\"User\":{\"type\":\"object\",\"properties\":{\"firstname\":{\"type\":\"string\"},\"lastname\":{\"type\":\"string\"},\"age\":{\"type\":\"number\"}}}},\"$schema\":\"http://json-schema.org/draft-04/schema#\"}"));
+    assertThat(raml.getSchemas().get(0).get("UserJson"), containsString("firstname"));
+  }
 }

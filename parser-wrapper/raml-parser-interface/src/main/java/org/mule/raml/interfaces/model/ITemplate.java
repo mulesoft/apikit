@@ -6,8 +6,9 @@
  */
 package org.mule.raml.interfaces.model;
 
-public interface ITemplate
-{
-    void setDisplayName(String displayName);
-    String getDisplayName();
+public interface ITemplate {
+
+  void setDisplayName(String displayName);
+
+  String getDisplayName();
 }

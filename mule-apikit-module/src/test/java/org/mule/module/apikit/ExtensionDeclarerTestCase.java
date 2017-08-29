@@ -20,38 +20,37 @@ import org.mule.runtime.extension.internal.loader.ExtensionModelFactory;
 
 import org.junit.Test;
 
-public class ExtensionDeclarerTestCase
-{
+public class ExtensionDeclarerTestCase {
 
-    @Test
-    public void getApikitExtensionDeclarer()
-    {
-        ApikitExtensionLoadingDelegate apikitExtensionLoadingDelegate = new ApikitExtensionLoadingDelegate();
-        ExtensionDeclarer extensionDeclarer = new ExtensionDeclarer();
-        apikitExtensionLoadingDelegate.accept(extensionDeclarer, null);
-        ExtensionModelJsonSerializer serializer = new ExtensionModelJsonSerializer(true);
-        ExtensionLoadingContext ctx = new DefaultExtensionLoadingContext(extensionDeclarer, Thread.currentThread().getContextClassLoader(),
-                                                                         DslResolvingContext.getDefault(emptySet()));
-        ExtensionModel extensionModel = new ExtensionModelFactory().create(ctx);
-        String jsonContent = serializer.serialize(extensionModel);
-        assertNotNull(jsonContent);
-        assertEquals(2, countOccurences(jsonContent,"BAD_REQUEST"));
-        assertEquals(3, countOccurences(jsonContent,"NOT_FOUND"));
-        assertEquals(2, countOccurences(jsonContent,"METHOD_NOT_ALLOWED"));
-        assertEquals(2, countOccurences(jsonContent,"UNSUPPORTED_MEDIA_TYPE"));
-        assertEquals(2, countOccurences(jsonContent,"NOT_ACCEPTABLE"));
-    }
+  @Test
+  public void getApikitExtensionDeclarer() {
+    ApikitExtensionLoadingDelegate apikitExtensionLoadingDelegate = new ApikitExtensionLoadingDelegate();
+    ExtensionDeclarer extensionDeclarer = new ExtensionDeclarer();
+    apikitExtensionLoadingDelegate.accept(extensionDeclarer, null);
+    ExtensionModelJsonSerializer serializer = new ExtensionModelJsonSerializer(true);
+    ExtensionLoadingContext ctx =
+        new DefaultExtensionLoadingContext(extensionDeclarer, Thread.currentThread().getContextClassLoader(),
+                                           DslResolvingContext.getDefault(emptySet()));
+    ExtensionModel extensionModel = new ExtensionModelFactory().create(ctx);
+    String jsonContent = serializer.serialize(extensionModel);
+    assertNotNull(jsonContent);
+    assertEquals(2, countOccurences(jsonContent, "BAD_REQUEST"));
+    assertEquals(3, countOccurences(jsonContent, "NOT_FOUND"));
+    assertEquals(2, countOccurences(jsonContent, "METHOD_NOT_ALLOWED"));
+    assertEquals(2, countOccurences(jsonContent, "UNSUPPORTED_MEDIA_TYPE"));
+    assertEquals(2, countOccurences(jsonContent, "NOT_ACCEPTABLE"));
+  }
 
-    public int countOccurences(String str, String substring) {
-        int lastIndex = 0;
-        int count = 0;
-        while (lastIndex >= 0) {
-            lastIndex = str.indexOf(substring, lastIndex);
-            if (lastIndex >= 0) {
-                count++;
-                lastIndex += substring.length();
-            }
-        }
-        return count;
+  public int countOccurences(String str, String substring) {
+    int lastIndex = 0;
+    int count = 0;
+    while (lastIndex >= 0) {
+      lastIndex = str.indexOf(substring, lastIndex);
+      if (lastIndex >= 0) {
+        count++;
+        lastIndex += substring.length();
+      }
     }
+    return count;
+  }
 }

@@ -9,7 +9,6 @@ package org.mule.module.apikit.validation.body.form;
 import java.util.List;
 import java.util.Map;
 
-import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.module.apikit.validation.body.form.transformation.DataWeaveDefaultsBuilder;
 import org.mule.module.apikit.validation.body.form.transformation.DataWeaveTransformer;
@@ -17,12 +16,12 @@ import org.mule.module.apikit.validation.body.form.transformation.TextPlainPart;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.el.ExpressionManager;
-import org.mule.runtime.core.api.exception.TypedException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MultipartFormValidator implements FormValidatorStrategy<TypedValue> {
+
   protected final Logger logger = LoggerFactory.getLogger(MultipartFormValidator.class);
   Map<String, List<IParameter>> formParameters;
   DataWeaveTransformer dataWeaveTransformer;
@@ -39,33 +38,25 @@ public class MultipartFormValidator implements FormValidatorStrategy<TypedValue>
     List<String> actualKeys = dataWeaveTransformer.getKeysFromPayload(originalPayload);
     DataWeaveDefaultsBuilder defaultsBuilder = new DataWeaveDefaultsBuilder();
 
-    for (String expectedKey : formParameters.keySet())
-    {
-      if (formParameters.get(expectedKey).size() != 1)
-      {
+    for (String expectedKey : formParameters.keySet()) {
+      if (formParameters.get(expectedKey).size() != 1) {
         //do not perform validation when multi-type parameters are used
         continue;
       }
 
       IParameter expected = formParameters.get(expectedKey).get(0);
-      if (!actualKeys.contains(expectedKey) )
-      {
-        if (expected.isRequired())
-        {
+      if (!actualKeys.contains(expectedKey)) {
+        if (expected.isRequired()) {
           throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
         }
-        if (expected.getDefaultValue() != null)
-        {
+        if (expected.getDefaultValue() != null) {
           defaultsBuilder.addPart(new TextPlainPart().setName(expectedKey).setValue(expected.getDefaultValue()));
         }
       }
     }
-    if (defaultsBuilder.areDefaultsToAdd())
-    {
+    if (defaultsBuilder.areDefaultsToAdd()) {
       return dataWeaveTransformer.runDataWeaveScript(defaultsBuilder.build(), originalPayload.getDataType(), originalPayload);
-    }
-    else
-    {
+    } else {
       return originalPayload;
     }
   }

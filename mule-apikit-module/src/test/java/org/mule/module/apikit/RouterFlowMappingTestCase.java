@@ -15,42 +15,37 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import org.junit.Rule;
 import org.junit.Test;
 
-
 import com.jayway.restassured.RestAssured;
 
 @ArtifactClassLoaderRunnerConfig
-public class RouterFlowMappingTestCase extends MuleArtifactFunctionalTestCase
-{
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+public class RouterFlowMappingTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Override
-    public int getTestTimeoutSecs()
-    {
-        return 6000;
-    }
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    protected void doSetUp() throws Exception
-    {
-        RestAssured.port = serverPort.getNumber();
-        super.doSetUp();
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Override
-    protected String getConfigResources()
-    {
-        return "org/mule/module/apikit/simple-routing/simple-flow-mapping.xml";
-    }
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
+  }
+
+  @Override
+  protected String getConfigResources() {
+    return "org/mule/module/apikit/simple-routing/simple-flow-mapping.xml";
+  }
 
 
-    @Test
-    public void simpleRouting() throws Exception
-    {
-        given().header("Accept", "*/*")
-                .expect()
-                .response().body(is("hello"))
-                .statusCode(200)
-                .when().get("/api/resources");
-    }
+  @Test
+  public void simpleRouting() throws Exception {
+    given().header("Accept", "*/*")
+        .expect()
+        .response().body(is("hello"))
+        .statusCode(200)
+        .when().get("/api/resources");
+  }
 }

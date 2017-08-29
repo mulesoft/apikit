@@ -30,9 +30,10 @@ public class ConsoleResources {
   private String method;
   private String aceptHeader;
 
-  public ConsoleResources(ConsoleConfig config, String listenerPath, String requestPath, String queryString, String method, String aceptHeader) {
+  public ConsoleResources(ConsoleConfig config, String listenerPath, String requestPath, String queryString, String method,
+                          String aceptHeader) {
     this.config = config;
-    this.listenerPath =  listenerPath;
+    this.listenerPath = listenerPath;
     this.requestPath = requestPath;
     this.queryString = queryString;
     this.method = method;

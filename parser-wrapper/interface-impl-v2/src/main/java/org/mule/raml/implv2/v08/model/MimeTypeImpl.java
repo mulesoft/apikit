@@ -17,56 +17,47 @@ import java.util.Map;
 import org.raml.v2.api.model.v08.bodies.BodyLike;
 import org.raml.v2.api.model.v08.parameters.Parameter;
 
-public class MimeTypeImpl implements IMimeType
-{
+public class MimeTypeImpl implements IMimeType {
 
-    private BodyLike bodyLike;
+  private BodyLike bodyLike;
 
-    public MimeTypeImpl(BodyLike bodyLike)
-    {
-        this.bodyLike = bodyLike;
+  public MimeTypeImpl(BodyLike bodyLike) {
+    this.bodyLike = bodyLike;
+  }
+
+  @Override
+  public String getType() {
+    return bodyLike.name();
+  }
+
+  @Override
+  public String getExample() {
+    return bodyLike.example() != null ? bodyLike.example().value() : null;
+  }
+
+  @Override
+  public String getSchema() {
+    return bodyLike.schema() != null ? bodyLike.schema().value() : null;
+  }
+
+  @Override
+  public Map<String, List<IParameter>> getFormParameters() {
+    Map<String, List<IParameter>> result = new LinkedHashMap<>();
+    for (Parameter parameter : bodyLike.formParameters()) {
+      List<IParameter> list = new ArrayList<>();
+      list.add(new ParameterImpl(parameter));
+      result.put(parameter.name(), list);
     }
+    return result;
+  }
 
-    @Override
-    public String getType()
-    {
-        return bodyLike.name();
-    }
+  @Override
+  public Object getCompiledSchema() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public String getExample()
-    {
-        return bodyLike.example() != null ? bodyLike.example().value() : null;
-    }
-
-    @Override
-    public String getSchema()
-    {
-        return bodyLike.schema() != null ? bodyLike.schema().value() : null;
-    }
-
-    @Override
-    public Map<String, List<IParameter>> getFormParameters()
-    {
-        Map<String, List<IParameter>> result = new LinkedHashMap<>();
-        for (Parameter parameter : bodyLike.formParameters())
-        {
-            List<IParameter> list = new ArrayList<>();
-            list.add(new ParameterImpl(parameter));
-            result.put(parameter.name(), list);
-        }
-        return result;
-    }
-
-    @Override
-    public Object getCompiledSchema()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getInstance()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public Object getInstance() {
+    throw new UnsupportedOperationException();
+  }
 }

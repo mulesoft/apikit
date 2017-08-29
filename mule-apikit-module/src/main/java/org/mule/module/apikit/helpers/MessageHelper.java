@@ -10,21 +10,18 @@ import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
 
-public class MessageHelper
-{
-    public static Message setPayload(Message message, Object payload, String mimetype)
-    {
-        return setPayload(message, payload, MediaType.parse(mimetype));
-    }
+public class MessageHelper {
 
-    public static Message setPayload(Message message, Object payload, MediaType mediatype)
-    {
-        Message.Builder messageBuilder = Message.builder(message);
-        messageBuilder.value(payload);
-        if (mediatype != null)
-        {
-            messageBuilder.mediaType(mediatype);
-        }
-        return messageBuilder.build();
+  public static Message setPayload(Message message, Object payload, String mimetype) {
+    return setPayload(message, payload, MediaType.parse(mimetype));
+  }
+
+  public static Message setPayload(Message message, Object payload, MediaType mediatype) {
+    Message.Builder messageBuilder = Message.builder(message);
+    messageBuilder.value(payload);
+    if (mediatype != null) {
+      messageBuilder.mediaType(mediatype);
     }
+    return messageBuilder.build();
+  }
 }

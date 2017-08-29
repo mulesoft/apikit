@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedValue> {
+
   protected final Logger logger = LoggerFactory.getLogger(UrlencodedFormV2Validator.class);
   Map<String, List<IParameter>> formParameters;
   IMimeType actionMimeType;
@@ -41,8 +42,7 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
   @Override
   public TypedValue validate(TypedValue originalPayload) throws BadRequestException {
 
-    if (!(actionMimeType instanceof MimeTypeImpl))
-    {
+    if (!(actionMimeType instanceof MimeTypeImpl)) {
       // validate only raml 1.0
       return originalPayload;
     }
@@ -50,25 +50,20 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
     String jsonText;
     MultiMap<String, String> requestMap = dataWeaveTransformer.getMultiMapFromPayload(originalPayload);
 
-    try
-    {
+    try {
       jsonText = new ObjectMapper().writeValueAsString(requestMap);
-    }
-    catch (Exception e)
-    {
+    } catch (Exception e) {
       logger.warn("Cannot validate url-encoded form", e);
       return originalPayload;
     }
 
     List<ValidationResult> validationResult = ((MimeTypeImpl) actionMimeType).validate(jsonText);
-    if (validationResult.size() > 0)
-    {
-      String resultString =  "";
-      for (ValidationResult result : validationResult)
-      {
+    if (validationResult.size() > 0) {
+      String resultString = "";
+      for (ValidationResult result : validationResult) {
         resultString += result.getMessage() + "\n";
       }
-      throw ApikitErrorTypes.throwErrorType(new InvalidFormParameterException(resultString));
+      throw new InvalidFormParameterException(resultString);
     }
 
     return dataWeaveTransformer.getXFormUrlEncodedStream(requestMap, originalPayload.getDataType());

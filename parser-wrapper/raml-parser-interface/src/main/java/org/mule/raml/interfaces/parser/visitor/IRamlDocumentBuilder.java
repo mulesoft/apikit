@@ -8,16 +8,15 @@ package org.mule.raml.interfaces.parser.visitor;
 
 import org.mule.raml.interfaces.model.IRaml;
 
-public interface IRamlDocumentBuilder
-{
+public interface IRamlDocumentBuilder {
 
-    IRaml build(String content, String resourceLocation);
+  IRaml build(String content, String resourceLocation);
 
-    IRaml build(String resourceLocation);
+  IRaml build(String resourceLocation);
 
-    IRamlDocumentBuilder addPathLookupFirst(String path);
+  IRamlDocumentBuilder addPathLookupFirst(String path);
 
-    IRamlDocumentBuilder addClassPathLookup(ClassLoader customClassLoader);
+  IRamlDocumentBuilder addClassPathLookup(ClassLoader customClassLoader);
 
-    Object getInstance();
+  Object getInstance();
 }

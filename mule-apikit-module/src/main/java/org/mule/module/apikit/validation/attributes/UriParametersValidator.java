@@ -6,8 +6,7 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.exception.InvalidUriParameterException;
+import org.mule.module.apikit.api.exception.InvalidUriParameterException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.raml.interfaces.model.IResource;
@@ -28,8 +27,7 @@ public class UriParametersValidator {
   }
 
   public MultiMap<String, String> validateAndAddDefaults(MultiMap<String, String> uriParams)
-          throws InvalidUriParameterException
-  {
+      throws InvalidUriParameterException {
     this.uriParams = uriParams;
     for (Map.Entry<String, IParameter> entry : resource.getResolvedUriParameters().entrySet()) {
       String value = (String) resolvedVariables.get(entry.getKey());

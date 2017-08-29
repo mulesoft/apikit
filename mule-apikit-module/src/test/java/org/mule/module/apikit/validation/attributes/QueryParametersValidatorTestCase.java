@@ -8,7 +8,7 @@ package org.mule.module.apikit.validation.attributes;
 
 import static org.junit.Assert.assertEquals;
 
-import org.mule.module.apikit.exception.InvalidQueryParameterException;
+import org.mule.module.apikit.api.exception.InvalidQueryParameterException;
 import org.mule.raml.implv1.model.ActionImpl;
 import org.mule.runtime.api.util.MultiMap;
 
@@ -23,8 +23,7 @@ import org.raml.model.parameter.QueryParameter;
 public class QueryParametersValidatorTestCase {
 
   @Test(expected = InvalidQueryParameterException.class)
-  public void invalidQueryParamMaxLength() throws InvalidQueryParameterException
-  {
+  public void invalidQueryParamMaxLength() throws InvalidQueryParameterException {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();
     queryParam1.setType(ParamType.STRING);
@@ -43,8 +42,7 @@ public class QueryParametersValidatorTestCase {
   }
 
   @Test
-  public void validQueryParamMaxLength() throws InvalidQueryParameterException
-  {
+  public void validQueryParamMaxLength() throws InvalidQueryParameterException {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();
     queryParam1.setType(ParamType.STRING);
@@ -63,8 +61,7 @@ public class QueryParametersValidatorTestCase {
   }
 
   @Test
-  public void validQueryParamAddingDefault() throws InvalidQueryParameterException
-  {
+  public void validQueryParamAddingDefault() throws InvalidQueryParameterException {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();
     queryParam1.setType(ParamType.STRING);
@@ -92,8 +89,7 @@ public class QueryParametersValidatorTestCase {
   }
 
   @Test
-  public void validQueryParamAddingDefaultWithSpaces() throws InvalidQueryParameterException
-  {
+  public void validQueryParamAddingDefaultWithSpaces() throws InvalidQueryParameterException {
     Map<String, QueryParameter> expectedQueryParams = new HashMap<>();
     QueryParameter queryParam1 = new QueryParameter();
     queryParam1.setType(ParamType.STRING);

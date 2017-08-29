@@ -9,16 +9,15 @@ package org.mule.raml.implv1.model;
 import org.mule.raml.interfaces.model.ISecurityScheme;
 import org.raml.model.SecurityScheme;
 
-public class SecuritySchemeImpl implements ISecurityScheme
-{
-    SecurityScheme securityScheme;
-    public SecuritySchemeImpl(SecurityScheme securityScheme)
-    {
-        this.securityScheme = securityScheme;
-    }
+public class SecuritySchemeImpl implements ISecurityScheme {
 
-    public Object getInstance()
-    {
-        return securityScheme;
-    }
+  SecurityScheme securityScheme;
+
+  public SecuritySchemeImpl(SecurityScheme securityScheme) {
+    this.securityScheme = securityScheme;
+  }
+
+  public Object getInstance() {
+    return securityScheme;
+  }
 }

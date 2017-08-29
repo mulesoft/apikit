@@ -17,36 +17,36 @@ import org.mule.runtime.api.component.ComponentIdentifier;
  * {@link org.mule.module.apikit.metadata.model.Flow}
  * {@link org.mule.module.apikit.metadata.model.FlowMapping}
  */
-public class ApikitElementIdentifiers
-{
-    private ApikitElementIdentifiers() {}
+public class ApikitElementIdentifiers {
 
-    private static final ComponentIdentifier FLOW =
-            ComponentIdentifier.buildFromStringRepresentation("flow");
+  private ApikitElementIdentifiers() {}
 
-    private static final ComponentIdentifier APIKIT_CONFIG =
-            ComponentIdentifier.buildFromStringRepresentation("apikit:config");
+  private static final ComponentIdentifier FLOW =
+      ComponentIdentifier.buildFromStringRepresentation("flow");
 
-    private static final ComponentIdentifier APIKIT_FLOW_MAPPINGS =
-            ComponentIdentifier.buildFromStringRepresentation("apikit:flow-mappings");
+  private static final ComponentIdentifier APIKIT_CONFIG =
+      ComponentIdentifier.buildFromStringRepresentation("apikit:config");
 
-    private static final ComponentIdentifier APIKIT_FLOW_MAPPING =
-            ComponentIdentifier.buildFromStringRepresentation("apikit:flow-mapping");
+  private static final ComponentIdentifier APIKIT_FLOW_MAPPINGS =
+      ComponentIdentifier.buildFromStringRepresentation("apikit:flow-mappings");
+
+  private static final ComponentIdentifier APIKIT_FLOW_MAPPING =
+      ComponentIdentifier.buildFromStringRepresentation("apikit:flow-mapping");
 
 
-    public static boolean isFlow(ComponentIdentifier identifier) {
-        return identifier.equals(FLOW);
-    }
+  public static boolean isFlow(ComponentIdentifier identifier) {
+    return identifier.equals(FLOW);
+  }
 
-    public static boolean isApikitConfig(ComponentIdentifier identifier) {
-        return identifier.equals(APIKIT_CONFIG);
-    }
+  public static boolean isApikitConfig(ComponentIdentifier identifier) {
+    return identifier.equals(APIKIT_CONFIG);
+  }
 
-    public static boolean isFlowMappings(ComponentIdentifier identifier) {
-        return identifier.equals(APIKIT_FLOW_MAPPINGS);
-    }
+  public static boolean isFlowMappings(ComponentIdentifier identifier) {
+    return identifier.equals(APIKIT_FLOW_MAPPINGS);
+  }
 
-    public static boolean isFlowMapping(ComponentIdentifier identifier) {
-        return identifier.equals(APIKIT_FLOW_MAPPING);
-    }
+  public static boolean isFlowMapping(ComponentIdentifier identifier) {
+    return identifier.equals(APIKIT_FLOW_MAPPING);
+  }
 }

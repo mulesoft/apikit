@@ -9,27 +9,23 @@ package org.mule.raml.implv1.model;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.raml.model.SecurityReference;
 
-public class SecurityReferenceImpl implements ISecurityReference
-{
-    SecurityReference securityReference;
+public class SecurityReferenceImpl implements ISecurityReference {
 
-    public SecurityReferenceImpl(SecurityReference securityReference)
-    {
-        this.securityReference = securityReference;
-    }
+  SecurityReference securityReference;
 
-    public SecurityReferenceImpl(String name)
-    {
-        securityReference = new SecurityReference(name);
-    }
+  public SecurityReferenceImpl(SecurityReference securityReference) {
+    this.securityReference = securityReference;
+  }
 
-    public String getName()
-    {
-        return securityReference.getName();
-    }
+  public SecurityReferenceImpl(String name) {
+    securityReference = new SecurityReference(name);
+  }
 
-    public Object getInstance()
-    {
-        return securityReference;
-    }
+  public String getName() {
+    return securityReference.getName();
+  }
+
+  public Object getInstance() {
+    return securityReference;
+  }
 }

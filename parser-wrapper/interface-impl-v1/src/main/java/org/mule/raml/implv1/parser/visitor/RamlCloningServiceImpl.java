@@ -13,28 +13,22 @@ import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.parser.visitor.IRamlCloningService;
 import org.raml.model.Raml;
 
-public class RamlCloningServiceImpl implements IRamlCloningService
-{
+public class RamlCloningServiceImpl implements IRamlCloningService {
 
-    public IRaml deepCloneRaml(IRaml source)
-    {
-        Raml sourceInstance = (Raml)source.getInstance();
-        Raml targetInstance = (Raml) SerializationUtils.deserialize(SerializationUtils.serialize(sourceInstance));
-        targetInstance.setCompiledSchemas(sourceInstance.getCompiledSchemas());
-        return new RamlImplV1(targetInstance);
-    }
+  public IRaml deepCloneRaml(IRaml source) {
+    Raml sourceInstance = (Raml) source.getInstance();
+    Raml targetInstance = (Raml) SerializationUtils.deserialize(SerializationUtils.serialize(sourceInstance));
+    targetInstance.setCompiledSchemas(sourceInstance.getCompiledSchemas());
+    return new RamlImplV1(targetInstance);
+  }
 
-    public IRaml shallowCloneRaml(IRaml source)
-    {
-        Raml sourceInstance = (Raml) source.getInstance();
-        try
-        {
-             return new RamlImplV1((Raml) BeanUtils.cloneBean(sourceInstance));
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException(e);
-        }
+  public IRaml shallowCloneRaml(IRaml source) {
+    Raml sourceInstance = (Raml) source.getInstance();
+    try {
+      return new RamlImplV1((Raml) BeanUtils.cloneBean(sourceInstance));
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
+  }
 
 }

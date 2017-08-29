@@ -9,60 +9,49 @@ package org.mule.module.apikit;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ApikitRegistry
-{
-    private Map<String, Configuration> configMap;
+public class ApikitRegistry {
 
-    private Map<String, String> apiSourceMap;
+  private Map<String, Configuration> configMap;
 
-    public void registerConfiguration(Configuration config)
-    {
-        if (configMap == null)
-        {
-            configMap = new HashMap<>();
-        }
-        this.configMap.put(config.getName(), config);
+  private Map<String, String> apiSourceMap;
 
-        if (apiSourceMap != null)
-        {
-            config.getRamlHandler().setApiServer(apiSourceMap.get(config.getName()));
-
-
-            for (String apiSourceMapItem : apiSourceMap.keySet())
-            {
-                if (configMap.get(apiSourceMapItem) != null)
-                {
-                    configMap.get(apiSourceMapItem).getRamlHandler().setApiServer(apiSourceMap.get(apiSourceMapItem));
-                }
-            }
-
-        }
+  public void registerConfiguration(Configuration config) {
+    if (configMap == null) {
+      configMap = new HashMap<>();
     }
+    this.configMap.put(config.getName(), config);
 
-    public Configuration getConfiguration(String configName)
-    {
-        return configMap.get(configName);
-    }
+    if (apiSourceMap != null) {
+      config.getRamlHandler().setApiServer(apiSourceMap.get(config.getName()));
 
-    public void setApiSource(String configName, String apiSource)
-    {
-        if (apiSourceMap == null)
-        {
-            apiSourceMap = new HashMap<>();
+
+      for (String apiSourceMapItem : apiSourceMap.keySet()) {
+        if (configMap.get(apiSourceMapItem) != null) {
+          configMap.get(apiSourceMapItem).getRamlHandler().setApiServer(apiSourceMap.get(apiSourceMapItem));
         }
-        apiSourceMap.put(configName, apiSource);
+      }
 
-
-        if (configMap != null)
-        {
-            for (String apiSourceMapItem : apiSourceMap.keySet())
-            {
-                if (configMap.get(apiSourceMapItem) != null)
-                {
-                    configMap.get(apiSourceMapItem).getRamlHandler().setApiServer(apiSourceMap.get(apiSourceMapItem));
-                }
-            }
-        }
     }
+  }
+
+  public Configuration getConfiguration(String configName) {
+    return configMap.get(configName);
+  }
+
+  public void setApiSource(String configName, String apiSource) {
+    if (apiSourceMap == null) {
+      apiSourceMap = new HashMap<>();
+    }
+    apiSourceMap.put(configName, apiSource);
+
+
+    if (configMap != null) {
+      for (String apiSourceMapItem : apiSourceMap.keySet()) {
+        if (configMap.get(apiSourceMapItem) != null) {
+          configMap.get(apiSourceMapItem).getRamlHandler().setApiServer(apiSourceMap.get(apiSourceMapItem));
+        }
+      }
+    }
+  }
 
 }

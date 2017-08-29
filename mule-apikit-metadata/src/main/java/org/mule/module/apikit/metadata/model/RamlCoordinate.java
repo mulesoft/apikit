@@ -6,41 +6,46 @@
  */
 package org.mule.module.apikit.metadata.model;
 
+import javax.annotation.Nullable;
+
 /**
  * A RAML coordinate. It is composed by a method, a resource, a media type (optional), and a APIkit config name (optional).
  */
-public class RamlCoordinate
-{
-    private String method;
-    private String resource;
-    private String mediaType;
-    private String configName;
+public class RamlCoordinate {
 
-    public RamlCoordinate(String method, String resource, String mediaType, String configName) {
-        this.resource = resource;
-        this.method = method;
-        this.mediaType = mediaType;
-        this.configName = configName;
-    }
+  final private String flowName;
+  final private String method;
+  final private String resource;
+  final private String mediaType;
+  final private String configName;
 
-    public String getConfigName()
-    {
-        return configName;
-    }
+  public RamlCoordinate(String flowName, String method, String resource, String mediaType, String configName) {
+    this.flowName = flowName;
+    this.resource = resource;
+    this.method = method;
+    this.mediaType = mediaType;
+    this.configName = configName;
+  }
 
-    public String getResource()
-    {
-        return resource;
-    }
+  @Nullable
+  public String getConfigName() {
+    return configName;
+  }
 
-    public String getMediaType()
-    {
-        return mediaType;
-    }
+  public String getResource() {
+    return resource;
+  }
 
-    public String getMethod()
-    {
-        return method;
-    }
+  @Nullable
+  public String getMediaType() {
+    return mediaType;
+  }
 
+  public String getMethod() {
+    return method;
+  }
+
+  public String getFlowName() {
+    return flowName;
+  }
 }

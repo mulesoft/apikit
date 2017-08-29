@@ -11,6 +11,6 @@ import org.jdom2.Document;
 
 public interface MuleConfigFileParser {
 
-    Object parse(Document document);
+  Object parse(Document document);
 
 }

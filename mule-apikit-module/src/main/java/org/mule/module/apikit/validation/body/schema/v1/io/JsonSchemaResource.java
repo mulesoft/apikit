@@ -22,72 +22,60 @@ import org.springframework.core.io.AbstractFileResolvingResource;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
-public class JsonSchemaResource extends AbstractFileResolvingResource
-{
+public class JsonSchemaResource extends AbstractFileResolvingResource {
 
-    private String className;
+  private String className;
 
-    private ClassLoader classLoader;
+  private ClassLoader classLoader;
 
-    private static LoadingCache<Class<?>, byte[]> schemaCache;
+  private static LoadingCache<Class<?>, byte[]> schemaCache;
 
-    static
-    {
-        schemaCache = CacheBuilder.newBuilder()
-                .maximumSize(1000)
-                .build(
-                        new CacheLoader<Class<?>, byte[]>()
-                        {
-                            private ObjectMapper objectMapper;
+  static {
+    schemaCache = CacheBuilder.newBuilder()
+        .maximumSize(1000)
+        .build(
+               new CacheLoader<Class<?>, byte[]>() {
 
-                            public byte[] load(Class<?> clazz) throws IOException
-                            {
-                                if (objectMapper == null)
-                                {
-                                    objectMapper = new ObjectMapper();
-                                }
+                 private ObjectMapper objectMapper;
 
-                                JsonSchema jsonSchema = this.objectMapper.generateJsonSchema(clazz);
-                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                                this.objectMapper.writeValue(baos, jsonSchema);
+                 public byte[] load(Class<?> clazz) throws IOException {
+                   if (objectMapper == null) {
+                     objectMapper = new ObjectMapper();
+                   }
 
-                                return baos.toByteArray();
-                            }
-                        });
+                   JsonSchema jsonSchema = this.objectMapper.generateJsonSchema(clazz);
+                   ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                   this.objectMapper.writeValue(baos, jsonSchema);
 
+                   return baos.toByteArray();
+                 }
+               });
+
+  }
+
+  public JsonSchemaResource(String className, ClassLoader classLoader) {
+    Assert.notNull(className, "Class name must not be null");
+    this.className = className;
+    this.classLoader = (classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader());
+  }
+
+  @Override
+  public String getDescription() {
+    StringBuilder builder = new StringBuilder("annotated class resource [");
+    builder.append(this.className);
+    builder.append(']');
+    return builder.toString();
+  }
+
+  @Override
+  public InputStream getInputStream() throws IOException {
+    try {
+      Class<?> clazz = this.classLoader.loadClass(className);
+      return new ByteArrayInputStream(schemaCache.get(clazz));
+    } catch (ClassNotFoundException e) {
+      throw new IOException(getDescription() + " cannot be found", e);
+    } catch (ExecutionException e) {
+      throw new IOException(getDescription() + " cannot be found", e.getCause());
     }
-
-    public JsonSchemaResource(String className, ClassLoader classLoader)
-    {
-        Assert.notNull(className, "Class name must not be null");
-        this.className = className;
-        this.classLoader = (classLoader != null ? classLoader : ClassUtils.getDefaultClassLoader());
-    }
-
-    @Override
-    public String getDescription()
-    {
-        StringBuilder builder = new StringBuilder("annotated class resource [");
-        builder.append(this.className);
-        builder.append(']');
-        return builder.toString();
-    }
-
-    @Override
-    public InputStream getInputStream() throws IOException
-    {
-        try
-        {
-            Class<?> clazz = this.classLoader.loadClass(className);
-            return new ByteArrayInputStream(schemaCache.get(clazz));
-        }
-        catch (ClassNotFoundException e)
-        {
-            throw new IOException(getDescription() + " cannot be found", e);
-        }
-        catch (ExecutionException e)
-        {
-            throw new IOException(getDescription() + " cannot be found", e.getCause());
-        }
-    }
+  }
 }

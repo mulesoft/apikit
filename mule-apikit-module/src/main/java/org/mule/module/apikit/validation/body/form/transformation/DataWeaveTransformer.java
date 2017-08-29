@@ -18,65 +18,57 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DataWeaveTransformer
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataWeaveTransformer.class);
+public class DataWeaveTransformer {
 
-    private final DataType multiMapDataType = DataType.builder()
-            .mapType(MultiMap.class)
-            .keyType(String.class)
-            .valueType(String.class)
-            .build();
+  private static final Logger LOGGER = LoggerFactory.getLogger(DataWeaveTransformer.class);
 
-    ExpressionManager expressionManager;
+  private final DataType multiMapDataType = DataType.builder()
+      .mapType(MultiMap.class)
+      .keyType(String.class)
+      .valueType(String.class)
+      .build();
 
-    public DataWeaveTransformer(ExpressionManager expressionManager)
-    {
-        this.expressionManager = expressionManager;
+  ExpressionManager expressionManager;
+
+  public DataWeaveTransformer(ExpressionManager expressionManager) {
+    this.expressionManager = expressionManager;
+  }
+
+  public TypedValue runDataWeaveScript(String script, DataType dataType, TypedValue payload)
+      throws InvalidFormParameterException {
+    BindingContext.Builder bindingContextBuilder = BindingContext.builder();
+
+    bindingContextBuilder.addBinding("payload", payload);
+    TypedValue result;
+    try {
+      if (dataType != null) {
+        result = expressionManager.evaluate(script, dataType, bindingContextBuilder.build());
+      } else {
+        result = expressionManager.evaluate(script, bindingContextBuilder.build());
+      }
+    } catch (Exception e) {
+      LOGGER.error("Invalid form parameter exception. Payload transformation could not be performed. Reason: " + e.getMessage());
+      throw new InvalidFormParameterException("Invalid form parameter exception. Payload transformation could not be performed. Reason: "
+          + e.getMessage());
     }
+    return result;
+  }
 
-    public TypedValue runDataWeaveScript(String script, DataType dataType, TypedValue payload) throws InvalidFormParameterException
-    {
-        BindingContext.Builder bindingContextBuilder = BindingContext.builder();
+  public MultiMap<String, String> getMultiMapFromPayload(TypedValue payload) throws InvalidFormParameterException {
+    String script = "output application/java --- payload";
 
-        bindingContextBuilder.addBinding("payload", payload);
-        TypedValue result;
-        try
-        {
-            if (dataType != null)
-            {
-                result = expressionManager.evaluate(script, dataType, bindingContextBuilder.build());
-            }
-            else
-            {
-                result = expressionManager.evaluate(script, bindingContextBuilder.build());
-            }
-        }
-        catch (Exception e)
-        {
-            LOGGER.error("Invalid form parameter exception. Payload transformation could not be performed. Reason: " + e.getMessage());
-            throw new InvalidFormParameterException("Invalid form parameter exception. Payload transformation could not be performed. Reason: " + e.getMessage());
-        }
-        return result;
-    }
+    return (MultiMap<String, String>) runDataWeaveScript(script, multiMapDataType, payload).getValue();
+  }
 
-    public MultiMap<String, String> getMultiMapFromPayload(TypedValue payload) throws InvalidFormParameterException
-    {
-        String script = "output application/java --- payload";
+  public TypedValue getXFormUrlEncodedStream(MultiMap mapToTransform, DataType responseDataType)
+      throws InvalidFormParameterException {
+    TypedValue<MultiMap<String, String>> modifiedPayload = new TypedValue<>(mapToTransform, multiMapDataType);
+    String script = "output application/x-www-form-urlencoded --- payload";
+    return runDataWeaveScript(script, responseDataType, modifiedPayload);
+  }
 
-        return (MultiMap<String,String>) runDataWeaveScript(script, multiMapDataType, payload).getValue();
-    }
-
-    public TypedValue getXFormUrlEncodedStream(MultiMap mapToTransform, DataType responseDataType) throws InvalidFormParameterException
-    {
-        TypedValue<MultiMap<String, String>> modifiedPayload = new TypedValue<>(mapToTransform, multiMapDataType);
-        String script = "output application/x-www-form-urlencoded --- payload";
-        return runDataWeaveScript(script, responseDataType, modifiedPayload);
-    }
-
-    public List<String> getKeysFromPayload(TypedValue payload) throws InvalidFormParameterException
-    {
-        String script = "output application/java --- payload.parts pluck $$ as String";
-        return (List<String>)runDataWeaveScript(script, null, payload).getValue();
-    }
+  public List<String> getKeysFromPayload(TypedValue payload) throws InvalidFormParameterException {
+    String script = "output application/java --- payload.parts pluck $$ as String";
+    return (List<String>) runDataWeaveScript(script, null, payload).getValue();
+  }
 }

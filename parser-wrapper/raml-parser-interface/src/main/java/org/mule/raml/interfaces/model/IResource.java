@@ -11,17 +11,27 @@ import java.util.Map;
 
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
-public interface IResource
-{
-    IAction getAction(String name);
-    String getUri();
-    void setParentUri(String parentUri);
-    Map<String, IResource> getResources();
-    String getParentUri();
-    Map<IActionType, IAction> getActions();
-    Map<String, List<IParameter>> getBaseUriParameters();
-    Map<String, IParameter> getResolvedUriParameters();
-    String getDisplayName();
-    String getRelativeUri();
-    void cleanBaseUriParameters();
+public interface IResource {
+
+  IAction getAction(String name);
+
+  String getUri();
+
+  void setParentUri(String parentUri);
+
+  Map<String, IResource> getResources();
+
+  String getParentUri();
+
+  Map<IActionType, IAction> getActions();
+
+  Map<String, List<IParameter>> getBaseUriParameters();
+
+  Map<String, IParameter> getResolvedUriParameters();
+
+  String getDisplayName();
+
+  String getRelativeUri();
+
+  void cleanBaseUriParameters();
 }

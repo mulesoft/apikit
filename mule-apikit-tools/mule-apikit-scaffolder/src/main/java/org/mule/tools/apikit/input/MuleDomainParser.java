@@ -20,37 +20,30 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaders;
 
-public class MuleDomainParser
-{
-    private Map<String, HttpListener4xConfig> httpListenerConfigs = new HashMap<>();
+public class MuleDomainParser {
 
-    public MuleDomainParser(Log log, InputStream domainStream)
-    {
+  private Map<String, HttpListener4xConfig> httpListenerConfigs = new HashMap<>();
 
-        if (domainStream != null)
-        {
-            try
-            {
-                parseMuleDomainFile(domainStream);
-            }
-            catch (Exception e)
-            {
-                log.error("Error parsing Mule domain file. Reason: " + e.getMessage());
-                log.debug(e);
-            }
-        }
+  public MuleDomainParser(Log log, InputStream domainStream) {
+
+    if (domainStream != null) {
+      try {
+        parseMuleDomainFile(domainStream);
+      } catch (Exception e) {
+        log.error("Error parsing Mule domain file. Reason: " + e.getMessage());
+        log.debug(e);
+      }
     }
+  }
 
-    private void parseMuleDomainFile(InputStream stream) throws JDOMException, IOException
-    {
-        SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
-        Document document = saxBuilder.build(stream);
-        httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
-    }
+  private void parseMuleDomainFile(InputStream stream) throws JDOMException, IOException {
+    SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
+    Document document = saxBuilder.build(stream);
+    httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
+  }
 
-    public Map<String, HttpListener4xConfig> getHttpListenerConfigs()
-    {
-        return httpListenerConfigs;
-    }
+  public Map<String, HttpListener4xConfig> getHttpListenerConfigs() {
+    return httpListenerConfigs;
+  }
 
 }

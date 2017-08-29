@@ -40,8 +40,8 @@ public class BodyValidator {
 
 
   public static ValidBody validate(IAction action, HttpRequestAttributes attributes, Object payload,
-                                   ValidationConfig config, String charset) throws BadRequestException, UnsupportedMediaTypeException
-  {
+                                   ValidationConfig config, String charset)
+      throws BadRequestException, UnsupportedMediaTypeException {
     ValidBody validBody = new ValidBody(payload);
 
     if (action == null || !action.hasBody()) {
@@ -76,11 +76,12 @@ public class BodyValidator {
     IMimeType mimeType = foundMimeType.getValue();
 
 
-    if(requestMimeTypeName.contains("json") || requestMimeTypeName.contains("xml")) {
+    if (requestMimeTypeName.contains("json") || requestMimeTypeName.contains("xml")) {
 
       validateAsString(config, mimeType, action, requestMimeTypeName, validBody.getPayload(), charset);
 
-    } else if((requestMimeTypeName.contains("multipart/form-data") || requestMimeTypeName.contains("application/x-www-form-urlencoded"))) {
+    } else if ((requestMimeTypeName.contains("multipart/form-data")
+        || requestMimeTypeName.contains("application/x-www-form-urlencoded"))) {
 
       validBody = validateAsMultiPart(config, mimeType, requestMimeTypeName, validBody.getPayloadAsTypedValue());
 
@@ -89,7 +90,9 @@ public class BodyValidator {
     return validBody;
   }
 
-  private static void validateAsString(ValidationConfig config, IMimeType mimeType, IAction action, String requestMimeTypeName, Object payload, String charset) throws BadRequestException {
+  private static void validateAsString(ValidationConfig config, IMimeType mimeType, IAction action, String requestMimeTypeName,
+                                       Object payload, String charset)
+      throws BadRequestException {
     RestSchemaValidator schemaValidator = null;
 
     if (config.isParserV2()) {
@@ -101,9 +104,9 @@ public class BodyValidator {
         if (requestMimeTypeName.contains("json")) {
 
           ApiKitJsonSchema schema = config.getJsonSchema(schemaPath);
-          schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(schema != null? schema.getSchema() : null));
+          schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(schema != null ? schema.getSchema() : null));
 
-        } else if(requestMimeTypeName.contains("xml")) {
+        } else if (requestMimeTypeName.contains("xml")) {
           schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));
         }
       } catch (ExecutionException e) {
@@ -118,7 +121,9 @@ public class BodyValidator {
 
   }
 
-  private static ValidBody validateAsMultiPart(ValidationConfig config, IMimeType mimeType, String requestMimeTypeName, TypedValue payload) throws BadRequestException {
+  private static ValidBody validateAsMultiPart(ValidationConfig config, IMimeType mimeType, String requestMimeTypeName,
+                                               TypedValue payload)
+      throws BadRequestException {
     ValidBody validBody = new ValidBody(payload);
     FormParametersValidator formParametersValidator = null;
 
@@ -126,15 +131,18 @@ public class BodyValidator {
 
       if (requestMimeTypeName.contains("multipart/form-data")) {
 
-        formParametersValidator = new FormParametersValidator(new MultipartFormValidator(mimeType.getFormParameters(), config.getExpressionManager()));
+        formParametersValidator =
+            new FormParametersValidator(new MultipartFormValidator(mimeType.getFormParameters(), config.getExpressionManager()));
         validBody.setFormParameters(formParametersValidator.validate(payload));
 
       } else if (requestMimeTypeName.contains("application/x-www-form-urlencoded")) {
         if (config.isParserV2()) {
-          formParametersValidator = new FormParametersValidator(new UrlencodedFormV2Validator(mimeType, config.getExpressionManager()));
+          formParametersValidator =
+              new FormParametersValidator(new UrlencodedFormV2Validator(mimeType, config.getExpressionManager()));
 
         } else {
-          formParametersValidator = new FormParametersValidator(new UrlencodedFormV1Validator(mimeType.getFormParameters(), config.getExpressionManager()));
+          formParametersValidator = new FormParametersValidator(new UrlencodedFormV1Validator(mimeType.getFormParameters(),
+                                                                                              config.getExpressionManager()));
         }
 
         validBody.setFormParameters(formParametersValidator.validate(payload));

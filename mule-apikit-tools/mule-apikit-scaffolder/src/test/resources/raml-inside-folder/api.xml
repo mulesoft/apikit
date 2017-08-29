@@ -28,7 +28,7 @@
         <apikit:router />
     </flow>
 
-    <flow name="post:/oneResource:api-config">
+    <flow name="post:\oneResource:api-config">
         <set-payload value="#[NullPayload.getInstance()]" />
     </flow>
 

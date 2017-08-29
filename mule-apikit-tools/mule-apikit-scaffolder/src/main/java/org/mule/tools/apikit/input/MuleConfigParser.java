@@ -34,57 +34,57 @@ import org.jdom2.input.sax.XMLReaders;
 
 public class MuleConfigParser {
 
-    private Set<ResourceActionMimeTypeTriplet> entries = new HashSet<>();
-    private Map<String, API> includedApis = new HashMap<>();
-    private Map<String, HttpListener4xConfig> httpListenerConfigs = new HashMap<>();
-    private Map<String, APIKitConfig> apikitConfigs = new HashMap<>();
-    private final APIFactory apiFactory;
-    private final Log log;
+  private Set<ResourceActionMimeTypeTriplet> entries = new HashSet<>();
+  private Map<String, API> includedApis = new HashMap<>();
+  private Map<String, HttpListener4xConfig> httpListenerConfigs = new HashMap<>();
+  private Map<String, APIKitConfig> apikitConfigs = new HashMap<>();
+  private final APIFactory apiFactory;
+  private final Log log;
 
-    public MuleConfigParser(Log log, APIFactory apiFactory) {
-        this.apiFactory = apiFactory;
-        this.httpListenerConfigs.putAll(apiFactory.getDomainHttpListenerConfigs());
-        this.log = log;
+  public MuleConfigParser(Log log, APIFactory apiFactory) {
+    this.apiFactory = apiFactory;
+    this.httpListenerConfigs.putAll(apiFactory.getDomainHttpListenerConfigs());
+    this.log = log;
+  }
+
+  public MuleConfigParser parse(Set<File> ramlPaths, Map<File, InputStream> streams) {
+    for (Entry<File, InputStream> fileStreamEntry : streams.entrySet()) {
+      InputStream stream = fileStreamEntry.getValue();
+      File file = fileStreamEntry.getKey();
+      try {
+        parseMuleConfigFile(file, stream, ramlPaths);
+        stream.close();
+      } catch (Exception e) {
+        log.error("Error parsing Mule xml config file: [" + file + "]. Reason: " + e.getMessage());
+        log.debug(e);
+      }
     }
+    return this;
+  }
 
-    public MuleConfigParser parse(Set<File> ramlPaths, Map<File, InputStream> streams) {
-        for (Entry<File, InputStream> fileStreamEntry : streams.entrySet()) {
-            InputStream stream = fileStreamEntry.getValue();
-            File file = fileStreamEntry.getKey();
-            try {
-                parseMuleConfigFile(file, stream, ramlPaths);
-                stream.close();
-            } catch (Exception e) {
-                log.error("Error parsing Mule xml config file: [" + file + "]. Reason: " + e.getMessage());
-                log.debug(e);
-            }
-        }
-        return this;
-    }
+  protected void parseMuleConfigFile(File file, InputStream stream, Set<File> ramlPaths) throws JDOMException, IOException {
+    SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
+    Document document = saxBuilder.build(stream);
 
-    protected void parseMuleConfigFile(File file, InputStream stream, Set<File> ramlPaths) throws JDOMException, IOException {
-        SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
-        Document document = saxBuilder.build(stream);
+    apikitConfigs.putAll(new APIKitConfigParser().parse(document));
+    httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
 
-        apikitConfigs.putAll(new APIKitConfigParser().parse(document));
-        httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
+    includedApis.putAll(new APIKitRoutersParser(apikitConfigs, httpListenerConfigs, ramlPaths, file, apiFactory).parse(document));
 
-        includedApis.putAll(new APIKitRoutersParser(apikitConfigs,httpListenerConfigs, ramlPaths, file, apiFactory).parse(document));
+    entries.addAll(new APIKitFlowsParser(log, includedApis).parse(document));
+  }
 
-        entries.addAll(new APIKitFlowsParser(log, includedApis).parse(document));
-    }
+  public Map<String, APIKitConfig> getApikitConfigs() {
+    return apikitConfigs;
+  }
 
-    public Map<String, APIKitConfig> getApikitConfigs() {
-        return apikitConfigs;
-    }
+  public Set<ResourceActionMimeTypeTriplet> getEntries() {
+    return entries;
+  }
 
-    public Set<ResourceActionMimeTypeTriplet> getEntries() {
-        return entries;
-    }
-
-    public Set<API> getIncludedApis() {
-        Set<API> apis = new HashSet<API>();
-        apis.addAll(includedApis.values());
-        return apis;
-    }
+  public Set<API> getIncludedApis() {
+    Set<API> apis = new HashSet<API>();
+    apis.addAll(includedApis.values());
+    return apis;
+  }
 }

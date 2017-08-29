@@ -83,13 +83,13 @@
     </flow>
 
 
-    <flow name="post:/typesDog:apikitConfig1">
-        <logger level="INFO" message="inside of post:/typesDog:apikitConfig1"/>
+    <flow name="post:\typesDog:apikitConfig1">
+        <logger level="INFO" message="inside of post:\typesDog:apikitConfig1"/>
         <set-payload value="typesDog"/>
     </flow>
 
-    <flow name="post:/typesPerson:apikitConfig2">
-        <logger level="INFO" message="inside of post:/typesPerson:apikitConfig2"/>
+    <flow name="post:\typesPerson:apikitConfig2">
+        <logger level="INFO" message="inside of post:\typesPerson:apikitConfig2"/>
         <set-payload value="typesPerson"/>
     </flow>
 

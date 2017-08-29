@@ -15,78 +15,73 @@ import scala.Option;
 
 import java.io.IOException;
 
-public class ExampleUtils
-{
-    private static final String DW_INPUT_TYPE = "payload";
-    private static final String DW_OUTPUT_TYPE = "application/dw";
-    private static final String APPLICATION_XML_CONTENT_TYPE = "application/xml";
-    private static final String DEFAULT_CONTENT_TYPE = "application/json";
+public class ExampleUtils {
 
-    private ExampleUtils() { }
+  private static final String DW_INPUT_TYPE = "payload";
+  private static final String DW_OUTPUT_TYPE = "application/dw";
+  private static final String APPLICATION_XML_CONTENT_TYPE = "application/xml";
+  private static final String DEFAULT_CONTENT_TYPE = "application/json";
 
-    public static String getExampleContentType(String example) {
+  private ExampleUtils() {}
 
-        if (isValidXML(example)) {
-            return APPLICATION_XML_CONTENT_TYPE;
-        }
+  public static String getExampleContentType(String example) {
 
-        return DEFAULT_CONTENT_TYPE;
+    if (isValidXML(example)) {
+      return APPLICATION_XML_CONTENT_TYPE;
     }
 
-    public static String getExampleAsJSONIfNeeded(String payload) {
+    return DEFAULT_CONTENT_TYPE;
+  }
 
-        if (!(isValidXML(payload) || isValidJSON(payload))) {
-            return transformYamlExampleIntoJSON(payload);
-        }
+  public static String getExampleAsJSONIfNeeded(String payload) {
 
-        return payload;
+    if (!(isValidXML(payload) || isValidJSON(payload))) {
+      return transformYamlExampleIntoJSON(payload);
     }
 
-    public static String getDataWeaveExpressionText(String example)
-    {
-        String transformContentType = getExampleContentType(example);
-        example = getExampleAsJSONIfNeeded(example);
+    return payload;
+  }
 
-        WeaveSimpleRunner runner = new WeaveSimpleRunner();
-        runner.addInput(DW_INPUT_TYPE, transformContentType, new StringSourceProvider(example, Option.empty()));
-        runner.setOutputType(DW_OUTPUT_TYPE);
-        String weaveResult = runner.execute(DW_INPUT_TYPE).toString();
+  public static String getDataWeaveExpressionText(String example) {
+    String transformContentType = getExampleContentType(example);
+    example = getExampleAsJSONIfNeeded(example);
 
-        return "%dw 2.0\n" +
-                "output "+ transformContentType +"\n" +
-                "---\n" + weaveResult + "\n";
+    WeaveSimpleRunner runner = new WeaveSimpleRunner();
+    runner.addInput(DW_INPUT_TYPE, transformContentType, new StringSourceProvider(example, Option.empty()));
+    runner.setOutputType(DW_OUTPUT_TYPE);
+    String weaveResult = runner.execute(DW_INPUT_TYPE).toString();
+
+    return "%dw 2.0\n" +
+        "output " + transformContentType + "\n" +
+        "---\n" + weaveResult + "\n";
+  }
+
+  private static String transformYamlExampleIntoJSON(String example) {
+    Yaml yaml = new Yaml();
+    Object yamlObject = yaml.load(example);
+
+    try {
+      return new ObjectMapper().writeValueAsString(yamlObject);
+
+    } catch (JsonProcessingException e) {
+      // If example couldn't have been processed, we return a null JSON.
+      return "null";
+    }
+  }
+
+  public static boolean isValidXML(String payload) {
+    return payload.startsWith("<");
+  }
+
+  public static boolean isValidJSON(String payload) {
+
+    try {
+      new ObjectMapper().readTree(payload);
+
+    } catch (IOException e) {
+      return false;
     }
 
-    private static String transformYamlExampleIntoJSON(String example)
-    {
-        Yaml yaml = new Yaml();
-        Object yamlObject = yaml.load(example);
-
-        try
-        {
-            return new ObjectMapper().writeValueAsString(yamlObject);
-            
-        } catch (JsonProcessingException e)
-        {
-            // If example couldn't have been processed, we return a null JSON.
-            return "null";
-        }
-    }
-
-    public static boolean isValidXML(String payload) {
-        return payload.startsWith("<");
-    }
-
-    public static boolean isValidJSON(String payload) {
-
-        try
-        {
-            new ObjectMapper().readTree(payload);
-
-        } catch (IOException e) {
-            return false;
-        }
-
-        return true;
-    }
+    return true;
+  }
 }

@@ -10,23 +10,22 @@ import org.mule.module.apikit.api.exception.MuleRestException;
 
 public class UnsupportedMediaTypeException extends MuleRestException {
 
-    private static String STRING_REPRESENTATION = "APIKIT:UNSUPPORTED_MEDIA_TYPE";
+  private static String STRING_REPRESENTATION = "APIKIT:UNSUPPORTED_MEDIA_TYPE";
 
-    public UnsupportedMediaTypeException(String path) {
-        super(path);
-    }
+  public UnsupportedMediaTypeException(String path) {
+    super(path);
+  }
 
-    public UnsupportedMediaTypeException(Throwable t) {
-        super(t);
-    }
+  public UnsupportedMediaTypeException(Throwable t) {
+    super(t);
+  }
 
-    public UnsupportedMediaTypeException(){
-        super("Unsupported mediaType");
-    }
+  public UnsupportedMediaTypeException() {
+    super("Unsupported mediaType");
+  }
 
-    @Override
-    public String getStringRepresentation()
-    {
-        return STRING_REPRESENTATION;
-    }
+  @Override
+  public String getStringRepresentation() {
+    return STRING_REPRESENTATION;
+  }
 }

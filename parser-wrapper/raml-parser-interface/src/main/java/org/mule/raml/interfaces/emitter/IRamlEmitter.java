@@ -8,7 +8,7 @@ package org.mule.raml.interfaces.emitter;
 
 import org.mule.raml.interfaces.model.IRaml;
 
-public interface IRamlEmitter
-{
-    String dump(IRaml raml);
+public interface IRamlEmitter {
+
+  String dump(IRaml raml);
 }

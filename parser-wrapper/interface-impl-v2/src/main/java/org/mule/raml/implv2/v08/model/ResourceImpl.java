@@ -20,121 +20,103 @@ import org.raml.v2.api.model.v08.methods.Method;
 import org.raml.v2.api.model.v08.parameters.Parameter;
 import org.raml.v2.api.model.v08.resources.Resource;
 
-public class ResourceImpl implements IResource
-{
+public class ResourceImpl implements IResource {
 
-    private Resource resource;
-    private Map<IActionType, IAction> actions;
-    private Map<String, IParameter> resolvedUriParameters;
+  private Resource resource;
+  private Map<IActionType, IAction> actions;
+  private Map<String, IParameter> resolvedUriParameters;
 
-    public ResourceImpl(Resource resource)
-    {
-        this.resource = resource;
+  public ResourceImpl(Resource resource) {
+    this.resource = resource;
+  }
+
+  @Override
+  public String getRelativeUri() {
+    return resource.relativeUri().value();
+  }
+
+  @Override
+  public String getUri() {
+    return resource.resourcePath();
+  }
+
+  @Override
+  public String getParentUri() {
+    return getUri().substring(0, getUri().length() - getRelativeUri().length());
+  }
+
+  @Override
+  public IAction getAction(String name) {
+    return getActions().get(getActionKey(name));
+  }
+
+  @Override
+  public Map<IActionType, IAction> getActions() {
+    if (actions == null) {
+      actions = loadActions(resource);
+    }
+    return actions;
+  }
+
+  private static Map<IActionType, IAction> loadActions(Resource resource) {
+    Map<IActionType, IAction> map = new LinkedHashMap<>();
+    for (Method method : resource.methods()) {
+      map.put(getActionKey(method.method()), new ActionImpl(method));
+    }
+    return map;
+  }
+
+  private static IActionType getActionKey(String method) {
+    return IActionType.valueOf(method.toUpperCase());
+  }
+
+  @Override
+  public Map<String, IResource> getResources() {
+    Map<String, IResource> result = new HashMap<>();
+    for (Resource item : resource.resources()) {
+      result.put(item.relativeUri().value(), new ResourceImpl(item));
+    }
+    return result;
+  }
+
+  @Override
+  public String getDisplayName() {
+    return resource.displayName();
+  }
+
+  @Override
+  public Map<String, IParameter> getResolvedUriParameters() {
+    if (resolvedUriParameters == null) {
+      resolvedUriParameters = loadResolvedUriParameters(resource);
     }
 
-    @Override
-    public String getRelativeUri()
-    {
-        return resource.relativeUri().value();
-    }
+    return resolvedUriParameters;
+  }
 
-    @Override
-    public String getUri()
-    {
-        return resource.resourcePath();
+  private static Map<String, IParameter> loadResolvedUriParameters(Resource resource) {
+    Map<String, IParameter> result = new HashMap<>();
+    Resource current = resource;
+    while (current != null) {
+      for (Parameter parameter : current.uriParameters()) {
+        result.put(parameter.name(), new ParameterImpl(parameter));
+      }
+      current = current.parentResource();
     }
+    return result;
+  }
 
-    @Override
-    public String getParentUri()
-    {
-        return getUri().substring(0, getUri().length() - getRelativeUri().length());
-    }
+  @Override
+  public void setParentUri(String parentUri) {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public IAction getAction(String name)
-    {
-        return getActions().get(getActionKey(name));
-    }
+  @Override
+  public Map<String, List<IParameter>> getBaseUriParameters() {
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public Map<IActionType, IAction> getActions()
-    {
-        if (actions == null) {
-            actions = loadActions(resource);
-        }
-        return actions;
-    }
-
-    private static Map<IActionType, IAction> loadActions(Resource resource) {
-        Map<IActionType, IAction> map = new LinkedHashMap<>();
-        for (Method method : resource.methods())
-        {
-            map.put(getActionKey(method.method()), new ActionImpl(method));
-        }
-        return map;
-    }
-
-    private static IActionType getActionKey(String method) {
-        return IActionType.valueOf(method.toUpperCase());
-    }
-
-    @Override
-    public Map<String, IResource> getResources()
-    {
-        Map<String, IResource> result = new HashMap<>();
-        for (Resource item : resource.resources())
-        {
-            result.put(item.relativeUri().value(), new ResourceImpl(item));
-        }
-        return result;
-    }
-
-    @Override
-    public String getDisplayName()
-    {
-        return resource.displayName();
-    }
-
-    @Override
-    public Map<String, IParameter> getResolvedUriParameters()
-    {
-        if (resolvedUriParameters == null)
-        {
-            resolvedUriParameters = loadResolvedUriParameters(resource);
-        }
-
-        return resolvedUriParameters;
-    }
-
-    private static Map<String, IParameter> loadResolvedUriParameters(Resource resource) {
-        Map<String, IParameter> result = new HashMap<>();
-        Resource current = resource;
-        while (current != null)
-        {
-            for (Parameter parameter : current.uriParameters())
-            {
-                result.put(parameter.name(), new ParameterImpl(parameter));
-            }
-            current = current.parentResource();
-        }
-        return result;
-    }
-
-    @Override
-    public void setParentUri(String parentUri)
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Map<String, List<IParameter>> getBaseUriParameters()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void cleanBaseUriParameters()
-    {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  public void cleanBaseUriParameters() {
+    throw new UnsupportedOperationException();
+  }
 }

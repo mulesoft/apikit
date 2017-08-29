@@ -17,87 +17,71 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 
-public class APIFactory
-{
-    private Map<File, API> apis = new HashMap<File, API>();
-    private Map<String, HttpListener4xConfig> domainHttpListenerConfigs = new HashMap<>();
-    public APIFactory (Map<String, HttpListener4xConfig> domainHttpListenerConfigs)
-    {
-        this.domainHttpListenerConfigs.putAll(domainHttpListenerConfigs);
-    }
+public class APIFactory {
 
-    public APIFactory ()
-    {
-    }
+  private Map<File, API> apis = new HashMap<File, API>();
+  private Map<String, HttpListener4xConfig> domainHttpListenerConfigs = new HashMap<>();
 
-    public API createAPIBindingInboundEndpoint(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config)
-    {
-        return createAPIBinding(ramlFile, xmlFile, baseUri, path, config, null);
-    }
+  public APIFactory(Map<String, HttpListener4xConfig> domainHttpListenerConfigs) {
+    this.domainHttpListenerConfigs.putAll(domainHttpListenerConfigs);
+  }
 
-    public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config, HttpListener4xConfig httpListenerConfig)
-    {
-        Validate.notNull(ramlFile);
-        if(apis.containsKey(ramlFile))
-        {
-            API api = apis.get(ramlFile);
-            if(api.getXmlFile() == null && xmlFile != null)
-            {
-                api.setXmlFile(xmlFile);
-            }
-            return api;
-        }
-        API api = new API(ramlFile, xmlFile, baseUri, path, config);
-        if (httpListenerConfig == null)
-        {
-            if (domainHttpListenerConfigs.size() >0)
-            {
-                api.setHttpListenerConfig(getFirstLC());
-            }
-            else
-            {
-                api.setDefaultHttpListenerConfig();
-            }
-        }
-        else
-        {
-            api.setHttpListenerConfig(httpListenerConfig);
-        }
-        api.setConfig(config);
-        apis.put(ramlFile, api);
-        return api;
-    }
+  public APIFactory() {}
 
-    public Map<String, HttpListener4xConfig> getDomainHttpListenerConfigs() {
-        return domainHttpListenerConfigs;
-    }
+  public API createAPIBindingInboundEndpoint(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config) {
+    return createAPIBinding(ramlFile, xmlFile, baseUri, path, config, null);
+  }
 
-    private HttpListener4xConfig getFirstLC()
-    {
-        List<Map.Entry<String,HttpListener4xConfig>> numericPortsList = new ArrayList<>();
-        List<Map.Entry<String,HttpListener4xConfig>> nonNumericPortsList = new ArrayList<>();
-
-        for (Map.Entry<String, HttpListener4xConfig> entry : domainHttpListenerConfigs.entrySet())
-        {
-            if (StringUtils.isNumeric(entry.getValue().getPort()))
-            {
-                numericPortsList.add(entry);
-            }
-            else
-            {
-                nonNumericPortsList.add(entry);
-            }
-        }
-        Collections.sort(numericPortsList, new Comparator<Map.Entry<String, HttpListener4xConfig>>(){
-            @Override
-            public int compare(Map.Entry<String, HttpListener4xConfig> o1, Map.Entry<String, HttpListener4xConfig> o2)
-            {
-                Integer i1 = Integer.parseInt(o1.getValue().getPort());
-                Integer i2 = Integer.parseInt(o2.getValue().getPort());
-                return i1.compareTo(i2);
-            }
-        });
-        numericPortsList.addAll(nonNumericPortsList);
-        return numericPortsList.get(0).getValue();
+  public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config,
+                              HttpListener4xConfig httpListenerConfig) {
+    Validate.notNull(ramlFile);
+    if (apis.containsKey(ramlFile)) {
+      API api = apis.get(ramlFile);
+      if (api.getXmlFile() == null && xmlFile != null) {
+        api.setXmlFile(xmlFile);
+      }
+      return api;
     }
+    API api = new API(ramlFile, xmlFile, baseUri, path, config);
+    if (httpListenerConfig == null) {
+      if (domainHttpListenerConfigs.size() > 0) {
+        api.setHttpListenerConfig(getFirstLC());
+      } else {
+        api.setDefaultHttpListenerConfig();
+      }
+    } else {
+      api.setHttpListenerConfig(httpListenerConfig);
+    }
+    api.setConfig(config);
+    apis.put(ramlFile, api);
+    return api;
+  }
+
+  public Map<String, HttpListener4xConfig> getDomainHttpListenerConfigs() {
+    return domainHttpListenerConfigs;
+  }
+
+  private HttpListener4xConfig getFirstLC() {
+    List<Map.Entry<String, HttpListener4xConfig>> numericPortsList = new ArrayList<>();
+    List<Map.Entry<String, HttpListener4xConfig>> nonNumericPortsList = new ArrayList<>();
+
+    for (Map.Entry<String, HttpListener4xConfig> entry : domainHttpListenerConfigs.entrySet()) {
+      if (StringUtils.isNumeric(entry.getValue().getPort())) {
+        numericPortsList.add(entry);
+      } else {
+        nonNumericPortsList.add(entry);
+      }
+    }
+    Collections.sort(numericPortsList, new Comparator<Map.Entry<String, HttpListener4xConfig>>() {
+
+      @Override
+      public int compare(Map.Entry<String, HttpListener4xConfig> o1, Map.Entry<String, HttpListener4xConfig> o2) {
+        Integer i1 = Integer.parseInt(o1.getValue().getPort());
+        Integer i2 = Integer.parseInt(o2.getValue().getPort());
+        return i1.compareTo(i2);
+      }
+    });
+    numericPortsList.addAll(nonNumericPortsList);
+    return numericPortsList.get(0).getValue();
+  }
 }

@@ -16,38 +16,38 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(namespace = "http://mulesoft.com/schemas/soccer")
 public class UpdateTeam {
 
-    private String name;
-    private String homeCity;
-    private String stadium;
+  private String name;
+  private String homeCity;
+  private String stadium;
 
-    @JsonProperty
-    @XmlElement(required = false, namespace = "http://mulesoft.com/schemas/soccer")
-    public String getName() {
-        return name;
-    }
+  @JsonProperty
+  @XmlElement(required = false, namespace = "http://mulesoft.com/schemas/soccer")
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    @JsonProperty
-    @XmlElement(required = false, namespace = "http://mulesoft.com/schemas/soccer")
-    public String getHomeCity() {
-        return homeCity;
-    }
+  @JsonProperty
+  @XmlElement(required = false, namespace = "http://mulesoft.com/schemas/soccer")
+  public String getHomeCity() {
+    return homeCity;
+  }
 
-    public void setHomeCity(String homeCity) {
-        this.homeCity = homeCity;
-    }
+  public void setHomeCity(String homeCity) {
+    this.homeCity = homeCity;
+  }
 
-    @JsonProperty
-    @XmlElement(required = false, namespace = "http://mulesoft.com/schemas/soccer")
-    public String getStadium() {
-        return stadium;
-    }
+  @JsonProperty
+  @XmlElement(required = false, namespace = "http://mulesoft.com/schemas/soccer")
+  public String getStadium() {
+    return stadium;
+  }
 
-    public void setStadium(String stadium) {
-        this.stadium = stadium;
-    }
+  public void setStadium(String stadium) {
+    this.stadium = stadium;
+  }
 
 }

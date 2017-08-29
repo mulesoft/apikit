@@ -9,6 +9,7 @@ package org.mule.module.apikit.api.validation;
 import org.mule.extension.http.api.HttpRequestAttributes;
 
 public class ValidRequest {
+
   HttpRequestAttributes attributes;
   ValidBody body;
 
