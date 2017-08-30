@@ -1,0 +1,18 @@
+#%RAML 1.0
+title: Sample API
+baseUri: http://127.0.0.1:8085/api/
+
+types:
+  Request: !include schema/person-schema.xsd#person
+
+/target:
+  post:
+    body: 
+      application/xml: 
+        type: Request
+        example: !include examples/person-example.xml
+    responses: 
+      200: 
+        body: 
+          application/json:
+
