@@ -67,7 +67,6 @@ public class MultipartFormFunctionalTestCase extends MuleArtifactFunctionalTestC
   }
 
   @Test
-  @Ignore("Form parameter types are not being validated [APIKIT-839]")
   public void answer400WhenRequiredFormParameterIsInvalid() throws Exception {
     given().multiPart("userId", "I am not an integer HAHAHA")
         .expect()
@@ -128,7 +127,6 @@ public class MultipartFormFunctionalTestCase extends MuleArtifactFunctionalTestC
   }
 
   @Test
-  @Ignore("Form parameter types are not being validated [APIKIT-839]")
   public void answer400WhenOptionalFormParameterIsInvalid() throws Exception {
     given().multiPart("content", "More than 10 characters")
         .expect()
