@@ -123,9 +123,8 @@ public class FlowMetadata implements MetadataSource {
     IMimeType mimeType = null;
 
     if (action.hasBody()) {
-      final Iterator<IMimeType> it = action.getBody().values().iterator();
-      if (it.hasNext()) {
-        mimeType = it.next();
+      if (action.getBody().size() == 1) {
+        mimeType = action.getBody().values().iterator().next();
       } else if (coordinate.getMediaType() != null) {
         mimeType = action.getBody().get(coordinate.getMediaType());
       }
