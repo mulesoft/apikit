@@ -72,7 +72,7 @@
     </flow>
 
     <flow name="post:\multipart:multipart\form-data:router-config">
-        <set-payload value="#[output text/plain --- payload.parts.second.content]" />
+        <set-payload value="#[output application/json --- {(payload.parts pluck {'$$': $.content})}]" />
     </flow>
     <flow name="post:\multiple-required-multipart:multipart\form-data:router-config">
         <set-payload value="#[output application/json --- payload.parts pluck $$ as String]" />
