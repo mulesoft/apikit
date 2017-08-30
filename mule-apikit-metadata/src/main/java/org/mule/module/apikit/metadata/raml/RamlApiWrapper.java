@@ -9,33 +9,34 @@ package org.mule.module.apikit.metadata.raml;
 import org.mule.module.apikit.metadata.interfaces.MetadataSource;
 import org.mule.module.apikit.metadata.FlowMetadata;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
-import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+
+import static java.util.Optional.ofNullable;
 
 public class RamlApiWrapper {
 
   private Map<String, IResource> ramlResources = new HashMap<>();
-
 
   public RamlApiWrapper(IRaml ramlApi) {
     collectResourcesRecursively(ramlApi.getResources());
   }
 
   private void collectResourcesRecursively(Map<String, IResource> resources) {
-    for (IResource resource : resources.values()) {
+    resources.values().forEach(resource -> {
       ramlResources.put(resource.getUri(), resource);
       collectResourcesRecursively(resource.getResources());
-    }
+    });
   }
 
-  public MetadataSource getActionForCoordinate(RamlCoordinate coordinate) {
-    IResource resource = ramlResources.get(coordinate.getResource());
-    IAction action = resource.getAction(coordinate.getMethod());
-    return new FlowMetadata(action, coordinate);
+  public Optional<MetadataSource> getActionForCoordinate(RamlCoordinate coordinate) {
+    return ofNullable(ramlResources.get(coordinate.getResource()))
+        .map(resource -> resource.getAction(coordinate.getMethod()))
+        .map(action -> new FlowMetadata(action, coordinate));
   }
 }
 

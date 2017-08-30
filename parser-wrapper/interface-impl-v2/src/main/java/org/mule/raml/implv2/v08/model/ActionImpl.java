@@ -92,7 +92,7 @@ public class ActionImpl implements IAction {
 
 
   private static Map<String, IParameter> loadQueryParameters(Method method) {
-    Map<String, IParameter> result = new HashMap<>();
+    final Map<String, IParameter> result = new HashMap<>();
     for (Parameter parameter : method.queryParameters()) {
       result.put(parameter.name(), new ParameterImpl(parameter));
     }

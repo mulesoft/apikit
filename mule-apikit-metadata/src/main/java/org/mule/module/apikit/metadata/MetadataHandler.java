@@ -35,9 +35,9 @@ public class MetadataHandler {
     }
 
     // If there exists metadata for the flow, we get the Api
-    final Optional<ApikitConfig> config = modelWrapper.getConfig(coordinate.get().getConfigName());
-    return config.flatMap(ApikitConfig::getApi)
-        .map(api -> api.getActionForCoordinate(coordinate.get()))
+    return modelWrapper.getConfig(coordinate.get().getConfigName())
+        .flatMap(ApikitConfig::getApi)
+        .flatMap(api -> api.getActionForCoordinate(coordinate.get()))
         .flatMap(MetadataSource::getMetadata);
   }
 }

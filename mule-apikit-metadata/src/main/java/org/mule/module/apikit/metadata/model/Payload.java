@@ -11,6 +11,7 @@ import org.mule.module.apikit.metadata.MetadataFactory;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class Payload {
 
   private Payload() {}
 
-  public static MetadataType metadata(IMimeType body) {
+  public static MetadataType metadata(@Nullable IMimeType body) {
 
     if (body == null) {
       return MetadataFactory.defaultMetadata();
