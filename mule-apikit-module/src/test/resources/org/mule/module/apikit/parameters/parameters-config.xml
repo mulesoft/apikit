@@ -87,11 +87,11 @@
         <logger level="INFO" message="siamo qui"/>
     </flow>
 
-    <flow name="get:\resources\{id}">
+    <flow name="get:\resources\(id)">
         <logger level="INFO" message="siamo qui"/>
     </flow>
 
-    <flow name="get:\resources\{id}\{id2}">
+    <flow name="get:\resources\(id)\(id2)">
         <logger level="INFO" message="siamo qui"/>
     </flow>
 
