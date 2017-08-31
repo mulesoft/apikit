@@ -8,6 +8,8 @@ package org.mule.module.apikit.metadata;
 
 import org.junit.Test;
 import org.mule.metadata.api.model.FunctionType;
+import org.mule.metadata.internal.utils.MetadataTypeWriter;
+import org.mule.metadata.persistence.JsonMetadataTypeWriter;
 import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import org.mule.module.apikit.metadata.utils.MockedApplicationModel;
@@ -57,7 +59,7 @@ public class MetadataModuleTestCase {
     Notifier notifier = new TestNotifier();
 
     ApplicationModel applicationModel =
-        createApplicationModel("org/mule/module/apikit/metadata/single-api-with-no-name/mule-config.xml");
+        createApplicationModel("org/mule/module/apikit/metadata/single-api-with-no-name/app.xml");
     assertThat(applicationModel, notNullValue());
 
     Metadata metadata = new Metadata.Builder()
@@ -79,7 +81,7 @@ public class MetadataModuleTestCase {
     ResourceLoader resourceLoader = new TestResourceLoader();
     Notifier notifier = new TestNotifier();
 
-    ApplicationModel applicationModel = createApplicationModel("org/mule/module/apikit/metadata/api-in-raml08/mule-config.xml");
+    ApplicationModel applicationModel = createApplicationModel("org/mule/module/apikit/metadata/api-in-raml08/app.xml");
     assertThat(applicationModel, notNullValue());
 
     Metadata metadata = new Metadata.Builder()
