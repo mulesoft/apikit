@@ -13,13 +13,10 @@ import org.mule.module.apikit.metadata.model.FlowMapping;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.module.apikit.metadata.raml.RamlCoordsSimpleFactory;
 import org.mule.module.apikit.metadata.raml.RamlHandler;
-import org.mule.module.apikit.metadata.util.Utils;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
 import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -33,6 +30,7 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.mule.module.apikit.metadata.ApikitElementIdentifiers.isApikitConfig;
 import static org.mule.module.apikit.metadata.util.Utils.merge;
 
 public class ApplicationModelWrapper {
@@ -59,7 +57,7 @@ public class ApplicationModelWrapper {
   }
 
   private void initialize() {
-    findApikitConfigs();
+    loadConfigs();
     loadFlows();
   }
 
@@ -76,11 +74,9 @@ public class ApplicationModelWrapper {
     metadataFlows = merge(asList(conventionCoordinates, flowMappingCoordinates));
   }
 
-  private void findApikitConfigs() {
-
-    configMap = applicationModel.getRootComponentModel().getInnerComponents()
-        .stream()
-        .filter((element) -> ApikitElementIdentifiers.isApikitConfig(element.getIdentifier()))
+  private void loadConfigs() {
+    configMap = applicationModel.getRootComponentModel().getInnerComponents().stream()
+        .filter(ApikitElementIdentifiers::isApikitConfig)
         .map(this::createApikitConfig)
         .collect(toMap(ApikitConfig::getName, identity()));
   }
@@ -159,20 +155,17 @@ public class ApplicationModelWrapper {
   }
 
   public List<Flow> findFlows() {
-
-    return applicationModel.getRootComponentModel().getInnerComponents()
-        .stream()
-        .filter(element -> ApikitElementIdentifiers.isFlow(element.getIdentifier()))
+    return applicationModel.getRootComponentModel().getInnerComponents().stream()
+        .filter(ApikitElementIdentifiers::isFlow)
         .map(this::createFlow)
         .collect(toList());
   }
 
   private Flow createFlow(ComponentModel componentModel) {
-    Map<String, String> parameters = componentModel.getParameters();
-    String flowName = parameters.get(PARAMETER_NAME);
+    final Map<String, String> parameters = componentModel.getParameters();
+    final String flowName = parameters.get(PARAMETER_NAME);
     return new Flow(flowName);
   }
-
 
   public Optional<RamlCoordinate> getRamlCoordinatesForFlow(String flowName) {
     return ofNullable(metadataFlows.get(flowName));
