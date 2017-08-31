@@ -9,7 +9,6 @@ package org.mule.module.apikit.validation.body.form;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
-import static org.junit.Assert.assertTrue;
 
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.runtime.core.api.util.IOUtils;
@@ -17,25 +16,14 @@ import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.Response;
-
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import junit.framework.Assert;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class MultipartFormFunctionalTestCase extends MuleArtifactFunctionalTestCase {
+public abstract class MultipartFormFunctionalTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
   public DynamicPort serverPort = new DynamicPort("serverPort");
@@ -49,11 +37,6 @@ public class MultipartFormFunctionalTestCase extends MuleArtifactFunctionalTestC
   protected void doSetUp() throws Exception {
     RestAssured.port = serverPort.getNumber();
     super.doSetUp();
-  }
-
-  @Override
-  protected String getConfigResources() {
-    return "org/mule/module/apikit/validation/formParameters/mule-config-v1.xml";
   }
 
   @Test
@@ -149,10 +132,15 @@ public class MultipartFormFunctionalTestCase extends MuleArtifactFunctionalTestC
   @Test
   public void setDefaultFormParameterForMultipartRequest() throws Exception {
     given().multiPart("first", "primero", "application/json")
-        .multiPart("third", "true")
         .multiPart("payload", "3.4")
         .expect().response()
-        .body(is("segundo")).statusCode(201)
+        .body(is("{\n" +
+            "  \"first\": \"primero\",\n" +
+            "  \"payload\": \"3.4\",\n" +
+            "  \"second\": \"segundo\",\n" +
+            "  \"third\": \"true\"\n" +
+            "}"))
+        .statusCode(201)
         .when().post("/api/multipart");
   }
 

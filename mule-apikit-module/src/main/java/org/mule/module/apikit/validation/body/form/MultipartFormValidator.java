@@ -49,13 +49,12 @@ public class MultipartFormValidator implements FormValidatorStrategy<TypedValue>
         String value = actualParameters.get(expectedKey);
         if (!expected.validate(value)) {
           throw new InvalidFormParameterException("Value " + value + " for parameter " + expectedKey + " is invalid");
-        } ;
-      } else {
-        if (expected.isRequired()) {
-          throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
         }
+      } else {
         if (expected.getDefaultValue() != null) {
           defaultsBuilder.addPart(new TextPlainPart().setName(expectedKey).setValue(expected.getDefaultValue()));
+        } else if (expected.isRequired()) {
+          throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
         }
       }
     }
