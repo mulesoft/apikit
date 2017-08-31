@@ -7,6 +7,7 @@
 package org.mule.module.apikit.metadata;
 
 import org.mule.runtime.api.component.ComponentIdentifier;
+import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;
 
 /**
  * Helper class that tells if a given XML Component is some of the valid APIKit
@@ -34,12 +35,12 @@ public class ApikitElementIdentifiers {
       ComponentIdentifier.buildFromStringRepresentation("apikit:flow-mapping");
 
 
-  public static boolean isFlow(ComponentIdentifier identifier) {
-    return identifier.equals(FLOW);
+  public static boolean isFlow(ComponentModel component) {
+    return component.getIdentifier().equals(FLOW);
   }
 
-  public static boolean isApikitConfig(ComponentIdentifier identifier) {
-    return identifier.equals(APIKIT_CONFIG);
+  public static boolean isApikitConfig(ComponentModel component) {
+    return component.getIdentifier().equals(APIKIT_CONFIG);
   }
 
   public static boolean isFlowMappings(ComponentIdentifier identifier) {

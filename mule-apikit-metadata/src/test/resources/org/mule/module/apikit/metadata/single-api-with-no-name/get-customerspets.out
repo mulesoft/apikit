@@ -1,0 +1,27 @@
+%type _:Java = (inputMetadata:{
+  "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
+    "payload" : Any, 
+    "attributes" : {
+      "queryParameters"? : {
+
+      }, 
+      "headers"? : {
+
+      }, 
+      "uriParameters"? : Any
+    }
+  }, 
+  "variables" : {
+
+  }
+}) -> {
+  "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
+    "payload" : @example("value" : "{\"name\":\"Mandy\",\"age\":3}") {
+      "name"? : String, 
+      "age"? : @typeId("value" : "int") Number
+    }
+  }, 
+  "variables" : {
+
+  }
+}
