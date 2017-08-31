@@ -37,11 +37,11 @@
         </error-handler>
     </flow>
 
-    <flow name="get:\resource\{param}">
+    <flow name="get:\resource\(param)">
         <set-payload value="#[payload]" />
     </flow>
 
-    <flow name="get:\list\{param}">
+    <flow name="get:\list\(param)">
         <set-payload value="#[payload]" />
     </flow>
 
@@ -49,8 +49,8 @@
         <logger level="INFO" message="get:\uriparam:router-config" />
     </flow>
 
-    <flow name="get:\uriparam\{optional}">
-        <logger level="INFO" message="get:\uriparam\{optional}:router-config" />
+    <flow name="get:\uriparam\(optional)">
+        <logger level="INFO" message="get:\uriparam\(optional):router-config" />
     </flow>
 
 </mule>

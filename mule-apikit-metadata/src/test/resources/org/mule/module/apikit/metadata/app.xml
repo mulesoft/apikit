@@ -115,23 +115,23 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="put:\books\{bookId}:router-config">
-        <logger level="INFO" message="put:\books\{bookId}:router-config" />
+    <flow name="put:\books\(bookId):router-config">
+        <logger level="INFO" message="put:\books\(bookId):router-config" />
     </flow>
-    <flow name="put:\customers\{customerId}:router-config">
-        <logger level="INFO" message="put:\customers\{customerId}:router-config" />
+    <flow name="put:\customers\(customerId):router-config">
+        <logger level="INFO" message="put:\customers\(customerId):router-config" />
     </flow>
     <flow name="get:\books:router-config">
         <logger level="INFO" message="get:\books:router-config" />
     </flow>
-    <flow name="get:\customers\{customerId}\purchases:router-config">
-        <logger level="INFO" message="get:\customers\{customerId}\purchases:router-config" />
+    <flow name="get:\customers\(customerId)\purchases:router-config">
+        <logger level="INFO" message="get:\customers\(customerId)\purchases:router-config" />
     </flow>
-    <flow name="get:\books\{bookId}:router-config">
-        <logger level="INFO" message="get:\books\{bookId}:router-config" />
+    <flow name="get:\books\(bookId):router-config">
+        <logger level="INFO" message="get:\books\(bookId):router-config" />
     </flow>
-    <flow name="get:\customers\{customerId}:router-config">
-        <logger level="INFO" message="get:\customers\{customerId}:router-config" />
+    <flow name="get:\customers\(customerId):router-config">
+        <logger level="INFO" message="get:\customers\(customerId):router-config" />
     </flow>
     <flow name="post:\books:application\json:router-config">
         <logger level="INFO" message="post:\books:application\json:router-config" />
