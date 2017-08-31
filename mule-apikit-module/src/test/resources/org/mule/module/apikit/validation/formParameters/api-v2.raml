@@ -2,65 +2,144 @@
 ---
 title: Parameters API
 
+/multipart:
+  post:
+    body:
+      multipart/form-data:
+        properties:
+          first:
+            type: string
+          second:
+            type: string
+            default: segundo
+          third:
+            type: boolean
+            required: false
+            default: true
+          fourth:
+            type: string
+            required: false
+    responses:
+      201: ~
+
 /url-encoded-simple:
-    post:
-        body:
-            application/x-www-form-urlencoded:
-                properties:
-                    first:
-                        type: string
-        responses:
-            201: ~
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          first:
+            type: string
+    responses:
+      201: ~
+
 /url-encoded-simple-integer:
-    post:
-        body:
-            application/x-www-form-urlencoded:
-                properties:
-                    first:
-                        type: integer
-        responses:
-            201: ~
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          first:
+            type: integer
+    responses:
+      201: ~
+
 /url-encoded-with-default:
-    post:
-        body:
-            application/x-www-form-urlencoded:
-                properties:
-                    first:
-                        type: string
-                        default: primo
-                        required: false
-                    second:
-                        type: string
-                        required: true
-                    third:
-                        type: boolean
-        responses:
-            201: ~
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          first:
+            type: string
+            default: primo
+            required: false
+          second:
+            type: string
+          third:
+            type: boolean
+            required: true
+    responses:
+      201: ~
+
 /url-encoded-duplicated-key:
-    post:
-        body:
-            application/x-www-form-urlencoded:
-                properties:
-                    second:
-                        type: string
-                        required: true
-                    third:
-                        type: boolean
-        responses:
-            201: ~
-/url-encoded-enum:
-    post:
-        body:
-            application/x-www-form-urlencoded:
-                properties:
-                    first:
-                        type: string
-                        required: true
-                    second:
-                        type: string
-                        required: false
-                        enum: [ segundo, secondo ]
-                    third:
-                        type: boolean
-        responses:
-            201: ~
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          first:
+            type: string
+            required: false
+            default: primo
+          second:
+            type: string
+            required: true
+          third:
+            type: boolean
+            required: true
+    responses:
+      201: ~
+
+/uploadImage:
+  post:
+    body:
+      multipart/form-data:
+        properties:
+          image:
+            type: file
+
+/uploadFile:
+  post:
+    body:
+      multipart/form-data:
+        properties:
+          document:
+            type: file
+
+/users:
+  post:
+    body:
+      multipart/form-data:
+        properties:
+          userId:
+            type: integer
+
+/announcements:
+  post:
+    body:
+      multipart/form-data:
+        properties:
+          content:
+            required: false
+            type: string
+            maxLength: 10
+
+/multiple-required-multipart:
+  post:
+    body:
+      multipart/form-data:
+        properties:
+          userId:
+            type: string
+          second:
+            type: string
+          third:
+            type: boolean
+    responses:
+      201: ~
+
+/multiple-optional-multipart:
+  post:
+    body:
+      multipart/form-data:
+        properties:
+          first:
+            type: string
+            required: false
+          second:
+            type: string
+            required: false
+            default: segundo
+          third:
+            type: boolean
+            required: false
+            default: true
+    responses:
+      201: ~

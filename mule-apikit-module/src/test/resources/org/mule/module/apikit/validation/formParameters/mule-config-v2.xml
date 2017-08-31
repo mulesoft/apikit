@@ -69,21 +69,24 @@
     </flow>
 
     <flow name="post:\multipart:multipart\form-data:router-config">
-        <set-payload value="#[payload.namedParts.second.payload]" />
+        <set-payload value="#[output application/json --- {(payload.parts pluck {'$$': $.content})}]" />
+    </flow>
+    <flow name="post:\multiple-required-multipart:multipart\form-data:router-config">
+        <set-payload value="#[output application/json --- payload.parts pluck $$ as String]" />
+    </flow>
+    <flow name="post:\multiple-optional-multipart:multipart\form-data:router-config">
+        <set-payload value="#[output application/json --- payload.parts pluck $$ as String]" />
     </flow>
     <flow name="post:\users:multipart\form-data:router-config">
-        <set-payload value="#[payload.namedParts.userId.payload]" />
+        <set-payload value="#[output text/plain --- payload.parts.userId.content]" />
     </flow>
     <flow name="post:\announcements:multipart\form-data:router-config">
-        <set-payload value="#[payload.namedParts.content.payload]" />
+        <set-payload value="#[output text/plain --- payload.parts.content.content default 'content-not-provided']" />
     </flow>
     <flow name="post:\uploadImage:multipart\form-data:router-config">
-        <set-payload value="#[mel:
-            java.util.Arrays.toString(
-                org.mule.runtime.core.api.util.IOUtils.toByteArray(
-                    message.payload.getPart('image').payload.value))]"/>
+        <set-payload value="#[output text/plain import java!java::util::Arrays import java!org::mule::runtime::core::api::util::IOUtils --- Arrays::toString(IOUtils::toByteArray(payload.parts.image.content as String))]"/>
     </flow>
     <flow name="post:\uploadFile:multipart\form-data:router-config">
-        <set-payload value="#[payload.namedParts.document.payload]"/>
+        <set-payload value="#[output text/plain --- payload.parts.document.content]"/>
     </flow>
 </mule>

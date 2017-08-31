@@ -23,7 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-public class MultipartFormFunctionalTestCase extends MuleArtifactFunctionalTestCase {
+public abstract class MultipartFormFunctionalTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
   public DynamicPort serverPort = new DynamicPort("serverPort");
@@ -37,11 +37,6 @@ public class MultipartFormFunctionalTestCase extends MuleArtifactFunctionalTestC
   protected void doSetUp() throws Exception {
     RestAssured.port = serverPort.getNumber();
     super.doSetUp();
-  }
-
-  @Override
-  protected String getConfigResources() {
-    return "org/mule/module/apikit/validation/formParameters/mule-config-v1.xml";
   }
 
   @Test
