@@ -22,8 +22,10 @@ import org.mule.module.apikit.metadata.model.Payload;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.Optional;
 
 import static java.util.Optional.of;
@@ -37,15 +39,17 @@ public class FlowMetadata implements MetadataSource {
 
   final private IAction action;
   final private RamlCoordinate coordinate;
+  final private Map<String, IParameter> baseUriParameters;
 
-  public FlowMetadata(IAction action, RamlCoordinate coordinate) {
+  public FlowMetadata(IAction action, RamlCoordinate coordinate, Map<String, IParameter> baseUriParameters) {
     this.action = action;
     this.coordinate = coordinate;
+    this.baseUriParameters = baseUriParameters;
   }
 
   @Override
   public Optional<FunctionType> getMetadata() {
-    final MuleEventMetadataType inputEvent = inputMetadata(action, coordinate);
+    final MuleEventMetadataType inputEvent = inputMetadata(action, coordinate, baseUriParameters);
     final MuleEventMetadataType outputEvent = outputMetadata(action, coordinate);
 
     // FunctionType
@@ -58,10 +62,11 @@ public class FlowMetadata implements MetadataSource {
     return of(function);
   }
 
-  private MuleEventMetadataType inputMetadata(IAction action, RamlCoordinate coordinate) {
+  private MuleEventMetadataType inputMetadata(IAction action, RamlCoordinate coordinate,
+                                              Map<String, IParameter> baseUriParameters) {
     final MessageMetadataType message = new MessageMetadataTypeBuilder()
         .payload(getInputPayload(action, coordinate))
-        .attributes(getInputAttributes(action)).build();
+        .attributes(getInputAttributes(action, baseUriParameters)).build();
 
     return new MuleEventMetadataTypeBuilder().message(message).build();
   }
@@ -90,7 +95,7 @@ public class FlowMetadata implements MetadataSource {
     return builder;
   }
 
-  private ObjectType getInputAttributes(IAction action) {
+  private ObjectType getInputAttributes(IAction action, Map<String, IParameter> baseUriParameters) {
 
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
     builder.addField()
@@ -101,14 +106,15 @@ public class FlowMetadata implements MetadataSource {
         .value(getHeaders(action));
     builder.addField()
         .key(ATTRIBUTES_URI_PARAMETERS)
-        .value(getUriParameters(action));
+        .value(getUriParameters(action, baseUriParameters));
 
     return builder.build();
   }
 
-  private ObjectTypeBuilder getUriParameters(IAction action) {
+  private ObjectTypeBuilder getUriParameters(IAction action, Map<String, IParameter> baseUriParameters) {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
+    baseUriParameters.forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata()));
     action.getResource().getResolvedUriParameters()
         .forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata()));
 

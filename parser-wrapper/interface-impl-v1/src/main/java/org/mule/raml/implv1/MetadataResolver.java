@@ -27,6 +27,7 @@ public class MetadataResolver {
   public static Optional<MetadataType> resolve(AbstractParam param) {
     final BaseTypeBuilder rootBuilder = BaseTypeBuilder.create(MetadataFormat.JAVA);
 
+
     final TypeBuilder builder;
 
     switch (param.getType()) {

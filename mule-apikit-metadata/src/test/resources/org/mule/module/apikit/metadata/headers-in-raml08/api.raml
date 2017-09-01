@@ -4,7 +4,7 @@ title: RAML 0.8 Headers
 version: v1
 baseUri: https://www.example.com/api/
 
-/headers/mandatory:
+/headers:
     get:
         headers:
           stringHeader:
@@ -32,30 +32,6 @@ baseUri: https://www.example.com/api/
           fileHeader:
             type: file
           withoutType:
-
-/headers/optional:
-    get:
-        headers:
-          stringHeader:
-            type: string
-            required: false
-          numberHeader:
-            type: number
-            required: false
-          integerHeader:
-            type: integer
-            required: false
-          dateHeader:
-            type: date
-            required: false
-          booleanHeader:
-            type: boolean
-            required: false
-          fileHeader:
-            type: file
-            required: false
-          withoutType:
-            required: false
 
 /without/headers:
     get:

@@ -70,11 +70,8 @@
     <flow name="get:\without\headers:router-config">
         <logger level="INFO" message="get:\without\headers:router-config" />
     </flow>
-    <flow name="get:\headers\mandatory:router-config">
-        <logger level="INFO" message="get:\headers\mandatory:router-config" />
-    </flow>
-    <flow name="get:\headers\optional:router-config">
-        <logger level="INFO" message="get:\headers\optional:router-config" />
+    <flow name="get:\headers:router-config">
+        <logger level="INFO" message="get:\headers:router-config" />
     </flow>
     <flow name="get:\headers\array:router-config">
         <logger level="INFO" message="get:\headers\array:router-config" />

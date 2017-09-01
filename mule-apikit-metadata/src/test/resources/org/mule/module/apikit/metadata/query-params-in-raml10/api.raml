@@ -1,53 +1,56 @@
 #%RAML 1.0
-title: RAML 1.0 Headers
+title: RAML 0.8 Query String
 version: v1
 baseUri: https://www.example.com/api/
 
-/headers:
+/querystring:
     get:
-        headers:
-          stringHeader:
+        queryParameters:
+          stringQueryParam:
             type: string
             minLength: 2
             maxLength: 10
             enum: ["enum1", "enum2"]
             default: "enum1"
-          numberHeader:
+          numberQueryParam:
             type: number
             minimum: 10.10
             maximum: 20.20
             default: 15.15
-          integerHeader:
+          integerQueryParam:
             type: integer
             minimum: 10
             maximum: 20
             default: 15
-          dateHeader:
+          dateQueryParam:
             type: datetime
             default: "Sun, 06 Nov 1994 08:49:37 GMT"
-          booleanHeader:
+          booleanQueryParam:
             type: boolean
             default: false
-          fileHeader:
+          fileQueryParam:
             type: file
-          withoutType:
+          queryParamWithoutType:
 
-/without/headers:
+/querystring/array:
     get:
-        headers:
-
-/headers/array:
-    get:
-        headers:
-          arrayOfStringHeader:
+        queryParameters:
+          stringQueryParam:
             type: string[]
-          arrayOfNumberHeader:
+            minItems: 3
+            maxItems: 10
+            default: "enum1"
+          numberQueryParam:
             type: number[]
-          arrayOfIntegerHeader:
+            default: 15.15
+          integerQueryParam:
             type: integer[]
-          arrayOfDateHeader:
+            default: 15
+          dateQueryParam:
             type: datetime[]
-          arrayOfBooleanHeader:
+            default: "Sun, 06 Nov 1994 08:49:37 GMT"
+          booleanQueryParam:
             type: boolean[]
-          arrayOfFileHeader:
+            default: false
+          fileQueryParam:
             type: file[]

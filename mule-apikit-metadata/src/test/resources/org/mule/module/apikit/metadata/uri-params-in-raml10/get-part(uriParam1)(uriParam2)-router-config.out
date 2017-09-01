@@ -6,16 +6,13 @@
 
       }, 
       "headers"? : {
-        "withoutType"? : String, 
-        "integerHeader"? : @int Number, 
-        "booleanHeader"? : Boolean, 
-        "fileHeader"? : Binary, 
-        "dateHeader"? : DateTime, 
-        "stringHeader"? : String, 
-        "numberHeader"? : Number
+
       }, 
       "uriParameters"? : {
-
+        "v1"? : String, 
+        "v2"? : String, 
+        "uriParam1"? : @int Number, 
+        "uriParam2"? : Number
       }
     }
   }, 

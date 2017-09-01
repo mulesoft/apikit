@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd       http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-    <apikit:config name="router-config" raml="headers-in-raml10/api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="router-config" raml="uri-params-in-raml10/api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <http:listener-config name="httpListenerConfigDefault">
         <http:listener-connection host="0.0.0.0" port="8084" />
     </http:listener-config>
@@ -67,13 +67,17 @@
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\without\headers:router-config">
-        <logger level="INFO" message="get:\without\headers:router-config" />
+
+    <flow name="get:\part:router-config">
+        <logger level="INFO" message="get:\part:router-config" />
     </flow>
-    <flow name="get:\headers:router-config">
-        <logger level="INFO" message="get:\headers:router-config" />
+    <flow name="get:\part\(uriParam1):router-config">
+        <logger level="INFO" message="get:\part\(uriParam1):router-config" />
     </flow>
-    <flow name="get:\headers\array:router-config">
-        <logger level="INFO" message="get:\headers\array:router-config" />
+    <flow name="get:\part\(uriParam1)\(uriParam2):router-config">
+        <logger level="INFO" message="get:\part\(uriParam1)\(uriParam2):router-config" />
+    </flow>
+    <flow name="get:\part\(uriParam1)\(uriParam2)\(uriParam3):router-config">
+        <logger level="INFO" message="get:\part\(uriParam1)\(uriParam2)\(uriParam3):router-config" />
     </flow>
 </mule>
