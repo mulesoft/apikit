@@ -6,12 +6,16 @@
  */
 package org.mule.raml.implv2.v08.model;
 
+import org.mule.metadata.api.model.MetadataType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import org.raml.v2.api.model.v08.parameters.Parameter;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mule.raml.implv2.v08.MetadataResolver.resolve;
+import static org.mule.raml.implv2.v08.MetadataResolver.stringType;
 
 public class ParameterImpl implements IParameter {
 
@@ -79,5 +83,10 @@ public class ParameterImpl implements IParameter {
   @Override
   public Object getInstance() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public MetadataType getMetadata() {
+    return resolve(parameter).orElse(stringType());
   }
 }

@@ -11,7 +11,9 @@
       "headers"? : {
 
       }, 
-      "uriParameters"? : Any
+      "uriParameters"? : {
+
+      }
     }
   }, 
   "variables" : {

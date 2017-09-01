@@ -3,12 +3,14 @@
     "payload" : Any, 
     "attributes" : {
       "queryParameters"? : {
-        "sortAsc"? : Any
+        "sortAsc"? : Boolean
       }, 
       "headers"? : {
-        "X-Amount"? : Any
+        "X-Amount"? : String
       }, 
-      "uriParameters"? : Any
+      "uriParameters"? : {
+
+      }
     }
   }, 
   "variables" : {

@@ -6,12 +6,15 @@
  */
 package org.mule.raml.implv1.model.parameter;
 
+import org.mule.metadata.api.model.MetadataType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.raml.model.parameter.AbstractParam;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.raml.model.parameter.AbstractParam;
+import static org.mule.raml.implv1.MetadataResolver.stringType;
+import static org.mule.raml.implv1.MetadataResolver.resolve;
 
 public class ParameterImpl implements IParameter {
 
@@ -67,5 +70,9 @@ public class ParameterImpl implements IParameter {
     return parameter;
   }
 
+  @Override
+  public MetadataType getMetadata() {
+    return resolve(parameter).orElse(stringType());
+  }
 
 }

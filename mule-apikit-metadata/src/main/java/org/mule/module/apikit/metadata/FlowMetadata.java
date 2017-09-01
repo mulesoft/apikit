@@ -24,7 +24,6 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 
 import javax.annotation.Nullable;
-import java.util.Iterator;
 import java.util.Optional;
 
 import static java.util.Optional.of;
@@ -78,7 +77,7 @@ public class FlowMetadata implements MetadataSource {
   private ObjectTypeBuilder getQueryParameters(IAction action) {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-    action.getQueryParameters().forEach((key, value) -> builder.addField().key(key).value().anyType());
+    action.getQueryParameters().forEach((key, value) -> builder.addField().key(key).value(value.getMetadata()));
 
     return builder;
   }
@@ -86,7 +85,7 @@ public class FlowMetadata implements MetadataSource {
   private ObjectTypeBuilder getHeaders(IAction action) {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-    action.getHeaders().forEach((key, value) -> builder.addField().key(key).value().anyType());
+    action.getHeaders().forEach((key, value) -> builder.addField().key(key).value(value.getMetadata()));
 
     return builder;
   }
@@ -102,11 +101,19 @@ public class FlowMetadata implements MetadataSource {
         .value(getHeaders(action));
     builder.addField()
         .key(ATTRIBUTES_URI_PARAMETERS)
-        .value().anyType(); // TODO: Metadata for UriParameters
+        .value(getUriParameters(action));
 
     return builder.build();
   }
 
+  private ObjectTypeBuilder getUriParameters(IAction action) {
+    final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
+
+    action.getResource().getResolvedUriParameters()
+        .forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata()));
+
+    return builder;
+  }
 
   private MetadataType getOutputPayload(IAction action) {
     @Nullable

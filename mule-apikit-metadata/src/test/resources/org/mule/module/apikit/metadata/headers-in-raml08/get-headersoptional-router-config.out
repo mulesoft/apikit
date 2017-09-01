@@ -1,17 +1,18 @@
 %type _:Java = (inputMetadata:{
   "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
-    "payload" : {
-      "author"? : String, 
-      "available"? : Boolean, 
-      "title"? : String, 
-      * : Any
-    }, 
+    "payload" : Any, 
     "attributes" : {
       "queryParameters"? : {
 
       }, 
       "headers"? : {
-
+        "stringHeader"? : String, 
+        "numberHeader"? : Number, 
+        "integerHeader"? : @int Number, 
+        "dateHeader"? : DateTime, 
+        "booleanHeader"? : Boolean, 
+        "fileHeader"? : String, 
+        "withoutType"? : String
       }, 
       "uriParameters"? : {
 
