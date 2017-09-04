@@ -37,8 +37,8 @@ public class ApplicationModelWrapper {
 
   private final static String PARAMETER_NAME = "name";
   private final static String PARAMETER_RAML = "raml";
-  private final static String OUTPUT_HEADERS_MAP_NAME = "outboundHeadersMapName";
-  private final static String HTTP_STATUS_VAR_NAME = "httpStatusVarName";
+  private final static String PARAMETER_OUTPUT_HEADERS_VAR = "outboundHeadersMapName";
+  private final static String PARAMETER_HTTP_STATUS_VAR = "httpStatusVarName";
   private final static String PARAMETER_RESOURCE = "resource";
   private final static String PARAMETER_ACTION = "action";
   private final static String PARAMETER_CONTENT_TYPE = "content-type";
@@ -115,8 +115,8 @@ public class ApplicationModelWrapper {
     final Map<String, String> parameters = unwrappedApikitConfig.getParameters();
     final String configName = parameters.get(PARAMETER_NAME);
     final String configRaml = parameters.get(PARAMETER_RAML);
-    final String outputHeadersVarName = parameters.get(OUTPUT_HEADERS_MAP_NAME);
-    final String httpStatusVarName = parameters.get(HTTP_STATUS_VAR_NAME);
+    final String outputHeadersVarName = parameters.get(PARAMETER_OUTPUT_HEADERS_VAR);
+    final String httpStatusVarName = parameters.get(PARAMETER_HTTP_STATUS_VAR);
 
     final List<FlowMapping> flowMappings = unwrappedApikitConfig.getInnerComponents()
         .stream()
