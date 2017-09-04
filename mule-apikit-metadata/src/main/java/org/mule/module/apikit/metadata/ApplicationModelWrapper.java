@@ -17,6 +17,7 @@ import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
 import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,13 +31,14 @@ import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
-import static org.mule.module.apikit.metadata.ApikitElementIdentifiers.isApikitConfig;
 import static org.mule.module.apikit.metadata.util.Utils.merge;
 
 public class ApplicationModelWrapper {
 
   private final static String PARAMETER_NAME = "name";
   private final static String PARAMETER_RAML = "raml";
+  private final static String OUTPUT_HEADERS_MAP_NAME = "outboundHeadersMapName";
+  private final static String HTTP_STATUS_VAR_NAME = "httpStatusVarName";
   private final static String PARAMETER_RESOURCE = "resource";
   private final static String PARAMETER_ACTION = "action";
   private final static String PARAMETER_CONTENT_TYPE = "content-type";
@@ -85,6 +87,10 @@ public class ApplicationModelWrapper {
     return configMap.keySet();
   }
 
+  public Collection<ApikitConfig> getConfigurations() {
+    return configMap.values();
+  }
+
   private Map<String, RamlCoordinate> createCoordinatesForMappingFlows(List<Flow> flows, RamlCoordsSimpleFactory coordsFactory) {
     final Set<String> flowNames = flows.stream().map(Flow::getName).collect(toSet());
 
@@ -109,6 +115,8 @@ public class ApplicationModelWrapper {
     final Map<String, String> parameters = unwrappedApikitConfig.getParameters();
     final String configName = parameters.get(PARAMETER_NAME);
     final String configRaml = parameters.get(PARAMETER_RAML);
+    final String outputHeadersVarName = parameters.get(OUTPUT_HEADERS_MAP_NAME);
+    final String httpStatusVarName = parameters.get(HTTP_STATUS_VAR_NAME);
 
     final List<FlowMapping> flowMappings = unwrappedApikitConfig.getInnerComponents()
         .stream()
@@ -120,7 +128,7 @@ public class ApplicationModelWrapper {
 
     final RamlHandlerSupplier ramlSupplier = RamlHandlerSupplier.create(configRaml, ramlHandler);
 
-    return new ApikitConfig(configName, configRaml, flowMappings, ramlSupplier);
+    return new ApikitConfig(configName, configRaml, flowMappings, ramlSupplier, httpStatusVarName, outputHeadersVarName);
   }
 
   private static class RamlHandlerSupplier implements Supplier<Optional<IRaml>> {

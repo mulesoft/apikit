@@ -36,10 +36,10 @@ public class RamlApiWrapper {
     });
   }
 
-  public Optional<MetadataSource> getActionForCoordinate(RamlCoordinate coordinate) {
+  public Optional<MetadataSource> getActionForFlow(RamlCoordinate coordinate, String httpStatusVar, String outboundHeadersVar) {
     return ofNullable(ramlResources.get(coordinate.getResource()))
         .map(resource -> resource.getAction(coordinate.getMethod()))
-        .map(action -> new FlowMetadata(action, coordinate, baseUriParameters));
+        .map(action -> new FlowMetadata(action, coordinate, baseUriParameters, httpStatusVar, outboundHeadersVar));
   }
 }
 

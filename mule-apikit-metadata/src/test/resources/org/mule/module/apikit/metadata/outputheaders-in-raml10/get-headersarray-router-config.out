@@ -3,12 +3,7 @@
     "payload" : Any, 
     "attributes" : {
       "queryParameters"? : {
-        "dateQueryParam"? : [DateTime], 
-        "numberQueryParam"? : [Number], 
-        "integerQueryParam"? : [@int Number], 
-        "fileQueryParam"? : [Binary], 
-        "stringQueryParam"? : @length("min" : 3, "max" : 10) [String], 
-        "booleanQueryParam"? : [Boolean]
+
       }, 
       "headers"? : {
 
@@ -27,7 +22,12 @@
   }, 
   "variables" : {
     "outboundHeaders" : {
-
+      "arrayOfStringHeader"? : [String], 
+      "arrayOfNumberHeader"? : [Number], 
+      "arrayOfIntegerHeader"? : [@int Number], 
+      "arrayOfDateHeader"? : [DateTime], 
+      "arrayOfBooleanHeader"? : [Boolean], 
+      "arrayOfFileHeader"? : [Binary]
     }, 
     "httpStatus" : String
   }

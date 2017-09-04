@@ -16,6 +16,8 @@ import java.util.Map;
 import org.raml.v2.api.model.v10.bodies.Response;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 
+import static java.util.Optional.ofNullable;
+
 public class ResponseImpl implements IResponse {
 
   private Response response;
@@ -49,7 +51,12 @@ public class ResponseImpl implements IResponse {
 
   @Override
   public Map<String, IParameter> getHeaders() {
-    throw new UnsupportedOperationException();
+    final Map<String, IParameter> result = new LinkedHashMap<>();
+
+    ofNullable(response.headers())
+        .ifPresent(headers -> headers.forEach(header -> result.put(header.name(), new ParameterImpl(header))));
+
+    return result;
   }
 
   @Override

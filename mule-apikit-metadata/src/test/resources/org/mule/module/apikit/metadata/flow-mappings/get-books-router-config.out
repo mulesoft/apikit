@@ -26,6 +26,10 @@
       }]
   }, 
   "variables" : {
-
+    "outboundHeaders" : {
+      "header1"? : String, 
+      "header2"? : @int Number
+    }, 
+    "httpStatus" : String
   }
 }

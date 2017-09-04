@@ -24,6 +24,9 @@
     "payload" : Any
   }, 
   "variables" : {
+    "outboundHeaders" : {
 
+    }, 
+    "httpStatus" : String
   }
 }

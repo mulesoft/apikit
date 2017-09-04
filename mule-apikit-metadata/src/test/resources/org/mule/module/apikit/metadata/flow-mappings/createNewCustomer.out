@@ -26,6 +26,9 @@
     }
   }, 
   "variables" : {
+    "outboundHeaders" : {
 
+    }, 
+    "httpStatus" : String
   }
 }
