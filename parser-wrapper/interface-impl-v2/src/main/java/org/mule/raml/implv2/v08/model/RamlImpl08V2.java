@@ -67,7 +67,7 @@ public class RamlImpl08V2 implements IRaml {
 
   @Override
   public Map<String, IParameter> getBaseUriParameters() {
-    final Map<String, IParameter> baseUriParameters = new HashMap<>();
+    final Map<String, IParameter> baseUriParameters = new LinkedHashMap<>();
 
     api.baseUriParameters().forEach(type -> baseUriParameters.put(type.name(), new ParameterImpl(type)));
 
