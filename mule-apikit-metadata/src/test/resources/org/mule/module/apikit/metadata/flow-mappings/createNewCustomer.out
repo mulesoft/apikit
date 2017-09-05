@@ -8,7 +8,9 @@
       "headers"? : {
 
       }, 
-      "uriParameters"? : Any
+      "uriParameters"? : {
+
+      }
     }
   }, 
   "variables" : {
@@ -24,6 +26,9 @@
     }
   }, 
   "variables" : {
+    "outboundHeaders" : {
 
+    }, 
+    "httpStatus" : String
   }
 }

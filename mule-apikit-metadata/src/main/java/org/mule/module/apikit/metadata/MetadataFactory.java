@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.metadata;
 
-import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
@@ -20,11 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.mule.metadata.api.builder.BaseTypeBuilder.create;
+
 public class MetadataFactory {
 
-  private static final MetadataType DEFAULT_METADATA =
-      BaseTypeBuilder.create(MetadataFormat.JAVA).anyType().build();
-
+  private static final MetadataType DEFAULT_METADATA = create(MetadataFormat.JAVA).anyType().build();
+  private static final MetadataType STRING_METADATA = create(MetadataFormat.JAVA).stringType().build();
 
   private MetadataFactory() {}
 
@@ -87,7 +87,7 @@ public class MetadataFactory {
   }
 
   public static MetadataType fromFormMetadata(Map<String, List<IParameter>> formParameters) {
-    ObjectTypeBuilder parameters = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
+    final ObjectTypeBuilder parameters = create(MetadataFormat.JAVA).objectType();
 
     for (Map.Entry<String, List<IParameter>> entry : formParameters.entrySet()) {
       parameters.addField()
@@ -104,5 +104,13 @@ public class MetadataFactory {
    */
   public static MetadataType defaultMetadata() {
     return DEFAULT_METADATA;
+  }
+
+  /**
+   * Creates metadata to describe an string type
+   * @return The newly created MetadataType
+   */
+  public static MetadataType stringMetadata() {
+    return STRING_METADATA;
   }
 }

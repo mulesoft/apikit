@@ -14,4 +14,12 @@
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../../formatter.xml</formatterConfigPath>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-metadata-model-api</artifactId>
+            <version>${metadata.api.version}</version>
+        </dependency>
+    </dependencies>
+
 </project>

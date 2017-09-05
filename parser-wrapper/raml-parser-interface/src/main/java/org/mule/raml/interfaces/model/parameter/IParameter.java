@@ -6,6 +6,8 @@
  */
 package org.mule.raml.interfaces.model.parameter;
 
+import org.mule.metadata.api.model.MetadataType;
+
 import java.util.Map;
 
 public interface IParameter {
@@ -31,4 +33,6 @@ public interface IParameter {
   Map<String, String> getExamples();
 
   Object getInstance();
+
+  MetadataType getMetadata();
 }

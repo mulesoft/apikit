@@ -13,6 +13,7 @@ import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,11 @@ public class RamlImpl08V2 implements IRaml {
 
   @Override
   public Map<String, IParameter> getBaseUriParameters() {
-    throw new UnsupportedOperationException();
+    final Map<String, IParameter> baseUriParameters = new LinkedHashMap<>();
+
+    api.baseUriParameters().forEach(type -> baseUriParameters.put(type.name(), new ParameterImpl(type)));
+
+    return baseUriParameters;
   }
 
   @Override

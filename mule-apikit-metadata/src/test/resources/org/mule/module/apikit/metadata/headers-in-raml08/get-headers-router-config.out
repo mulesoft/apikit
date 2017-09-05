@@ -1,0 +1,35 @@
+%type _:Java = (inputMetadata:{
+  "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
+    "payload" : Any, 
+    "attributes" : {
+      "queryParameters"? : {
+
+      }, 
+      "headers"? : {
+        "stringHeader"? : @enum("values" : ["enum1","enum2"]) @length("min" : 2, "max" : 10) @default("value" : "enum1") String, 
+        "numberHeader"? : @range("from" : 10.10, "to" : 20.20) @default("value" : "15.15") Number, 
+        "integerHeader"? : @int @range("from" : 10, "to" : 20) @default("value" : "15") Number, 
+        "dateHeader"? : @default("value" : "Sun, 06 Nov 1994 08:49:37 GMT") DateTime, 
+        "booleanHeader"? : @default("value" : "false") Boolean, 
+        "fileHeader"? : String, 
+        "withoutType"? : String
+      }, 
+      "uriParameters"? : {
+
+      }
+    }
+  }, 
+  "variables" : {
+
+  }
+}) -> {
+  "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
+    "payload" : Any
+  }, 
+  "variables" : {
+    "outboundHeaders" : {
+
+    }, 
+    "httpStatus" : String
+  }
+}
