@@ -9,9 +9,9 @@
         "arrayOfStringHeader"? : [String], 
         "arrayOfNumberHeader"? : [Number], 
         "arrayOfIntegerHeader"? : [@int Number], 
-        "arrayOfDateHeader"? : [DateTime], 
+        "arrayOfDateHeader"? : [String], 
         "arrayOfBooleanHeader"? : [Boolean], 
-        "arrayOfFileHeader"? : [Binary]
+        "arrayOfFileHeader"? : [String]
       }, 
       "uriParameters"? : {
 
