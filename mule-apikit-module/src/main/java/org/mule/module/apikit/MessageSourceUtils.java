@@ -7,8 +7,8 @@
 package org.mule.module.apikit;
 
 import org.apache.log4j.Logger;
+import org.mule.runtime.api.component.Component;
 import org.mule.runtime.api.component.ComponentIdentifier;
-import org.mule.runtime.api.meta.AnnotatedObject;
 import org.mule.runtime.extension.api.runtime.config.ConfigurationState;
 import org.mule.runtime.extension.api.runtime.config.ConfiguredComponent;
 import org.mule.runtime.extension.api.runtime.source.ParameterizedSource;
@@ -30,7 +30,7 @@ public class MessageSourceUtils {
   //     * @param flow where to extract the URI
    * @return the URI
    */
-  public static URI getUriFromFlow(AnnotatedObject source) {
+  public static URI getUriFromFlow(Component source) {
     if (source != null && isHttpExtensionSource(source)) {
       try {
         String resolvedPath = getListenerPath(source);
@@ -43,7 +43,7 @@ public class MessageSourceUtils {
     return null;
   }
 
-  private static String getListenerPath(AnnotatedObject source) {
+  private static String getListenerPath(Component source) {
     final ParameterizedSource parameterizedSource = cast(source);
     String listenerPath = cast(parameterizedSource.getInitialisationParameters().get("path"));
     final String basePath = cast(getConfigState(source).getConfigParameters().get("basePath"));
@@ -51,14 +51,14 @@ public class MessageSourceUtils {
     return basePath == null ? listenerPath : prependIfMissing(basePath, "/") + listenerPath;
   }
 
-  private static ConfigurationState getConfigState(AnnotatedObject source) {
+  private static ConfigurationState getConfigState(Component source) {
     final ConfiguredComponent configuredComponent = cast(source);
     return configuredComponent.getConfigurationInstance()
         .orElseThrow(() -> new RuntimeException("Source does not contain a configuration instance"))
         .getState();
   }
 
-  private static boolean isHttpExtensionSource(AnnotatedObject source) {
+  private static boolean isHttpExtensionSource(Component source) {
     final ComponentIdentifier identifier = source.getLocation().getComponentIdentifier().getIdentifier();
     return identifier.equals(buildFromStringRepresentation("http:listener"));
   }
