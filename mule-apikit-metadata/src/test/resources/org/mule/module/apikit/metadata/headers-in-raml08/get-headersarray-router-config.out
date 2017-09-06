@@ -9,7 +9,7 @@
         "arrayOfStringHeader"? : [String], 
         "arrayOfNumberHeader"? : [Number], 
         "arrayOfIntegerHeader"? : [@int Number], 
-        "arrayOfDateHeader"? : [DateTime], 
+        "arrayOfDateHeader"? : [String], 
         "arrayOfBooleanHeader"? : [Boolean], 
         "arrayOfFileHeader"? : [String], 
         "arrayWithoutType"? : [String]

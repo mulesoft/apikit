@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-metadata-model-raml</artifactId>
+            <artifactId>mule-metadata-model-json</artifactId>
             <version>${metadata.api.version}</version>
         </dependency>
 

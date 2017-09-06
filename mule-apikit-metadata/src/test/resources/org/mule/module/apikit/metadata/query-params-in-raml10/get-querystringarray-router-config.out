@@ -3,11 +3,11 @@
     "payload" : Any, 
     "attributes" : {
       "queryParameters"? : {
-        "dateQueryParam"? : [DateTime], 
+        "dateQueryParam"? : [String], 
         "numberQueryParam"? : [Number], 
         "integerQueryParam"? : [@int Number], 
-        "fileQueryParam"? : [Binary], 
-        "stringQueryParam"? : @length("min" : 3, "max" : 10) [String], 
+        "fileQueryParam"? : [String], 
+        "stringQueryParam"? : [String], 
         "booleanQueryParam"? : [Boolean]
       }, 
       "headers"? : {

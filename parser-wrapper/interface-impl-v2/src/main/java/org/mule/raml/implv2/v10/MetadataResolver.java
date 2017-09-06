@@ -9,23 +9,28 @@ package org.mule.raml.implv2.v10;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
-import org.mule.metadata.raml.internal.CustomHandlingTypeDeclarationTypeLoader;
+import org.mule.metadata.json.JsonTypeLoader;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 
 import java.util.Optional;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Optional.of;
 
 public class MetadataResolver {
 
   private MetadataResolver() {}
 
-  public static Optional<MetadataType> resolve(TypeDeclaration declaration) {
-    final CustomHandlingTypeDeclarationTypeLoader typeLoader = createTypeLoader();
+  public static Optional<MetadataType> resolve(TypeDeclaration type) {
+    final String schema = type.toJsonSchema();
 
-    return typeLoader.load(declaration, null, null);
+    return isNullOrEmpty(schema) ? of(anyType()) : fromJsonSchema(schema);
   }
 
-  private static CustomHandlingTypeDeclarationTypeLoader createTypeLoader() {
-    return new CustomHandlingTypeDeclarationTypeLoader(MetadataFormat.JAVA);
+  private static Optional<MetadataType> fromJsonSchema(String jsonSchema) {
+    final JsonTypeLoader jsonTypeLoader = new JsonTypeLoader(jsonSchema);
+
+    return jsonTypeLoader.load(null);
   }
 
   public static MetadataType anyType() {

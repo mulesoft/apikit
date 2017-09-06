@@ -8,7 +8,6 @@ package org.mule.raml.implv1;
 
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.builder.BooleanTypeBuilder;
-import org.mule.metadata.api.builder.DateTimeBuilder;
 import org.mule.metadata.api.builder.NumberTypeBuilder;
 import org.mule.metadata.api.builder.StringTypeBuilder;
 import org.mule.metadata.api.builder.TypeBuilder;
@@ -31,23 +30,19 @@ public class MetadataResolver {
     final TypeBuilder builder;
 
     switch (param.getType()) {
-      case STRING:
-        builder = handle(rootBuilder.stringType(), param);
-        break;
       case NUMBER:
         builder = handle(rootBuilder.numberType(), param);
         break;
       case INTEGER:
         builder = handle(rootBuilder.numberType().integer(), param);
         break;
-      case DATE:
-        builder = handle(rootBuilder.dateTimeType(), param);
-        break;
-      case FILE:
-        builder = handle(rootBuilder.stringType(), param);
-        break;
       case BOOLEAN:
         builder = handle(rootBuilder.booleanType(), param);
+        break;
+      case STRING:
+      case DATE:
+      case FILE:
+        builder = handle(rootBuilder.stringType(), param);
         break;
       default:
         builder = handle(rootBuilder.stringType(), param);
@@ -58,12 +53,6 @@ public class MetadataResolver {
   }
 
   private static TypeBuilder handle(BooleanTypeBuilder builder, AbstractParam param) {
-    Optional.ofNullable(param.getDefaultValue()).ifPresent(builder::defaultValue);
-
-    return builder;
-  }
-
-  private static TypeBuilder handle(DateTimeBuilder builder, AbstractParam param) {
     Optional.ofNullable(param.getDefaultValue()).ifPresent(builder::defaultValue);
 
     return builder;
