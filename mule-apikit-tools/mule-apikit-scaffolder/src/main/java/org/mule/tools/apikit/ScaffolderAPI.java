@@ -62,12 +62,7 @@ public class ScaffolderAPI {
    * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
    */
   public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
-    if (ExtensionManager.isScaffolderExtensionEnabled()) {
-      ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, minMuleVersion,
-                                                                  runtimeEdition.name());
-    } else {
-      execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
-    }
+    execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
   }
 
   /**

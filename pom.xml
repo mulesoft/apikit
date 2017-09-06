@@ -3,25 +3,23 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>mule-apikit-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0-rc-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
     <modules>
         <module>parser-wrapper</module>
-        <module>mule-apikit-module-spi</module>
         <module>mule-apikit-module</module>
         <module>mule-apikit-tools</module>
-        <module>mule-apikit-examples</module>
         <module>mule-apikit-metadata</module>
     </modules>
 
     <properties>
         <!--mule community version-->
-        <mule.version>4.0.0-SNAPSHOT</mule.version>
-        <mule.core.version>4.0.0-SNAPSHOT</mule.core.version>
+        <mule.version>4.0.0-rc-SNASPHOT</mule.version>
+        <mule.core.version>4.0.0-rc-SNASPHOT</mule.core.version>
         <cors.module.version>2.1.2</cors.module.version>
-        <metadata.api.version>1.0.0-SNAPSHOT</metadata.api.version>
+        <metadata.api.version>1.0.0-rc-SNASPHOT</metadata.api.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
@@ -37,7 +35,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>
-                <version>0.9-SNAPSHOT</version>
+                <version>0.8.19</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.code.findbugs</groupId>
@@ -64,7 +62,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.15-SNAPSHOT</version>
+                <version>1.0.14</version>
                 <exclusions>
                     <exclusion>
                         <groupId> org.slf4j</groupId>
