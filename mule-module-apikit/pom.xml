@@ -68,6 +68,12 @@
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-module-json</artifactId>
             <version>${mule.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.googlecode.libphonenumber</groupId>
+                    <artifactId>libphonenumber</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mule.modules</groupId>
@@ -94,6 +100,10 @@
             <artifactId>json-schema-validator</artifactId>
             <version>2.2.6</version>
             <exclusions>
+                <exclusion>
+                    <groupId>com.googlecode.libphonenumber</groupId>
+                    <artifactId>libphonenumber</artifactId>
+                </exclusion>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-databind</artifactId>
@@ -125,6 +135,11 @@
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
             <version>2.1.13</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.libphonenumber</groupId>
+            <artifactId>libphonenumber</artifactId>
+            <version>8.0.0</version>
         </dependency>
 
         <!--test deps -->
