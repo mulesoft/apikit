@@ -29,13 +29,13 @@ import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.helpers.MessageHelper;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.component.AbstractComponent;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.meta.AbstractAnnotatedObject;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.InternalEvent;
 import org.mule.runtime.core.api.construct.Flow;
@@ -56,7 +56,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
-public class Router extends AbstractAnnotatedObject implements Processor, Initialisable
+public class Router extends AbstractComponent implements Processor, Initialisable
 
 {
 
