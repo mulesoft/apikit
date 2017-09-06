@@ -36,7 +36,7 @@
         <mule.service.weave.version>2.0.0-SNAPSHOT</mule.service.weave.version>
         <mule.api.version>1.0.0-SNAPSHOT</mule.api.version>
         <mule.app.plugins.maven.plugin.version>1.0.0-SNAPSHOT</mule.app.plugins.maven.plugin.version>
-        <mule.http.connector.version>0.9.0-SNAPSHOT</mule.http.connector.version>
+        <mule.http.connector.version>1.0.0-SNAPSHOT</mule.http.connector.version>
         <mule.http.service.version>1.0.0-SNAPSHOT</mule.http.service.version>
         <mule.extensions.api.version>1.0.0-SNAPSHOT</mule.extensions.api.version>
         <mule.service.scheduler.version>1.0.0-SNAPSHOT</mule.service.scheduler.version>
