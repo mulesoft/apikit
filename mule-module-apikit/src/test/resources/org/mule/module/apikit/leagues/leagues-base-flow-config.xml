@@ -34,20 +34,20 @@
         </apikit:mapping>
     </apikit:mapping-exception-strategy>
 
-    <flow name="get:/leagues">
+    <flow name="get:/leagues" processingStrategy="non-blocking">
         <set-payload value="#[registry:list-of-leagues]"/>
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="get:/leagues.json">
+    <flow name="get:/leagues.json" processingStrategy="non-blocking">
         <set-payload value="{&quot;leagues&quot;: [{&quot;id&quot;: &quot;liga-bbva&quot;,&quot;name&quot;: &quot;Liga BBVA&quot;},{&quot;id&quot;: &quot;premier-league&quot;,&quot;name&quot;: &quot;Premier League&quot;}]}"/>
     </flow>
 
-    <flow name="get:/leagues.xml">
+    <flow name="get:/leagues.xml" processingStrategy="non-blocking">
         <set-payload value="&lt;leagues&gt;&lt;league&gt;&lt;ns2:id xmlns:ns2=&quot;http://mulesoft.com/schemas/soccer&quot;&gt;liga-bbva&lt;/ns2:id&gt;&lt;ns2:name xmlns:ns2=&quot;http://mulesoft.com/schemas/soccer&quot;&gt;Liga BBVA&lt;/ns2:name&gt;&lt;/league&gt;&lt;league&gt;&lt;ns2:id xmlns:ns2=&quot;http://mulesoft.com/schemas/soccer&quot;&gt;premier-league&lt;/ns2:id&gt;&lt;ns2:name xmlns:ns2=&quot;http://mulesoft.com/schemas/soccer&quot;&gt;Premier League&lt;/ns2:name&gt;&lt;/league&gt;&lt;/leagues&gt;"/>
     </flow>
 
-    <flow name="post:/leagues">
+    <flow name="post:/leagues" processingStrategy="non-blocking">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
@@ -69,7 +69,7 @@
 
     </flow>
 
-    <flow name="get:/leagues/{leagueId}">
+    <flow name="get:/leagues/{leagueId}" processingStrategy="non-blocking">
         <logger level="WARN" message="leagueId: #[leagueId]"/>
         <choice>
             <when expression="#[app.registry['list-of-leagues'].getLeague(leagueId)]">
@@ -82,7 +82,7 @@
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="put:/leagues/{leagueId}">
+    <flow name="put:/leagues/{leagueId}" processingStrategy="non-blocking">
         <custom-transformer class="org.mule.module.apikit.transform.PayloadNormalizerTransformer"
                             returnClass="org.mule.module.apikit.leagues.League"/>
         <choice>
@@ -102,14 +102,14 @@
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="delete:/leagues/{leagueId}">
+    <flow name="delete:/leagues/{leagueId}" processingStrategy="non-blocking">
         <expression-component>
             app.registry['list-of-leagues'].deleteLeague(leagueId)
         </expression-component>
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="get:/leagues/{leagueId}/teams">
+    <flow name="get:/leagues/{leagueId}/teams" processingStrategy="non-blocking">
         <expression-component>
             teams = app.registry['list-of-leagues'].getLeague(leagueId).getTeams();
             int from = Integer.valueOf(message.inboundProperties['http.query.params']['offset']);
@@ -120,7 +120,7 @@
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="put:/leagues/{leagueId}/badge">
+    <flow name="put:/leagues/{leagueId}/badge" processingStrategy="non-blocking">
         <set-variable variableName="mp1"
                       value="#[org.mule.util.IOUtils.toString(message.inboundAttachments['description'].getDataSource().getInputStream())]"/>
         <set-variable variableName="mp2"
@@ -130,31 +130,31 @@
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="get:/leagues/{leagueId}/badge">
+    <flow name="get:/leagues/{leagueId}/badge" processingStrategy="non-blocking">
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{ &quot;name&quot;: &quot;Liga BBVA&quot; }"/>
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="get:/leagues/{leagueId}/teams/leader">
+    <flow name="get:/leagues/{leagueId}/teams/leader" processingStrategy="non-blocking">
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{ &quot;name&quot;: &quot;Aleti&quot; }"/>
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="get:/leagues/version/v1">
+    <flow name="get:/leagues/version/v1" processingStrategy="non-blocking">
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{ &quot;version&quot;: &quot;v1&quot; }"/>
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="get:/leagues/version/v1/child">
+    <flow name="get:/leagues/version/v1/child" processingStrategy="non-blocking">
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{ &quot;version&quot;: &quot;v1-child&quot; }"/>
         <flow-ref name="non-blocking-checker"/>
     </flow>
 
-    <flow name="non-blocking-checker">
+    <flow name="non-blocking-checker" processingStrategy="non-blocking">
         <scripting:component>
             <scripting:script engine="Groovy"><![CDATA[message.setOutboundProperty('non-blocking',eventContext.event.isAllowNonBlocking());return message;]]></scripting:script>
         </scripting:component>

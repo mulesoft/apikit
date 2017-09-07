@@ -6,6 +6,8 @@
  */
 package org.mule.tools.apikit.input;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
 import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IAction;
@@ -17,6 +19,10 @@ import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.output.GenerationModel;
+import org.raml.v2.api.loader.CompositeResourceLoader;
+import org.raml.v2.api.loader.DefaultResourceLoader;
+import org.raml.v2.api.loader.ResourceLoader;
+import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,13 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.raml.v2.api.loader.CompositeResourceLoader;
-import org.raml.v2.api.loader.DefaultResourceLoader;
-import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.v2.api.loader.RootRamlResourceLoader;
 
 public class RAMLFilesParser
 {
@@ -138,7 +137,7 @@ public class RAMLFilesParser
 
     private ResourceLoader getResourceLoader(String filePath)
     {
-        return new CompositeResourceLoader(new RootRamlResourceLoader(new File(filePath)), new DefaultResourceLoader());
+        return new CompositeResourceLoader(new RootRamlFileResourceLoader(new File(filePath)), new DefaultResourceLoader());
     }
 
     void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version)

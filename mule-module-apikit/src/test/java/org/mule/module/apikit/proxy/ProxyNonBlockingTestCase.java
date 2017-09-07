@@ -6,6 +6,9 @@
  */
 package org.mule.module.apikit.proxy;
 
+import org.junit.Ignore;
+
+@Ignore
 public class ProxyNonBlockingTestCase extends ProxyTestCase
 {
 

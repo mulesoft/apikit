@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
+import org.junit.Ignore;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.infrastructure.deployment.AbstractFakeMuleServerTestCase;
 
@@ -19,6 +20,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
+@Ignore
 public class ProxyTestCase extends AbstractFakeMuleServerTestCase
 {
 

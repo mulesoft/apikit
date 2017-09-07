@@ -23,7 +23,7 @@
 
     <apikit:config name="api-config" raml="org/mule/module/apikit/non-blocking/api.raml" consoleEnabled="false" consolePath="console"/>
 
-    <flow name="mock-backendFlow">
+    <flow name="mock-backendFlow" processingStrategy="non-blocking">
         <http:listener config-ref="server_lc" path="/*"/>
         <set-payload value="#['{&quot;message&quot;:&quot;my message&quot;}']" mimeType="application/json"/>
     </flow>
@@ -46,7 +46,7 @@
 
 
 
-    <flow name="post:/assets:application/json:api-config">
+    <flow name="post:/assets:application/json:api-config" processingStrategy="non-blocking">
         <set-variable value="assets/initiateassets" variableName="proxyPath" />
         <http:request config-ref="request-config" path="#[flowVars['proxyPath']]" method="POST" parseResponse="false">
             <http:success-status-code-validator values="0..599" />
