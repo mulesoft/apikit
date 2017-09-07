@@ -6,9 +6,6 @@
  */
 package org.mule.module.apikit.leagues;
 
-import org.junit.Ignore;
-
-@Ignore
 public class LeaguesHttpListenerNonBlockingTestCase extends LeaguesHttpListenerTestCase
 {
 
