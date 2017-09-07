@@ -12,6 +12,7 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class LeaguesHttpListenerTestCase extends LeaguesTestCase
 {
 
