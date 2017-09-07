@@ -310,7 +310,8 @@ public class HttpRestRequest
             {
                 if (!key.startsWith("http.")) //TODO MULE-8131
                 {
-                    incomingHeaders.put(key, String.valueOf(message.getInboundProperty(key)));
+                    final String inboundProperty = message.getInboundProperty(key);
+                    incomingHeaders.put(key, inboundProperty);
                 }
             }
         }
