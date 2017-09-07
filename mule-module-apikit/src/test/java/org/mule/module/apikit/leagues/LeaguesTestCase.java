@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
 import org.junit.Rule;
 import org.junit.Test;
 
-@Ignore
 public class LeaguesTestCase extends FunctionalTestCase
 {
 
