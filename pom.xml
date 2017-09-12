@@ -28,11 +28,22 @@
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>
                 <version>0.8.17</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.googlecode.libphonenumber</groupId>
+                        <artifactId>libphonenumber</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.googlecode.json-simple</groupId>
                 <artifactId>json-simple</artifactId>
                 <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.libphonenumber</groupId>
+                <artifactId>libphonenumber</artifactId>
+                <version>8.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
