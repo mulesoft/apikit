@@ -8,7 +8,6 @@ package org.mule.module.apikit;
 
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
-import static org.mule.runtime.core.privileged.processor.MessageProcessors.processWithChildContext;
 import static reactor.core.publisher.Flux.empty;
 import static reactor.core.publisher.Flux.from;
 
@@ -30,15 +29,11 @@ import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.helpers.MessageHelper;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
-import org.mule.runtime.api.component.execution.ComponentExecutionException;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.component.location.Location;
-import org.mule.runtime.api.event.Event;
-import org.mule.runtime.api.event.EventContext;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.api.message.Error;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.DefaultMuleException;
 import org.mule.runtime.core.api.event.BaseEvent;
@@ -53,13 +48,9 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
-import org.mule.runtime.core.api.rx.Exceptions;
-import org.mule.runtime.core.privileged.processor.MessageProcessors;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,7 +116,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
         path = path.isEmpty() ? "/" : path;
 
         //Get uriPattern, uriResolver, and the resolvedVariables
-        URIPattern uriPattern = null;
+        URIPattern uriPattern;
         try {
           uriPattern = config.getUriPatternCache().get(path);
         } catch (Exception e) {
