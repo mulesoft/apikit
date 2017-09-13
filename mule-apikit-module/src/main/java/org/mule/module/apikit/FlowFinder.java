@@ -14,9 +14,9 @@ import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.component.Component;
 import org.mule.runtime.api.component.ComponentIdentifier;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
-import org.mule.runtime.api.meta.AnnotatedObject;
 import org.mule.runtime.core.api.construct.Flow;
 
 import java.util.Arrays;
@@ -88,7 +88,7 @@ public class FlowFinder {
   }
 
   private List<Flow> getFlows() {
-    List<? extends AnnotatedObject> annotatedObjects =
+    List<? extends Component> annotatedObjects =
         locator.find(ComponentIdentifier.builder().name("flow").namespace("mule").build());
     return (List<Flow>) annotatedObjects;
   }

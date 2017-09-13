@@ -1,0 +1,29 @@
+#%RAML 0.8
+---
+title: RAML 0.8 Uri param
+version: v1
+baseUri: https://www.example.com/api/{v1}/
+
+baseUriParameters:
+  v1:
+    type: string
+  v2:
+
+/part:
+  get:
+  /{uriParam1}:
+    uriParameters:
+      uriParam1:
+        type: integer
+    get:
+    /{uriParam2}:
+      uriParameters:
+        uriParam2:
+          type: number
+      get:
+
+      /{uriParam3}:
+        uriParameters:
+          uriParam3:
+            type: boolean
+        get:

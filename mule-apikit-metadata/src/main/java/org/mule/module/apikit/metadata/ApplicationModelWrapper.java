@@ -13,13 +13,11 @@ import org.mule.module.apikit.metadata.model.FlowMapping;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.module.apikit.metadata.raml.RamlCoordsSimpleFactory;
 import org.mule.module.apikit.metadata.raml.RamlHandler;
-import org.mule.module.apikit.metadata.util.Utils;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.config.spring.api.dsl.model.ApplicationModel;
 import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -39,6 +37,8 @@ public class ApplicationModelWrapper {
 
   private final static String PARAMETER_NAME = "name";
   private final static String PARAMETER_RAML = "raml";
+  private final static String PARAMETER_OUTPUT_HEADERS_VAR = "outboundHeadersMapName";
+  private final static String PARAMETER_HTTP_STATUS_VAR = "httpStatusVarName";
   private final static String PARAMETER_RESOURCE = "resource";
   private final static String PARAMETER_ACTION = "action";
   private final static String PARAMETER_CONTENT_TYPE = "content-type";
@@ -59,7 +59,7 @@ public class ApplicationModelWrapper {
   }
 
   private void initialize() {
-    findApikitConfigs();
+    loadConfigs();
     loadFlows();
   }
 
@@ -76,17 +76,19 @@ public class ApplicationModelWrapper {
     metadataFlows = merge(asList(conventionCoordinates, flowMappingCoordinates));
   }
 
-  private void findApikitConfigs() {
-
-    configMap = applicationModel.getRootComponentModel().getInnerComponents()
-        .stream()
-        .filter((element) -> ApikitElementIdentifiers.isApikitConfig(element.getIdentifier()))
+  private void loadConfigs() {
+    configMap = applicationModel.getRootComponentModel().getInnerComponents().stream()
+        .filter(ApikitElementIdentifiers::isApikitConfig)
         .map(this::createApikitConfig)
         .collect(toMap(ApikitConfig::getName, identity()));
   }
 
   private Set<String> getConfigNames() {
     return configMap.keySet();
+  }
+
+  public Collection<ApikitConfig> getConfigurations() {
+    return configMap.values();
   }
 
   private Map<String, RamlCoordinate> createCoordinatesForMappingFlows(List<Flow> flows, RamlCoordsSimpleFactory coordsFactory) {
@@ -113,6 +115,8 @@ public class ApplicationModelWrapper {
     final Map<String, String> parameters = unwrappedApikitConfig.getParameters();
     final String configName = parameters.get(PARAMETER_NAME);
     final String configRaml = parameters.get(PARAMETER_RAML);
+    final String outputHeadersVarName = parameters.get(PARAMETER_OUTPUT_HEADERS_VAR);
+    final String httpStatusVarName = parameters.get(PARAMETER_HTTP_STATUS_VAR);
 
     final List<FlowMapping> flowMappings = unwrappedApikitConfig.getInnerComponents()
         .stream()
@@ -124,7 +128,7 @@ public class ApplicationModelWrapper {
 
     final RamlHandlerSupplier ramlSupplier = RamlHandlerSupplier.create(configRaml, ramlHandler);
 
-    return new ApikitConfig(configName, configRaml, flowMappings, ramlSupplier);
+    return new ApikitConfig(configName, configRaml, flowMappings, ramlSupplier, httpStatusVarName, outputHeadersVarName);
   }
 
   private static class RamlHandlerSupplier implements Supplier<Optional<IRaml>> {
@@ -159,20 +163,17 @@ public class ApplicationModelWrapper {
   }
 
   public List<Flow> findFlows() {
-
-    return applicationModel.getRootComponentModel().getInnerComponents()
-        .stream()
-        .filter(element -> ApikitElementIdentifiers.isFlow(element.getIdentifier()))
+    return applicationModel.getRootComponentModel().getInnerComponents().stream()
+        .filter(ApikitElementIdentifiers::isFlow)
         .map(this::createFlow)
         .collect(toList());
   }
 
   private Flow createFlow(ComponentModel componentModel) {
-    Map<String, String> parameters = componentModel.getParameters();
-    String flowName = parameters.get(PARAMETER_NAME);
+    final Map<String, String> parameters = componentModel.getParameters();
+    final String flowName = parameters.get(PARAMETER_NAME);
     return new Flow(flowName);
   }
-
 
   public Optional<RamlCoordinate> getRamlCoordinatesForFlow(String flowName) {
     return ofNullable(metadataFlows.get(flowName));

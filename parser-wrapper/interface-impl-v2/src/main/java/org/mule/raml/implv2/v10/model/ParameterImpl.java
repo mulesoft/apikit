@@ -6,6 +6,7 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import org.mule.metadata.api.model.MetadataType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
@@ -15,6 +16,9 @@ import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.mule.raml.implv2.v10.MetadataResolver.anyType;
+import static org.mule.raml.implv2.v10.MetadataResolver.resolve;
 
 public class ParameterImpl implements IParameter {
 
@@ -87,5 +91,10 @@ public class ParameterImpl implements IParameter {
   @Override
   public Object getInstance() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public MetadataType getMetadata() {
+    return resolve(typeDeclaration).orElse(anyType());
   }
 }

@@ -9,6 +9,7 @@ package org.mule.module.apikit.validation.body.form.transformation;
 import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.runtime.api.el.BindingContext;
 import org.mule.runtime.api.metadata.DataType;
+import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.api.el.ExpressionManager;
@@ -18,7 +19,11 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.mule.runtime.api.metadata.MediaType.create;
+
 public class DataWeaveTransformer {
+
+  private static final MediaType MULTIPART_FORMDATA = create("multipart", "form-data");
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DataWeaveTransformer.class);
 
@@ -55,7 +60,14 @@ public class DataWeaveTransformer {
   }
 
   public MultiMap<String, String> getMultiMapFromPayload(TypedValue payload) throws InvalidFormParameterException {
-    String script = "output application/java --- payload";
+    final String script;
+
+    final MediaType mediaType = payload.getDataType().getMediaType();
+    if (mediaType.matches(MULTIPART_FORMDATA)) {
+      script = "output application/java --- {(payload.parts pluck { '$$': $.content })}";
+    } else {
+      script = "output application/java --- payload";
+    }
 
     return (MultiMap<String, String>) runDataWeaveScript(script, multiMapDataType, payload).getValue();
   }

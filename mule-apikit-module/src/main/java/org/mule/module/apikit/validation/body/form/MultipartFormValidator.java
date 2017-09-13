@@ -35,7 +35,7 @@ public class MultipartFormValidator implements FormValidatorStrategy<TypedValue>
   @Override
   public TypedValue validate(TypedValue originalPayload) throws InvalidFormParameterException {
 
-    List<String> actualKeys = dataWeaveTransformer.getKeysFromPayload(originalPayload);
+    Map<String, String> actualParameters = dataWeaveTransformer.getMultiMapFromPayload(originalPayload);
     DataWeaveDefaultsBuilder defaultsBuilder = new DataWeaveDefaultsBuilder();
 
     for (String expectedKey : formParameters.keySet()) {
@@ -45,12 +45,16 @@ public class MultipartFormValidator implements FormValidatorStrategy<TypedValue>
       }
 
       IParameter expected = formParameters.get(expectedKey).get(0);
-      if (!actualKeys.contains(expectedKey)) {
-        if (expected.isRequired()) {
-          throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
+      if (actualParameters.keySet().contains(expectedKey)) {
+        String value = actualParameters.get(expectedKey);
+        if (!expected.validate(value)) {
+          throw new InvalidFormParameterException("Value " + value + " for parameter " + expectedKey + " is invalid");
         }
+      } else {
         if (expected.getDefaultValue() != null) {
           defaultsBuilder.addPart(new TextPlainPart().setName(expectedKey).setValue(expected.getDefaultValue()));
+        } else if (expected.isRequired()) {
+          throw new InvalidFormParameterException("Required form parameter " + expectedKey + " not specified");
         }
       }
     }

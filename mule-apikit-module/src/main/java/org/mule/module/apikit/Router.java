@@ -29,16 +29,18 @@ import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.helpers.MessageHelper;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.component.AbstractComponent;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.component.location.Location;
+import org.mule.runtime.api.event.EventContext;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.message.Message;
-import org.mule.runtime.api.meta.AbstractAnnotatedObject;
 import org.mule.runtime.core.api.DefaultMuleException;
-import org.mule.runtime.core.api.InternalEvent;
+import org.mule.runtime.core.api.event.BaseEvent;
 import org.mule.runtime.core.api.construct.Flow;
+import org.mule.runtime.core.api.event.BaseEventContext;
 import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.runtime.core.api.exception.TypedException;
 import org.mule.runtime.core.api.processor.Processor;
@@ -56,7 +58,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
 
-public class Router extends AbstractAnnotatedObject implements Processor, Initialisable
+public class Router extends AbstractComponent implements Processor, Initialisable
 
 {
 
@@ -90,22 +92,23 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
     registry.setApiSource(configRef, url.get().toString().replace("*", ""));
   }
 
-  public InternalEvent process(final InternalEvent event) throws MuleException {
+  public BaseEvent process(final BaseEvent event) throws MuleException {
     return processToApply(event, this);
   }
 
   @Override
-  public Publisher<InternalEvent> apply(Publisher<InternalEvent> publisher) {
+  public Publisher<BaseEvent> apply(Publisher<BaseEvent> publisher) {
     return from(publisher).flatMap(event -> {
       try {
         Configuration config = registry.getConfiguration(getConfigRef());
-        InternalEvent.Builder eventBuilder = InternalEvent.builder(event);
+        BaseEvent.Builder eventBuilder = BaseEvent.builder(event);
         eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
         HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
 
         if (isRequestingRamlV1(attributes, config, event, eventBuilder)) {
-          event.getContext().success(eventBuilder.build());
+          final BaseEventContext context = (BaseEventContext) event.getContext();
+          context.success(eventBuilder.build());
           return empty();
         }
 
@@ -160,9 +163,9 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
     this.name = name;
   }
 
-  public InternalEvent.Builder validateRequest(InternalEvent event, InternalEvent.Builder eventbuilder, ValidationConfig config,
-                                               IResource resource, HttpRequestAttributes attributes,
-                                               ResolvedVariables resolvedVariables)
+  public BaseEvent.Builder validateRequest(BaseEvent event, BaseEvent.Builder eventbuilder, ValidationConfig config,
+                                           IResource resource, HttpRequestAttributes attributes,
+                                           ResolvedVariables resolvedVariables)
       throws DefaultMuleException, MuleRestException {
 
     String charset = null;
@@ -186,8 +189,8 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
     return resource;
   }
 
-  public boolean isRequestingRamlV1(HttpRequestAttributes attributes, Configuration config, InternalEvent event,
-                                    InternalEvent.Builder eventBuilder) {
+  public boolean isRequestingRamlV1(HttpRequestAttributes attributes, Configuration config, BaseEvent event,
+                                    BaseEvent.Builder eventBuilder) {
     if (config.getRamlHandler().isRequestingRamlV1ForRouter(attributes.getListenerPath(), attributes.getRequestPath(),
                                                             attributes.getMethod(),
                                                             AttributesHelper.getHeaderIgnoreCase(attributes, "Accept"))) {

@@ -1,0 +1,62 @@
+#%RAML 0.8
+---
+title: RAML 0.8 Headers
+version: v1
+baseUri: https://www.example.com/api/
+
+/headers:
+    get:
+        headers:
+          stringHeader:
+            type: string
+            minLength: 2
+            maxLength: 10
+            enum: ["enum1", "enum2"]
+            default: "enum1"
+          numberHeader:
+            type: number
+            minimum: 10.10
+            maximum: 20.20
+            default: 15.15
+          integerHeader:
+            type: integer
+            minimum: 10
+            maximum: 20
+            default: 15
+          dateHeader:
+            type: date
+            default: "Sun, 06 Nov 1994 08:49:37 GMT"
+          booleanHeader:
+            type: boolean
+            default: false
+          fileHeader:
+            type: file
+          withoutType:
+
+/without/headers:
+    get:
+        headers:
+
+/headers/array:
+    get:
+        headers:
+          arrayOfStringHeader:
+            type: string
+            repeat: true
+          arrayOfNumberHeader:
+            type: number
+            repeat: true
+          arrayOfIntegerHeader:
+            type: integer
+            repeat: true
+          arrayOfDateHeader:
+            type: date
+            repeat: true
+          arrayOfBooleanHeader:
+            type: boolean
+            repeat: true
+          arrayOfFileHeader:
+            type: file
+            repeat: true
+          arrayWithoutType:
+            repeat: true

@@ -8,6 +8,7 @@ package org.mule.raml.implv1.model;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -41,13 +42,11 @@ public class ResponseImpl implements IResponse {
   }
 
   public Map<String, IParameter> getHeaders() {
-    if (response.getHeaders() == null) {
-      return null;
-    }
-    Map<String, IParameter> map = new LinkedHashMap<String, IParameter>();
-    for (Map.Entry<String, Header> entry : response.getHeaders().entrySet()) {
-      map.put(entry.getKey(), new ParameterImpl(entry.getValue()));
-    }
+    final Map<String, IParameter> map = new LinkedHashMap<>();
+
+    Optional.ofNullable(response.getHeaders())
+        .ifPresent(headers -> headers.forEach((name, header) -> map.put(name, new ParameterImpl(header))));
+
     return map;
   }
 

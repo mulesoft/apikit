@@ -7,6 +7,7 @@
 package org.mule.raml.implv1.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +24,8 @@ import org.raml.model.Template;
 import org.raml.model.parameter.UriParameter;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
+
+import static java.util.Collections.emptyMap;
 
 public class RamlImplV1 implements IRaml {
 
@@ -77,7 +80,7 @@ public class RamlImplV1 implements IRaml {
 
   public Map<String, IParameter> getBaseUriParameters() {
     if (raml.getBaseUriParameters() == null) {
-      return null;
+      return emptyMap();
     }
     Map<String, IParameter> map = new LinkedHashMap<String, IParameter>();
     for (Map.Entry<String, UriParameter> entry : raml.getBaseUriParameters().entrySet()) {

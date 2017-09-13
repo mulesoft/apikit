@@ -6,10 +6,12 @@
  */
 package org.mule.module.apikit;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
 import org.mule.raml.interfaces.model.IActionType;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,7 +22,13 @@ public class FlowName {
 
   public static final String FLOW_NAME_SEPARATOR = ":";
   public static final String URL_RESOURCE_SEPARATOR = "/";
-  public static final String RESOURCE_SEPARATOR = "\\";
+
+  private static final ImmutableMap<String, String> specialCharacters = ImmutableMap.<String, String>builder()
+      .put("/", "\\")
+      .put("{", "(")
+      .put("}", ")")
+      .build();
+
   private static final String APIKIT_FLOW_NAME_FORMAT = "^([^:]+):(" + URL_RESOURCE_SEPARATOR + "[^:]*)(:([^:]+))?(:(.*))?$";
 
   private static final Pattern PATTERN = Pattern.compile(APIKIT_FLOW_NAME_FORMAT);
@@ -40,11 +48,19 @@ public class FlowName {
   }
 
   public static String encode(String value) {
-    return value.replace(URL_RESOURCE_SEPARATOR, RESOURCE_SEPARATOR);
+    for (Map.Entry<String, String> entry : specialCharacters.entrySet()) {
+      value = value.replace(entry.getKey(), entry.getValue());
+    }
+
+    return value;
   }
 
   public static String decode(String value) {
-    return value.replace(RESOURCE_SEPARATOR, URL_RESOURCE_SEPARATOR);
+    for (Map.Entry<String, String> entry : specialCharacters.entrySet()) {
+      value = value.replace(entry.getValue(), entry.getKey());
+    }
+
+    return value;
   }
 
   public static String getAction(String flowName) {

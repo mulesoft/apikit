@@ -21,13 +21,18 @@ public class ApikitConfig {
   final private String raml;
   final private List<FlowMapping> flowMappings;
   final private Supplier<Optional<IRaml>> apiSupplier;
+  final private String httpStatusVarName;
+  final private String outputHeadersVarName;
   private RamlApiWrapper ramlApi;
 
-  public ApikitConfig(String name, String raml, List<FlowMapping> flowMappings, Supplier<Optional<IRaml>> apiSupplier) {
+  public ApikitConfig(String name, String raml, List<FlowMapping> flowMappings, Supplier<Optional<IRaml>> apiSupplier,
+                      String httpStatusVarName, String outputHeadersVarName) {
     this.name = name;
     this.raml = raml;
     this.flowMappings = flowMappings;
     this.apiSupplier = apiSupplier;
+    this.httpStatusVarName = httpStatusVarName;
+    this.outputHeadersVarName = outputHeadersVarName;
   }
 
   public String getName() {
@@ -49,4 +54,11 @@ public class ApikitConfig {
     return ofNullable(ramlApi);
   }
 
+  public String getHttpStatusVarName() {
+    return httpStatusVarName;
+  }
+
+  public String getOutputHeadersVarName() {
+    return outputHeadersVarName;
+  }
 }

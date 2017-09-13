@@ -28,6 +28,8 @@ import org.raml.model.parameter.Header;
 import org.raml.model.parameter.QueryParameter;
 import org.raml.model.parameter.UriParameter;
 
+import static java.util.Collections.emptyMap;
+
 public class ActionImpl implements IAction {
 
   Action action;
@@ -77,7 +79,7 @@ public class ActionImpl implements IAction {
 
   public Map<String, IParameter> getQueryParameters() {
     if (action.getQueryParameters() == null) {
-      return null;
+      return emptyMap();
     }
     Map<String, IParameter> map = new LinkedHashMap<String, IParameter>();
     for (Map.Entry<String, QueryParameter> entry : action.getQueryParameters().entrySet()) {
@@ -103,7 +105,7 @@ public class ActionImpl implements IAction {
 
   public Map<String, IParameter> getHeaders() {
     if (action.getHeaders() == null) {
-      return null;
+      return emptyMap();
     }
     Map<String, IParameter> map = new LinkedHashMap<String, IParameter>();
     for (Map.Entry<String, Header> entry : action.getHeaders().entrySet()) {
