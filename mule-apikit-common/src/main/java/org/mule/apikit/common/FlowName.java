@@ -4,11 +4,10 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.apikit.model;
+package org.mule.apikit.common;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
-import org.mule.raml.interfaces.model.IActionType;
 
 import java.util.Collection;
 import java.util.Map;
@@ -24,7 +23,7 @@ public class FlowName {
   public static final String URL_RESOURCE_SEPARATOR = "/";
 
   private static final ImmutableMap<String, String> specialCharacters = ImmutableMap.<String, String>builder()
-      .put("/", "\\")
+      .put(URL_RESOURCE_SEPARATOR, "\\")
       .put("{", "(")
       .put("}", ")")
       .build();
@@ -68,13 +67,7 @@ public class FlowName {
   }
 
   public static String getAction(Matcher flowNameMatcher) {
-    final String action = flowNameMatcher.group(1);
-
-    if (!isValidAction(action)) {
-      throw new IllegalArgumentException(action + " is not a valid action type");
-    }
-
-    return action;
+    return flowNameMatcher.group(1);
   }
 
   public static String getResource(String flowName) {
@@ -121,12 +114,4 @@ public class FlowName {
     return Optional.empty();
   }
 
-  private static boolean isValidAction(String name) {
-    for (IActionType actionType : IActionType.values()) {
-      if (actionType.toString().equals(name.toUpperCase())) {
-        return true;
-      }
-    }
-    return false;
-  }
 }

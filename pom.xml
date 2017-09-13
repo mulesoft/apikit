@@ -14,6 +14,7 @@
         <module>mule-apikit-tools</module>
         <module>mule-apikit-examples</module>
         <module>mule-apikit-metadata</module>
+        <module>mule-apikit-common</module>
     </modules>
 
     <properties>
