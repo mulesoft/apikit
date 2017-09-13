@@ -8,17 +8,15 @@ package org.mule.tools.apikit.misc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mule.weave.v2.module.reader.StringSourceProvider;
-import org.mule.weave.v2.runtime.utils.WeaveSimpleRunner;
+import org.mule.weave.v2.runtime.DataWeaveResult;
+import org.mule.weave.v2.runtime.DataWeaveScriptingEngine;
+import org.mule.weave.v2.runtime.ScriptingBindings;
 import org.yaml.snakeyaml.Yaml;
-import scala.Option;
 
 import java.io.IOException;
 
 public class ExampleUtils {
 
-  private static final String DW_INPUT_TYPE = "payload";
-  private static final String DW_OUTPUT_TYPE = "application/dw";
   private static final String APPLICATION_XML_CONTENT_TYPE = "application/xml";
   private static final String DEFAULT_CONTENT_TYPE = "application/json";
 
@@ -46,14 +44,19 @@ public class ExampleUtils {
     String transformContentType = getExampleContentType(example);
     example = getExampleAsJSONIfNeeded(example);
 
-    WeaveSimpleRunner runner = new WeaveSimpleRunner();
-    runner.addInput(DW_INPUT_TYPE, transformContentType, new StringSourceProvider(example, Option.empty()));
-    runner.setOutputType(DW_OUTPUT_TYPE);
-    String weaveResult = runner.execute(DW_INPUT_TYPE).toString();
+    final String weaveResult = asDataWeave(example, transformContentType);
 
     return "%dw 2.0\n" +
         "output " + transformContentType + "\n" +
         "---\n" + weaveResult + "\n";
+  }
+
+  private static String asDataWeave(String payload, String mimeType) {
+    String script = "output application/dw --- payload";
+    ScriptingBindings bindings = new ScriptingBindings()
+        .addBinding("payload", payload, mimeType);
+    DataWeaveResult result = DataWeaveScriptingEngine.write(script, bindings);
+    return result.getContentAsString();
   }
 
   private static String transformYamlExampleIntoJSON(String example) {
