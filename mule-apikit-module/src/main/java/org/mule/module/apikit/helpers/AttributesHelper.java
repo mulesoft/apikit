@@ -22,7 +22,7 @@ public class AttributesHelper {
     // Prevents instantiation :)
   }
 
-  public static MultiMap addParam(MultiMap<String, String> oldParams, String key, String value) {
+  public static MultiMap<String, String> addParam(MultiMap<String, String> oldParams, String key, String value) {
     MultiMap<String, String> mapParam = new MultiMap<>();
     LinkedList<String> valueList = new LinkedList<>();
     valueList.add(value);

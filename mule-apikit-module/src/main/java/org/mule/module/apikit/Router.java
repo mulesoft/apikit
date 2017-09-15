@@ -7,8 +7,7 @@
 package org.mule.module.apikit;
 
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static org.mule.runtime.core.api.processor.MessageProcessors.processToApply;
-import static org.mule.runtime.core.api.processor.MessageProcessors.processWithChildContext;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
 import static reactor.core.publisher.Flux.empty;
 import static reactor.core.publisher.Flux.from;
 
@@ -32,7 +31,6 @@ import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.component.location.Location;
-import org.mule.runtime.api.event.EventContext;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -57,6 +55,7 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public class Router extends AbstractComponent implements Processor, Initialisable
 
@@ -92,6 +91,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     registry.setApiSource(configRef, url.get().toString().replace("*", ""));
   }
 
+  @Override
   public BaseEvent process(final BaseEvent event) throws MuleException {
     return processToApply(event, this);
   }
@@ -116,7 +116,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
         path = path.isEmpty() ? "/" : path;
 
         //Get uriPattern, uriResolver, and the resolvedVariables
-        URIPattern uriPattern = null;
+        URIPattern uriPattern;
         try {
           uriPattern = config.getUriPatternCache().get(path);
         } catch (Exception e) {
@@ -135,7 +135,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
         String successStatusCode =
             config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
         eventBuilder.addVariable(config.getHttpStatusVarName(), successStatusCode);
-        return processWithChildContext(eventBuilder.build(), flow, Optional.empty());
+        return Mono.fromFuture(flow.execute(eventBuilder.build())).cast(BaseEvent.class);
       } catch (Exception e) {
         if (e instanceof MuleRestException) {
           return Flux.error(

@@ -9,10 +9,10 @@ package org.mule.module.apikit.metadata;
 import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
-import org.mule.metadata.json.JsonExampleTypeLoader;
-import org.mule.metadata.json.JsonTypeLoader;
-import org.mule.metadata.xml.ModelFactory;
-import org.mule.metadata.xml.XmlTypeLoader;
+import org.mule.metadata.json.api.JsonExampleTypeLoader;
+import org.mule.metadata.json.api.JsonTypeLoader;
+import org.mule.metadata.xml.api.ModelFactory;
+import org.mule.metadata.xml.api.XmlTypeLoader;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.List;
