@@ -9,7 +9,7 @@
 
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-apikit-module</artifactId>
-    <version>1.0.0-rc-SNAPSHOT</version>
+    <version>0.9.0-SNAPSHOT</version>
     <packaging>mule-plugin</packaging>
 
     <name>APIKit Module</name>
@@ -133,12 +133,12 @@
         <dependency>
             <groupId>org.mule.raml</groupId>
             <artifactId>raml-parser-interface-impl-v1</artifactId>
-            <version>${project.version}</version>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mule.raml</groupId>
             <artifactId>raml-parser-interface-impl-v2</artifactId>
-            <version>${project.version}</version>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>
