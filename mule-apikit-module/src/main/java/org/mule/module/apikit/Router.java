@@ -6,27 +6,20 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static org.mule.runtime.core.api.processor.MessageProcessors.processToApply;
-import static org.mule.runtime.core.api.processor.MessageProcessors.processWithChildContext;
-import static reactor.core.publisher.Flux.empty;
-import static reactor.core.publisher.Flux.from;
-
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.exception.BadRequestException;
-import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.api.exception.MuleRestException;
-import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.module.apikit.helpers.AttributesHelper;
-import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.RequestValidator;
 import org.mule.module.apikit.api.validation.ValidRequest;
-import org.mule.module.apikit.api.config.ValidationConfig;
+import org.mule.module.apikit.exception.MethodNotAllowedException;
+import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.module.apikit.helpers.AttributesHelper;
+import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.helpers.MessageHelper;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
@@ -42,19 +35,23 @@ import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.runtime.core.api.exception.TypedException;
 import org.mule.runtime.core.api.processor.Processor;
+import org.reactivestreams.Publisher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
-
-import org.reactivestreams.Publisher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
+import static org.mule.runtime.core.api.processor.MessageProcessors.processToApply;
+import static org.mule.runtime.core.api.processor.MessageProcessors.processWithChildContext;
+import static reactor.core.publisher.Flux.empty;
+import static reactor.core.publisher.Flux.from;
 
 public class Router extends AbstractAnnotatedObject implements Processor, Initialisable
 
@@ -160,7 +157,7 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
     this.name = name;
   }
 
-  public InternalEvent.Builder validateRequest(InternalEvent event, InternalEvent.Builder eventbuilder, ValidationConfig config,
+  public InternalEvent.Builder validateRequest(InternalEvent event, InternalEvent.Builder eventbuilder, Configuration config,
                                                IResource resource, HttpRequestAttributes attributes,
                                                ResolvedVariables resolvedVariables)
       throws DefaultMuleException, MuleRestException {

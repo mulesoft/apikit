@@ -6,9 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.metadata.api.model.MetadataFormat.JAVA;
-import static org.mule.runtime.api.meta.Category.COMMUNITY;
-
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
@@ -25,6 +22,9 @@ import org.mule.runtime.api.meta.model.error.ErrorModelBuilder;
 import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFactory;
 import org.mule.runtime.extension.api.loader.ExtensionLoadingContext;
 import org.mule.runtime.extension.api.loader.ExtensionLoadingDelegate;
+
+import static org.mule.metadata.api.model.MetadataFormat.JAVA;
+import static org.mule.runtime.api.meta.Category.COMMUNITY;
 
 public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate {
 
@@ -90,6 +90,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
     parameterGroupDeclarer.withRequiredParameter("httpStatusVarName").ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("keepRamlBaseUri").defaultingTo(false).ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("disableValidations").defaultingTo(false).ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withOptionalParameter("muleThreeCompatibility").defaultingTo(false).ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("flowMappings")
         .ofType(typeBuilder.arrayType().of(typeLoader.load(FlowMapping.class)).build());
 

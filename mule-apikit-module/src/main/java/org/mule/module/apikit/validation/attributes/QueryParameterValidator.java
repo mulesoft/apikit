@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import com.google.common.base.Joiner;
 import org.mule.module.apikit.api.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
@@ -13,6 +14,10 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static com.google.common.collect.Sets.difference;
 
 public class QueryParameterValidator {
 
@@ -22,15 +27,22 @@ public class QueryParameterValidator {
 
   public QueryParameterValidator(IAction action) {
     this.action = action;
-
   }
 
-  public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString)
+  public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString, boolean isMuleThreeCompatibility)
       throws InvalidQueryParameterException {
+
+    if (!isMuleThreeCompatibility) {
+      final Set notDefinedQueryParameters = difference(queryParams.keySet(), action.getQueryParameters().keySet());
+      if (!notDefinedQueryParameters.isEmpty()) {
+        throw new InvalidQueryParameterException(Joiner.on(", ").join(notDefinedQueryParameters)
+            + " parameters are not defined in RAML.");
+      }
+    }
 
     for (String expectedKey : action.getQueryParameters().keySet()) {
       IParameter expected = action.getQueryParameters().get(expectedKey);
-      Collection<?> actual = queryParams.getAll(expectedKey);
+      List<String> actual = queryParams.getAll(expectedKey);
 
       if (actual.isEmpty()) {
         if (expected.isRequired()) {
@@ -55,7 +67,7 @@ public class QueryParameterValidator {
         } else {
           // single query param or repeat
           //noinspection unchecked
-          for (String param : (Collection<String>) actual) {
+          for (String param : actual) {
             validateQueryParam(expectedKey, expected, param);
           }
         }
@@ -92,6 +104,5 @@ public class QueryParameterValidator {
       throw new InvalidQueryParameterException(msg);
     }
   }
-
 
 }

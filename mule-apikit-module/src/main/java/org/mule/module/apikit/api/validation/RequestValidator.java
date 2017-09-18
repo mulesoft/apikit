@@ -7,23 +7,22 @@
 package org.mule.module.apikit.api.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.api.config.ValidationConfig;
-import org.mule.module.apikit.api.uri.ResolvedVariables;
+import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.api.exception.MuleRestException;
+import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.validation.AttributesValidator;
 import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.core.api.DefaultMuleException;
-import org.mule.runtime.core.api.el.ExpressionManager;
 
 public class RequestValidator {
 
-  public static ValidRequest validate(ValidationConfig config, IResource resource, HttpRequestAttributes attributes,
+  public static ValidRequest validate(Configuration config, IResource resource, HttpRequestAttributes attributes,
                                       ResolvedVariables resolvedVariables, Object payload, String charset)
       throws DefaultMuleException, MuleRestException {
 
     return ValidRequest.builder()
-        .withAttributes(AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables))
+        .withAttributes(AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables, config))
         .withBody(BodyValidator.validate(resource.getAction(attributes.getMethod().toLowerCase()), attributes, payload, config,
                                          charset))
         .build();

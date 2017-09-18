@@ -6,21 +6,26 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import static org.junit.Assert.assertEquals;
-
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mule.module.apikit.api.exception.InvalidQueryParameterException;
 import org.mule.raml.implv1.model.ActionImpl;
 import org.mule.runtime.api.util.MultiMap;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Test;
 import org.raml.model.Action;
 import org.raml.model.ParamType;
 import org.raml.model.parameter.QueryParameter;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+
 public class QueryParametersValidatorTestCase {
+
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
 
   @Test(expected = InvalidQueryParameterException.class)
   public void invalidQueryParamMaxLength() throws InvalidQueryParameterException {
@@ -38,7 +43,7 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("first", "first");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "first=first");
+    validator.validateAndAddDefaults(incomingQueryParams, "first=first", false);
   }
 
   @Test
@@ -57,7 +62,7 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("first", "a");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "first=a");
+    validator.validateAndAddDefaults(incomingQueryParams, "first=a", false);
   }
 
   @Test
@@ -82,7 +87,7 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("first", "a");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "first=a");
+    validator.validateAndAddDefaults(incomingQueryParams, "first=a", false);
     assertEquals("a", validator.getQueryParams().get("first"));
     assertEquals("test", validator.getQueryParams().get("second"));
     assertEquals("first=a&second=test", validator.getQueryString());
@@ -110,9 +115,56 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("first", "a");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "first=a");
+    validator.validateAndAddDefaults(incomingQueryParams, "first=a", false);
     assertEquals("a", validator.getQueryParams().get("first"));
     assertEquals("test with spaces", validator.getQueryParams().get("second"));
     assertEquals("first=a&second=test+with+spaces", validator.getQueryString());
   }
+
+  @Test
+  public void sendArrayToANonArrayQueryParam() throws InvalidQueryParameterException {
+    expectedException.expect(InvalidQueryParameterException.class);
+    expectedException.expectMessage(NON_ARRAY_QUERY_PARAM_FAIL_MESSAGE);
+
+    Map<String, QueryParameter> expectedQueryParam = new HashMap<>();
+    QueryParameter queryParam1 = new QueryParameter();
+    queryParam1.setType(ParamType.STRING);
+    queryParam1.setMaxLength(1);
+    expectedQueryParam.put("first", queryParam1);
+
+    Action action = new Action();
+    action.setQueryParameters(expectedQueryParam);
+    ActionImpl actionImpl = new ActionImpl(action);
+
+    MultiMap<String, String> incomingQueryParams = new MultiMap<>();
+    incomingQueryParams.put("first", Arrays.asList("foo", "wow"));
+
+    QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
+    validator.validateAndAddDefaults(incomingQueryParams, "first=foo&first=wow", false);
+  }
+
+  @Test
+  public void validateStrictValidation() throws InvalidQueryParameterException {
+    expectedException.expect(InvalidQueryParameterException.class);
+    expectedException.expectMessage(STRICT_VALIDATION_FAIL_MESSAGE);
+
+    Map<String, QueryParameter> expectedQueryParam = new HashMap<>();
+    QueryParameter queryParam1 = new QueryParameter();
+    queryParam1.setType(ParamType.STRING);
+    queryParam1.setMaxLength(1);
+    expectedQueryParam.put("first", queryParam1);
+
+    Action action = new Action();
+    action.setQueryParameters(expectedQueryParam);
+    ActionImpl actionImpl = new ActionImpl(action);
+
+    MultiMap<String, String> incomingQueryParams = new MultiMap<>();
+    incomingQueryParams.put("second", "b");
+
+    QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
+    validator.validateAndAddDefaults(incomingQueryParams, "second=b", false);
+  }
+
+  private static final String NON_ARRAY_QUERY_PARAM_FAIL_MESSAGE = "Query parameter first is not repeatable";
+  private static final String STRICT_VALIDATION_FAIL_MESSAGE = "second parameters are not defined in RAML.";
 }
