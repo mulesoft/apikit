@@ -8,6 +8,7 @@ package org.mule.module.apikit;
 
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.RoutingTable;
+import org.mule.apikit.common.FlowName;
 import org.mule.module.apikit.exception.NotImplementedException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.api.uri.URIPattern;
@@ -27,8 +28,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.mule.module.apikit.FlowName.FLOW_NAME_SEPARATOR;
-import static org.mule.module.apikit.FlowName.URL_RESOURCE_SEPARATOR;
+import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
+import static org.mule.apikit.common.FlowName.URL_RESOURCE_SEPARATOR;
 
 public class FlowFinder {
 

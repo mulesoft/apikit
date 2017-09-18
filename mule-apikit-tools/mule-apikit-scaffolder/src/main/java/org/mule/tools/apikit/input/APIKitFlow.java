@@ -9,7 +9,8 @@ package org.mule.tools.apikit.input;
 import java.util.Collection;
 import java.util.regex.Matcher;
 
-import org.mule.tools.apikit.model.FlowName;
+import org.mule.apikit.common.FlowName;
+import org.mule.raml.interfaces.common.RamlUtils;
 
 public class APIKitFlow {
 
@@ -46,6 +47,10 @@ public class APIKitFlow {
     final Matcher matcher = FlowName.getMatcher(name);
 
     final String action = FlowName.getAction(matcher);
+    if (!RamlUtils.isValidAction(action)) {
+      throw new IllegalArgumentException(action + " is not a valid action type");
+    }
+
     final String resource = FlowName.getResource(matcher);
 
     final String mimeType = FlowName.getMimeType(matcher, existingConfigs).orElse(null);
