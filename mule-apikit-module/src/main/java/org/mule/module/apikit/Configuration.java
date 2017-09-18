@@ -19,7 +19,6 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.el.ExpressionManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +39,7 @@ import javax.xml.validation.Schema;
 public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
 
   private boolean disableValidations;
+  private boolean muleThreeCompatibility;
   private String name;
   private String raml;
   private boolean keepRamlBaseUri;
@@ -119,6 +119,14 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   public void setDisableValidations(boolean disableValidations) {
     this.disableValidations = disableValidations;
+  }
+
+  public boolean isMuleThreeCompatibility() {
+    return muleThreeCompatibility;
+  }
+
+  public void setMuleThreeCompatibility(boolean muleThreeCompatibility) {
+    this.muleThreeCompatibility = muleThreeCompatibility;
   }
 
   public boolean isKeepRamlBaseUri() {

@@ -6,6 +6,10 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.Sets;
+import com.google.common.net.MediaType;
+import org.mule.module.apikit.HeaderNames;
 import org.mule.module.apikit.api.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.helpers.AttributesHelper;
@@ -14,15 +18,16 @@ import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
-
-import com.google.common.net.MediaType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static com.google.common.collect.Sets.difference;
 
 public class HeadersValidator {
 
@@ -33,43 +38,82 @@ public class HeadersValidator {
 
   public HeadersValidator() {}
 
-  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action)
+  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action, boolean isMuleThreeCompatibility)
       throws InvalidHeaderException, NotAcceptableException {
     this.headers = incomingHeaders;
-    analyseRequestHeaders(action);
+    analyseRequestHeaders(action, isMuleThreeCompatibility);
     analyseAcceptHeader(incomingHeaders, action);
   }
 
-  private void analyseRequestHeaders(IAction action) throws InvalidHeaderException {
+  private void analyseRequestHeaders(IAction action, boolean isMuleThreeCompatibility) throws InvalidHeaderException {
+    if (!isMuleThreeCompatibility) {
+      Set<String> standardHttpHeaders = Sets.newHashSet(HeaderNames.values()).stream()
+          .map(header -> header.getName().toLowerCase()).collect(Collectors.toSet());
+      Set<String> headersDefinedInRAML =
+          action.getHeaders().keySet().stream().map(String::toLowerCase).collect(Collectors.toSet());
+      final Set notDefinedHeaders = difference(headers.keySet().stream().map(String::toLowerCase).collect(Collectors.toSet()),
+                                               Sets.union(standardHttpHeaders, headersDefinedInRAML));
+      if (!notDefinedHeaders.isEmpty()) {
+        throw new InvalidHeaderException(Joiner.on(", ").join(notDefinedHeaders) + " headers are not defined in RAML.");
+      }
+    }
+
     for (String expectedKey : action.getHeaders().keySet()) {
       IParameter expected = action.getHeaders().get(expectedKey);
 
       if (expectedKey.contains("{?}")) {
         String regex = expectedKey.replace("{?}", ".*");
         for (String incoming : headers.keySet()) {
-          String incomingValue = AttributesHelper.getParamIgnoreCase(headers, incoming);
-          if (incoming.matches(regex) && !expected.validate(incomingValue)) {
-            String msg = String.format("Invalid value '%s' for header %s. %s",
-                                       incomingValue, expectedKey, expected.message(incomingValue));
-            throw new InvalidHeaderException(msg);
-          }
+          if (incoming.matches(regex))
+            validateHeader(headers.getAll(incoming), expectedKey, expected, isMuleThreeCompatibility);
         }
       } else {
-        String actual = AttributesHelper.getParamIgnoreCase(headers, expectedKey);
-        if (actual == null && expected.isRequired()) {
+        List<String> actual = headers.getAll(expectedKey);
+        if (actual.isEmpty() && expected.isRequired()) {
           throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
         }
-        if (actual == null && expected.getDefaultValue() != null) {
+        if (actual.isEmpty() && expected.getDefaultValue() != null) {
           headers = AttributesHelper.addParam(headers, expectedKey, expected.getDefaultValue());
         }
-        if (actual != null) {
-          if (!expected.validate(actual)) {
-            String msg = String.format("Invalid value '%s' for header %s. %s",
-                                       actual, expectedKey, expected.message(actual));
-            throw new InvalidHeaderException(msg);
-          }
-        }
+        validateHeader(actual, expectedKey, expected, isMuleThreeCompatibility);
       }
+    }
+  }
+
+  private void validateHeader(List<String> headerValues, String expectedKey, IParameter expectedValue,
+                              boolean isMuleThreeCompatibility)
+      throws InvalidHeaderException {
+    if (headerValues.isEmpty())
+      return;
+
+    if (!isMuleThreeCompatibility && headerValues.size() > 1 && !expectedValue.isArray() && !expectedValue.isRepeat())
+      throw new InvalidHeaderException("Header " + expectedKey + " is not repeatable");
+
+    // raml 1.0 array validation
+    if (expectedValue.isArray()) {
+      validateHeaderArray(headerValues, expectedKey, expectedValue);
+    } else {
+      // single header or repeat
+      for (String value : headerValues)
+        validateHeader(expectedKey, expectedValue, value);
+    }
+  }
+
+  private void validateHeaderArray(List<String> headerValues, String expectedKey, IParameter expectedValue)
+      throws InvalidHeaderException {
+    StringBuilder builder = new StringBuilder();
+    for (String value : headerValues)
+      builder.append("- ").append(value).append("\n");
+
+    validateHeader(expectedKey, expectedValue, builder.toString());
+  }
+
+  private void validateHeader(String paramKey, IParameter expected, String headerValue) throws InvalidHeaderException {
+    if (!expected.validate(headerValue)) {
+      String msg = String.format("Invalid value '%s' for header %s. %s",
+                                 headerValue, paramKey, expected.message(headerValue));
+
+      throw new InvalidHeaderException(msg);
     }
   }
 
