@@ -31,7 +31,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.v2.api.loader.RootRamlResourceLoader;
+import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 
 public class RAMLFilesParser
 {
@@ -138,7 +138,7 @@ public class RAMLFilesParser
 
     private ResourceLoader getResourceLoader(String filePath)
     {
-        return new CompositeResourceLoader(new RootRamlResourceLoader(new File(filePath)), new DefaultResourceLoader());
+        return new CompositeResourceLoader(new RootRamlFileResourceLoader(new File(filePath)), new DefaultResourceLoader());
     }
 
     void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version)
