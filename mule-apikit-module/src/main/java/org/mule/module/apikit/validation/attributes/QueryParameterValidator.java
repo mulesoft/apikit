@@ -32,13 +32,8 @@ public class QueryParameterValidator {
   public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString, boolean isMuleThreeCompatibility)
       throws InvalidQueryParameterException {
 
-    if (!isMuleThreeCompatibility) {
-      final Set notDefinedQueryParameters = difference(queryParams.keySet(), action.getQueryParameters().keySet());
-      if (!notDefinedQueryParameters.isEmpty()) {
-        throw new InvalidQueryParameterException(Joiner.on(", ").join(notDefinedQueryParameters)
-            + " parameters are not defined in RAML.");
-      }
-    }
+    if (!isMuleThreeCompatibility)
+      validateQueryParametersStrictly(queryParams);
 
     for (String expectedKey : action.getQueryParameters().keySet()) {
       IParameter expected = action.getQueryParameters().get(expectedKey);
@@ -76,6 +71,14 @@ public class QueryParameterValidator {
 
     this.queryParams = queryParams;
     this.queryString = queryString;
+  }
+
+  private void validateQueryParametersStrictly(MultiMap<String, String> queryParams) throws InvalidQueryParameterException {
+    //check that query parameters are defined in the RAML
+    final Set notDefinedQueryParameters = difference(queryParams.keySet(), action.getQueryParameters().keySet());
+    if (!notDefinedQueryParameters.isEmpty())
+      throw new InvalidQueryParameterException(Joiner.on(", ").join(notDefinedQueryParameters)
+          + " parameters are not defined in RAML.");
   }
 
   public MultiMap<String, String> getQueryParams() {
