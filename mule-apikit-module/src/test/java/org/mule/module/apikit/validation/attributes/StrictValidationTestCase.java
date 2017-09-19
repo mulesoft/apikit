@@ -42,16 +42,16 @@ public class StrictValidationTestCase extends MuleArtifactFunctionalTestCase {
   @Test
   public void failWhenSendingNonDefinedHeader() throws Exception {
     given().header("header2", "value")
-            .expect()
-            .statusCode(404)
-            .when().get("/resources");
+        .expect()
+        .statusCode(404)
+        .when().get("/resources");
   }
 
   @Test
   public void sucessWhenSendingDefinedHeader() throws Exception {
     given().header("header1", "value")
-            .expect()
-            .statusCode(404)
-            .when().get("/resources");
+        .expect()
+        .statusCode(404)
+        .when().get("/resources");
   }
 }
