@@ -6,72 +6,45 @@
  */
 package org.mule.module.apikit.helpers;
 
-import static org.mule.module.apikit.CharsetUtils.trimBom;
-
-import org.mule.module.apikit.ApikitErrorTypes;
+import org.apache.commons.io.IOUtils;
 import org.mule.module.apikit.api.exception.BadRequestException;
-import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.mule.module.apikit.CharsetUtils.trimBom;
 
 
 public class PayloadHelper {
 
   protected static final Logger logger = LoggerFactory.getLogger(PayloadHelper.class);
 
-  public static String getPayloadAsString(Object input, String charset, boolean trimBom) throws BadRequestException {
-    if (input instanceof CursorStreamProvider) {
-      try {
-        return IOUtils.toString(((CursorStreamProvider) input).openCursor());
-      } catch (IOException e) {
-        throw new BadRequestException("Error processing request: " + e.getMessage());
-      }
+  public static String getPayloadAsString(Object input, String charset) throws BadRequestException {
+    final byte[] bytes;
+
+    try {
+
+      if (input instanceof CursorStreamProvider)
+        bytes = IOUtils.toByteArray(((CursorStreamProvider) input).openCursor());
+      else if (input instanceof InputStream)
+        bytes = IOUtils.toByteArray((InputStream) input);
+      else if (input instanceof String)
+        bytes = ((String) input).getBytes();
+      else if (input instanceof byte[])
+        bytes = (byte[]) input;
+      else if (input != null)
+        throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
+      else
+        throw new BadRequestException("Don't know how to parse payload");
+
+      return IOUtils.toString(trimBom(bytes), charset);
+
+    } catch (IOException e) {
+      throw new BadRequestException("Error processing request: " + e.getMessage());
     }
-
-    if (input instanceof InputStream) {
-      logger.debug("transforming payload to perform Schema validation");
-      RewindableInputStream rewindableInputStream = new RewindableInputStream((InputStream) input);
-      try {
-        input = IOUtils.toString(rewindableInputStream);
-      } catch (IOException e) {
-        throw new BadRequestException("Error processing request: " + e.getMessage());
-      }
-      rewindableInputStream.rewind();
-
-    } else if (input instanceof byte[]) {
-      try {
-        input = byteArrayToString((byte[]) input, charset, trimBom);
-      } catch (IOException e) {
-        throw new BadRequestException("Error processing request: " + e.getMessage());
-      }
-    } else if (input instanceof String) {
-      // already in the right format
-    } else {
-      String errorMessage = "Don't know how to parse payload";
-      if (input != null) {
-        errorMessage = "Don't know how to parse " + input.getClass().getName();
-      }
-      throw new BadRequestException(errorMessage);
-
-    }
-    return (String) input;
-  }
-
-  private static String byteArrayToString(byte[] bytes, String charset, boolean trimBom) throws IOException {
-    String result;
-    if (trimBom) {
-      result = IOUtils.toString(new ByteArrayInputStream(trimBom(bytes)), charset);
-    } else {
-      result = IOUtils.toString(bytes, charset);
-    }
-    return result;
   }
 
 }

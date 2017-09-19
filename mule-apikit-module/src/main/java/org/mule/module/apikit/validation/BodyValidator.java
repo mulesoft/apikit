@@ -115,7 +115,7 @@ public class BodyValidator {
     }
 
 
-    String strPayload = PayloadHelper.getPayloadAsString(payload, charset, requestMimeTypeName.contains("json"));
+    String strPayload = PayloadHelper.getPayloadAsString(payload, charset);
 
     schemaValidator.validate(strPayload);
 

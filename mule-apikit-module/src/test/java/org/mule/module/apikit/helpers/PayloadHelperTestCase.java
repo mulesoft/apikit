@@ -22,14 +22,14 @@ public class PayloadHelperTestCase {
   public void validStreamPayload() throws TypedException, BadRequestException {
     InputStream is = new ByteArrayInputStream("{ \"name\": \"Major League Soccer\" }".getBytes());
 
-    assertEquals("{ \"name\": \"Major League Soccer\" }", PayloadHelper.getPayloadAsString(is, "UTF-8", true));
+    assertEquals("{ \"name\": \"Major League Soccer\" }", PayloadHelper.getPayloadAsString(is, "UTF-8"));
   }
 
   @Test
   public void validStringPayload() throws TypedException, BadRequestException {
     String payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
 
-    assertEquals(payload, PayloadHelper.getPayloadAsString(payload, "UTF-8", true));
+    assertEquals(payload, PayloadHelper.getPayloadAsString(payload, "UTF-8"));
   }
 
   @Test
@@ -37,10 +37,10 @@ public class PayloadHelperTestCase {
     String payloadString = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
 
     InputStream payloadStream = new ByteArrayInputStream(payloadString.getBytes(StandardCharsets.UTF_8));
-    assertEquals(payloadString, PayloadHelper.getPayloadAsString(payloadStream, "UTF-8", true));
+    assertEquals(payloadString, PayloadHelper.getPayloadAsString(payloadStream, "UTF-8"));
     //re-reading payload to check if it was consumed
     payloadStream = new ByteArrayInputStream(payloadString.getBytes(StandardCharsets.UTF_8));
-    assertEquals(payloadString, PayloadHelper.getPayloadAsString(payloadStream, "UTF-8", true));
+    assertEquals(payloadString, PayloadHelper.getPayloadAsString(payloadStream, "UTF-8"));
   }
 
   @Test
@@ -48,13 +48,21 @@ public class PayloadHelperTestCase {
     byte[] payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>".getBytes();
 
     assertEquals("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>",
-                 PayloadHelper.getPayloadAsString(payload, "UTF-8", true));
+                 PayloadHelper.getPayloadAsString(payload, "UTF-8"));
   }
 
   @Test(expected = BadRequestException.class)
   public void nullPayload() throws TypedException, BadRequestException {
 
-    PayloadHelper.getPayloadAsString(null, "UTF-8", true);
+    PayloadHelper.getPayloadAsString(null, "UTF-8");
 
+  }
+
+  @Test
+  public void validStreamPayloadWithBOM() throws TypedException, BadRequestException {
+    final String utf8BOM = "\uFEFF";
+    final String payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><greeting>hello</greeting></league>";
+
+    assertEquals(payload, PayloadHelper.getPayloadAsString(utf8BOM + payload, "UTF-8"));
   }
 }
