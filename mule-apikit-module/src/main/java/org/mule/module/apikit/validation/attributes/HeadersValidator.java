@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation.attributes;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import com.google.common.net.MediaType;
 import org.mule.module.apikit.HeaderNames;
@@ -51,9 +52,17 @@ public class HeadersValidator {
           .map(header -> header.getName().toLowerCase()).collect(Collectors.toSet());
       Set<String> headersDefinedInRAML =
           action.getHeaders().keySet().stream().map(String::toLowerCase).collect(Collectors.toSet());
-      final Set notDefinedHeaders = difference(headers.keySet().stream().map(String::toLowerCase).collect(Collectors.toSet()),
-                                               Sets.union(standardHttpHeaders, headersDefinedInRAML));
-      if (!notDefinedHeaders.isEmpty()) {
+      final Set<String> notDefinedHeaders =
+          difference(headers.keySet().stream().map(String::toLowerCase).collect(Collectors.toSet()),
+                     Sets.union(standardHttpHeaders, headersDefinedInRAML));
+      final Set<String> collect = headersDefinedInRAML.stream().filter(header -> header.contains("{?}"))
+          .map(header -> header.replace("{?}", ".*")).collect(Collectors.toSet());
+
+      Predicate<String> allCaps = string -> collect.stream().noneMatch(string::matches);
+
+
+      final Set<String> notDefinedHeaders1 = Sets.filter(notDefinedHeaders, allCaps);
+      if (!notDefinedHeaders1.isEmpty()) {
         throw new InvalidHeaderException(Joiner.on(", ").join(notDefinedHeaders) + " headers are not defined in RAML.");
       }
     }
@@ -68,7 +77,7 @@ public class HeadersValidator {
             validateHeader(headers.getAll(incoming), expectedKey, expected, isMuleThreeCompatibility);
         }
       } else {
-        List<String> actual = headers.getAll(expectedKey);
+        List<String> actual = AttributesHelper.getParamsIgnoreCase(headers, expectedKey);
         if (actual.isEmpty() && expected.isRequired()) {
           throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
         }

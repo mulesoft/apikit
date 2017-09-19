@@ -33,12 +33,20 @@ title: Parameters API
         minimum: 1
         maximum: 5
     get:
+      headers:
+        one:
+      queryParameters:
+        first:
 
     /{id2}:
       uriParameters:
         id2:
           enum: [one, two, three]
       get:
+        headers:
+          one:
+        queryParameters:
+          first:
 
 /repeat:
     get:
