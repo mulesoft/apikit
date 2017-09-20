@@ -7,7 +7,7 @@
 package org.mule.module.apikit.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.Configuration;
+import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.helpers.AttributesHelper;
@@ -21,7 +21,7 @@ import org.mule.runtime.core.api.DefaultMuleException;
 public class AttributesValidator {
 
   public static HttpRequestAttributes validateAndAddDefaults(HttpRequestAttributes attributes, IResource resource,
-                                                             ResolvedVariables resolvedVariables, Configuration config)
+                                                             ResolvedVariables resolvedVariables, ValidationConfig config)
       throws MuleRestException, DefaultMuleException {
 
     MultiMap<String, String> headers;

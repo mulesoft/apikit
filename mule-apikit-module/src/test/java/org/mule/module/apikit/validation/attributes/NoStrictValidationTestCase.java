@@ -16,8 +16,9 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import static com.jayway.restassured.RestAssured.given;
 
 @ArtifactClassLoaderRunnerConfig
-public class StrictValidationTestCase extends MuleArtifactFunctionalTestCase {
+public class NoStrictValidationTestCase extends MuleArtifactFunctionalTestCase {
 
+  //muleThreeCompatibility = true
   @Rule
   public DynamicPort serverPort = new DynamicPort("serverPort");
 
@@ -34,38 +35,23 @@ public class StrictValidationTestCase extends MuleArtifactFunctionalTestCase {
 
   @Override
   protected String getConfigResources() {
-    return "org/mule/module/apikit/validation/strict-validation/strict-validation-config.xml";
+    return "org/mule/module/apikit/validation/strict-validation/no-strict-validation-config.xml";
   }
 
   @Test
-  public void failWhenSendingNonDefinedQueryParam() throws Exception {
-    given().queryParam("param2", "value")
-        .expect()
-        .statusCode(400)
-        .when().get("api/resource");
-  }
-
-  @Test
-  public void successWhenSendingDefinedQueryParam() throws Exception {
-    given().queryParam("param1", "value")
+  public void successWhenSendingNonDefinedQueryParam() throws Exception {
+    given().queryParam("noDefinedParam", "value")
         .expect()
         .statusCode(200)
         .when().get("api/resource");
   }
 
   @Test
-  public void failWhenSendingNonDefinedHeader() throws Exception {
-    given().header("header2", "value")
-        .expect()
-        .statusCode(400)
-        .when().get("api/resource");
-  }
-
-  @Test
-  public void successWhenSendingDefinedHeader() throws Exception {
-    given().header("header1", "value")
+  public void successWhenSendingNonDefinedHeader() throws Exception {
+    given().header("noDefinedHeader", "value")
         .expect()
         .statusCode(200)
         .when().get("api/resource");
   }
+
 }

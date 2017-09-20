@@ -9,6 +9,7 @@ package org.mule.module.apikit;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.UrlUtils;
+import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
@@ -157,7 +158,7 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
     this.name = name;
   }
 
-  public InternalEvent.Builder validateRequest(InternalEvent event, InternalEvent.Builder eventbuilder, Configuration config,
+  public InternalEvent.Builder validateRequest(InternalEvent event, InternalEvent.Builder eventBuilder, ValidationConfig config,
                                                IResource resource, HttpRequestAttributes attributes,
                                                ResolvedVariables resolvedVariables)
       throws DefaultMuleException, MuleRestException {
@@ -172,7 +173,7 @@ public class Router extends AbstractAnnotatedObject implements Processor, Initia
     ValidRequest validRequest =
         RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload(), charset);
 
-    return EventHelper.regenerateEvent(event.getMessage(), eventbuilder, validRequest);
+    return EventHelper.regenerateEvent(event.getMessage(), eventBuilder, validRequest);
   }
 
   private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException {
