@@ -8,12 +8,6 @@ package org.mule.module.apikit;
 
 //import org.mule.module.apikit.exception.NotFoundException;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Inject;
-import javax.xml.validation.Schema;
-
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -32,14 +26,19 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.config.MuleProperties;
 import org.mule.runtime.core.api.el.ExpressionManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.inject.Inject;
+import javax.xml.validation.Schema;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 
 public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
 
   private boolean disableValidations;
+  private boolean muleThreeCompatibility;
   private String name;
   private String raml;
   private boolean keepRamlBaseUri;
@@ -123,6 +122,15 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   public void setDisableValidations(boolean disableValidations) {
     this.disableValidations = disableValidations;
+  }
+
+  @Override
+  public boolean isMuleThreeCompatibility() {
+    return muleThreeCompatibility;
+  }
+
+  public void setMuleThreeCompatibility(boolean muleThreeCompatibility) {
+    this.muleThreeCompatibility = muleThreeCompatibility;
   }
 
   public boolean isKeepRamlBaseUri() {

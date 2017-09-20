@@ -7,9 +7,10 @@
 package org.mule.module.apikit.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.MuleRestException;
-import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
+import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.validation.attributes.HeadersValidator;
 import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
 import org.mule.module.apikit.validation.attributes.UriParametersValidator;
@@ -20,7 +21,7 @@ import org.mule.runtime.core.api.DefaultMuleException;
 public class AttributesValidator {
 
   public static HttpRequestAttributes validateAndAddDefaults(HttpRequestAttributes attributes, IResource resource,
-                                                             ResolvedVariables resolvedVariables)
+                                                             ResolvedVariables resolvedVariables, ValidationConfig config)
       throws MuleRestException, DefaultMuleException {
 
     MultiMap<String, String> headers;
@@ -35,13 +36,15 @@ public class AttributesValidator {
     // queryparams
     QueryParameterValidator queryParamValidator =
         new QueryParameterValidator(resource.getAction(attributes.getMethod().toLowerCase()));
-    queryParamValidator.validateAndAddDefaults(attributes.getQueryParams(), attributes.getQueryString());
+    queryParamValidator.validateAndAddDefaults(attributes.getQueryParams(), attributes.getQueryString(),
+                                               config.isMuleThreeCompatibility());
     queryParams = queryParamValidator.getQueryParams();
     queryString = queryParamValidator.getQueryString();
 
     // headers
     HeadersValidator headersValidator = new HeadersValidator();
-    headersValidator.validateAndAddDefaults(attributes.getHeaders(), resource.getAction(attributes.getMethod().toLowerCase()));
+    headersValidator.validateAndAddDefaults(attributes.getHeaders(), resource.getAction(attributes.getMethod().toLowerCase()),
+                                            config.isMuleThreeCompatibility());
     headers = headersValidator.getNewHeaders();
 
     // regenerate attributes
