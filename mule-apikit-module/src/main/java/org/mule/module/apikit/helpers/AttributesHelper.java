@@ -7,7 +7,6 @@
 package org.mule.module.apikit.helpers;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.HeaderNames;
 import org.mule.runtime.api.util.MultiMap;
@@ -17,6 +16,8 @@ import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.emptyList;
 
 public class AttributesHelper {
 
@@ -79,12 +80,11 @@ public class AttributesHelper {
   }
 
   public static List<String> getParamsIgnoreCase(MultiMap<String, String> parameters, String name) {
-    final List<String> result = Lists.newArrayList();
-    for (String header : parameters.keySet()) {
-      if (header.equalsIgnoreCase(name.toLowerCase()))
-        result.addAll(parameters.getAll(header));
-    }
-    return result;
+    return parameters.keySet().stream()
+        .map(String::toLowerCase)
+        .filter(header -> header.equalsIgnoreCase(name))
+        .findFirst().map(parameters::getAll)
+        .orElse(emptyList());
   }
 
   public static String getMediaType(HttpRequestAttributes attributes) {

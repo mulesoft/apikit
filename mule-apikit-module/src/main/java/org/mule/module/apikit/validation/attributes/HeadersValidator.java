@@ -25,9 +25,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
-import static com.google.common.collect.Sets.*;
+import static com.google.common.collect.Sets.difference;
+import static com.google.common.collect.Sets.filter;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.union;
+import static java.util.stream.Collectors.toSet;
+
 
 public class HeadersValidator {
 
@@ -74,13 +78,13 @@ public class HeadersValidator {
   private void validateHeadersStrictly(IAction action) throws InvalidHeaderException {
     //checks that headers are defined in the RAML
     final Set<String> headersDefinedInRAML =
-        action.getHeaders().keySet().stream().map(String::toLowerCase).collect(Collectors.toSet());
+        action.getHeaders().keySet().stream().map(String::toLowerCase).collect(toSet());
 
     final Set<String> standardHttpHeaders = newHashSet(HeaderNames.values()).stream()
-        .map(header -> header.getName().toLowerCase()).collect(Collectors.toSet());
+        .map(header -> header.getName().toLowerCase()).collect(toSet());
 
     final Set<String> headersWithPlaceholder = headersDefinedInRAML.stream().filter(header -> header.contains("{?}"))
-        .map(header -> header.replace("{?}", ".*")).collect(Collectors.toSet());
+        .map(header -> header.replace("{?}", ".*")).collect(toSet());
     final Predicate<String> noRegexMatch = header -> headersWithPlaceholder.stream().noneMatch(header::matches);
     final Set<String> placeholderHeadersRemoved = filter(headers.keySet(), noRegexMatch::test);
 

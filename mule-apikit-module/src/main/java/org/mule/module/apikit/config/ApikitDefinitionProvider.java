@@ -17,7 +17,9 @@ import org.mule.runtime.dsl.api.component.ComponentBuildingDefinitionProvider;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.*;
+import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromChildCollectionConfiguration;
+import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromChildConfiguration;
+import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromSimpleParameter;
 import static org.mule.runtime.dsl.api.component.TypeDefinition.fromType;
 
 public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProvider {
