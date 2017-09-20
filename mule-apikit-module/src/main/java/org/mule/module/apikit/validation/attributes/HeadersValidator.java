@@ -80,13 +80,13 @@ public class HeadersValidator {
     final Set<String> headersDefinedInRAML =
         action.getHeaders().keySet().stream().map(String::toLowerCase).collect(toSet());
 
-    final Set<String> standardHttpHeaders = newHashSet(HeaderNames.values()).stream()
-        .map(header -> header.getName().toLowerCase()).collect(toSet());
-
     final Set<String> headersWithPlaceholder = headersDefinedInRAML.stream().filter(header -> header.contains("{?}"))
         .map(header -> header.replace("{?}", ".*")).collect(toSet());
     final Predicate<String> noRegexMatch = header -> headersWithPlaceholder.stream().noneMatch(header::matches);
     final Set<String> placeholderHeadersRemoved = filter(headers.keySet(), noRegexMatch::test);
+
+    final Set<String> standardHttpHeaders = newHashSet(HeaderNames.values()).stream()
+        .map(header -> header.getName().toLowerCase()).collect(toSet());
 
     final Set<String> notDefinedHeaders = difference(placeholderHeadersRemoved, union(headersDefinedInRAML, standardHttpHeaders));
     if (!notDefinedHeaders.isEmpty())
