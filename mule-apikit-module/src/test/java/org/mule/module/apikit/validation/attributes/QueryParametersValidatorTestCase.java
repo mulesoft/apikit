@@ -122,7 +122,7 @@ public class QueryParametersValidatorTestCase {
   }
 
   @Test
-  public void sendArrayToANonArrayQueryParam() throws InvalidQueryParameterException {
+  public void failWhenSendingArrayToANonArrayQueryParam() throws InvalidQueryParameterException {
     expectedException.expect(InvalidQueryParameterException.class);
     expectedException.expectMessage(NON_ARRAY_QUERY_PARAM_FAIL_MESSAGE);
 
@@ -144,7 +144,7 @@ public class QueryParametersValidatorTestCase {
   }
 
   @Test
-  public void validateStrictValidation() throws InvalidQueryParameterException {
+  public void failWhenSendingNonDefinedQueryParam() throws InvalidQueryParameterException {
     expectedException.expect(InvalidQueryParameterException.class);
     expectedException.expectMessage(STRICT_VALIDATION_FAIL_MESSAGE);
 

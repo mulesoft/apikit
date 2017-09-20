@@ -190,7 +190,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     this.name = name;
   }
 
-  public BaseEvent.Builder validateRequest(BaseEvent event, BaseEvent.Builder eventbuilder, ValidationConfig config,
+  public BaseEvent.Builder validateRequest(BaseEvent event, BaseEvent.Builder eventBuilder, ValidationConfig config,
                                            IResource resource, HttpRequestAttributes attributes,
                                            ResolvedVariables resolvedVariables)
       throws DefaultMuleException, MuleRestException {
@@ -205,7 +205,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     ValidRequest validRequest =
         RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload(), charset);
 
-    return EventHelper.regenerateEvent(event.getMessage(), eventbuilder, validRequest);
+    return EventHelper.regenerateEvent(event.getMessage(), eventBuilder, validRequest);
   }
 
   private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException {

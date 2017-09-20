@@ -73,7 +73,8 @@ public class HeadersValidator {
 
   private void validateHeadersStrictly(IAction action) throws InvalidHeaderException {
     //checks that headers are defined in the RAML
-    final Set<String> headersDefinedInRAML = action.getHeaders().keySet().stream().map(String::toLowerCase).collect(Collectors.toSet());
+    final Set<String> headersDefinedInRAML =
+        action.getHeaders().keySet().stream().map(String::toLowerCase).collect(Collectors.toSet());
 
     final Set<String> standardHttpHeaders = newHashSet(HeaderNames.values()).stream()
         .map(header -> header.getName().toLowerCase()).collect(Collectors.toSet());
