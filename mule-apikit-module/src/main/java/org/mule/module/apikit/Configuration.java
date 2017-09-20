@@ -6,18 +6,6 @@
  */
 package org.mule.module.apikit;
 
-//import org.mule.module.apikit.exception.NotFoundException;
-
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import javax.inject.Inject;
-import javax.xml.validation.Schema;
-
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.config.ConsoleConfig;
 import org.mule.module.apikit.api.config.ValidationConfig;
@@ -30,11 +18,23 @@ import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
-import org.mule.runtime.core.api.config.MuleProperties;
 import org.mule.runtime.core.api.el.ExpressionManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
+//import org.mule.module.apikit.exception.NotFoundException;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
+import javax.xml.validation.Schema;
 
 
 public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
@@ -78,6 +78,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private ConfigurationComponentLocator locator;
 
 
+  @Override
   public void initialise() throws InitialisationException {
     try {
       ramlHandler = new RamlHandler(raml, keepRamlBaseUri);
@@ -93,11 +94,6 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   @Deprecated //TODO USE NEW API
   public String getApiServer() {
     return "http://localhost:8081";
-  }
-
-  @Deprecated //TODO use new service
-  public String getAppHome() {
-    return muleContext.getRegistry().get(MuleProperties.APP_HOME_DIRECTORY_PROPERTY);
   }
 
   //config properties
@@ -170,6 +166,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
         .build(
                new CacheLoader<String, URIResolver>() {
 
+                 @Override
                  public URIResolver load(String path) throws IOException {
                    return new URIResolver(path);
                  }
@@ -180,6 +177,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
         .build(
                new CacheLoader<String, URIPattern>() {
 
+                 @Override
                  public URIPattern load(String path) throws Exception {
                    URIResolver resolver = uriResolverCache.get(path);
                    URIPattern match = flowFinder.findBestMatch(resolver);
@@ -232,6 +230,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     this.ramlHandler = ramlHandler; //TODO REPLACE WITH REFLECTION
   }
 
+  @Override
   public RamlHandler getRamlHandler() {
     return this.ramlHandler;
   }
