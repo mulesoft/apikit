@@ -6,19 +6,20 @@
  */
 package org.mule.module.apikit.api;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
-import org.apache.commons.io.IOUtils;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.StreamUtils;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.parser.ParserService;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
-import org.mule.runtime.core.api.exception.TypedException;
+import org.mule.runtime.api.exception.TypedException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+import org.apache.commons.io.IOUtils;
 import org.raml.model.ActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

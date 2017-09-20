@@ -6,11 +6,7 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Mockito;
+import static org.mockito.Mockito.when;
 import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.exception.BadRequestException;
@@ -20,14 +16,19 @@ import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
-import org.mule.runtime.core.api.exception.TypedException;
+import org.mule.runtime.api.exception.TypedException;
 
-import javax.xml.validation.Schema;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import static org.mockito.Mockito.when;
+import javax.xml.validation.Schema;
+
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 public class RestJsonSchemaValidatorTestCase {
 

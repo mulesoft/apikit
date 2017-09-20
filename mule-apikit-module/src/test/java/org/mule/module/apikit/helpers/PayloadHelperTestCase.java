@@ -7,14 +7,14 @@
 package org.mule.module.apikit.helpers;
 
 import static org.junit.Assert.assertEquals;
+import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.runtime.api.exception.TypedException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import org.junit.Test;
-import org.mule.module.apikit.api.exception.BadRequestException;
-import org.mule.runtime.core.api.exception.TypedException;
 
 public class PayloadHelperTestCase {
 
