@@ -81,7 +81,6 @@ public class AttributesHelper {
 
   public static List<String> getParamsIgnoreCase(MultiMap<String, String> parameters, String name) {
     return parameters.keySet().stream()
-        .map(String::toLowerCase)
         .filter(header -> header.equalsIgnoreCase(name))
         .findFirst().map(parameters::getAll)
         .orElse(emptyList());
