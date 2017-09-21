@@ -14,8 +14,8 @@ import org.mule.module.apikit.validation.attributes.HeadersValidator;
 import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
 import org.mule.module.apikit.validation.attributes.UriParametersValidator;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.core.api.DefaultMuleException;
 
 public class AttributesValidator {
 

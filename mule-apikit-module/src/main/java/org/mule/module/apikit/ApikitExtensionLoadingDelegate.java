@@ -33,7 +33,6 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
   public static final String EXTENSION_DESCRIPTION = "APIKit plugin";
   public static final String VENDOR = "Mulesoft";
   public static final String VERSION = "1.0.0-SNAPSHOT";
-  public static final MuleVersion MIN_MULE_VERSION = new MuleVersion("4.0");
   public static final String XSD_FILE_NAME = "mule-apikit.xsd";
   private static final String UNESCAPED_LOCATION_PREFIX = "http://";
   private static final String SCHEMA_LOCATION = "www.mulesoft.org/schema/mule/mule-apikit";
@@ -70,7 +69,6 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
         .fromVendor(VENDOR)
         .onVersion(VERSION)
         .withCategory(COMMUNITY)
-        .withMinMuleVersion(MIN_MULE_VERSION)
         .withXmlDsl(xmlDslModel)
         .withErrorModel(badRequestErrorModel)
         .withErrorModel(apikitAnyErrorType)

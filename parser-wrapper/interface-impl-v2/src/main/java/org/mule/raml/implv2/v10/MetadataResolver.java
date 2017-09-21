@@ -9,7 +9,7 @@ package org.mule.raml.implv2.v10;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
-import org.mule.metadata.json.JsonTypeLoader;
+import org.mule.metadata.json.api.JsonTypeLoader;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 
 import java.util.Optional;

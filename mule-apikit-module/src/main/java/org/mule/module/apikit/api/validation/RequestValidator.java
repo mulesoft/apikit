@@ -13,8 +13,7 @@ import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.validation.AttributesValidator;
 import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
-import org.mule.runtime.core.api.DefaultMuleException;
-import org.mule.runtime.core.api.el.ExpressionManager;
+import org.mule.runtime.api.exception.DefaultMuleException;
 
 public class RequestValidator {
 

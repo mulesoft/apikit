@@ -21,9 +21,9 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.mule.tools.apikit.model.FlowName;
+import org.mule.apikit.common.FlowName;
 
-import static org.mule.tools.apikit.model.FlowName.FLOW_NAME_SEPARATOR;
+import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
 
 public class GenerationModel implements Comparable<GenerationModel> {
 

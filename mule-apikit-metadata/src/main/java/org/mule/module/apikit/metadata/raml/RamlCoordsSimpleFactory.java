@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.metadata.raml;
 
-import org.mule.module.apikit.metadata.FlowName;
+import org.mule.apikit.common.FlowName;
 import org.mule.module.apikit.metadata.model.FlowMapping;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Optional.empty;
-import static org.mule.module.apikit.metadata.FlowName.FLOW_NAME_SEPARATOR;
+import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
 
 public class RamlCoordsSimpleFactory {
 

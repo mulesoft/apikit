@@ -11,7 +11,7 @@ import org.mule.module.apikit.api.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.raml.implv1.model.ActionImpl;
 import org.mule.runtime.api.util.MultiMap;
-import org.mule.runtime.core.api.exception.TypedException;
+import org.mule.runtime.api.exception.TypedException;
 
 import java.util.ArrayList;
 import java.util.HashMap;

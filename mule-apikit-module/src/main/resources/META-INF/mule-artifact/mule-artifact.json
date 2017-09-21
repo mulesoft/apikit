@@ -1,6 +1,7 @@
 {
   "name":"APIKit",
   "minMuleVersion":"4.0.0",
+  "requiredProduct":"MULE",
   "bundleDescriptorLoader": {
     "id": "mule",
     "attributes": {
