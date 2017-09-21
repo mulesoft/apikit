@@ -6,15 +6,18 @@
  */
 package org.mule.module.apikit.helpers;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.LinkedList;
-import java.util.Map;
-
 import com.google.common.base.Strings;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.HeaderNames;
 import org.mule.runtime.api.util.MultiMap;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.Collections.emptyList;
 
 public class AttributesHelper {
 
@@ -76,8 +79,15 @@ public class AttributesHelper {
     return null;
   }
 
+  public static List<String> getParamsIgnoreCase(MultiMap<String, String> parameters, String name) {
+    return parameters.keySet().stream()
+        .filter(header -> header.equalsIgnoreCase(name))
+        .findFirst().map(parameters::getAll)
+        .orElse(emptyList());
+  }
+
   public static String getMediaType(HttpRequestAttributes attributes) {
-    String contentType = getHeaderIgnoreCase(attributes, HeaderNames.CONTENT_TYPE);
+    String contentType = getHeaderIgnoreCase(attributes, HeaderNames.CONTENT_TYPE.getName());
     return contentType != null ? contentType.split(";")[0] : null;
   }
 

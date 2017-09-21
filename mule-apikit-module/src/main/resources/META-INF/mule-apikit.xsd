@@ -13,6 +13,7 @@
     <xsd:annotation>
         <xsd:documentation>
             APIkit is a Mule module for building ReST API's
+            APIkit is a Mule module for building ReST API's
         </xsd:documentation>
         <xsd:appinfo>
             <schemadoc:short-name>APIkit</schemadoc:short-name>
@@ -57,6 +58,13 @@
                         <xsd:documentation>
                             Do no perform validation of uri parameters, headers, query parameters and body schemas.
                             Default values are not enforced by the server.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+                <xsd:attribute name="muleThreeCompatibility" type="mule:substitutableBoolean" default="false" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Do not perform strict validation of uri headers and query parameters, and allow arrays values on non array types headers.
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
