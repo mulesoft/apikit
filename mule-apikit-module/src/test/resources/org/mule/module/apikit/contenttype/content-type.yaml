@@ -3,6 +3,9 @@
 title: Parameters API
 /resources:
   get:
+    headers:
+        ctype:
+            type: string
     responses:
         200:
             body:
@@ -10,6 +13,9 @@ title: Parameters API
                 text/xml: !!null
 /multitype:
   get:
+    headers:
+        ctype:
+            type: string
     responses:
         200:
             body:
@@ -19,6 +25,9 @@ title: Parameters API
 
 /multistatus:
   get:
+    headers:
+        ctype:
+            type: string
     responses:
         200:
             body:
