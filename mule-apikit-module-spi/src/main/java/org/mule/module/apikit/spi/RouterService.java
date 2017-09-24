@@ -7,7 +7,7 @@
 package org.mule.module.apikit.spi;
 
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.core.api.event.BaseEvent;
+import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.processor.Processor;
 
 /**
@@ -21,7 +21,7 @@ public interface RouterService {
    * @param event
    * @return
    */
-  BaseEvent processBlockingRequest(BaseEvent event, Processor router) throws MuleException;
+  CoreEvent processBlockingRequest(CoreEvent event, Processor router) throws MuleException;
 
   /**
    * Returns true if the path of the HTTP request matches a predefined condition
@@ -29,6 +29,6 @@ public interface RouterService {
    * @param event
    * @return
    */
-  boolean isExecutable(BaseEvent event);
+  boolean isExecutable(CoreEvent event);
 
 }
