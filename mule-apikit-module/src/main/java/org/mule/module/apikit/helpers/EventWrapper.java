@@ -14,22 +14,22 @@ import java.util.Map;
 import org.mule.extension.http.api.HttpHeaders;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.metadata.MediaType;
-import org.mule.runtime.core.api.event.BaseEvent;
+import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.http.api.HttpConstants;
 
 public class EventWrapper {
 
-  private BaseEvent inputEvent;
-  private BaseEvent.Builder outputBuilder;
+  private CoreEvent inputEvent;
+  private CoreEvent.Builder outputBuilder;
   private HashMap<String, String> outboundHeaders = new HashMap<>();
   private String httpStatus;
   private String outboundHeadersMapName;
   private String httpStatusVarName;
 
 
-  public EventWrapper(BaseEvent input, String outboundHeadersMapName, String httpStatusVarName) {
+  public EventWrapper(CoreEvent input, String outboundHeadersMapName, String httpStatusVarName) {
     inputEvent = input;
-    outputBuilder = BaseEvent.builder(input);
+    outputBuilder = CoreEvent.builder(input);
     this.outboundHeadersMapName = outboundHeadersMapName;
     this.httpStatusVarName = httpStatusVarName;
     httpStatus = String.valueOf(HttpConstants.HttpStatus.OK.getStatusCode());
@@ -39,7 +39,7 @@ public class EventWrapper {
     outboundHeaders.putAll(headers);
   }
 
-  public BaseEvent build() {
+  public CoreEvent build() {
     outputBuilder.addVariable(httpStatusVarName, httpStatus);
     outputBuilder.addVariable(outboundHeadersMapName, outboundHeaders);
     return outputBuilder.build();
