@@ -38,7 +38,7 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.core.api.construct.Flow;
-import org.mule.runtime.core.api.event.BaseEvent;
+import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.event.BaseEventContext;
 import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.runtime.api.exception.TypedException;
@@ -94,10 +94,10 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   }
 
   @Override
-  public BaseEvent process(final BaseEvent event) throws MuleException {
+  public CoreEvent process(final CoreEvent event) throws MuleException {
     try {
       Configuration config = registry.getConfiguration(getConfigRef());
-      BaseEvent.Builder eventBuilder = BaseEvent.builder(event);
+      CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
       eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
       HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
@@ -108,7 +108,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
         return event;
       }
 
-      return (BaseEvent) doRoute(event, config, eventBuilder, attributes).get();
+      return (CoreEvent) doRoute(event, config, eventBuilder, attributes).get();
     } catch (MuleException e) {
       throw e;
     } catch (Exception e) {
@@ -117,11 +117,11 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   }
 
   @Override
-  public Publisher<BaseEvent> apply(Publisher<BaseEvent> publisher) {
+  public Publisher<CoreEvent> apply(Publisher<CoreEvent> publisher) {
     return from(publisher).flatMap(event -> {
       try {
         Configuration config = registry.getConfiguration(getConfigRef());
-        BaseEvent.Builder eventBuilder = BaseEvent.builder(event);
+        CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
         eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
         HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
@@ -132,7 +132,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
           return empty();
         }
 
-        return Mono.fromFuture(doRoute(event, config, eventBuilder, attributes)).cast(BaseEvent.class);
+        return Mono.fromFuture(doRoute(event, config, eventBuilder, attributes)).cast(CoreEvent.class);
       } catch (Exception e) {
         if (e instanceof MuleRestException) {
           return Flux.error(
@@ -144,7 +144,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     });
   }
 
-  private CompletableFuture<Event> doRoute(BaseEvent event, Configuration config, BaseEvent.Builder eventBuilder,
+  private CompletableFuture<Event> doRoute(CoreEvent event, Configuration config, CoreEvent.Builder eventBuilder,
                                            HttpRequestAttributes attributes)
       throws ExecutionException, DefaultMuleException, MuleRestException, UnsupportedMediaTypeException {
     String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRequestPath());
@@ -190,7 +190,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     this.name = name;
   }
 
-  public BaseEvent.Builder validateRequest(BaseEvent event, BaseEvent.Builder eventBuilder, ValidationConfig config,
+  public CoreEvent.Builder validateRequest(CoreEvent event, CoreEvent.Builder eventBuilder, ValidationConfig config,
                                            IResource resource, HttpRequestAttributes attributes,
                                            ResolvedVariables resolvedVariables)
       throws DefaultMuleException, MuleRestException {
@@ -216,8 +216,8 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     return resource;
   }
 
-  public boolean isRequestingRamlV1(HttpRequestAttributes attributes, Configuration config, BaseEvent event,
-                                    BaseEvent.Builder eventBuilder) {
+  public boolean isRequestingRamlV1(HttpRequestAttributes attributes, Configuration config, CoreEvent event,
+                                    CoreEvent.Builder eventBuilder) {
     if (config.getRamlHandler().isRequestingRamlV1ForRouter(attributes.getListenerPath(), attributes.getRequestPath(),
                                                             attributes.getMethod(),
                                                             AttributesHelper.getHeaderIgnoreCase(attributes, "Accept"))) {
