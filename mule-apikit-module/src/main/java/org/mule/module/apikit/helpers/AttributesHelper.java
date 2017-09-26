@@ -6,15 +6,19 @@
  */
 package org.mule.module.apikit.helpers;
 
+import com.google.common.base.Strings;
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.HeaderName;
+import org.mule.runtime.api.util.MultiMap;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Strings;
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.HeaderNames;
-import org.mule.runtime.api.util.MultiMap;
+import static java.util.Collections.emptyList;
+import static org.mule.module.apikit.HeaderName.CONTENT_TYPE;
 
 public class AttributesHelper {
 
@@ -60,10 +64,14 @@ public class AttributesHelper {
                                      attributes.getRemoteAddress(), attributes.getClientCertificate());
   }
 
-  private static String ANY_RESPONSE_MEDIA_TYPE = "*/*";
+  private static final String ANY_RESPONSE_MEDIA_TYPE = "*/*";
+
+  public static String getHeaderIgnoreCase(HttpRequestAttributes attributes, HeaderName name) {
+    return getHeaderIgnoreCase(attributes, name.getName());
+  }
 
   public static String getHeaderIgnoreCase(HttpRequestAttributes attributes, String name) {
-    MultiMap<String, String> headers = attributes.getHeaders();
+    final MultiMap<String, String> headers = attributes.getHeaders();
     return getParamIgnoreCase(headers, name);
   }
 
@@ -76,8 +84,15 @@ public class AttributesHelper {
     return null;
   }
 
+  public static List<String> getParamsIgnoreCase(MultiMap<String, String> parameters, String name) {
+    return parameters.keySet().stream()
+        .filter(header -> header.equalsIgnoreCase(name))
+        .findFirst().map(parameters::getAll)
+        .orElse(emptyList());
+  }
+
   public static String getMediaType(HttpRequestAttributes attributes) {
-    String contentType = getHeaderIgnoreCase(attributes, HeaderNames.CONTENT_TYPE);
+    final String contentType = getHeaderIgnoreCase(attributes, CONTENT_TYPE);
     return contentType != null ? contentType.split(";")[0] : null;
   }
 

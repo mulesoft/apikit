@@ -23,9 +23,9 @@ import org.mule.module.apikit.api.validation.RequestValidator;
 import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
+import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.helpers.MessageHelper;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
@@ -43,10 +43,10 @@ import org.mule.runtime.core.api.event.BaseEventContext;
 import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.runtime.api.exception.TypedException;
 import org.mule.runtime.core.api.processor.Processor;
-
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.net.URI;
@@ -57,8 +57,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
-
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public class Router extends AbstractComponent implements Processor, Initialisable
@@ -192,7 +190,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     this.name = name;
   }
 
-  public CoreEvent.Builder validateRequest(CoreEvent event, CoreEvent.Builder eventbuilder, ValidationConfig config,
+  public CoreEvent.Builder validateRequest(CoreEvent event, CoreEvent.Builder eventBuilder, ValidationConfig config,
                                            IResource resource, HttpRequestAttributes attributes,
                                            ResolvedVariables resolvedVariables)
       throws DefaultMuleException, MuleRestException {
@@ -207,7 +205,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     ValidRequest validRequest =
         RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload(), charset);
 
-    return EventHelper.regenerateEvent(event.getMessage(), eventbuilder, validRequest);
+    return EventHelper.regenerateEvent(event.getMessage(), eventBuilder, validRequest);
   }
 
   private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException {

@@ -8,8 +8,8 @@ package org.mule.module.apikit.api.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.config.ValidationConfig;
-import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.api.exception.MuleRestException;
+import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.validation.AttributesValidator;
 import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
@@ -22,7 +22,7 @@ public class RequestValidator {
       throws DefaultMuleException, MuleRestException {
 
     return ValidRequest.builder()
-        .withAttributes(AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables))
+        .withAttributes(AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables, config))
         .withBody(BodyValidator.validate(resource.getAction(attributes.getMethod().toLowerCase()), attributes, payload, config,
                                          charset))
         .build();
