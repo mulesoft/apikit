@@ -174,18 +174,19 @@ public abstract class MultipartFormFunctionalTestCase extends MuleArtifactFuncti
   }
 
   @Test
-  @Ignore // TODO uncomment this test when https://github.com/mulesoft/data-weave/issues/199 is fixed
   public void answer201WhenOptionalFormParameterIsProvidedAsEmpty() throws Exception {
     given().multiPart("first", "required")
-            .multiPart("third", "")
-            .expect()
-            .response()
-            .statusCode(201)
-            .body(is("[\n" +
-                    "  \"userId\",\n" +
-                    "  \"second\",\n" +
-                    "  \"third\"\n" +
-                    "]"))
-            .when().post("/api/multipart");
+        .multiPart("third", "false")
+        .multiPart("fourth", "")
+        .expect()
+        .response()
+        .statusCode(201)
+        .body(is("{\n" +
+            "  \"first\": \"required\",\n" +
+            "  \"third\": \"false\",\n" +
+            "  \"fourth\": \"\",\n" +
+            "  \"second\": \"segundo\"\n" +
+            "}"))
+        .when().post("/api/multipart");
   }
 }
