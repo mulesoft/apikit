@@ -78,21 +78,21 @@ public class HeadersValidator {
   private void validateHeadersStrictly(IAction action) throws InvalidHeaderException {
     //checks that headers are defined in the RAML
     final Set<String> ramlHeaders = action.getHeaders().keySet().stream()
-            .map(String::toLowerCase)
-            .collect(toSet());
+        .map(String::toLowerCase)
+        .collect(toSet());
 
     final Set<String> templateHeaders = ramlHeaders.stream()
-            .filter(header -> header.contains("{?}"))
-            .map(header -> header.replace("{?}", ".*"))
-            .collect(toSet());
+        .filter(header -> header.contains("{?}"))
+        .map(header -> header.replace("{?}", ".*"))
+        .collect(toSet());
 
     final Set<String> unmatchedHeaders = headers.keySet().stream()
-            .filter(header -> templateHeaders.stream().noneMatch(header::matches))
-            .collect(toSet());
+        .filter(header -> templateHeaders.stream().noneMatch(header::matches))
+        .collect(toSet());
 
     final Set<String> standardHeaders = stream(HeaderName.values())
-            .map(header -> header.getName().toLowerCase())
-            .collect(toSet());
+        .map(header -> header.getName().toLowerCase())
+        .collect(toSet());
 
     final Set<String> undefinedHeaders = difference(unmatchedHeaders, union(ramlHeaders, standardHeaders));
 
