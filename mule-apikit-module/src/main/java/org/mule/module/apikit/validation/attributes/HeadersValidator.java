@@ -6,9 +6,8 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import com.google.common.base.Joiner;
 import com.google.common.net.MediaType;
-import org.mule.module.apikit.HeaderNames;
+import org.mule.module.apikit.HeaderName;
 import org.mule.module.apikit.api.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.helpers.AttributesHelper;
@@ -24,12 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
 
+import static com.google.common.base.Joiner.on;
 import static com.google.common.collect.Sets.difference;
-import static com.google.common.collect.Sets.filter;
-import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.union;
+import static java.lang.String.format;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toSet;
 
 
@@ -53,80 +52,84 @@ public class HeadersValidator {
     if (!isMuleThreeCompatibility)
       validateHeadersStrictly(action);
 
-    for (String expectedKey : action.getHeaders().keySet()) {
-      IParameter expected = action.getHeaders().get(expectedKey);
+    for (Map.Entry<String, IParameter> entry : action.getHeaders().entrySet()) {
+      final String ramlHeader = entry.getKey();
+      final IParameter ramlType = entry.getValue();
 
-      if (expectedKey.contains("{?}")) {
-        String regex = expectedKey.replace("{?}", ".*");
-        for (String incoming : headers.keySet()) {
-          if (incoming.matches(regex))
-            validateHeader(headers.getAll(incoming), expectedKey, expected, isMuleThreeCompatibility);
+      if (ramlHeader.contains("{?}")) {
+        final String regex = ramlHeader.replace("{?}", ".*");
+        for (String incomingHeader : headers.keySet()) {
+          if (incomingHeader.matches(regex))
+            validateHeader(headers.getAll(incomingHeader), ramlHeader, ramlType, isMuleThreeCompatibility);
         }
       } else {
-        List<String> actual = AttributesHelper.getParamsIgnoreCase(headers, expectedKey);
-        if (actual.isEmpty() && expected.isRequired()) {
-          throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
+        final List<String> values = AttributesHelper.getParamsIgnoreCase(headers, ramlHeader);
+        if (values.isEmpty() && ramlType.isRequired()) {
+          throw new InvalidHeaderException("Required header " + ramlHeader + " not specified");
         }
-        if (actual.isEmpty() && expected.getDefaultValue() != null) {
-          headers = AttributesHelper.addParam(headers, expectedKey, expected.getDefaultValue());
+        if (values.isEmpty() && ramlType.getDefaultValue() != null) {
+          headers = AttributesHelper.addParam(headers, ramlHeader, ramlType.getDefaultValue());
         }
-        validateHeader(actual, expectedKey, expected, isMuleThreeCompatibility);
+        validateHeader(values, ramlHeader, ramlType, isMuleThreeCompatibility);
       }
     }
   }
 
   private void validateHeadersStrictly(IAction action) throws InvalidHeaderException {
     //checks that headers are defined in the RAML
-    final Set<String> headersDefinedInRAML =
-        action.getHeaders().keySet().stream().map(String::toLowerCase).collect(toSet());
+    final Set<String> ramlHeaders = action.getHeaders().keySet().stream()
+            .map(String::toLowerCase)
+            .collect(toSet());
 
-    final Set<String> headersWithPlaceholder = headersDefinedInRAML.stream().filter(header -> header.contains("{?}"))
-        .map(header -> header.replace("{?}", ".*")).collect(toSet());
-    final Predicate<String> noRegexMatch = header -> headersWithPlaceholder.stream().noneMatch(header::matches);
-    final Set<String> placeholderHeadersRemoved = filter(headers.keySet(), noRegexMatch::test);
+    final Set<String> templateHeaders = ramlHeaders.stream()
+            .filter(header -> header.contains("{?}"))
+            .map(header -> header.replace("{?}", ".*"))
+            .collect(toSet());
 
-    final Set<String> standardHttpHeaders = newHashSet(HeaderNames.values()).stream()
-        .map(header -> header.getName().toLowerCase()).collect(toSet());
+    final Set<String> unmatchedHeaders = headers.keySet().stream()
+            .filter(header -> templateHeaders.stream().noneMatch(header::matches))
+            .collect(toSet());
 
-    final Set<String> notDefinedHeaders = difference(placeholderHeadersRemoved, union(headersDefinedInRAML, standardHttpHeaders));
-    if (!notDefinedHeaders.isEmpty())
-      throw new InvalidHeaderException(Joiner.on(", ").join(notDefinedHeaders) + " headers are not defined in RAML.");
-  }
+    final Set<String> standardHeaders = stream(HeaderName.values())
+            .map(header -> header.getName().toLowerCase())
+            .collect(toSet());
 
-  private void validateHeader(List<String> headerValues, String expectedKey, IParameter expectedValue,
-                              boolean isMuleThreeCompatibility)
-      throws InvalidHeaderException {
-    if (headerValues.isEmpty())
-      return;
+    final Set<String> undefinedHeaders = difference(unmatchedHeaders, union(ramlHeaders, standardHeaders));
 
-    if (!isMuleThreeCompatibility && headerValues.size() > 1 && !expectedValue.isArray() && !expectedValue.isRepeat())
-      throw new InvalidHeaderException("Header " + expectedKey + " is not repeatable");
-
-    // raml 1.0 array validation
-    if (expectedValue.isArray()) {
-      validateHeaderArray(headerValues, expectedKey, expectedValue);
-    } else {
-      // single header or repeat
-      for (String value : headerValues)
-        validateHeader(expectedKey, expectedValue, value);
+    if (!undefinedHeaders.isEmpty()) {
+      throw new InvalidHeaderException(on(", ").join(undefinedHeaders) + " headers are not defined in RAML.");
     }
   }
 
-  private void validateHeaderArray(List<String> headerValues, String expectedKey, IParameter expectedValue)
+  private void validateHeader(List<String> values, String name, IParameter type,
+                              boolean isMuleThreeCompatibility)
       throws InvalidHeaderException {
-    StringBuilder builder = new StringBuilder();
-    for (String value : headerValues)
-      builder.append("- ").append(value).append("\n");
+    if (values.isEmpty())
+      return;
 
-    validateHeader(expectedKey, expectedValue, builder.toString());
+    if (!isMuleThreeCompatibility && values.size() > 1 && !type.isArray() && !type.isRepeat())
+      throw new InvalidHeaderException("Header " + name + " is not repeatable");
+
+    // raml 1.0 array validation
+    if (type.isArray()) {
+      validateType(name, values, type);
+    } else {
+      // single header or repeat
+      validateType(name, values.get(0), type);
+    }
   }
 
-  private void validateHeader(String paramKey, IParameter expected, String headerValue) throws InvalidHeaderException {
-    if (!expected.validate(headerValue)) {
-      String msg = String.format("Invalid value '%s' for header %s. %s",
-                                 headerValue, paramKey, expected.message(headerValue));
+  private void validateType(String name, List<String> values, IParameter type) throws InvalidHeaderException {
+    final StringBuilder yamlValue = new StringBuilder();
+    for (String value : values)
+      yamlValue.append("- ").append(value).append("\n");
 
-      throw new InvalidHeaderException(msg);
+    validateType(name, yamlValue.toString(), type);
+  }
+
+  private void validateType(String name, String value, IParameter type) throws InvalidHeaderException {
+    if (!type.validate(value)) {
+      throw new InvalidHeaderException(format("Invalid value '%s' for header %s. %s", value, name, type.message(value)));
     }
   }
 
@@ -160,7 +163,7 @@ public class HeadersValidator {
         for (Map.Entry<String, IMimeType> entry : interfacesOfTypes.entrySet()) {
           mimeTypes.add(entry.getValue().getType());
         }
-        logger.debug(String.format("=== adding response mimeTypes for status %d : %s", status, mimeTypes));
+        logger.debug(format("=== adding response mimeTypes for status %d : %s", status, mimeTypes));
       }
     }
     return mimeTypes;

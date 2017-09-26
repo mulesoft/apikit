@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit;
 
-public enum HeaderNames {
+public enum HeaderName {
   ACCEPT("Accept"),
   ACCEPT_CHARSET("Accept-Charset"),
   ACCEPT_ENCODING("Accept-Encoding"),
@@ -85,7 +85,7 @@ public enum HeaderNames {
 
   private String name;
 
-  HeaderNames(String name) {
+  HeaderName(String name) {
     this.name = name;
   }
 

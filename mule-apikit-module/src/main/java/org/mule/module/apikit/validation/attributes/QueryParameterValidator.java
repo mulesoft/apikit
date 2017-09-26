@@ -21,9 +21,9 @@ import static com.google.common.collect.Sets.difference;
 
 public class QueryParameterValidator {
 
-  MultiMap<String, String> queryParams;
-  String queryString;
-  IAction action;
+  private MultiMap<String, String> queryParams;
+  private String queryString;
+  private IAction action;
 
   public QueryParameterValidator(IAction action) {
     this.action = action;
