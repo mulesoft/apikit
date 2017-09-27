@@ -51,14 +51,4 @@ public class RouterRamlTestCase extends MuleArtifactFunctionalTestCase {
         .statusCode(200)
         .when().get("/api/resources");
   }
-
-  @Test
-  public void getRamlV1() throws Exception {
-    given().header("Accept", APPLICATION_RAML)
-        .expect()
-        .response().body(containsString("#%RAML 0.8"))
-        .statusCode(200)
-        .contentType(APPLICATION_RAML)
-        .when().get("/api");
-  }
 }

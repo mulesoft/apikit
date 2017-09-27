@@ -139,16 +139,6 @@ public class RamlHandler {
             || queryString.equals(RAML_QUERY_STRING)));
   }
 
-  public boolean isRequestingRamlV1ForRouter(String listenerPath, String requestPath, String method, String acceptHeader) {
-    String postalistenerPath = UrlUtils.getListenerPath(listenerPath, requestPath);
-
-    return (!isParserV2() &&
-        (postalistenerPath.equals(requestPath) || (postalistenerPath + "/").equals(requestPath)) &&
-        ActionType.GET.toString().equals(method.toUpperCase()) &&
-        (APPLICATION_RAML.equals(acceptHeader)));
-  }
-
-
   public boolean isRequestingRamlV2(String listenerPath, String requestPath, String queryString, String method) {
     String consolePath = UrlUtils.getListenerPath(listenerPath, requestPath);
     String resourcesFullPath = consolePath;
