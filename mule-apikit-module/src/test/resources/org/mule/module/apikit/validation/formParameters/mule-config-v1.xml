@@ -56,7 +56,7 @@
         <apikit:console config-ref="router-config" />
     </flow>
     <flow name="post:\url-encoded-simple:application\x-www-form-urlencoded:router-config">
-        <set-payload value="#[payload.first]"/>
+        <set-payload value="#[payload]"/>
     </flow>
     <flow name="post:\url-encoded-with-default:application\x-www-form-urlencoded:router-config">
         <set-payload value="#[payload]"/>

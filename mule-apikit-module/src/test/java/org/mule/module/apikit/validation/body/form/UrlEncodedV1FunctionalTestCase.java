@@ -41,7 +41,7 @@ public class UrlEncodedV1FunctionalTestCase extends MuleArtifactFunctionalTestCa
     return "org/mule/module/apikit/validation/formParameters/mule-config-v1.xml";
   }
 
-  @Ignore
+  @Test
   public void simpleUrlencodedRequest() throws Exception {
     given().header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("first", "primo")
