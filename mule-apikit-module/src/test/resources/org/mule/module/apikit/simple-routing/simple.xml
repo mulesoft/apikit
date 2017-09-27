@@ -65,4 +65,9 @@
         <set-payload value="#[payload]"/>
     </flow>
 
+    <flow name="post:\error">
+        <logger level="INFO" message="inside of post:\error"/>
+        <set-payload value="#[payload.first]"/>
+    </flow>
+
 </mule>

@@ -152,4 +152,15 @@ public class RouterTestCase extends MuleArtifactFunctionalTestCase {
         .when().put("/api/types-test");
   }
 
+  @Test
+  public void answerWith500WhenSubFlowThrowsAnError() throws Exception {
+    given().header("Content-Type", "application/x-www-form-urlencoded")
+        .formParam("first", "primo")
+        .expect()
+        .response()
+        .body(is("first=primo"))
+        .statusCode(500)
+        .when().post("/api/error");
+  }
+
 }

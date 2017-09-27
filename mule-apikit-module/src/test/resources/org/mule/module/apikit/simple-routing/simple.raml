@@ -42,3 +42,15 @@ types:
         200:
             body:
                 application/json: !!null
+/error:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          first:
+            type: string
+    responses:
+        200:
+            body:
+                application/json: !!null
+                text/xml: !!null
