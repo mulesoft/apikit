@@ -13,7 +13,6 @@ import static reactor.core.publisher.Flux.from;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.UrlUtils;
-import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
@@ -190,7 +189,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     this.name = name;
   }
 
-  public CoreEvent.Builder validateRequest(CoreEvent event, CoreEvent.Builder eventBuilder, ValidationConfig config,
+  public CoreEvent.Builder validateRequest(CoreEvent event, CoreEvent.Builder eventBuilder, Configuration config,
                                            IResource resource, HttpRequestAttributes attributes,
                                            ResolvedVariables resolvedVariables)
       throws DefaultMuleException, MuleRestException {
