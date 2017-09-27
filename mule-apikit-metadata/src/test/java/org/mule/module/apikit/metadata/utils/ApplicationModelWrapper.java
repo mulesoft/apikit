@@ -6,8 +6,9 @@
  */
 package org.mule.module.apikit.metadata.utils;
 
+import org.mule.runtime.config.api.dsl.model.ComponentModel;
+
 import java.util.Optional;
-import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;
 
 public interface ApplicationModelWrapper {
 

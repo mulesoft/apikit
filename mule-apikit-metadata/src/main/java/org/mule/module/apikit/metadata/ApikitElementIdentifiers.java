@@ -7,7 +7,7 @@
 package org.mule.module.apikit.metadata;
 
 import org.mule.runtime.api.component.ComponentIdentifier;
-import org.mule.runtime.config.spring.api.dsl.model.ComponentModel;
+import org.mule.runtime.config.api.dsl.model.ComponentModel;
 
 /**
  * Helper class that tells if a given XML Component is some of the valid APIKit
