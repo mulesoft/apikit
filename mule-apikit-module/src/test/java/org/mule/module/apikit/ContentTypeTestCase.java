@@ -114,7 +114,7 @@ public class ContentTypeTestCase extends MuleArtifactFunctionalTestCase {
         .when().get("/api/multitype");
   }
 
-  @Ignore
+  @Test
   public void getOnUsingMultipleHttpStatus() throws Exception {
     given()
         .header("Accept", "*/*")

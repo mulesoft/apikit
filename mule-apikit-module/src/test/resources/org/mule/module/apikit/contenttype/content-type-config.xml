@@ -91,7 +91,7 @@
                 <set-variable variableName="httpStatus" value="200"/>
                 <logger level="INFO" message="returning zip with 200 Ok"/>
                 <set-variable variableName="outboundHeaders" value="#[vars.outboundHeaders ++ {'Content-Type':'application/zip'}]"/>
-                <set-payload value="#[org.mule.transport.NullPayload.getInstance()]"/>
+                <set-payload value="#[mel:null]"/>
             </when>
             <otherwise>
                 <set-variable variableName="httpStatus" value="202"/>
