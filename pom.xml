@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>mule-apikit-parent</artifactId>
-    <version>1.0.0-rc-SNAPSHOT</version>
+    <version>1.0.0-rc</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
@@ -16,10 +16,10 @@
 
     <properties>
         <!--mule community version-->
-        <mule.version>4.0.0-rc-SNASPHOT</mule.version>
-        <mule.core.version>4.0.0-rc-SNASPHOT</mule.core.version>
+        <mule.version>4.0.0-rc</mule.version>
+        <mule.core.version>4.0.0-rc</mule.core.version>
         <cors.module.version>2.1.2</cors.module.version>
-        <metadata.api.version>1.0.0-rc-SNASPHOT</metadata.api.version>
+        <metadata.api.version>1.0.0-rc</metadata.api.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <formatterConfigPath>formatter.xml</formatterConfigPath>

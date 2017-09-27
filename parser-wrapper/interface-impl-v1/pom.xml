@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.raml</groupId>
         <artifactId>raml-parser-interface-parent</artifactId>
-        <version>1.0.0-rc-SNAPSHOT</version>
+        <version>1.0.0-rc</version>
     </parent>
 
     <artifactId>raml-parser-interface-impl-v1</artifactId>

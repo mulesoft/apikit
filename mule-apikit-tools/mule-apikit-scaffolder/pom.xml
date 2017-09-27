@@ -5,13 +5,14 @@
     <parent>
         <artifactId>mule-apikit-tools</artifactId>
         <groupId>org.mule.tools</groupId>
-        <version>1.0.0-rc-SNAPSHOT</version>
+        <version>1.0.0-rc</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mule-apikit-scaffolder</artifactId>
     <properties>
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../../formatter.xml</formatterConfigPath>
+        <weave.runtime.version>2.0.0-rc</weave.runtime.version>
     </properties>
 
     <dependencies>
@@ -38,7 +39,7 @@
         <dependency>
             <groupId>org.mule.weave</groupId>
             <artifactId>runtime</artifactId>
-            <version>2.0.0-rc-SNAPSHOT</version>
+            <version>${weave.runtime.version}</version>
         </dependency>
 
         <!-- Testing -->
