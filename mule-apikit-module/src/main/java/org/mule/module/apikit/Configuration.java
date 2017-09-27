@@ -121,7 +121,6 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     this.disableValidations = disableValidations;
   }
 
-  @Override
   public boolean isMuleThreeCompatibility() {
     return muleThreeCompatibility;
   }
