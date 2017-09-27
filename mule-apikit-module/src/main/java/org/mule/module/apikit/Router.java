@@ -111,16 +111,21 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
         HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
 
-        return Mono.fromFuture(doRoute(event, config, eventBuilder, attributes)).cast(CoreEvent.class);
-      } catch (Exception e) {
-        if (e instanceof MuleRestException) {
-          return Flux.error(
-                            new MessagingException(event, ApikitErrorTypes.throwErrorType((MuleRestException) e)));
-        }
+        final CompletableFuture<Event> resultEvent = doRoute(event, config, eventBuilder, attributes);
 
-        return Flux.error(new MessagingException(event, e));
+        return Mono.fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(e -> buildMessagingException(event, e));
+      } catch (Exception e) {
+        return Flux.error(buildMessagingException(event, e));
       }
     });
+  }
+
+  private MessagingException buildMessagingException(CoreEvent event, Throwable e) {
+    if (e instanceof MuleRestException) {
+      return new MessagingException(event, ApikitErrorTypes.throwErrorType((MuleRestException) e));
+    }
+
+    return new MessagingException(event, e);
   }
 
   private CompletableFuture<Event> doRoute(CoreEvent event, Configuration config, CoreEvent.Builder eventBuilder,
