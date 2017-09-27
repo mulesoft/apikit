@@ -67,6 +67,7 @@
 
     <flow name="post:\error">
         <logger level="INFO" message="inside of post:\error"/>
+        <!-- This should fail with org.mule.runtime.core.api.expression.ExpressionRuntimeException: "Cannot coerce String ("primo") to Object" -->
         <set-payload value="#[payload.first]"/>
     </flow>
 
