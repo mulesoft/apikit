@@ -188,7 +188,7 @@ public class ParametersTestCase extends MuleArtifactFunctionalTestCase {
         .expect()
         .response().body(allOf(containsString("baseUri"),
                                containsString("http://localhost:" + serverPort.getNumber() + "/api")))
-        .statusCode(200).when().get("/api");
+        .statusCode(200).when().get("/console/");
   }
 
 }

@@ -45,17 +45,6 @@ public class RouterRamlProcessorsAfterRouterTestCase extends MuleArtifactFunctio
   }
 
   @Test
-  public void getRamlV1() throws Exception {
-    given().header("Accept", APPLICATION_RAML)
-        .expect()
-        .response().body(containsString("#%RAML 0.8"))
-        .contentType(APPLICATION_RAML)
-        .statusCode(200)
-        .header("secondHeader", is(nullValue()))
-        .when().get("/api");
-  }
-
-  @Test
   public void simpleRouting() throws Exception {
     given().expect()
         .response().body(is("goodbye")) //payload is crushed by the processor located after Router
