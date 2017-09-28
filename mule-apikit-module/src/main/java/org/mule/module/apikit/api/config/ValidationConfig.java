@@ -21,4 +21,6 @@ public interface ValidationConfig {
   Schema getXmlSchema(String schemaPath) throws ExecutionException;
 
   ExpressionManager getExpressionManager();
+
+  boolean isMuleThreeCompatibility();
 }
