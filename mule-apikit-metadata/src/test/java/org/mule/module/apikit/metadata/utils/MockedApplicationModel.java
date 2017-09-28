@@ -8,15 +8,15 @@ package org.mule.module.apikit.metadata.utils;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
-import static org.mule.runtime.config.spring.api.XmlConfigurationDocumentLoader.noValidationDocumentLoader;
+import static org.mule.runtime.config.api.XmlConfigurationDocumentLoader.noValidationDocumentLoader;
 
 import org.mule.runtime.api.meta.model.ExtensionModel;
-import org.mule.runtime.config.spring.api.dsl.model.ComponentBuildingDefinitionRegistry;
-import org.mule.runtime.config.spring.api.dsl.model.ResourceProvider;
-import org.mule.runtime.config.spring.api.dsl.processor.ArtifactConfig;
-import org.mule.runtime.config.spring.api.dsl.processor.ConfigFile;
-import org.mule.runtime.config.spring.api.dsl.processor.ConfigLine;
-import org.mule.runtime.config.spring.api.dsl.processor.xml.XmlApplicationParser;
+import org.mule.runtime.config.api.dsl.model.ComponentBuildingDefinitionRegistry;
+import org.mule.runtime.config.api.dsl.model.ResourceProvider;
+import org.mule.runtime.config.api.dsl.processor.ArtifactConfig;
+import org.mule.runtime.config.api.dsl.processor.ConfigFile;
+import org.mule.runtime.config.api.dsl.processor.ConfigLine;
+import org.mule.runtime.config.api.dsl.processor.xml.XmlApplicationParser;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.registry.ServiceRegistry;
 import org.mule.runtime.core.api.registry.SpiServiceRegistry;
@@ -39,11 +39,11 @@ import org.w3c.dom.Document;
 public class MockedApplicationModel implements ApplicationModelWrapper {
 
   private final String name;
-  private org.mule.runtime.config.spring.api.dsl.model.ApplicationModel applicationModel;
+  private org.mule.runtime.config.api.dsl.model.ApplicationModel applicationModel;
   private String typesData;
 
   private MockedApplicationModel(String name,
-                                 org.mule.runtime.config.spring.api.dsl.model.ApplicationModel applicationModel,
+                                 org.mule.runtime.config.api.dsl.model.ApplicationModel applicationModel,
                                  String typesData) {
     this.name = name;
     this.applicationModel = applicationModel;
@@ -54,7 +54,7 @@ public class MockedApplicationModel implements ApplicationModelWrapper {
     return name;
   }
 
-  public org.mule.runtime.config.spring.api.dsl.model.ApplicationModel getApplicationModel() {
+  public org.mule.runtime.config.api.dsl.model.ApplicationModel getApplicationModel() {
     return applicationModel;
   }
 
@@ -98,12 +98,12 @@ public class MockedApplicationModel implements ApplicationModelWrapper {
   }
 
   @Override
-  public org.mule.runtime.config.spring.api.dsl.model.ComponentModel findRootComponentModel() {
+  public org.mule.runtime.config.api.dsl.model.ComponentModel findRootComponentModel() {
     return getApplicationModel().getRootComponentModel();
   }
 
   @Override
-  public Optional<org.mule.runtime.config.spring.api.dsl.model.ComponentModel> findNamedComponent(String name) {
+  public Optional<org.mule.runtime.config.api.dsl.model.ComponentModel> findNamedComponent(String name) {
     return getApplicationModel().findTopLevelNamedComponent(name);
   }
 
@@ -210,13 +210,13 @@ public class MockedApplicationModel implements ApplicationModelWrapper {
           createComponentBuildingDefinitionRegistry(extensionModels, muleContext != null ? muleContext.getClass().getClassLoader()
               : Thread.currentThread().getContextClassLoader());
 
-      org.mule.runtime.config.spring.api.dsl.model.ApplicationModel applicationModel =
-          new org.mule.runtime.config.spring.api.dsl.model.ApplicationModel(artifactConfigBuilder.build(), null,
-                                                                            extensionModels, Collections.emptyMap(),
-                                                                            Optional.empty(),
-                                                                            Optional.of(componentBuildingDefinitionRegistry),
-                                                                            false,
-                                                                            getResourceProvider());
+      org.mule.runtime.config.api.dsl.model.ApplicationModel applicationModel =
+          new org.mule.runtime.config.api.dsl.model.ApplicationModel(artifactConfigBuilder.build(), null,
+                                                                     extensionModels, Collections.emptyMap(),
+                                                                     Optional.empty(),
+                                                                     Optional.of(componentBuildingDefinitionRegistry),
+                                                                     false,
+                                                                     getResourceProvider());
       return new MockedApplicationModel("", applicationModel, typesData);
     }
   }
