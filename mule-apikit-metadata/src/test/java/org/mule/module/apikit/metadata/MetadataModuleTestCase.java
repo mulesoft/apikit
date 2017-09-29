@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.metadata;
 
+import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.mule.metadata.api.model.FunctionType;
 import org.mule.metadata.internal.utils.MetadataTypeWriter;
@@ -111,4 +112,45 @@ public class MetadataModuleTestCase {
     return mockedApplicationModel.getApplicationModel();
   }
 
+  @Test
+  public void testNotifyingOnlyOneErrorPerLifespan() throws Exception {
+    final ResourceLoader resourceLoader = new TestResourceLoader();
+    final TestNotifier notifier = new TestNotifier();
+
+    final ApplicationModel model = createApplicationModel("org/mule/module/apikit/metadata/invalid-raml-file-location/app.xml");
+    assertThat(model, notNullValue());
+
+    final Metadata metadata = new Metadata.Builder()
+        .withApplicationModel(model)
+        .withResourceLoader(resourceLoader)
+        .withNotifier(notifier)
+        .build();
+
+    assertThat(notifier.error().size(), is(0));
+    assertThat(notifier.debug().size(), is(0));
+    assertThat(notifier.info().size(), is(0));
+    assertThat(notifier.warn().size(), is(0));
+
+    metadata.getMetadataForFlow("get:\\flow1:router-config");
+
+    assertThat(notifier.error().size(), is(1));
+    assertThat(notifier.debug().size(), is(0));
+    assertThat(notifier.info().size(), is(0));
+    assertThat(notifier.warn().size(), is(0));
+
+    metadata.getMetadataForFlow("get:\\flow2:router-config");
+
+    assertThat(notifier.error().size(), is(1));
+    assertThat(notifier.debug().size(), is(0));
+    assertThat(notifier.info().size(), is(0));
+    assertThat(notifier.warn().size(), is(0));
+
+    metadata.getMetadataForFlow("get:\\flow3:router-config");
+
+    assertThat(notifier.error().size(), is(1));
+    assertThat(notifier.debug().size(), is(0));
+    assertThat(notifier.info().size(), is(0));
+    assertThat(notifier.warn().size(), is(0));
+
+  }
 }

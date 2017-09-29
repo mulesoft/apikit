@@ -10,13 +10,17 @@ import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 public class TestResourceLoader implements ResourceLoader {
 
   @Override
   public File getRamlResource(String relativePath) {
     try {
-      return new File(this.getClass().getResource(relativePath).toURI());
+      URL resource = this.getClass().getResource(relativePath);
+      if (resource == null)
+        return null;
+      return new File(resource.toURI());
 
     } catch (URISyntaxException e) {
       e.printStackTrace();

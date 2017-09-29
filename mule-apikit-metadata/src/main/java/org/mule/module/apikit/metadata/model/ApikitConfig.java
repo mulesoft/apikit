@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-import static java.util.Optional.ofNullable;
-
 public class ApikitConfig {
 
   final private String name;
@@ -23,7 +21,7 @@ public class ApikitConfig {
   final private Supplier<Optional<IRaml>> apiSupplier;
   final private String httpStatusVarName;
   final private String outputHeadersVarName;
-  private RamlApiWrapper ramlApi;
+  private Optional<RamlApiWrapper> ramlApi;
 
   public ApikitConfig(String name, String raml, List<FlowMapping> flowMappings, Supplier<Optional<IRaml>> apiSupplier,
                       String httpStatusVarName, String outputHeadersVarName) {
@@ -49,9 +47,9 @@ public class ApikitConfig {
 
   public Optional<RamlApiWrapper> getApi() {
     if (ramlApi == null) {
-      ramlApi = apiSupplier.get().map(RamlApiWrapper::new).orElse(null);
+      ramlApi = apiSupplier.get().map(RamlApiWrapper::new);
     }
-    return ofNullable(ramlApi);
+    return ramlApi;
   }
 
   public String getHttpStatusVarName() {
