@@ -6,6 +6,9 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
+import static reactor.core.publisher.Flux.from;
+
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
@@ -32,15 +35,12 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.runtime.core.api.processor.Processor;
+
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
@@ -48,8 +48,10 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static reactor.core.publisher.Flux.from;
+import javax.inject.Inject;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public class Router extends AbstractComponent implements Processor, Initialisable
 
@@ -121,12 +123,12 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     });
   }
 
-  private MessagingException buildMessagingException(CoreEvent event, Throwable e) {
+  private Throwable buildMessagingException(CoreEvent event, Throwable e) {
     if (e instanceof MuleRestException) {
-      return new MessagingException(event, ApikitErrorTypes.throwErrorType((MuleRestException) e));
+      return ApikitErrorTypes.throwErrorType((MuleRestException) e);
     }
 
-    return new MessagingException(event, e);
+    return e;
   }
 
   private CompletableFuture<Event> doRoute(CoreEvent event, Configuration config, CoreEvent.Builder eventBuilder,
