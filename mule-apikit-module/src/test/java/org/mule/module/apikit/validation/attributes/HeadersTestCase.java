@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation.attributes;
 
 import com.jayway.restassured.RestAssured;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
@@ -38,7 +39,7 @@ public class HeadersTestCase extends MuleArtifactFunctionalTestCase {
     return "org/mule/module/apikit/validation/headers/mule-config.xml";
   }
 
-  @Test
+  @Ignore
   public void answer400WhenRequiredHeaderIsNotSent() throws Exception {
     given().expect().response()
         .body(is("{message: 'Bad Request'}"))
@@ -46,7 +47,7 @@ public class HeadersTestCase extends MuleArtifactFunctionalTestCase {
         .when().get("/api/datetime2616");
   }
 
-  @Test
+  @Ignore
   public void answer400WhenRequiredHeaderIsInvalid() throws Exception {
     given().request()
         .header("X-ModifiedSince", "Invalid Date")
@@ -74,7 +75,7 @@ public class HeadersTestCase extends MuleArtifactFunctionalTestCase {
         .when().post("/api/datetime2616");
   }
 
-  @Test
+  @Ignore
   public void answer400WhenOptionalHeaderIsNotValid() throws Exception {
     given().request()
         .header("X-MaxRows", "Hello World")

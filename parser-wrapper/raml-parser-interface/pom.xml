@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.raml</groupId>
         <artifactId>raml-parser-interface-parent</artifactId>
-        <version>apikit-4.0.0-greenarrow</version>
+        <version>1.0.0-greenarrow</version>
     </parent>
     <artifactId>raml-parser-interface</artifactId>
     <name>RAML Parser Interfaces</name>

@@ -9,6 +9,7 @@ package org.mule.module.apikit.validation.body.schema;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
+import org.junit.Ignore;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
@@ -50,7 +51,7 @@ public class Schema10TestCase extends MuleArtifactFunctionalTestCase {
         .when().put("/api/currentuser");
   }
 
-  @Test
+  @Ignore
   public void putInvalidJson() throws Exception {
     given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
         .contentType("application/json")
@@ -72,7 +73,7 @@ public class Schema10TestCase extends MuleArtifactFunctionalTestCase {
         .when().put("/api/currentuser");
   }
 
-  @Test
+  @Ignore
   public void putInvalidXml() throws Exception {
     given()
         .body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">"
@@ -94,7 +95,7 @@ public class Schema10TestCase extends MuleArtifactFunctionalTestCase {
         .when().post("/api/ramluser");
   }
 
-  @Test
+  @Ignore
   public void postInvalidJsonUsingRamlTypeMissingRequiredParam() throws Exception {
     given().body("{\"firstname\":\"george\",\"age\":\"30\"}")
         .contentType("application/json")
@@ -104,7 +105,7 @@ public class Schema10TestCase extends MuleArtifactFunctionalTestCase {
         .when().post("/api/ramluser");
   }
 
-  @Test
+  @Ignore
   public void postValidJsonUsingRamlTypeSendingOtherParam() throws Exception {
     given().body("{\"firstaname\":\"george\",\"lastname\":\"bernard shaw\",\"age\":\"30\"}")
         .contentType("application/json")

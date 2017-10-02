@@ -49,7 +49,7 @@ public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
         .when().put("/api/resource");
   }
 
-  @Test
+  @Ignore
   public void invalidSchema() throws Exception {
     given()
         .body("{\"/\": {\"fstype\": \"ext4\", \"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\"}}")
@@ -67,7 +67,7 @@ public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
         .when().put("/api/global");
   }
 
-  @Test
+  @Ignore
   public void invalidGlobalSchema() throws Exception {
     given()
         .body("{\"/\": {\"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")
@@ -85,7 +85,7 @@ public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
         .when().put("/api/global-include");
   }
 
-  @Test
+  @Ignore
   public void invalidGlobalIncludeSchema() throws Exception {
     given()
         .body("{\"/\": {\"device\": \"/dev/hda\"}, \"swap\": {\"fstype\": \"ext4\", \"device\": \"/dev/hdb\"}}")

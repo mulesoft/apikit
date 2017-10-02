@@ -6,6 +6,9 @@
  */
 package org.mule.module.apikit.parameters;
 
+import org.junit.Ignore;
+
+@Ignore
 public class ParametersInboundTestCase extends ParametersTestCase {
 
   @Override

@@ -8,6 +8,7 @@ package org.mule.module.apikit.validation.body.schema;
 
 import static com.jayway.restassured.RestAssured.given;
 
+import org.junit.Ignore;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
@@ -18,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
+@Ignore
 public class Raml08JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
@@ -39,7 +41,7 @@ public class Raml08JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase 
     return "org/mule/module/apikit/validation/body/schema/raml-08-with-schema-in-include.xml";
   }
 
-  @Test
+  @Ignore
   public void JsonSchemaRef() {
     given().body("{\n" +
         "\"response\":\n" +

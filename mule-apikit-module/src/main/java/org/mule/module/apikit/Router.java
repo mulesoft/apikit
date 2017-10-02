@@ -32,8 +32,8 @@ import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.core.api.exception.MessagingException;
 import org.mule.runtime.core.api.processor.Processor;
+import org.mule.runtime.core.internal.exception.MessagingException;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,12 +121,8 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     });
   }
 
-  private MessagingException buildMessagingException(CoreEvent event, Throwable e) {
-    if (e instanceof MuleRestException) {
-      return new MessagingException(event, ApikitErrorTypes.throwErrorType((MuleRestException) e));
-    }
-
-    return new MessagingException(event, e);
+  private Throwable buildMessagingException(CoreEvent event, Throwable e) {
+    return e;
   }
 
   private CompletableFuture<Event> doRoute(CoreEvent event, Configuration config, CoreEvent.Builder eventBuilder,

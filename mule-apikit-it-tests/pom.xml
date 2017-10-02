@@ -6,12 +6,12 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>mule-apikit-parent</artifactId>
-        <version>apikit-4.0.0-greenarrow</version>
+        <version>1.0.0-greenarrow</version>
     </parent>
 
     <groupId>org.mule.tools</groupId>
     <artifactId>mule-apikit-it-tests</artifactId>
-    <version>apikit-4.0.0-greenarrow</version>
+    <version>1.0.0-greenarrow</version>
 
     <properties>
         <licensePath>../LICENSE_HEADER.txt</licensePath>

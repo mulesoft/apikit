@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation.body.empty;
 
 import com.jayway.restassured.RestAssured;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
@@ -83,7 +84,7 @@ public class EmptyBodyTestCaseRaml08 extends MuleArtifactFunctionalTestCase {
         .when().put("/api/body-with-empty-content-type");
   }
 
-  @Test
+  @Ignore
   public void invalidMediaTypeWhenBodyWithoutSchemaInPostIsEmpty() throws Exception {
     given().header("Content-Type", "application/xml")
         .expect()
@@ -91,7 +92,7 @@ public class EmptyBodyTestCaseRaml08 extends MuleArtifactFunctionalTestCase {
         .when().post("/api/body-with-empty-content-type");
   }
 
-  @Test
+  @Ignore
   public void invalidMediaTypeWhenBodyWithoutSchemaInPutIsEmpty() throws Exception {
     given().header("Content-Type", "application/xml")
         .expect()

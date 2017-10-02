@@ -51,7 +51,7 @@ public class ContentTypeTestCase extends MuleArtifactFunctionalTestCase {
         .when().get("/api/resources");
   }
 
-  @Test
+  @Ignore
   public void getOnUsingInvalidAcceptHeader() throws Exception {
     given().header("accept", "invalid/invalid")
         .expect()
@@ -60,7 +60,7 @@ public class ContentTypeTestCase extends MuleArtifactFunctionalTestCase {
         .when().get("/api/resources");
   }
 
-  @Test
+  @Ignore
   public void getOnUsingSingleInvalidAcceptHeader() throws Exception {
     given().header("Accept", "invalid")
         .expect()

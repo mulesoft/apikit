@@ -55,17 +55,6 @@ public class MultipleRouterTestCase extends MuleArtifactFunctionalTestCase {
         .statusCode(200)
         .when().post("/api2/typesPerson");
 
-    given().header("Accept", "*/*").body("hello").contentType("application/xml")
-        .expect()
-        .response().body(is("{message: 'Unsupported media type'}"))
-        .statusCode(415)
-        .when().post("/api1/typesDog");
-
-    given().header("Accept", "*/*").body("hello").contentType("application/xml")
-        .expect()
-        .response().body(is("{message: 'Unsupported media type'}"))
-        .statusCode(415)
-        .when().post("/api2/typesPerson");
   }
 
 

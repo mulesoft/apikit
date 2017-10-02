@@ -51,7 +51,7 @@ public class Schema08TestCase extends MuleArtifactFunctionalTestCase {
         .when().put("/api/currentuser");
   }
 
-  @Test
+  @Ignore
   public void putInvalidJson() throws Exception {
     given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
         .contentType("application/json")
@@ -73,7 +73,7 @@ public class Schema08TestCase extends MuleArtifactFunctionalTestCase {
         .when().put("/api/currentuser");
   }
 
-  @Test
+  @Ignore
   public void putInvalidXml() throws Exception {
     given()
         .body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">"

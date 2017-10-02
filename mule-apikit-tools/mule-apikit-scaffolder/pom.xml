@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mule-apikit-tools</artifactId>
         <groupId>org.mule.tools</groupId>
-        <version>apikit-4.0.0-greenarrow</version>
+        <version>1.0.0-greenarrow</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mule-apikit-scaffolder</artifactId>
@@ -75,11 +75,6 @@
             <artifactId>plexus-utils</artifactId>
             <version>3.0.8</version>
         </dependency>
-        <dependency>
-            <groupId>org.mule.modules</groupId>
-            <artifactId>mule-apikit-module-spi</artifactId>
-            <version>${project.version}</version>
-       </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>

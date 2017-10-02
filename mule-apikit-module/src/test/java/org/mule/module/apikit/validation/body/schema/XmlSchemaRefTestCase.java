@@ -48,7 +48,7 @@ public class XmlSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
         .when().put("/api/name");
   }
 
-  @Test
+  @Ignore
   public void invalidSchema() throws Exception {
     given()
         .body("{\"name\":\"gbs\"}").contentType("application/xml")
