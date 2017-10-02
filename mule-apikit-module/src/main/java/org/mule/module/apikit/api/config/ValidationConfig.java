@@ -14,8 +14,6 @@ import java.util.concurrent.ExecutionException;
 
 public interface ValidationConfig {
 
-  boolean DEFAULT_MULE_THREE_COMPATIBILITY = false;
-
   boolean isParserV2();
 
   ApiKitJsonSchema getJsonSchema(String schemaPath) throws ExecutionException;
@@ -24,5 +22,11 @@ public interface ValidationConfig {
 
   ExpressionManager getExpressionManager();
 
-  boolean isMuleThreeCompatibility();
+  default boolean isQueryParamsStrictValidation() {
+    return false;
+  }
+
+  default boolean isHeadersStrictValidation() {
+    return false;
+  }
 }

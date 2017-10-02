@@ -44,7 +44,8 @@ public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProv
         .withSetterParameterDefinition("httpStatusVarName", fromSimpleParameter("httpStatusVarName").build())
         .withSetterParameterDefinition("keepRamlBaseUri", fromSimpleParameter("keepRamlBaseUri").build())
         .withSetterParameterDefinition("disableValidations", fromSimpleParameter("disableValidations").build())
-        .withSetterParameterDefinition("muleThreeCompatibility", fromSimpleParameter("muleThreeCompatibility").build())
+        .withSetterParameterDefinition("queryParamsStrictValidation", fromSimpleParameter("queryParamsStrictValidation").build())
+        .withSetterParameterDefinition("headersStrictValidation", fromSimpleParameter("headersStrictValidation").build())
         .withSetterParameterDefinition("flowMappings", fromChildConfiguration(FlowMappings.class).build())
         .build());
 

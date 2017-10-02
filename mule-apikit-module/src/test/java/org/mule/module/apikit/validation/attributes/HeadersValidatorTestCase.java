@@ -59,7 +59,7 @@ public class HeadersValidatorTestCase {
     incomingHeaders.put("one", "foo");
     incomingHeaders.put("mule-special", "dough");
 
-    validator.validateAndAddDefaults(incomingHeaders, actionv1, false);
+    validator.validateAndAddDefaults(incomingHeaders, actionv1, true);
   }
 
   @Test
@@ -91,7 +91,7 @@ public class HeadersValidatorTestCase {
     incomingHeaders.put("one", "foo");
     incomingHeaders.put("mule-special", "wow");
 
-    validator.validateAndAddDefaults(incomingHeaders, actionv1, false);
+    validator.validateAndAddDefaults(incomingHeaders, actionv1, true);
   }
 
   @Test
@@ -112,7 +112,7 @@ public class HeadersValidatorTestCase {
     MultiMap<String, String> incomingHeaders = new MultiMap<>();
     incomingHeaders.put("one", Arrays.asList("foo", "wow"));
 
-    validator.validateAndAddDefaults(incomingHeaders, actionv1, false);
+    validator.validateAndAddDefaults(incomingHeaders, actionv1, true);
   }
 
   private static final String NON_ARRAY_HEADER_FAIL_MESSAGE = "Header one is not repeatable";

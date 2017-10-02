@@ -37,14 +37,14 @@ public class AttributesValidator {
     QueryParameterValidator queryParamValidator =
         new QueryParameterValidator(resource.getAction(attributes.getMethod().toLowerCase()));
     queryParamValidator.validateAndAddDefaults(attributes.getQueryParams(), attributes.getQueryString(),
-                                               config.isMuleThreeCompatibility());
+                                               config.isQueryParamsStrictValidation());
     queryParams = queryParamValidator.getQueryParams();
     queryString = queryParamValidator.getQueryString();
 
     // headers
     HeadersValidator headersValidator = new HeadersValidator();
     headersValidator.validateAndAddDefaults(attributes.getHeaders(), resource.getAction(attributes.getMethod().toLowerCase()),
-                                            config.isMuleThreeCompatibility());
+                                            config.isHeadersStrictValidation());
     headers = headersValidator.getNewHeaders();
 
     // regenerate attributes
