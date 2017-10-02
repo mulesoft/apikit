@@ -6,11 +6,8 @@
  */
 package org.mule.module.apikit.metadata;
 
-import org.hamcrest.Matcher;
 import org.junit.Test;
 import org.mule.metadata.api.model.FunctionType;
-import org.mule.metadata.internal.utils.MetadataTypeWriter;
-import org.mule.metadata.persistence.JsonMetadataTypeWriter;
 import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import org.mule.module.apikit.metadata.utils.MockedApplicationModel;
@@ -21,6 +18,7 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.mule.module.apikit.metadata.TestNotifier.*;
 
 public class MetadataModuleTestCase {
 
@@ -126,31 +124,30 @@ public class MetadataModuleTestCase {
         .withNotifier(notifier)
         .build();
 
-    assertThat(notifier.error().size(), is(0));
-    assertThat(notifier.debug().size(), is(0));
-    assertThat(notifier.info().size(), is(0));
-    assertThat(notifier.warn().size(), is(0));
+    assertThat(notifier.messages(ERROR).size(), is(0));
+    assertThat(notifier.messages(DEBUG).size(), is(0));
+    assertThat(notifier.messages(INFO).size(), is(0));
+    assertThat(notifier.messages(WARN).size(), is(0));
 
     metadata.getMetadataForFlow("get:\\flow1:router-config");
 
-    assertThat(notifier.error().size(), is(1));
-    assertThat(notifier.debug().size(), is(0));
-    assertThat(notifier.info().size(), is(0));
-    assertThat(notifier.warn().size(), is(0));
+    assertThat(notifier.messages(ERROR).size(), is(1));
+    assertThat(notifier.messages(DEBUG).size(), is(0));
+    assertThat(notifier.messages(INFO).size(), is(0));
+    assertThat(notifier.messages(WARN).size(), is(0));
 
     metadata.getMetadataForFlow("get:\\flow2:router-config");
 
-    assertThat(notifier.error().size(), is(1));
-    assertThat(notifier.debug().size(), is(0));
-    assertThat(notifier.info().size(), is(0));
-    assertThat(notifier.warn().size(), is(0));
+    assertThat(notifier.messages(ERROR).size(), is(1));
+    assertThat(notifier.messages(DEBUG).size(), is(0));
+    assertThat(notifier.messages(INFO).size(), is(0));
+    assertThat(notifier.messages(WARN).size(), is(0));
 
     metadata.getMetadataForFlow("get:\\flow3:router-config");
 
-    assertThat(notifier.error().size(), is(1));
-    assertThat(notifier.debug().size(), is(0));
-    assertThat(notifier.info().size(), is(0));
-    assertThat(notifier.warn().size(), is(0));
-
+    assertThat(notifier.messages(ERROR).size(), is(1));
+    assertThat(notifier.messages(DEBUG).size(), is(0));
+    assertThat(notifier.messages(INFO).size(), is(0));
+    assertThat(notifier.messages(WARN).size(), is(0));
   }
 }

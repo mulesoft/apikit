@@ -15,12 +15,12 @@ import java.util.List;
 
 public class TestNotifier implements Notifier {
 
-  private static final String ERROR = "error";
-  private static final String DEBUG = "debug";
-  private static final String INFO = "info";
-  private static final String WARN = "warn";
-  private Logger log = LoggerFactory.getLogger(TestNotifier.class);
-  private MultiMap<String, String> messages = new MultiMap<>();
+  public static final String ERROR = "error";
+  public static final String DEBUG = "debug";
+  public static final String INFO = "info";
+  public static final String WARN = "warn";
+  public Logger log = LoggerFactory.getLogger(TestNotifier.class);
+  public MultiMap<String, String> messages = new MultiMap<>();
 
   @Override
   public void error(String message) {
@@ -46,19 +46,8 @@ public class TestNotifier implements Notifier {
     log.debug(message);
   }
 
-  public List<String> error() {
-    return messages.getAll(ERROR);
-  }
+  public List<String> messages(String type) {
+    return messages.getAll(type);
 
-  public List<String> warn() {
-    return messages.getAll(WARN);
-  }
-
-  public List<String> info() {
-    return messages.getAll(INFO);
-  }
-
-  public List<String> debug() {
-    return messages.getAll(DEBUG);
   }
 }
