@@ -18,7 +18,10 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.mule.module.apikit.metadata.TestNotifier.*;
+import static org.mule.module.apikit.metadata.TestNotifier.ERROR;
+import static org.mule.module.apikit.metadata.TestNotifier.DEBUG;
+import static org.mule.module.apikit.metadata.TestNotifier.INFO;
+import static org.mule.module.apikit.metadata.TestNotifier.WARN;
 
 public class MetadataModuleTestCase {
 
