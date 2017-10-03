@@ -116,14 +116,14 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
         final CompletableFuture<Event> resultEvent = doRoute(event, config, eventBuilder, attributes);
 
-        return Mono.fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(e -> buildMessagingException(event, e));
+        return Mono.fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(this::buildMessagingException);
       } catch (Exception e) {
-        return Flux.error(buildMessagingException(event, e));
+        return Flux.error(buildMessagingException(e));
       }
     });
   }
 
-  private Throwable buildMessagingException(CoreEvent event, Throwable e) {
+  private Throwable buildMessagingException(Throwable e) {
     if (e instanceof MuleRestException) {
       return ApikitErrorTypes.throwErrorType((MuleRestException) e);
     }
