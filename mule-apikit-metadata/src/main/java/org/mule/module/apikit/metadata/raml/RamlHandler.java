@@ -37,7 +37,7 @@ public class RamlHandler {
       final File resource = resourceLoader.getRamlResource(uri);
 
       if (resource == null) {
-        notifier.warn(format("RAML document '%s' not found.", uri));
+        notifier.error(format("RAML document '%s' not found.", uri));
         return empty();
       }
 
