@@ -43,7 +43,7 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("first", "first");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "first=first", false);
+    validator.validateAndAddDefaults(incomingQueryParams, "first=first", true);
   }
 
   @Test
@@ -62,7 +62,7 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("first", "a");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "first=a", false);
+    validator.validateAndAddDefaults(incomingQueryParams, "first=a", true);
   }
 
   @Test
@@ -87,7 +87,7 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("first", "a");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "first=a", false);
+    validator.validateAndAddDefaults(incomingQueryParams, "first=a", true);
     assertEquals("a", validator.getQueryParams().get("first"));
     assertEquals("test", validator.getQueryParams().get("second"));
     assertEquals("first=a&second=test", validator.getQueryString());
@@ -115,7 +115,7 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("first", "a");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "first=a", false);
+    validator.validateAndAddDefaults(incomingQueryParams, "first=a", true);
     assertEquals("a", validator.getQueryParams().get("first"));
     assertEquals("test with spaces", validator.getQueryParams().get("second"));
     assertEquals("first=a&second=test+with+spaces", validator.getQueryString());
@@ -140,7 +140,7 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("first", Arrays.asList("foo", "wow"));
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "first=foo&first=wow", false);
+    validator.validateAndAddDefaults(incomingQueryParams, "first=foo&first=wow", true);
   }
 
   @Test
@@ -162,7 +162,7 @@ public class QueryParametersValidatorTestCase {
     incomingQueryParams.put("second", "b");
 
     QueryParameterValidator validator = new QueryParameterValidator(actionImpl);
-    validator.validateAndAddDefaults(incomingQueryParams, "second=b", false);
+    validator.validateAndAddDefaults(incomingQueryParams, "second=b", true);
   }
 
   private static final String NON_ARRAY_QUERY_PARAM_FAIL_MESSAGE = "Query parameter first is not repeatable";

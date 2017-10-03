@@ -41,15 +41,15 @@ public class HeadersValidator {
 
   public HeadersValidator() {}
 
-  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action, boolean isMuleThreeCompatibility)
+  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action, boolean headersStrictValidation)
       throws InvalidHeaderException, NotAcceptableException {
     this.headers = incomingHeaders;
-    analyseRequestHeaders(action, isMuleThreeCompatibility);
+    analyseRequestHeaders(action, headersStrictValidation);
     analyseAcceptHeader(incomingHeaders, action);
   }
 
-  private void analyseRequestHeaders(IAction action, boolean isMuleThreeCompatibility) throws InvalidHeaderException {
-    if (!isMuleThreeCompatibility)
+  private void analyseRequestHeaders(IAction action, boolean headersStrictValidation) throws InvalidHeaderException {
+    if (headersStrictValidation)
       validateHeadersStrictly(action);
 
     for (Map.Entry<String, IParameter> entry : action.getHeaders().entrySet()) {
@@ -60,7 +60,7 @@ public class HeadersValidator {
         final String regex = ramlHeader.replace("{?}", ".*");
         for (String incomingHeader : headers.keySet()) {
           if (incomingHeader.matches(regex))
-            validateHeader(headers.getAll(incomingHeader), ramlHeader, ramlType, isMuleThreeCompatibility);
+            validateHeader(headers.getAll(incomingHeader), ramlHeader, ramlType);
         }
       } else {
         final List<String> values = AttributesHelper.getParamsIgnoreCase(headers, ramlHeader);
@@ -70,7 +70,7 @@ public class HeadersValidator {
         if (values.isEmpty() && ramlType.getDefaultValue() != null) {
           headers = AttributesHelper.addParam(headers, ramlHeader, ramlType.getDefaultValue());
         }
-        validateHeader(values, ramlHeader, ramlType, isMuleThreeCompatibility);
+        validateHeader(values, ramlHeader, ramlType);
       }
     }
   }
@@ -97,17 +97,16 @@ public class HeadersValidator {
     final Set<String> undefinedHeaders = difference(unmatchedHeaders, union(ramlHeaders, standardHeaders));
 
     if (!undefinedHeaders.isEmpty()) {
-      throw new InvalidHeaderException(on(", ").join(undefinedHeaders) + " headers are not defined in RAML.");
+      throw new InvalidHeaderException(on(", ").join(undefinedHeaders) + " headers are not defined in RAML and strict headers validation property is true.");
     }
   }
 
-  private void validateHeader(List<String> values, String name, IParameter type,
-                              boolean isMuleThreeCompatibility)
+  private void validateHeader(List<String> values, String name, IParameter type)
       throws InvalidHeaderException {
     if (values.isEmpty())
       return;
 
-    if (!isMuleThreeCompatibility && values.size() > 1 && !type.isArray() && !type.isRepeat())
+    if (values.size() > 1 && !type.isArray() && !type.isRepeat())
       throw new InvalidHeaderException("Header " + name + " is not repeatable");
 
     // raml 1.0 array validation

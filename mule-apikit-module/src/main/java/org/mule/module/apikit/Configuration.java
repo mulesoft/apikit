@@ -39,7 +39,8 @@ import javax.xml.validation.Schema;
 public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
 
   private boolean disableValidations;
-  private boolean muleThreeCompatibility;
+  private boolean queryParamsStrictValidation;
+  private boolean headersStrictValidation;
   private String name;
   private String raml;
   private boolean keepRamlBaseUri;
@@ -76,7 +77,6 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   @Inject
   private ConfigurationComponentLocator locator;
-
 
   @Override
   public void initialise() throws InitialisationException {
@@ -122,12 +122,21 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   }
 
   @Override
-  public boolean isMuleThreeCompatibility() {
-    return muleThreeCompatibility;
+  public boolean isQueryParamsStrictValidation() {
+    return queryParamsStrictValidation;
   }
 
-  public void setMuleThreeCompatibility(boolean muleThreeCompatibility) {
-    this.muleThreeCompatibility = muleThreeCompatibility;
+  public void setQueryParamsStrictValidation(boolean queryParamsStrictValidation) {
+    this.queryParamsStrictValidation = queryParamsStrictValidation;
+  }
+
+  @Override
+  public boolean isHeadersStrictValidation() {
+    return headersStrictValidation;
+  }
+
+  public void setHeadersStrictValidation(boolean headersStrictValidation) {
+    this.headersStrictValidation = headersStrictValidation;
   }
 
   public boolean isKeepRamlBaseUri() {

@@ -29,10 +29,11 @@ public class QueryParameterValidator {
     this.action = action;
   }
 
-  public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString, boolean isMuleThreeCompatibility)
+  public void validateAndAddDefaults(MultiMap<String, String> queryParams, String queryString,
+                                     boolean queryParamsStrictValidation)
       throws InvalidQueryParameterException {
 
-    if (!isMuleThreeCompatibility)
+    if (queryParamsStrictValidation)
       validateQueryParametersStrictly(queryParams);
 
     for (String expectedKey : action.getQueryParameters().keySet()) {
