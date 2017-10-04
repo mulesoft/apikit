@@ -1,7 +1,7 @@
 {
   "name": "${meta.prefix}${meta.artifactId}${meta.suffix}",
   "minMuleVersion": "${minMuleVersion}",
-  "requiredProduct":"MULE",
+  "requiredProduct": "MULE",
   "classLoaderModelLoaderDescriptor": {
     "id": "mule",
     "attributes": {
