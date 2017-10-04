@@ -97,7 +97,8 @@ public class HeadersValidator {
     final Set<String> undefinedHeaders = difference(unmatchedHeaders, union(ramlHeaders, standardHeaders));
 
     if (!undefinedHeaders.isEmpty()) {
-      throw new InvalidHeaderException(on(", ").join(undefinedHeaders) + " headers are not defined in RAML and strict headers validation property is true.");
+      throw new InvalidHeaderException(on(", ").join(undefinedHeaders)
+          + " headers are not defined in RAML and strict headers validation property is true.");
     }
   }
 
