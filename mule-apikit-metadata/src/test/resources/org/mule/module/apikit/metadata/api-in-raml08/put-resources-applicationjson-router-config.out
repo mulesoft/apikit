@@ -2,13 +2,13 @@
   "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
     "payload" : Number, 
     "attributes" : {
-      "queryParameters"? : {
+      "queryParams"? : {
 
       }, 
       "headers"? : {
 
       }, 
-      "uriParameters"? : {
+      "uriParams"? : {
 
       }
     }
