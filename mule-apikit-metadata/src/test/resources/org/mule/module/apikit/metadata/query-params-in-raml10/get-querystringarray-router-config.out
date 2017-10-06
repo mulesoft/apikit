@@ -2,7 +2,7 @@
   "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
     "payload" : Any, 
     "attributes" : {
-      "queryParameters"? : {
+      "queryParams"? : {
         "dateQueryParam"? : [String], 
         "numberQueryParam"? : [Number], 
         "integerQueryParam"? : [@int Number], 
@@ -13,7 +13,7 @@
       "headers"? : {
 
       }, 
-      "uriParameters"? : {
+      "uriParams"? : {
 
       }
     }

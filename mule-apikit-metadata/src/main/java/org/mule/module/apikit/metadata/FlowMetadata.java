@@ -37,9 +37,9 @@ import static org.mule.module.apikit.metadata.MetadataFactory.stringMetadata;
 public class FlowMetadata implements MetadataSource {
 
   private static final String PARAMETER_INPUT_METADATA = "inputMetadata";
-  private static final String ATTRIBUTES_QUERY_PARAMETERS = "queryParameters";
+  private static final String ATTRIBUTES_QUERY_PARAMETERS = "queryParams";
   private static final String ATTRIBUTES_HEADERS = "headers";
-  private static final String ATTRIBUTES_URI_PARAMETERS = "uriParameters";
+  private static final String ATTRIBUTES_URI_PARAMETERS = "uriParams";
 
   final private IAction action;
   final private RamlCoordinate coordinate;

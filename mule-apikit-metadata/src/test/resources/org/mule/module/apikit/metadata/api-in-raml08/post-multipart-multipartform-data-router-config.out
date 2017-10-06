@@ -6,13 +6,13 @@
       "third"? : Any
     }, 
     "attributes" : {
-      "queryParameters"? : {
+      "queryParams"? : {
 
       }, 
       "headers"? : {
 
       }, 
-      "uriParameters"? : {
+      "uriParams"? : {
 
       }
     }
