@@ -32,14 +32,29 @@ import java.util.Optional;
 
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.of;
+import static org.mule.module.apikit.metadata.MetadataFactory.binaryMetadata;
+import static org.mule.module.apikit.metadata.MetadataFactory.objectMetadata;
 import static org.mule.module.apikit.metadata.MetadataFactory.stringMetadata;
 
 public class FlowMetadata implements MetadataSource {
 
   private static final String PARAMETER_INPUT_METADATA = "inputMetadata";
-  private static final String ATTRIBUTES_QUERY_PARAMETERS = "queryParams";
+  private static final String ATTRIBUTES_QUERY_PARAMS = "queryParams";
   private static final String ATTRIBUTES_HEADERS = "headers";
-  private static final String ATTRIBUTES_URI_PARAMETERS = "uriParams";
+  private static final String ATTRIBUTES_URI_PARAMS = "uriParams";
+  private static final String ATTRIBUTES_LISTENER_PATH = "listenerPath";
+  private static final String ATTRIBUTES_RELATIVE_PATH = "relativePath";
+  private static final String ATTRIBUTES_VERSION = "version";
+  private static final String ATTRIBUTES_SCHEME = "scheme";
+  private static final String ATTRIBUTES_METHOD = "method";
+  private static final String ATTRIBUTES_REQUEST_URI = "requestUri";
+  private static final String ATTRIBUTES_QUERY_STRING = "queryString";
+  private static final String ATTRIBUTES_REMOTE_ADDRESS = "remoteAddress";
+  private static final String ATTRIBUTES_CLIENT_CERTIFICATE = "clientCertificate";
+  private static final String CLIENT_CERTIFICATE_ENCODED = "encoded";
+  private static final String CLIENT_CERTIFICATE_PUBLIC_KEY = "publicKey";
+  private static final String CLIENT_CERTIFICATE_TYPE = "type";
+  private static final String ATTRIBUTES_REQUEST_PATH = "requestPath";
 
   final private IAction action;
   final private RamlCoordinate coordinate;
@@ -137,14 +152,54 @@ public class FlowMetadata implements MetadataSource {
 
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
     builder.addField()
-        .key(ATTRIBUTES_QUERY_PARAMETERS)
-        .value(getQueryParameters(action));
+        .key(ATTRIBUTES_CLIENT_CERTIFICATE)
+        .value(getClientCertificate());
     builder.addField()
         .key(ATTRIBUTES_HEADERS)
         .value(getHeaders(action));
     builder.addField()
-        .key(ATTRIBUTES_URI_PARAMETERS)
+        .key(ATTRIBUTES_LISTENER_PATH)
+        .value(stringMetadata());
+    builder.addField()
+        .key(ATTRIBUTES_METHOD)
+        .value(stringMetadata());
+    builder.addField()
+        .key(ATTRIBUTES_QUERY_PARAMS)
+        .value(getQueryParameters(action));
+    builder.addField()
+        .key(ATTRIBUTES_QUERY_STRING)
+        .value(stringMetadata());
+    builder.addField()
+        .key(ATTRIBUTES_RELATIVE_PATH)
+        .value(stringMetadata());
+    builder.addField()
+        .key(ATTRIBUTES_REMOTE_ADDRESS)
+        .value(stringMetadata());
+    builder.addField()
+        .key(ATTRIBUTES_REQUEST_PATH)
+        .value(stringMetadata());
+    builder.addField()
+        .key(ATTRIBUTES_REQUEST_URI)
+        .value(stringMetadata());
+    builder.addField()
+        .key(ATTRIBUTES_SCHEME)
+        .value(stringMetadata());
+    builder.addField()
+        .key(ATTRIBUTES_URI_PARAMS)
         .value(getUriParameters(action, baseUriParameters));
+    builder.addField()
+        .key(ATTRIBUTES_VERSION)
+        .value(stringMetadata());
+
+    return builder.build();
+  }
+
+  private MetadataType getClientCertificate() {
+    final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
+
+    builder.addField().key(CLIENT_CERTIFICATE_PUBLIC_KEY).value(objectMetadata());
+    builder.addField().key(CLIENT_CERTIFICATE_TYPE).value(stringMetadata());
+    builder.addField().key(CLIENT_CERTIFICATE_ENCODED).value(binaryMetadata());
 
     return builder.build();
   }

@@ -5,15 +5,31 @@
       "surname"? : String
     }, 
     "attributes" : {
-      "queryParams"? : {
+      "clientCertificate"? : {
+        "publicKey"? : {
 
+        }, 
+        "type"? : String, 
+        "encoded"? : Binary
       }, 
       "headers"? : {
 
       }, 
+      "listenerPath"? : String, 
+      "method"? : String, 
+      "queryParams"? : {
+
+      }, 
+      "queryString"? : String, 
+      "relativePath"? : String, 
+      "remoteAddress"? : String, 
+      "requestPath"? : String, 
+      "requestUri"? : String, 
+      "scheme"? : String, 
       "uriParams"? : {
 
-      }
+      }, 
+      "version"? : String
     }
   }, 
   "variables" : {
