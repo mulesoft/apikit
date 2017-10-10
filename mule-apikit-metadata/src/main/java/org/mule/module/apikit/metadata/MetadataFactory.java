@@ -113,4 +113,13 @@ public class MetadataFactory {
   public static MetadataType stringMetadata() {
     return STRING_METADATA;
   }
+
+  public static MetadataType objectMetadata() {
+    return create(MetadataFormat.JAVA).objectType().build();
+  }
+
+  public static MetadataType binaryMetadata() {
+    return create(MetadataFormat.JAVA).binaryType().build();
+  }
+
 }

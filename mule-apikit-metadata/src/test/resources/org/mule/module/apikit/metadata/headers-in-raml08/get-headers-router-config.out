@@ -2,8 +2,12 @@
   "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
     "payload" : Any, 
     "attributes" : {
-      "queryParams"? : {
+      "clientCertificate"? : {
+        "publicKey"? : {
 
+        }, 
+        "type"? : String, 
+        "encoded"? : Binary
       }, 
       "headers"? : {
         "stringHeader"? : @enum("values" : ["enum1","enum2"]) @length("min" : 2, "max" : 10) @default("value" : "enum1") String, 
@@ -14,9 +18,21 @@
         "fileHeader"? : String, 
         "withoutType"? : String
       }, 
+      "listenerPath"? : String, 
+      "method"? : String, 
+      "queryParams"? : {
+
+      }, 
+      "queryString"? : String, 
+      "relativePath"? : String, 
+      "remoteAddress"? : String, 
+      "requestPath"? : String, 
+      "requestUri"? : String, 
+      "scheme"? : String, 
       "uriParams"? : {
 
-      }
+      }, 
+      "version"? : String
     }
   }, 
   "variables" : {

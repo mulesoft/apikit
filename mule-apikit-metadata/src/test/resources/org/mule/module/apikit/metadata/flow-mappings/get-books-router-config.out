@@ -2,15 +2,31 @@
   "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
     "payload" : Any, 
     "attributes" : {
-      "queryParams"? : {
-        "sortAsc"? : Boolean
+      "clientCertificate"? : {
+        "publicKey"? : {
+
+        }, 
+        "type"? : String, 
+        "encoded"? : Binary
       }, 
       "headers"? : {
         "X-Amount"? : String
       }, 
+      "listenerPath"? : String, 
+      "method"? : String, 
+      "queryParams"? : {
+        "sortAsc"? : Boolean
+      }, 
+      "queryString"? : String, 
+      "relativePath"? : String, 
+      "remoteAddress"? : String, 
+      "requestPath"? : String, 
+      "requestUri"? : String, 
+      "scheme"? : String, 
       "uriParams"? : {
 
-      }
+      }, 
+      "version"? : String
     }
   }, 
   "variables" : {
