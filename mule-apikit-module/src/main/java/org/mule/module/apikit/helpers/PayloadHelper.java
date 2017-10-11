@@ -8,6 +8,7 @@ package org.mule.module.apikit.helpers;
 
 import org.apache.commons.io.IOUtils;
 import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,11 @@ public class PayloadHelper {
 
       if (input instanceof CursorStreamProvider)
         bytes = IOUtils.toByteArray(((CursorStreamProvider) input).openCursor());
-      else if (input instanceof InputStream)
+      else if (input instanceof RewindableInputStream) {
+        final RewindableInputStream rewindable = (RewindableInputStream) input;
+        bytes = IOUtils.toByteArray(rewindable);
+        rewindable.rewind();
+      } else if (input instanceof InputStream)
         bytes = IOUtils.toByteArray((InputStream) input);
       else if (input instanceof String)
         bytes = ((String) input).getBytes();

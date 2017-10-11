@@ -13,7 +13,7 @@ import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 import org.mule.module.apikit.api.validation.ValidBody;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.helpers.AttributesHelper;
-import org.mule.module.apikit.helpers.PayloadHelper;
+import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.module.apikit.validation.body.form.FormParametersValidator;
 import org.mule.module.apikit.validation.body.form.MultipartFormValidator;
 import org.mule.module.apikit.validation.body.form.UrlencodedFormV2Validator;
@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
+import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsString;
 
 public class BodyValidator {
 
@@ -109,12 +110,12 @@ public class BodyValidator {
 
     final ValidBody validBody = new ValidBody(payload);
 
-    final String strPayload = PayloadHelper.getPayloadAsString(validBody.getPayload(), charset);
-    validator.validate(strPayload);
-
     if (payload instanceof InputStream) {
-      validBody.setPayload(strPayload);
+      final RewindableInputStream rewindableInputStream = new RewindableInputStream((InputStream) payload);
+      validBody.setPayload(rewindableInputStream);
     }
+
+    validator.validate(getPayloadAsString(validBody.getPayload(), charset));
 
     return validBody;
   }
