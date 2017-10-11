@@ -10,8 +10,8 @@ import org.mule.runtime.api.metadata.TypedValue;
 
 public class ValidBody {
 
-  Object payload;
-  Object formParameters;
+  private Object payload;
+  private Object formParameters;
 
   public ValidBody(Object payload) {
     setPayload(payload);

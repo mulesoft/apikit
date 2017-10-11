@@ -13,12 +13,12 @@ import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 import org.mule.module.apikit.api.validation.ValidBody;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.helpers.AttributesHelper;
-import org.mule.module.apikit.helpers.PayloadHelper;
+import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.module.apikit.validation.body.form.FormParametersValidator;
 import org.mule.module.apikit.validation.body.form.MultipartFormValidator;
 import org.mule.module.apikit.validation.body.form.UrlencodedFormV2Validator;
 import org.mule.module.apikit.validation.body.form.UrlencodedFormV1Validator;
-import org.mule.module.apikit.validation.body.schema.RestSchemaValidator;
+import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.module.apikit.validation.body.schema.v1.RestJsonSchemaValidator;
 import org.mule.module.apikit.validation.body.schema.v1.RestXmlSchemaValidator;
 import org.mule.module.apikit.validation.body.schema.v1.cache.SchemaCacheUtils;
@@ -27,12 +27,15 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.runtime.api.metadata.TypedValue;
 
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.io.InputStream;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.lang.String.format;
+import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsString;
 
 public class BodyValidator {
 
@@ -42,6 +45,7 @@ public class BodyValidator {
   public static ValidBody validate(IAction action, HttpRequestAttributes attributes, Object payload,
                                    ValidationConfig config, String charset)
       throws BadRequestException, UnsupportedMediaTypeException {
+
     ValidBody validBody = new ValidBody(payload);
 
     if (action == null || !action.hasBody()) {
@@ -49,91 +53,89 @@ public class BodyValidator {
       return validBody;
     }
 
-    String requestMimeTypeName = AttributesHelper.getMediaType(attributes);
-    Map.Entry<String, IMimeType> foundMimeType;
+    final String requestMimeTypeName = AttributesHelper.getMediaType(attributes);
 
-    try {
-
-      foundMimeType = action.getBody()
-          .entrySet()
-          .stream()
-          .filter(entry -> {
-            if (logger.isDebugEnabled()) {
-              logger.debug(String.format("comparing request media type %s with expected %s\n", requestMimeTypeName,
-                                         entry.getKey()));
-            }
-
-            return entry.getKey().equals(requestMimeTypeName);
-          })
-          .findFirst()
-          .get();
-
-    } catch (NoSuchElementException e) {
-      throw new UnsupportedMediaTypeException();
-    }
+    final Entry<String, IMimeType> foundMimeType = action.getBody().entrySet().stream()
+        .peek(entry -> {
+          if (logger.isDebugEnabled())
+            logger.debug(format("comparing request media type %s with expected %s\n", requestMimeTypeName, entry.getKey()));
+        })
+        .filter(entry -> entry.getKey().equals(requestMimeTypeName))
+        .findFirst()
+        .orElseThrow(UnsupportedMediaTypeException::new);
 
 
-    IMimeType mimeType = foundMimeType.getValue();
-
+    final IMimeType mimeType = foundMimeType.getValue();
 
     if (requestMimeTypeName.contains("json") || requestMimeTypeName.contains("xml")) {
 
-      validateAsString(config, mimeType, action, requestMimeTypeName, validBody.getPayload(), charset);
+      validBody = validateAsString(config, mimeType, action, requestMimeTypeName, payload, charset);
 
     } else if ((requestMimeTypeName.contains("multipart/form-data")
         || requestMimeTypeName.contains("application/x-www-form-urlencoded"))) {
 
-      validBody = validateAsMultiPart(config, mimeType, requestMimeTypeName, validBody.getPayloadAsTypedValue());
+      validBody = validateAsMultiPart(config, mimeType, requestMimeTypeName, payload);
 
     }
 
     return validBody;
   }
 
-  private static void validateAsString(ValidationConfig config, IMimeType mimeType, IAction action, String requestMimeTypeName,
-                                       Object payload, String charset)
+  private static ValidBody validateAsString(ValidationConfig config, IMimeType mimeType, IAction action,
+                                            String requestMimeTypeName,
+                                            Object payload, String charset)
       throws BadRequestException {
-    RestSchemaValidator schemaValidator = null;
 
+    IRestSchemaValidatorStrategy validator = null;
     if (config.isParserV2()) {
-      schemaValidator = new RestSchemaValidator(new RestSchemaV2Validator(mimeType));
+      validator = new RestSchemaV2Validator(mimeType);
     } else {
       String schemaPath = SchemaCacheUtils.getSchemaCacheKey(action, requestMimeTypeName);
 
       try {
         if (requestMimeTypeName.contains("json")) {
-
           ApiKitJsonSchema schema = config.getJsonSchema(schemaPath);
-          schemaValidator = new RestSchemaValidator(new RestJsonSchemaValidator(schema != null ? schema.getSchema() : null));
-
+          validator = new RestJsonSchemaValidator(schema != null ? schema.getSchema() : null);
         } else if (requestMimeTypeName.contains("xml")) {
-          schemaValidator = new RestSchemaValidator(new RestXmlSchemaValidator(config.getXmlSchema(schemaPath)));
+          validator = new RestXmlSchemaValidator(config.getXmlSchema(schemaPath));
         }
       } catch (ExecutionException e) {
         throw new BadRequestException(e);
       }
     }
 
+    if (validator == null) {
+      throw new BadRequestException(format("Unexpected Mime Type %s", requestMimeTypeName));
+    }
 
-    String strPayload = PayloadHelper.getPayloadAsString(payload, charset, requestMimeTypeName.contains("json"));
+    final ValidBody validBody = new ValidBody(payload);
 
-    schemaValidator.validate(strPayload);
+    if (payload instanceof InputStream) {
+      final RewindableInputStream rewindableInputStream = new RewindableInputStream((InputStream) payload);
+      validBody.setPayload(rewindableInputStream);
+    }
 
+    validator.validate(getPayloadAsString(validBody.getPayload(), charset));
+
+    return validBody;
   }
 
   private static ValidBody validateAsMultiPart(ValidationConfig config, IMimeType mimeType, String requestMimeTypeName,
-                                               TypedValue payload)
+                                               Object payload)
       throws BadRequestException {
-    ValidBody validBody = new ValidBody(payload);
-    FormParametersValidator formParametersValidator = null;
 
+    final ValidBody validBody = new ValidBody(payload);
+
+    final TypedValue payloadAsTypedValue = validBody.getPayloadAsTypedValue();
+
+    final FormParametersValidator formParametersValidator;
     if (mimeType.getFormParameters() != null) {
 
       if (requestMimeTypeName.contains("multipart/form-data")) {
 
         formParametersValidator =
             new FormParametersValidator(new MultipartFormValidator(mimeType.getFormParameters(), config.getExpressionManager()));
-        validBody.setFormParameters(formParametersValidator.validate(payload));
+        validBody.setFormParameters(formParametersValidator.validate(payloadAsTypedValue));
 
       } else if (requestMimeTypeName.contains("application/x-www-form-urlencoded")) {
         if (config.isParserV2()) {
@@ -145,7 +147,7 @@ public class BodyValidator {
                                                                                               config.getExpressionManager()));
         }
 
-        validBody.setFormParameters(formParametersValidator.validate(payload));
+        validBody.setFormParameters(formParametersValidator.validate(payloadAsTypedValue));
       }
     }
 
