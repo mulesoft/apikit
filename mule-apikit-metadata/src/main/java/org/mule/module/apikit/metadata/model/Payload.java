@@ -30,6 +30,7 @@ public class Payload {
       return MetadataFactory.defaultMetadata();
     }
 
+
     String type = body.getType();
     String schema = body.getSchema();
     String example = body.getExample();
@@ -55,8 +56,7 @@ public class Payload {
 
   private static MetadataType applicationXmlMetadata(String schema, String example) {
     if (schema != null) {
-      return MetadataFactory.fromXSDSchema(schema);
-
+      return MetadataFactory.fromXSDSchema(schema, example);
     } else if (example != null) {
       return MetadataFactory.fromXMLExample(example);
     }

@@ -12,13 +12,17 @@ import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.json.api.JsonExampleTypeLoader;
 import org.mule.metadata.json.api.JsonTypeLoader;
 import org.mule.metadata.xml.api.ModelFactory;
+import org.mule.metadata.xml.api.SchemaCollector;
 import org.mule.metadata.xml.api.XmlTypeLoader;
+import org.mule.metadata.xml.api.utils.XmlSchemaUtils;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import javax.xml.namespace.QName;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.mule.metadata.api.builder.BaseTypeBuilder.create;
 
 public class MetadataFactory {
@@ -51,16 +55,12 @@ public class MetadataFactory {
    * @return The metadata if the example is valid, null otherwise
    */
   public static MetadataType fromJsonExample(String jsonExample) {
-
     Optional<MetadataType> root = Optional.empty();
 
     try {
-
       JsonExampleTypeLoader jsonExampleTypeLoader = new JsonExampleTypeLoader(jsonExample);
       root = jsonExampleTypeLoader.load(null);
-
     } catch (Exception e) {
-
       System.out.println("[ ERROR ] There was a problem when trying to parse example : " + jsonExample);
     }
 
@@ -71,11 +71,21 @@ public class MetadataFactory {
   /**
    *
    * @param xsdSchema
+   * @param example
    * @return
    */
-  public static MetadataType fromXSDSchema(String xsdSchema) {
-    // TODO: 7/26/17  
-    return defaultMetadata();
+  public static MetadataType fromXSDSchema(String xsdSchema, String example) {
+    try {
+      final Optional<QName> rootElementName = XmlSchemaUtils.getXmlSchemaRootElementName(singletonList(xsdSchema), example);
+      return rootElementName.map(qName -> {
+
+        final SchemaCollector schemaCollector = SchemaCollector.getInstance().addSchema("", xsdSchema);
+        final XmlTypeLoader xmlTypeLoader = new XmlTypeLoader(schemaCollector);
+        return xmlTypeLoader.load(qName.toString()).orElse(defaultMetadata());
+      }).orElse(defaultMetadata());
+    } catch (RuntimeException e) {
+      return defaultMetadata();
+    }
   }
 
   public static MetadataType fromXMLExample(String xmlExample) {
