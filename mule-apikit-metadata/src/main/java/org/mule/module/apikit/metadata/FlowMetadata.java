@@ -109,7 +109,7 @@ public class FlowMetadata implements MetadataSource {
 
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-    headers.forEach((name, value) -> builder.addField().key(name).value(value.getMetadata()));
+    headers.forEach((name, value) -> builder.addField().key(name.toLowerCase()).value(value.getMetadata()));
 
     return builder;
   }

@@ -38,12 +38,12 @@
   }, 
   "variables" : {
     "outboundHeaders" : {
-      "arrayOfStringHeader"? : [String], 
-      "arrayOfNumberHeader"? : [Number], 
-      "arrayOfIntegerHeader"? : [@int Number], 
-      "arrayOfDateHeader"? : [String], 
-      "arrayOfBooleanHeader"? : [Boolean], 
-      "arrayOfFileHeader"? : [String]
+      "arrayofstringheader"? : [String], 
+      "arrayofnumberheader"? : [Number], 
+      "arrayofintegerheader"? : [@int Number], 
+      "arrayofdateheader"? : [String], 
+      "arrayofbooleanheader"? : [Boolean], 
+      "arrayoffileheader"? : [String]
     }, 
     "httpStatus" : String
   }
