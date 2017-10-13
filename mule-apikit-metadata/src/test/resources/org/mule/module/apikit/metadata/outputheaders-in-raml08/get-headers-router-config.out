@@ -38,13 +38,13 @@
   }, 
   "variables" : {
     "outboundHeaders" : {
-      "stringHeader"? : @enum("values" : ["enum1","enum2"]) @length("min" : 2, "max" : 10) @default("value" : "enum1") String, 
-      "numberHeader"? : @range("from" : 10.10, "to" : 20.20) @default("value" : "15.15") Number, 
-      "integerHeader"? : @int @range("from" : 10, "to" : 20) @default("value" : "15") Number, 
-      "dateHeader"? : @default("value" : "Sun, 06 Nov 1994 08:49:37 GMT") String, 
-      "booleanHeader"? : @default("value" : "false") Boolean, 
-      "fileHeader"? : String, 
-      "withoutType"? : String
+      "stringheader"? : @enum("values" : ["enum1","enum2"]) @length("min" : 2, "max" : 10) @default("value" : "enum1") String, 
+      "numberheader"? : @range("from" : 10.10, "to" : 20.20) @default("value" : "15.15") Number, 
+      "integerheader"? : @int @range("from" : 10, "to" : 20) @default("value" : "15") Number, 
+      "dateheader"? : @default("value" : "Sun, 06 Nov 1994 08:49:37 GMT") String, 
+      "booleanheader"? : @default("value" : "false") Boolean, 
+      "fileheader"? : String, 
+      "withouttype"? : String
     }, 
     "httpStatus" : String
   }
