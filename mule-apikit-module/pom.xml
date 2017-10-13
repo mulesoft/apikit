@@ -35,7 +35,7 @@
 
         <mule.service.weave.version>2.0.0-SNAPSHOT</mule.service.weave.version>
         <mule.api.version>1.0.0-SNAPSHOT</mule.api.version>
-        <mule.app.plugins.maven.plugin.version>1.0.0-SNAPSHOT</mule.app.plugins.maven.plugin.version>
+        <mule.plugin.maven.plugin.version>1.0.0-SNAPSHOT</mule.plugin.maven.plugin.version>
         <mule.http.connector.version>1.0.0-SNAPSHOT</mule.http.connector.version>
         <mule.http.service.version>1.0.0-SNAPSHOT</mule.http.service.version>
         <mule.extensions.api.version>1.0.0-SNAPSHOT</mule.extensions.api.version>
@@ -48,9 +48,9 @@
         <plugins>
             <plugin>
                 <groupId>org.mule.runtime.plugins</groupId>
-                <artifactId>mule-app-plugins-maven-plugin</artifactId>
+                <artifactId>mule-plugin-maven-plugin</artifactId>
                 <extensions>true</extensions>
-                <version>${mule.app.plugins.maven.plugin.version}</version>
+                <version>${mule.plugin.maven.plugin.version}</version>
             </plugin>
             <!--TODO (MULE-10540) parent pom for mule plugins -->
             <plugin>
