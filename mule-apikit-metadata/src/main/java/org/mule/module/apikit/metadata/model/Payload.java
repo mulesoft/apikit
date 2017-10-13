@@ -25,15 +25,13 @@ public class Payload {
   private Payload() {}
 
   public static MetadataType metadata(@Nullable IMimeType body) {
-
     if (body == null) {
       return MetadataFactory.defaultMetadata();
     }
 
-
-    String type = body.getType();
-    String schema = body.getSchema();
-    String example = body.getExample();
+    final String type = body.getType();
+    final String schema = body.getSchema();
+    final String example = body.getExample();
 
     switch (type) {
       case MIME_APPLICATION_JSON:

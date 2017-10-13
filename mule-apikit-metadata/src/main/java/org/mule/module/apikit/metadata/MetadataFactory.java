@@ -39,8 +39,7 @@ public class MetadataFactory {
    * @return The metadata if the Schema is valid, null otherwise
    */
   public static MetadataType fromJsonSchema(String jsonSchema) {
-
-    JsonTypeLoader jsonTypeLoader = new JsonTypeLoader(jsonSchema);
+    final JsonTypeLoader jsonTypeLoader = new JsonTypeLoader(jsonSchema);
     final Optional<MetadataType> root = jsonTypeLoader.load(null);
 
     // We didn't managed to parse the schema.
@@ -78,9 +77,11 @@ public class MetadataFactory {
     try {
       final Optional<QName> rootElementName = XmlSchemaUtils.getXmlSchemaRootElementName(singletonList(xsdSchema), example);
       return rootElementName.map(qName -> {
-
-        final SchemaCollector schemaCollector = SchemaCollector.getInstance().addSchema("", xsdSchema);
-        final XmlTypeLoader xmlTypeLoader = new XmlTypeLoader(schemaCollector);
+        /*
+          See
+          https://github.com/mulesoft/metadata-model-api/blob/d1b8147a487fb1986821276cd9fd4bb320124604/metadata-model-raml/src/main/java/org/mule/metadata/raml/api/XmlRamlTypeLoader.java#L58
+        */
+        final XmlTypeLoader xmlTypeLoader = new XmlTypeLoader(SchemaCollector.getInstance().addSchema("", xsdSchema));
         return xmlTypeLoader.load(qName.toString()).orElse(defaultMetadata());
       }).orElse(defaultMetadata());
     } catch (RuntimeException e) {
