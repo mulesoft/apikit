@@ -25,14 +25,13 @@ public class Payload {
   private Payload() {}
 
   public static MetadataType metadata(@Nullable IMimeType body) {
-
     if (body == null) {
       return MetadataFactory.defaultMetadata();
     }
 
-    String type = body.getType();
-    String schema = body.getSchema();
-    String example = body.getExample();
+    final String type = body.getType();
+    final String schema = body.getSchema();
+    final String example = body.getExample();
 
     switch (type) {
       case MIME_APPLICATION_JSON:
@@ -55,8 +54,7 @@ public class Payload {
 
   private static MetadataType applicationXmlMetadata(String schema, String example) {
     if (schema != null) {
-      return MetadataFactory.fromXSDSchema(schema);
-
+      return MetadataFactory.fromXSDSchema(schema, example);
     } else if (example != null) {
       return MetadataFactory.fromXMLExample(example);
     }
