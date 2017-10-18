@@ -12,7 +12,6 @@
     <properties>
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../../formatter.xml</formatterConfigPath>
-        <mule.api.version>1.0.0-SNAPSHOT</mule.api.version>
     </properties>
 
     <dependencies>
