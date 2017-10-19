@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.prependIfMissing;
+import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.runtime.api.component.ComponentIdentifier.buildFromStringRepresentation;
 
 public class MessageSourceUtils {
@@ -71,8 +72,4 @@ public class MessageSourceUtils {
     return new URI(scheme, null, host, port, path, null, null);
   }
 
-  @SuppressWarnings("unchecked")
-  private static <A, B> A cast(B b) {
-    return (A) b;
-  }
 }

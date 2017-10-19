@@ -6,6 +6,8 @@
  */
 package org.mule.apikit.common;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +22,14 @@ public class CollectionUtils {
     maps.forEach(map::putAll);
 
     return map;
+  }
+
+  public static <T> List<T> join(List<T> l1, List<T> l2) {
+    return ImmutableSet.<T>builder()
+        .addAll(l1)
+        .addAll(l2)
+        .build()
+        .asList();
   }
 
 }

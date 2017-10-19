@@ -1,22 +1,22 @@
 {
-  "name": "${meta.prefix}${meta.artifactId}${meta.suffix}",
-  "minMuleVersion": "${minMuleVersion}",
+  "configs": [
+    "mule-config.xml"
+  ],
+  "redeploymentEnabled": true,
+  "name": "empty-artifact-json",
+  "minMuleVersion": "4.0.0",
   "requiredProduct": "MULE",
   "classLoaderModelLoaderDescriptor": {
     "id": "mule",
     "attributes": {
-      "exportedPackages": [],
       "exportedResources": [
         "api/api.raml"
-      ]
+      ],
+      "exportedPackages": []
     }
   },
   "bundleDescriptorLoader": {
     "id": "mule",
     "attributes": {}
-  },
-  "configs": [
-    "mule-config.xml"
-  ],
-  "domain": "${domainName}"
+  }
 }
