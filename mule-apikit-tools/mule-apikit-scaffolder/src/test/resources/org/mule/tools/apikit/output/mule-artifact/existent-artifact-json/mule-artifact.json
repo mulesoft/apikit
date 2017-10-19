@@ -1,7 +1,7 @@
 {
   "configs": [
-    "mule-config.xml",
-    "api.xml"
+    "other-config.xml",
+    "mule-config.xml"
   ],
   "redeploymentEnabled": false,
   "name": "custom-name",
@@ -10,11 +10,12 @@
   "classLoaderModelLoaderDescriptor": {
     "id": "mule",
     "attributes": {
+      "exportedPackages": [],
       "exportedResources": [
         "api/api.raml",
-        "api/trait.raml"
-      ],
-      "exportedPackages": []
+        "api/trait.raml",
+        "otherFolder/some.resource"
+      ]
     }
   },
   "bundleDescriptorLoader": {

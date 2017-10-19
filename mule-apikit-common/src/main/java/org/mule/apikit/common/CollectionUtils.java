@@ -6,7 +6,6 @@
  */
 package org.mule.apikit.common;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.HashMap;
@@ -25,7 +24,7 @@ public class CollectionUtils {
     return map;
   }
 
-  public static <T> ImmutableList<T> join(List<T> l1, List<T> l2) {
+  public static <T> List<T> join(List<T> l1, List<T> l2) {
     return ImmutableSet.<T>builder()
         .addAll(l1)
         .addAll(l2)

@@ -48,7 +48,7 @@ public class MuleArtifactJsonGeneratorTestCase {
   public void testGenerateNewDescriptor() throws Exception {
     final MuleArtifactJsonGenerator configGenerator =
         new MuleArtifactJsonGenerator(null, new File(BASE_DIR, testName), DEFAULT_MULE_VERSION);
-    final MuleApplicationModel model = configGenerator.generateDescriptor();
+    final MuleApplicationModel model = configGenerator.generateArtifact();
     final String json = serializer.serialize(model);
 
     final String expectedJson = IOUtils.toString(new FileInputStream(new File(BASE_DIR, testName + "/" + expected)));

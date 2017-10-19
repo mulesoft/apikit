@@ -20,19 +20,20 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
-import static com.sun.jmx.mbeanserver.Util.cast;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toList;
 import static org.mule.apikit.common.CollectionUtils.join;
+import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.runtime.api.deployment.meta.Product.MULE;
 import static org.mule.tools.apikit.misc.FileListUtils.listFiles;
 
 public class MuleArtifactJsonGenerator {
 
+  private static final String API_PATH_PREFIX = "api/";
   private final File rootDirectory;
   private final String artifactName;
   private final String minMuleVersion;
@@ -53,7 +54,7 @@ public class MuleArtifactJsonGenerator {
     this(log, rootDirectory, rootDirectory.getName(), minMuleVersion);
   }
 
-  public MuleArtifactJsonGenerator(Log log, File rootDirectory, String artifactName, String minMuleVersion) {
+  private MuleArtifactJsonGenerator(Log log, File rootDirectory, String artifactName, String minMuleVersion) {
     this.log = log;
     this.rootDirectory = rootDirectory;
     this.artifactName = artifactName;
@@ -62,36 +63,43 @@ public class MuleArtifactJsonGenerator {
 
   public void generate() {
     try {
-      final MuleApplicationModel muleArtifactJson = generateDescriptor();
-      saveDescriptor(muleArtifactJson);
+      final MuleApplicationModel artifact = generateArtifact();
+      save(artifact);
     } catch (Exception e) {
       log.error("Error generating descriptor mule-artifact.json", e);
     }
   }
 
-  private void saveDescriptor(MuleApplicationModel muleArtifactJson) throws IOException {
-    final String asString = serializer.serialize(muleArtifactJson);
+  private void save(MuleApplicationModel artifact) throws IOException {
+    final String asString = serializer.serialize(artifact);
     Files.write(Paths.get(rootDirectory.getPath(), MULE_ARTIFACT_FILENAME), asString.getBytes());
   }
 
-  MuleApplicationModel generateDescriptor() {
+  MuleApplicationModel generateArtifact() {
     try {
       final String json = IOUtils.toString(new FileInputStream(new File(rootDirectory, MULE_ARTIFACT_FILENAME)));
 
-      final MuleApplicationModel muleArtifactJson = serializer.deserialize(json);
+      final MuleApplicationModel artifact = serializer.deserialize(json);
 
-      final List<String> oldExportedResources =
-          cast(muleArtifactJson.getClassLoaderModelLoaderDescriptor().getAttributes().get(EXPORTED_RESOURCES));
-      final ImmutableList<String> newExportedResources = join(oldExportedResources, getApiResourcesList());
+      final List<String> exportedResources = collectExportedResources(artifact);
 
-      return updateExportedResources(muleArtifactJson, newExportedResources);
+      return updateExportedResources(artifact, exportedResources);
     } catch (Exception e) {
-      // Some Error has occurred
-      return createDefaultMuleArtifactJson();
+      log.warn("Error generating descriptor mule-artifact.json. Creating default descriptor.", e);
+      return createDefaultArtifact();
     }
   }
 
-  private MuleApplicationModel createDefaultMuleArtifactJson() {
+  private List<String> collectExportedResources(MuleApplicationModel artifact) {
+    final List<String> currentResources =
+        cast(artifact.getClassLoaderModelLoaderDescriptor().getAttributes().get(EXPORTED_RESOURCES));
+
+    final List<String> applicationResources =
+        currentResources.stream().filter(resource -> !resource.startsWith(API_PATH_PREFIX)).collect(toList());
+    return join(getApiResourcesList(), applicationResources);
+  }
+
+  private MuleApplicationModel createDefaultArtifact() {
     final MuleApplicationModel.MuleApplicationModelBuilder builder = getMuleApplicationModelBuilder();
     builder.setName(artifactName);
     builder.setMinMuleVersion(minMuleVersion);
@@ -108,18 +116,15 @@ public class MuleArtifactJsonGenerator {
     return builder.build();
   }
 
-  private MuleApplicationModel updateExportedResources(MuleApplicationModel muleArtifactJson, List<String> exportedResources) {
-    final MuleApplicationModel.MuleApplicationModelBuilder builder = getMuleApplicationModelBuilder(muleArtifactJson);
+  private MuleApplicationModel updateExportedResources(MuleApplicationModel artifact, List<String> exportedResources) {
+    final MuleApplicationModel.MuleApplicationModelBuilder builder = getMuleApplicationModelBuilder(artifact);
 
-    final MuleArtifactLoaderDescriptor classLoaderModelLoaderDescriptor = muleArtifactJson.getClassLoaderModelLoaderDescriptor();
+    final MuleArtifactLoaderDescriptor descriptor = artifact.getClassLoaderModelLoaderDescriptor();
 
-    Map<String, Object> attributes = classLoaderModelLoaderDescriptor.getAttributes().entrySet().stream()
-        .collect(Collectors.toMap(
-                                  Map.Entry::getKey,
-                                  e -> EXPORTED_RESOURCES.equals(e.getKey()) ? exportedResources : e.getValue()));
+    final HashMap<String, Object> attributes = new HashMap<>(descriptor.getAttributes());
+    attributes.put(EXPORTED_RESOURCES, exportedResources);
 
-    builder.withClassLoaderModelDescriptorLoader(new MuleArtifactLoaderDescriptor(classLoaderModelLoaderDescriptor.getId(),
-                                                                                  attributes));
+    builder.withClassLoaderModelDescriptorLoader(new MuleArtifactLoaderDescriptor(descriptor.getId(), attributes));
 
     return builder.build();
   }
@@ -128,15 +133,15 @@ public class MuleArtifactJsonGenerator {
     return new MuleApplicationModel.MuleApplicationModelBuilder();
   }
 
-  private MuleApplicationModel.MuleApplicationModelBuilder getMuleApplicationModelBuilder(MuleApplicationModel muleArtifactJson) {
+  private MuleApplicationModel.MuleApplicationModelBuilder getMuleApplicationModelBuilder(MuleApplicationModel artifact) {
     final MuleApplicationModel.MuleApplicationModelBuilder builder = getMuleApplicationModelBuilder();
-    builder.setName(muleArtifactJson.getName());
-    builder.setMinMuleVersion(muleArtifactJson.getMinMuleVersion());
-    builder.setConfigs(muleArtifactJson.getConfigs());
-    builder.setRedeploymentEnabled(muleArtifactJson.isRedeploymentEnabled());
-    builder.setRequiredProduct(muleArtifactJson.getRequiredProduct());
-    builder.withBundleDescriptorLoader(muleArtifactJson.getBundleDescriptorLoader());
-    builder.withClassLoaderModelDescriptorLoader(muleArtifactJson.getClassLoaderModelLoaderDescriptor());
+    builder.setName(artifact.getName());
+    builder.setMinMuleVersion(artifact.getMinMuleVersion());
+    builder.setConfigs(artifact.getConfigs());
+    builder.setRedeploymentEnabled(artifact.isRedeploymentEnabled());
+    builder.setRequiredProduct(artifact.getRequiredProduct());
+    builder.withBundleDescriptorLoader(artifact.getBundleDescriptorLoader());
+    builder.withClassLoaderModelDescriptorLoader(artifact.getClassLoaderModelLoaderDescriptor());
     return builder;
   }
 
@@ -144,6 +149,6 @@ public class MuleArtifactJsonGenerator {
     final Path rootPath = new File(rootDirectory, RESOURCES_PATH).toPath();
     return listFiles(rootDirectory.getPath(), API_RESOURCES_PATH).stream()
         .map(p -> rootPath.relativize(p).toString())
-        .collect(Collectors.toList());
+        .collect(toList());
   }
 }
