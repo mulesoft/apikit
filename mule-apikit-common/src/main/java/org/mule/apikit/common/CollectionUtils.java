@@ -8,9 +8,12 @@ package org.mule.apikit.common;
 
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CollectionUtils {
 
@@ -24,12 +27,13 @@ public class CollectionUtils {
     return map;
   }
 
-  public static <T> List<T> join(List<T> l1, List<T> l2) {
-    return ImmutableSet.<T>builder()
-        .addAll(l1)
-        .addAll(l2)
-        .build()
-        .asList();
+  public static <T> Collection<T> join(List<T> l1, List<T> l2) {
+    final Set<T> joined = new LinkedHashSet<>();
+
+    joined.addAll(l1);
+    joined.addAll(l2);
+
+    return joined;
   }
 
 }
