@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -80,7 +81,7 @@ public class MuleArtifactJsonGenerator {
 
       final MuleApplicationModel artifact = serializer.deserialize(json);
 
-      final List<String> exportedResources = collectExportedResources(artifact);
+      final Collection<String> exportedResources = collectExportedResources(artifact);
 
       return updateExportedResources(artifact, exportedResources);
     } catch (Exception e) {
@@ -89,7 +90,7 @@ public class MuleArtifactJsonGenerator {
     }
   }
 
-  private List<String> collectExportedResources(MuleApplicationModel artifact) {
+  private Collection<String> collectExportedResources(MuleApplicationModel artifact) {
     final List<String> currentResources =
         cast(artifact.getClassLoaderModelLoaderDescriptor().getAttributes().get(EXPORTED_RESOURCES));
 
@@ -115,7 +116,7 @@ public class MuleArtifactJsonGenerator {
     return builder.build();
   }
 
-  private MuleApplicationModel updateExportedResources(MuleApplicationModel artifact, List<String> exportedResources) {
+  private MuleApplicationModel updateExportedResources(MuleApplicationModel artifact, Collection<String> exportedResources) {
     final MuleApplicationModel.MuleApplicationModelBuilder builder = getMuleApplicationModelBuilder(artifact);
 
     final MuleArtifactLoaderDescriptor descriptor = artifact.getClassLoaderModelLoaderDescriptor();
