@@ -13,9 +13,18 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.Collections.emptyList;
 
 public class FileListUtils {
 
@@ -70,6 +79,28 @@ public class FileListUtils {
       } else {
         throw new RuntimeException(e);
       }
+    }
+  }
+
+  public static List<Path> listFiles(String baseDir, String dir) {
+    final List<Path> files = new ArrayList<>();
+
+    final Path path = Paths.get(baseDir, dir);
+    try {
+      Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+          if (!attrs.isDirectory())
+            files.add(file);
+          return FileVisitResult.CONTINUE;
+        }
+      });
+
+      return files;
+
+    } catch (IOException e) {
+      return emptyList();
     }
   }
 }

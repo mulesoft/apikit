@@ -1,0 +1,22 @@
+{
+  "configs": [
+    "mule-config.xml"
+  ],
+  "redeploymentEnabled": true,
+  "name": "empty-artifact-json",
+  "minMuleVersion": "4.0.0",
+  "requiredProduct": "MULE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedResources": [
+        "api/api.raml"
+      ],
+      "exportedPackages": []
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

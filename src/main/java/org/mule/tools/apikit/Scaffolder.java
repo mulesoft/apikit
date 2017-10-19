@@ -14,6 +14,7 @@ import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.RuntimeEdition;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationStrategy;
+import org.mule.tools.apikit.output.MuleArtifactJsonGenerator;
 import org.mule.tools.apikit.output.MuleConfigGenerator;
 
 import java.io.File;
@@ -21,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +38,7 @@ public class Scaffolder {
   public final static RuntimeEdition DEFAULT_RUNTIME_EDITION = CE;
 
   private final MuleConfigGenerator muleConfigGenerator;
+  private final MuleArtifactJsonGenerator muleArtifactJsonGenerator;
 
   public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles,
                                             List<String> muleXmlFiles)
@@ -90,9 +93,16 @@ public class Scaffolder {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
     }
 
+    if (minMuleVersion == null) {
+      minMuleVersion = DEFAULT_MULE_VERSION;
+    }
+
     muleConfigGenerator =
         new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(),
                                 ramlsWithExtensionEnabled, minMuleVersion, runtimeEdition);
+
+    muleArtifactJsonGenerator =
+        new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
   }
 
   private static InputStream getDomainStream(Log log, String domainPath) {
@@ -113,8 +123,20 @@ public class Scaffolder {
     return domainStream;
   }
 
+  //TODO This is only a hack to get project base directory. Project Base Dir should be informed by api parameter
+  private File getProjectBaseDirectory(File muleXmlOutputDirectory) {
+    final Path outputDirectory = muleXmlOutputDirectory.toPath();
+
+    if (outputDirectory.endsWith("src/main/mule") || outputDirectory.endsWith("src/main/mule/")) {
+      return outputDirectory.getParent().getParent().getParent().toFile();
+    } else {
+      return muleXmlOutputDirectory;
+    }
+  }
+
   public void run() {
     muleConfigGenerator.generate();
+    muleArtifactJsonGenerator.generate();
   }
 
 
