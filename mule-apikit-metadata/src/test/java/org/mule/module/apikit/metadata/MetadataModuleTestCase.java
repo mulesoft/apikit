@@ -11,7 +11,7 @@ import org.mule.metadata.api.model.FunctionType;
 import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import org.mule.module.apikit.metadata.utils.MockedApplicationModel;
-import org.mule.runtime.config.api.dsl.model.ApplicationModel;
+import org.mule.runtime.config.internal.model.ApplicationModel;
 
 import java.util.Optional;
 

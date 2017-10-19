@@ -17,6 +17,8 @@ import org.mule.runtime.config.api.dsl.processor.ArtifactConfig;
 import org.mule.runtime.config.api.dsl.processor.ConfigFile;
 import org.mule.runtime.config.api.dsl.processor.ConfigLine;
 import org.mule.runtime.config.api.dsl.processor.xml.XmlApplicationParser;
+import org.mule.runtime.config.internal.model.ApplicationModel;
+import org.mule.runtime.config.internal.model.ComponentModel;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.registry.ServiceRegistry;
 import org.mule.runtime.core.api.registry.SpiServiceRegistry;
@@ -39,11 +41,11 @@ import org.w3c.dom.Document;
 public class MockedApplicationModel implements ApplicationModelWrapper {
 
   private final String name;
-  private org.mule.runtime.config.api.dsl.model.ApplicationModel applicationModel;
+  private ApplicationModel applicationModel;
   private String typesData;
 
   private MockedApplicationModel(String name,
-                                 org.mule.runtime.config.api.dsl.model.ApplicationModel applicationModel,
+                                 ApplicationModel applicationModel,
                                  String typesData) {
     this.name = name;
     this.applicationModel = applicationModel;
@@ -54,7 +56,7 @@ public class MockedApplicationModel implements ApplicationModelWrapper {
     return name;
   }
 
-  public org.mule.runtime.config.api.dsl.model.ApplicationModel getApplicationModel() {
+  public ApplicationModel getApplicationModel() {
     return applicationModel;
   }
 
@@ -98,12 +100,12 @@ public class MockedApplicationModel implements ApplicationModelWrapper {
   }
 
   @Override
-  public org.mule.runtime.config.api.dsl.model.ComponentModel findRootComponentModel() {
+  public ComponentModel findRootComponentModel() {
     return getApplicationModel().getRootComponentModel();
   }
 
   @Override
-  public Optional<org.mule.runtime.config.api.dsl.model.ComponentModel> findNamedComponent(String name) {
+  public Optional<ComponentModel> findNamedComponent(String name) {
     return getApplicationModel().findTopLevelNamedComponent(name);
   }
 
@@ -210,13 +212,13 @@ public class MockedApplicationModel implements ApplicationModelWrapper {
           createComponentBuildingDefinitionRegistry(extensionModels, muleContext != null ? muleContext.getClass().getClassLoader()
               : Thread.currentThread().getContextClassLoader());
 
-      org.mule.runtime.config.api.dsl.model.ApplicationModel applicationModel =
-          new org.mule.runtime.config.api.dsl.model.ApplicationModel(artifactConfigBuilder.build(), null,
-                                                                     extensionModels, Collections.emptyMap(),
-                                                                     Optional.empty(),
-                                                                     Optional.of(componentBuildingDefinitionRegistry),
-                                                                     false,
-                                                                     getResourceProvider());
+      ApplicationModel applicationModel =
+          new ApplicationModel(artifactConfigBuilder.build(), null,
+                               extensionModels, Collections.emptyMap(),
+                               Optional.empty(),
+                               Optional.of(componentBuildingDefinitionRegistry),
+                               false,
+                               getResourceProvider());
       return new MockedApplicationModel("", applicationModel, typesData);
     }
   }

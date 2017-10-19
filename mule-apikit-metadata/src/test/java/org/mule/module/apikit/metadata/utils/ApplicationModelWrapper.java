@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.metadata.utils;
 
-import org.mule.runtime.config.api.dsl.model.ComponentModel;
+import org.mule.runtime.config.internal.model.ComponentModel;
 
 import java.util.Optional;
 
