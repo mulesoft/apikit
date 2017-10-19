@@ -63,8 +63,7 @@ public class MuleArtifactJsonGenerator {
 
   public void generate() {
     try {
-      final MuleApplicationModel artifact = generateArtifact();
-      save(artifact);
+      save(generateArtifact());
     } catch (Exception e) {
       log.error("Error generating descriptor mule-artifact.json", e);
     }
