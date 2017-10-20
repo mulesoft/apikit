@@ -6,8 +6,6 @@
  */
 package org.mule.apikit.common;
 
-import com.google.common.collect.ImmutableSet;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;

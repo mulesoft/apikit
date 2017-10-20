@@ -148,7 +148,7 @@ public class MuleArtifactJsonGenerator {
   private List<String> getApiResourcesList() {
     final Path rootPath = new File(rootDirectory, RESOURCES_PATH).toPath();
     return listFiles(rootDirectory.getPath(), API_RESOURCES_PATH).stream()
-        .map(p -> rootPath.relativize(p).toString())
+        .map(p -> rootPath.relativize(p).toString()).sorted()
         .collect(toList());
   }
 }
