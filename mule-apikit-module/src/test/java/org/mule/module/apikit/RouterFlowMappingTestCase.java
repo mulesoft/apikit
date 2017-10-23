@@ -17,7 +17,7 @@ import org.junit.Test;
 
 import com.jayway.restassured.RestAssured;
 
-@ArtifactClassLoaderRunnerConfig
+@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
 public class RouterFlowMappingTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

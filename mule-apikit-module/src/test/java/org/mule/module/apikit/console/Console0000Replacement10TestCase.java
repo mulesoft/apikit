@@ -22,7 +22,7 @@ import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 
-@ArtifactClassLoaderRunnerConfig
+@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
 public class Console0000Replacement10TestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

@@ -23,7 +23,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-@ArtifactClassLoaderRunnerConfig
+@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
 public class ConsoleWithRouterTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

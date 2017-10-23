@@ -19,7 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
-@ArtifactClassLoaderRunnerConfig
+@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
 public class ContentTypeTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
