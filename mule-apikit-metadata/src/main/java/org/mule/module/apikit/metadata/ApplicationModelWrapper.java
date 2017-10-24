@@ -14,8 +14,8 @@ import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.module.apikit.metadata.raml.RamlCoordsSimpleFactory;
 import org.mule.module.apikit.metadata.raml.RamlHandler;
 import org.mule.raml.interfaces.model.IRaml;
-import org.mule.runtime.config.api.dsl.model.ApplicationModel;
-import org.mule.runtime.config.api.dsl.model.ComponentModel;
+import org.mule.runtime.config.internal.model.ApplicationModel;
+import org.mule.runtime.config.internal.model.ComponentModel;
 
 import java.util.Collection;
 import java.util.List;

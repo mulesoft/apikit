@@ -17,7 +17,7 @@ import org.mule.module.apikit.metadata.model.Flow;
 import org.mule.module.apikit.metadata.raml.RamlHandler;
 import org.mule.module.apikit.metadata.utils.MockedApplicationModel;
 import org.mule.module.apikit.metadata.utils.TestDataProvider;
-import org.mule.runtime.config.api.dsl.model.ApplicationModel;
+import org.mule.runtime.config.internal.model.ApplicationModel;
 
 import java.io.File;
 import java.io.IOException;
