@@ -39,11 +39,6 @@
             <!--required by raml-parser-2. Workaround for MULE-12439-->
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <!--required by raml-parser-2. Workaround for MULE-12439-->
-        </dependency>
-        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <!--required by raml-parser v2. Workaround for MULE-12439-->
