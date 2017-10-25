@@ -20,6 +20,7 @@ import java.util.List;
 import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromChildCollectionConfiguration;
 import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromChildConfiguration;
 import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromSimpleParameter;
+import static org.mule.runtime.dsl.api.component.AttributeDefinition.Builder.fromSimpleReferenceParameter;
 import static org.mule.runtime.dsl.api.component.TypeDefinition.fromType;
 
 public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProvider {
@@ -65,12 +66,12 @@ public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProv
     definitions.add(baseDefinition.withIdentifier("router")
         .withTypeDefinition(fromType(Router.class))
         .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
-        .withSetterParameterDefinition("configRef", fromSimpleParameter("config-ref").build()).build());
+        .withSetterParameterDefinition("configuration", fromSimpleReferenceParameter("config-ref").build()).build());
 
     definitions.add(baseDefinition.withIdentifier("console")
         .withTypeDefinition(fromType(Console.class))
         .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
-        .withSetterParameterDefinition("configRef", fromSimpleParameter("config-ref").build()).build());
+        .withSetterParameterDefinition("configuration", fromSimpleReferenceParameter("config-ref").build()).build());
     return definitions;
   }
 }

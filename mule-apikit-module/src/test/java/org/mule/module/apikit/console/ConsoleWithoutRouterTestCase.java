@@ -64,15 +64,6 @@ public class ConsoleWithoutRouterTestCase extends MuleArtifactFunctionalTestCase
   }
 
   @Test
-  public void getConsoleIndexWithInvalidListenerPath() throws Exception {
-    RestAssured.port = serverPort2.getNumber();
-    given().header("Accept", "*/*")
-        .expect()
-        .statusCode(500)
-        .when().get("/konsole");
-  }
-
-  @Test
   public void getConsoleJavascriptResource() throws Exception {
     given().port(serverPort.getNumber())
         .header("Accept", "*/*")
