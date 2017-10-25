@@ -38,7 +38,7 @@ public class Console extends AbstractComponent implements Processor, Initialisab
   private final ApikitRegistry registry;
   private final ConfigurationComponentLocator locator;
 
-  private String configRef;
+  private Configuration configuration;
   private String name;
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -73,7 +73,7 @@ public class Console extends AbstractComponent implements Processor, Initialisab
 
   @Override
   public CoreEvent process(CoreEvent event) throws MuleException {
-    Configuration config = registry.getConfiguration(getConfigRef());
+    final Configuration config = getConfiguration();
 
     EventWrapper eventWrapper = new EventWrapper(event, config.getOutboundHeadersMapName(), config.getHttpStatusVarName());
 
@@ -107,12 +107,12 @@ public class Console extends AbstractComponent implements Processor, Initialisab
     return eventWrapper.build();
   }
 
-  public String getConfigRef() {
-    return configRef;
+  public Configuration getConfiguration() {
+    return configuration;
   }
 
-  public void setConfigRef(String config) {
-    this.configRef = config;
+  public void setConfiguration(Configuration configuration) {
+    this.configuration = configuration;
   }
 
   public String getName() {

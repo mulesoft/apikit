@@ -61,7 +61,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
   private final ConfigurationComponentLocator locator;
 
-  private String configRef;
+  private Configuration configuration;
 
   private String name;
 
@@ -84,13 +84,13 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
           .error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
       return;
     }
-    registry.setApiSource(configRef, url.get().toString().replace("*", ""));
+    registry.setApiSource(configuration.getName(), url.get().toString().replace("*", ""));
   }
 
   @Override
   public CoreEvent process(final CoreEvent event) throws MuleException {
     try {
-      Configuration config = registry.getConfiguration(getConfigRef());
+      Configuration config = registry.getConfiguration(getConfiguration().getName());
       CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
       eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
@@ -108,7 +108,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   public Publisher<CoreEvent> apply(Publisher<CoreEvent> publisher) {
     return from(publisher).flatMap(event -> {
       try {
-        Configuration config = registry.getConfiguration(getConfigRef());
+        Configuration config = registry.getConfiguration(getConfiguration().getName());
         CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
         eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
@@ -160,12 +160,12 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     return flow.execute(eventBuilder.build());
   }
 
-  public String getConfigRef() {
-    return configRef;
+  public Configuration getConfiguration() {
+    return configuration;
   }
 
-  public void setConfigRef(String config) {
-    this.configRef = config;
+  public void setConfiguration(Configuration config) {
+    this.configuration = config;
   }
 
   public String getName() {

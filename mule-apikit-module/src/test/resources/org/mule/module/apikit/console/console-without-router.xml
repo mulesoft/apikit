@@ -26,11 +26,4 @@
         </http:listener>
         <apikit:console config-ref="apikitConfig" />
     </flow>
-
-    <flow name="invalid-api-console">
-        <http:listener config-ref="httpListenerConfigForInvalidConsoleFlow" path="/konsole/"/>
-        <apikit:console config-ref="apikitConfigWithRouter" />
-    </flow>
-
-
 </mule>
