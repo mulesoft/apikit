@@ -8,7 +8,7 @@ package org.mule.module.apikit.validation.body.form;
 
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
-@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
+@ArtifactClassLoaderRunnerConfig
 public class MultipartFormFunctionalTestCaseRaml10 extends MultipartFormFunctionalTestCase {
 
   @Override

@@ -16,7 +16,7 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
-@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
+@ArtifactClassLoaderRunnerConfig
 public class HeadersTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

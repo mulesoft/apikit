@@ -19,7 +19,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
+@ArtifactClassLoaderRunnerConfig
 public class Schema08TestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

@@ -15,7 +15,7 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import static com.jayway.restassured.RestAssured.given;
 
-@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
+@ArtifactClassLoaderRunnerConfig
 public class NoStrictValidationTestCase extends MuleArtifactFunctionalTestCase {
 
   //muleThreeCompatibility = true

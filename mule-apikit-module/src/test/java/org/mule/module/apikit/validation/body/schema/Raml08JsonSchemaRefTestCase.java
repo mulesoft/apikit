@@ -17,7 +17,7 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 
-@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
+@ArtifactClassLoaderRunnerConfig
 public class Raml08JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

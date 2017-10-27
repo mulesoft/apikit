@@ -6,6 +6,9 @@
  */
 package org.mule.module.apikit.parameters;
 
+import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
+
+@ArtifactClassLoaderRunnerConfig
 public class ParametersInboundTestCase extends ParametersTestCase {
 
   @Override

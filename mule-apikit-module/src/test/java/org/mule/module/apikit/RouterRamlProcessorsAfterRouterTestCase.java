@@ -22,7 +22,7 @@ import org.junit.Test;
 
 import com.jayway.restassured.RestAssured;
 
-@ArtifactClassLoaderRunnerConfig(sharedRuntimeLibs = {"org.mule.tests:mule-tests-unit"})
+@ArtifactClassLoaderRunnerConfig
 public class RouterRamlProcessorsAfterRouterTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
