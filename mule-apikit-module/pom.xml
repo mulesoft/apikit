@@ -109,11 +109,6 @@
             <!--required by raml-parser v1 & v2. Workaround for MULE-12439-->
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <!--required by raml-parser v1 & v2. Workaround for MULE-12439-->
-        </dependency>
-        <dependency>
             <groupId> org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <!--required by raml-parser v1, v2 & http service. Workaround for MULE-12439-->
