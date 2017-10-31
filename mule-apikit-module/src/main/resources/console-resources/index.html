@@ -57,7 +57,7 @@
     });
     window.addEventListener('raml-json-enhance-ready', function(e) {
       var apiConsole = document.querySelector('api-console');
-      apiConsole.setAttribute('base-uri', window.location.host);
+      apiConsole.setAttribute('base-uri', window.location.origin);
       apiConsole.raml = e.detail.json;
     });
 
