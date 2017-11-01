@@ -8,6 +8,7 @@ package org.mule.module.apikit.metadata.raml;
 
 import org.mule.module.apikit.metadata.interfaces.MetadataSource;
 import org.mule.module.apikit.metadata.FlowMetadata;
+import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
@@ -21,12 +22,16 @@ import static java.util.Optional.ofNullable;
 
 public class RamlApiWrapper {
 
-  private Map<String, IResource> ramlResources = new HashMap<>();
-  private Map<String, IParameter> baseUriParameters = new HashMap<>();
+  private final Map<String, IResource> ramlResources = new HashMap<>();
+  private final Map<String, IParameter> baseUriParameters;
+  private final Map<String, String> consolidatedSchemas;
+  private final Notifier notifier;
 
-  public RamlApiWrapper(IRaml ramlApi) {
+  public RamlApiWrapper(IRaml ramlApi, Notifier notifier) {
     collectResources(ramlApi.getResources());
+    consolidatedSchemas = ramlApi.getConsolidatedSchemas();
     this.baseUriParameters = ramlApi.getBaseUriParameters();
+    this.notifier = notifier;
   }
 
   private void collectResources(Map<String, IResource> resources) {
@@ -36,10 +41,15 @@ public class RamlApiWrapper {
     });
   }
 
-  public Optional<MetadataSource> getActionForFlow(RamlCoordinate coordinate, String httpStatusVar, String outboundHeadersVar) {
+  public Optional<MetadataSource> getActionForFlow(RamlApiWrapper api, RamlCoordinate coordinate, String httpStatusVar,
+                                                   String outboundHeadersVar) {
     return ofNullable(ramlResources.get(coordinate.getResource()))
         .map(resource -> resource.getAction(coordinate.getMethod()))
-        .map(action -> new FlowMetadata(action, coordinate, baseUriParameters, httpStatusVar, outboundHeadersVar));
+        .map(action -> new FlowMetadata(api, action, coordinate, baseUriParameters, httpStatusVar, outboundHeadersVar, notifier));
+  }
+
+  public Map<String, String> getConsolidatedSchemas() {
+    return consolidatedSchemas;
   }
 }
 

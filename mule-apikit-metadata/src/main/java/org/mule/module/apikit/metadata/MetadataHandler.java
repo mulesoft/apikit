@@ -73,7 +73,7 @@ public class MetadataHandler {
     // If there exists metadata for the flow, we get the Api
     return config
         .flatMap(ApikitConfig::getApi)
-        .flatMap(api -> api.getActionForFlow(coordinate.get(), httpStatusVar, outboundHeadersVar))
+        .flatMap(api -> api.getActionForFlow(api, coordinate.get(), httpStatusVar, outboundHeadersVar))
         .flatMap(MetadataSource::getMetadata);
   }
 }

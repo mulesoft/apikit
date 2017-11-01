@@ -6,6 +6,7 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import static java.util.Collections.emptyMap;
 import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
 
 import org.mule.raml.interfaces.model.IRaml;
@@ -15,6 +16,7 @@ import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -87,7 +89,7 @@ public class RamlImpl10V2 implements IRaml {
 
   @Override
   public Map<String, String> getConsolidatedSchemas() {
-    throw new UnsupportedOperationException();
+    return emptyMap();
   }
 
   @Override

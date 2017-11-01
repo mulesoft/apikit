@@ -13,6 +13,7 @@ import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,6 +22,8 @@ import java.util.Map;
 import org.raml.v2.api.model.v08.api.Api;
 import org.raml.v2.api.model.v08.api.GlobalSchema;
 import org.raml.v2.api.model.v08.resources.Resource;
+
+import static java.util.Collections.emptyMap;
 
 public class RamlImpl08V2 implements IRaml {
 
@@ -52,7 +55,7 @@ public class RamlImpl08V2 implements IRaml {
 
   @Override
   public Map<String, String> getConsolidatedSchemas() {
-    throw new UnsupportedOperationException();
+    return emptyMap();
   }
 
   @Override

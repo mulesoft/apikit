@@ -56,12 +56,8 @@ public class MetadataFactory {
   public static MetadataType fromJsonExample(String jsonExample) {
     Optional<MetadataType> root = Optional.empty();
 
-    try {
-      JsonExampleTypeLoader jsonExampleTypeLoader = new JsonExampleTypeLoader(jsonExample);
-      root = jsonExampleTypeLoader.load(null);
-    } catch (Exception e) {
-      System.out.println("[ ERROR ] There was a problem when trying to parse example : " + jsonExample);
-    }
+    JsonExampleTypeLoader jsonExampleTypeLoader = new JsonExampleTypeLoader(jsonExample);
+    root = jsonExampleTypeLoader.load(null);
 
     // We didn't managed to parse the schema.
     return root.orElse(defaultMetadata());
@@ -74,19 +70,15 @@ public class MetadataFactory {
    * @return
    */
   public static MetadataType fromXSDSchema(String xsdSchema, String example) {
-    try {
-      final Optional<QName> rootElementName = XmlSchemaUtils.getXmlSchemaRootElementName(singletonList(xsdSchema), example);
-      return rootElementName.map(qName -> {
-        /*
-          See
-          https://github.com/mulesoft/metadata-model-api/blob/d1b8147a487fb1986821276cd9fd4bb320124604/metadata-model-raml/src/main/java/org/mule/metadata/raml/api/XmlRamlTypeLoader.java#L58
-        */
-        final XmlTypeLoader xmlTypeLoader = new XmlTypeLoader(SchemaCollector.getInstance().addSchema("", xsdSchema));
-        return xmlTypeLoader.load(qName.toString()).orElse(defaultMetadata());
-      }).orElse(defaultMetadata());
-    } catch (RuntimeException e) {
-      return defaultMetadata();
-    }
+    final Optional<QName> rootElementName = XmlSchemaUtils.getXmlSchemaRootElementName(singletonList(xsdSchema), example);
+    return rootElementName.map(qName -> {
+      /*
+        See
+        https://github.com/mulesoft/metadata-model-api/blob/d1b8147a487fb1986821276cd9fd4bb320124604/metadata-model-raml/src/main/java/org/mule/metadata/raml/api/XmlRamlTypeLoader.java#L58
+      */
+      final XmlTypeLoader xmlTypeLoader = new XmlTypeLoader(SchemaCollector.getInstance().addSchema("", xsdSchema));
+      return xmlTypeLoader.load(qName.toString()).orElse(defaultMetadata());
+    }).orElse(defaultMetadata());
   }
 
   public static MetadataType fromXMLExample(String xmlExample) {

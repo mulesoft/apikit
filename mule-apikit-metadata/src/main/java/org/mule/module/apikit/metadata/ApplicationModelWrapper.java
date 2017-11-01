@@ -128,7 +128,8 @@ public class ApplicationModelWrapper {
 
     final RamlHandlerSupplier ramlSupplier = RamlHandlerSupplier.create(configRaml, ramlHandler);
 
-    return new ApikitConfig(configName, configRaml, flowMappings, ramlSupplier, httpStatusVarName, outputHeadersVarName);
+    return new ApikitConfig(configName, configRaml, flowMappings, ramlSupplier, httpStatusVarName, outputHeadersVarName,
+                            notifier);
   }
 
   private static class RamlHandlerSupplier implements Supplier<Optional<IRaml>> {

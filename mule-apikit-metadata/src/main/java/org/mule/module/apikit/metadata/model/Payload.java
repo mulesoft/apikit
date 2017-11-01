@@ -8,6 +8,7 @@ package org.mule.module.apikit.metadata.model;
 
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.module.apikit.metadata.MetadataFactory;
+import org.mule.module.apikit.metadata.raml.RamlApiWrapper;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
@@ -24,13 +25,13 @@ public class Payload {
 
   private Payload() {}
 
-  public static MetadataType metadata(@Nullable IMimeType body) {
+  public static MetadataType metadata(RamlApiWrapper api, @Nullable IMimeType body) {
     if (body == null) {
       return MetadataFactory.defaultMetadata();
     }
 
     final String type = body.getType();
-    final String schema = body.getSchema();
+    final String schema = resolveSchema(api, body);
     final String example = body.getExample();
 
     switch (type) {
@@ -45,7 +46,20 @@ public class Payload {
       default:
         return MetadataFactory.defaultMetadata();
     }
+  }
 
+  private static String resolveSchema(RamlApiWrapper api, IMimeType body) {
+    String schema = body.getSchema();
+
+    // As body.getSchema() can return the name of the schema, null or
+    // the schema itself, first we assume that it has the schema name
+    // and we try to get the schema def from the api consolidated
+    // schemas
+    if (api.getConsolidatedSchemas().containsKey(schema)) {
+      schema = api.getConsolidatedSchemas().get(schema);
+    }
+
+    return schema;
   }
 
   private static MetadataType formMetadata(Map<String, List<IParameter>> formParameters) {

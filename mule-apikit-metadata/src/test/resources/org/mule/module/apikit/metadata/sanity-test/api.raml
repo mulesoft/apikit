@@ -1,0 +1,818 @@
+#%RAML 0.8
+title: Sanity RAML 0.8 API
+version: v0.1
+protocols: [HTTP]
+baseUri: http://localhost:9090/api/{version}
+documentation:
+  - title: APIKIt Sanity Test
+    content: This application provides a way to test APIkit with RAML 0.8 for any Sanity test
+schemas:
+  - Items: |
+      { "$schema" : "http://json-schema.org/draft-03/schema",
+          "id" : "http://jsonschema.net",
+          "properties" : { "items" : { "id" : "http://jsonschema.net/items",
+                  "items" : { "id" : "http://jsonschema.net/items/0",
+                     "properties" : { "code" : { "id" : "http://jsonschema.net/items/0/code",
+                        "required" : false,
+                        "type" : "string"
+                        },
+                    "color" : { "id" : "http://jsonschema.net/items/0/color",
+                        "required" : false,
+                        "type" : "string"
+                      },
+                    "description" : { "id" : "http://jsonschema.net/items/0/description",
+                        "required" : false,
+                        "type" : "string"
+                      },
+                    "id" : { "id" : "http://jsonschema.net/items/0/id",
+                        "required" : false,
+                        "type" : "number"
+                      },
+                    "size" : { "id" : "http://jsonschema.net/items/0/size",
+                        "required" : false,
+                        "type" : "string"
+                      }
+                  },
+                "type" : "object"
+              },
+            "type" : "array"
+          } },
+        "type" : "object"
+      }
+  - Providers: |
+      { "$schema" : "http://json-schema.org/draft-03/schema",
+        "id" : "http://jsonschema.net",
+        "properties" : { "providers" : { "id" : "http://jsonschema.net/providers",
+                "items" : { "id" : "http://jsonschema.net/providers/0",
+                    "properties" : { "address" : { "id" : "http://jsonschema.net/providers/0/address",
+                            "items" : { "id" : "http://jsonschema.net/providers/0/address/0",
+                                "properties" : { "floor" : { "id" : "http://jsonschema.net/providers/0/address/0/floor",
+                                        "required" : false,
+                                        "type" : "string"
+                                      },
+                                    "number" : { "id" : "http://jsonschema.net/providers/0/address/0/number",
+                                        "required" : false,
+                                        "type" : "number"
+                                      },
+                                    "street" : { "id" : "http://jsonschema.net/providers/0/address/0/street",
+                                        "required" : false,
+                                        "type" : "string"
+                                      }
+                                  },
+                                "required" : false,
+                                "type" : "object"
+                              },
+                            "required" : false,
+                            "type" : "array"
+                          },
+                        "id" : { "id" : "http://jsonschema.net/providers/0/id",
+                            "required" : false,
+                            "type" : "number"
+                          },
+                        "name" : { "id" : "http://jsonschema.net/providers/0/name",
+                            "required" : true,
+                            "type" : "string"
+                          },
+                        "code" : { "id" : "http://jsonschema.net/providers/0/code",
+                            "required" : true,
+                            "type" : "string"
+                          },
+                        "phone" : { "id" : "http://jsonschema.net/providers/0/phone",
+                            "items" : { "id" : "http://jsonschema.net/providers/0/phone/0",
+                                "properties" : { "business" : { "id" : "http://jsonschema.net/providers/0/phone/0/business",
+                                        "required" : false,
+                                        "type" : "string"
+                                      },
+                                    "cellPhone" : { "id" : "http://jsonschema.net/providers/0/phone/0/cellPhone",
+                                        "required" : false,
+                                        "type" : "string"
+                                      },
+                                    "personal" : { "id" : "http://jsonschema.net/providers/0/phone/0/personal",
+                                        "required" : false,
+                                        "type" : "string"
+                                      }
+                                  },
+                                "required" : false,
+                                "type" : "object"
+                              },
+                            "required" : false,
+                            "type" : "array"
+                          }
+                      },
+                    "required" : false,
+                    "type" : "object"
+                  },
+                "required" : false,
+                "type" : "array"
+              } },
+        "required" : false,
+        "type" : "object"
+      }
+  - Clients: |
+      { "$schema" : "http://json-schema.org/draft-03/schema",
+        "id" : "http://jsonschema.net",
+        "properties" : { "clients" : { "id" : "http://jsonschema.net/clients",
+                "items" : { "id" : "http://jsonschema.net/clients/0",
+                    "properties" : { "code" : { "id" : "http://jsonschema.net/clients/0/code",
+                            "required" : false,
+                            "type" : "string"
+                          },
+                        "id" : { "id" : "http://jsonschema.net/clients/0/id",
+                            "required" : false,
+                            "type" : "number"
+                          },
+                        "name" : { "id" : "http://jsonschema.net/clients/0/name",
+                            "required" : false,
+                            "type" : "string"
+                          }
+                      },
+                    "required" : false,
+                    "type" : "object"
+                  },
+                "required" : false,
+                "type" : "array"
+              } },
+        "required" : false,
+        "type" : "object"
+      }
+  - Invoices: |
+      { "$schema" : "http://json-schema.org/draft-03/schema",
+        "id" : "http://jsonschema.net",
+        "properties" : { "clientId" : { "id" : "http://jsonschema.net/clientId",
+                "required" : false,
+                "type" : "number"
+              },
+            "date" : { "id" : "http://jsonschema.net/date",
+                "required" : false,
+                "type" : "string"
+              },
+            "id" : { "id" : "http://jsonschema.net/id",
+                "required" : false,
+                "type" : "number"
+              },
+            "items" : { "id" : "http://jsonschema.net/items",
+                "items" : { "id" : "http://jsonschema.net/items/0",
+                    "properties" : { "itemId" : { "id" : "http://jsonschema.net/items/0/itemId",
+                            "required" : false,
+                            "type" : "number"
+                          },
+                        "notes" : { "id" : "http://jsonschema.net/items/0/notes",
+                            "required" : false,
+                            "type" : "string"
+                          }
+                      },
+                    "required" : false,
+                    "type" : "object"
+                  },
+                "required" : false,
+                "type" : "array"
+              },
+            "price" : { "id" : "http://jsonschema.net/price",
+                "required" : false,
+                "type" : "string"
+              }
+          },
+        "required" : false,
+        "type" : "object"
+      }
+traits:
+  - post-item:
+      queryParameters:
+        code:
+          displayName: Code
+          description: |
+              Code that identifies the item.
+          type: string
+          minLength: 3
+          maxLength: 10
+          required: true
+          example: "ATB-123"
+        size:
+          displayName: Size
+          description: |
+              Size of the item. Note that it must be lower case.
+          type: string
+          required: true
+          enum: [small, medium, large]
+          example: "small"
+          default: "medium"
+        color:
+          displayName: Color
+          description: Color of the item.
+          type: string
+          required: false
+          example: "blue"
+        description:
+          displayName: Description
+          description: Detailed description of the item.
+          type: string
+          required: false
+          example: |
+            "Baptism souvenirs. There is a variety of colors and the combination of them
+            can be personalized."
+resourceTypes:
+  - collection:
+      usage: This resourceType should be used for any collection of items
+      description: The collection of <<resourcePathName>>
+      get:
+        description: Get all <<resourcePathName>>, optionally filtered
+      post:
+        description: Create a new <<resourcePathName | !singularize>>
+  - element:
+      usage: This resourceType should be use for any single element
+      description: A specific <<resourcePathName | !singularize>>
+      put?:
+        description: Update a <<resourcePathName | !singularize>>
+      delete?:
+        description: Delete a <<resourcePathName | !singularize>>
+/items:
+  displayName: Items
+  type: collection
+  get:
+    description: Get a list of all the available items.
+    queryParameters:
+      size:
+        displayName: Size
+        description: |
+          Size of the item.
+        enum: [ small, medium, large ]
+        required: false
+    responses:
+      200:
+        description: Retrieved all available items.
+        body:
+          application/json:
+            schema: Items
+            example: |
+              {
+                "items":
+                  [
+                    {
+                      "id":123,
+                      "code":"AD-12",
+                      "color":"blue",
+                      "size":"medium",
+                      "description":"Borders in light blue"
+                    },
+                    {
+                      "id":321,
+                      "code":"AD-13",
+                      "color":"pink",
+                      "size":"small",
+                      "description":"Borders in red"
+                    }
+                  ]
+                }
+      400:
+        description: Bad Request.
+      404:
+        description: Resource not found
+      405:
+        description: Method not allowed
+      406:
+        description: Not acceptable
+      409:
+        description: Conflict
+      415:
+        description: Unsupported media type
+  post:
+    description: Create a new item
+    is: [post-item]
+    body:
+      application/json:
+        schema: Items
+    responses:
+      204:
+        description: Created new item
+      400:
+        description: Bad Request.
+      404:
+        description: Resource not found
+      405:
+        description: Method not allowed
+      406:
+        description: Not acceptable
+      409:
+        description: Conflict
+      415:
+        description: Unsupported media type
+  /{itemId}:
+    displayName: Item
+    type: element
+    uriParameters:
+      itemId:
+        description: |
+          Id that identifies the item.
+        type: integer
+        minimum: 0
+        example: 138
+    get:
+      description: Get an item by Code.
+      responses:
+        200:
+          description: Retrieved item
+          body:
+            application/json:
+              example: |
+                  {
+                      "id":123,
+                      "code":"AD-12",
+                      "color":"blue",
+                      "size":"medium",
+                      "description":"Borders in light blue"
+                  }
+              schema: Items
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+    put:
+      description: Update an item by Code.
+      body:
+        application/x-www-form-urlencoded:
+          formParameters:
+            Id:
+              description: Id of the item
+              type: integer
+              required: false
+              example: 123
+            Code:
+              description: Code of the item
+              type: string
+              required: false
+              example: "AD-12"
+            Color:
+              description: Color of the item
+              type: string
+              required: false
+              example: "blue"
+            Size:
+              description: Size of the item
+              type: string
+              required: false
+              enum: [small, medium, large]
+              example: "medium"
+            Description:
+              description: Description of the item
+              type: string
+              required: false
+              example: "Borders in light blue"
+      responses:
+        201:
+          description: Item successfully updated.
+          body:
+            application/json:
+              schema: Items
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+    delete:
+      description: Delete an item by Code.
+      body:
+        multipart/form-data:
+          formParameters:
+            code:
+              displayName: Code
+              description: Code of the item to delete.
+              example: "ASX-140"
+              type: string
+              required: true
+              minLength: 3
+              maxLength: 12
+      responses:
+        204:
+          description: Item successfully deleted.
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+          headers:
+            X-waiting-period:
+              description: |
+                The number of seconds to wait before you can attempt to make a request again.
+              type: integer
+              required: true
+              minimum: 1
+              maximum: 3600
+              example: 34
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+/providers:
+  displayName: Providers
+  get:
+    description: Get a list of all providers.
+    responses:
+      200:
+        description: Retrieved a list of all providers.
+        body:
+          application/json:
+            schema: Providers
+      400:
+        description: Bad Request.
+      404:
+        description: Resource not found
+      405:
+        description: Method not allowed
+      406:
+        description: Not acceptable
+      409:
+        description: Conflict
+      415:
+        description: Unsupported media type
+  post:
+    description: Add a new provider.
+    responses:
+      201:
+        description: Provider successfully created.
+        body:
+          application/json:
+            schema: Providers
+      400:
+        description: Bad Request.
+      404:
+        description: Resource not found
+      405:
+        description: Method not allowed
+      406:
+        description: Not acceptable
+      409:
+        description: Conflict
+      415:
+        description: Unsupported media type
+  /{providerId}:
+    displayName: Provider
+    uriParameters:
+      providerId:
+        description: |
+          Id that identifies the provider.
+        type: integer
+        minimum: 0
+        example: 138
+    get:
+      description: Get a provider by Code.
+      responses:
+        200:
+          description: Retrieved provider
+          body:
+            application/json:
+              schema: Providers
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+    put:
+      description: Update a provider by Code.
+      responses:
+        201:
+          description: Provider successfully updated.
+          body:
+            application/json:
+              schema: Providers
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+    delete:
+      description: Delete a provider by Code.
+      responses:
+        204:
+          description: Provider successfully deleted.
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+/clients:
+  displayName: Clients
+  get:
+    description: Get a list of all clients.
+    is: [post-item]
+    responses:
+      200:
+        description: Retrieved a list of all clients.
+        body:
+          application/json:
+            schema: Clients
+      400:
+        description: Bad Request.
+      404:
+        description: Resource not found
+      405:
+        description: Method not allowed
+      406:
+        description: Not acceptable
+      409:
+        description: Conflict
+      415:
+        description: Unsupported media type
+  post:
+    description: Add a new client.
+    responses:
+      201:
+        description: Client successfully created.
+        body:
+          application/json:
+            schema: Clients
+      400:
+        description: Bad Request.
+      404:
+        description: Resource not found
+      405:
+        description: Method not allowed
+      406:
+        description: Not acceptable
+      409:
+        description: Conflict
+      415:
+        description: Unsupported media type
+  /{clientId}:
+    displayName: Client
+    uriParameters:
+      clientId:
+        description: |
+          Id that identifies the clientId.
+        type: integer
+        minimum: 0
+        example: 138
+    get:
+      description: Get a client by Code.
+      responses:
+        200:
+          description: Retrieved client
+          body:
+            application/json:
+              schema: Clients
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+    put:
+      description: Update a client by Code.
+      body:
+        application/json:
+          schema: Clients
+      responses:
+        201:
+          description: Client successfully updated.
+          body:
+            application/json:
+              schema: Clients
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+    delete:
+      description: Delete a client by Code.
+      responses:
+        204:
+          description: Client successfully deleted.
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+/invoices:
+  displayName: Invoices
+  get:
+    description: Get a list of all invoices.
+    responses:
+      200:
+        description: Retrieved a list of all invoices.
+        body:
+          application/json:
+            schema: Invoices
+            example: |
+              {
+                "id": 138,
+                "date":"13-Oct-2013",
+                "clientId": 200,
+                "items": [
+                                    {
+                                        "itemId": 138,
+                                        "notes": "Some additional comments"
+                                    },
+                                    {
+                                        "itemId": 15,
+                                        "notes": "Another comment"
+                                    }
+                              ],
+                "price":"384.25"
+              }
+      400:
+        description: Bad Request.
+      404:
+        description: Resource not found
+      405:
+        description: Method not allowed
+      406:
+        description: Not acceptable
+      409:
+        description: Conflict
+      415:
+        description: Unsupported media type
+  post:
+    description: Add a new client.
+    responses:
+      201:
+        description: Client successfully created.
+        body:
+          application/json:
+            schema: Clients
+            example: |
+              {
+                "id": 138,
+                "date":"13-Oct-2013",
+                "clientId": 200,
+                "items": [
+                                    {
+                                        "itemId": 138,
+                                        "notes": "Some additional comments"
+                                    },
+                                    {
+                                        "itemId": 15,
+                                        "notes": "Another comment"
+                                    }
+                              ],
+                "price":"384.25"
+              }
+      400:
+        description: Bad Request.
+      404:
+        description: Resource not found
+      405:
+        description: Method not allowed
+      406:
+        description: Not acceptable
+      409:
+        description: Conflict
+      415:
+        description: Unsupported media type
+  /{invoiceId}:
+    displayName: Invoice
+    uriParameters:
+      invoiceId:
+        description: |
+          Id that identifies the invoice.
+        type: integer
+        minimum: 0
+        example: 138
+    get:
+      description: Get an invoice by Code.
+      responses:
+        200:
+          description: Retrieved invoice
+          body:
+            application/json:
+              schema: Invoices
+              example: |
+                {
+                  "id": 138,
+                  "date":"13-Oct-2013",
+                  "clientId": 200,
+                  "items": [
+                                      {
+                                          "itemId": 138,
+                                          "notes": "Some additional comments"
+                                      },
+                                      {
+                                          "itemId": 15,
+                                          "notes": "Another comment"
+                                      }
+                                ],
+                  "price":"384.25"
+                }
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+    put:
+      description: Update an invoice by Code.
+      responses:
+        201:
+          description: Invoice successfully updated.
+          body:
+            application/json:
+              schema: Invoices
+              example: |
+                {
+                  "id": 138,
+                  "date":"13-Oct-2013",
+                  "clientId": 200,
+                  "items": [
+                                      {
+                                          "itemId": 138,
+                                          "notes": "Some additional comments"
+                                      },
+                                      {
+                                          "itemId": 15,
+                                          "notes": "Another comment"
+                                      }
+                                ],
+                  "price":"384.25"
+                }
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
+    delete:
+      description: Delete an invoice by Code.
+      responses:
+        204:
+          description: Invoice successfully deleted.
+        400:
+          description: Bad Request.
+        404:
+          description: Resource not found
+        405:
+          description: Method not allowed
+        406:
+          description: Not acceptable
+        409:
+          description: Conflict
+        415:
+          description: Unsupported media type
