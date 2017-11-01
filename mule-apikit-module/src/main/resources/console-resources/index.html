@@ -50,6 +50,24 @@
   <raml-json-enhance></raml-json-enhance>
 
   <script>
+    var computeAbsoluteUrl = function(baseUri, url) {
+      var uri = baseUri;
+      if (uri[uri.length - 1] !== '/') {
+        uri += '/';
+      }
+      if (url[0] === '/') {
+        url = url.substr(1);
+      }
+      return uri + url;
+    };
+
+    var isRelative = function(url) {
+      if (!url || typeof url !== 'string') {
+        return true;
+      }
+      return url.indexOf('http') !== 0;
+    };
+
     var parser = document.querySelector('raml-js-parser');
     parser.addEventListener('api-parse-ready', function(e) {
       var enhacer = document.querySelector('raml-json-enhance');
@@ -57,8 +75,12 @@
     });
     window.addEventListener('raml-json-enhance-ready', function(e) {
       var apiConsole = document.querySelector('api-console');
-      apiConsole.setAttribute('base-uri', window.location.host);
       apiConsole.raml = e.detail.json;
+
+      // if RAML's baseUri is relative, set api-console base-uri
+      if (isRelative(e.detail.json.baseUri)) {
+        apiConsole.setAttribute('base-uri', computeAbsoluteUrl(window.location.origin, e.detail.json.baseUri));
+      }
     });
 
     function init() {
