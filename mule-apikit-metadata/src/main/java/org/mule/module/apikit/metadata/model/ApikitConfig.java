@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.metadata.model;
 
+import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.raml.RamlApiWrapper;
 import org.mule.raml.interfaces.model.IRaml;
 
@@ -21,16 +22,18 @@ public class ApikitConfig {
   final private Supplier<Optional<IRaml>> apiSupplier;
   final private String httpStatusVarName;
   final private String outputHeadersVarName;
+  final private Notifier notifier;
   private Optional<RamlApiWrapper> ramlApi;
 
   public ApikitConfig(String name, String raml, List<FlowMapping> flowMappings, Supplier<Optional<IRaml>> apiSupplier,
-                      String httpStatusVarName, String outputHeadersVarName) {
+                      String httpStatusVarName, String outputHeadersVarName, Notifier notifier) {
     this.name = name;
     this.raml = raml;
     this.flowMappings = flowMappings;
     this.apiSupplier = apiSupplier;
     this.httpStatusVarName = httpStatusVarName;
     this.outputHeadersVarName = outputHeadersVarName;
+    this.notifier = notifier;
   }
 
   public String getName() {
@@ -47,7 +50,7 @@ public class ApikitConfig {
 
   public Optional<RamlApiWrapper> getApi() {
     if (ramlApi == null) {
-      ramlApi = apiSupplier.get().map(RamlApiWrapper::new);
+      ramlApi = apiSupplier.get().map(api -> new RamlApiWrapper(api, notifier));
     }
     return ramlApi;
   }

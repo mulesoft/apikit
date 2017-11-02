@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static java.lang.String.format;
@@ -55,7 +56,7 @@ public class MetadataTestCase extends TestDataProvider {
   @Test
   public void runTest() throws Exception {
     final ResourceLoader resourceLoader = new TestResourceLoader();
-    final Notifier notifier = new TestNotifier();
+    final TestNotifier notifier = new TestNotifier();
     final RamlHandler ramlHandler = new RamlHandler(resourceLoader, notifier);
 
     final ApplicationModel applicationModel = createApplicationModel(input);
@@ -83,6 +84,9 @@ public class MetadataTestCase extends TestDataProvider {
       final String expected = expectedMap.get(name);
       assertThat(format("Function metadata differ from expected. File: '%s'", name), actual, is(equalTo(expected)));
     });
+
+    notifier.messages.keySet()
+        .forEach(key -> notifier.messages(key).forEach(message -> System.out.println(key.toUpperCase() + " - " + message)));
   }
 
   private static Optional<FlowFunctionType> getMetadata(Metadata metadata, Flow flow) {

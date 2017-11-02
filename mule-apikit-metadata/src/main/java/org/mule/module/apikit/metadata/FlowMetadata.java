@@ -18,8 +18,10 @@ import org.mule.metadata.message.api.MessageMetadataTypeBuilder;
 import org.mule.metadata.message.api.MuleEventMetadataType;
 import org.mule.metadata.message.api.MuleEventMetadataTypeBuilder;
 import org.mule.module.apikit.metadata.interfaces.MetadataSource;
+import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.model.Payload;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
+import org.mule.module.apikit.metadata.raml.RamlApiWrapper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
@@ -30,6 +32,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.of;
 import static org.mule.module.apikit.metadata.MetadataFactory.binaryMetadata;
@@ -61,20 +64,25 @@ public class FlowMetadata implements MetadataSource {
   final private Map<String, IParameter> baseUriParameters;
   final private String httpStatusVar;
   final private String outboundHeadersVar;
+  final private RamlApiWrapper api;
+  final private Notifier notifier;
 
-  public FlowMetadata(IAction action, RamlCoordinate coordinate, Map<String, IParameter> baseUriParameters, String httpStatusVar,
-                      String outboundHeadersVar) {
+  public FlowMetadata(RamlApiWrapper api, IAction action, RamlCoordinate coordinate, Map<String, IParameter> baseUriParameters,
+                      String httpStatusVar,
+                      String outboundHeadersVar, Notifier notifier) {
+    this.api = api;
     this.action = action;
     this.coordinate = coordinate;
     this.baseUriParameters = baseUriParameters;
     this.httpStatusVar = httpStatusVar;
     this.outboundHeadersVar = outboundHeadersVar;
+    this.notifier = notifier;
   }
 
   @Override
   public Optional<FunctionType> getMetadata() {
     final MuleEventMetadataType inputEvent = inputMetadata(action, coordinate, baseUriParameters);
-    final MuleEventMetadataType outputEvent = outputMetadata(action, outboundHeadersVar, httpStatusVar);
+    final MuleEventMetadataType outputEvent = outputMetadata(action, coordinate, outboundHeadersVar, httpStatusVar);
 
     // FunctionType
     final FunctionTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).functionType();
@@ -95,9 +103,10 @@ public class FlowMetadata implements MetadataSource {
     return new MuleEventMetadataTypeBuilder().message(message).build();
   }
 
-  private MuleEventMetadataType outputMetadata(IAction action, String outboundHeadersVar, String httpStatusVar) {
+  private MuleEventMetadataType outputMetadata(IAction action, RamlCoordinate coordinate, String outboundHeadersVar,
+                                               String httpStatusVar) {
     final MessageMetadataType message = new MessageMetadataTypeBuilder()
-        .payload(getOutputPayload(action)).build();
+        .payload(getOutputPayload(action, coordinate)).build();
 
     return new MuleEventMetadataTypeBuilder().message(message)
         .addVariable(outboundHeadersVar, getOutputHeadersMetadata(action).build())
@@ -214,7 +223,7 @@ public class FlowMetadata implements MetadataSource {
     return builder;
   }
 
-  private MetadataType getOutputPayload(IAction action) {
+  private MetadataType getOutputPayload(IAction action, RamlCoordinate coordinate) {
     final Optional<Collection<IMimeType>> mimeTypes = findFirstResponse(action)
         .map(response -> response.getBody().values());
 
@@ -226,7 +235,7 @@ public class FlowMetadata implements MetadataSource {
       mimeType = null;
     }
 
-    return Payload.metadata(mimeType);
+    return loadMetadata(mimeType, coordinate, api, "output");
   }
 
   private MetadataType getInputPayload(IAction action, RamlCoordinate coordinate) {
@@ -241,6 +250,17 @@ public class FlowMetadata implements MetadataSource {
       }
     }
 
-    return Payload.metadata(mimeType);
+    return loadMetadata(mimeType, coordinate, api, "input");
+  }
+
+  private MetadataType loadMetadata(IMimeType mimeType, RamlCoordinate coordinate, RamlApiWrapper api,
+                                    String payloadDescription) {
+    try {
+      return Payload.metadata(api, mimeType);
+    } catch (Exception e) {
+      notifier.warn(format("Error while trying to resolve %s payload metadata for flow '%s'.\nDetails: %s", payloadDescription,
+                           coordinate.getFlowName(), e.getMessage()));
+      return MetadataFactory.defaultMetadata();
+    }
   }
 }

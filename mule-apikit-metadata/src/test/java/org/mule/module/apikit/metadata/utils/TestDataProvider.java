@@ -64,14 +64,13 @@ public class TestDataProvider {
               .forEach(File::delete);
 
           // Write golden files  with current values
-          BiConsumer<String, String> stringStringBiConsumer = (name, content) -> {
+          currentMap.forEach((name, content) -> {
             try {
               Files.write(basePath.resolve(name), content.getBytes("UTF-8"));
             } catch (IOException e) {
               throw new RuntimeException(e);
             }
-          };
-          currentMap.forEach(stringStringBiConsumer);
+          });
 
         } catch (IOException e) {
           throw new RuntimeException(e);
