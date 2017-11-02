@@ -6,7 +6,6 @@
  */
 package org.mule.tools.apikit.output;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
@@ -23,7 +22,9 @@ import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toList;
@@ -38,7 +39,7 @@ public class MuleArtifactJsonGenerator {
   private final File rootDirectory;
   private final String artifactName;
   private final String minMuleVersion;
-  private final List<String> configFiles = ImmutableList.of("mule-config.xml");
+  private final Set<String> configFiles = newHashSet("mule-config.xml");
   private final Log log;
 
   private static final String MULE_ARTIFACT_LOADER_DESCRIPTOR_ID = "mule";
