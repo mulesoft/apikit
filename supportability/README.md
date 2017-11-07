@@ -3,14 +3,13 @@
 ## Table of Contents
 - [Overview](#overview)
 - [Documentation link](#documentation-link)
-- [Architecture Overview](#architecture-overview)
-- [Service Maps](#service-maps)
 - [Code repositories](#code-repositories)
 - [Team](#team)
 - [Slack Channels](#slack-channels)
-- [JIRA Projects](#jira-projects)
+- [Jira Projects](#jira-projects)
 - [Troubleshooting](#troubleshooting)
 - [Compatibility Matrix](#compatibility-matrix)
+- [Limitations](#limitations)
 
 ## Overview
 APIKit is a toolkit that facilitates REST development. 
@@ -39,8 +38,8 @@ v1 branch is for RAML 0.8 but only for the community
 * **PM:** Badi Azad: [badi.azad@mulesoft.com](mailto:badi.azad@mulesoft.com)
 * **Engineering Manager:** Raúl Tardá: [raul.tarda@mulesoft.com](mailto:raul.tarda@mulesoft.com)
 * **QA:** Nicolas Grossi: [nicolas.grossi@mulesoft.com](mailto:nicolas.grossi@mulesoft.com)
-* **Architect:** Alejandro Amura: [nicolas.grossi@mulesoft.com](mailto:nicolas.grossi@mulesoft.com)
 * **Developers:**  
+  * Alejandro Amura: [alejandro.amura@mulesoft.com](mailto:alejandro.amura@mulesoft.com)
   * Santiago Fuentes: [santiago.fuentes@mulesoft.com](mailto:santiago.fuentes@mulesoft.com)
   * Diego Macias: [diego.macias@mulesoft.com](mailto:diego.macias@mulesoft.com)  
   * Diego Larralde: [diego.larralde@mulesoft.com](mailto:diego.larralde@mulesoft.com)
@@ -51,7 +50,7 @@ v1 branch is for RAML 0.8 but only for the community
 * APIkit : [#apikit](https://mulesoft.slack.com/archives/apikit)
 * RAML : [#raml](https://mulesoft.slack.com/archives/raml)
 
-### JIRA 
+### Jira Projects
 * APIKIT [Open issues](https://www.mulesoft.org/jira/issues/?jql=project%20%3D%20APIKIT%20AND%20resolution%20%3D%20Unresolved)
 * SOAPKIT [Open issues](https://www.mulesoft.org/jira/issues/?jql=project%20%3D%20SOAPKIT%20AND%20resolution%20%3D%20Unresolved)
 * ODATA [Open issues](https://www.mulesoft.org/jira/issues/?jql=project%20%3D%20ODATA%20AND%20resolution%20%3D%20Unresolved)
