@@ -1,0 +1,13 @@
+#%RAML 1.0
+title: ping
+version: 1.0
+
+/ping:
+  get:
+    description: Ping example
+    responses:
+      200:
+        body:
+          application/xml:
+            example: |
+              <ping>OK</ping>
