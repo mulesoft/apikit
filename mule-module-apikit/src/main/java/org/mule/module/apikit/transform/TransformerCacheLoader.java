@@ -52,7 +52,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
                                              DataType sourceDataType,
                                              DataType resultDataType) throws MuleException
     {
-        if (isJson(sourceDataType))
+        if (isJson(sourceDataType) && !String.class.equals(resultDataType.getType()))
         {
             JsonToObject jto = new JsonToObject();
             jto.setReturnDataType(resultDataType);
