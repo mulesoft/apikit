@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+    <http:listener-config name="ping-httpListenerConfig" host="0.0.0.0" port="${serverPort}"/>
+    <apikit:config name="ping-config" raml="org/mule/module/apikit/transform/ping.raml" consoleEnabled="false"/>
+
+    <flow name="xmltojsonFlow">
+        <http:listener config-ref="ping-httpListenerConfig" path="/"/>
+        <logger message="#[message.payloadAs(java.lang.String)]" level="INFO"/>
+    </flow>
+    <flow name="ping-main">
+        <http:listener config-ref="ping-httpListenerConfig" path="/api/*"/>
+        <apikit:router config-ref="ping-config"/>
+        <exception-strategy ref="ping-apiKitGlobalExceptionMapping"/>
+    </flow>
+    <flow name="ping-console">
+        <http:listener config-ref="ping-httpListenerConfig" path="/console/*"/>
+        <apikit:console config-ref="ping-config"/>
+    </flow>
+    <flow name="get:/ping:ping-config">
+        <set-payload value="{
+	&quot;ping&quot;: &quot;ok&quot;
+}" mimeType="application/json"/>
+    </flow>
+    <apikit:mapping-exception-strategy name="ping-apiKitGlobalExceptionMapping">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
+            <set-property propertyName="Content-Type" value="application/json"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <set-property propertyName="Content-Type" value="application/json"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException" />
+            <set-property propertyName="Content-Type" value="application/json"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Unsupported media type&quot; }"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException" />
+            <set-property propertyName="Content-Type" value="application/json"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Not acceptable&quot; }"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException" />
+            <set-property propertyName="Content-Type" value="application/json"/>
+            <set-payload value="{ &quot;message&quot;: &quot;Bad request&quot; }"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+</mule>
