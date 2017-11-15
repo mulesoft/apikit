@@ -212,12 +212,18 @@ public class HttpRestRequest
     }
 
     //only for raml 1.0
-    private void validateQueryParamArray(String paramKey, IParameter expected, Collection<?> paramValue) throws InvalidQueryParameterException
+    private void validateQueryParamArray(String paramKey, IParameter expected, Collection<?> paramValues) throws InvalidQueryParameterException
     {
         StringBuilder builder = new StringBuilder();
-        for (Object item : paramValue)
+        for (Object paramValue : paramValues)
         {
-            builder.append("- ").append(String.valueOf(item)).append("\n");
+            final String value = String.valueOf(paramValue);
+            builder.append("- ");
+
+            if (value.startsWith("*")) builder.append("\"").append(value).append("\"");
+            else builder.append(value);
+
+            builder.append("\n");
         }
         validateQueryParam(paramKey, expected, builder.toString());
     }
