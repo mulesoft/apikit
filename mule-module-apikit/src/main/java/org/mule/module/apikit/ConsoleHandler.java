@@ -20,7 +20,6 @@ import org.mule.transport.http.components.ResourceNotFoundException;
 import org.mule.transport.http.i18n.HttpMessages;
 import org.mule.util.FilenameUtils;
 import org.mule.util.IOUtils;
-import org.mule.util.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +30,8 @@ import java.io.InputStream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.mule.util.StringUtils.isNotEmpty;
 
 public class ConsoleHandler implements MessageProcessor
 {
@@ -180,7 +181,7 @@ public class ConsoleHandler implements MessageProcessor
                 String host = event.getMessage().getInboundProperty("Host");
                 String requestPath = event.getMessage().getInboundProperty("http.request.path");
                 String redirectLocation = scheme + "://" + host + requestPath + "/";
-                if (StringUtils.isNotEmpty(queryString))
+                if (isNotEmpty(queryString))
                 {
                     redirectLocation += "?" + queryString;
                 }
@@ -205,9 +206,16 @@ public class ConsoleHandler implements MessageProcessor
                     }
                     else
                     {
-                        String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
+                        final String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
                         File apiResource = new File(configuration.getAppHome(), resourcePath);
-                        in = new FileInputStream(apiResource);
+
+                        if (apiResource.exists()) {
+                            in = new FileInputStream(apiResource);
+                        } else if (isNotEmpty(apiResourcesRelativePath) && !"/".equals(apiResourcesRelativePath)){
+                            // check if exists in /classes/${apiResourcesRelativePath} dir
+                            apiResource = new File(configuration.getAppHome(), "classes/" + resourcePath);
+                            in = new FileInputStream(apiResource);
+                        }
                     }
                 }
                 else if (path.startsWith(embeddedConsolePath + "/scripts"))
