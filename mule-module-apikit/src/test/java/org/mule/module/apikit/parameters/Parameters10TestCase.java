@@ -53,4 +53,13 @@ public class Parameters10TestCase extends FunctionalTestCase
                 .when().get("/api/repeat");
     }
 
+    @Test
+    public void repeatableStringQueryParamWithAsterisk()
+    {
+        given().queryParam("status", "*a", "b")
+                .expect().response().statusCode(200)
+                .body(is("status: [*a, b]"))
+                .when().get("/api/repeat");
+    }
+
 }
