@@ -1,0 +1,28 @@
+#%RAML 1.0
+title: Sample API
+baseUri: http://localhost:8081
+
+/resource:
+  get:
+    queryParameters:
+      string:
+        type: string[]
+        required: false
+      number:
+        type: number[]
+        required: false
+      integer:
+        type: integer[]
+        required: false
+      boolean:
+        type: boolean[]
+        required: false
+      date:
+        type: date-only[]
+        required: false
+      file:
+        type: file[]
+        required: false
+      nil:
+        type: nil[]
+        required: false

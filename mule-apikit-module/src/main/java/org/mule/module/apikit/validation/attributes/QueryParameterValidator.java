@@ -91,12 +91,22 @@ public class QueryParameterValidator {
   }
 
   //only for raml 1.0
-  private void validateQueryParamArray(String paramKey, IParameter expected, Collection<?> paramValue)
+  private void validateQueryParamArray(String paramKey, IParameter expected, Collection<?> paramValues)
       throws InvalidQueryParameterException {
     StringBuilder builder = new StringBuilder();
-    for (Object item : paramValue) {
-      builder.append("- ").append(String.valueOf(item)).append("\n");
-    }
+
+    paramValues.forEach(paramValue -> {
+      final String value = String.valueOf(paramValue);
+      builder.append("- ");
+
+      if (value.startsWith("*"))
+        builder.append("\"").append(value).append("\"");
+      else
+        builder.append(value);
+
+      builder.append("\n");
+    });
+
     validateQueryParam(paramKey, expected, builder.toString());
   }
 
