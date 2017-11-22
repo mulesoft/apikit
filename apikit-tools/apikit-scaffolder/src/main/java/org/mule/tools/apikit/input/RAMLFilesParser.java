@@ -8,6 +8,7 @@ package org.mule.tools.apikit.input;
 
 import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
@@ -138,7 +139,7 @@ public class RAMLFilesParser
 
     private ResourceLoader getResourceLoader(String filePath)
     {
-        return new CompositeResourceLoader(new RootRamlFileResourceLoader(new File(filePath)), new DefaultResourceLoader());
+        return new CompositeResourceLoader(new RootRamlFileResourceLoader(new File(filePath)), new ExchangeDependencyResourceLoader(filePath), new DefaultResourceLoader());
     }
 
     void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version)
