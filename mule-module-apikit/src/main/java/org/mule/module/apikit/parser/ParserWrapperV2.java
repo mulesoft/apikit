@@ -11,6 +11,7 @@ import org.mule.module.apikit.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.model.IRaml;
 
 import com.google.common.collect.Lists;
@@ -38,7 +39,7 @@ public class ParserWrapperV2 implements ParserWrapper
     public ParserWrapperV2(String ramlPath, String appHome)
     {
         this.ramlPath = ramlPath;
-        List<ResourceLoader> resourceLoaders = Lists.newArrayList((ResourceLoader) new DefaultResourceLoader());
+        List<ResourceLoader> resourceLoaders = Lists.newArrayList(new DefaultResourceLoader(), new ExchangeDependencyResourceLoader());
         if (appHome != null)
         {
             resourceLoaders.add(new FileResourceLoader(appHome));

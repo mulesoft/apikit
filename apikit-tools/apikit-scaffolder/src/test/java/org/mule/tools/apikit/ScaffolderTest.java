@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,8 +45,13 @@ public class ScaffolderTest {
     private FileListUtils fileListUtils = new FileListUtils();
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         folder.newFolder("scaffolder");
+        folder.newFolder("scaffolder-exchange");
+        folder.newFolder("scaffolder-exchange/exchange_modules");
+        createFile("scaffolder-exchange/exchange_modules/library1.raml");
+        createFile("scaffolder-exchange/exchange_modules/library2.raml");
+        createFile("scaffolder-exchange/exchange_modules/library3.raml");
         folder.newFolder("scaffolder-existing");
         folder.newFolder("scaffolder-existing-extension");
         folder.newFolder("scaffolder-existing-custom-lc");
@@ -877,6 +883,21 @@ public class ScaffolderTest {
         doubleRootRaml();
     }
 
+    @Test
+    public void testGenerateWithExchangeModules() throws Exception
+    {
+        File muleXmlSimple = simpleGeneration("scaffolder-exchange", "api", null, "3.8.0");
+        assertTrue(muleXmlSimple.exists());
+        String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+        assertEquals(1, countOccurences(s, "<http:listener-config"));
+        assertEquals(1, countOccurences(s, "get:/resource1:api-config"));
+        assertEquals(1, countOccurences(s, "get:/resource2:api-config"));
+        assertEquals(1, countOccurences(s, "get:/resource3:api-config"));
+        assertEquals(0, countOccurences(s, "extensionEnabled"));
+        assertEquals(1, countOccurences(s, "<apikit:console"));
+        assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
+    }
+
     public void doubleRootRaml() throws Exception
     {
         List<File> ramls = Arrays.asList(getFile("double-root-raml/simple.raml"), getFile("double-root-raml/two.raml"));
@@ -938,6 +959,13 @@ public class ScaffolderTest {
         {
             return null;
         }
+
+        final File file = new File(s);
+        if (file.exists()) return file;
+        else return createFile(s);
+    }
+
+    private File createFile(String s) throws IOException {
         File file = folder.newFile(s);
         file.createNewFile();
         InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
