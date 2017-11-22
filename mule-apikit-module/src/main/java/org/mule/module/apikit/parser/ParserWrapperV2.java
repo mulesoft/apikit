@@ -10,6 +10,7 @@ import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.model.IRaml;
 
 import java.io.File;
@@ -37,7 +38,9 @@ public class ParserWrapperV2 implements ParserWrapper {
       File ramlFile = new File(Thread.currentThread().getContextClassLoader().getResource(ramlPath).getFile());
       this.resourceLoader =
           new org.raml.v2.api.loader.CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFile.getParentFile()),
-                                                             new DefaultResourceLoader());
+                                                             new DefaultResourceLoader(),
+                                                             new ExchangeDependencyResourceLoader(ramlFile.getParentFile()
+                                                                 .getAbsolutePath()));
     } else {
       this.resourceLoader = new DefaultResourceLoader();
     }

@@ -1,0 +1,49 @@
+#%RAML 1.0
+title: Sample API
+
+uses:
+  library1: exchange_modules/library1.raml
+  library2: exchange_modules/library2.raml
+  library3: /exchange_modules/library3.raml
+
+/resource1:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: library1.ComplexType
+            example: |
+              {
+                "name" : "a Name",
+                "length" : 2999
+              }
+
+/resource2:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: library2.ComplexType
+            example: |
+              {
+                "id": "an id",
+                "field1": {
+                  "id" : "an id",
+                  "name" : "a Name"
+                }
+              }
+
+/resource3:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: library3.BaseType
+            example: |
+              {
+                "id" : "an id",
+                "name" : "a Name"
+              }
