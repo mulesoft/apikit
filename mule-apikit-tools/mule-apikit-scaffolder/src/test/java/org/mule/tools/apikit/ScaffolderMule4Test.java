@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -46,8 +47,13 @@ public class ScaffolderMule4Test {
   private FileListUtils fileListUtils = new FileListUtils();
 
   @Before
-  public void setUp() {
+  public void setUp() throws IOException {
     folder.newFolder("scaffolder");
+    folder.newFolder("scaffolder-exchange");
+    folder.newFolder("scaffolder-exchange/exchange_modules");
+    createFile("scaffolder-exchange/exchange_modules/library1.raml");
+    createFile("scaffolder-exchange/exchange_modules/library2.raml");
+    createFile("scaffolder-exchange/exchange_modules/library3.raml");
     folder.newFolder("double-root-raml");
     folder.newFolder("custom-domain-4");
     folder.newFolder("raml-inside-folder");
@@ -728,6 +734,19 @@ public class ScaffolderMule4Test {
 
   }
 
+  @Test
+  public void testGenerateWithExchangeModules() throws Exception {
+    File muleXmlSimple = simpleGeneration("scaffolder-exchange", "api", null, DEFAULT_MULE_VERSION, EE);
+    assertTrue(muleXmlSimple.exists());
+    String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+    assertEquals(1, countOccurences(s, "<http:listener-config"));
+    assertEquals(1, countOccurences(s, "get:\\resource1:api-config"));
+    assertEquals(1, countOccurences(s, "get:\\resource2:api-config"));
+    assertEquals(1, countOccurences(s, "get:\\resource3:api-config"));
+    assertEquals(0, countOccurences(s, "extensionEnabled"));
+    assertEquals(1, countOccurences(s, "<apikit:console"));
+  }
+
   private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
       throws FileNotFoundException {
     return createScaffolder(ramls, xmls, muleXmlOut, null, null);
@@ -768,6 +787,15 @@ public class ScaffolderMule4Test {
     if (s == null) {
       return null;
     }
+
+    final File file = new File(s);
+    if (file.exists())
+      return file;
+    else
+      return createFile(s);
+  }
+
+  private File createFile(String s) throws IOException {
     File file = folder.newFile(s);
     file.createNewFile();
     InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
