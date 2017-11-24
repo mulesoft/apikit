@@ -9,6 +9,7 @@ package org.mule.tools.apikit.output;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -43,6 +44,8 @@ import org.junit.rules.TemporaryFolder;
 
 public class MuleConfigGeneratorTest {
 
+  public static final String VERSION = "v1";
+
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
 
@@ -52,7 +55,7 @@ public class MuleConfigGeneratorTest {
 
     IResource resource = mock(IResource.class);
 
-    when(resource.getUri()).thenReturn("/api/pet");
+    when(resource.getResolvedUri(anyString())).thenReturn("/api/pet");
 
     IAction action = mock(IAction.class);
 
@@ -74,8 +77,8 @@ public class MuleConfigGeneratorTest {
     when(api.getPath()).thenReturn("/api/*");
     when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
 
-    entries.addAll(Arrays.asList(new GenerationModel(api, resource, action),
-                                 new GenerationModel(api, resource, postAction)));
+    entries.addAll(Arrays.asList(new GenerationModel(api, VERSION, resource, action),
+                                 new GenerationModel(api, VERSION, resource, postAction)));
 
 
     Log mock = mock(Log.class);

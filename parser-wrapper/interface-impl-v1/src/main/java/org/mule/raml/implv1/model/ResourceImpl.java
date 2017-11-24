@@ -21,6 +21,8 @@ import org.raml.model.ActionType;
 import org.raml.model.Resource;
 import org.raml.model.parameter.UriParameter;
 
+import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
+
 public class ResourceImpl implements IResource {
 
   Resource resource;
@@ -38,8 +40,14 @@ public class ResourceImpl implements IResource {
 
   }
 
+  @Override
   public String getUri() {
     return resource.getUri();
+  }
+
+  @Override
+  public String getResolvedUri(String version) {
+    return resolveVersion(getUri(), version);
   }
 
   public void setParentUri(String s) {
@@ -108,5 +116,10 @@ public class ResourceImpl implements IResource {
 
   public void cleanBaseUriParameters() {
     resource.getBaseUriParameters().clear();
+  }
+
+  @Override
+  public String toString() {
+    return getUri();
   }
 }

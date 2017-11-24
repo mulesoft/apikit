@@ -99,6 +99,7 @@ public class ScaffolderMule4Test {
     assertEquals(8, countOccurences(s, "http:headers"));
     assertEquals(2, countOccurences(s, "get:\\:" + name + "-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:" + name + "-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\v1:" + name + "-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
@@ -111,7 +112,7 @@ public class ScaffolderMule4Test {
                  countOccurences(s,
                                  "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
     assertEquals(0, countOccurences(s, "exception-strategy"));
-    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   public void testSimpleGenerate(String name) throws Exception {
@@ -147,7 +148,7 @@ public class ScaffolderMule4Test {
                  countOccurences(s,
                                  "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
     assertEquals(0, countOccurences(s, "exception-strategy"));
-    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -237,10 +238,11 @@ public class ScaffolderMule4Test {
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -272,10 +274,11 @@ public class ScaffolderMule4Test {
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -309,10 +312,11 @@ public class ScaffolderMule4Test {
     assertEquals(0, countOccurences(s, "<http:inbound"));
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -346,10 +350,11 @@ public class ScaffolderMule4Test {
     assertEquals(2, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8081\""));
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -383,10 +388,11 @@ public class ScaffolderMule4Test {
     assertEquals(2, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8081\""));
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -419,9 +425,10 @@ public class ScaffolderMule4Test {
     assertEquals(2, countOccurences(s, "config-ref=\"abcd\""));
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -453,9 +460,10 @@ public class ScaffolderMule4Test {
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
