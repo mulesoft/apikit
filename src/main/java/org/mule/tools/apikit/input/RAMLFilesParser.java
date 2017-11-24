@@ -8,6 +8,7 @@ package org.mule.tools.apikit.input;
 
 import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
@@ -68,7 +69,8 @@ public class RAMLFilesParser {
           if (ParserV2Utils.useParserV2(content)) {
             ResourceLoader resourceLoader =
                 new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFileParent), new DefaultResourceLoader(),
-                                            new FileResourceLoader(ramlFolderPath));
+                                            new FileResourceLoader(ramlFolderPath),
+                                            new ExchangeDependencyResourceLoader(ramlFolderPath));
             raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
           } else {
             raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
@@ -94,7 +96,8 @@ public class RAMLFilesParser {
     List<String> errors;
     if (ParserV2Utils.useParserV2(content)) {
       ResourceLoader resourceLoader = new CompositeResourceLoader(new RootRamlFileResourceLoader(new File(filePath)),
-                                                                  new DefaultResourceLoader(), new FileResourceLoader(filePath));
+                                                                  new DefaultResourceLoader(), new FileResourceLoader(filePath),
+                                                                  new ExchangeDependencyResourceLoader(filePath));
       errors = ParserV2Utils.validate(resourceLoader, fileName, content);
     } else {
       errors = ParserV1Utils.validate(filePath, fileName, content);
