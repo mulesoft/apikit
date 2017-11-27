@@ -3,7 +3,7 @@
 title: Sample API
 version: v1
 baseUri: http://localhost/api
-/:
+/: &resource
     displayName: Leagues
     get:
         responses:
@@ -11,11 +11,7 @@ baseUri: http://localhost/api
                 body:
                     application/json: !!null
                     text/xml: !!null
-/pet:
-    displayName: Leagues
-    get:
-        responses:
-            200:
-                body:
-                    application/json: !!null
-                    text/xml: !!null
+
+/pet: *resource
+
+/pet/{version}: *resource

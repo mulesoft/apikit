@@ -75,7 +75,7 @@ public class RAMLFilesParser {
           } else {
             raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
           }
-          collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI);
+          collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
           processedFiles.add(ramlFile);
         } catch (Exception e) {
           log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());
@@ -118,7 +118,7 @@ public class RAMLFilesParser {
     return true;
   }
 
-  void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri) {
+  void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version) {
     for (IResource resource : resourceMap.values()) {
       for (IAction action : resource.getActions().values()) {
 
@@ -131,7 +131,7 @@ public class RAMLFilesParser {
           for (IMimeType mimeType : mimeTypes.values()) {
             if (mimeType.getSchema() != null
                 || (mimeType.getFormParameters() != null && !mimeType.getFormParameters().isEmpty())) {
-              addResource(api, resource, action, mimeType.getType());
+              addResource(api, resource, action, mimeType.getType(), version);
             } else {
               addGenericAction = true;
             }
@@ -141,23 +141,24 @@ public class RAMLFilesParser {
         }
 
         if (addGenericAction) {
-          addResource(api, resource, action, null);
+          addResource(api, resource, action, null, version);
         }
       }
 
-      collectResources(filename, resource.getResources(), baseUri);
+      collectResources(filename, resource.getResources(), baseUri, version);
     }
   }
 
-  void addResource(API api, IResource resource, IAction action, String mimeType) {
+  void addResource(API api, IResource resource, IAction action, String mimeType, String version) {
 
     String completePath = APIKitTools
         .getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
 
-    ResourceActionMimeTypeTriplet resourceActionTriplet = new ResourceActionMimeTypeTriplet(api, completePath + resource.getUri(),
-                                                                                            action.getType().toString(),
-                                                                                            mimeType);
-    entries.put(resourceActionTriplet, new GenerationModel(api, resource, action, mimeType));
+    ResourceActionMimeTypeTriplet resourceActionTriplet =
+        new ResourceActionMimeTypeTriplet(api, completePath + resource.getResolvedUri(version),
+                                          action.getType().toString(),
+                                          mimeType);
+    entries.put(resourceActionTriplet, new GenerationModel(api, version, resource, action, mimeType));
   }
 
   public Map<ResourceActionMimeTypeTriplet, GenerationModel> getEntries() {
