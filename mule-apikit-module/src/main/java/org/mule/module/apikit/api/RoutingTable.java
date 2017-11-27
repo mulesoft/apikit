@@ -29,11 +29,7 @@ public class RoutingTable {
 
       String parentUri = resource.getParentUri();
 
-      if (parentUri.contains("{version}")) {
-        resource.setParentUri(parentUri.replaceAll("\\{version}", version));
-      }
-
-      String uri = resource.getUri();
+      String uri = resource.getResolvedUri(version);
 
       routingTable.put(new URIPattern(uri), resource);
 

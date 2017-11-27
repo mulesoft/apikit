@@ -71,6 +71,7 @@ public class ScaffolderTest {
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(1, countOccurences(s, "get:\\:" + name + "-config"));
     assertEquals(1, countOccurences(s, "get:\\pet:" + name + "-config"));
+    assertEquals(1, countOccurences(s, "get:\\pet\\v1:" + name + "-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));

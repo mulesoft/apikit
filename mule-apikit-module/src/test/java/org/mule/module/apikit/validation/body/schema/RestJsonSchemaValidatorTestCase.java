@@ -79,7 +79,7 @@ public class RestJsonSchemaValidatorTestCase {
     IResource mockedResource = Mockito.mock(IResource.class);
 
     when(mockedResource.getAction("POST")).thenReturn(mockedAction);
-    when(mockedResource.getUri()).thenReturn("/leagues");
+    when(mockedResource.getResolvedUri(api.getVersion())).thenReturn("/leagues");
 
     when(mockedAction.getResource()).thenReturn(mockedResource);
     when(mockedAction.getType()).thenReturn(IActionType.POST);

@@ -14,6 +14,7 @@ import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.Component;
 import org.mule.runtime.api.component.ComponentIdentifier;
@@ -57,7 +58,8 @@ public class FlowFinder {
   }
 
   protected void initializeRestFlowMap() {
-    flattenResourceTree(ramlHandler.getApi().getResources());
+    final IRaml api = ramlHandler.getApi();
+    flattenResourceTree(api.getResources(), api.getVersion());
 
     if (restFlowMap == null) {
       restFlowMap = new HashMap<>();
@@ -82,7 +84,7 @@ public class FlowFinder {
         }
       }
 
-      logMissingMappings();
+      logMissingMappings(api.getVersion());
 
       restFlowMapUnwrapped = new HashMap<>(restFlowMap);
     }
@@ -94,11 +96,11 @@ public class FlowFinder {
     return (List<Flow>) annotatedObjects;
   }
 
-  private void flattenResourceTree(Map<String, IResource> resources) {
+  private void flattenResourceTree(Map<String, IResource> resources, String version) {
     for (IResource resource : resources.values()) {
-      flatResourceTree.put(resource.getUri(), resource);
+      flatResourceTree.put(resource.getResolvedUri(version), resource);
       if (resource.getResources() != null) {
-        flattenResourceTree(resource.getResources());
+        flattenResourceTree(resource.getResources(), version);
       }
     }
   }
@@ -174,9 +176,9 @@ public class FlowFinder {
     return null;
   }
 
-  private void logMissingMappings() {
+  private void logMissingMappings(String version) {
     for (IResource resource : flatResourceTree.values()) {
-      String fullResource = resource.getUri();
+      String fullResource = resource.getResolvedUri(version);
       for (IAction action : resource.getActions().values()) {
         String method = action.getType().name().toLowerCase();
         String key = method + ":" + fullResource;
@@ -214,7 +216,7 @@ public class FlowFinder {
 
 
   public Flow getFlow(IResource resource, String method, String contentType) throws UnsupportedMediaTypeException {
-    String baseKey = method + ":" + resource.getUri();
+    String baseKey = method + ":" + resource.getResolvedUri(ramlHandler.getApi().getVersion());
     Map<String, Flow> rawRestFlowMap = getRawRestFlowMap();
     Flow flow = rawRestFlowMap.get(baseKey + ":" + contentType);
     if (flow == null) {

@@ -28,16 +28,16 @@ public class RamlApiWrapper {
   private final Notifier notifier;
 
   public RamlApiWrapper(IRaml ramlApi, Notifier notifier) {
-    collectResources(ramlApi.getResources());
+    collectResources(ramlApi.getResources(), ramlApi.getVersion());
     consolidatedSchemas = ramlApi.getConsolidatedSchemas();
     this.baseUriParameters = ramlApi.getBaseUriParameters();
     this.notifier = notifier;
   }
 
-  private void collectResources(Map<String, IResource> resources) {
+  private void collectResources(Map<String, IResource> resources, String version) {
     resources.values().forEach(resource -> {
-      ramlResources.put(resource.getUri(), resource);
-      collectResources(resource.getResources());
+      ramlResources.put(resource.getResolvedUri(version), resource);
+      collectResources(resource.getResources(), version);
     });
   }
 

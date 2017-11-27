@@ -20,6 +20,8 @@ import org.raml.v2.api.model.v08.methods.Method;
 import org.raml.v2.api.model.v08.parameters.Parameter;
 import org.raml.v2.api.model.v08.resources.Resource;
 
+import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
+
 public class ResourceImpl implements IResource {
 
   private Resource resource;
@@ -38,6 +40,11 @@ public class ResourceImpl implements IResource {
   @Override
   public String getUri() {
     return resource.resourcePath();
+  }
+
+  @Override
+  public String getResolvedUri(String version) {
+    return resolveVersion(getUri(), version);
   }
 
   @Override
@@ -118,5 +125,10 @@ public class ResourceImpl implements IResource {
   @Override
   public void cleanBaseUriParameters() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String toString() {
+    return getUri();
   }
 }

@@ -197,7 +197,8 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException {
     IResource resource = configuration.getFlowFinder().getResource(uriPattern);
     if (resource.getAction(method) == null) {
-      throw ApikitErrorTypes.throwErrorType(new MethodNotAllowedException(resource.getUri() + " : " + method));
+      throw ApikitErrorTypes.throwErrorType(new MethodNotAllowedException(resource
+          .getResolvedUri(configuration.getRamlHandler().getApi().getVersion()) + " : " + method));
     }
     return resource;
   }

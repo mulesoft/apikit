@@ -7,6 +7,7 @@
 package org.mule.raml.implv2.v10.model;
 
 import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
+import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
@@ -41,6 +42,12 @@ public class ResourceImpl implements IResource {
   public String getUri() {
     return resource.resourcePath();
   }
+
+  @Override
+  public String getResolvedUri(String version) {
+    return resolveVersion(getUri(), version);
+  }
+
 
   @Override
   public String getParentUri() {
@@ -121,5 +128,10 @@ public class ResourceImpl implements IResource {
   @Override
   public void cleanBaseUriParameters() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String toString() {
+    return getUri();
   }
 }
