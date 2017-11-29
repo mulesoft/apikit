@@ -35,6 +35,23 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.of;
+import static org.mule.module.apikit.metadata.CertificateFields.CLIENT_CERTIFICATE_ENCODED;
+import static org.mule.module.apikit.metadata.CertificateFields.CLIENT_CERTIFICATE_PUBLIC_KEY;
+import static org.mule.module.apikit.metadata.CertificateFields.CLIENT_CERTIFICATE_TYPE;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_CLIENT_CERTIFICATE;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_HEADERS;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_LISTENER_PATH;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_LOCAL_ADDRESS;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_METHOD;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_QUERY_PARAMS;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_QUERY_STRING;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_RELATIVE_PATH;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_REMOTE_ADDRESS;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_REQUEST_PATH;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_REQUEST_URI;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_SCHEME;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_URI_PARAMS;
+import static org.mule.module.apikit.metadata.HttpRequestAttributesFields.ATTRIBUTES_VERSION;
 import static org.mule.module.apikit.metadata.MetadataFactory.binaryMetadata;
 import static org.mule.module.apikit.metadata.MetadataFactory.objectMetadata;
 import static org.mule.module.apikit.metadata.MetadataFactory.stringMetadata;
@@ -42,22 +59,6 @@ import static org.mule.module.apikit.metadata.MetadataFactory.stringMetadata;
 public class FlowMetadata implements MetadataSource {
 
   private static final String PARAMETER_INPUT_METADATA = "inputMetadata";
-  private static final String ATTRIBUTES_QUERY_PARAMS = "queryParams";
-  private static final String ATTRIBUTES_HEADERS = "headers";
-  private static final String ATTRIBUTES_URI_PARAMS = "uriParams";
-  private static final String ATTRIBUTES_LISTENER_PATH = "listenerPath";
-  private static final String ATTRIBUTES_RELATIVE_PATH = "relativePath";
-  private static final String ATTRIBUTES_VERSION = "version";
-  private static final String ATTRIBUTES_SCHEME = "scheme";
-  private static final String ATTRIBUTES_METHOD = "method";
-  private static final String ATTRIBUTES_REQUEST_URI = "requestUri";
-  private static final String ATTRIBUTES_QUERY_STRING = "queryString";
-  private static final String ATTRIBUTES_REMOTE_ADDRESS = "remoteAddress";
-  private static final String ATTRIBUTES_CLIENT_CERTIFICATE = "clientCertificate";
-  private static final String CLIENT_CERTIFICATE_ENCODED = "encoded";
-  private static final String CLIENT_CERTIFICATE_PUBLIC_KEY = "publicKey";
-  private static final String CLIENT_CERTIFICATE_TYPE = "type";
-  private static final String ATTRIBUTES_REQUEST_PATH = "requestPath";
 
   final private IAction action;
   final private RamlCoordinate coordinate;
@@ -161,43 +162,46 @@ public class FlowMetadata implements MetadataSource {
 
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
     builder.addField()
-        .key(ATTRIBUTES_CLIENT_CERTIFICATE)
+        .key(ATTRIBUTES_CLIENT_CERTIFICATE.getName())
         .value(getClientCertificate());
     builder.addField()
-        .key(ATTRIBUTES_HEADERS)
+        .key(ATTRIBUTES_HEADERS.getName())
         .value(getHeaders(action));
     builder.addField()
-        .key(ATTRIBUTES_LISTENER_PATH)
+        .key(ATTRIBUTES_LISTENER_PATH.getName())
         .value(stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_METHOD)
+        .key(ATTRIBUTES_METHOD.getName())
         .value(stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_QUERY_PARAMS)
+        .key(ATTRIBUTES_QUERY_PARAMS.getName())
         .value(getQueryParameters(action));
     builder.addField()
-        .key(ATTRIBUTES_QUERY_STRING)
+        .key(ATTRIBUTES_QUERY_STRING.getName())
         .value(stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_RELATIVE_PATH)
+        .key(ATTRIBUTES_RELATIVE_PATH.getName())
         .value(stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_REMOTE_ADDRESS)
+        .key(ATTRIBUTES_REMOTE_ADDRESS.getName())
         .value(stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_REQUEST_PATH)
+        .key(ATTRIBUTES_REQUEST_PATH.getName())
         .value(stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_REQUEST_URI)
+        .key(ATTRIBUTES_REQUEST_URI.getName())
         .value(stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_SCHEME)
+        .key(ATTRIBUTES_SCHEME.getName())
         .value(stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_URI_PARAMS)
+        .key(ATTRIBUTES_URI_PARAMS.getName())
         .value(getUriParameters(action, baseUriParameters));
     builder.addField()
-        .key(ATTRIBUTES_VERSION)
+        .key(ATTRIBUTES_VERSION.getName())
+        .value(stringMetadata());
+    builder.addField()
+        .key(ATTRIBUTES_LOCAL_ADDRESS.getName())
         .value(stringMetadata());
 
     return builder.build();
@@ -206,9 +210,9 @@ public class FlowMetadata implements MetadataSource {
   private MetadataType getClientCertificate() {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-    builder.addField().key(CLIENT_CERTIFICATE_PUBLIC_KEY).value(objectMetadata());
-    builder.addField().key(CLIENT_CERTIFICATE_TYPE).value(stringMetadata());
-    builder.addField().key(CLIENT_CERTIFICATE_ENCODED).value(binaryMetadata());
+    builder.addField().key(CLIENT_CERTIFICATE_PUBLIC_KEY.getName()).value(objectMetadata());
+    builder.addField().key(CLIENT_CERTIFICATE_TYPE.getName()).value(stringMetadata());
+    builder.addField().key(CLIENT_CERTIFICATE_ENCODED.getName()).value(binaryMetadata());
 
     return builder.build();
   }

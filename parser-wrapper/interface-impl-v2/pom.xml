@@ -51,7 +51,7 @@
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-metadata-model-json</artifactId>
-            <version>${metadata.api.version}</version>
+            <version>${mule.api.version}</version>
         </dependency>
 
         <!-- test dependencies -->

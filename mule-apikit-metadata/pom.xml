@@ -17,25 +17,22 @@
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
     </properties>
 
-
-
-
     <dependencies>
         <!-- Metadata API -->
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-message-metadata-model</artifactId>
-            <version>${metadata.api.version}</version>
+            <version>${mule.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-metadata-model-json</artifactId>
-            <version>${metadata.api.version}</version>
+            <version>${mule.api.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-metadata-model-xml</artifactId>
-            <version>${metadata.api.version}</version>
+            <version>${mule.api.version}</version>
         </dependency>
 
         <dependency>
@@ -78,6 +75,13 @@
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-runner</artifactId>
             <version>${mule.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-http-connector</artifactId>
+            <version>${mule.api.version}</version>
+            <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
     </dependencies>

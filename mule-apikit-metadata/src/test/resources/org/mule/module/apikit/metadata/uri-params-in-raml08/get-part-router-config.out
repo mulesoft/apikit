@@ -27,7 +27,8 @@
         "v1"? : String, 
         "v2"? : String
       }, 
-      "version"? : String
+      "version"? : String, 
+      "localAddress"? : String
     }
   }, 
   "variables" : {

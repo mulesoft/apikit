@@ -28,7 +28,8 @@
       "uriParams"? : {
         "itemId"? : @int Number
       }, 
-      "version"? : String
+      "version"? : String, 
+      "localAddress"? : String
     }
   }, 
   "variables" : {
