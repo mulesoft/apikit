@@ -17,6 +17,7 @@ import org.mule.runtime.api.exception.TypedException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
@@ -174,11 +175,16 @@ public class RamlHandler {
   }
 
   private String findRootRaml(String ramlLocation) {
-    String[] startingLocations = new String[] {"", "api/", "api"};
-    for (String start : startingLocations) {
-      URL ramlLocationUrl = Thread.currentThread().getContextClassLoader().getResource(start + ramlLocation);
-      if (ramlLocationUrl != null) {
-        return start + ramlLocation;
+    try {
+      final URL url = new URL(ramlLocation);
+      return url.toString();
+    } catch (MalformedURLException e) {
+      String[] startingLocations = new String[] {"", "api/", "api"};
+      for (String start : startingLocations) {
+        URL ramlLocationUrl = Thread.currentThread().getContextClassLoader().getResource(start + ramlLocation);
+        if (ramlLocationUrl != null) {
+          return start + ramlLocation;
+        }
       }
     }
     return null;
