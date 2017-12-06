@@ -11,7 +11,7 @@
         <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
-    <apikit:config name="apikitConfig" raml="https://raw.githubusercontent.com/mulesoft/apikit/apikit-4.x/mule-apikit-module/src/test/resources/org/mule/module/apikit/simple-routing/remote.raml"
+    <apikit:config name="apikitConfig" raml="https://raw.githubusercontent.com/mulesoft/apikit/apikit-4.x/mule-apikit-module/src/test/resources/org/mule/module/apikit/router-remote-raml/remote.raml"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
     <flow name="doorway">
