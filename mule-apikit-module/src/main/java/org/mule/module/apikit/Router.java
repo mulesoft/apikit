@@ -25,11 +25,13 @@ import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
+import org.mule.runtime.api.component.execution.ComponentExecutionException;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.exception.TypedException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -97,7 +99,11 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
       HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
 
       return (CoreEvent) doRoute(event, config, eventBuilder, attributes).get();
-    } catch (MuleException e) {
+    } catch (MuleRestException e) {
+      throw ApikitErrorTypes.throwErrorType(e);
+    } catch (ComponentExecutionException e) {
+      throw new TypedException(e.getCause(), e.getEvent().getError().get().getErrorType());
+    } catch (MuleException | MuleRuntimeException e) {
       throw e;
     } catch (Exception e) {
       throw new DefaultMuleException(e);
@@ -128,7 +134,16 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
       return ApikitErrorTypes.throwErrorType((MuleRestException) e);
     }
 
-    return e;
+    if (e instanceof ComponentExecutionException) {
+      return new TypedException(e.getCause(),
+                                ((ComponentExecutionException) e).getEvent().getError().get().getErrorType());
+    }
+
+    if (e instanceof MuleException || e instanceof MuleRuntimeException) {
+      return e;
+    }
+
+    return new DefaultMuleException(e);
   }
 
   private CompletableFuture<Event> doRoute(CoreEvent event, Configuration config, CoreEvent.Builder eventBuilder,
