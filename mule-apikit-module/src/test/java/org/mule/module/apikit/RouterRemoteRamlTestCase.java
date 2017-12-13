@@ -47,9 +47,9 @@ public class RouterRemoteRamlTestCase extends MuleArtifactFunctionalTestCase {
   @Test
   public void simpleRouting() throws Exception {
     given().header("Accept", "*/*")
-            .expect()
-            .response().body(is("hello"))
-            .statusCode(200)
-            .when().get("/api/resources");
+        .expect()
+        .response().body(is("hello"))
+        .statusCode(200)
+        .when().get("/api/resources");
   }
 }
