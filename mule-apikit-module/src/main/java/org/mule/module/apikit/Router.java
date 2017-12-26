@@ -7,7 +7,7 @@
 package org.mule.module.apikit;
 
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static reactor.core.publisher.Flux.from;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
@@ -112,7 +112,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
   @Override
   public Publisher<CoreEvent> apply(Publisher<CoreEvent> publisher) {
-    return from(publisher).flatMap(event -> {
+    return flatMap(publisher, event -> {
       try {
         Configuration config = registry.getConfiguration(getConfiguration().getName());
         CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
@@ -126,7 +126,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
       } catch (Exception e) {
         return Flux.error(buildMessagingException(e));
       }
-    });
+    }, this);
   }
 
   private Throwable buildMessagingException(Throwable e) {
