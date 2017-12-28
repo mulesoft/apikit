@@ -20,6 +20,7 @@ import org.junit.Test;
 import com.jayway.restassured.RestAssured;
 
 @ArtifactClassLoaderRunnerConfig
+@Ignore
 public class ProcessorsAfterRouterTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

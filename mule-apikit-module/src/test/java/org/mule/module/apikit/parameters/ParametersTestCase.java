@@ -7,6 +7,7 @@
 package org.mule.module.apikit.parameters;
 
 import com.jayway.restassured.RestAssured;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
@@ -19,6 +20,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.core.Is.is;
 
 @ArtifactClassLoaderRunnerConfig
+@Ignore
 public class ParametersTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

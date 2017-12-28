@@ -19,6 +19,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
+@Ignore
 public class XmlSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

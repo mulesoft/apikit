@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation.body.empty;
 
 import com.jayway.restassured.RestAssured;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
@@ -16,6 +17,7 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import static com.jayway.restassured.RestAssured.given;
 
 @ArtifactClassLoaderRunnerConfig
+@Ignore
 public class EmptyBodyTestCaseRaml08 extends MuleArtifactFunctionalTestCase {
 
   @Rule
