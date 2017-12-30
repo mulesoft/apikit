@@ -80,4 +80,24 @@ public class Parameters10TestCase extends FunctionalTestCase
                 .when().get("/api/repeat");
     }
 
+    @Test
+    public void repeatableHeader()
+    {
+        given().header("repeatable", "a")
+                .header("repeatable", "b")
+                .expect().response().statusCode(200)
+                .body(is("headers: [a, b]"))
+                .when().get("/api/repeatHeader");
+    }
+
+    @Test
+    public void repeatableHeaderWithSingleValue()
+    {
+        given().header("repeatable", "a")
+                .expect().response()
+                .statusCode(200)
+                .body(is("headers: [a]"))
+                .when().get("/api/repeatHeader");
+    }
+
 }

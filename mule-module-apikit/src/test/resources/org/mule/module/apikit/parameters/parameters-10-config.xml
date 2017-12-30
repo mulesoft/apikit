@@ -10,13 +10,19 @@
 
     <apikit:config raml="org/mule/module/apikit/parameters/parameters-10.raml"/>
 
+    <http:listener-config name="httpListenerConfig" host="localhost" port="${serverPort}" />
+
     <flow name="parameters">
-        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <http:listener config-ref="httpListenerConfig" path="/api/*"/>
         <apikit:router/>
     </flow>
 
     <flow name="get:/repeat">
         <set-payload value="status: #[message.inboundProperties['http.query.params'].status]"/>
+    </flow>
+
+    <flow name="get:/repeatHeader">
+        <set-payload value="headers: #[message.inboundProperties.'repeatable']"/>
     </flow>
 
 </mule>

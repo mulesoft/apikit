@@ -55,6 +55,10 @@
         <logger level="INFO" message="status: #[message.inboundProperties.status]"/>
     </flow>
 
+    <flow name="get:/repeatableHeader">
+        <set-payload value="headers: #[message.inboundProperties.'repeatable']"/>
+    </flow>
+
     <flow name="get:/trackOrder">
         <logger level="INFO" message="status: #[message.inboundProperties.status]"/>
     </flow>

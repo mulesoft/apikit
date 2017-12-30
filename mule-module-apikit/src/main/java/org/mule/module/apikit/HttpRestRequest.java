@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit;
 
+import static java.util.Collections.singletonList;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.module.apikit.CharsetUtils.trimBom;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.ACCEPT_HEADER;
@@ -259,20 +260,20 @@ public class HttpRestRequest
     @SuppressWarnings("unchecked")
     private void processHeaders() throws InvalidHeaderException
     {
+        final Map<String, Object> incomingHeaders = getIncomingHeaders(requestEvent.getMessage());
         for (String expectedKey : action.getHeaders().keySet())
         {
-            IParameter expected = action.getHeaders().get(expectedKey);
-            Map<String, String> incomingHeaders = getIncomingHeaders(requestEvent.getMessage());
+            final IParameter expected = action.getHeaders().get(expectedKey);
 
             if (expectedKey.contains("{?}"))
             {
-                String regex = expectedKey.replace("{?}", ".*");
+                final String regex = expectedKey.replace("{?}", ".*");
                 for (String incoming : incomingHeaders.keySet())
                 {
-                    String incomingValue = incomingHeaders.get(incoming);
+                    final String incomingValue = getInboundPropertyAsString(incomingHeaders.get(incoming), isRepeatable(expected));
                     if (incoming.matches(regex) && !expected.validate(incomingValue))
                     {
-                        String msg = String.format("Invalid value '%s' for header %s. %s",
+                        final String msg = String.format("Invalid value '%s' for header %s. %s",
                                                    incomingValue, expectedKey, expected.message(incomingValue));
                         throw new InvalidHeaderException(msg);
                     }
@@ -280,7 +281,7 @@ public class HttpRestRequest
             }
             else
             {
-                String actual = incomingHeaders.get(expectedKey);
+                final String actual = getInboundPropertyAsString(incomingHeaders.get(expectedKey), isRepeatable(expected));
                 if (actual == null && expected.isRequired())
                 {
                     throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
@@ -293,7 +294,7 @@ public class HttpRestRequest
                 {
                     if (!expected.validate(actual))
                     {
-                        String msg = String.format("Invalid value '%s' for header %s. %s",
+                        final String msg = String.format("Invalid value '%s' for header %s. %s",
                                                    actual, expectedKey, expected.message(actual));
                         throw new InvalidHeaderException(msg);
                     }
@@ -302,10 +303,13 @@ public class HttpRestRequest
         }
     }
 
-    private Map<String,String> getIncomingHeaders(MuleMessage message)
-    {
+    private boolean isRepeatable(IParameter parameter) {
+        return parameter.isRepeat() || parameter.isArray();
+    }
 
-        Map<String, String> incomingHeaders = new CaseInsensitiveHashMap();
+    private Map<String, Object> getIncomingHeaders(MuleMessage message)
+    {
+        Map<String, Object> incomingHeaders = new CaseInsensitiveHashMap();
         if (message.getInboundProperty("http.headers") != null)
         {
             incomingHeaders = new CaseInsensitiveHashMap(message.<Map>getInboundProperty("http.headers"));
@@ -314,14 +318,50 @@ public class HttpRestRequest
         {
             for (String key : message.getInboundPropertyNames())
             {
-                if (!key.startsWith("http.")) //TODO MULE-8131
+                if (!key.startsWith("http."))
                 {
-                    final String inboundProperty = message.getInboundProperty(key);
-                    incomingHeaders.put(key, inboundProperty);
+                    incomingHeaders.put(key, message.getInboundProperty(key));
                 }
             }
         }
         return incomingHeaders;
+    }
+
+    /**
+     *
+     * Returns the String representation of a given inboundProperty.
+     * <p>
+     * If isArray parameter is set to true and inboundProperty is an Iterable, it returns an expanded YAML list. If isArray is set to true but inboundProperty is not an Iterable, it returns an expanded YAML list
+     * with a single element. Otherwise, this method returns the String value.
+     *
+     * @param  inboundProperty  an Object with the inbound property
+     * @param  isArray          indicates if the resulting string should be a list or not
+     * @return                  the string representation of the inbound property
+    */
+    private String getInboundPropertyAsString(Object inboundProperty, boolean isArray)
+    {
+        if (inboundProperty == null) {
+            return null;
+        }
+
+        if (isArray)
+        {
+            final Iterable properties;
+            if (inboundProperty instanceof Iterable) {
+                properties = (Iterable) inboundProperty;
+            } else {
+                properties = singletonList(inboundProperty);
+            }
+
+            final StringBuilder sb = new StringBuilder();
+            for (Object property : properties) {
+                sb.append("- ").append(String.valueOf(property)).append("\n");
+            }
+            return sb.toString();
+        } else {
+            return String.valueOf(inboundProperty);
+        }
+
     }
 
     private void setHeader(String key, String value)
@@ -329,7 +369,6 @@ public class HttpRestRequest
         requestEvent.getMessage().setProperty(key, value, PropertyScope.INBOUND);
         if (requestEvent.getMessage().getInboundProperty("http.headers") != null)
         {
-            //TODO MULE-8131
             requestEvent.getMessage().<Map<String, String>>getInboundProperty("http.headers").put(key, value);
         }
     }
