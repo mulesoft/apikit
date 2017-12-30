@@ -21,4 +21,5 @@ public interface IParameter
     String getExample();
     Map<String, String> getExamples();
     Object getInstance();
+    boolean isStringArray();
 }

@@ -94,4 +94,9 @@ public class ParameterImpl implements IParameter
     {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public boolean isStringArray() {
+        return false;
+    }
 }
