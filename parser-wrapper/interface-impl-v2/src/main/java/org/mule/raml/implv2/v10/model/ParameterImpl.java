@@ -10,6 +10,7 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
+import org.raml.v2.api.model.v10.datamodel.StringTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 
 import java.util.LinkedHashMap;
@@ -102,5 +103,10 @@ public class ParameterImpl implements IParameter
     public Object getInstance()
     {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isStringArray() {
+        return isArray() && ((ArrayTypeDeclaration) typeDeclaration).items() instanceof StringTypeDeclaration;
     }
 }

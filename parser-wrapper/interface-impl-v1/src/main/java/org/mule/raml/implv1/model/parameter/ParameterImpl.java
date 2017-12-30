@@ -11,7 +11,10 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.raml.model.ParamType;
 import org.raml.model.parameter.AbstractParam;
+
+import static org.raml.model.ParamType.*;
 
 public class ParameterImpl implements IParameter
 {
@@ -78,6 +81,11 @@ public class ParameterImpl implements IParameter
     public Object getInstance()
     {
         return parameter;
+    }
+
+    @Override
+    public boolean isStringArray() {
+        return false;
     }
 
 

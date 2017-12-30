@@ -220,7 +220,7 @@ public class HttpRestRequest
             final String value = String.valueOf(paramValue);
             builder.append("- ");
 
-            if (value.startsWith("*")) builder.append("\"").append(value).append("\"");
+            if (value.startsWith("*") || expected.isStringArray()) builder.append("\"").append(value).append("\"");
             else builder.append(value);
 
             builder.append("\n");

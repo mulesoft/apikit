@@ -62,4 +62,22 @@ public class Parameters10TestCase extends FunctionalTestCase
                 .when().get("/api/repeat");
     }
 
+    @Test
+    public void arrayStringQueryParamWithInteger()
+    {
+        given().queryParam("status", "123")
+                .expect().response().statusCode(200)
+                .body(is("status: 123"))
+                .when().get("/api/repeat");
+    }
+
+    @Test
+    public void arrayStringQueryParamWithIntegers()
+    {
+        given().queryParam("status", "123", "456")
+                .expect().response().statusCode(200)
+                .body(is("status: [123, 456]"))
+                .when().get("/api/repeat");
+    }
+
 }
