@@ -270,18 +270,14 @@ public class HttpRestRequest
                 final String regex = expectedKey.replace("{?}", ".*");
                 for (String incoming : incomingHeaders.keySet())
                 {
-                    final String incomingValue = getInboundPropertyAsString(incomingHeaders.get(incoming), isRepeatable(expected));
-                    if (incoming.matches(regex) && !expected.validate(incomingValue))
-                    {
-                        final String msg = String.format("Invalid value '%s' for header %s. %s",
-                                                   incomingValue, expectedKey, expected.message(incomingValue));
-                        throw new InvalidHeaderException(msg);
+                    if (incoming.matches(regex)) {
+                        validateHeader(expectedKey, expected, incomingHeaders.get(incoming));
                     }
                 }
             }
             else
             {
-                final String actual = getInboundPropertyAsString(incomingHeaders.get(expectedKey), isRepeatable(expected));
+                final Object actual = incomingHeaders.get(expectedKey);
                 if (actual == null && expected.isRequired())
                 {
                     throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
@@ -292,19 +288,36 @@ public class HttpRestRequest
                 }
                 if (actual != null)
                 {
-                    if (!expected.validate(actual))
-                    {
-                        final String msg = String.format("Invalid value '%s' for header %s. %s",
-                                                   actual, expectedKey, expected.message(actual));
-                        throw new InvalidHeaderException(msg);
-                    }
+                    validateHeader(expectedKey, expected, actual);
                 }
             }
         }
     }
 
-    private boolean isRepeatable(IParameter parameter) {
-        return parameter.isRepeat() || parameter.isArray();
+    private void validateHeader(String expectedKey, IParameter expected, Object header) throws InvalidHeaderException {
+        if (expected.isArray())
+        {
+            validateHeaderAsString(expectedKey, expected, getArrayHeaderAsString(header));
+        }
+        else if (expected.isRepeat())
+        {
+            for (Object h : (Iterable) header) {
+                validateHeaderAsString(expectedKey, expected, getHeaderAsString(h));
+            }
+        }
+        else
+        {
+            validateHeaderAsString(expectedKey, expected, getHeaderAsString(header));
+        }
+    }
+
+    private void validateHeaderAsString(String expectedKey, IParameter expected, String actual) throws InvalidHeaderException {
+        if (!expected.validate(actual))
+        {
+            final String msg = String.format("Invalid value '%s' for header %s. %s",
+                                       actual, expectedKey, expected.message(actual));
+            throw new InvalidHeaderException(msg);
+        }
     }
 
     private Map<String, Object> getIncomingHeaders(MuleMessage message)
@@ -329,38 +342,34 @@ public class HttpRestRequest
 
     /**
      *
-     * Returns the String representation of a given inboundProperty.
-     * <p>
-     * If isArray parameter is set to true, it returns an expanded YAML list. Otherwise, this method returns the String value.
+     * Returns an expanded YAML list with each value in the given headerValue.
      *
-     * @param  inboundProperty  an Object with the inbound property
-     * @param  isArray          indicates if the resulting string should be a list or not
+     * @param  headerValue  an Object with the inbound property
      * @return                  the string representation of the inbound property
     */
-    private String getInboundPropertyAsString(Object inboundProperty, boolean isArray)
+    private String getArrayHeaderAsString(Object headerValue)
     {
-        if (inboundProperty == null) {
-            return null;
-        }
+        if (headerValue == null) return null;
 
-        if (isArray)
-        {
-            final Iterable properties;
-            if (inboundProperty instanceof Iterable) {
-                properties = (Iterable) inboundProperty;
-            } else {
-                properties = singletonList(inboundProperty);
-            }
-
-            final StringBuilder sb = new StringBuilder();
-            for (Object property : properties) {
-                sb.append("- ").append(String.valueOf(property)).append("\n");
-            }
-            return sb.toString();
+        final Iterable properties;
+        if (headerValue instanceof Iterable) {
+            properties = (Iterable) headerValue;
         } else {
-            return String.valueOf(inboundProperty);
+            properties = singletonList(headerValue);
         }
 
+        final StringBuilder sb = new StringBuilder();
+        for (Object property : properties) {
+            sb.append("- ").append(String.valueOf(property)).append("\n");
+        }
+        return sb.toString();
+    }
+
+    private String getHeaderAsString(Object header)
+    {
+        if (header == null) return null;
+
+        return String.valueOf(header);
     }
 
     private void setHeader(String key, String value)
