@@ -331,8 +331,7 @@ public class HttpRestRequest
      *
      * Returns the String representation of a given inboundProperty.
      * <p>
-     * If isArray parameter is set to true and inboundProperty is an Iterable, it returns an expanded YAML list. If isArray is set to true but inboundProperty is not an Iterable, it returns an expanded YAML list
-     * with a single element. Otherwise, this method returns the String value.
+     * If isArray parameter is set to true, it returns an expanded YAML list. Otherwise, this method returns the String value.
      *
      * @param  inboundProperty  an Object with the inbound property
      * @param  isArray          indicates if the resulting string should be a list or not

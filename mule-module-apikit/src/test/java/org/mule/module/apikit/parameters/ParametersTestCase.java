@@ -215,16 +215,6 @@ public class ParametersTestCase extends FunctionalTestCase
                 .when().get("/api/repeatableHeader");
     }
 
-    @Test
-    public void repeatableHeaderWithSingleValue()
-    {
-        given().header("repeatable", "a")
-                .expect().response()
-                .statusCode(200)
-                .body(is("headers: [a]"))
-                .when().get("/api/repeatableHeader");
-    }
-
 
     @Test
     public void raml() throws Exception

@@ -18,7 +18,7 @@
     </flow>
 
     <flow name="get:/repeat">
-        <set-payload value="status: #[message.inboundProperties['http.query.params'].status]"/>
+        <set-payload value="parameters: #[message.inboundProperties.'http.query.params']"/>
     </flow>
 
     <flow name="get:/repeatHeader">
