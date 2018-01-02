@@ -6,11 +6,9 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-import org.junit.Ignore;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 @ArtifactClassLoaderRunnerConfig
-@Ignore
 public class MultipartFormFunctionalTestCaseRaml10 extends MultipartFormFunctionalTestCase {
 
   @Override

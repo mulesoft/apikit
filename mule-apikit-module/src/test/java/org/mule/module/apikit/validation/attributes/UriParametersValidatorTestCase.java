@@ -18,7 +18,6 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 @ArtifactClassLoaderRunnerConfig
-@Ignore
 public class UriParametersValidatorTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
