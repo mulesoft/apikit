@@ -8,6 +8,7 @@ package org.mule.module.apikit;
 
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
@@ -91,23 +92,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
   @Override
   public CoreEvent process(final CoreEvent event) throws MuleException {
-    try {
-      Configuration config = registry.getConfiguration(getConfiguration().getName());
-      CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
-      eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
-
-      HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
-
-      return (CoreEvent) doRoute(event, config, eventBuilder, attributes).get();
-    } catch (MuleRestException e) {
-      throw ApikitErrorTypes.throwErrorType(e);
-    } catch (ComponentExecutionException e) {
-      throw new TypedException(e.getCause(), e.getEvent().getError().get().getErrorType());
-    } catch (MuleException | MuleRuntimeException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new DefaultMuleException(e);
-    }
+    return processToApply(event, this);
   }
 
   @Override
