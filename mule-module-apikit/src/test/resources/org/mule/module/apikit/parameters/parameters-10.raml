@@ -13,3 +13,13 @@ title: Parameters API
             200:
                 body:
                     text/plain: ~
+
+/repeatHeader:
+    get:
+        headers:
+            repeatable:
+                type: array
+        responses:
+            200:
+                body:
+                    text/plain: ~

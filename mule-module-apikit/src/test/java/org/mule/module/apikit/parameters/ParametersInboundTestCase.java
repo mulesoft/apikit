@@ -13,4 +13,9 @@ public class ParametersInboundTestCase extends ParametersTestCase
     {
         return "org/mule/module/apikit/parameters/parameters-config-inbound.xml";
     }
+
+    @Override
+    public void repeatableHeader() {
+        System.out.println("Not supported - Test skipped");
+    }
 }
