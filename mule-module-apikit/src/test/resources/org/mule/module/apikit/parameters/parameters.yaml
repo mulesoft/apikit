@@ -46,6 +46,18 @@ title: Parameters API
             status:
                 type: string
                 repeat: true
+
+/repeatableHeader:
+    get:
+        headers:
+            repeatable:
+                type: string
+                repeat: true
+        responses:
+            200:
+                body:
+                    text/plain: ~
+
 /trackOrder:
   get:
     queryParameters:

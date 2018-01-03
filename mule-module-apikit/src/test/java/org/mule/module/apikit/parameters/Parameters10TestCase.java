@@ -6,18 +6,14 @@
  */
 package org.mule.module.apikit.parameters;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-
+import com.jayway.restassured.RestAssured;
+import org.junit.Rule;
+import org.junit.Test;
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
-import com.jayway.restassured.RestAssured;
-
-import org.junit.Rule;
-import org.junit.Test;
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
 
 public class Parameters10TestCase extends FunctionalTestCase
 {
@@ -49,7 +45,7 @@ public class Parameters10TestCase extends FunctionalTestCase
     {
         given().queryParam("status", "a", "b")
                 .expect().response().statusCode(200)
-                .body(is("status: [a, b]"))
+                .body(is("parameters: ParameterMap{[status=[a, b]]}"))
                 .when().get("/api/repeat");
     }
 
@@ -58,7 +54,7 @@ public class Parameters10TestCase extends FunctionalTestCase
     {
         given().queryParam("status", "*a", "b")
                 .expect().response().statusCode(200)
-                .body(is("status: [*a, b]"))
+                .body(is("parameters: ParameterMap{[status=[*a, b]]}"))
                 .when().get("/api/repeat");
     }
 
@@ -67,7 +63,7 @@ public class Parameters10TestCase extends FunctionalTestCase
     {
         given().queryParam("status", "123")
                 .expect().response().statusCode(200)
-                .body(is("status: 123"))
+                .body(is("parameters: ParameterMap{[status=[123]]}"))
                 .when().get("/api/repeat");
     }
 
@@ -76,8 +72,18 @@ public class Parameters10TestCase extends FunctionalTestCase
     {
         given().queryParam("status", "123", "456")
                 .expect().response().statusCode(200)
-                .body(is("status: [123, 456]"))
+                .body(is("parameters: ParameterMap{[status=[123, 456]]}"))
                 .when().get("/api/repeat");
+    }
+
+    @Test
+    public void repeatableHeader()
+    {
+        given().header("repeatable", "a")
+                .header("repeatable", "b")
+                .expect().response().statusCode(200)
+                .body(is("headers: [a, b]"))
+                .when().get("/api/repeatHeader");
     }
 
 }
