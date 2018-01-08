@@ -6,11 +6,9 @@
  */
 package org.mule.module.apikit.parameters;
 
-import org.junit.Ignore;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 @ArtifactClassLoaderRunnerConfig
-@Ignore
 public class ParametersInboundTestCase extends ParametersTestCase {
 
   @Override

@@ -6,9 +6,7 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static reactor.core.publisher.Flux.from;
-
+import com.google.common.cache.LoadingCache;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
@@ -38,22 +36,22 @@ import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.processor.Processor;
-
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
-import javax.inject.Inject;
-
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
+import static reactor.core.publisher.Mono.error;
+import static reactor.core.publisher.Mono.fromFuture;
 
 public class Router extends AbstractComponent implements Processor, Initialisable
 
@@ -91,28 +89,12 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
   @Override
   public CoreEvent process(final CoreEvent event) throws MuleException {
-    try {
-      Configuration config = registry.getConfiguration(getConfiguration().getName());
-      CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
-      eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
-
-      HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
-
-      return (CoreEvent) doRoute(event, config, eventBuilder, attributes).get();
-    } catch (MuleRestException e) {
-      throw ApikitErrorTypes.throwErrorType(e);
-    } catch (ComponentExecutionException e) {
-      throw new TypedException(e.getCause(), e.getEvent().getError().get().getErrorType());
-    } catch (MuleException | MuleRuntimeException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new DefaultMuleException(e);
-    }
+    return processToApply(event, this);
   }
 
   @Override
   public Publisher<CoreEvent> apply(Publisher<CoreEvent> publisher) {
-    return from(publisher).flatMap(event -> {
+    return flatMap(publisher, event -> {
       try {
         Configuration config = registry.getConfiguration(getConfiguration().getName());
         CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
@@ -122,18 +104,14 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
         final CompletableFuture<Event> resultEvent = doRoute(event, config, eventBuilder, attributes);
 
-        return Mono.fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(this::buildMessagingException);
-      } catch (Exception e) {
-        return Flux.error(buildMessagingException(e));
+        return fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(this::buildMuleException);
+      } catch (MuleRestException e) {
+        return error(ApikitErrorTypes.throwErrorType(e));
       }
-    });
+    }, this);
   }
 
-  private Throwable buildMessagingException(Throwable e) {
-    if (e instanceof MuleRestException) {
-      return ApikitErrorTypes.throwErrorType((MuleRestException) e);
-    }
-
+  private Throwable buildMuleException(Throwable e) {
     if (e instanceof ComponentExecutionException) {
       return new TypedException(e.getCause(),
                                 ((ComponentExecutionException) e).getEvent().getError().get().getErrorType());
@@ -148,21 +126,15 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
   private CompletableFuture<Event> doRoute(CoreEvent event, Configuration config, CoreEvent.Builder eventBuilder,
                                            HttpRequestAttributes attributes)
-      throws ExecutionException, DefaultMuleException, MuleRestException {
+      throws MuleRestException {
     String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRequestPath());
     path = path.isEmpty() ? "/" : path;
 
     //Get uriPattern, uriResolver, and the resolvedVariables
-    URIPattern uriPattern;
-    try {
-      uriPattern = config.getUriPatternCache().get(path);
-    } catch (Exception e) {
-      throw ApikitErrorTypes.throwErrorType(new NotFoundException(path));
-    }
-
-    URIResolver uriResolver = config.getUriResolverCache().get(path);
-
+    URIPattern uriPattern = findInCache(path, config.getUriPatternCache());
+    URIResolver uriResolver = findInCache(path, config.getUriResolverCache());
     ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
+
     IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
     if (!config.isDisableValidations()) {
       eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
@@ -173,6 +145,14 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
         config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
     eventBuilder.addVariable(config.getHttpStatusVarName(), successStatusCode);
     return flow.execute(eventBuilder.build());
+  }
+
+  private <T> T findInCache(String key, LoadingCache<String, T> cache) {
+    try {
+      return cache.get(key);
+    } catch (Exception e) {
+      throw ApikitErrorTypes.throwErrorType(new NotFoundException(key));
+    }
   }
 
   public Configuration getConfiguration() {
@@ -194,7 +174,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   public CoreEvent.Builder validateRequest(CoreEvent event, CoreEvent.Builder eventBuilder, ValidationConfig config,
                                            IResource resource, HttpRequestAttributes attributes,
                                            ResolvedVariables resolvedVariables)
-      throws DefaultMuleException, MuleRestException {
+      throws MuleRestException {
 
     String charset = null;
     try {

@@ -20,7 +20,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 @ArtifactClassLoaderRunnerConfig
-@Ignore
 public class UrlEncodedV2FunctionalTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

@@ -13,13 +13,12 @@ import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.validation.AttributesValidator;
 import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
-import org.mule.runtime.api.exception.DefaultMuleException;
 
 public class RequestValidator {
 
   public static ValidRequest validate(ValidationConfig config, IResource resource, HttpRequestAttributes attributes,
                                       ResolvedVariables resolvedVariables, Object payload, String charset)
-      throws DefaultMuleException, MuleRestException {
+      throws MuleRestException {
 
     return ValidRequest.builder()
         .withAttributes(AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables, config))
