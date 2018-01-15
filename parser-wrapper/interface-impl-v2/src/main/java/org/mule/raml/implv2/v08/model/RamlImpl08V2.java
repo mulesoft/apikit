@@ -6,6 +6,7 @@
  */
 package org.mule.raml.implv2.v08.model;
 
+import com.google.common.base.Optional;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
@@ -21,9 +22,12 @@ import org.raml.v2.api.model.v08.api.Api;
 import org.raml.v2.api.model.v08.api.GlobalSchema;
 import org.raml.v2.api.model.v08.resources.Resource;
 
+import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
+
 public class RamlImpl08V2 implements IRaml
 {
     private Api api;
+    private Optional<String> version;
 
     public RamlImpl08V2(Api api)
     {
@@ -45,7 +49,10 @@ public class RamlImpl08V2 implements IRaml
     @Override
     public String getVersion()
     {
-        return api.version();
+        if (version == null) {
+            version = Optional.fromNullable(api.version());
+        }
+        return version.orNull();
     }
 
     @Override
