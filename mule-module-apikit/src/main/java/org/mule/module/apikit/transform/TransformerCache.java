@@ -15,6 +15,7 @@ import com.google.common.cache.LoadingCache;
 
 public final class TransformerCache
 {
+    final private static Object LOCK = new Object();
 
     private static final String REGISTRY_TRANSFORMER_CACHE_KEY = "__restRouterTransformerCache";
 
@@ -22,11 +23,15 @@ public final class TransformerCache
     {
         if (muleContext.getRegistry().get(REGISTRY_TRANSFORMER_CACHE_KEY) == null)
         {
-            LoadingCache<DataTypePair, Transformer> transformerCache = CacheBuilder.newBuilder()
-                    .maximumSize(1000)
-                    .build(new TransformerCacheLoader(muleContext));
+            synchronized (LOCK) {
+                if (muleContext.getRegistry().get(REGISTRY_TRANSFORMER_CACHE_KEY) == null) {
+                    LoadingCache<DataTypePair, Transformer> transformerCache = CacheBuilder.newBuilder()
+                            .maximumSize(1000)
+                            .build(new TransformerCacheLoader(muleContext));
 
-            muleContext.getRegistry().registerObject(REGISTRY_TRANSFORMER_CACHE_KEY, transformerCache);
+                    muleContext.getRegistry().registerObject(REGISTRY_TRANSFORMER_CACHE_KEY, transformerCache);
+                }
+            }
         }
 
         return muleContext.getRegistry().get(REGISTRY_TRANSFORMER_CACHE_KEY);
