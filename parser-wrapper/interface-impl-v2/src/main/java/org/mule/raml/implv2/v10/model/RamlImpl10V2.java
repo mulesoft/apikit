@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.raml.v2.api.model.v10.api.Api;
 import org.raml.v2.api.model.v10.datamodel.AnyTypeDeclaration;
@@ -31,6 +32,7 @@ import org.raml.v2.api.model.v10.resources.Resource;
 public class RamlImpl10V2 implements IRaml {
 
   private Api api;
+  private Optional<String> version;
 
   public RamlImpl10V2(Api api) {
     this.api = api;
@@ -53,7 +55,10 @@ public class RamlImpl10V2 implements IRaml {
 
   @Override
   public String getVersion() {
-    return nullSafe(api.version());
+    if (version == null) {
+      version = Optional.ofNullable(nullSafe(api.version()));
+    }
+    return version.orElse(null);
   }
 
   @Override

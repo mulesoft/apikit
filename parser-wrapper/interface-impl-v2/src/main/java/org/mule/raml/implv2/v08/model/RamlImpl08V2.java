@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.raml.v2.api.model.v08.api.Api;
 import org.raml.v2.api.model.v08.api.GlobalSchema;
@@ -28,6 +29,7 @@ import static java.util.Collections.emptyMap;
 public class RamlImpl08V2 implements IRaml {
 
   private Api api;
+  private Optional<String> version;
 
   public RamlImpl08V2(Api api) {
     this.api = api;
@@ -45,7 +47,10 @@ public class RamlImpl08V2 implements IRaml {
 
   @Override
   public String getVersion() {
-    return api.version();
+    if (version == null) {
+      version = Optional.ofNullable(api.version());
+    }
+    return version.orElse(null);
   }
 
   @Override
