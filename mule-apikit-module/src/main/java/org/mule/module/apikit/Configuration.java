@@ -81,7 +81,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   @Override
   public void initialise() throws InitialisationException {
     try {
-      ramlHandler = new RamlHandler(raml, keepRamlBaseUri);
+      ramlHandler = new RamlHandler(raml, keepRamlBaseUri, muleContext);
     } catch (IOException e) {
       throw new InitialisationException(e.fillInStackTrace(), this);
     }

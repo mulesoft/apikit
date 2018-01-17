@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.commons.io.IOUtils;
+import org.mule.runtime.core.api.MuleContext;
 import org.raml.model.ActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +40,11 @@ public class RamlHandler {
 
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+
+  private MuleContext muleContext;
+
   //ramlLocation should be the root raml location, relative of the resources folder
-  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri) throws IOException {
+  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext) throws IOException {
     this.keepRamlBaseUri = keepRamlBaseUri;
 
     String rootRamlLocation = findRootRaml(ramlLocation);
@@ -56,6 +60,7 @@ public class RamlHandler {
       this.apiResourcesRelativePath = rootRamlLocation.substring(0, idx + 1);
       this.apiResourcesRelativePath = sanitarizeResourceRelativePath(apiResourcesRelativePath);
     }
+    this.muleContext = muleContext;
   }
 
   public boolean isParserV2() {
@@ -103,7 +108,7 @@ public class RamlHandler {
       InputStream apiResource = null;
       ByteArrayOutputStream baos = null;
       try {
-        apiResource = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourceRelativePath);
+        apiResource = muleContext.getExecutionClassLoader().getResourceAsStream(resourceRelativePath);
 
         if (apiResource == null) {
           throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
