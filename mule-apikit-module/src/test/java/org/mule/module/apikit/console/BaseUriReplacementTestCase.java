@@ -7,20 +7,32 @@
 package org.mule.module.apikit.console;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import org.junit.BeforeClass;
 import org.mule.module.apikit.api.RamlHandler;
 
 import org.junit.AfterClass;
 import org.junit.Test;
 import org.mule.module.apikit.api.UrlUtils;
+import org.mule.runtime.core.api.MuleContext;
 
 public class BaseUriReplacementTestCase {
 
   private static final String FULL_DOMAIN = UrlUtils.FULL_DOMAIN;
 
+  private static MuleContext muleContext;
+
+  @BeforeClass
+  public static void beforeAll() {
+    muleContext = mock(MuleContext.class);
+    when(muleContext.getExecutionClassLoader()).thenReturn(Thread.currentThread().getContextClassLoader());
+  }
+
   @Test
   public void baseUriReplacementTest() throws Exception {
-    RamlHandler ramlHandler = new RamlHandler("org/mule/module/apikit/console/simple-with-baseuri10.raml", false);
+    RamlHandler ramlHandler = new RamlHandler("org/mule/module/apikit/console/simple-with-baseuri10.raml", false, muleContext);
     assertEquals("http://localhost:8081/api", ramlHandler.getBaseUriReplacement("http://localhost:8081/api"));
     assertEquals("http://localhost:8081/api", ramlHandler.getBaseUriReplacement("http://0.0.0.0:8081/api"));
 

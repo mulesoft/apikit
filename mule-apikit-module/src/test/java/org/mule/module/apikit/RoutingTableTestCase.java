@@ -6,24 +6,36 @@
  */
 package org.mule.module.apikit;
 
-import static org.hamcrest.CoreMatchers.hasItems;
-
-import java.io.IOException;
-
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.RoutingTable;
 import org.mule.module.apikit.api.uri.URIPattern;
+import org.mule.runtime.core.api.MuleContext;
+
+import java.io.IOException;
+
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RoutingTableTestCase {
 
-  RamlHandler ramlHandler = new RamlHandler("org/mule/module/apikit/routing-table-sample.raml", true);
+  private static RamlHandler ramlHandler;
+  private static MuleContext muleContext;
 
-  public RoutingTableTestCase() throws IOException {}
+  @BeforeClass
+  public static void beforeAll() throws IOException {
+    muleContext = mock(MuleContext.class);
+    when(muleContext.getExecutionClassLoader()).thenReturn(Thread.currentThread().getContextClassLoader());
+    ramlHandler = new RamlHandler("org/mule/module/apikit/routing-table-sample.raml", true, muleContext);
+  }
+
+  public RoutingTableTestCase() {}
 
   @Test
-  public void testResourceFlattenedTree() throws IOException {
+  public void testResourceFlattenedTree() {
 
     RoutingTable routingTable = new RoutingTable(ramlHandler.getApi());
 
