@@ -2,6 +2,7 @@
   "configs": [
     "mule-config.xml"
   ],
+  "secureProperties": [],
   "redeploymentEnabled": true,
   "name": "empty-artifact-json",
   "minMuleVersion": "4.0.0",
