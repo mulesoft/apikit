@@ -3,6 +3,7 @@
     "other-config.xml",
     "mule-config.xml"
   ],
+  "secureProperties": [],
   "redeploymentEnabled": false,
   "name": "custom-name",
   "minMuleVersion": "4.0.0",
