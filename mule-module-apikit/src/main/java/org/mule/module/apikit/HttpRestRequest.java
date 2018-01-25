@@ -7,7 +7,6 @@
 package org.mule.module.apikit;
 
 import static java.util.Collections.singletonList;
-import static org.apache.xmlbeans.SystemProperties.getProperty;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.module.apikit.CharsetUtils.trimBom;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.ACCEPT_HEADER;
@@ -71,7 +70,8 @@ import org.slf4j.LoggerFactory;
 public class HttpRestRequest
 {
     private static final List<Integer> DEFAULT_SUCCESS_STATUS = Arrays.asList(200);
-    private static final boolean IS_PAYLOAD_AS_STRING_ENABLED = Boolean.valueOf(getProperty("mule.module.apikit.payloadAsString", "false"));
+    private static final String PAYLOAD_AS_STRING_PROPERTY_NAME = "mule.module.apikit.payloadAsString";
+    private static final boolean IS_PAYLOAD_AS_STRING_ENABLED = Boolean.valueOf(System.getProperty(PAYLOAD_AS_STRING_PROPERTY_NAME, "false"));
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
