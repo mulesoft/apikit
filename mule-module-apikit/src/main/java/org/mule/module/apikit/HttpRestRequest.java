@@ -7,6 +7,7 @@
 package org.mule.module.apikit;
 
 import static java.util.Collections.singletonList;
+import static org.apache.xmlbeans.SystemProperties.getProperty;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.module.apikit.CharsetUtils.trimBom;
 import static org.mule.module.apikit.transform.ApikitResponseTransformer.ACCEPT_HEADER;
@@ -69,8 +70,9 @@ import org.slf4j.LoggerFactory;
 
 public class HttpRestRequest
 {
-
     private static final List<Integer> DEFAULT_SUCCESS_STATUS = Arrays.asList(200);
+    private static final boolean IS_PAYLOAD_AS_STRING_ENABLED = Boolean.valueOf(getProperty("mule.module.apikit.payloadAsString", "false"));
+
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MuleEvent requestEvent;
@@ -613,7 +615,11 @@ public class HttpRestRequest
                 //update payload and encoding
                 DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, message.getDataType().getMimeType());
                 dataType.setEncoding(encoding);
-                message.setPayload(new ByteArrayInputStream(bytes), dataType);
+                if (IS_PAYLOAD_AS_STRING_ENABLED) {
+                    message.setPayload(new String(bytes), dataType);
+                } else {
+                    message.setPayload(new ByteArrayInputStream(bytes), dataType);
+                }
 
             }
             catch (IOException e)
