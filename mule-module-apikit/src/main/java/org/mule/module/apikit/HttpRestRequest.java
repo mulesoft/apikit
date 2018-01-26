@@ -69,10 +69,8 @@ import org.slf4j.LoggerFactory;
 
 public class HttpRestRequest
 {
-    private static final List<Integer> DEFAULT_SUCCESS_STATUS = Arrays.asList(200);
-    private static final String PAYLOAD_AS_STRING_PROPERTY_NAME = "mule.module.apikit.payloadAsString";
-    private static final boolean IS_PAYLOAD_AS_STRING_ENABLED = Boolean.valueOf(System.getProperty(PAYLOAD_AS_STRING_PROPERTY_NAME, "false"));
 
+    private static final List<Integer> DEFAULT_SUCCESS_STATUS = Arrays.asList(200);
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MuleEvent requestEvent;
@@ -615,11 +613,7 @@ public class HttpRestRequest
                 //update payload and encoding
                 DataType<ByteArrayInputStream> dataType = DataTypeFactory.create(ByteArrayInputStream.class, message.getDataType().getMimeType());
                 dataType.setEncoding(encoding);
-                if (IS_PAYLOAD_AS_STRING_ENABLED) {
-                    message.setPayload(new String(bytes), dataType);
-                } else {
-                    message.setPayload(new ByteArrayInputStream(bytes), dataType);
-                }
+                message.setPayload(new ByteArrayInputStream(bytes), dataType);
 
             }
             catch (IOException e)
