@@ -1,0 +1,20 @@
+#%RAML 1.0
+---
+title: invalid-type
+baseUri: http://localhost:8080/
+
+/resource:
+  get:
+    queryParameters:
+      required:
+        type: string
+      optional:
+        type: string
+        required: false
+      optionalarray:
+        type: string[]
+        required: false
+    responses:
+      200:
+          body:
+            application/json:

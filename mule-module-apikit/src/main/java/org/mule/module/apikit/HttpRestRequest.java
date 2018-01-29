@@ -73,6 +73,9 @@ public class HttpRestRequest
     private static final String PAYLOAD_AS_STRING_PROPERTY_NAME = "mule.module.apikit.payloadAsString";
     private static final boolean IS_PAYLOAD_AS_STRING_ENABLED = Boolean.valueOf(System.getProperty(PAYLOAD_AS_STRING_PROPERTY_NAME, "false"));
 
+    public static final String NULLABLE_AS_OPTIONAL_PROPERTY_NAME = "mule.module.apikit.queryParamNullAsOptional";
+    private static final boolean NULLABLE_AS_OPTIONAL_PROPERTY_NAME_ENABLED = Boolean.valueOf(System.getProperty(NULLABLE_AS_OPTIONAL_PROPERTY_NAME, "false"));
+
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected MuleEvent requestEvent;
@@ -144,6 +147,19 @@ public class HttpRestRequest
         return requestEvent;
     }
 
+    private static boolean allParamsAreNull(Collection<?> paramValues)
+    {
+        if (NULLABLE_AS_OPTIONAL_PROPERTY_NAME_ENABLED) {
+            for (Object value : paramValues) {
+                if (value != null) return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     private void processQueryParameters() throws InvalidQueryParameterException
     {
         for (String expectedKey : action.getQueryParameters().keySet())
@@ -151,7 +167,7 @@ public class HttpRestRequest
             IParameter expected = action.getQueryParameters().get(expectedKey);
             Collection<?> actual = getActualQueryParam(expectedKey);
 
-            if (actual.isEmpty())
+            if (actual.isEmpty() || allParamsAreNull(actual))
             {
                 if (expected.isRequired())
                 {
