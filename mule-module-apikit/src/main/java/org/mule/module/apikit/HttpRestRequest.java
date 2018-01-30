@@ -74,7 +74,6 @@ public class HttpRestRequest
     private static final boolean IS_PAYLOAD_AS_STRING_ENABLED = Boolean.valueOf(System.getProperty(PAYLOAD_AS_STRING_PROPERTY_NAME, "false"));
 
     public static final String NULLABLE_AS_OPTIONAL_PROPERTY_NAME = "mule.module.apikit.queryParamNullAsOptional";
-    private static final boolean NULLABLE_AS_OPTIONAL_PROPERTY_NAME_ENABLED = Boolean.valueOf(System.getProperty(NULLABLE_AS_OPTIONAL_PROPERTY_NAME, "false"));
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -149,7 +148,8 @@ public class HttpRestRequest
 
     private static boolean allParamsAreNull(Collection<?> paramValues)
     {
-        if (NULLABLE_AS_OPTIONAL_PROPERTY_NAME_ENABLED) {
+        final Boolean isNullableAsOptionalEnabled = Boolean.valueOf(System.getProperty(NULLABLE_AS_OPTIONAL_PROPERTY_NAME, "false"));
+        if (isNullableAsOptionalEnabled) {
             for (Object value : paramValues) {
                 if (value != null) return false;
             }

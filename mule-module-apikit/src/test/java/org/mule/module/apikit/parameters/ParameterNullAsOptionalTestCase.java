@@ -3,18 +3,11 @@ package org.mule.module.apikit.parameters;
 import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.tck.junit4.rule.SystemProperty;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-
 import static com.jayway.restassured.RestAssured.given;
-import static java.util.Collections.singletonList;
 import static org.mule.module.apikit.HttpRestRequest.NULLABLE_AS_OPTIONAL_PROPERTY_NAME;
 
 public class ParameterNullAsOptionalTestCase extends FunctionalTestCase
@@ -46,7 +39,7 @@ public class ParameterNullAsOptionalTestCase extends FunctionalTestCase
     }
 
     @Test
-    public void validMultipartFormProvided() throws Exception
+    public void testNullQueryParameters() throws Exception
     {
         given().param("required", "value")
                 .param("optional", (Object) null)
