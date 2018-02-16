@@ -71,7 +71,7 @@ public class HttpRestRequest
 {
 
     private static final List<Integer> DEFAULT_SUCCESS_STATUS = Arrays.asList(200);
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected static final Logger logger = LoggerFactory.getLogger(HttpRestRequest.class);
 
     protected MuleEvent requestEvent;
     protected AbstractConfiguration config;

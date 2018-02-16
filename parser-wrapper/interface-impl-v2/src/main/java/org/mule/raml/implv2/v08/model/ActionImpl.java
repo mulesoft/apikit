@@ -29,6 +29,7 @@ public class ActionImpl implements IAction
 
     private Method method;
 
+    private Map<String, IMimeType> bodies;
     private Map<String, IResponse> responses;
     private Map<String, IParameter> queryParameters;
     private Map<String, IParameter> headers;
@@ -47,7 +48,7 @@ public class ActionImpl implements IAction
     @Override
     public boolean hasBody()
     {
-        return !method.body().isEmpty();
+        return !getBody().isEmpty();
     }
 
     @Override
@@ -71,7 +72,16 @@ public class ActionImpl implements IAction
     }
 
     @Override
-    public Map<String, IMimeType> getBody()
+    public Map<String, IMimeType> getBody() {
+        if (bodies == null)
+        {
+            bodies = loadBodies(method);
+        }
+
+        return bodies;
+    }
+
+    private static Map<String, IMimeType> loadBodies(Method method)
     {
         Map<String, IMimeType> result = new LinkedHashMap<>();
         for (BodyLike bodyLike : method.body())
