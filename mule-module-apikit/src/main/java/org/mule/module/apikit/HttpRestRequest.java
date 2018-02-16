@@ -75,7 +75,7 @@ public class HttpRestRequest
 
     public static final String NULLABLE_AS_OPTIONAL_PROPERTY_NAME = "mule.module.apikit.queryParamNullAsOptional";
 
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected static final Logger logger = LoggerFactory.getLogger(HttpRestRequest.class);
 
     protected MuleEvent requestEvent;
     protected AbstractConfiguration config;
