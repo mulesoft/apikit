@@ -68,19 +68,19 @@ public class ActionImpl implements IAction {
 
   @Override
   public Map<String, IMimeType> getBody() {
-      if (bodies == null) {
-          bodies = loadBodies(method);
-      }
+    if (bodies == null) {
+      bodies = loadBodies(method);
+    }
 
-      return bodies;
+    return bodies;
   }
 
   private static Map<String, IMimeType> loadBodies(Method method) {
-      Map<String, IMimeType> result = new LinkedHashMap<>();
-      for (TypeDeclaration typeDeclaration : method.body()) {
-        result.put(typeDeclaration.name(), new MimeTypeImpl(typeDeclaration));
-      }
-      return result;
+    Map<String, IMimeType> result = new LinkedHashMap<>();
+    for (TypeDeclaration typeDeclaration : method.body()) {
+      result.put(typeDeclaration.name(), new MimeTypeImpl(typeDeclaration));
+    }
+    return result;
   }
 
   @Override
