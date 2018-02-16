@@ -46,12 +46,7 @@ public class ActionImpl implements IAction
     @Override
     public boolean hasBody()
     {
-        if (bodies == null)
-        {
-            bodies = loadBodies(method);
-        }
-
-        return !bodies.isEmpty();
+        return !getBody().isEmpty();
     }
 
     @Override
