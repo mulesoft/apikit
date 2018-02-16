@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedValue> {
 
-  protected final Logger logger = LoggerFactory.getLogger(UrlencodedFormV2Validator.class);
+  protected static final Logger logger = LoggerFactory.getLogger(UrlencodedFormV2Validator.class);
   Map<String, List<IParameter>> formParameters;
   IMimeType actionMimeType;
   DataWeaveTransformer dataWeaveTransformer;

@@ -61,7 +61,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private static final int URI_CACHE_SIZE = 1000;
 
 
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  protected static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
   private RamlHandler ramlHandler;
   private FlowFinder flowFinder;

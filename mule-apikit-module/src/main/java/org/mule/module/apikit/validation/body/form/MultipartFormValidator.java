@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public class MultipartFormValidator implements FormValidatorStrategy<TypedValue> {
 
-  protected final Logger logger = LoggerFactory.getLogger(MultipartFormValidator.class);
+  protected static final Logger logger = LoggerFactory.getLogger(MultipartFormValidator.class);
   Map<String, List<IParameter>> formParameters;
   DataWeaveTransformer dataWeaveTransformer;
 

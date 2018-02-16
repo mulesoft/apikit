@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class FormParametersValidator {
 
-  protected final Logger logger = LoggerFactory.getLogger(FormParametersValidator.class);
+  protected static final Logger logger = LoggerFactory.getLogger(FormParametersValidator.class);
 
   FormValidatorStrategy strategy;
 

@@ -38,7 +38,7 @@ public class RamlHandler {
 
   private String apiResourcesRelativePath = "";
 
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  protected static final Logger logger = LoggerFactory.getLogger(RamlHandler.class);
 
 
   private MuleContext muleContext;

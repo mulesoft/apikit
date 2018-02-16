@@ -34,7 +34,7 @@ import static org.mule.apikit.common.FlowName.URL_RESOURCE_SEPARATOR;
 
 public class FlowFinder {
 
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  protected static final Logger logger = LoggerFactory.getLogger(FlowFinder.class);
 
   private Map<String, IResource> flatResourceTree = new HashMap<>();
   private Map<String, Flow> restFlowMap;

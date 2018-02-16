@@ -40,7 +40,7 @@ public class Console extends AbstractComponent implements Processor, Initialisab
 
   private Configuration configuration;
   private String name;
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  protected static final Logger logger = LoggerFactory.getLogger(Console.class);
 
   private static final String CONSOLE_URL_FILE = "consoleurl";
 
