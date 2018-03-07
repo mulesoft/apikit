@@ -182,7 +182,6 @@ public class ApplicationModelWrapper {
 
   public Optional<ApikitConfig> getConfig(String configName) {
     if (configMap.isEmpty()) {
-      notifier.warn("There is not a APIKit configuration defined in the application.");
       return empty();
     }
 
