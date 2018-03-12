@@ -172,15 +172,22 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         {
             if (areCompatibleTypes(msgMimeType, acceptedMediaType))
             {
-                return appendEncoding(encoding, acceptedMediaType);
+                return acceptedMediaType.contains("*") ? appendEncoding(encoding, msgMimeType) : appendEncoding(encoding, acceptedMediaType);
             }
         }
         for (String acceptedMediaType : conjunctionTypes)
         {
             if (areCompatibleTypes(msgContentType, acceptedMediaType))
             {
-                final String contentTypeEncoding = extractEncoding(msgContentType);
-                return appendEncoding(contentTypeEncoding, acceptedMediaType);
+                if (acceptedMediaType.contains("*"))
+                {
+                    return appendEncoding(encoding, msgContentType);
+                }
+                else
+                {
+                    final String contentTypeEncoding = extractEncoding(msgContentType);
+                    return appendEncoding(contentTypeEncoding, acceptedMediaType);
+                }
             }
         }
         return null;
@@ -191,6 +198,8 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
     }
 
     private String extractEncoding(String msgContentType) {
+        if (msgContentType == null) return null;
+
         final int charsetKeyIndex = msgContentType.indexOf(CHARSET_PARAMETER);
 
         if (charsetKeyIndex == -1) return null;
@@ -201,20 +210,20 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
     }
 
 
-    private boolean areCompatibleTypes(String mimeType1, String mimeType2)
+    private boolean areCompatibleTypes(String baseMimeType, String mimeType)
     {
-        if (mimeType1 == null && mimeType2 == null)
+        if ((baseMimeType == null && mimeType == null) || "*/*".equals(mimeType))
         {
             return true;
         }
-        else if (mimeType1 != null && mimeType2 != null)
+        else if (baseMimeType != null && mimeType != null)
         {
-            if (mimeType1.equals(mimeType2)) return true;
+            if (baseMimeType.equals(mimeType)) return true;
 
-            final String subtype1 = getMimeSubtype(mimeType1);
-            final String subtype2 = getMimeSubtype(mimeType2);
+            final String baseSubType = getMimeSubtype(baseMimeType);
+            final String subtype = getMimeSubtype(mimeType);
 
-            return subtype1.equals(subtype2);
+            return "*".equals(subtype) || baseSubType.equals(subtype);
         }
 
         return false;

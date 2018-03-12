@@ -142,4 +142,28 @@ public class ContentTypeTestCase extends FunctionalTestCase
                 .statusCode(202)
                 .when().get("/api/multistatus");
     }
+
+    @Test
+    public void honourEncoding() throws Exception
+    {
+        given()
+                .header("Accept", "application/json")
+                .expect()
+                .response().contentType(is("application/json;charset=UTF-8"))
+                .body(is("never mind"))
+                .statusCode(200)
+                .when().get("/api/encoding");
+    }
+
+    @Test
+    public void honourEncodingWhenAcceptingAlternativeMimeType() throws Exception
+    {
+        given()
+                .header("Accept", "application/vnd.api+json")
+                .expect()
+                .response().contentType(is("application/vnd.api+json;charset=UTF-8"))
+                .body(is("never mind"))
+                .statusCode(200)
+                .when().get("/api/encoding");
+    }
 }
