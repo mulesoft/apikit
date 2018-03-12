@@ -6,21 +6,19 @@
  */
 package org.mule.module.apikit.transform;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.net.MediaType;
 import org.mule.api.MuleMessage;
 import org.mule.api.transformer.DataType;
 import org.mule.api.transformer.Transformer;
 import org.mule.api.transformer.TransformerException;
 import org.mule.module.apikit.RestContentTypeParser;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.transformer.AbstractMessageTransformer;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
-
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.net.MediaType;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,6 +30,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
     public static final String CONTRACT_MIME_TYPES = "_ApikitResponseTransformer_contractMimeTypes";
     public static final String APIKIT_ROUTER_REQUEST = "_ApikitResponseTransformer_apikitRouterRequest";
     public static final String ACCEPT_HEADER = "_ApikitResponseTransformer_AcceptedHeaders";
+    private static final String CHARSET_PARAMETER = ";charset=";
 
     @Override
     public Object transformMessage(MuleMessage message, String encoding) throws TransformerException
@@ -60,12 +59,10 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
                                                  String acceptedHeader) throws TransformerException
     {
         Object payload = message.getPayload();
-        String msgMimeType = null;
         DataType<?> dataType = message.getDataType();
-        if (dataType != null && dataType.getMimeType() != null)
-        {
-            msgMimeType = dataType.getMimeType() + ";charset=" + message.getEncoding();
-        }
+        final String msgMimeType = dataType != null ? dataType.getMimeType() : null;
+        final String msgEncoding = message.getEncoding();
+
         String msgContentType = message.getOutboundProperty("Content-Type");
 
         // user is in charge of setting content-type when using */*
@@ -88,7 +85,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
         }
 
         Collection<String> conjunctionTypes = getBestMatchMediaTypes(responseMimeTypes, acceptedHeader);
-        String msgAcceptedContentType = acceptedContentType(msgMimeType, msgContentType, conjunctionTypes);
+        String msgAcceptedContentType = acceptedContentType(msgMimeType, msgEncoding, msgContentType, conjunctionTypes);
         if (msgAcceptedContentType != null)
         {
             message.setOutboundProperty("Content-Type", msgAcceptedContentType);
@@ -98,7 +95,7 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
             }
             return payload;
         }
-        DataType sourceDataType = DataTypeFactory.create(message.getPayload().getClass(), msgMimeType);
+        DataType sourceDataType = DataTypeFactory.create(message.getPayload().getClass(), appendEncoding(msgEncoding, msgMimeType));
         DataType resultDataType = DataTypeFactory.create(String.class, responseRepresentation);
 
         if (logger.isDebugEnabled())
@@ -169,23 +166,81 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
      *
      * @return null if it is not
      */
-    private String acceptedContentType(String msgMimeType, String msgContentType, Collection<String> conjunctionTypes)
+    private String acceptedContentType(String msgMimeType, String encoding, String msgContentType, Collection<String> conjunctionTypes)
     {
         for (String acceptedMediaType : conjunctionTypes)
         {
-            if(msgMimeType != null && msgMimeType.contains(acceptedMediaType))
+            if (areCompatibleTypes(msgMimeType, acceptedMediaType))
             {
-                return msgMimeType;
+                return acceptedMediaType.contains("*") ? appendEncoding(encoding, msgMimeType) : appendEncoding(encoding, acceptedMediaType);
             }
         }
         for (String acceptedMediaType : conjunctionTypes)
         {
-            if(msgContentType != null && msgContentType.contains(acceptedMediaType))
+            if (areCompatibleTypes(msgContentType, acceptedMediaType))
             {
-                return msgContentType;
+                if (acceptedMediaType.contains("*"))
+                {
+                    return appendEncoding(encoding, msgContentType);
+                }
+                else
+                {
+                    final String contentTypeEncoding = extractEncoding(msgContentType);
+                    return appendEncoding(contentTypeEncoding, acceptedMediaType);
+                }
             }
         }
         return null;
+    }
+
+    private String appendEncoding(String encoding, String mimeType) {
+        return encoding != null && mimeType != null && !mimeType.contains(CHARSET_PARAMETER) ? mimeType + CHARSET_PARAMETER + encoding : mimeType;
+    }
+
+    private String extractEncoding(String msgContentType) {
+        if (msgContentType == null) return null;
+
+        final int charsetKeyIndex = msgContentType.indexOf(CHARSET_PARAMETER);
+
+        if (charsetKeyIndex == -1) return null;
+
+        final int endCharsetDefinition = msgContentType.indexOf(";", charsetKeyIndex + 1);
+
+        return endCharsetDefinition != -1 ? msgContentType.substring(charsetKeyIndex + CHARSET_PARAMETER.length(), endCharsetDefinition) : msgContentType.substring(charsetKeyIndex + CHARSET_PARAMETER.length());
+    }
+
+
+    private boolean areCompatibleTypes(String baseMimeType, String mimeType)
+    {
+        if ((baseMimeType == null && mimeType == null) || "*/*".equals(mimeType))
+        {
+            return true;
+        }
+        else if (baseMimeType != null && mimeType != null)
+        {
+            if (baseMimeType.equals(mimeType)) return true;
+
+            final String baseSubType = getMimeSubtype(baseMimeType);
+            final String subtype = getMimeSubtype(mimeType);
+
+            return "*".equals(subtype) || baseSubType.equals(subtype);
+        }
+
+        return false;
+    }
+    
+    
+    private String getMimeSubtype(String mimeType) {
+        final String mimeTypeWithoutParameters = mimeType.contains(";") ? mimeType.split(";")[0] : mimeType;
+
+        if (mimeTypeWithoutParameters.contains("+"))
+        {
+            return mimeTypeWithoutParameters.split("\\+")[1];
+        }
+        else
+        {
+            return mimeTypeWithoutParameters.split("/")[1];
+        }
     }
 
 }

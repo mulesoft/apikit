@@ -81,4 +81,9 @@
         </choice>
     </flow>
 
+
+    <flow name="get:/encoding">
+        <set-payload value="never mind" mimeType="application/json" encoding="UTF-8"/>
+    </flow>
+
 </mule>

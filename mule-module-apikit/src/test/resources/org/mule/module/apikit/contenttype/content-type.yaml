@@ -26,3 +26,11 @@ title: Parameters API
         202:
             body:
                 application/json: ~
+
+/encoding:
+  get:
+    responses:
+        200:
+            body:
+                application/json: ~
+                application/vnd.api+json: ~
