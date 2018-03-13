@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>mule-apikit-parent</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
@@ -11,16 +11,15 @@
         <module>parser-wrapper</module>
         <module>mule-apikit-module</module>
         <module>mule-apikit-tools</module>
-        <module>mule-apikit-examples</module>
         <module>mule-apikit-metadata</module>
         <module>mule-apikit-common</module>
     </modules>
 
     <properties>
         <!--mule community version-->
-        <mule.version>4.1.1-SNAPSHOT</mule.version>
-        <mule.core.version>4.1.1-SNAPSHOT</mule.core.version>
-        <mule.api.version>1.1.1-SNAPSHOT</mule.api.version>
+        <mule.version>4.1.1</mule.version>
+        <mule.core.version>4.1.1</mule.core.version>
+        <mule.api.version>1.1.1</mule.api.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
@@ -36,7 +35,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>
-                <version>0.9-SNAPSHOT</version>
+                <version>0.8.22</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.code.findbugs</groupId>
@@ -59,7 +58,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.19-SNAPSHOT</version>
+                <version>1.0.18</version>
                 <exclusions>
                     <exclusion>
                         <groupId> org.slf4j</groupId>
