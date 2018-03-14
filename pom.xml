@@ -58,7 +58,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.18</version>
+                <version>1.0.19</version>
                 <exclusions>
                     <exclusion>
                         <groupId> org.slf4j</groupId>
