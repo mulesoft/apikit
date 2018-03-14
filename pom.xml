@@ -117,7 +117,7 @@
 
     <distributionManagement>
         <repository>
-            <id>mulesoft-releases</id>
+            <id>mule-ee-releases</id>
             <name>MuleSoft Releases Repository</name>
             <url>https://repository-master.mulesoft.org/nexus/content/repositories/ci-releases/</url>
         </repository>
