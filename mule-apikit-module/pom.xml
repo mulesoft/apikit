@@ -35,7 +35,7 @@
 
         <!-- REVISE VERSIONS USED IN RELEASE -->
         <mule.service.weave.version>2.1.1-SNAPSHOT</mule.service.weave.version>
-        <mule.plugin.maven.plugin.version>1.1.1-SNAPSHOT</mule.plugin.maven.plugin.version>
+        <mule.plugin.maven.plugin.version>1.2.0-SNAPSHOT</mule.plugin.maven.plugin.version>
         <mule.http.connector.version>1.1.1-SNAPSHOT</mule.http.connector.version>
         <mule.http.service.version>1.1.1-SNAPSHOT</mule.http.service.version>
         <mule.extensions.api.version>1.1.1-SNAPSHOT</mule.extensions.api.version>
