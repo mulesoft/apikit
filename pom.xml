@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>mule-apikit-parent</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
@@ -18,9 +18,9 @@
 
     <properties>
         <!--mule community version-->
-        <mule.version>4.2.0-SNAPSHOT</mule.version>
-        <mule.core.version>4.2.0-SNAPSHOT</mule.core.version>
-        <mule.api.version>1.2.0-SNAPSHOT</mule.api.version>
+        <mule.version>4.1.1-SNAPSHOT</mule.version>
+        <mule.core.version>4.1.1-SNAPSHOT</mule.core.version>
+        <mule.api.version>1.1.1-SNAPSHOT</mule.api.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
