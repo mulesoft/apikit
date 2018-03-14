@@ -133,8 +133,7 @@ public class BaseUriReplacementTestCase {
     System.setProperty(FULL_DOMAIN, "aamura.cloudhub.io/api/v1");
     assertEquals("https://aamura.cloudhub.io/api/v1/console", UrlUtils.getBaseUriReplacement("https://0.0.0.0:8081/console"));
     assertEquals("https://aamura.cloudhub.io/api/v1/console/", UrlUtils.getBaseUriReplacement("https://0.0.0.0:8081/console/"));
-
-    System.setProperty(FULL_DOMAIN, "aamura.cloudhub.io/api/v1");
+    
     assertEquals("http://aamura.cloudhub.io/api/v1/console", UrlUtils.getBaseUriReplacement("http://0.0.0.0:8081/console"));
     assertEquals("http://aamura.cloudhub.io/api/v1/console/", UrlUtils.getBaseUriReplacement("http://0.0.0.0:8081/console/"));
   }
