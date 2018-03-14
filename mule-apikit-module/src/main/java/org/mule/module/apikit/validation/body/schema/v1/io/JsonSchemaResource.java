@@ -40,7 +40,7 @@ public class JsonSchemaResource extends AbstractFileResolvingResource {
 
                  public byte[] load(Class<?> clazz) throws IOException {
                    if (objectMapper == null) {
-                     objectMapper = new ObjectMapper();
+                     objectMapper = new ObjectMapper().disableDefaultTyping();
                    }
 
                    JsonSchema jsonSchema = this.objectMapper.generateJsonSchema(clazz);
