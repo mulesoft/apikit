@@ -222,8 +222,8 @@ public class UrlUtils {
         if (fullDomain.contains("://")) {
           baseUriReplacement = fullDomain + path;
         } else {
-          final String scheme = apiServer.contains(HTTPS) ? HTTPS : HTTP;
-          baseUriReplacement = scheme + fullDomain + path;
+          final String protocol = apiServer.contains(HTTPS) ? HTTPS : HTTP;
+          baseUriReplacement = protocol + fullDomain + path;
         }
       } else {
         baseUriReplacement = baseUriReplacement.replace(BIND_TO_ALL_INTERFACES, "localhost");
