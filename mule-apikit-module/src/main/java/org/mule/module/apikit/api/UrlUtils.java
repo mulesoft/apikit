@@ -7,7 +7,6 @@
 package org.mule.module.apikit.api;
 
 import org.apache.commons.lang3.StringUtils;
-import org.mule.extension.http.api.HttpRequestAttributes;
 
 import java.net.URL;
 
@@ -22,6 +21,8 @@ public class UrlUtils {
   public static final String HTTP_REQUEST_PATH_PROPERTY = "http.request.path";
   private static final String BIND_TO_ALL_INTERFACES = "0.0.0.0";
   public static final String FULL_DOMAIN = "fullDomain";
+  private static final String HTTP = "http://";
+  private static final String HTTPS = "https://";
 
 
   private UrlUtils() {}
@@ -221,7 +222,8 @@ public class UrlUtils {
         if (fullDomain.contains("://")) {
           baseUriReplacement = fullDomain + path;
         } else {
-          baseUriReplacement = "http://" + fullDomain + path;
+          final String protocol = apiServer.contains(HTTPS) ? HTTPS : HTTP;
+          baseUriReplacement = protocol + fullDomain + path;
         }
       } else {
         baseUriReplacement = baseUriReplacement.replace(BIND_TO_ALL_INTERFACES, "localhost");
