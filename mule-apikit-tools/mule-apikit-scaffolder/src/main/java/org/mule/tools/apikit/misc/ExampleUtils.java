@@ -64,7 +64,7 @@ public class ExampleUtils {
     Object yamlObject = yaml.load(example);
 
     try {
-      return new ObjectMapper().writeValueAsString(yamlObject);
+      return new ObjectMapper().disableDefaultTyping().writeValueAsString(yamlObject);
 
     } catch (JsonProcessingException e) {
       // If example couldn't have been processed, we return a null JSON.
@@ -79,7 +79,7 @@ public class ExampleUtils {
   public static boolean isValidJSON(String payload) {
 
     try {
-      new ObjectMapper().readTree(payload);
+      new ObjectMapper().disableDefaultTyping().readTree(payload);
 
     } catch (IOException e) {
       return false;

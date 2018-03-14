@@ -35,6 +35,7 @@ public class Positions {
   //@Transformer(resultMimeType = "application/json")
   public String toJson(Positions positions) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
+    mapper.disableDefaultTyping();
     return mapper.writeValueAsString(positions);
   }
 

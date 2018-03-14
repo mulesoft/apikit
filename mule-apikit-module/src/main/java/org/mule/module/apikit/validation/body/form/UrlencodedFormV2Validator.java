@@ -51,7 +51,7 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
     MultiMap<String, String> requestMap = dataWeaveTransformer.getMultiMapFromPayload(originalPayload);
 
     try {
-      jsonText = new ObjectMapper().writeValueAsString(requestMap);
+      jsonText = new ObjectMapper().disableDefaultTyping().writeValueAsString(requestMap);
     } catch (Exception e) {
       logger.warn("Cannot validate url-encoded form", e);
       return originalPayload;
