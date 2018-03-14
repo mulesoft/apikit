@@ -21,8 +21,8 @@ public class UrlUtils {
   public static final String HTTP_REQUEST_PATH_PROPERTY = "http.request.path";
   private static final String BIND_TO_ALL_INTERFACES = "0.0.0.0";
   public static final String FULL_DOMAIN = "fullDomain";
-  private final static String HTTP = "http://";
-  final static String HTTPS = "https://";
+  private static final String HTTP = "http://";
+  private static final String HTTPS = "https://";
 
 
   private UrlUtils() {}
