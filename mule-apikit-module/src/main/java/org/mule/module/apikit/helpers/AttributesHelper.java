@@ -8,6 +8,7 @@ package org.mule.module.apikit.helpers;
 
 import com.google.common.base.Strings;
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.extension.http.api.HttpRequestAttributesBuilder;
 import org.mule.module.apikit.HeaderName;
 import org.mule.runtime.api.util.MultiMap;
 
@@ -21,6 +22,8 @@ import static java.util.Collections.emptyList;
 import static org.mule.module.apikit.HeaderName.CONTENT_TYPE;
 
 public class AttributesHelper {
+
+  private static final String ANY_RESPONSE_MEDIA_TYPE = "*/*";
 
   private AttributesHelper() {
     // Prevents instantiation :)
@@ -56,15 +59,13 @@ public class AttributesHelper {
   public static HttpRequestAttributes replaceParams(HttpRequestAttributes attributes, MultiMap<String, String> headers,
                                                     MultiMap<String, String> queryParams, String queryString,
                                                     MultiMap<String, String> uriParams) {
-    return new HttpRequestAttributes(headers, attributes.getListenerPath(), attributes.getRelativePath(),
-                                     attributes.getVersion(), attributes.getScheme(),
-                                     attributes.getMethod(), attributes.getRequestPath(),
-                                     attributes.getRequestUri(), queryString,
-                                     queryParams, uriParams,
-                                     attributes.getRemoteAddress(), attributes.getClientCertificate());
+    return new HttpRequestAttributesBuilder(attributes)
+        .headers(headers)
+        .queryParams(queryParams)
+        .queryString(queryString)
+        .uriParams(uriParams)
+        .build();
   }
-
-  private static final String ANY_RESPONSE_MEDIA_TYPE = "*/*";
 
   public static String getHeaderIgnoreCase(HttpRequestAttributes attributes, HeaderName name) {
     return getHeaderIgnoreCase(attributes, name.getName());
