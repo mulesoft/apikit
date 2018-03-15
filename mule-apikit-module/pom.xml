@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>mule-apikit-parent</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.1.2-SNAPSHOT</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-apikit-module</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
     <packaging>mule-plugin</packaging>
 
     <name>APIKit Module</name>
@@ -35,11 +35,11 @@
 
         <!-- REVISE VERSIONS USED IN RELEASE -->
         <mule.service.weave.version>2.1.1-SNAPSHOT</mule.service.weave.version>
-        <mule.plugin.maven.plugin.version>1.2.0-SNAPSHOT</mule.plugin.maven.plugin.version>
+        <mule.plugin.maven.plugin.version>1.1.1-SNAPSHOT</mule.plugin.maven.plugin.version>
         <mule.http.connector.version>1.1.1-SNAPSHOT</mule.http.connector.version>
         <mule.http.service.version>1.1.1-SNAPSHOT</mule.http.service.version>
         <mule.extensions.api.version>1.1.1-SNAPSHOT</mule.extensions.api.version>
-        <mule.service.scheduler.version>1.1.2</mule.service.scheduler.version>
+        <mule.service.scheduler.version>1.1.4-SNAPSHOT</mule.service.scheduler.version>
         <project.reactor.version>3.2.0.M1</project.reactor.version>
 
     </properties>
