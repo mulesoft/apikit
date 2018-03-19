@@ -33,6 +33,11 @@ import org.slf4j.LoggerFactory;
 
 import static org.mule.util.StringUtils.isNotEmpty;
 
+import static org.mule.module.apikit.UrlUtils.getBasePath;
+import static org.mule.module.apikit.UrlUtils.getQueryString;
+import static org.mule.module.apikit.UrlUtils.getResourceRelativePath;
+import static org.mule.module.apikit.uri.URICoder.decode;
+
 public class ConsoleHandler implements MessageProcessor
 {
 
@@ -158,9 +163,9 @@ public class ConsoleHandler implements MessageProcessor
         {
             throw new IllegalStateException("Console path in listener must end with /*");
         }
-        String path = UrlUtils.getResourceRelativePath(event.getMessage());
-        String contextPath = UrlUtils.getBasePath(event.getMessage());
-        String queryString = UrlUtils.getQueryString(event.getMessage());
+        String path = decode(getResourceRelativePath(event.getMessage()));
+        String contextPath = getBasePath(event.getMessage());
+        String queryString = getQueryString(event.getMessage());
 
         if (logger.isDebugEnabled())
         {
