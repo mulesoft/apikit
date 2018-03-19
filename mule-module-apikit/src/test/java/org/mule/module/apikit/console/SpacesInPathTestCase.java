@@ -41,7 +41,7 @@ public class SpacesInPathTestCase extends FunctionalTestCase
     }
 
     private String getAppHomeDirectory() {
-        return new File(this.getClass().getResource("this is a test.json").getFile()).getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getPath();
+        return getClass().getResource("/").getPath();
     }
 
 
