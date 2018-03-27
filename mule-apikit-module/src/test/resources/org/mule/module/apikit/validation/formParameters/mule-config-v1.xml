@@ -15,6 +15,7 @@
 
     <flow name="main-api">
         <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
+            <non-repeatable-stream/>
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
