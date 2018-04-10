@@ -41,6 +41,7 @@ import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.transformer.types.DataTypeFactory;
+import org.mule.transport.NullPayload;
 import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
 import org.mule.util.IOUtils;
@@ -539,7 +540,7 @@ public class HttpRestRequest
         String jsonText;
         try
         {
-            Map<String, String> payload = (Map<String, String>) requestEvent.getMessage().getPayload();
+            Map<String, String> payload = requestEvent.getMessage().getPayload() instanceof NullPayload ? Collections.<String, String>emptyMap() : (Map<String, String>) requestEvent.getMessage().getPayload();
             jsonText = new ObjectMapper().writeValueAsString(payload);
         }
         catch (Exception e)
