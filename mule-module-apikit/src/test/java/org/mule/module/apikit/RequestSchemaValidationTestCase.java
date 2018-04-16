@@ -59,7 +59,8 @@ public class RequestSchemaValidationTestCase extends FunctionalTestCase
                 .contentType("application/json")
                 .expect().statusCode(400)
                 .response()
-                .body(containsString("{\"error\":\"error: object has missing required properties ([\\\"address1\\\",\\\"address2\\\",\\\"city\\\",\\\"country\\\",\\\"email\\\",\\\"name\\\",\\\"postalCode\\\",\\\"stateOrProvince\\\"])\\n    level: \\\"error\\\"\\n    schema: {\\\"loadingURI\\\":\\\"#\\\",\\\"pointer\\\":\\\"\\\"}\\n    instance: {\\\"pointer\\\":\\\"\\\"}\\n    domain: \\\"validation\\\"\\n    keyword: \\\"properties\\\"\\n    required: [\\\"address1\\\",\\\"address2\\\",\\\"city\\\",\\\"country\\\",\\\"email\\\",\\\"name\\\",\\\"postalCode\\\",\\\"size\\\",\\\"stateOrProvince\\\"]\\n    missing: [\\\"address1\\\",\\\"address2\\\",\\\"city\\\",\\\"country\\\",\\\"email\\\",\\\"name\\\",\\\"postalCode\\\",\\\"stateOrProvince\\\"]\\n\\nerror: instance type (integer) does not match any allowed primitive type (allowed: [\\\"string\\\"])\\n    level: \\\"error\\\"\\n    schema: {\\\"loadingURI\\\":\\\"#\\\",\\\"pointer\\\":\\\"/properties/size\\\"}\\n    instance: {\\\"pointer\\\":\\\"/size\\\"}\\n    domain: \\\"validation\\\"\\n    keyword: \\\"type\\\"\\n    found: \\\"integer\\\"\\n    expected: [\\\"string\\\"]\\n\\n\"}"))
+                .body(containsString("object has missing required properties"))
+                .body(containsString("error: instance type (integer) does not match any allowed primitive type"))
                 .header("Content-Type", is("application/json"))
                 .when().post("/api/orderTshirt");
     }
