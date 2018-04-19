@@ -7,17 +7,16 @@ package org.mule.tools.apikit;
  * LICENSE.txt file.
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mule.tools.apikit.Helper.countOccurences;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
-import static org.mule.tools.apikit.model.RuntimeEdition.EE;
-
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
+import org.mule.tools.apikit.model.RuntimeEdition;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,14 +30,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.mule.tools.apikit.model.RuntimeEdition;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mule.tools.apikit.Helper.countOccurences;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
 public class ScaffolderMule4Test {
 
@@ -99,6 +98,10 @@ public class ScaffolderMule4Test {
                  countOccurences(s,
                                  "<set-variable variableName=\"outboundHeaders\" value=\"#[{'Content-Type':'application/json'}]\" />"));
     assertEquals(7, countOccurences(s, "<set-variable variableName=\"httpStatus\""));
+    assertEquals(2,
+                 countOccurences(s, "<set-variable xmlns=\"\" value=\"#[attributes.uriParams.name]\" variableName=\"name\" />"));
+    assertEquals(1,
+                 countOccurences(s, "<set-variable xmlns=\"\" value=\"#[attributes.uriParams.owner]\" variableName=\"owner\""));
     assertEquals(7, countOccurences(s, "<set-payload"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -118,7 +121,7 @@ public class ScaffolderMule4Test {
                  countOccurences(s,
                                  "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
     assertEquals(0, countOccurences(s, "exception-strategy"));
-    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   public void testSimpleGenerate(String name) throws Exception {
@@ -134,8 +137,10 @@ public class ScaffolderMule4Test {
     assertEquals(4, countOccurences(s, "#[vars.outboundHeaders default {}]"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
-    assertEquals(7, countOccurences(s, "<ee:variables>"));
-    assertEquals(7, countOccurences(s, "<ee:set-variable"));
+    assertEquals(9, countOccurences(s, "<ee:variables>"));
+    assertEquals(10, countOccurences(s, "<ee:set-variable"));
+    assertEquals(2, countOccurences(s, "<ee:set-variable variableName=\"name\">attributes.uriParams.name</ee:set-variable>"));
+    assertEquals(1, countOccurences(s, "<ee:set-variable variableName=\"owner\">attributes.uriParams.owner</ee:set-variable>"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -154,7 +159,7 @@ public class ScaffolderMule4Test {
                  countOccurences(s,
                                  "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
     assertEquals(0, countOccurences(s, "exception-strategy"));
-    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -235,8 +240,8 @@ public class ScaffolderMule4Test {
     assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
-    assertEquals(7, countOccurences(s, "<ee:variables>"));
-    assertEquals(7, countOccurences(s, "<ee:set-variable"));
+    assertEquals(9, countOccurences(s, "<ee:variables>"));
+    assertEquals(10, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -248,7 +253,7 @@ public class ScaffolderMule4Test {
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -271,8 +276,8 @@ public class ScaffolderMule4Test {
     assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
-    assertEquals(7, countOccurences(s, "<ee:variables>"));
-    assertEquals(7, countOccurences(s, "<ee:set-variable"));
+    assertEquals(9, countOccurences(s, "<ee:variables>"));
+    assertEquals(10, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -284,7 +289,7 @@ public class ScaffolderMule4Test {
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -308,8 +313,8 @@ public class ScaffolderMule4Test {
     assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
-    assertEquals(7, countOccurences(s, "<ee:variables>"));
-    assertEquals(7, countOccurences(s, "<ee:set-variable"));
+    assertEquals(9, countOccurences(s, "<ee:variables>"));
+    assertEquals(10, countOccurences(s, "<ee:set-variable"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
@@ -322,7 +327,7 @@ public class ScaffolderMule4Test {
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -350,8 +355,8 @@ public class ScaffolderMule4Test {
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
-    assertEquals(7, countOccurences(s, "<ee:variables>"));
-    assertEquals(7, countOccurences(s, "<ee:set-variable"));
+    assertEquals(9, countOccurences(s, "<ee:variables>"));
+    assertEquals(10, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(2, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8081\""));
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
@@ -360,7 +365,7 @@ public class ScaffolderMule4Test {
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -386,8 +391,8 @@ public class ScaffolderMule4Test {
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
-    assertEquals(7, countOccurences(s, "<ee:variables>"));
-    assertEquals(7, countOccurences(s, "<ee:set-variable"));
+    assertEquals(9, countOccurences(s, "<ee:variables>"));
+    assertEquals(10, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
@@ -398,7 +403,7 @@ public class ScaffolderMule4Test {
     assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -423,8 +428,8 @@ public class ScaffolderMule4Test {
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
-    assertEquals(7, countOccurences(s, "<ee:variables>"));
-    assertEquals(7, countOccurences(s, "<ee:set-variable"));
+    assertEquals(9, countOccurences(s, "<ee:variables>"));
+    assertEquals(10, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
@@ -434,7 +439,7 @@ public class ScaffolderMule4Test {
     assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test
@@ -459,8 +464,8 @@ public class ScaffolderMule4Test {
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
-    assertEquals(7, countOccurences(s, "<ee:variables>"));
-    assertEquals(7, countOccurences(s, "<ee:set-variable"));
+    assertEquals(9, countOccurences(s, "<ee:variables>"));
+    assertEquals(10, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
@@ -469,7 +474,7 @@ public class ScaffolderMule4Test {
     assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
-    assertEquals(3, countOccurences(s, "<logger level=\"INFO\" message="));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   @Test

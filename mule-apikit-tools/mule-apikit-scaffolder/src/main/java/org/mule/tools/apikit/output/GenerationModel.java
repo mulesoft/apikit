@@ -6,22 +6,21 @@
  */
 package org.mule.tools.apikit.output;
 
+import com.google.common.collect.Lists;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.mule.apikit.common.FlowName;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.tools.apikit.model.API;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.mule.apikit.common.FlowName;
 
 import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
 
@@ -202,5 +201,14 @@ public class GenerationModel implements Comparable<GenerationModel> {
   @Override
   public int compareTo(@Nonnull GenerationModel generationModel) {
     return this.getName().compareTo(generationModel.getName());
+  }
+
+  public List<String> getUriParameters() {
+    List<String> result = new ArrayList<>();
+    for (String part : Lists.newArrayList(resource.getResolvedUri(version).split("/"))) {
+      if (part.startsWith("{") && part.endsWith("}"))
+        result.add(part.substring(1, part.length() - 1));
+    }
+    return result;
   }
 }
