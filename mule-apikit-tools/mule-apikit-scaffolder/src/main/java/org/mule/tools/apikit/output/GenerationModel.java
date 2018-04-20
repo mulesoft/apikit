@@ -204,6 +204,7 @@ public class GenerationModel implements Comparable<GenerationModel> {
   }
 
   public List<String> getUriParameters() {
+    resource.getResolvedUriParameters();
     List<String> result = new ArrayList<>();
     for (String part : Lists.newArrayList(resource.getResolvedUri(version).split("/"))) {
       if (part.startsWith("{") && part.endsWith("}"))

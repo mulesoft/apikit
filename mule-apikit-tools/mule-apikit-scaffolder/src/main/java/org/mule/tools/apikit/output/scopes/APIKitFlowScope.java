@@ -34,28 +34,29 @@ public class APIKitFlowScope implements Scope {
     flow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
     flow.setAttribute("name", flowEntry.getFlowName());
 
-    for (Element element : generateFlowContent(flowEntry, isMuleEE)) {
-      flow.addContent(element);
+    if (isMuleEE && !flowEntry.getUriParameters().isEmpty()) flow.addContent(createEEUriParamsSetVariables(flowEntry));
+    else if (!isMuleEE && !flowEntry.getUriParameters().isEmpty()) {
+      for (Element element : createCEUriParamsSetVariables(flowEntry)) {
+        flow.addContent(element);
+      }
     }
+
+    flow.addContent(generateFlowContent(flowEntry, isMuleEE));
   }
 
-  private List<Element> generateFlowContent(GenerationModel flowEntry, boolean isMuleEE) {
+  private Element generateFlowContent(GenerationModel flowEntry, boolean isMuleEE) {
     if (isMuleEE && flowEntry.getExampleWrapper() != null) {
       try {
         return generateTransform(flowEntry);
       } catch (Exception e) {
-        return generateLogger(flowEntry, true);
+        return generateLogger(flowEntry);
       }
     } else {
-      return generateLogger(flowEntry, isMuleEE);
+      return generateLogger(flowEntry);
     }
   }
 
-  private List<Element> generateTransform(GenerationModel flowEntry) {
-    ArrayList<Element> result = new ArrayList<>();
-    if (!flowEntry.getUriParameters().isEmpty())
-      result.add(createEEUriParamsSetVariables(flowEntry));
-
+  private Element generateTransform(GenerationModel flowEntry) {
     Element transform = new Element("transform", EE_NAMESPACE.getNamespace());
     Element setPayload = new Element("set-payload", EE_NAMESPACE.getNamespace());
     Element message = new Element("message", EE_NAMESPACE.getNamespace());
@@ -66,29 +67,19 @@ public class APIKitFlowScope implements Scope {
     transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(),
                            XSI_NAMESPACE.getNamespace());
     transform.addContent(message);
-    result.add(transform);
-    return result;
+    return transform;
   }
 
-  private List<Element> generateLogger(GenerationModel flowEntry, boolean isMuleEE) {
-    ArrayList<Element> result = new ArrayList<>();
-
-    if (isMuleEE && !flowEntry.getUriParameters().isEmpty())
-      result.add(createEEUriParamsSetVariables(flowEntry));
-    else if (!isMuleEE && !flowEntry.getUriParameters().isEmpty())
-      result.addAll(createCEUriParamsSetVariables(flowEntry));
-
+  private Element generateLogger(GenerationModel flowEntry) {
     Element logger = new Element("logger", XMLNS_NAMESPACE.getNamespace());
     logger.setAttribute(LOGGER_ATTRIBUTE_LEVEL, LOGGER_ATTRIBUTE_LEVEL_VALUE);
     logger.setAttribute(LOGGER_ATTRIBUTE_MESSAGE, flowEntry.getFlowName());
 
-    result.add(logger);
-    return result;
+    return logger;
   }
 
   private Element createEEUriParamsSetVariables(GenerationModel flowEntry) {
     Element transform = new Element("transform", EE_NAMESPACE.getNamespace());
-    //    transform.setAttribute("name", "Set Variables"/);
     Element variables = new Element("variables", EE_NAMESPACE.getNamespace());
 
     for (String uriParameter : flowEntry.getUriParameters()) {
