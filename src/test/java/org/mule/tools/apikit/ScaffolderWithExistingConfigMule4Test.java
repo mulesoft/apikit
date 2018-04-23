@@ -6,13 +6,14 @@
  */
 package org.mule.tools.apikit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mule.tools.apikit.Helper.countOccurences;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
-
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
 
@@ -29,16 +30,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mule.tools.apikit.Helper.countOccurences;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
-public class ScaffolderWithExistingConfigMule4 {
+public class ScaffolderWithExistingConfigMule4Test {
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
@@ -258,8 +257,8 @@ public class ScaffolderWithExistingConfigMule4 {
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
     assertEquals(0, countOccurences(s, "inbound-endpoint"));
-    assertEquals(2, countOccurences(s, "get:\\leagues\\{leagueId}"));
-    assertEquals(2, countOccurences(s, "post:\\leagues\\{leagueId}"));
+    assertEquals(2, countOccurences(s, "get:\\leagues\\(leagueId)"));
+    assertEquals(2, countOccurences(s, "post:\\leagues\\(leagueId)"));
     assertEquals(1, countOccurences(s, "<http:listener config-ref=\"HTTP_Listener_Configuration\""));
     assertEquals(1, countOccurences(s, "<http:listener config-ref=\"http-lc-0.0.0.0-8081\""));
     assertEquals(0, countOccurences(s, "extensionEnabled"));

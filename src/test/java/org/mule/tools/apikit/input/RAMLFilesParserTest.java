@@ -6,9 +6,14 @@
  */
 package org.mule.tools.apikit.input;
 
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import junit.framework.Assert;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.Test;
+import org.mule.tools.apikit.model.APIFactory;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
+import org.mule.tools.apikit.output.GenerationModel;
 
 import java.io.File;
 import java.io.InputStream;
@@ -17,15 +22,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.Assert;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.maven.plugin.logging.Log;
-import org.junit.Test;
-import org.mule.tools.apikit.model.APIFactory;
-import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-import org.mule.tools.apikit.output.GenerationModel;
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 public class RAMLFilesParserTest {
 
@@ -46,7 +45,7 @@ public class RAMLFilesParserTest {
 
     Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
     assertNotNull(entries);
-    assertEquals(3, entries.size());
+    assertEquals(5, entries.size());
     Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
     ResourceActionMimeTypeTriplet triplet = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
 
