@@ -1,0 +1,14 @@
+#%RAML 1.0
+title: Empty body test
+
+/nil:
+  post:
+    body:
+      application/json:
+        type: string | nil
+
+/string:
+  post:
+    body:
+      application/json: 
+        type: string  
