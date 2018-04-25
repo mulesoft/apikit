@@ -665,6 +665,10 @@ public class HttpRestRequest
         {
             // already in the right format
         }
+        else if (input instanceof NullPayload)
+        {
+            return null;
+        }
         else
         {
             throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
