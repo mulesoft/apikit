@@ -38,7 +38,8 @@ public class RestContentTypeParserTestCase
     @Test
     public void asterisk() throws Exception
     {
-        assertAcceptHeader("*");
+        List<MediaType> actualMediaTypes = RestContentTypeParser.parseMediaTypes("*");
+        assertTrue(actualMediaTypes.size() == 1);
 
     }
 
