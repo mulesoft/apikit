@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit;
 
+import org.mule.module.apikit.uri.Variable;
+import org.mule.module.apikit.uri.Variable.Reserved;
 import org.mule.raml.interfaces.model.IMimeType;
 
 import com.google.common.collect.Lists;
@@ -23,6 +25,8 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.mule.module.apikit.uri.Variable.Reserved.*;
+
 /**
  * MIME-Type Parser
  * <p/>
@@ -39,6 +43,7 @@ import org.slf4j.LoggerFactory;
 public final class RestContentTypeParser
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestContentTypeParser.class);
+    private static final String WILDCARD = "*";
 
     /**
      * Parse results container
@@ -88,7 +93,8 @@ public final class RestContentTypeParser
 
         // Java URLConnection class sends an Accept header that includes a
         // single "*" - Turn it into a legal wildcard.
-        if (fullType.equals("*"))
+
+        if (fullType.equals(WILDCARD))
         {
             fullType = "*/*";
         }
@@ -331,6 +337,9 @@ public final class RestContentTypeParser
         {
             try
             {
+                if (r != null && r.equals(WILDCARD)) {
+                    r = "*/*";
+                }
                 parsedMediaTypes.add(MediaType.parse(StringUtils.trim(r)));
             }
             catch (IllegalArgumentException e)
