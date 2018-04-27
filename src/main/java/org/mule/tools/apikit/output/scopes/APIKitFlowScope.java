@@ -34,7 +34,8 @@ public class APIKitFlowScope implements Scope {
     flow = new Element("flow", XMLNS_NAMESPACE.getNamespace());
     flow.setAttribute("name", flowEntry.getFlowName());
 
-    if (isMuleEE && !flowEntry.getUriParameters().isEmpty()) flow.addContent(createEEUriParamsSetVariables(flowEntry));
+    if (isMuleEE && !flowEntry.getUriParameters().isEmpty())
+      flow.addContent(createEEUriParamsSetVariables(flowEntry));
     else if (!isMuleEE && !flowEntry.getUriParameters().isEmpty()) {
       for (Element element : createCEUriParamsSetVariables(flowEntry)) {
         flow.addContent(element);
