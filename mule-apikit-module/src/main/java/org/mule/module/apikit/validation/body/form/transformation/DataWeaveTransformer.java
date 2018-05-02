@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation.body.form.transformation;
 
 import org.mule.module.apikit.api.exception.InvalidFormParameterException;
+import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.runtime.api.el.BindingContext;
 import org.mule.runtime.api.metadata.DataType;
 import org.mule.runtime.api.metadata.MediaType;
@@ -19,6 +20,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.runtime.api.metadata.MediaType.create;
 
 public class DataWeaveTransformer {
@@ -33,7 +35,7 @@ public class DataWeaveTransformer {
       .valueType(String.class)
       .build();
 
-  ExpressionManager expressionManager;
+  private ExpressionManager expressionManager;
 
   public DataWeaveTransformer(ExpressionManager expressionManager) {
     this.expressionManager = expressionManager;
@@ -69,10 +71,18 @@ public class DataWeaveTransformer {
       script = "output application/java --- payload";
     }
 
-    return (MultiMap<String, String>) runDataWeaveScript(script, multiMapDataType, payload).getValue();
+    final MultiMap<String, String> result = cast(runDataWeaveScript(script, multiMapDataType, payload).getValue());
+
+    // Rewind input stream, if possible.
+    // This rewind is needed to be able to consume the stream several times
+    if (payload.getValue() instanceof RewindableInputStream) {
+      ((RewindableInputStream) payload.getValue()).rewind();
+    }
+
+    return result;
   }
 
-  public TypedValue getXFormUrlEncodedStream(MultiMap mapToTransform, DataType responseDataType)
+  public TypedValue getXFormUrlEncodedStream(MultiMap<String, String> mapToTransform, DataType responseDataType)
       throws InvalidFormParameterException {
     TypedValue<MultiMap<String, String>> modifiedPayload = new TypedValue<>(mapToTransform, multiMapDataType);
     String script = "output application/x-www-form-urlencoded --- payload";
@@ -81,6 +91,6 @@ public class DataWeaveTransformer {
 
   public List<String> getKeysFromPayload(TypedValue payload) throws InvalidFormParameterException {
     String script = "output application/java --- payload.parts pluck $$ as String";
-    return (List<String>) runDataWeaveScript(script, null, payload).getValue();
+    return cast(runDataWeaveScript(script, null, payload).getValue());
   }
 }
