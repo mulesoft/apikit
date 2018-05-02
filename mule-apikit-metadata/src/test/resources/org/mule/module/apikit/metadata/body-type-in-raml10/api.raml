@@ -1,0 +1,26 @@
+#%RAML 1.0
+title: APIKitTest
+types: 
+  Person:
+    type: object
+    properties: 
+      name: string
+      birthdate: date-only
+      weight: integer
+      phonenumber?: string
+
+/persons:
+  get:
+    responses: 
+      200: 
+        body: 
+          application/json:
+            Person[]
+  /{name}:
+    get:
+      responses: 
+        200:
+          body: 
+            application/json:
+              Person
+    

@@ -19,7 +19,6 @@ import org.mule.metadata.message.api.MuleEventMetadataType;
 import org.mule.metadata.message.api.MuleEventMetadataTypeBuilder;
 import org.mule.module.apikit.metadata.interfaces.MetadataSource;
 import org.mule.module.apikit.metadata.interfaces.Notifier;
-import org.mule.module.apikit.metadata.model.Payload;
 import org.mule.module.apikit.metadata.model.RamlCoordinate;
 import org.mule.module.apikit.metadata.raml.RamlApiWrapper;
 import org.mule.raml.interfaces.model.IAction;
@@ -163,45 +162,58 @@ public class FlowMetadata implements MetadataSource {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
     builder.addField()
         .key(ATTRIBUTES_CLIENT_CERTIFICATE.getName())
+        .required(false)
         .value(getClientCertificate());
     builder.addField()
         .key(ATTRIBUTES_HEADERS.getName())
+        .required(true)
         .value(getHeaders(action));
     builder.addField()
         .key(ATTRIBUTES_LISTENER_PATH.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_METHOD.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_QUERY_PARAMS.getName())
+        .required(true)
         .value(getQueryParameters(action));
     builder.addField()
         .key(ATTRIBUTES_QUERY_STRING.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_RELATIVE_PATH.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_REMOTE_ADDRESS.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_REQUEST_PATH.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_REQUEST_URI.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_SCHEME.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_URI_PARAMS.getName())
+        .required(true)
         .value(getUriParameters(action, baseUriParameters));
     builder.addField()
         .key(ATTRIBUTES_VERSION.getName())
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_LOCAL_ADDRESS.getName())
+        .required(true)
         .value(stringMetadata());
 
     return builder.build();
@@ -239,7 +251,7 @@ public class FlowMetadata implements MetadataSource {
       mimeType = null;
     }
 
-    return loadMetadata(mimeType, coordinate, api, "output");
+    return loadIOPayloadMetadata(mimeType, coordinate, api, "output");
   }
 
   private MetadataType getInputPayload(IAction action, RamlCoordinate coordinate) {
@@ -254,11 +266,11 @@ public class FlowMetadata implements MetadataSource {
       }
     }
 
-    return loadMetadata(mimeType, coordinate, api, "input");
+    return loadIOPayloadMetadata(mimeType, coordinate, api, "input");
   }
 
-  private MetadataType loadMetadata(IMimeType mimeType, RamlCoordinate coordinate, RamlApiWrapper api,
-                                    String payloadDescription) {
+  private MetadataType loadIOPayloadMetadata(IMimeType mimeType, RamlCoordinate coordinate, RamlApiWrapper api,
+                                             String payloadDescription) {
     try {
       return Payload.metadata(api, mimeType);
     } catch (Exception e) {

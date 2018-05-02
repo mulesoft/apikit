@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.metadata;
 
-public enum CertificateFields {
+enum CertificateFields {
   CLIENT_CERTIFICATE_ENCODED("encoded"),
   CLIENT_CERTIFICATE_PUBLIC_KEY("publicKey"),
   CLIENT_CERTIFICATE_TYPE("type");

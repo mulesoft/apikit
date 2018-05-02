@@ -9,12 +9,12 @@
         "type"? : String, 
         "encoded"? : Binary
       }, 
-      "headers"? : {
+      "headers" : {
 
       }, 
-      "listenerPath"? : String, 
-      "method"? : String, 
-      "queryParams"? : {
+      "listenerPath" : String, 
+      "method" : String, 
+      "queryParams" : {
         "dateQueryParam"? : String, 
         "numberQueryParam"? : Number, 
         "integerQueryParam"? : @int Number, 
@@ -23,17 +23,17 @@
         "booleanQueryParam"? : Boolean, 
         "queryParamWithoutType"? : String
       }, 
-      "queryString"? : String, 
-      "relativePath"? : String, 
-      "remoteAddress"? : String, 
-      "requestPath"? : String, 
-      "requestUri"? : String, 
-      "scheme"? : String, 
-      "uriParams"? : {
+      "queryString" : String, 
+      "relativePath" : String, 
+      "remoteAddress" : String, 
+      "requestPath" : String, 
+      "requestUri" : String, 
+      "scheme" : String, 
+      "uriParams" : {
 
       }, 
       "version"? : String, 
-      "localAddress"? : String
+      "localAddress" : String
     }
   }, 
   "variables" : {

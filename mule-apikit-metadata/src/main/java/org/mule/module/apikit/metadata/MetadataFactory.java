@@ -25,7 +25,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.mule.metadata.api.builder.BaseTypeBuilder.create;
 
-public class MetadataFactory {
+class MetadataFactory {
 
   private static final MetadataType DEFAULT_METADATA = create(MetadataFormat.JAVA).anyType().build();
   private static final MetadataType STRING_METADATA = create(MetadataFormat.JAVA).stringType().build();

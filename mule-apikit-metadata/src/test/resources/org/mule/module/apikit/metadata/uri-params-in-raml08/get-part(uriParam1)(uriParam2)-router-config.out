@@ -9,28 +9,28 @@
         "type"? : String, 
         "encoded"? : Binary
       }, 
-      "headers"? : {
+      "headers" : {
 
       }, 
-      "listenerPath"? : String, 
-      "method"? : String, 
-      "queryParams"? : {
+      "listenerPath" : String, 
+      "method" : String, 
+      "queryParams" : {
 
       }, 
-      "queryString"? : String, 
-      "relativePath"? : String, 
-      "remoteAddress"? : String, 
-      "requestPath"? : String, 
-      "requestUri"? : String, 
-      "scheme"? : String, 
-      "uriParams"? : {
+      "queryString" : String, 
+      "relativePath" : String, 
+      "remoteAddress" : String, 
+      "requestPath" : String, 
+      "requestUri" : String, 
+      "scheme" : String, 
+      "uriParams" : {
         "v1"? : String, 
         "v2"? : String, 
         "uriParam1"? : @int Number, 
         "uriParam2"? : Number
       }, 
       "version"? : String, 
-      "localAddress"? : String
+      "localAddress" : String
     }
   }, 
   "variables" : {

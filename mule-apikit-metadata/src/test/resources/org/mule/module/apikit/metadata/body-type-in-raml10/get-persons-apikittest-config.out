@@ -24,9 +24,7 @@
       "requestUri" : String, 
       "scheme" : String, 
       "uriParams" : {
-        "v1"? : String, 
-        "v2"? : String, 
-        "uriParam1"? : @int Number
+
       }, 
       "version"? : String, 
       "localAddress" : String
@@ -37,7 +35,13 @@
   }
 }) -> {
   "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
-    "payload" : Any
+    "payload" : [{
+        "birthdate"? : String, 
+        "name"? : String, 
+        "phonenumber"? : String, 
+        "weight"? : @int Number, 
+        * : Any
+      }]
   }, 
   "variables" : {
     "outboundHeaders" : {

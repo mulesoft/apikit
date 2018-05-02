@@ -4,19 +4,17 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.metadata.model;
+package org.mule.module.apikit.metadata;
 
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Nullable;
 import org.mule.metadata.api.model.MetadataType;
-import org.mule.module.apikit.metadata.MetadataFactory;
 import org.mule.module.apikit.metadata.raml.RamlApiWrapper;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-
-public class Payload {
+class Payload {
 
   private static final String MIME_APPLICATION_JSON = "application/json";
   private static final String MIME_APPLICATION_XML = "application/xml";

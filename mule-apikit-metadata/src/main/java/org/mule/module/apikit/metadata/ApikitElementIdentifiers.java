@@ -18,7 +18,7 @@ import org.mule.runtime.config.internal.model.ComponentModel;
  * {@link org.mule.module.apikit.metadata.model.Flow}
  * {@link org.mule.module.apikit.metadata.model.FlowMapping}
  */
-public class ApikitElementIdentifiers {
+class ApikitElementIdentifiers {
 
   private ApikitElementIdentifiers() {}
 

@@ -49,7 +49,7 @@ public class MetadataTestCase extends TestDataProvider {
 
   @Parameterized.Parameters(name = "{2}")
   public static Collection<Object[]> getData() throws IOException, URISyntaxException {
-    final URI baseFolder = MetadataTestCase.class.getResource("").toURI();
+    final URI baseFolder = MetadataTestCase.class.getResource("").toURI(); //body-type-in-raml10
     return getData(baseFolder, "app.xml", OUTPUT_PATTERN);
   }
 

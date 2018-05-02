@@ -19,7 +19,7 @@ import java.util.Optional;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Optional.empty;
 
-public class MetadataHandler {
+class MetadataHandler {
 
   private ApplicationModelWrapper modelWrapper;
   private Notifier notifier;
