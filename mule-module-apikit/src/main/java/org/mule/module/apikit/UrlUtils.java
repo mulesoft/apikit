@@ -12,10 +12,12 @@ import static org.mule.transport.http.HttpConnector.HTTP_REQUEST_PATH_PROPERTY;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.http.internal.ParameterMap;
 import org.mule.util.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map.Entry;
 
 public class UrlUtils
 {
@@ -89,9 +91,20 @@ public class UrlUtils
         if (path == null)
         {
             path = message.getInboundProperty("http.listener.path");
-            if (path != null && path.endsWith("/*"))
-            {
-                path = path.substring(0, path.length() - 2);
+
+            if (path != null) {
+                if (path.endsWith("/*"))
+                {
+                    path = path.substring(0, path.length() - 2);
+                }
+
+                ParameterMap uriParams = message.getInboundProperty("http.uri.params");
+                if (!uriParams.isEmpty()) {
+                    for (Entry<String, String> entry : uriParams.entrySet()) {
+                        String uriParameter = "{" + entry.getKey() + "}";
+                        if (path.contains(uriParameter)) path = path.replace(uriParameter, entry.getValue());
+                    }
+                }
             }
             if (path == null)
             {
