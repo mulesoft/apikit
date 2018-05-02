@@ -1,0 +1,41 @@
+#%RAML 1.0
+---
+title: Non repeatable streams
+
+/multipart:
+  post:
+    body:
+      multipart/form-data:
+        properties:
+          first:
+            type: string
+          second:
+            type: string
+            default: segundo
+          third:
+            type: boolean
+            required: false
+            default: true
+    responses:
+      201: ~
+
+/url-encoded-simple:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          first:
+            type: string
+    responses:
+      201: ~
+
+/simple-post:
+  post:
+    body:
+      application/json:
+        properties:
+          firstName: string
+          lastName: string
+          age: integer
+    responses:
+      201: ~

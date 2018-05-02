@@ -21,6 +21,7 @@ import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
+import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
 import org.mule.runtime.api.component.execution.ComponentExecutionException;
@@ -33,6 +34,7 @@ import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.exception.TypedException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.processor.Processor;
@@ -42,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Optional;
@@ -176,15 +179,25 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
                                            ResolvedVariables resolvedVariables)
       throws MuleRestException {
 
-    String charset = null;
+    TypedValue payload = event.getMessage().getPayload();
+
+    final String charset;
     try {
-      charset = getEncoding(event.getMessage(), event.getMessage().getPayload().getValue(), LOGGER);
+      final Object payloadValue = payload.getValue();
+      if (payloadValue instanceof InputStream) {
+        final RewindableInputStream rewindable = new RewindableInputStream((InputStream) payloadValue);
+        charset = getEncoding(event.getMessage(), rewindable, LOGGER);
+        rewindable.rewind();
+        payload = new TypedValue<>(rewindable, payload.getDataType());
+      } else {
+        charset = getEncoding(event.getMessage(), payloadValue, LOGGER);
+      }
     } catch (IOException e) {
       throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
     }
 
-    ValidRequest validRequest =
-        RequestValidator.validate(config, resource, attributes, resolvedVariables, event.getMessage().getPayload(), charset);
+    final ValidRequest validRequest =
+        RequestValidator.validate(config, resource, attributes, resolvedVariables, payload, charset);
 
     return EventHelper.regenerateEvent(event.getMessage(), eventBuilder, validRequest);
   }

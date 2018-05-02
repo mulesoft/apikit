@@ -6,9 +6,6 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-import java.util.List;
-import java.util.Map;
-
 import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.module.apikit.validation.body.form.transformation.DataWeaveDefaultsBuilder;
 import org.mule.module.apikit.validation.body.form.transformation.DataWeaveTransformer;
@@ -16,9 +13,11 @@ import org.mule.module.apikit.validation.body.form.transformation.TextPlainPart;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.el.ExpressionManager;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 public class MultipartFormValidator implements FormValidatorStrategy<TypedValue> {
 
