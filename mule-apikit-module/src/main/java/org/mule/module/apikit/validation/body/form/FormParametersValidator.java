@@ -8,7 +8,6 @@ package org.mule.module.apikit.validation.body.form;
 
 import org.mule.module.apikit.api.exception.BadRequestException;
 
-import org.mule.runtime.api.metadata.TypedValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +21,7 @@ public class FormParametersValidator {
     this.strategy = strategy;
   }
 
-  public Object validate(TypedValue payload) throws BadRequestException {
+  public Object validate(Object payload) throws BadRequestException {
     return this.strategy.validate(payload);
   }
 }
