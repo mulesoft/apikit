@@ -8,8 +8,8 @@ package org.mule.raml.implv2.v10;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
 
+import org.hamcrest.CoreMatchers;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
 
@@ -26,7 +26,7 @@ public class InterfaceV10TestCase {
     assertThat(raml.getVersion(), is("1.0"));
     assertThat(raml.getSchemas().get(0).size(), is(2));
     assertThat(raml.getSchemas().get(0).get("User"),
-               is("{\"$ref\":\"#/definitions/User\",\"definitions\":{\"User\":{\"type\":\"object\",\"properties\":{\"firstname\":{\"type\":\"string\"},\"lastname\":{\"type\":\"string\"},\"age\":{\"type\":\"number\"}}}},\"$schema\":\"http://json-schema.org/draft-04/schema#\"}"));
-    assertThat(raml.getSchemas().get(0).get("UserJson"), containsString("firstname"));
+               is("{\"$ref\":\"#/definitions/User\",\"definitions\":{\"User\":{\"type\":\"object\",\"properties\":{\"firstname\":{\"type\":\"string\"},\"lastname\":{\"type\":\"string\"},\"age\":{\"type\":\"number\"}},\"required\":[\"firstname\",\"lastname\",\"age\"]}},\"$schema\":\"http://json-schema.org/draft-04/schema#\"}"));
+    assertThat(raml.getSchemas().get(0).get("UserJson"), CoreMatchers.containsString("firstname"));
   }
 }

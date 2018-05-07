@@ -36,10 +36,10 @@
 }) -> {
   "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
     "payload" : {
-      "birthdate"? : String, 
-      "name"? : String, 
+      "birthdate" : String, 
+      "name" : String, 
       "phonenumber"? : String, 
-      "weight"? : @int Number, 
+      "weight" : @int Number, 
       * : Any
     }
   }, 
