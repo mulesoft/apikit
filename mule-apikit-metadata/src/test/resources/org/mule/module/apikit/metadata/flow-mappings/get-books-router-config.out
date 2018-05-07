@@ -36,9 +36,9 @@
 }) -> {
   "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
     "payload" : [{
-        "author"? : String, 
+        "author" : String, 
         "available"? : Boolean, 
-        "title"? : String, 
+        "title" : String, 
         * : Any
       }]
   }, 
