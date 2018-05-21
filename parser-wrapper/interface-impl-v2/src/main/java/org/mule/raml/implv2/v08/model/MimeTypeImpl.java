@@ -8,14 +8,14 @@ package org.mule.raml.implv2.v08.model;
 
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
+import org.raml.v2.api.model.v08.bodies.BodyLike;
+import org.raml.v2.api.model.v08.parameters.Parameter;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.raml.v2.api.model.v08.bodies.BodyLike;
-import org.raml.v2.api.model.v08.parameters.Parameter;
 
 public class MimeTypeImpl implements IMimeType {
 
@@ -58,6 +58,11 @@ public class MimeTypeImpl implements IMimeType {
 
   @Override
   public Object getInstance() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public List<IValidationResult> validate(String payload) {
     throw new UnsupportedOperationException();
   }
 }

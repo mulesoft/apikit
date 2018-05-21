@@ -32,4 +32,8 @@ public class ValidationResultImpl implements IValidationResult {
   public boolean isLineUnknown() {
     return validationResult.getLine() == ValidationResult.UNKNOWN;
   }
+
+  public String getPath() {
+    throw new UnsupportedOperationException();
+  }
 }

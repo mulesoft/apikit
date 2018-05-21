@@ -8,6 +8,7 @@ package org.mule.raml.implv2.v10.model;
 
 import static org.mule.raml.implv2.v10.model.RamlImpl10V2.getTypeAsString;
 
+import org.mule.raml.implv2.parser.rule.ValidationResultImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
@@ -15,8 +16,9 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.raml.v2.api.model.common.ValidationResult;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
@@ -70,8 +72,11 @@ public class MimeTypeImpl implements IMimeType {
     return result;
   }
 
-  public List<ValidationResult> validate(String payload) {
-    return typeDeclaration.validate(payload);
+  @Override
+  public List<IValidationResult> validate(String payload) {
+    return typeDeclaration.validate(payload).stream()
+        .map(ValidationResultImpl::new)
+        .collect(Collectors.toList());
   }
 
   @Override

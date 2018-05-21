@@ -9,14 +9,17 @@ package org.mule.amf.impl.model;
 import amf.client.model.domain.EndPoint;
 import amf.client.model.domain.Operation;
 import amf.client.model.domain.WebApi;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.toMap;
 import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
 public class ResourceImpl implements IResource {
@@ -99,16 +102,8 @@ public class ResourceImpl implements IResource {
     return resolvedUriParameters;
   }
 
-  private static Map<String, IParameter> loadResolvedUriParameters(Resource resource) {
-    Map<String, IParameter> result = new HashMap<>();
-    Resource current = resource;
-    while (current != null) {
-      for (TypeDeclaration typeDeclaration : current.uriParameters()) {
-        result.put(typeDeclaration.name(), new ParameterImpl(typeDeclaration));
-      }
-      current = current.parentResource();
-    }
-    return result;
+  private static Map<String, IParameter> loadResolvedUriParameters(EndPoint resource) {
+    return resource.parameters().stream().collect(toMap(p -> p.name().value(), ParameterImpl::new));
   }
 
   @Override

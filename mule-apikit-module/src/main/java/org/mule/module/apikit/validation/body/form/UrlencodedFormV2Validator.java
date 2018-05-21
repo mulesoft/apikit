@@ -6,25 +6,21 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-import org.mule.module.apikit.ApikitErrorTypes;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.module.apikit.validation.body.form.transformation.DataWeaveTransformer;
-import org.mule.raml.implv2.v10.model.MimeTypeImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.api.el.ExpressionManager;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
-
-import org.raml.v2.api.model.common.ValidationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedValue> {
 
@@ -42,11 +38,6 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
   @Override
   public TypedValue validate(TypedValue originalPayload) throws BadRequestException {
 
-    if (!(actionMimeType instanceof MimeTypeImpl)) {
-      // validate only raml 1.0
-      return originalPayload;
-    }
-
     String jsonText;
     MultiMap<String, String> requestMap = dataWeaveTransformer.getMultiMapFromPayload(originalPayload);
 
@@ -57,10 +48,16 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
       return originalPayload;
     }
 
-    List<ValidationResult> validationResult = ((MimeTypeImpl) actionMimeType).validate(jsonText);
+    final List<IValidationResult> validationResult;
+    try {
+      validationResult = actionMimeType.validate(jsonText);
+    } catch (UnsupportedOperationException e) {
+      return originalPayload;
+    }
+
     if (validationResult.size() > 0) {
       String resultString = "";
-      for (ValidationResult result : validationResult) {
+      for (IValidationResult result : validationResult) {
         resultString += result.getMessage() + "\n";
       }
       throw new InvalidFormParameterException(resultString);
