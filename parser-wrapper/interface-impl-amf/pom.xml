@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.mule.raml</groupId>
+        <artifactId>raml-parser-interface-parent</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>raml-parser-interface-impl-amf</artifactId>
+    <name>RAML parser v2 interface implemention</name>
+    <packaging>jar</packaging>
+
+    <properties>
+        <amfVersion>1.3.3</amfVersion>
+        
+        <licensePath>../../LICENSE_HEADER.txt</licensePath>
+        <formatterConfigPath>../../formatter.xml</formatterConfigPath>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.mule.raml</groupId>
+            <artifactId>raml-parser-interface</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- AMF Dependencies -->
+        <dependency>
+            <groupId>org.mule.amf</groupId>
+            <artifactId>amf-client_2.12</artifactId>
+            <version>${amfVersion}</version>
+        </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>
