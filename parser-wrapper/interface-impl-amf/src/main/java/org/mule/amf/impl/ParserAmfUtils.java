@@ -9,18 +9,18 @@ package org.mule.amf.impl;
 import amf.client.model.domain.WebApi;
 import java.io.File;
 import java.net.URL;
-import org.mule.amf.impl.model.ApiImpl;
+import org.mule.amf.impl.model.AmfImpl;
 import org.mule.raml.interfaces.model.IRaml;
 
-public class ParserApiUtils {
+public class ParserAmfUtils {
 
   public static IRaml build(final String api) {
     final WebApi webApi = webApi(api);
-    return new ApiImpl(webApi);
+    return new AmfImpl(webApi);
   }
 
   private static WebApi webApi(final String resource) {
-    final URL url = ParserApiUtils.class.getResource(resource);
+    final URL url = ParserAmfUtils.class.getResource(resource);
     final File file = new File(url.getFile());
     return DocumentParser.getWebApi(file);
   }

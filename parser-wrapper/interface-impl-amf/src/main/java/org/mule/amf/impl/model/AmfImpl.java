@@ -23,12 +23,12 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 
-public class ApiImpl implements IRaml {
+public class AmfImpl implements IRaml {
 
   private WebApi webApi;
   private Map<String, Map<String, IResource>> resources = new HashMap<>();
 
-  public ApiImpl(final WebApi webApi) {
+  public AmfImpl(final WebApi webApi) {
     this.webApi = webApi;
     resources = buildResources(webApi.endPoints());
   }
@@ -36,23 +36,25 @@ public class ApiImpl implements IRaml {
   private Map<String, Map<String, IResource>> buildResources(final List<EndPoint> endPoints) {
 
     final Map<String, Map<String, IResource>> resources = new HashMap<>();
-
-    endPoints.forEach(endPoint -> {
-
-      final String value = endPoint.path().value();
-      final int index = value.lastIndexOf("/");
-      final String parent = value.substring(0, index);
-      addToMap(resources, parent, endPoint);
-    });
+    endPoints.forEach(endPoint -> addToMap(resources, endPoint));
     return resources;
 
   }
 
-  private void addToMap(final Map<String, Map<String, IResource>> resources, final String parent, final EndPoint endPoint) {
-    final Map<String, IResource> parentMap = resources.computeIfAbsent(parent, k -> new HashMap<>());
-    parentMap.put(parent, new ResourceImpl(endPoint));
+  private void addToMap(final Map<String, Map<String, IResource>> resources, final EndPoint endPoint) {
+      final String path = endPoint.path().value();
+      final String parent = parentKey(path);
+      System.out.println("AmfImpl.buildResources parent: '" + parent + "' " + endPoint.path().value());
+
+      final Map<String, IResource> parentMap = resources.computeIfAbsent(parent, k -> new HashMap<>());
+      parentMap.put(path, new ResourceImpl(endPoint));
   }
 
+  private static String parentKey(final String path) {
+      final int index = path.lastIndexOf("/");
+      return path.substring(0, index+1);
+  }
+  
   @Override
   public IResource getResource(String path) {
     return getResources().get(path);

@@ -12,32 +12,30 @@ import amf.client.model.domain.Parameter;
 import amf.client.model.domain.Shape;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-
-import static com.sun.jmx.mbeanserver.Util.cast;
 import static java.util.stream.Collectors.toMap;
 
-public class ParameterImpl implements IParameter {
+class ParameterImpl implements IParameter {
 
   private Parameter parameter;
   private AnyShape schema;
 
-  public ParameterImpl(Parameter parameter) {
+  ParameterImpl(final Parameter parameter) {
     this.parameter = parameter;
+    this.schema = getSchema(parameter);
   }
 
   @Override
-  public boolean validate(String value) {
+  public boolean validate(final String value) {
     return validatePayload(value).conforms();
   }
 
-  private ValidationReport validatePayload(String value) {
-    final AnyShape schema = getSchema();
+  private ValidationReport validatePayload(final String value) {
     try {
       return schema.validate(value).get();
     } catch (InterruptedException | ExecutionException e) {
@@ -45,21 +43,14 @@ public class ParameterImpl implements IParameter {
     }
   }
 
-  private AnyShape getSchema() {
-    if (schema == null) {
+  private static AnyShape getSchema(final Parameter parameter) {
       final Shape shape = parameter.schema();
-
-      if (shape instanceof AnyShape)
-        schema = cast(shape);
-      else
-        throw new UnsupportedSchemaException();
-    }
-
-    return schema;
+     if (shape instanceof AnyShape) return (AnyShape) shape;
+     throw new UnsupportedSchemaException();
   }
 
   @Override
-  public String message(String value) {
+  public String message(final String value) {
     final ValidationReport validationReport = validatePayload(value);
     if (validationReport.conforms())
       return "OK";
@@ -78,7 +69,7 @@ public class ParameterImpl implements IParameter {
 
   @Override
   public String getDefaultValue() {
-    return getSchema().defaultValueStr().value();
+    return schema.defaultValueStr().value();
   }
 
   @Override
@@ -88,17 +79,17 @@ public class ParameterImpl implements IParameter {
 
   @Override
   public boolean isArray() {
-    return getSchema() instanceof ArrayShape;
+    return schema instanceof ArrayShape;
   }
 
   @Override
   public String getDisplayName() {
-    throw new UnsupportedOperationException();
+      return schema.displayName().value();
   }
 
   @Override
   public String getDescription() {
-    throw new UnsupportedOperationException();
+    return parameter.description().value();
   }
 
   @Override
@@ -110,7 +101,7 @@ public class ParameterImpl implements IParameter {
 
   @Override
   public Map<String, String> getExamples() {
-    return getSchema().examples().stream()
+    return schema.examples().stream()
         .collect(toMap(e -> e.name().value(), e -> e.value().value()));
   }
 

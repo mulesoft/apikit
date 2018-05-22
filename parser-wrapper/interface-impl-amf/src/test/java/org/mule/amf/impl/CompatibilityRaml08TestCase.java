@@ -17,25 +17,28 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
-import static org.hamcrest.Matchers.hasSize;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 
-public class CompatibilityRaml08TestCase {
+public class CompatibilityRaml08TestCase extends AbstractTestCase{
 
+  private static final String SANITY_08_RAML = "sanity-08.raml";
+    
   private static IRaml amf;
   private static IRaml raml;
 
   @BeforeClass
   public static void beforeClass() {
 
-    amf = ParserApiUtils.build("sanity-08.raml");
-    raml = buildRaml08("sanity-08.raml");
+    amf = ParserAmfUtils.build(SANITY_08_RAML);
+    raml = buildRaml08(SANITY_08_RAML);
 
     assertNotNull(amf);
     assertNotNull(raml);
@@ -72,18 +75,22 @@ public class CompatibilityRaml08TestCase {
 
     ramlBaseUriParameters.forEach((k, v) -> {
       assertThat(amfBaseUriParameters.containsKey(k), is(true));
-      assertEqual(v, amfBaseUriParameters.get(k));
-
+      assertEqual( amfBaseUriParameters.get(k), v);
     });
   }
 
-  private static void assertEqual(final IParameter expected, final IParameter actual) {
-    // TODO
-    assertThat(expected.getDefaultValue(), is(equalTo(actual.getDefaultValue())));
-  }
+    @Test
+  public void resources() {
+        final Map<String, IResource> ramlResources = raml.getResources();
+        final Map<String, IResource> amfResources = amf.getResources();
 
+        assertEqual(amfResources, ramlResources);
+    }  
+
+
+  
   private static IRaml buildRaml08(final String resource) {
-    final URL url = ParserApiUtils.class.getResource(resource);
+    final URL url = ParserAmfUtils.class.getResource(resource);
     final File file = new File(url.getFile());
 
     try {

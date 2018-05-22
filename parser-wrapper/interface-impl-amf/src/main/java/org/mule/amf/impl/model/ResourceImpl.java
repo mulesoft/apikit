@@ -22,22 +22,22 @@ import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
 public class ResourceImpl implements IResource {
 
-  private EndPoint resource;
+  private EndPoint endPoint;
   private Map<IActionType, IAction> actions;
   private Map<String, IParameter> resolvedUriParameters;
 
-  public ResourceImpl(final EndPoint resource) {
-    this.resource = resource;
+  public ResourceImpl(final EndPoint endPoint) {
+    this.endPoint = endPoint;
   }
 
   @Override
   public String getRelativeUri() {
-    return resource.path().value();
+    return endPoint.path().value();
   }
 
   @Override
   public String getUri() {
-    return resource.path().value();
+    return endPoint.path().value();
   }
 
   @Override
@@ -59,7 +59,7 @@ public class ResourceImpl implements IResource {
   @Override
   public Map<IActionType, IAction> getActions() {
     if (actions == null) {
-      actions = loadActions(resource);
+      actions = loadActions(endPoint);
     }
 
     return actions;
@@ -84,13 +84,13 @@ public class ResourceImpl implements IResource {
 
   @Override
   public String getDisplayName() {
-    return resource.path().value();
+    return endPoint.name().value();
   }
 
   @Override
   public Map<String, IParameter> getResolvedUriParameters() {
     if (resolvedUriParameters == null) {
-      resolvedUriParameters = loadResolvedUriParameters(resource);
+      resolvedUriParameters = loadResolvedUriParameters(endPoint);
     }
 
     return resolvedUriParameters;
