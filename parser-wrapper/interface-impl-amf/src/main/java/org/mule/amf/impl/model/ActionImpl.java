@@ -6,7 +6,11 @@
  */
 package org.mule.amf.impl.model;
 
+import amf.client.model.domain.EndPoint;
 import amf.client.model.domain.Operation;
+import amf.client.model.domain.Request;
+import amf.client.model.domain.Response;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -18,25 +22,26 @@ import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-import org.raml.v2.api.model.v10.bodies.Response;
-import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
-import org.raml.v2.api.model.v10.methods.Method;
+
+import static java.util.Collections.emptyMap;
 
 public class ActionImpl implements IAction {
 
-  private Method method;
+  private final EndPoint endPoint;
+  private final Operation operation;
   private Map<String, IMimeType> bodies;
   private Map<String, IResponse> responses;
   private Map<String, IParameter> queryParameters;
   private Map<String, IParameter> headers;
 
-  public ActionImpl(Operation method) {
-    this.method = method;
+  public ActionImpl(final EndPoint endPoint, final Operation operation) {
+    this.endPoint = endPoint;
+    this.operation = operation;
   }
 
   @Override
   public IActionType getType() {
-    return IActionType.valueOf(method.method().toUpperCase());
+    return IActionType.valueOf(operation.method().value().toUpperCase());
   }
 
   @Override
@@ -47,54 +52,64 @@ public class ActionImpl implements IAction {
   @Override
   public Map<String, IResponse> getResponses() {
     if (responses == null) {
-      responses = loadResponses(method);
+      responses = loadResponses(operation);
     }
     return responses;
   }
 
-  private static Map<String, IResponse> loadResponses(Method method) {
+  private static Map<String, IResponse> loadResponses(final Operation operation) {
     Map<String, IResponse> result = new LinkedHashMap<>();
-    for (Response response : method.responses()) {
-      result.put(response.code().value(), new ResponseImpl(response));
+    for (Response response : operation.responses()) {
+      result.put(response.statusCode().value(), new ResponseImpl(response));
     }
     return result;
   }
 
   @Override
   public IResource getResource() {
-    return new ResourceImpl(method.resource());
+    return new ResourceImpl(endPoint);
   }
 
   @Override
   public Map<String, IMimeType> getBody() {
     if (bodies == null) {
-      bodies = loadBodies(method);
+      bodies = loadBodies(operation);
     }
 
     return bodies;
   }
 
-  private static Map<String, IMimeType> loadBodies(Method method) {
-    Map<String, IMimeType> result = new LinkedHashMap<>();
-    for (TypeDeclaration typeDeclaration : method.body()) {
-      result.put(typeDeclaration.name(), new MimeTypeImpl(typeDeclaration));
-    }
+  private static Map<String, IMimeType> loadBodies(final Operation operation) {
+    final Request request = operation.request();
+    if (request == null)
+      return emptyMap();
+
+    final Map<String, IMimeType> result = new LinkedHashMap<>();
+
+    request.payloads().forEach(payload -> {
+      result.put(payload.schema().name().value(), new MimeTypeImpl(payload));
+    });
+
     return result;
   }
 
   @Override
   public Map<String, IParameter> getQueryParameters() {
     if (queryParameters == null) {
-      queryParameters = loadQueryParameters(method);
+      queryParameters = loadQueryParameters(operation);
     }
     return queryParameters;
   }
 
-  private static Map<String, IParameter> loadQueryParameters(Method method) {
+  private static Map<String, IParameter> loadQueryParameters(final Operation operation) {
+    final Request request = operation.request();
+    if (request == null)
+      return emptyMap();
+
     final Map<String, IParameter> result = new HashMap<>();
-    for (TypeDeclaration typeDeclaration : method.queryParameters()) {
-      result.put(typeDeclaration.name(), new ParameterImpl(typeDeclaration));
-    }
+    request.queryParameters().forEach(parameter -> {
+      result.put(parameter.name().value(), new ParameterImpl(parameter));
+    });
     return result;
   }
 
@@ -106,16 +121,20 @@ public class ActionImpl implements IAction {
   @Override
   public Map<String, IParameter> getHeaders() {
     if (headers == null) {
-      headers = loadHeaders(method);
+      headers = loadHeaders(operation);
     }
     return headers;
   }
 
-  private Map<String, IParameter> loadHeaders(Method method) {
-    Map<String, IParameter> result = new HashMap<>();
-    for (TypeDeclaration typeDeclaration : method.headers()) {
-      result.put(typeDeclaration.name(), new ParameterImpl(typeDeclaration));
-    }
+  private Map<String, IParameter> loadHeaders(final Operation operation) {
+    final Request request = operation.request();
+    if (request == null)
+      return emptyMap();
+
+    final Map<String, IParameter> result = new HashMap<>();
+    request.headers().forEach(parameter -> {
+      result.put(parameter.name().value(), new ParameterImpl(parameter));
+    });
     return result;
   }
 

@@ -8,16 +8,14 @@ package org.mule.amf.impl.model;
 
 import amf.client.model.domain.EndPoint;
 import amf.client.model.domain.Operation;
-import amf.client.model.domain.WebApi;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
@@ -28,7 +26,7 @@ public class ResourceImpl implements IResource {
   private Map<IActionType, IAction> actions;
   private Map<String, IParameter> resolvedUriParameters;
 
-  public ResourceImpl(final WebApi webApi, final EndPoint resource) {
+  public ResourceImpl(final EndPoint resource) {
     this.resource = resource;
   }
 
@@ -67,10 +65,10 @@ public class ResourceImpl implements IResource {
     return actions;
   }
 
-  private static Map<IActionType, IAction> loadActions(final EndPoint resource) {
+  private static Map<IActionType, IAction> loadActions(final EndPoint endPoint) {
     Map<IActionType, IAction> map = new LinkedHashMap<>();
-    for (Operation method : resource.operations()) {
-      map.put(getActionKey(method.method().value()), new ActionImpl(method));
+    for (Operation operation : endPoint.operations()) {
+      map.put(getActionKey(operation.method().value()), new ActionImpl(endPoint, operation));
     }
     return map;
   }
@@ -81,11 +79,7 @@ public class ResourceImpl implements IResource {
 
   @Override
   public Map<String, IResource> getResources() {
-    Map<String, IResource> result = new HashMap<>();
-    for (Resource item : resource.resources()) {
-      result.put(item.relativeUri().value(), new ResourceImpl(item));
-    }
-    return result;
+    return Collections.emptyMap();
   }
 
   @Override
@@ -102,7 +96,7 @@ public class ResourceImpl implements IResource {
     return resolvedUriParameters;
   }
 
-  private static Map<String, IParameter> loadResolvedUriParameters(EndPoint resource) {
+  private static Map<String, IParameter> loadResolvedUriParameters(final EndPoint resource) {
     return resource.parameters().stream().collect(toMap(p -> p.name().value(), ParameterImpl::new));
   }
 

@@ -12,7 +12,7 @@ import amf.client.model.domain.Parameter;
 import amf.client.model.domain.Shape;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
-import org.mule.amv.impl.extension.UnsupportedSchemaException;
+import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
@@ -49,10 +49,10 @@ public class ParameterImpl implements IParameter {
     if (schema == null) {
       final Shape shape = parameter.schema();
 
-      if (schema instanceof AnyShape)
+      if (shape instanceof AnyShape)
         schema = cast(shape);
-
-      throw new UnsupportedSchemaException();
+      else
+        throw new UnsupportedSchemaException();
     }
 
     return schema;
@@ -78,7 +78,7 @@ public class ParameterImpl implements IParameter {
 
   @Override
   public String getDefaultValue() {
-    return schema.defaultValueStr().value();
+    return getSchema().defaultValueStr().value();
   }
 
   @Override
