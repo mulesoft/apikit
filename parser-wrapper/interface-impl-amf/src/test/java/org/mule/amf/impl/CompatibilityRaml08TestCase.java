@@ -75,7 +75,7 @@ public class CompatibilityRaml08TestCase extends AbstractTestCase{
 
     ramlBaseUriParameters.forEach((k, v) -> {
       assertThat(amfBaseUriParameters.containsKey(k), is(true));
-      assertEqual( amfBaseUriParameters.get(k), v);
+      assertResourcesEqual( amfBaseUriParameters.get(k), v);
     });
   }
 
@@ -84,11 +84,9 @@ public class CompatibilityRaml08TestCase extends AbstractTestCase{
         final Map<String, IResource> ramlResources = raml.getResources();
         final Map<String, IResource> amfResources = amf.getResources();
 
-        assertEqual(amfResources, ramlResources);
-    }  
+        assertResourcesEqual(amfResources, ramlResources);
+  }  
 
-
-  
   private static IRaml buildRaml08(final String resource) {
     final URL url = ParserAmfUtils.class.getResource(resource);
     final File file = new File(url.getFile());

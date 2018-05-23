@@ -17,17 +17,20 @@ import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
 public class ResourceImpl implements IResource {
 
-  private EndPoint endPoint;
+    private AmfImpl amf;
+    private EndPoint endPoint;
   private Map<IActionType, IAction> actions;
   private Map<String, IParameter> resolvedUriParameters;
 
-  public ResourceImpl(final EndPoint endPoint) {
-    this.endPoint = endPoint;
+  ResourceImpl(AmfImpl amf, final EndPoint endPoint) {
+      this.amf = amf;
+      this.endPoint = endPoint;
   }
 
   @Override
@@ -65,11 +68,11 @@ public class ResourceImpl implements IResource {
     return actions;
   }
 
-  private static Map<IActionType, IAction> loadActions(final EndPoint endPoint) {
-    Map<IActionType, IAction> map = new LinkedHashMap<>();
-    for (Operation operation : endPoint.operations()) {
-      map.put(getActionKey(operation.method().value()), new ActionImpl(endPoint, operation));
-    }
+  private Map<IActionType, IAction> loadActions(final EndPoint endPoint) {
+    final Map<IActionType, IAction> map = new LinkedHashMap<>();
+    endPoint.operations().forEach(operation -> {
+       map.put(getActionKey(operation.method().value()), new ActionImpl(this, operation));
+    });
     return map;
   }
 
@@ -79,7 +82,10 @@ public class ResourceImpl implements IResource {
 
   @Override
   public Map<String, IResource> getResources() {
-    return Collections.emptyMap();
+
+      final String uri = getUri();
+      final Map<String, Map<String, IResource>> resources = amf.getResourceTree();
+      return resources.containsKey(uri) ? resources.get(uri) : emptyMap();
   }
 
   @Override
@@ -118,5 +124,9 @@ public class ResourceImpl implements IResource {
   @Override
   public String toString() {
     return getUri();
+  }
+
+  EndPoint getEndPoint() {
+        return endPoint;
   }
 }

@@ -31,14 +31,29 @@ public class AmfImpl implements IRaml {
   public AmfImpl(final WebApi webApi) {
     this.webApi = webApi;
     resources = buildResources(webApi.endPoints());
+
+    System.out.println("------------- Resources -------------");
+    dump("",  getResources(), "");
+    System.out.println("-------------------------------------");
   }
 
+  private static String dump(final String indent, Map<String, IResource> resources, final String out) {
+
+      for (Map.Entry<String, IResource> entry : resources.entrySet()) {
+
+          final IResource value = entry.getValue();
+          final String resource = "[" + entry.getKey() + "] -> " + value.getUri();
+          
+          return dump(indent + "  ", value.getResources(), out + resource + "\n");
+      }
+      return out;
+  }
+  
   private Map<String, Map<String, IResource>> buildResources(final List<EndPoint> endPoints) {
 
     final Map<String, Map<String, IResource>> resources = new HashMap<>();
     endPoints.forEach(endPoint -> addToMap(resources, endPoint));
     return resources;
-
   }
 
   private void addToMap(final Map<String, Map<String, IResource>> resources, final EndPoint endPoint) {
@@ -47,12 +62,12 @@ public class AmfImpl implements IRaml {
       System.out.println("AmfImpl.buildResources parent: '" + parent + "' " + endPoint.path().value());
 
       final Map<String, IResource> parentMap = resources.computeIfAbsent(parent, k -> new HashMap<>());
-      parentMap.put(path, new ResourceImpl(endPoint));
+      parentMap.put(path, new ResourceImpl(this, endPoint));
   }
 
   private static String parentKey(final String path) {
       final int index = path.lastIndexOf("/");
-      return path.substring(0, index+1);
+      return index == 0 ? "/" : path.substring(0, index);
   }
   
   @Override
@@ -82,7 +97,7 @@ public class AmfImpl implements IRaml {
 
   @Override
   public Map<String, IResource> getResources() {
-    return resources.get("/");
+    return resources.containsKey("/") ? resources.get("/") : emptyMap();
   }
 
   @Override
@@ -137,7 +152,7 @@ public class AmfImpl implements IRaml {
 
   }
 
-  public Map<String, Map<String, IResource>> getResourcesTree() {
+  public Map<String, Map<String, IResource>> getResourceTree() {
     return resources;
   }
 }

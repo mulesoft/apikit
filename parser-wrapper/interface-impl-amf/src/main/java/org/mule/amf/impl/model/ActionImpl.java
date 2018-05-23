@@ -6,11 +6,9 @@
  */
 package org.mule.amf.impl.model;
 
-import amf.client.model.domain.EndPoint;
 import amf.client.model.domain.Operation;
 import amf.client.model.domain.Request;
 import amf.client.model.domain.Response;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,15 +25,15 @@ import static java.util.Collections.emptyMap;
 
 public class ActionImpl implements IAction {
 
-  private final EndPoint endPoint;
+  private final ResourceImpl resource;
   private final Operation operation;
   private Map<String, IMimeType> bodies;
   private Map<String, IResponse> responses;
   private Map<String, IParameter> queryParameters;
   private Map<String, IParameter> headers;
 
-  public ActionImpl(final EndPoint endPoint, final Operation operation) {
-    this.endPoint = endPoint;
+  public ActionImpl(final ResourceImpl resource, final Operation operation) {
+    this.resource = resource;
     this.operation = operation;
   }
 
@@ -67,7 +65,7 @@ public class ActionImpl implements IAction {
 
   @Override
   public IResource getResource() {
-    return new ResourceImpl(endPoint);
+    return resource;
   }
 
   @Override
