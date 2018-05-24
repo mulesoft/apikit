@@ -7,8 +7,6 @@
 package org.mule.amf.impl.model;
 
 import amf.client.model.domain.EndPoint;
-import amf.client.model.domain.Operation;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,20 +15,19 @@ import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
-import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
 public class ResourceImpl implements IResource {
 
-    private AmfImpl amf;
-    private EndPoint endPoint;
+  private AmfImpl amf;
+  private EndPoint endPoint;
   private Map<IActionType, IAction> actions;
   private Map<String, IParameter> resolvedUriParameters;
 
   ResourceImpl(AmfImpl amf, final EndPoint endPoint) {
-      this.amf = amf;
-      this.endPoint = endPoint;
+    this.amf = amf;
+    this.endPoint = endPoint;
   }
 
   @Override
@@ -61,18 +58,16 @@ public class ResourceImpl implements IResource {
 
   @Override
   public Map<IActionType, IAction> getActions() {
-    if (actions == null) {
+    if (actions == null)
       actions = loadActions(endPoint);
-    }
 
     return actions;
   }
 
   private Map<IActionType, IAction> loadActions(final EndPoint endPoint) {
     final Map<IActionType, IAction> map = new LinkedHashMap<>();
-    endPoint.operations().forEach(operation -> {
-       map.put(getActionKey(operation.method().value()), new ActionImpl(this, operation));
-    });
+    endPoint.operations()
+        .forEach(operation -> map.put(getActionKey(operation.method().value()), new ActionImpl(this, operation)));
     return map;
   }
 
@@ -82,10 +77,7 @@ public class ResourceImpl implements IResource {
 
   @Override
   public Map<String, IResource> getResources() {
-
-      final String uri = getUri();
-      final Map<String, Map<String, IResource>> resources = amf.getResourceTree();
-      return resources.containsKey(uri) ? resources.get(uri) : emptyMap();
+    return amf.getResources(this);
   }
 
   @Override
@@ -126,7 +118,4 @@ public class ResourceImpl implements IResource {
     return getUri();
   }
 
-  EndPoint getEndPoint() {
-        return endPoint;
-  }
 }

@@ -44,9 +44,10 @@ class ParameterImpl implements IParameter {
   }
 
   private static AnyShape getSchema(final Parameter parameter) {
-      final Shape shape = parameter.schema();
-     if (shape instanceof AnyShape) return (AnyShape) shape;
-     throw new UnsupportedSchemaException();
+    final Shape shape = parameter.schema();
+    if (shape instanceof AnyShape)
+      return (AnyShape) shape;
+    throw new UnsupportedSchemaException();
   }
 
   @Override
@@ -84,7 +85,7 @@ class ParameterImpl implements IParameter {
 
   @Override
   public String getDisplayName() {
-      return schema.displayName().value();
+    return schema.displayName().value();
   }
 
   @Override
