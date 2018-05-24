@@ -5,8 +5,8 @@ protocols: [HTTP]
 baseUri: http://localhost:9090/api/{version}
 baseUriParameters:
   version:
-      displayName: Version
-      type: string
+    displayName: Version
+    type: string
 documentation:
   - title: APIKIt Sanity Test
     content: This application provides a way to test APIkit with RAML 1.0 for any Sanity test
@@ -179,15 +179,7 @@ types:
       "required" : false,
       "type" : "object"
     }
-title: Sanity RAML 0.8 API
-version: v0.1
-protocols:
-  - HTTP
-baseUri: http://localhost:9090/api/{version}
-documentation:
-  -
-    title: APIKIt Sanity Test
-    content: This application provides a way to test APIkit with RAML 0.8 for any Sanity test
+
 traits:
   post-item:
     queryParameters:

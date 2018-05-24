@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>raml-parser-interface-impl-amf</artifactId>
-    <name>RAML parser v2 interface implemention</name>
+    <name>RAML AMF parser interface implementation</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -45,6 +45,13 @@
         <dependency>
             <groupId>org.mule.raml</groupId>
             <artifactId>raml-parser-interface-impl-v1</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mule.raml</groupId>
+            <artifactId>raml-parser-interface-impl-v2</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>

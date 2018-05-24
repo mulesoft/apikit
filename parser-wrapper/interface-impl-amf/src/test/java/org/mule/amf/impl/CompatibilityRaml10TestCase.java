@@ -10,45 +10,50 @@ import java.io.File;
 import java.io.FileReader;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mule.raml.implv1.ParserV1Utils;
+import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.IResource;
+import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.raml.v2.api.loader.DefaultResourceLoader;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 @RunWith(Parameterized.class)
-public class CompatibilityRaml08TestCase extends AbstractCompatibilityTestCase {
+public class CompatibilityRaml10TestCase extends AbstractCompatibilityTestCase {
 
-  public CompatibilityRaml08TestCase(final String api) {
+  public CompatibilityRaml10TestCase(final String api) {
     super(api);
   }
 
   @Override
   IRaml buildRaml(final String api) {
-    return buildRaml08(api);
+    return buildRaml10(api);
   }
 
   @Parameterized.Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
-    return Arrays.asList(new Object[][] {{"raml-08/sanity.raml"}, {"raml-08/leagues/leagues.raml"}});
+    return Arrays.asList(new Object[][] {{"raml-10/sanity.raml"}, {"raml-10/leagues/input.raml"}});
   }
 
-  private static IRaml buildRaml08(final String resource) {
+  private static IRaml buildRaml10(final String resource) {
     final URL url = ParserAmfUtils.class.getResource(resource);
     final File file = new File(url.getFile());
 
     try {
-      final FileReader fileReader = new FileReader(file);
-      final String content = IOUtils.toString(fileReader);
-      fileReader.close();
-
-      String rootRamlName = file.getName();
-      String ramlFolderPath = null;
-      if (file.getParentFile() != null) {
-        ramlFolderPath = file.getParentFile().getPath();
-      }
-      return ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
+      final DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
+      return ParserV2Utils.build(resourceLoader, file.getAbsolutePath());
     } catch (Exception e) {
       Assert.fail(e.getMessage());
     }
