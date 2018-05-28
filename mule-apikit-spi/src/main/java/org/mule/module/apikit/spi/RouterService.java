@@ -21,7 +21,7 @@ public interface RouterService {
    * Handles the request and returns a valid MuleEvent
    *
    * @param event
-  * @param ramlPath 
+  * @param ramlPath
    * @return
    */
   CompletableFuture<Event> process(CoreEvent event, EventProcessor router, String ramlPath) throws MuleException;
