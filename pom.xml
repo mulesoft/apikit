@@ -18,7 +18,7 @@
 
     <properties>
         <!--mule community version-->
-        <mule.version>3.8.7-SNAPSHOT</mule.version>
+        <mule.version>3.8.8-SNAPSHOT</mule.version>
         <cors.module.version>2.1.4-SNAPSHOT</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -29,7 +29,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>
-                <version>0.9-SNAPSHOT</version>
+                <version>0.8.25-SNAPSHOT</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
@@ -54,7 +54,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.21-SNAPSHOT</version>
+                <version>1.0.23-SNAPSHOT</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
