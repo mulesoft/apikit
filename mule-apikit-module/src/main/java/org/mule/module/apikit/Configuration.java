@@ -12,6 +12,7 @@ import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
+import org.mule.module.apikit.spi.RouterService;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
@@ -30,6 +31,8 @@ import com.google.common.cache.LoadingCache;
 //import org.mule.module.apikit.exception.NotFoundException;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 
 import javax.inject.Inject;
@@ -47,6 +50,9 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private String outboundHeadersMapName;
   private String httpStatusVarName;
   private FlowMappings flowMappings = new FlowMappings();
+
+  private final static String APIKIT_ROUTER_EXTENSION = "apikit.router.extension";
+  private boolean isExtensionEnabled = Boolean.valueOf(System.getProperty(APIKIT_ROUTER_EXTENSION, "false"));
 
 
   private final static String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeaders";
@@ -279,5 +285,24 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   @Override
   public ExpressionManager getExpressionManager() {
     return expressionManager;
+  }
+
+  public RouterService getExtension() {
+    final ClassLoader executionClassLoader = muleContext.getExecutionClassLoader();
+
+    final ServiceLoader<RouterService> routerServices =
+        ServiceLoader.load(org.mule.module.apikit.spi.RouterService.class, executionClassLoader);
+
+    final Iterator<RouterService> iterator = routerServices.iterator();
+    if (iterator.hasNext()) {
+      return iterator.next();
+    }
+
+    throw new RuntimeException("Couldn't load extension");
+  }
+
+
+  public boolean isExtensionEnabled() {
+    return isExtensionEnabled;
   }
 }
