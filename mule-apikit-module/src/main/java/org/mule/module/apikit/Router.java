@@ -107,16 +107,15 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     try {
       final CompletableFuture<Event> resultEvent;
       if (configuration.isExtensionEnabled()) {
-        resultEvent =
-            configuration.getExtension()
-                .process(event, this, this.configuration.getRaml()); // "/home/jbrasca/AnypointStudio/studio-workspace/odata-extension-poc/src/main/resources/api/test.raml"
-
+        resultEvent = configuration.getExtension().process(event, this, this.configuration.getRaml());
         return fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(this::buildMuleException);
       } else {
         resultEvent = processEvent(event);
       }
 
       return fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(this::buildMuleException);
+    } catch (MuleRestException e) {
+      return error(ApikitErrorTypes.throwErrorType(e));
     } catch (MuleException e) {
       return error(e);
     }

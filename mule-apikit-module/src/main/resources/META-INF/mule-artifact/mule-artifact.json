@@ -30,9 +30,7 @@
         "org.raml.v2.api.model.common",
         "org.raml.v2.api.model.v10.datamodel",
         "org.raml.v2.api.model.v10.api",
-        "org.raml.v2.api.model.v10.declarations",
-        "com.sun.ws.rs.ext",
-        "org.glassfish.jersey.internal"
+        "org.raml.v2.api.model.v10.declarations"
       ],
       "exportedResources":[
         "/META-INF/",

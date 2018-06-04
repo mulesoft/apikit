@@ -6,10 +6,11 @@
  */
 package org.mule.module.apikit.spi;
 
+import java.util.concurrent.CompletableFuture;
+
 import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.event.CoreEvent;
-import java.util.concurrent.CompletableFuture;
 
 /**
  * Extension (SPI) for the APIKit Module
