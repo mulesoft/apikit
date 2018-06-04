@@ -102,7 +102,8 @@ public class AmfImpl implements IRaml {
 
   @Override
   public Map<String, IResource> getResources() {
-    return resources.containsKey("/") ? resources.get("/") : emptyMap();
+    return resources.values().stream().flatMap(m -> m.entrySet().stream())
+        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   Map<String, IResource> getResources(final ResourceImpl resource) {

@@ -9,10 +9,6 @@ package org.mule.amf.impl.model;
 import amf.client.model.domain.Operation;
 import amf.client.model.domain.Request;
 import amf.client.model.domain.Response;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -20,6 +16,11 @@ import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 
@@ -84,9 +85,9 @@ public class ActionImpl implements IAction {
 
     final Map<String, IMimeType> result = new LinkedHashMap<>();
 
-    request.payloads().forEach(payload -> {
-      result.put(payload.schema().name().value(), new MimeTypeImpl(payload));
-    });
+    request.payloads().stream()
+        .filter(payload -> payload.mediaType().nonNull())
+        .forEach(payload -> result.put(payload.mediaType().value(), new MimeTypeImpl(payload)));
 
     return result;
   }

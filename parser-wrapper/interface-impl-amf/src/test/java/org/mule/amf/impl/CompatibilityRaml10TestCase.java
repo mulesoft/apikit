@@ -6,29 +6,16 @@
  */
 package org.mule.amf.impl;
 
-import java.io.File;
-import java.io.FileReader;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Map;
-import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
-import org.mule.raml.interfaces.model.IResource;
-import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import java.io.File;
+import java.net.URL;
+import java.util.Arrays;
 
 @RunWith(Parameterized.class)
 public class CompatibilityRaml10TestCase extends AbstractCompatibilityTestCase {

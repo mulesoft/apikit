@@ -4,13 +4,8 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.injector;
+package org.mule.module.apikit.parser;
 
-import org.mule.module.apikit.exception.ApikitRuntimeException;
-
-public class TraitAlreadyDefinedException extends ApikitRuntimeException {
-
-  public TraitAlreadyDefinedException(String message) {
-    super(message);
-  }
+enum Parser {
+  RAML_V1, RAML_V2, AMF
 }

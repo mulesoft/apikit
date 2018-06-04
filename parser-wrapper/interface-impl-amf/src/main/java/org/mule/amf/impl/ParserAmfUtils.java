@@ -7,10 +7,12 @@
 package org.mule.amf.impl;
 
 import amf.client.model.domain.WebApi;
-import java.io.File;
-import java.net.URL;
 import org.mule.amf.impl.model.AmfImpl;
 import org.mule.raml.interfaces.model.IRaml;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class ParserAmfUtils {
 
@@ -21,7 +23,11 @@ public class ParserAmfUtils {
 
   private static WebApi webApi(final String resource) {
     final URL url = ParserAmfUtils.class.getResource(resource);
-    final File file = new File(url.getFile());
-    return DocumentParser.getWebApi(file);
+    try {
+      final URI uri = url.toURI();
+      return DocumentParser.getWebApi(uri);
+    } catch (URISyntaxException e) {
+      throw new RuntimeException("Unexpected Error building Api", e);
+    }
   }
 }

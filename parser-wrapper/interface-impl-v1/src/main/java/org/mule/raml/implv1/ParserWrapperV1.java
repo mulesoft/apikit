@@ -4,15 +4,16 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.parser;
+package org.mule.raml.implv1;
 
 import static org.raml.parser.rule.ValidationResult.Level.ERROR;
 import static org.raml.parser.rule.ValidationResult.Level.WARN;
 import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 
-import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.module.apikit.injector.RamlUpdater;
+import org.mule.raml.implv1.injector.RamlUpdater;
 import org.mule.raml.implv1.model.RamlImplV1;
+import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.IRaml;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class ParserWrapperV1 implements ParserWrapper {
     List<ValidationResult> errors = ValidationResult.getLevel(ERROR, results);
     if (!errors.isEmpty()) {
       String msg = aggregateMessages(errors, "Invalid API descriptor -- errors found: ");
-      throw new ApikitRuntimeException(msg);
+      throw new RuntimeException(msg);
     }
     List<ValidationResult> warnings = ValidationResult.getLevel(WARN, results);
     if (!warnings.isEmpty()) {
@@ -111,7 +112,7 @@ public class ParserWrapperV1 implements ParserWrapper {
   }
 
   @Override
-  public RamlUpdater getRamlUpdater(IRaml api) {
+  public IRamlUpdater getRamlUpdater(IRaml api) {
     if (baseApi == null) {
       baseApi = deepCloneRaml(getRamlImpl(api));
     }

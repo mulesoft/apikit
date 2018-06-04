@@ -52,6 +52,7 @@ public class UrlEncodedV1FunctionalTestCase extends MuleArtifactFunctionalTestCa
         .when().post("/api/url-encoded-simple");
   }
 
+  @Ignore //This test fails for RAML 0.8 because of APIMF-753
   @Test
   public void setDefaultFormParameterForUrlencodedRequest() throws Exception {
     given().header("Content-Type", "application/x-www-form-urlencoded")
@@ -64,6 +65,7 @@ public class UrlEncodedV1FunctionalTestCase extends MuleArtifactFunctionalTestCa
         .when().post("/api/url-encoded-with-default");
   }
 
+  @Ignore //This test fails for RAML 0.8 because of APIMF-753
   @Test
   public void getKeyWithMultipleValuesUrlencodedRequest() throws Exception {
     given().header("Content-Type", "application/x-www-form-urlencoded")

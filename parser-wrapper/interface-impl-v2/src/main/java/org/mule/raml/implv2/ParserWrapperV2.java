@@ -4,16 +4,13 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.parser;
+package org.mule.raml.implv2;
 
-import org.mule.module.apikit.api.UrlUtils;
-import org.mule.module.apikit.exception.ApikitRuntimeException;
-import org.mule.module.apikit.injector.RamlUpdater;
-import org.mule.raml.implv2.ParserV2Utils;
+import org.apache.commons.lang3.StringUtils;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
+import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.IRaml;
-import org.mule.runtime.core.api.util.FileUtils;
-import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.loader.RootRamlFileResourceLoader;
@@ -23,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import static java.util.Optional.ofNullable;
@@ -53,9 +51,13 @@ public class ParserWrapperV2 implements ParserWrapper {
   private File fetchRamlFile(String ramlPath) {
     return ofNullable(ramlPath)
         .map(p -> Thread.currentThread().getContextClassLoader().getResource(p))
-        .filter(FileUtils::isFile)
+        .filter(ParserWrapperV2::isFile)
         .map(resource -> new File(resource.getFile()))
         .orElse(null);
+  }
+
+  private static boolean isFile(URL url) {
+    return "file".equals(url.getProtocol());
   }
 
   @Override
@@ -67,7 +69,7 @@ public class ParserWrapperV2 implements ParserWrapper {
       for (String error : errors) {
         message.append(error).append("\n");
       }
-      throw new ApikitRuntimeException(message.toString());
+      throw new RuntimeException(message.toString());
     }
   }
 
@@ -78,14 +80,14 @@ public class ParserWrapperV2 implements ParserWrapper {
 
   @Override
   public String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort) {
-    return UrlUtils.replaceBaseUri(ramlContent, newSchemeHostPort);
+    return replaceBaseUri(ramlContent, newSchemeHostPort);
   }
 
   @Override
   public String dump(IRaml api, String newBaseUri) {
     String dump = dumpRaml(api);
     if (newBaseUri != null) {
-      dump = UrlUtils.replaceBaseUri(dump, newBaseUri);
+      dump = replaceBaseUri(dump, newBaseUri);
     }
     return dump;
   }
@@ -93,13 +95,13 @@ public class ParserWrapperV2 implements ParserWrapper {
   private String dumpRaml(IRaml api) {
     InputStream stream = resourceLoader.fetchResource(ramlPath);
     if (stream == null) {
-      throw new ApikitRuntimeException("Invalid RAML descriptor");
+      throw new RuntimeException("Invalid RAML descriptor");
     }
     return StreamUtils.toString(stream);
   }
 
   @Override
-  public RamlUpdater getRamlUpdater(IRaml api) {
+  public IRamlUpdater getRamlUpdater(IRaml api) {
     throw new UnsupportedOperationException("RAML 1.0 is read only");
   }
 
@@ -107,5 +109,38 @@ public class ParserWrapperV2 implements ParserWrapper {
   public void updateBaseUri(IRaml api, String baseUri) {
     // do nothing, as updates are not supported
     logger.debug("RAML 1.0 parser does not support base uri updates");
+  }
+
+  private static String replaceBaseUri(String raml, String newBaseUri) {
+    if (newBaseUri != null) {
+      return replaceBaseUri(raml, ".*$", newBaseUri);
+    }
+    return raml;
+  }
+
+  private static String replaceBaseUri(String raml, String regex, String replacement) {
+    String[] split = raml.split("\n");
+    boolean found = false;
+    for (int i = 0; i < split.length; i++) {
+      if (split[i].startsWith("baseUri: ")) {
+        found = true;
+        split[i] = split[i].replaceFirst(regex, replacement);
+        if (!split[i].contains("baseUri: ")) {
+          split[i] = "baseUri: " + split[i];
+        }
+      }
+    }
+    if (!found) {
+      for (int i = 0; i < split.length; i++) {
+        if (split[i].startsWith("title:")) {
+          if (replacement.contains("baseUri:")) {
+            split[i] = split[i] + "\n" + replacement;
+          } else {
+            split[i] = split[i] + "\n" + "baseUri: " + replacement;
+          }
+        }
+      }
+    }
+    return StringUtils.join(split, "\n");
   }
 }

@@ -13,18 +13,15 @@ import amf.client.model.domain.WebApi;
 import amf.client.parse.Oas20Parser;
 import amf.client.parse.Parser;
 import amf.client.parse.RamlParser;
-import amf.client.render.AmfGraphRenderer;
-import amf.client.render.Oas20Renderer;
-import amf.client.render.Raml10Renderer;
 import amf.client.validate.ValidationReport;
-import amf.client.validate.ValidationResult;
 import amf.plugins.features.validation.AMFValidatorPlugin;
-import java.io.File;
+import amf.plugins.xml.XmlValidationPlugin;
+import org.mule.amf.impl.exceptions.ParserException;
+
+import java.net.URI;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import org.mule.amf.impl.exceptions.ParserException;
 
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
@@ -52,18 +49,22 @@ public class DocumentParser {
     return handleFuture(parser.parseFileAsync(url));
   }
 
-  public static WebApi getWebApi(final File file) throws ParserException {
-    return getWebApi(getParserForApi(file), file.toPath());
+  public static WebApi getWebApi(final URI apiDefinition) throws ParserException {
+    return getWebApi(getParserForApi(apiDefinition), apiDefinition);
   }
 
-  private static Parser getParserForApi(final File apiDefinition) {
-    final String ext = getExtension(apiDefinition.getAbsolutePath());
+  public static Parser getParserForApi(final URI apiDefinition) {
+    final String ext = getExtension(apiDefinition.getPath());
     return "raml".equalsIgnoreCase(ext) || "yaml".equalsIgnoreCase(ext) || "yml".equalsIgnoreCase(ext) ? ramlParser()
         : oas20Parser();
   }
 
   private static WebApi getWebApi(final Parser parser, final Path path) throws ParserException {
     return getWebApi(parseFile(parser, path.toUri().toString()));
+  }
+
+  public static WebApi getWebApi(final Parser parser, final URI uri) throws ParserException {
+    return getWebApi(parseFile(parser, uri.toString()));
   }
 
   private static WebApi getWebApi(final Document document) throws ParserException {
@@ -82,6 +83,7 @@ public class DocumentParser {
     try {
       AMF.init().get();
       AMFValidatorPlugin.withEnabledValidation(true);
+      amf.core.AMF.registerPlugin(new XmlValidationPlugin());
     } catch (final Exception e) {
       e.printStackTrace();
     }

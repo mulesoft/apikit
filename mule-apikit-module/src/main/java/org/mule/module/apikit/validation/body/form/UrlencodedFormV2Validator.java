@@ -22,6 +22,8 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.joining;
+
 public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedValue> {
 
   protected static final Logger logger = LoggerFactory.getLogger(UrlencodedFormV2Validator.class);
@@ -38,19 +40,13 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
   @Override
   public TypedValue validate(TypedValue originalPayload) throws BadRequestException {
 
-    String jsonText;
     MultiMap<String, String> requestMap = dataWeaveTransformer.getMultiMapFromPayload(originalPayload);
 
-    try {
-      jsonText = new ObjectMapper().disableDefaultTyping().writeValueAsString(requestMap);
-    } catch (Exception e) {
-      logger.warn("Cannot validate url-encoded form", e);
-      return originalPayload;
-    }
+    String yamlMap = toYamlMap(requestMap);
 
     final List<IValidationResult> validationResult;
     try {
-      validationResult = actionMimeType.validate(jsonText);
+      validationResult = actionMimeType.validate(yamlMap);
     } catch (UnsupportedOperationException e) {
       return originalPayload;
     }
@@ -64,5 +60,13 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
     }
 
     return dataWeaveTransformer.getXFormUrlEncodedStream(requestMap, originalPayload.getDataType());
+  }
+
+  private static String toYamlMap(MultiMap<String, String> map) {
+    return map.keySet().stream().map(key -> {
+      final List<String> allValues = map.getAll(key);
+      final String values = allValues.size() == 1 ? allValues.get(0) : "[" + allValues.stream().collect(joining(", ")) + "]";
+      return key + ": " + values;
+    }).collect(joining("\n"));
   }
 }

@@ -9,6 +9,7 @@ package org.mule.amf.impl.model;
 import amf.client.model.domain.AnyShape;
 import amf.client.model.domain.ArrayShape;
 import amf.client.model.domain.Parameter;
+import amf.client.model.domain.PropertyShape;
 import amf.client.model.domain.Shape;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
@@ -22,12 +23,20 @@ import static java.util.stream.Collectors.toMap;
 
 class ParameterImpl implements IParameter {
 
-  private Parameter parameter;
   private AnyShape schema;
+  private boolean required;
+  private String description;
 
   ParameterImpl(final Parameter parameter) {
-    this.parameter = parameter;
     this.schema = getSchema(parameter);
+    this.required = parameter.required().value();
+    this.description = parameter.description().value();
+  }
+
+  ParameterImpl(final PropertyShape property) {
+    this.schema = castToAnyShape(property.range());
+    this.required = property.minCount().value() > 0;
+    this.description = ""; //TODO investigate how to do this
   }
 
   @Override
@@ -45,6 +54,10 @@ class ParameterImpl implements IParameter {
 
   private static AnyShape getSchema(final Parameter parameter) {
     final Shape shape = parameter.schema();
+    return castToAnyShape(shape);
+  }
+
+  private static AnyShape castToAnyShape(Shape shape) {
     if (shape instanceof AnyShape)
       return (AnyShape) shape;
     throw new UnsupportedSchemaException();
@@ -65,7 +78,7 @@ class ParameterImpl implements IParameter {
 
   @Override
   public boolean isRequired() {
-    return parameter.required().value();
+    return required;
   }
 
   @Override
@@ -75,7 +88,7 @@ class ParameterImpl implements IParameter {
 
   @Override
   public boolean isRepeat() {
-    throw new UnsupportedOperationException();
+    return schema instanceof ArrayShape;
   }
 
   @Override
@@ -90,7 +103,7 @@ class ParameterImpl implements IParameter {
 
   @Override
   public String getDescription() {
-    return parameter.description().value();
+    return description;
   }
 
   @Override

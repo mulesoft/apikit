@@ -4,9 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.parser;
+package org.mule.raml.interfaces;
 
-import org.mule.module.apikit.injector.RamlUpdater;
+import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.IRaml;
 
 public interface ParserWrapper {
@@ -19,7 +19,7 @@ public interface ParserWrapper {
 
   String dump(IRaml api, String newBaseUri);
 
-  RamlUpdater getRamlUpdater(IRaml api);
+  IRamlUpdater getRamlUpdater(IRaml api);
 
   void updateBaseUri(IRaml api, String baseUri);
 }
