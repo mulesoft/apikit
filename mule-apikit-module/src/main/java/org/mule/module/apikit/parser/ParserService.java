@@ -32,11 +32,14 @@ public class ParserService {
   private final String ramlPath;
   private ResourceLoader resourceLoaderV2;
   private ParserWrapper parserWrapper;
+  private boolean amfParserEnabled;
 
-  private Parser parser = AMF;
+  private Parser parser;
 
-  public ParserService(String ramlPath) {
+  public ParserService(String ramlPath, boolean amfParserEnabled) {
     this.ramlPath = ramlPath;
+    this.amfParserEnabled = amfParserEnabled;
+
     resourceLoaderV2 = new DefaultResourceLoader();
     checkParserVersion();
     parserWrapper = getParserWrapper(ramlPath);
@@ -47,10 +50,14 @@ public class ParserService {
   }
 
   private void checkParserVersion() {
-    InputStream content = resourceLoaderV2.fetchResource(ramlPath);
-    if (content != null) {
-      String dump = StreamUtils.toString(content);
-      parser = ParserV2Utils.useParserV2(dump) ? RAML_V2 : RAML_V1;
+    if (amfParserEnabled) {
+      parser = AMF;
+    } else {
+      InputStream content = resourceLoaderV2.fetchResource(ramlPath);
+      if (content != null) {
+        String dump = StreamUtils.toString(content);
+        parser = ParserV2Utils.useParserV2(dump) ? RAML_V2 : RAML_V1;
+      }
     }
     logger.debug("Using parser " + parser);
   }

@@ -45,13 +45,17 @@ public class RamlHandler {
 
   //ramlLocation should be the root raml location, relative of the resources folder
   public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext) throws IOException {
+    this(ramlLocation, keepRamlBaseUri, muleContext, false);
+  }
+
+  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, boolean amfParserEnabled) throws IOException {
     this.keepRamlBaseUri = keepRamlBaseUri;
 
     String rootRamlLocation = findRootRaml(ramlLocation);
     if (rootRamlLocation == null) {
       throw new IOException("Raml not found at: " + ramlLocation);
     }
-    parserService = new ParserService(rootRamlLocation);
+    parserService = new ParserService(rootRamlLocation, amfParserEnabled);
     parserService.validateRaml();
     this.api = parserService.build();
 
