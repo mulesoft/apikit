@@ -92,6 +92,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
         .ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("headersStrictValidation").defaultingTo(false)
         .ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withOptionalParameter("enableAmfParser").defaultingTo(false).ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("flowMappings")
         .ofType(typeBuilder.arrayType().of(typeLoader.load(FlowMapping.class)).build());
 

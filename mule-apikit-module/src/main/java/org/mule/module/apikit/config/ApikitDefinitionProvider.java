@@ -47,6 +47,7 @@ public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProv
         .withSetterParameterDefinition("disableValidations", fromSimpleParameter("disableValidations").build())
         .withSetterParameterDefinition("queryParamsStrictValidation", fromSimpleParameter("queryParamsStrictValidation").build())
         .withSetterParameterDefinition("headersStrictValidation", fromSimpleParameter("headersStrictValidation").build())
+        .withSetterParameterDefinition("enableAmfParser", fromSimpleParameter("enableAmfParser").build())
         .withSetterParameterDefinition("flowMappings", fromChildConfiguration(FlowMappings.class).build())
         .build());
 
