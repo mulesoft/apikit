@@ -48,7 +48,8 @@ public class RamlHandler {
     this(ramlLocation, keepRamlBaseUri, muleContext, false);
   }
 
-  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, boolean amfParserEnabled) throws IOException {
+  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, boolean amfParserEnabled)
+      throws IOException {
     this.keepRamlBaseUri = keepRamlBaseUri;
 
     String rootRamlLocation = findRootRaml(ramlLocation);
