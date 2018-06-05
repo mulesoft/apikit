@@ -69,7 +69,6 @@ public class EmptyBodyTestCaseRaml08 extends MuleArtifactFunctionalTestCase {
   }
 
   @Test
-  @Ignore // This test fails because of APIMF-787
   public void successWhenBodyWithoutSchemaInPostIsEmpty() throws Exception {
     given().header("Content-Type", "application/json")
         .expect()
@@ -78,7 +77,6 @@ public class EmptyBodyTestCaseRaml08 extends MuleArtifactFunctionalTestCase {
   }
 
   @Test
-  @Ignore // This test fails because of APIMF-787
   public void successWhenBodyWithoutSchemaInPutIsEmpty() throws Exception {
     given().header("Content-Type", "application/json")
         .expect()
