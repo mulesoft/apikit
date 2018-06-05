@@ -8,6 +8,7 @@ package org.mule.amf.impl;
 
 import amf.ProfileNames;
 import amf.client.AMF;
+import amf.client.model.document.BaseUnit;
 import amf.client.model.document.Document;
 import amf.client.model.domain.WebApi;
 import amf.client.parse.Oas20Parser;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
+import static com.sun.jmx.mbeanserver.Util.cast;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
 public class DocumentParser {
@@ -67,8 +69,9 @@ public class DocumentParser {
     return getWebApi(parseFile(parser, uri.toString()));
   }
 
-  private static WebApi getWebApi(final Document document) throws ParserException {
-    return (WebApi) document.encodes();
+  private static WebApi getWebApi(final BaseUnit baseUnit) throws ParserException {
+    final Document document = cast(AMF.resolveRaml10(baseUnit));
+    return cast(document.encodes());
   }
 
   private static ValidationReport getParsingReport(final Oas20Parser parser) throws ParserException {
