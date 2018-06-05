@@ -6,21 +6,7 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
-import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
-import static reactor.core.publisher.Mono.error;
-import static reactor.core.publisher.Mono.fromFuture;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-
-import javax.inject.Inject;
-
+import com.google.common.cache.LoadingCache;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
@@ -36,7 +22,6 @@ import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.input.stream.RewindableInputStream;
-import org.mule.module.apikit.spi.EventProcessor;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
 import org.mule.runtime.api.component.execution.ComponentExecutionException;
@@ -57,9 +42,21 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.cache.LoadingCache;
+import javax.inject.Inject;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
-public class Router extends AbstractComponent implements Processor, Initialisable, EventProcessor
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
+import static reactor.core.publisher.Mono.error;
+import static reactor.core.publisher.Mono.fromFuture;
+
+public class Router extends AbstractComponent implements Processor, Initialisable
 
 {
 
@@ -100,35 +97,21 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
   @Override
   public Publisher<CoreEvent> apply(Publisher<CoreEvent> publisher) {
-    return flatMap(publisher, this::processWithExtension, this);
-  }
+    return flatMap(publisher, event -> {
+      try {
+        Configuration config = registry.getConfiguration(getConfiguration().getName());
+        CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
+        eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
 
-  private Publisher<CoreEvent> processWithExtension(CoreEvent event) {
-    try {
-      final CompletableFuture<Event> resultEvent;
-      if (configuration.isExtensionEnabled()) {
-        resultEvent = configuration.getExtension().process(event, this, this.configuration.getRaml());
+        HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
+
+        final CompletableFuture<Event> resultEvent = doRoute(event, config, eventBuilder, attributes);
+
         return fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(this::buildMuleException);
-      } else {
-        resultEvent = processEvent(event);
+      } catch (MuleRestException e) {
+        return error(ApikitErrorTypes.throwErrorType(e));
       }
-
-      return fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(this::buildMuleException);
-    } catch (MuleRestException e) {
-      return error(ApikitErrorTypes.throwErrorType(e));
-    } catch (MuleException e) {
-      return error(e);
-    }
-  }
-
-  public CompletableFuture<Event> processEvent(CoreEvent event) throws MuleRestException {
-    Configuration config = registry.getConfiguration(getConfiguration().getName());
-    CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
-    eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
-
-    HttpRequestAttributes attributes = ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
-
-    return doRoute(event, config, eventBuilder, attributes);
+    }, this);
   }
 
   private Throwable buildMuleException(Throwable e) {
