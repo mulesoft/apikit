@@ -69,7 +69,6 @@ public abstract class MultipartFormFunctionalTestCase extends MuleArtifactFuncti
         .when().post("/api/users");
   }
 
-  @Ignore // This test fails because of APIMF-753
   @Test
   public void answer200WhenMultipleRequiredFormParameterAreProvided() throws Exception {
     given().multiPart("userId", 5101)
