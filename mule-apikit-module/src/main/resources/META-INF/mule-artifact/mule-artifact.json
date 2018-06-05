@@ -23,7 +23,14 @@
         "org.mule.module.apikit.api.uri",
         "org.mule.module.apikit.api.validation",
         "org.mule.module.apikit.api.console",
-        "org.mule.raml.interfaces.model"
+        "org.mule.module.apikit.spi",
+        "org.mule.raml.interfaces.model",
+        "org.raml.v2.api.loader",
+        "org.raml.v2.api",
+        "org.raml.v2.api.model.common",
+        "org.raml.v2.api.model.v10.datamodel",
+        "org.raml.v2.api.model.v10.api",
+        "org.raml.v2.api.model.v10.declarations"
       ],
       "exportedResources":[
         "/META-INF/",
