@@ -8,7 +8,6 @@ package org.mule.amf.impl;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
@@ -28,11 +27,16 @@ abstract class AbstractTestCase {
 
   static void assertResourcesEqual(final IParameter actual, final IParameter expected) {
     assertThat(actual.getDefaultValue(), is(equalTo(expected.getDefaultValue())));
-    assertThat(actual.getDescription(), is(equalTo(expected.getDescription())));
-    assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
-    assertThat(actual.getExample(), is(equalTo(expected.getExample())));
-    assertThat(actual.getExamples().size(), is(expected.getExamples().size()));
+    assertThat(actual.isRepeat(), is(expected.isRepeat()));
     assertThat(actual.isArray(), is(expected.isArray()));
+    //  boolean validate(String value);
+    //  String message(String value);
+    assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
+    assertThat(actual.getDescription(), is(equalTo(expected.getDescription())));
+    assertThat(actual.getExample(), is(equalTo(expected.getExample())));
+    assertExamplesEqual(actual.getExamples(), expected.getExamples());
+    // Object getInstance();
+    // MetadataType getMetadata();
   }
 
   static void assertResourcesEqual(final Map<String, IResource> actual, final Map<String, IResource> expected) {
@@ -55,16 +59,23 @@ abstract class AbstractTestCase {
     assertThat(actual.getUri(), is(equalTo(expected.getUri())));
     assertThat(actual.getRelativeUri(), is(equalTo(expected.getRelativeUri())));
     assertThat(actual.getParentUri(), is(equalTo(expected.getParentUri())));
-    // TODO, I canot get it from AMF yet
+    assertThat(actual.getResolvedUri("v10"), is(equalTo(expected.getResolvedUri("v10"))));
+    // Different behaviour in Java Parser 08 & 10
     //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
-
     assertActionsEqual(actual.getActions(), expected.getActions());
+    actual.getActions().keySet().forEach(action -> {
+        final String actualAction = actual.getAction(action.name()).getType().name();
+        final String expectedAction = expected.getAction(action.name()).getType().name();
+        assertThat(actualAction, is(equalTo(expectedAction)));
+
+    });
     assertParametersEqual(actual.getResolvedUriParameters(), expected.getResolvedUriParameters());
-
-    // TODO
-    // actual.getBaseUriParameters();
-
     assertResourcesEqual(actual.getResources(), expected.getResources());
+
+      // Different behaviour in Java Parser 08 & 10
+      // Map<String, List<IParameter>> getBaseUriParameters();
+      // void setParentUri(String parentUri); 
+      // void cleanBaseUriParameters();
   }
 
   static void assertActionsEqual(final Map<IActionType, IAction> actual, final Map<IActionType, IAction> expected) {
@@ -97,11 +108,27 @@ abstract class AbstractTestCase {
   }
 
   static void assertEqual(final IParameter actual, final IParameter expected) {
-    // TODO, I canot get it from AMF yet
+    // Different behaviour in Java Parser 08 & 10
     //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
-    assertThat(actual.getDescription(), is(equalTo(expected.getDescription())));
-    // TODO MORE cases
+
+      assertThat(actual.getDefaultValue(), is(equalTo(expected.getDefaultValue())));
+      assertThat(actual.isRepeat(), is(expected.isRepeat()));
+      assertThat(actual.isArray(), is(expected.isArray()));
+      //  boolean validate(String value);
+      //  String message(String value);
+      // Different behaviour in Java Parser 08 & 10
+      //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
+      assertThat(actual.getDescription(), is(equalTo(expected.getDescription())));
+      assertThat(actual.getExample(), is(equalTo(expected.getExample())));
+      assertExamplesEqual(actual.getExamples(), expected.getExamples());
+      
+  // Different behaviour in Java Parser 08 & 10
+  // Object getInstance();
+  // MetadataType getMetadata();
+      
   }
 
-
+    static void assertExamplesEqual(final Map<String, String> actual, final Map<String, String> expected) {
+        assertThat(actual.size(), is(expected.size()));
+    }
 }

@@ -85,11 +85,21 @@ public class ParameterImpl implements IParameter {
 
   @Override
   public Map<String, String> getExamples() {
-    Map<String, String> examples = new LinkedHashMap<>();
-    for (ExampleSpec example : typeDeclaration.examples()) {
-      examples.put(example.name(), example.value());
+    Map<String, String> map = new LinkedHashMap<>();
+    final List<ExampleSpec> examples = typeDeclaration.examples();
+    
+    if (examples.isEmpty()) {
+        final String example = getExample();
+        if (example != null) {
+            map.put(null, example);
+        }
     }
-    return examples;
+    else {
+        for (ExampleSpec example : examples) {
+            map.put(example.name(), example.value());
+        }
+    }
+    return map;
   }
 
   @Override
