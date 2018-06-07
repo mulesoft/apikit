@@ -99,4 +99,14 @@ public class ParameterImpl implements IParameter
     public boolean isStringArray() {
         return false;
     }
+
+    @Override
+    public boolean isScalar() {
+        return true;
+    }
+
+    @Override
+    public boolean isFacetArray(String facet) {
+        return false;
+    }
 }

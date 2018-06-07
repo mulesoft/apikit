@@ -103,6 +103,11 @@ public class ActionImpl implements IAction
         return queryParameters;
     }
 
+    @Override
+    public IParameter getQueryString() {
+        return method.queryString() == null ? null : new ParameterImpl(method.queryString());
+    }
+
     private static Map<String, IParameter> loadQueryParameters(Method method) {
         Map<String, IParameter> result = new HashMap<>();
         for (TypeDeclaration typeDeclaration : method.queryParameters())

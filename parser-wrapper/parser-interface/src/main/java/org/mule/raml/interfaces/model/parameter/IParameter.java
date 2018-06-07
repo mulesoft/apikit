@@ -22,4 +22,6 @@ public interface IParameter
     Map<String, String> getExamples();
     Object getInstance();
     boolean isStringArray();
+    boolean isScalar();
+    boolean isFacetArray(String facet);
 }
