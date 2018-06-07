@@ -36,16 +36,17 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
 
   protected final IRaml amf;
   protected final IRaml raml;
+  protected final boolean isRaml08;
 
   private static final PathMatcher API_MATCHER = FileSystems.getDefault().getPathMatcher("glob:api.raml");
 
   AbstractCompatibilityTestCase(final File input, final String name) {
     amf = ParserAmfUtils.build(input);
     assertNotNull(amf);
-    raml = name.startsWith("08-") ? buildRaml08(input) : buildRaml10(input);
+    isRaml08 = name.startsWith("08-");
+    raml = isRaml08 ? buildRaml08(input) : buildRaml10(input);
     assertNotNull(raml);
   }
-
 
   static Collection<Object[]> getData(final URI baseFolder) throws IOException {
     final List<File> apis = scan(baseFolder);

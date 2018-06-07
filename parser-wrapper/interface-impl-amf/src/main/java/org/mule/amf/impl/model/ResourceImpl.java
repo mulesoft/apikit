@@ -25,14 +25,14 @@ public class ResourceImpl implements IResource {
   private Map<IActionType, IAction> actions;
   private Map<String, IParameter> resolvedUriParameters;
 
-  ResourceImpl(AmfImpl amf, final EndPoint endPoint) {
+  ResourceImpl(final AmfImpl amf, final EndPoint endPoint) {
     this.amf = amf;
     this.endPoint = endPoint;
   }
 
   @Override
   public String getRelativeUri() {
-    return endPoint.path().value();
+    return endPoint.relativePath();
   }
 
   @Override
@@ -41,10 +41,9 @@ public class ResourceImpl implements IResource {
   }
 
   @Override
-  public String getResolvedUri(String version) {
+  public String getResolvedUri(final String version) {
     return resolveVersion(getUri(), version);
   }
-
 
   @Override
   public String getParentUri() {
@@ -52,7 +51,7 @@ public class ResourceImpl implements IResource {
   }
 
   @Override
-  public IAction getAction(String name) {
+  public IAction getAction(final String name) {
     return getActions().get(getActionKey(name));
   }
 
@@ -71,7 +70,7 @@ public class ResourceImpl implements IResource {
     return map;
   }
 
-  private static IActionType getActionKey(String method) {
+  private static IActionType getActionKey(final String method) {
     return IActionType.valueOf(method.toUpperCase());
   }
 
@@ -82,7 +81,7 @@ public class ResourceImpl implements IResource {
 
   @Override
   public String getDisplayName() {
-    return endPoint.name().value();
+    return getUri();
   }
 
   @Override
@@ -119,4 +118,5 @@ public class ResourceImpl implements IResource {
   public String toString() {
     return getUri();
   }
+
 }

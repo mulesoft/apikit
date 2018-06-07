@@ -11,6 +11,7 @@ import amf.client.model.domain.Server;
 import amf.client.model.domain.WebApi;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,6 +21,7 @@ import org.mule.raml.interfaces.model.ISecurityScheme;
 import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.stream.Collectors.toMap;
 
@@ -31,28 +33,6 @@ public class AmfImpl implements IRaml {
   public AmfImpl(final WebApi webApi) {
     this.webApi = webApi;
     resources = buildResources(webApi.endPoints());
-
-    //System.out.println("------------- Resources -------------");
-    //System.out.println(dump("",  getResources(), ""));
-    //System.out.println("-------------------------------------");
-  }
-
-  private static String dump(final String indent, Map<String, IResource> resources, String out) {
-
-    if (resources.isEmpty())
-      return out;
-
-    for (Map.Entry<String, IResource> entry : resources.entrySet()) {
-
-      final IResource value = entry.getValue();
-      final String resource = "[" + entry.getKey() + "] -> " + value.getUri();
-      out += indent + resource + "\n";
-      if (value.getResources().isEmpty())
-        continue;
-
-      out = dump(indent + "  ", value.getResources(), out);
-    }
-    return out;
   }
 
   private Map<String, Map<String, IResource>> buildResources(final List<EndPoint> endPoints) {
@@ -64,15 +44,18 @@ public class AmfImpl implements IRaml {
 
   private void addToMap(final Map<String, Map<String, IResource>> resources, final EndPoint endPoint) {
     final String parentKey = parentKey(endPoint);
-    final Map<String, IResource> parentMap = resources.computeIfAbsent(parentKey, k -> new HashMap<>());
+
+    final Map<String, IResource> parentMap = resources.computeIfAbsent(parentKey, k -> new LinkedHashMap<>());
     final String childKey = endPoint.relativePath();
     parentMap.put(childKey, new ResourceImpl(this, endPoint));
+
+    //System.out.println("AmfImpl.addToMap ["+ parentKey + "] entry -> key: " + childKey + " -> " + endPoint.path().value());
   }
 
-  static String parentKey(final EndPoint endPoint) {
+  private static String parentKey(final EndPoint endPoint) {
     final String path = endPoint.path().value();
-    final int index = path.lastIndexOf("/");
-    return index == 0 ? "/" : path.substring(0, index);
+    final String relativePath = endPoint.relativePath();
+    return path.substring(0, path.length() - relativePath.length());
   }
 
   @Override
@@ -102,15 +85,10 @@ public class AmfImpl implements IRaml {
 
   @Override
   public Map<String, IResource> getResources() {
-    return resources.containsKey("/") ? resources.get("/") : emptyMap();
-    /* 
-    Diego Version  
-    return resources.values().stream().flatMap(m -> m.entrySet().stream())
-        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
-    */
+    return resources.containsKey("") ? resources.get("") : emptyMap();
   }
 
-  Map<String, IResource> getResources(final ResourceImpl resource) {
+  Map<String, IResource> getResources(final IResource resource) {
     final String key = resource.getUri();
     return resources.containsKey(key) ? resources.get(key) : emptyMap();
   }
@@ -144,7 +122,7 @@ public class AmfImpl implements IRaml {
 
   @Override
   public List<Map<String, String>> getSchemas() {
-    return null;
+    return emptyList();
   }
 
   @Override

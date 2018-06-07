@@ -25,18 +25,15 @@ class ParameterImpl implements IParameter {
 
   private AnyShape schema;
   private boolean required;
-  private String description;
 
   ParameterImpl(final Parameter parameter) {
     this.schema = getSchema(parameter);
     this.required = parameter.required().value();
-    this.description = parameter.description().value();
   }
 
   ParameterImpl(final PropertyShape property) {
     this.schema = castToAnyShape(property.range());
     this.required = property.minCount().value() > 0;
-    this.description = ""; //TODO investigate how to do this
   }
 
   @Override
@@ -103,7 +100,7 @@ class ParameterImpl implements IParameter {
 
   @Override
   public String getDescription() {
-    return description;
+    return schema.description().value();
   }
 
   @Override
