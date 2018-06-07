@@ -81,8 +81,8 @@ public class ResourceImpl implements IResource {
 
   @Override
   public String getDisplayName() {
-      final String value = endPoint.name().value();
-      return value != null ? value : getRelativeUri();
+    final String value = endPoint.name().value();
+    return value != null ? value : getRelativeUri();
   }
 
   @Override

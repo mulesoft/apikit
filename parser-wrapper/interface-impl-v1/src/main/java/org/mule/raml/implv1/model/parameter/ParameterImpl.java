@@ -63,11 +63,12 @@ public class ParameterImpl implements IParameter {
 
   @Override
   public Map<String, String> getExamples() {
-      final HashMap<String, String> map = new HashMap<>();
+    final HashMap<String, String> map = new HashMap<>();
 
-      final String example = getExample();
-      if (example != null) map.put(null, example);
-      return map;
+    final String example = getExample();
+    if (example != null)
+      map.put(null, example);
+    return map;
   }
 
   public Object getInstance() {

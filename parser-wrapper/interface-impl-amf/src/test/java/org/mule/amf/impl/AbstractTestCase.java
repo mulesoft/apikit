@@ -64,18 +64,18 @@ abstract class AbstractTestCase {
     //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
     assertActionsEqual(actual.getActions(), expected.getActions());
     actual.getActions().keySet().forEach(action -> {
-        final String actualAction = actual.getAction(action.name()).getType().name();
-        final String expectedAction = expected.getAction(action.name()).getType().name();
-        assertThat(actualAction, is(equalTo(expectedAction)));
+      final String actualAction = actual.getAction(action.name()).getType().name();
+      final String expectedAction = expected.getAction(action.name()).getType().name();
+      assertThat(actualAction, is(equalTo(expectedAction)));
 
     });
     assertParametersEqual(actual.getResolvedUriParameters(), expected.getResolvedUriParameters());
     assertResourcesEqual(actual.getResources(), expected.getResources());
 
-      // Different behaviour in Java Parser 08 & 10
-      // Map<String, List<IParameter>> getBaseUriParameters();
-      // void setParentUri(String parentUri); 
-      // void cleanBaseUriParameters();
+    // Different behaviour in Java Parser 08 & 10
+    // Map<String, List<IParameter>> getBaseUriParameters();
+    // void setParentUri(String parentUri); 
+    // void cleanBaseUriParameters();
   }
 
   static void assertActionsEqual(final Map<IActionType, IAction> actual, final Map<IActionType, IAction> expected) {
@@ -111,24 +111,24 @@ abstract class AbstractTestCase {
     // Different behaviour in Java Parser 08 & 10
     //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
 
-      assertThat(actual.getDefaultValue(), is(equalTo(expected.getDefaultValue())));
-      assertThat(actual.isRepeat(), is(expected.isRepeat()));
-      assertThat(actual.isArray(), is(expected.isArray()));
-      //  boolean validate(String value);
-      //  String message(String value);
-      // Different behaviour in Java Parser 08 & 10
-      //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
-      assertThat(actual.getDescription(), is(equalTo(expected.getDescription())));
-      assertThat(actual.getExample(), is(equalTo(expected.getExample())));
-      assertExamplesEqual(actual.getExamples(), expected.getExamples());
-      
-  // Different behaviour in Java Parser 08 & 10
-  // Object getInstance();
-  // MetadataType getMetadata();
-      
+    assertThat(actual.getDefaultValue(), is(equalTo(expected.getDefaultValue())));
+    assertThat(actual.isRepeat(), is(expected.isRepeat()));
+    assertThat(actual.isArray(), is(expected.isArray()));
+    //  boolean validate(String value);
+    //  String message(String value);
+    // Different behaviour in Java Parser 08 & 10
+    //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
+    assertThat(actual.getDescription(), is(equalTo(expected.getDescription())));
+    assertThat(actual.getExample(), is(equalTo(expected.getExample())));
+    assertExamplesEqual(actual.getExamples(), expected.getExamples());
+
+    // Different behaviour in Java Parser 08 & 10
+    // Object getInstance();
+    // MetadataType getMetadata();
+
   }
 
-    static void assertExamplesEqual(final Map<String, String> actual, final Map<String, String> expected) {
-        assertThat(actual.size(), is(expected.size()));
-    }
+  static void assertExamplesEqual(final Map<String, String> actual, final Map<String, String> expected) {
+    assertThat(actual.size(), is(expected.size()));
+  }
 }
