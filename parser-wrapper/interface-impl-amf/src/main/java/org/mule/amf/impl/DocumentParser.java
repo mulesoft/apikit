@@ -20,6 +20,7 @@ import amf.plugins.xml.XmlValidationPlugin;
 import org.mule.amf.impl.exceptions.ParserException;
 
 import java.net.URI;
+import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -66,7 +67,8 @@ public class DocumentParser {
   }
 
   public static WebApi getWebApi(final Parser parser, final URI uri) throws ParserException {
-    return getWebApi(parseFile(parser, uri.toString()));
+    final String decodedUri = URLDecoder.decode(uri.toString());
+    return getWebApi(parseFile(parser, decodedUri));
   }
 
   private static WebApi getWebApi(final BaseUnit baseUnit) throws ParserException {
