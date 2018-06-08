@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ExchangeDependencyResourceLoader implements ResourceLoader {
+
   private File workingDir = null;
   private final FileResourceLoader resourceLoader = new FileResourceLoader();
 
@@ -28,7 +29,8 @@ public class ExchangeDependencyResourceLoader implements ResourceLoader {
 
   @Override
   public CompletableFuture<Content> fetch(String path) {
-    if (path == null || path.isEmpty()) return fail();
+    if (path == null || path.isEmpty())
+      return fail();
 
     final Matcher matcher = DEPENDENCY_PATH_PATTERN.matcher(path);
     if (matcher.find()) {

@@ -40,12 +40,13 @@ public class RamlHandler {
 
   protected static final Logger logger = LoggerFactory.getLogger(RamlHandler.class);
 
+  private static boolean AMF_ENABLED = Boolean.getBoolean("mule.apikit.parser.amf");
 
   private MuleContext muleContext;
 
   //ramlLocation should be the root raml location, relative of the resources folder
   public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext) throws IOException {
-    this(ramlLocation, keepRamlBaseUri, muleContext, false);
+    this(ramlLocation, keepRamlBaseUri, muleContext, AMF_ENABLED);
   }
 
   public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, boolean amfParserEnabled)

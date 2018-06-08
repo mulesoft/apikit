@@ -123,7 +123,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   }
 
   public boolean isEnableAmfParser() {
-    return enableAmfParser;
+    return enableAmfParser || Boolean.getBoolean("mule.apikit.parser.amf");
   }
 
   public void setEnableAmfParser(boolean enableAmfParser) {

@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.List;
 
 import static java.util.Optional.ofNullable;
+import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
 
 public class ParserWrapperV2 implements ParserWrapper {
 
@@ -109,38 +110,5 @@ public class ParserWrapperV2 implements ParserWrapper {
   public void updateBaseUri(IRaml api, String baseUri) {
     // do nothing, as updates are not supported
     logger.debug("RAML 1.0 parser does not support base uri updates");
-  }
-
-  private static String replaceBaseUri(String raml, String newBaseUri) {
-    if (newBaseUri != null) {
-      return replaceBaseUri(raml, ".*$", newBaseUri);
-    }
-    return raml;
-  }
-
-  private static String replaceBaseUri(String raml, String regex, String replacement) {
-    String[] split = raml.split("\n");
-    boolean found = false;
-    for (int i = 0; i < split.length; i++) {
-      if (split[i].startsWith("baseUri: ")) {
-        found = true;
-        split[i] = split[i].replaceFirst(regex, replacement);
-        if (!split[i].contains("baseUri: ")) {
-          split[i] = "baseUri: " + split[i];
-        }
-      }
-    }
-    if (!found) {
-      for (int i = 0; i < split.length; i++) {
-        if (split[i].startsWith("title:")) {
-          if (replacement.contains("baseUri:")) {
-            split[i] = split[i] + "\n" + replacement;
-          } else {
-            split[i] = split[i] + "\n" + "baseUri: " + replacement;
-          }
-        }
-      }
-    }
-    return StringUtils.join(split, "\n");
   }
 }

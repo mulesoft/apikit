@@ -49,6 +49,10 @@ public class DocumentParser {
     }
   }
 
+  public static Document parseFile(final Parser parser, final URI uri) throws ParserException {
+    return parseFile(parser, URLDecoder.decode(uri.toString()));
+  }
+
   private static Document parseFile(final Parser parser, final String url) throws ParserException {
     return handleFuture(parser.parseFileAsync(url));
   }
@@ -68,11 +72,10 @@ public class DocumentParser {
   }
 
   public static WebApi getWebApi(final Parser parser, final URI uri) throws ParserException {
-    final String decodedUri = URLDecoder.decode(uri.toString());
-    return getWebApi(parseFile(parser, decodedUri));
+    return getWebApi(parseFile(parser, uri));
   }
 
-  private static WebApi getWebApi(final BaseUnit baseUnit) throws ParserException {
+  public static WebApi getWebApi(final BaseUnit baseUnit) throws ParserException {
     final Document document = cast(AMF.resolveRaml10(baseUnit));
     return cast(document.encodes());
   }
