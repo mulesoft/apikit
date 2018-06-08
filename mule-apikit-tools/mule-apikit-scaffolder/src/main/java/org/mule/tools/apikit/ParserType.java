@@ -1,9 +1,9 @@
 package org.mule.tools.apikit;
 
-public enum Parser {
+public enum ParserType {
     AMF, RAML;
 
-    public static Parser defaultType() {
+    public static ParserType defaultType() {
         return RAML;
     }
 }
