@@ -14,6 +14,7 @@ import java.util.List;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.mule.tools.apikit.model.RuntimeEdition;
 
+import static org.mule.tools.apikit.Parser.defaultType;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
@@ -35,7 +36,19 @@ public class ScaffolderAPI {
    */
 
   public void run(List<File> ramlFiles, File appDir) {
-    run(ramlFiles, appDir, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+    run(ramlFiles, appDir, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION, defaultType());
+  }
+
+  /**
+   * Modifies or creates the Mule config files which are contained in the appDir directory
+   * by running the scaffolder on the ramlFiles passed as parameter.
+   *
+   * @param ramlFiles the ramlFiles to which the scaffolder will be run on
+   * @param appDir the directory which contained the generated Mule config files
+   */
+
+  public void run(List<File> ramlFiles, File appDir, Parser parser) {
+    run(ramlFiles, appDir, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION, parser);
   }
 
   /**
@@ -48,9 +61,21 @@ public class ScaffolderAPI {
    * @param domainDir the directory which contained the domain used by the mule config files
    */
   public void run(List<File> ramlFiles, File appDir, File domainDir) {
-    run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+    run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION, defaultType());
   }
 
+  /**
+   * Modifies or creates the Mule config files which are contained in the appDir directory
+   * by running the scaffolder on the ramlFiles passed as parameter.
+   * Looks for an extension point and executes it, relying on the execute method otherwise.
+   *
+   * @param ramlFiles the ramlFiles to which the scaffolder will be run on
+   * @param appDir the directory which contained the generated Mule config files
+   * @param domainDir the directory which contained the domain used by the mule config files
+   */
+  public void run(List<File> ramlFiles, File appDir, File domainDir, Parser parser) {
+    run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION, parser);
+  }
 
   /**
    * Modifies or creates the Mule config files which are contained in the appDir directory
@@ -63,10 +88,24 @@ public class ScaffolderAPI {
    * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
    */
   public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
-    execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
+    run(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition, defaultType());
   }
 
-  private void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
+  /**
+   * Modifies or creates the Mule config files which are contained in the appDir directory
+   * by running the scaffolder on the ramlFiles passed as parameter.
+   *
+   * @param ramlFiles the ramlFiles to which the scaffolder will be run on
+   * @param appDir the directory which contained the generated Mule config files
+   * @param domainDir the directory which contained the domain used by the mule config files
+   * @param minMuleVersion currently unused, will be useful in future improvements
+   * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
+   */
+  public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition, Parser parser) {
+    execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition, parser);
+  }
+
+  private void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition, Parser parser) {
     List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
     List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
     SystemStreamLog log = new SystemStreamLog();
