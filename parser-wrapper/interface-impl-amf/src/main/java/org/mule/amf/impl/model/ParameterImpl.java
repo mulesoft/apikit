@@ -105,14 +105,15 @@ class ParameterImpl implements IParameter {
 
   @Override
   public String getExample() {
-    return getExamples().values().stream()
+    return schema.examples().stream().filter(example -> example.name().value() == null)
+        .map(example -> example.value().value())
         .findFirst()
         .orElse(null);
   }
 
   @Override
   public Map<String, String> getExamples() {
-    return schema.examples().stream()
+    return schema.examples().stream().filter(example -> example.name().value() != null)
         .collect(toMap(e -> e.name().value(), e -> e.value().value()));
   }
 
