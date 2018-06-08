@@ -20,18 +20,11 @@ public interface RouterService {
   /**
    * Handles the request and returns a valid MuleEvent
    *
-   * @param event
-  * @param ramlPath
-   * @return
+   * @param event		the requester event
+   * @param router 		reference to the apikit router
+   * @param ramlPath 	path to the raml
+   * @return 			a competable future with the response event
    */
   CompletableFuture<Event> process(CoreEvent event, EventProcessor router, String ramlPath) throws MuleException;
-
-  /**
-   * Returns true if the path of the HTTP request matches a predefined condition
-   *
-   * @param event
-   * @return
-   */
-  boolean isExecutable(CoreEvent event);
 
 }
