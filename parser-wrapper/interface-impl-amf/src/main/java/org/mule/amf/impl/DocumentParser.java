@@ -8,6 +8,7 @@ package org.mule.amf.impl;
 
 import amf.ProfileNames;
 import amf.client.AMF;
+import amf.client.environment.Environment;
 import amf.client.model.document.BaseUnit;
 import amf.client.model.document.Document;
 import amf.client.model.domain.WebApi;
@@ -32,12 +33,12 @@ public class DocumentParser {
 
   private DocumentParser() {}
 
-  private static RamlParser ramlParser() {
-    return AMF.ramlParser();
+  private static RamlParser ramlParser(Environment environment) {
+    return new RamlParser(environment);
   }
 
-  private static Oas20Parser oas20Parser() {
-    return AMF.oas20Parser();
+  private static Oas20Parser oas20Parser(Environment environment) {
+    return new Oas20Parser(environment);
   }
 
   private static <T, U> U handleFuture(CompletableFuture<T> f) throws ParserException {
@@ -52,14 +53,14 @@ public class DocumentParser {
     return handleFuture(parser.parseFileAsync(url));
   }
 
-  public static WebApi getWebApi(final URI apiDefinition) throws ParserException {
-    return getWebApi(getParserForApi(apiDefinition), apiDefinition);
+  public static WebApi getWebApi(final URI apiDefinition, Environment environment) throws ParserException {
+    return getWebApi(getParserForApi(apiDefinition, environment), apiDefinition);
   }
 
-  public static Parser getParserForApi(final URI apiDefinition) {
+  public static Parser getParserForApi(final URI apiDefinition, Environment environment) {
     final String ext = getExtension(apiDefinition.getPath());
-    return "raml".equalsIgnoreCase(ext) || "yaml".equalsIgnoreCase(ext) || "yml".equalsIgnoreCase(ext) ? ramlParser()
-        : oas20Parser();
+    return "raml".equalsIgnoreCase(ext) || "yaml".equalsIgnoreCase(ext) || "yml".equalsIgnoreCase(ext) ? ramlParser(environment)
+        : oas20Parser(environment);
   }
 
   private static WebApi getWebApi(final Parser parser, final Path path) throws ParserException {

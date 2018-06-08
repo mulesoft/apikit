@@ -18,7 +18,6 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
 @ArtifactClassLoaderRunnerConfig
-@Ignore // TODO APIKIT-1318
 public class ExchangeModulesLoadingTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule

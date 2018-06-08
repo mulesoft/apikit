@@ -6,14 +6,13 @@
  */
 package org.mule.amf.impl;
 
+import amf.client.environment.DefaultEnvironment;
 import amf.client.model.domain.WebApi;
-import java.io.File;
 import org.mule.amf.impl.model.AmfImpl;
 import org.mule.raml.interfaces.model.IRaml;
 
+import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 public class ParserAmfUtils {
 
@@ -24,6 +23,6 @@ public class ParserAmfUtils {
 
   private static WebApi webApi(final File file) {
     final URI uri = file.toURI();
-    return DocumentParser.getWebApi(uri);
+    return DocumentParser.getWebApi(uri, DefaultEnvironment.apply());
   }
 }
