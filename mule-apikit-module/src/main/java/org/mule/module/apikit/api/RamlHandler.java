@@ -194,7 +194,7 @@ public class RamlHandler {
       for (String start : startingLocations) {
         URL ramlLocationUrl = Thread.currentThread().getContextClassLoader().getResource(start + ramlLocation);
         if (ramlLocationUrl != null) {
-          return ramlLocationUrl.toString();
+          return start + ramlLocation;
         }
       }
     }

@@ -104,11 +104,13 @@ public class ScaffolderAPI {
    * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
    * @param parserType the parser to be used to parse the api
    */
-  public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition, ParserType parserType) {
+  public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition,
+                  ParserType parserType) {
     execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition, parserType);
   }
 
-  private void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition, ParserType parserType) {
+  private void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition,
+                       ParserType parserType) {
     List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
     List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
     SystemStreamLog log = new SystemStreamLog();
