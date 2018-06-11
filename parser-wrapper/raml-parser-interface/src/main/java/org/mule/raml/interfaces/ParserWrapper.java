@@ -7,9 +7,12 @@
 package org.mule.raml.interfaces;
 
 import org.mule.raml.interfaces.injector.IRamlUpdater;
+import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
 
 public interface ParserWrapper {
+
+  ApiVendor getApiVendor();
 
   void validate();
 

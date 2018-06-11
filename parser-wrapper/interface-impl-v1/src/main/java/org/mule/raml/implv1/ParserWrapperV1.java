@@ -6,6 +6,7 @@
  */
 package org.mule.raml.implv1;
 
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
 import static org.raml.parser.rule.ValidationResult.Level.ERROR;
 import static org.raml.parser.rule.ValidationResult.Level.WARN;
 import static org.raml.parser.rule.ValidationResult.UNKNOWN;
@@ -14,6 +15,7 @@ import org.mule.raml.implv1.injector.RamlUpdater;
 import org.mule.raml.implv1.model.RamlImplV1;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
+import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
 
 import java.util.List;
@@ -44,6 +46,11 @@ public class ParserWrapperV1 implements ParserWrapper {
   public ParserWrapperV1(String ramlPath) {
     this.ramlPath = ramlPath;
     this.resourceLoader = new DefaultResourceLoader();
+  }
+
+  @Override
+  public ApiVendor getApiVendor() {
+    return RAML_08;
   }
 
   @Override

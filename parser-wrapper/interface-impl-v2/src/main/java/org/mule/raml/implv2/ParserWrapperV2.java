@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
+import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
@@ -25,6 +26,7 @@ import java.util.List;
 
 import static java.util.Optional.ofNullable;
 import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 public class ParserWrapperV2 implements ParserWrapper {
 
@@ -59,6 +61,11 @@ public class ParserWrapperV2 implements ParserWrapper {
 
   private static boolean isFile(URL url) {
     return "file".equals(url.getProtocol());
+  }
+
+  @Override
+  public ApiVendor getApiVendor() {
+    return RAML_10; // TODO Support both ApiVendor parsing RAML file
   }
 
   @Override

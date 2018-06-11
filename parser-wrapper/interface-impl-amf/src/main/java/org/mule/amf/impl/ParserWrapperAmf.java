@@ -14,6 +14,7 @@ import amf.client.model.domain.WebApi;
 import amf.client.parse.Parser;
 import amf.client.render.Oas20Renderer;
 import amf.client.render.Raml08Renderer;
+import amf.client.render.Raml10Renderer;
 import amf.client.render.Renderer;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
@@ -27,6 +28,7 @@ import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
 import org.mule.amf.impl.model.AmfImpl;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
+import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,8 +91,13 @@ public class ParserWrapperAmf implements ParserWrapper {
   }
 
   private static Environment buildEnvironment(URI uri) {
-    final String rootDir = new File(uri).isDirectory() ? new File(uri).getPath() : new File(uri).getParent();
-    return DefaultEnvironment.apply().add(new ExchangeDependencyResourceLoader(rootDir));
+    Environment environment = DefaultEnvironment.apply();
+    if (uri.getScheme() != null && uri.getScheme().startsWith("file")) {
+      final File file = new File(uri);
+      final String rootDir = file.isDirectory() ? file.getPath() : file.getParent();
+      environment = environment.add(new ExchangeDependencyResourceLoader(rootDir));
+    }
+    return environment;
   }
 
   private static URI getPathAsUri(String path) {
@@ -118,6 +125,11 @@ public class ParserWrapperAmf implements ParserWrapper {
       }
     } else
       throw new RuntimeException("Couldn't load api in location: " + path);
+  }
+
+  @Override
+  public ApiVendor getApiVendor() {
+    return apiVendor;
   }
 
   @Override
@@ -183,7 +195,7 @@ public class ParserWrapperAmf implements ParserWrapper {
         renderer = new Oas20Renderer();
         break;
       default:
-        renderer = new Raml08Renderer();
+        renderer = new Raml10Renderer();
         break;
     }
 
@@ -192,12 +204,5 @@ public class ParserWrapperAmf implements ParserWrapper {
     } catch (final InterruptedException | ExecutionException e) {
       return e.getMessage();
     }
-  }
-
-
-  private enum ApiVendor {
-    RAML_08,
-    RAML_10,
-    OAS_20;
   }
 }

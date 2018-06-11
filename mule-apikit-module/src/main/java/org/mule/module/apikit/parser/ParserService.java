@@ -12,6 +12,7 @@ import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
+import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
@@ -45,8 +46,20 @@ public class ParserService {
     parserWrapper = getParserWrapper(ramlPath);
   }
 
+  /**
+   * @deprecated use getParser() and getApiVendor() instead.
+   */
+  @Deprecated
   public boolean isParserV2() {
     return parser == RAML_V2 || parser == AMF;
+  }
+
+  public Parser getParser() {
+    return parser;
+  }
+
+  public ApiVendor getApiVendor() {
+    return parserWrapper.getApiVendor();
   }
 
   private void checkParserVersion() {

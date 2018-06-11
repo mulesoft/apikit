@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.api.config.ConsoleConfig;
 import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.raml.interfaces.model.ApiVendor;
 
 public class ConsoleResources {
 
@@ -91,7 +92,7 @@ public class ConsoleResources {
 
   private InputStream updateIndexWithRamlLocation(InputStream inputStream) throws IOException {
     String ramlLocation;
-    if (config.getRamlHandler().isParserV2()) {
+    if (config.getRamlHandler().getApiVendor().equals(ApiVendor.RAML_10)) {
       ramlLocation = config.getRamlHandler().getRootRamlLocationForV2();
     } else {
       ramlLocation = config.getRamlHandler().getRootRamlLocationForV1();
