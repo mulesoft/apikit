@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>raml-parser-interface-impl-v1</artifactId>
-    <name>RAML parser v1 interface implemention</name>
+    <name>RAML parser v1 interface implementation</name>
     <packaging>jar</packaging>
 
     <properties>

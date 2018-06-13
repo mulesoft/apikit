@@ -16,6 +16,8 @@ import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.raml.v2.api.model.v10.system.types.AnnotableStringType;
+import org.raml.v2.api.model.v10.system.types.MarkdownString;
 
 import static org.mule.raml.implv2.v10.MetadataResolver.anyType;
 import static org.mule.raml.implv2.v10.MetadataResolver.resolve;
@@ -63,12 +65,14 @@ public class ParameterImpl implements IParameter {
 
   @Override
   public String getDisplayName() {
-    throw new UnsupportedOperationException();
+    final AnnotableStringType type = typeDeclaration.displayName();
+    return type == null ? null : type.value();
   }
 
   @Override
   public String getDescription() {
-    throw new UnsupportedOperationException();
+    final MarkdownString description = typeDeclaration.description();
+    return description == null ? null : description.value();
   }
 
   @Override

@@ -53,6 +53,7 @@ public class UrlEncodedV1FunctionalTestCase extends MuleArtifactFunctionalTestCa
   }
 
   @Test
+  @Ignore("APIKIT-1369")
   public void setDefaultFormParameterForUrlencodedRequest() throws Exception {
     given().header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("second", "segundo")
@@ -65,6 +66,7 @@ public class UrlEncodedV1FunctionalTestCase extends MuleArtifactFunctionalTestCa
   }
 
   @Test
+  @Ignore("APIKIT-1368")
   public void getKeyWithMultipleValuesUrlencodedRequest() throws Exception {
     given().header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("second", "segundo")

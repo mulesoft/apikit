@@ -17,6 +17,7 @@ import org.mule.module.apikit.exception.NotFoundException;
 import java.io.IOException;
 
 import org.junit.Test;
+import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.runtime.core.api.MuleContext;
 
 public class RamlHandlerTestCase {
@@ -30,13 +31,13 @@ public class RamlHandlerTestCase {
   }
 
   @Test
-  public void isParserV2FalseUsingRaml08() throws IOException {
+  public void apiVendorForRaml08() throws IOException {
     String ramlLocation = "org/mule/module/apikit/raml-handler/simple08.raml";
     String apiServer = "unused";
     boolean keepRamlBaseUri = true;
     RamlHandler handler = new RamlHandler(ramlLocation, keepRamlBaseUri, muleContext);
     handler.setApiServer(apiServer);
-    assertTrue(!handler.isParserV2());
+    assertTrue(handler.getApiVendor().equals(ApiVendor.RAML_08));
   }
 
   @Test
@@ -47,6 +48,7 @@ public class RamlHandlerTestCase {
     RamlHandler handler = new RamlHandler(ramlLocation, keepRamlBaseUri, muleContext);
     handler.setApiServer(apiServer);
     assertTrue(handler.isParserV2());
+    assertTrue(handler.getApiVendor().equals(ApiVendor.RAML_10));
   }
 
   @Test

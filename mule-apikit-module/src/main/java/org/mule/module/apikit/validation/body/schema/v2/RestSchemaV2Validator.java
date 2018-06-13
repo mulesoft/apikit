@@ -9,12 +9,11 @@ package org.mule.module.apikit.validation.body.schema.v2;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.raml.interfaces.model.IMimeType;
-
-import java.util.List;
-
-import org.raml.v2.api.model.common.ValidationResult;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 public class RestSchemaV2Validator implements IRestSchemaValidatorStrategy {
 
@@ -26,15 +25,7 @@ public class RestSchemaV2Validator implements IRestSchemaValidatorStrategy {
   }
 
   public void validate(String payload) throws BadRequestException {
-    List<ValidationResult> validationResults;
-
-    if (mimeType instanceof org.mule.raml.implv2.v10.model.MimeTypeImpl) {
-      validationResults = ((org.mule.raml.implv2.v10.model.MimeTypeImpl) mimeType).validate(payload);
-    } else {
-      // TODO implement for 08 (v2)
-      // List<ValidationResult> validationResults = ((org.mule.raml.implv2.v08.model.MimeTypeImpl) mimeType).validate(payload);
-      throw new RuntimeException("not supported");
-    }
+    final List<IValidationResult> validationResults = mimeType.validate(payload);
 
     if (!validationResults.isEmpty()) {
       String logMessage = validationResults.get(0).getMessage();

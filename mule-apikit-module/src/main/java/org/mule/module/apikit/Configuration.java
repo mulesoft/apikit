@@ -43,6 +43,7 @@ import javax.xml.validation.Schema;
 public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
 
   private boolean disableValidations;
+  private boolean enableAmfParser;
   private boolean queryParamsStrictValidation;
   private boolean headersStrictValidation;
   private String name;
@@ -88,7 +89,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   @Override
   public void initialise() throws InitialisationException {
     try {
-      ramlHandler = new RamlHandler(raml, keepRamlBaseUri, muleContext);
+      ramlHandler = new RamlHandler(raml, keepRamlBaseUri, muleContext, isEnableAmfParser());
     } catch (IOException e) {
       throw new InitialisationException(e.fillInStackTrace(), this);
     }
@@ -126,6 +127,14 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   public void setDisableValidations(boolean disableValidations) {
     this.disableValidations = disableValidations;
+  }
+
+  public boolean isEnableAmfParser() {
+    return enableAmfParser || Boolean.getBoolean("mule.apikit.parser.amf");
+  }
+
+  public void setEnableAmfParser(boolean enableAmfParser) {
+    this.enableAmfParser = enableAmfParser;
   }
 
   @Override

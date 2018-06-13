@@ -15,4 +15,6 @@ public interface IValidationResult {
   int getLine();
 
   boolean isLineUnknown();
+
+  String getPath();
 }

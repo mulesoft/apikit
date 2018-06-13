@@ -4,21 +4,20 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.injector;
+package org.mule.raml.implv1.injector;
 
-import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.raml.interfaces.injector.IRamlUpdater;
+import org.raml.model.Action;
+import org.raml.model.Raml;
+import org.raml.model.SecurityScheme;
+import org.raml.model.Template;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.raml.model.Action;
-import org.raml.model.Raml;
-import org.raml.model.SecurityScheme;
-import org.raml.model.Template;
-
-public class RamlUpdater {
+public class RamlUpdater implements IRamlUpdater {
 
   private Raml raml;
   private Set<String> currentTraits;
@@ -57,7 +56,7 @@ public class RamlUpdater {
     if (injectedTraits.isEmpty() && injectedSecuritySchemes.isEmpty()) {
       this.resetAndUpdate();
     } else {
-      throw new ApikitRuntimeException("Cannot inject and reset with the same Updater");
+      throw new RuntimeException("Cannot inject and reset with the same Updater");
     }
   }
 
@@ -84,7 +83,7 @@ public class RamlUpdater {
       Action action = getAction(actionRef);
       InjectableTrait injectableTrait = injectedTraits.get(name);
       if (injectableTrait == null) {
-        throw new ApikitRuntimeException("Trying to apply an undefined Trait: " + name);
+        throw new RuntimeException("Trying to apply an undefined Trait: " + name);
       }
       injectableTrait.applyToAction(action);
     }
@@ -115,7 +114,7 @@ public class RamlUpdater {
       Action action = getAction(actionRef);
       InjectableSecurityScheme injectableSecurityScheme = injectedSecuritySchemes.get(name);
       if (injectableSecurityScheme == null) {
-        throw new ApikitRuntimeException("Trying to apply an undefined Security Scheme: " + name);
+        throw new RuntimeException("Trying to apply an undefined Security Scheme: " + name);
       }
       injectableSecurityScheme.applyToAction(action);
     }

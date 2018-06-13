@@ -10,6 +10,7 @@ import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.StreamUtils;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.parser.ParserService;
+import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.api.exception.TypedException;
@@ -26,6 +27,8 @@ import org.raml.model.ActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
+
 public class RamlHandler {
 
   public static final String APPLICATION_RAML = "application/raml+yaml";
@@ -40,18 +43,24 @@ public class RamlHandler {
 
   protected static final Logger logger = LoggerFactory.getLogger(RamlHandler.class);
 
+  private static boolean AMF_ENABLED = Boolean.getBoolean("mule.apikit.parser.amf");
 
   private MuleContext muleContext;
 
   //ramlLocation should be the root raml location, relative of the resources folder
   public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext) throws IOException {
+    this(ramlLocation, keepRamlBaseUri, muleContext, AMF_ENABLED);
+  }
+
+  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, boolean amfParserEnabled)
+      throws IOException {
     this.keepRamlBaseUri = keepRamlBaseUri;
 
     String rootRamlLocation = findRootRaml(ramlLocation);
     if (rootRamlLocation == null) {
       throw new IOException("Raml not found at: " + ramlLocation);
     }
-    parserService = new ParserService(rootRamlLocation);
+    parserService = new ParserService(rootRamlLocation, amfParserEnabled);
     parserService.validateRaml();
     this.api = parserService.build();
 
@@ -63,8 +72,16 @@ public class RamlHandler {
     this.muleContext = muleContext;
   }
 
+  /**
+   * @deprecated use getApiVendor() instead.
+   */
+  @Deprecated
   public boolean isParserV2() {
     return parserService.isParserV2();
+  }
+
+  public ApiVendor getApiVendor() {
+    return parserService.getApiVendor();
   }
 
   public IRaml getApi() {
@@ -138,7 +155,7 @@ public class RamlHandler {
                                               String acceptHeader) {
     String postalistenerPath = UrlUtils.getListenerPath(listenerPath, requestPath);
 
-    return (!isParserV2() &&
+    return (getApiVendor().equals(RAML_08) &&
         (postalistenerPath.equals(requestPath) || (postalistenerPath + "/").equals(requestPath)) &&
         ActionType.GET.toString().equals(method.toUpperCase()) &&
         (APPLICATION_RAML.equals(acceptHeader)

@@ -6,6 +6,7 @@
  */
 package org.mule.raml.interfaces.common;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mule.raml.interfaces.model.IActionType;
 
 public class RamlUtils {
@@ -18,4 +19,38 @@ public class RamlUtils {
     }
     return false;
   }
+
+  public static String replaceBaseUri(String raml, String newBaseUri) {
+    if (newBaseUri != null) {
+      return replaceBaseUri(raml, ".*$", newBaseUri);
+    }
+    return raml;
+  }
+
+  private static String replaceBaseUri(String raml, String regex, String replacement) {
+    String[] split = raml.split("\n");
+    boolean found = false;
+    for (int i = 0; i < split.length; i++) {
+      if (split[i].startsWith("baseUri: ")) {
+        found = true;
+        split[i] = split[i].replaceFirst(regex, replacement);
+        if (!split[i].contains("baseUri: ")) {
+          split[i] = "baseUri: " + split[i];
+        }
+      }
+    }
+    if (!found) {
+      for (int i = 0; i < split.length; i++) {
+        if (split[i].startsWith("title:")) {
+          if (replacement.contains("baseUri:")) {
+            split[i] = split[i] + "\n" + replacement;
+          } else {
+            split[i] = split[i] + "\n" + "baseUri: " + replacement;
+          }
+        }
+      }
+    }
+    return StringUtils.join(split, "\n");
+  }
+
 }

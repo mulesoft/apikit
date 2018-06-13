@@ -86,7 +86,7 @@ public class Schema10TestCase extends MuleArtifactFunctionalTestCase {
 
   @Test
   public void postValidJsonUsingRamlType() throws Exception {
-    given().body("{\"firstname\":\"george\",\"lastname\":\"bernard shaw\",\"age\":\"30\"}")
+    given().body("{\"firstname\":\"george\",\"lastname\":\"bernard shaw\",\"age\":30}")
         .contentType("application/json")
         .expect()
         .statusCode(200)

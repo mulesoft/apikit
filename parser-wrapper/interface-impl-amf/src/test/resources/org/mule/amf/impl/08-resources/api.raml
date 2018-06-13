@@ -1,0 +1,110 @@
+#%RAML 0.8
+---
+title: Mix Resources Definitions
+version: 1.0
+baseUri: http://localhost:8080/api
+
+/sales:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+ 
+  /{id}/{itemId}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+    put:
+      body:
+        application/json:
+ 
+      
+/categories/{id1}/{id2}/{id3}:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+
+  /{id4}/{id5}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+
+  /fixed/{id6}:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+
+/categories/{id1}/overlap:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+
+
+/brands:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+
+  /one:
+    get:
+      responses:
+        200:
+          body:
+            application/json:
+
+    /two:
+      get:
+        responses:
+          200:
+            body:
+              application/json:
+
+      /three:
+        get:
+          responses:
+            200:
+              body:
+                application/json:
+
+        /four:
+          get:
+            responses:
+              200:
+                body:
+                  application/json:
+
+/resource/{param}:
+  uriParameters:
+    param:
+      type: integer
+      required: true
+  get:
+
+/list/{param}:
+  uriParameters:
+    param:
+      type: integer
+      required: false
+  get:
+
+/uriparam:
+  get:
+  /{optional}:
+    get:
+    uriParameters:
+      optional:
+        required: false
+        type: integer

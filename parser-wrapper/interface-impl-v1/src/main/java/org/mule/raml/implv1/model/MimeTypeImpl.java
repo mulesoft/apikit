@@ -6,16 +6,17 @@
  */
 package org.mule.raml.implv1.model;
 
+import org.mule.raml.implv1.model.parameter.ParameterImpl;
+import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
+import org.raml.model.MimeType;
+import org.raml.model.parameter.FormParameter;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.mule.raml.implv1.model.parameter.ParameterImpl;
-import org.mule.raml.interfaces.model.IMimeType;
-import org.mule.raml.interfaces.model.parameter.IParameter;
-import org.raml.model.MimeType;
-import org.raml.model.parameter.FormParameter;
 
 public class MimeTypeImpl implements IMimeType {
 
@@ -62,5 +63,10 @@ public class MimeTypeImpl implements IMimeType {
 
   public MimeType getInstance() {
     return mimeType;
+  }
+
+  @Override
+  public List<IValidationResult> validate(String payload) {
+    throw new UnsupportedOperationException();
   }
 }

@@ -6,17 +6,25 @@
  */
 package org.mule.module.apikit.parser;
 
-import org.mule.module.apikit.injector.RamlUpdater;
+import org.mule.amf.impl.ParserWrapperAmf;
+import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.ParserWrapperV2;
+import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.injector.IRamlUpdater;
+import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
-
-import java.io.InputStream;
-
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+
+import static org.mule.module.apikit.parser.Parser.AMF;
+import static org.mule.module.apikit.parser.Parser.RAML_V1;
+import static org.mule.module.apikit.parser.Parser.RAML_V2;
 
 public class ParserService {
 
@@ -25,33 +33,56 @@ public class ParserService {
   private final String ramlPath;
   private ResourceLoader resourceLoaderV2;
   private ParserWrapper parserWrapper;
-  private boolean parserV2;
+  private boolean amfParserEnabled;
 
-  public ParserService(String ramlPath) {
+  private Parser parser;
+
+  public ParserService(String ramlPath, boolean amfParserEnabled) {
     this.ramlPath = ramlPath;
+    this.amfParserEnabled = amfParserEnabled;
+
     resourceLoaderV2 = new DefaultResourceLoader();
     checkParserVersion();
-    setupParserWrapper(ramlPath);
+    parserWrapper = getParserWrapper(ramlPath);
   }
 
+  /**
+   * @deprecated use getParser() and getApiVendor() instead.
+   */
+  @Deprecated
   public boolean isParserV2() {
-    return parserV2;
+    return parser == RAML_V2 || parser == AMF;
+  }
+
+  public Parser getParser() {
+    return parser;
+  }
+
+  public ApiVendor getApiVendor() {
+    return parserWrapper.getApiVendor();
   }
 
   private void checkParserVersion() {
-    InputStream content = resourceLoaderV2.fetchResource(ramlPath);
-    if (content != null) {
-      String dump = StreamUtils.toString(content);
-      parserV2 = ParserV2Utils.useParserV2(dump);
+    if (amfParserEnabled) {
+      parser = AMF;
+    } else {
+      InputStream content = resourceLoaderV2.fetchResource(ramlPath);
+      if (content != null) {
+        String dump = StreamUtils.toString(content);
+        parser = ParserV2Utils.useParserV2(dump) ? RAML_V2 : RAML_V1;
+      }
     }
-    logger.debug("Using parser " + (parserV2 ? "V2" : "V1"));
+    logger.debug("Using parser " + parser);
   }
 
-  private void setupParserWrapper(String ramlPath) {
-    if (parserV2) {
-      parserWrapper = new ParserWrapperV2(ramlPath);
-    } else {
-      parserWrapper = new ParserWrapperV1(ramlPath);
+  private ParserWrapper getParserWrapper(String ramlPath) {
+    switch (parser) {
+      case RAML_V1:
+        return new ParserWrapperV1(ramlPath);
+      case RAML_V2:
+        return new ParserWrapperV2(ramlPath);
+      default:
+        return ParserWrapperAmf.create(ramlPath);
     }
   }
 
@@ -63,7 +94,7 @@ public class ParserService {
     return parserWrapper.build();
   }
 
-  public RamlUpdater getRamlUpdater(IRaml api) {
+  public IRamlUpdater getRamlUpdater(IRaml api) {
     return parserWrapper.getRamlUpdater(api);
   }
 

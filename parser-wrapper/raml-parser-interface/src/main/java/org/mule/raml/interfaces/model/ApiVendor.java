@@ -4,13 +4,10 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.injector;
+package org.mule.raml.interfaces.model;
 
-import org.mule.module.apikit.exception.ApikitRuntimeException;
-
-public class TraitAlreadyDefinedException extends ApikitRuntimeException {
-
-  public TraitAlreadyDefinedException(String message) {
-    super(message);
-  }
+public enum ApiVendor {
+  RAML_08,
+  RAML_10,
+  OAS_20;
 }

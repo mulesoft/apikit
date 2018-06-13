@@ -7,6 +7,7 @@
 package org.mule.raml.interfaces.model;
 
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 
 import java.util.List;
 import java.util.Map;
@@ -27,4 +28,6 @@ public interface IMimeType {
   String getExample();
 
   Object getInstance();
+
+  List<IValidationResult> validate(String payload);
 }
