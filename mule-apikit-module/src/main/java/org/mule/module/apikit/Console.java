@@ -19,8 +19,8 @@ import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
-import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.MuleContext;
+import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.processor.Processor;
 import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.api.util.StringMessageUtils;
@@ -32,8 +32,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.net.URI;
 import java.util.Optional;
-
-import static org.mule.module.apikit.api.UrlUtils.getCompletePathFromBasePathAndPath;
 
 public class Console extends AbstractComponent implements Processor, Initialisable {
 
@@ -87,7 +85,7 @@ public class Console extends AbstractComponent implements Processor, Initialisab
     String method = attributes.getMethod();
 
     ConsoleResources consoleResources =
-        new ConsoleResources(config, getCompletePathFromBasePathAndPath("", listenerPath),
+        new ConsoleResources(config, listenerPath,
                              requestPath, queryString, method, acceptHeader);
 
     // Listener path MUST end with /*

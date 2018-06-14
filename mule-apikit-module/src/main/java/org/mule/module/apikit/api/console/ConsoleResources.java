@@ -17,6 +17,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.mule.module.apikit.api.UrlUtils.getCompletePathFromBasePathAndPath;
+
 public class ConsoleResources {
 
   private static final String ROOT_CONSOLE_PATH = "/";
@@ -107,7 +109,7 @@ public class ConsoleResources {
     IOUtils.closeQuietly(inputStream);
 
     // for amf console index
-    indexHtml = indexHtml.replaceFirst(HTTP_LISTENER_BASE_PATH, listenerPath);
+    indexHtml = indexHtml.replaceFirst(HTTP_LISTENER_BASE_PATH, getCompletePathFromBasePathAndPath("", listenerPath));
     indexHtml = indexHtml.replaceFirst(AMF_MODEL_LOCATION, listenerPath + "/?amf");
 
     indexHtml = indexHtml.replaceFirst(RAML_LOCATION_PLACEHOLDER_KEY, ramlLocation);
