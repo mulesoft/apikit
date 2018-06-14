@@ -1,0 +1,211 @@
+<!doctype html>
+<!--
+@license
+Copyright 2017 Mulesoft.
+-->
+<!--
+This has to be run in a web server. Web component do not work with file:// scheme.
+Version: branch 2.0.0-preview commit 117fb1660be13b54d57699d306f9c4fbc4247379
+
+-->
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <title>API console bundle inspector</title>
+    <!--<script src="bower_components/webcomponentsjs/webcomponents-loader.js"></script>-->
+    <!-- This is demo page components only. They are not included into the build -->
+    <!--<link rel="import" href="bower_components/app-layout/app-drawer/app-drawer.html">-->
+    <!--<link rel="import" href="bower_components/app-layout/app-drawer-layout/app-drawer-layout.html">-->
+    <!--<link rel="import" href="bower_components/app-layout/app-header/app-header.html">-->
+    <!--<link rel="import" href="bower_components/app-layout/app-header-layout/app-header-layout.html">-->
+    <!--<link rel="import" href="bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">-->
+    <!--<link rel="import" href="bower_components/app-layout/app-toolbar/app-toolbar.html">-->
+    <!-- This is API console & Polymer components -->
+    <!--<link rel="import" href="bower_components/shadycss/apply-shim.html">-->
+    <!--<link rel="import" href="bower_components/polymer/lib/elements/custom-style.html">-->
+    <!--<link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">-->
+    <!--<link rel="import" href="bower_components/raml-aware/raml-aware.html">-->
+    <!--<link rel="import" href="bower_components/api-navigation/api-navigation.html">-->
+    <!--<link rel="import" href="bower_components/api-documentation/api-documentation.html">-->
+    <!--<link rel="import" href="bower_components/api-request-panel/api-request-panel.html">-->
+    <!-- This is optional dependencies. -->
+    <!--<link rel="import" href="bower_components/xhr-simple-request/xhr-simple-request.html">-->
+    <!--<link rel="import" href="bower_components/oauth-authorization/oauth-authorization.html">-->
+    <!--<link rel="import" href="bower_components/cryptojs-lib/cryptojs-lib.html">-->
+    <!-- And finally this is theme. IT MUST BE LAST INCLUDED FILE SO IT WON'T BE OVERWRITTEN -->
+    <!--<link rel="import" href="bower_components/anypoint-styles/anypoint-theme.html">-->
+    <!-- This is build file. Can't be combined with imports above (this is how web components works). Also the build does not contain app layout elements and combining them will cause errors. -->
+    <!-- <script src="import-detection.js"></script> -->
+    <link rel="import" href="HTTP_LISTENER_BASE_PATH/import.html">
+    <style>
+        html,
+        body {
+            margin: 0;
+            font-family: "Open Sans", "DIN Pro", sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .api-selector {
+            background-color: #fff;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+    </style>
+    <!-- `<custom-style>` is a web component defined by Polymer library. Handles styles definition in components. -->
+    <custom-style>
+        <style is="custom-style">
+            .drawer-content-wrapper {
+                max-height: 100%;
+                @apply --layout-vertical;
+            }
+
+            api-navigation {
+                @apply --layout-flex-auto;
+            }
+
+            .main-content {
+                margin-left: var(--api-console-main-content-margin-left, 24px);
+                margin-right: var(--api-console-main-content-margin-right, 24px);
+
+            }
+
+            api-documentation {
+                margin-right: 500px;
+            }
+
+            .tryit {
+                position: fixed;
+                top: 84px;
+                right: 0px;
+                width: 480px;
+            }
+
+            app-drawer-layout:not([narrow]) [drawer-toggle] {
+                display: none;
+            }
+
+            app-toolbar {
+                background-color: var(--api-console-toolbar-background-color, #000);
+                color: var(--api-console-toolbar-color, #fff);
+            }
+        </style>
+    </custom-style>
+</head>
+<body unresolved>
+<!--
+  RAML aware uses monostate pattern (http://wiki.c2.com/?MonostatePattern)
+  to transport data accross all components without assigning values to each
+  of them. It is used to transport AMF model. You can always use `amfModel`
+  property available to all api components to set model value. This is just
+  more convinient way to do this. -->
+<raml-aware scope="model" id="aware"></raml-aware>
+<!--
+  API components comes with few optional dependencies. You should not include
+  those dependencies into the build if you already have logic that perform
+  this tasks in order to reduce general initialization time and code size.
+
+  - xhr-simple-request handles `api-request` and `abort-api-requst` events
+    It also dispatches `api-response` event.
+  - oauth1-authorization/oauth2-authorization is responsible for OAuth authorization
+    dance flow. You really should not include this if your application already
+    have components that performs OAuth authorization. See components
+    documentation to learn events API.
+-->
+<xhr-simple-request></xhr-simple-request>
+<oauth1-authorization></oauth1-authorization>
+<oauth2-authorization></oauth2-authorization>
+<app-drawer-layout>
+    <app-drawer slot="drawer">
+        <div class="drawer-content-wrapper">
+            <!-- Exchange uses navigation separately from other components. This demo shows how the console would work in the Exchange. -->
+            <api-navigation aware="model" summary endpoints-opened></api-navigation>
+        </div>
+    </app-drawer>
+    <app-header-layout>
+        <!--<app-header slot="header" fixed condenses effects="waterfall">-->
+            <!--<app-toolbar>-->
+                <!--<paper-icon-button icon="arc:menu" drawer-toggle></paper-icon-button>-->
+                <!--<div main-title>API console for Anypoint demo</div>-->
+                <!--<paper-dropdown-menu label="Select demo API" class="api-selector">-->
+                    <!--<paper-listbox slot="dropdown-content" id="enpointsList">-->
+                        <!--<paper-item data-src="demo-api.json">ARC demo API</paper-item>-->
+                        <!--<paper-item data-src="cardconnect-rest-api.json">CardConnect REST API</paper-item>-->
+                        <!--<paper-item data-src="exchange-xapi.json">Exchange Xapi</paper-item>-->
+                    <!--</paper-listbox>-->
+                <!--</paper-dropdown-menu>-->
+            <!--</app-toolbar>-->
+        <!--</app-header>-->
+        <div class="main-content">
+            <!--
+              When handle-navigation-events is set the panel listens for navigation event itself
+              so the application do not need to pass any data between navigation and documentation.
+              At least as long as you are using `api-navigation` component.
+            -->
+            <api-documentation id="doc" aware="model" handle-navigation-events no-try-it></api-documentation>
+            <div class="tryit" hidden>
+                <!-- This shows how to handle tryit in exchange where try it sticks to the right hand side of the page. -->
+                <api-request-panel aware="model"></api-request-panel>
+            </div>
+        </div>
+    </app-header-layout>
+</app-drawer-layout>
+<script>
+    var Demo = {};
+    Demo.requestPanel = function() {
+        return document.querySelector('api-request-panel');
+    };
+    Demo.requestPanelContainer = function() {
+        return document.querySelector('.tryit');
+    };
+    Demo._apiChanged = function(e) {
+        var file = e.target.selectedItem.dataset.src;
+        Demo._loadFile(file);
+    };
+    Demo._loadFile = function() {
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener('load', (e) => {
+            let data;
+        try {
+            data = JSON.parse(e.target.response);
+        } catch (e) {
+            window.alert('Unable to parse AMF model');
+            return;
+        }
+        document.getElementById('aware').raml = data;
+    });
+        xhr.addEventListener('error', () => window.alert('Unable to load AMF model'));
+        xhr.open('GET', 'AMF_MODEL_LOCATION');
+        xhr.send();
+    };
+    Demo.init = function() {
+        document.getElementById('enpointsList').selected = 0;
+        document.getElementById('doc').scrollTarget = window;
+    };
+    Demo.runTryit = function(e) {
+        var id = e.detail.id;
+        Demo.requestPanel().selected = id;
+        Demo.requestPanelContainer().removeAttribute('hidden');
+    };
+    Demo.navChanged = function(e) {
+        if (e.detail.passive === true) {
+            return;
+        }
+        if (e.detail.type !== 'method') {
+            Demo.requestPanelContainer().setAttribute('hidden', true);
+        } else {
+            Demo.requestPanel().selected = e.detail.selected;
+            Demo.requestPanelContainer().removeAttribute('hidden');
+        }
+    };
+    // document.getElementById('enpointsList').addEventListener('selected-changed', Demo._apiChanged);
+    // window.addEventListener('WebComponentsReady', Demo.init);
+    window.addEventListener('WebComponentsReady', Demo._loadFile());
+    window.addEventListener('tryit-requested', Demo.runTryit);
+    window.addEventListener('api-navigation-selection-changed', Demo.navChanged);
+</script>
+</body>
+</html>

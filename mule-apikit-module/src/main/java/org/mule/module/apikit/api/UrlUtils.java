@@ -184,6 +184,21 @@ public class UrlUtils {
     return StringUtils.join(split, "\n");
   }
 
+  public static String getCompletePathFromBasePathAndPath(String basePath, String listenerPath) {
+
+    String path = basePath + listenerPath;
+    if (path.contains("/*")) {
+      path = path.replace("/*", "");
+    }
+    if (path.endsWith("/")) {
+      path = path.substring(0, path.length() - 1);
+    }
+    if (path.contains("//")) {
+      path = path.replace("//", "/");
+    }
+    return path;
+  }
+
   /**
    * Creates URL where the server must redirect the client
    * @return The redirect URL

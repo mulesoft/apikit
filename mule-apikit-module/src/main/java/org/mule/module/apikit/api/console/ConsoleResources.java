@@ -6,24 +6,26 @@
  */
 package org.mule.module.apikit.api.console;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.commons.io.IOUtils;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.api.config.ConsoleConfig;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.raml.interfaces.model.ApiVendor;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 public class ConsoleResources {
 
-  private static final String CONSOLE_RESOURCES_BASE = "/console-resources";
   private static final String ROOT_CONSOLE_PATH = "/";
   private static final String INDEX_RESOURCE_RELATIVE_PATH = "/index.html";
   private static final String RAML_LOCATION_PLACEHOLDER_KEY = "RAML_LOCATION_PLACEHOLDER";
+  private static final String HTTP_LISTENER_BASE_PATH = "HTTP_LISTENER_BASE_PATH";
+  private static final String AMF_MODEL_LOCATION = "AMF_MODEL_LOCATION";
 
+  private final String CONSOLE_RESOURCES_BASE;
   private ConsoleConfig config;
   private String listenerPath;
   private String requestPath;
@@ -33,6 +35,8 @@ public class ConsoleResources {
 
   public ConsoleResources(ConsoleConfig config, String listenerPath, String requestPath, String queryString, String method,
                           String aceptHeader) {
+    CONSOLE_RESOURCES_BASE = config.isEnableAmfParser() ? "/console-resources-amf" : "/console-resources";
+
     this.config = config;
     this.listenerPath = listenerPath;
     this.requestPath = requestPath;
@@ -101,6 +105,11 @@ public class ConsoleResources {
 
     String indexHtml = IOUtils.toString(inputStream);
     IOUtils.closeQuietly(inputStream);
+
+    // for amf console index
+    indexHtml = indexHtml.replaceFirst(HTTP_LISTENER_BASE_PATH, listenerPath);
+    indexHtml = indexHtml.replaceFirst(AMF_MODEL_LOCATION, listenerPath + "/?amf");
+
     indexHtml = indexHtml.replaceFirst(RAML_LOCATION_PLACEHOLDER_KEY, ramlLocation);
     inputStream = new ByteArrayInputStream(indexHtml.getBytes());
 
@@ -126,6 +135,10 @@ public class ConsoleResources {
 
     if (config.getRamlHandler().isRequestingRamlV2(listenerPath, requestPath, queryString, method)) {
       return config.getRamlHandler().getRamlV2(resourceRelativePath);
+    }
+
+    if (config.isEnableAmfParser() && queryString.equals("amf")) {
+      return config.getRamlHandler().getAMFModel();
     }
 
     return null;

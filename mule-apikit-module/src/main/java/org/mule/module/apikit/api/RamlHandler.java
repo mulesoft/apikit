@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.api;
 
+import org.apache.commons.io.IOUtils;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.StreamUtils;
 import org.mule.module.apikit.exception.NotFoundException;
@@ -14,18 +15,16 @@ import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.api.exception.TypedException;
+import org.mule.runtime.core.api.MuleContext;
+import org.raml.model.ActionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import org.apache.commons.io.IOUtils;
-import org.mule.runtime.core.api.MuleContext;
-import org.raml.model.ActionType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
 
@@ -145,6 +144,10 @@ public class RamlHandler {
       }
       return null;
     }
+  }
+
+  public String getAMFModel() {
+    return parserService.getAMFModel();
   }
 
   public String getBaseUriReplacement(String apiServer) {

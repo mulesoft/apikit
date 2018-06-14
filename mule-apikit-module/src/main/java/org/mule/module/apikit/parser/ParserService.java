@@ -106,7 +106,15 @@ public class ParserService {
     return parserWrapper.dump(api, newBaseUri);
   }
 
+  public String getAMFModel() {
+    if (parserWrapper instanceof ParserWrapperAmf)
+      return ((ParserWrapperAmf) parserWrapper).getAmfModel();
+    return "";
+  }
+
   public String dumpRaml(IRaml api) {
+    if (parserWrapper instanceof ParserWrapperAmf)
+      return ((ParserWrapperAmf) parserWrapper).getAmfModel();
     return parserWrapper.dump(api, null);
   }
 

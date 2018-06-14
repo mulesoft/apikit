@@ -11,4 +11,6 @@ import org.mule.module.apikit.api.RamlHandler;
 public interface ConsoleConfig {
 
   RamlHandler getRamlHandler();
+
+  boolean isEnableAmfParser();
 }

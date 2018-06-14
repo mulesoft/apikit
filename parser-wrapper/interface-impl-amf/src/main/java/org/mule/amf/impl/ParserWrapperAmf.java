@@ -12,6 +12,7 @@ import amf.client.environment.Environment;
 import amf.client.model.document.Document;
 import amf.client.model.domain.WebApi;
 import amf.client.parse.Parser;
+import amf.client.render.AmfGraphRenderer;
 import amf.client.render.Oas20Renderer;
 import amf.client.render.Raml08Renderer;
 import amf.client.render.Raml10Renderer;
@@ -19,11 +20,6 @@ import amf.client.render.Renderer;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
 import amf.core.remote.Vendor;
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.concurrent.ExecutionException;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
 import org.mule.amf.impl.model.AmfImpl;
 import org.mule.raml.interfaces.ParserWrapper;
@@ -33,6 +29,12 @@ import org.mule.raml.interfaces.model.IRaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
+
+import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 import static amf.ProfileNames.AMF;
 import static java.util.stream.Collectors.joining;
@@ -183,6 +185,14 @@ public class ParserWrapperAmf implements ParserWrapper {
 
   @Override
   public void updateBaseUri(IRaml api, String baseUri) {}
+
+  public String getAmfModel() {
+    try {
+      return new AmfGraphRenderer().generateString(document).get();
+    } catch (InterruptedException | ExecutionException e) {
+      return e.getMessage();
+    }
+  }
 
   private String renderApi() {
 
