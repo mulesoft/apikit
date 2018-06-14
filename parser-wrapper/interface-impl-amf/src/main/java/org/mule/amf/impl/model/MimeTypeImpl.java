@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutionException;
 
 import static com.sun.jmx.mbeanserver.Util.cast;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -41,19 +42,36 @@ public class MimeTypeImpl implements IMimeType {
 
   @Override
   public String getSchema() {
+    final Shape schema = payload.schema();
+
+    if (schema.getClass() == AnyShape.class)
+      return null;
+
+    if (schema instanceof AnyShape)
+      return ((AnyShape) schema).toJsonSchema();
+
     return null;
   }
 
   @Override
   public Map<String, List<IParameter>> getFormParameters() {
-    final Shape schema = payload.schema();
+    final String mediaType = payload.mediaType().value();
 
-    if (!(schema instanceof NodeShape))
-      throw new RuntimeException("Unexpected Shape " + schema.getClass());
+    if (mediaType.startsWith("multipart/") || mediaType.equals("application/x-www-form-urlencoded")) {
+      final Shape schema = payload.schema();
 
-    final NodeShape nodeShape = cast(schema);
-    return nodeShape.properties().stream()
-        .collect(toMap(p -> p.name().value(), p -> singletonList(new ParameterImpl(p))));
+      if (schema.getClass() == AnyShape.class)
+        return emptyMap();
+
+      if (!(schema instanceof NodeShape))
+        throw new RuntimeException("Unexpected Shape " + schema.getClass());
+
+      final NodeShape nodeShape = cast(schema);
+      return nodeShape.properties().stream()
+          .collect(toMap(p -> p.name().value(), p -> singletonList(new ParameterImpl(p))));
+    }
+
+    return emptyMap();
   }
 
   @Override
@@ -63,6 +81,16 @@ public class MimeTypeImpl implements IMimeType {
 
   @Override
   public String getExample() {
+    final Shape schema = payload.schema();
+
+    if (schema instanceof AnyShape) {
+      final AnyShape anyShape = (AnyShape) schema;
+      return anyShape.examples().stream().filter(example -> example.name().value() == null)
+          .map(example -> example.value().value())
+          .findFirst()
+          .orElse(null);
+    }
+
     return null;
   }
 

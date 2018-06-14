@@ -34,8 +34,6 @@ import scala.Option;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.concurrent.ExecutionException;
 
 import static amf.ProfileNames.AMF;
@@ -58,8 +56,8 @@ public class ParserWrapperAmf implements ParserWrapper {
   private static final String VENDOR_OAS_20 = "oas 2.0";
   private static final boolean VALIDATE = false;
 
-  private ParserWrapperAmf(final URI uri) {
-    parser = getParserForApi(uri, buildEnvironment(uri));
+  private ParserWrapperAmf(final URI uri, Environment environment) {
+    parser = getParserForApi(uri, environment);
     document = DocumentParser.parseFile(parser, uri, VALIDATE);
     webApi = getWebApi(parser, uri);
     final Option<Vendor> vendor = webApi.sourceVendor();
@@ -85,11 +83,14 @@ public class ParserWrapperAmf implements ParserWrapper {
     return result;
   }
 
-  public static ParserWrapperAmf create(String apiPath) {
+  public static ParserWrapperAmf create(URI apiUri) {
+    return create(apiUri, buildEnvironment(apiUri));
+  }
+
+  public static ParserWrapperAmf create(URI apiUri, Environment environment) {
     try {
-      final URI uri = getPathAsUri(apiPath);
       AMF.init().get();
-      return new ParserWrapperAmf(uri);
+      return new ParserWrapperAmf(apiUri, environment);
     } catch (InterruptedException | ExecutionException e) {
       return null;
     }
@@ -103,33 +104,6 @@ public class ParserWrapperAmf implements ParserWrapper {
       environment = environment.add(new ExchangeDependencyResourceLoader(rootDir));
     }
     return environment;
-  }
-
-  private static URI getPathAsUri(String path) {
-    try {
-      final URI uri = new URI(path);
-      if (uri.isAbsolute())
-        return uri;
-      else {
-        //It means that it's a file
-        return getUriFromFile(path);
-      }
-    } catch (URISyntaxException e) {
-      return getUriFromFile(path);
-    }
-  }
-
-  private static URI getUriFromFile(String path) {
-    final URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
-
-    if (resource != null) {
-      try {
-        return resource.toURI();
-      } catch (URISyntaxException e1) {
-        throw new RuntimeException("Couldn't load api in location: " + path);
-      }
-    } else
-      throw new RuntimeException("Couldn't load api in location: " + path);
   }
 
   @Override

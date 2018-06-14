@@ -12,6 +12,7 @@ import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
+import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.loader.RootRamlFileResourceLoader;
@@ -36,22 +37,27 @@ public class ParserWrapperV2 implements ParserWrapper {
   private final ResourceLoader resourceLoader;
 
   public ParserWrapperV2(String ramlPath) {
-    this.ramlPath = ramlPath;
+    this(ramlPath, buildResourceLoader(ramlPath));
+  }
 
+  public ParserWrapperV2(String ramlPath, ResourceLoader resourceLoader) {
+    this.ramlPath = ramlPath;
+    this.resourceLoader = resourceLoader;
+  }
+
+  private static ResourceLoader buildResourceLoader(String ramlPath) {
     final File ramlFile = fetchRamlFile(ramlPath);
 
     if (ramlFile != null && ramlFile.getParent() != null) {
-      this.resourceLoader =
-          new org.raml.v2.api.loader.CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFile.getParentFile()),
-                                                             new DefaultResourceLoader(),
-                                                             new ExchangeDependencyResourceLoader(ramlFile.getParentFile()
-                                                                 .getAbsolutePath()));
+      return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFile.getParentFile()),
+                                         new DefaultResourceLoader(),
+                                         new ExchangeDependencyResourceLoader(ramlFile.getParentFile().getAbsolutePath()));
     } else {
-      this.resourceLoader = new DefaultResourceLoader();
+      return new DefaultResourceLoader();
     }
   }
 
-  private File fetchRamlFile(String ramlPath) {
+  private static File fetchRamlFile(String ramlPath) {
     return ofNullable(ramlPath)
         .map(p -> Thread.currentThread().getContextClassLoader().getResource(p))
         .filter(ParserWrapperV2::isFile)

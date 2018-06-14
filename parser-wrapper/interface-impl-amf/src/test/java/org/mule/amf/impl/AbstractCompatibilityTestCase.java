@@ -49,14 +49,15 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
   private static final PathMatcher API_MATCHER = FileSystems.getDefault().getPathMatcher("glob:api.raml");
 
   AbstractCompatibilityTestCase(final File input, final String name) {
-    final String apiPath = input.toURI().toString();
+    final URI uri = input.toURI();
+    final String apiPath = uri.toString();
     isRaml08 = isRaml08(input);
     // Create Java Parser Wrapper
     ramlWrapper = isRaml08 ? new ParserWrapperV1(apiPath) : new ParserWrapperV2(apiPath);
     raml = ramlWrapper.build();
     assertNotNull(raml);
     // Create AMF Wrapper
-    amfWrapper = ParserWrapperAmf.create(apiPath);
+    amfWrapper = ParserWrapperAmf.create(uri);
     amf = amfWrapper.build();
     assertNotNull(amf);
 
