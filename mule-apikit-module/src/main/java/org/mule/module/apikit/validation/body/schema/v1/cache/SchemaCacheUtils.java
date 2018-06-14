@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.validation.body.schema.v1.cache;
 
-import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.api.exception.ApikitRuntimeException;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;

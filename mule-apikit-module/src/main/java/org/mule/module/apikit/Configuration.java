@@ -12,7 +12,7 @@ import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
-import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.api.exception.ApikitRuntimeException;
 import org.mule.module.apikit.spi.RouterService;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;

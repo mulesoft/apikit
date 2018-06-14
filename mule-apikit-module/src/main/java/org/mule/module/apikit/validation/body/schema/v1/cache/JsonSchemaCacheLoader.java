@@ -8,7 +8,7 @@ package org.mule.module.apikit.validation.body.schema.v1.cache;
 
 import static org.mule.module.apikit.validation.body.schema.v1.cache.SchemaCacheUtils.resolveJsonSchema;
 
-import org.mule.module.apikit.exception.ApikitRuntimeException;
+import org.mule.module.apikit.api.exception.ApikitRuntimeException;
 import org.mule.module.apikit.uri.URICoder;
 import org.mule.raml.interfaces.model.IRaml;
 
