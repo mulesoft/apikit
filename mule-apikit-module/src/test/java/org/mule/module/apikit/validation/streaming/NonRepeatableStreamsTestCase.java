@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation.streaming;
 
 import com.jayway.restassured.RestAssured;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
@@ -66,6 +67,7 @@ public class NonRepeatableStreamsTestCase extends MuleArtifactFunctionalTestCase
   }
 
   @Test
+  @Ignore("APIKIT-1370")
   public void simpleMultipartRequesWithDefaults() {
     given().multiPart("first", "primero")
         .expect()
