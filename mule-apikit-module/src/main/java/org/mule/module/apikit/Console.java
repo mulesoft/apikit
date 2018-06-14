@@ -33,6 +33,8 @@ import java.io.FileWriter;
 import java.net.URI;
 import java.util.Optional;
 
+import static org.mule.module.apikit.api.UrlUtils.getCompletePathFromBasePathAndPath;
+
 public class Console extends AbstractComponent implements Processor, Initialisable {
 
   private final ApikitRegistry registry;
@@ -85,7 +87,8 @@ public class Console extends AbstractComponent implements Processor, Initialisab
     String method = attributes.getMethod();
 
     ConsoleResources consoleResources =
-        new ConsoleResources(config, listenerPath, requestPath, queryString, method, acceptHeader);
+        new ConsoleResources(config, getCompletePathFromBasePathAndPath("", listenerPath),
+                             requestPath, queryString, method, acceptHeader);
 
     // Listener path MUST end with /*
     consoleResources.isValidPath(attributes.getListenerPath());
