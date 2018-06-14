@@ -6,14 +6,9 @@
  */
 package org.mule.module.apikit;
 
-import static java.util.Collections.singletonList;
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static org.mule.module.apikit.CharsetUtils.trimBom;
-import static org.mule.module.apikit.transform.ApikitResponseTransformer.ACCEPT_HEADER;
-import static org.mule.module.apikit.transform.ApikitResponseTransformer.APIKIT_ROUTER_REQUEST;
-import static org.mule.module.apikit.transform.ApikitResponseTransformer.BEST_MATCH_REPRESENTATION;
-import static org.mule.module.apikit.transform.ApikitResponseTransformer.CONTRACT_MIME_TYPES;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.net.MediaType;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -26,6 +21,7 @@ import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.module.apikit.exception.InvalidFormParameterException;
 import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.InvalidQueryParameterException;
+import org.mule.module.apikit.exception.InvalidQueryStringException;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
@@ -45,11 +41,11 @@ import org.mule.transport.NullPayload;
 import org.mule.transport.http.transformers.FormTransformer;
 import org.mule.util.CaseInsensitiveHashMap;
 import org.mule.util.IOUtils;
+import org.raml.v2.api.model.common.ValidationResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
-import com.google.common.net.MediaType;
-
+import javax.activation.DataHandler;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -62,11 +58,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-
-import org.raml.v2.api.model.common.ValidationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Collections.singletonList;
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
+import static org.mule.module.apikit.CharsetUtils.trimBom;
+import static org.mule.module.apikit.transform.ApikitResponseTransformer.ACCEPT_HEADER;
+import static org.mule.module.apikit.transform.ApikitResponseTransformer.APIKIT_ROUTER_REQUEST;
+import static org.mule.module.apikit.transform.ApikitResponseTransformer.BEST_MATCH_REPRESENTATION;
+import static org.mule.module.apikit.transform.ApikitResponseTransformer.CONTRACT_MIME_TYPES;
 
 public class HttpRestRequest
 {
@@ -127,6 +125,8 @@ public class HttpRestRequest
         this.action = action;
         if (!config.isDisableValidations())
         {
+            // qs and qp are mutually exclusive
+            processQueryString();
             processQueryParameters();
             processHeaders();
         }
@@ -159,6 +159,46 @@ public class HttpRestRequest
         }
 
         return false;
+    }
+
+    private void processQueryString() throws InvalidQueryStringException
+    {
+        IParameter expected = action.getQueryString();
+        if (!shouldProcessQueryString(expected)) return;
+
+        Map queryParamsMap = requestEvent.getMessage().getInboundProperty("http.query.params");
+        String queryString = buildQueryString(expected, queryParamsMap);
+
+        if (!expected.validate(queryString))
+        {
+            throw new InvalidQueryStringException("Invalid value for query string ");
+        }
+    }
+
+    private boolean shouldProcessQueryString(IParameter queryString) {
+        return queryString != null && !queryString.isArray() && !queryString.isScalar();
+    }
+
+    private String buildQueryString(IParameter expected, Map queryParamsMap) {
+        StringBuilder result = new StringBuilder();
+
+        for (Object property : queryParamsMap.keySet()) {
+
+            Collection<?> actualQueryParam = getActualQueryParam(property.toString());
+            result.append("\n").append(property).append(": ");
+
+            if (actualQueryParam.size() > 1 || expected.isFacetArray(property.toString())) {
+                for (Object o : actualQueryParam) {
+                    result.append("\n  - ").append(o);
+                }
+            } else
+            {
+                for (Object o : actualQueryParam)
+                    result.append(o).append("\n");
+            }
+        }
+        // if empty validate return an empty json
+        return result.length() == 0 ? "{}" : result.toString();
     }
 
     private void processQueryParameters() throws InvalidQueryParameterException
