@@ -1,0 +1,38 @@
+#%RAML 1.0
+title: Query string test
+
+types:
+   user:
+     properties:
+       firstname:
+       lastname:
+   simple-type:
+    properties:
+      property:
+        required: false
+   array-property:
+     properties:
+       property1:
+         type: string[]
+       property2:
+         required: false
+   type-property:
+     properties:
+       property: user
+    
+/simple-type:
+  get:
+    queryString:
+      type: simple-type
+
+
+/type-property-array:
+  get:
+    queryString:
+      type: array-property
+
+
+/type-property-type:
+  get:
+    queryString:
+      type: type-property

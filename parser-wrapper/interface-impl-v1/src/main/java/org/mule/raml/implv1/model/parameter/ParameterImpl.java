@@ -7,14 +7,10 @@
 package org.mule.raml.implv1.model.parameter;
 
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.raml.model.parameter.AbstractParam;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import org.raml.model.ParamType;
-import org.raml.model.parameter.AbstractParam;
-
-import static org.raml.model.ParamType.*;
 
 public class ParameterImpl implements IParameter
 {
@@ -85,6 +81,16 @@ public class ParameterImpl implements IParameter
 
     @Override
     public boolean isStringArray() {
+        return false;
+    }
+
+    @Override
+    public boolean isScalar() {
+        return true;
+    }
+
+    @Override
+    public boolean isFacetArray(String facet) {
         return false;
     }
 

@@ -112,6 +112,11 @@ public class ActionImpl implements IAction
         return queryParameters;
     }
 
+    @Override
+    public IParameter getQueryString() {
+        throw new UnsupportedOperationException();
+    }
+
 
     private static Map<String, IParameter> loadQueryParameters(Method method) {
         Map<String, IParameter> result = new HashMap<>();
