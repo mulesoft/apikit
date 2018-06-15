@@ -41,6 +41,7 @@ public class ConsoleWithKRBUWithBaseUriTestCase extends MuleArtifactFunctionalTe
 
   @Test
   public void getRootRamlConsoleWithoutRouter() {
+    // dump() of wrapper
     given().port(serverPort.getNumber())
         .header("Accept", "application/raml+yaml")
         .expect()
@@ -55,6 +56,7 @@ public class ConsoleWithKRBUWithBaseUriTestCase extends MuleArtifactFunctionalTe
 
   @Test
   public void getRootRamlConsolelWithRouter() {
+    // dump() of wrapper
     given().port(serverPort.getNumber())
         .header("Accept", "application/raml+yaml")
         .expect()

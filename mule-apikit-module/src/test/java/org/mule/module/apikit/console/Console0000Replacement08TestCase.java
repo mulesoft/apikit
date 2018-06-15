@@ -52,18 +52,17 @@ public class Console0000Replacement08TestCase extends MuleArtifactFunctionalTest
     headers.put("Expires", "-1");
 
     ResponseSpecification rs = given().port(serverPort.getNumber())
-            .header("Accept", "text/html")
-            .expect()
-            .statusCode(200)
-            .headers(headers)
-            .contentType("text/html");
+        .header("Accept", "text/html")
+        .expect()
+        .statusCode(200)
+        .headers(headers)
+        .contentType("text/html");
 
     if (Boolean.getBoolean("mule.apikit.parser.amf")) {
       rs = rs.body(containsString("<title>API console bundle inspector</title>"));
-    } else
-    {
+    } else {
       rs = rs.body(startsWith("<!doctype html>"))
-              .body(containsString("this.location.href + '?raml'"));
+          .body(containsString("this.location.href + '?raml'"));
     }
 
     rs.when().get(CONSOLE_BASE_PATH);
@@ -71,6 +70,7 @@ public class Console0000Replacement08TestCase extends MuleArtifactFunctionalTest
 
   @Test
   public void getRootRaml() {
+    // dump() of wrapper
     given().port(serverPort.getNumber())
         .header("Accept", "application/raml+yaml")
         .expect()

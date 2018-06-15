@@ -6,19 +6,16 @@
  */
 package org.mule.module.apikit.console;
 
-import static com.jayway.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.core.IsNot.not;
-
+import com.jayway.restassured.RestAssured;
+import org.junit.Rule;
+import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
-import com.jayway.restassured.RestAssured;
-
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.core.IsNot.not;
 
 @ArtifactClassLoaderRunnerConfig
 public class ConsoleRamlWithoutBaseUriTestCase extends MuleArtifactFunctionalTestCase {
@@ -58,6 +55,7 @@ public class ConsoleRamlWithoutBaseUriTestCase extends MuleArtifactFunctionalTes
 
   @Test
   public void getRootRamlConsoleWithoutRouterKRBUFalse() {
+    // dump() of wrapper
     given().port(serverPort.getNumber())
         .header("Accept", "application/raml+yaml")
         .expect()
@@ -71,6 +69,7 @@ public class ConsoleRamlWithoutBaseUriTestCase extends MuleArtifactFunctionalTes
 
   @Test
   public void getRootRamConsolelWithRouter() {
+    // dump() of wrapper
     given().port(serverPort.getNumber())
         .header("Accept", "application/raml+yaml")
         .expect()
