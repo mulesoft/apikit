@@ -16,6 +16,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mule.raml.interfaces.model.ApiVendor;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
@@ -47,6 +48,9 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
     final String amfDump = amfWrapper.dump(amf, "http://apikit-test");
     final String ramlDump = ramlWrapper.dump(raml, "http://apikit-test");
     // assertThat(amfDump, is(equalTo(ramlDump)));
+
+    //assertThat(amfDump, containsString("title"));
+    //assertThat(ramlDump, containsString("title"));
   }
 
   @Test

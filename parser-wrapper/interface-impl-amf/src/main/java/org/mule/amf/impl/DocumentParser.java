@@ -16,8 +16,10 @@ import amf.client.parse.Oas20Parser;
 import amf.client.parse.Parser;
 import amf.client.parse.RamlParser;
 import amf.client.validate.ValidationReport;
+import amf.client.validate.ValidationResult;
 import amf.plugins.features.validation.AMFValidatorPlugin;
 import amf.plugins.xml.XmlValidationPlugin;
+import java.util.List;
 import org.mule.amf.impl.exceptions.ParserException;
 
 import java.net.URI;
@@ -50,7 +52,21 @@ public class DocumentParser {
   }
 
   public static Document parseFile(final Parser parser, final URI uri) throws ParserException {
-    return parseFile(parser, URLDecoder.decode(uri.toString()));
+    return parseFile(parser, uri, false);
+  }
+
+  public static Document parseFile(final Parser parser, final URI uri, final boolean validate) throws ParserException {
+      final Document document = parseFile(parser, URLDecoder.decode(uri.toString()));
+
+      if (validate) {
+          final ValidationReport parsingReport = DocumentParser.getParsingReport(parser, ProfileNames.RAML());
+          final List<ValidationResult> results = parsingReport.results();
+          if (!results.isEmpty()) {
+              final String message = results.get(0).message();
+              throw new ParserException(message);
+          };
+      }
+      return document;
   }
 
   private static Document parseFile(final Parser parser, final String url) throws ParserException {
@@ -84,7 +100,7 @@ public class DocumentParser {
     return getParsingReport(parser, ProfileNames.OAS());
   }
 
-  private static ValidationReport getParsingReport(final Parser parser, final String profile) throws ParserException {
+  public static ValidationReport getParsingReport(final Parser parser, final String profile) throws ParserException {
     return handleFuture(parser.reportValidation(profile));
   }
 

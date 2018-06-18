@@ -50,14 +50,16 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
 
   AbstractCompatibilityTestCase(final File input, final String name) {
     final String apiPath = input.toURI().toString();
-    amfWrapper = ParserWrapperAmf.create(apiPath);
-    amf = amfWrapper.build();
-    assertNotNull(amf);
     isRaml08 = isRaml08(input);
-    System.out.println(input.getAbsolutePath() + " " + isRaml08);
+    // Create Java Parser Wrapper
     ramlWrapper = isRaml08 ? new ParserWrapperV1(apiPath) : new ParserWrapperV2(apiPath);
     raml = ramlWrapper.build();
     assertNotNull(raml);
+    // Create AMF Wrapper
+    amfWrapper = ParserWrapperAmf.create(apiPath);
+    amf = amfWrapper.build();
+    assertNotNull(amf);
+
   }
 
   static Collection<Object[]> getData(final URI baseFolder) throws IOException {

@@ -6,6 +6,7 @@
  */
 package org.mule.amf.impl;
 
+import amf.ProfileNames;
 import amf.client.AMF;
 import amf.client.environment.DefaultEnvironment;
 import amf.client.environment.Environment;
@@ -20,6 +21,7 @@ import amf.client.render.Renderer;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
 import amf.core.remote.Vendor;
+import java.util.List;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
 import org.mule.amf.impl.model.AmfImpl;
 import org.mule.raml.interfaces.ParserWrapper;
@@ -54,10 +56,11 @@ public class ParserWrapperAmf implements ParserWrapper {
   private static final String VENDOR_RAML_08 = "raml 0.8";
   private static final String VENDOR_RAML_10 = "raml 1.0";
   private static final String VENDOR_OAS_20 = "oas 2.0";
+  private static final boolean VALIDATE = false;
 
   private ParserWrapperAmf(final URI uri) {
     parser = getParserForApi(uri, buildEnvironment(uri));
-    document = DocumentParser.parseFile(parser, uri);
+    document = DocumentParser.parseFile(parser, uri, VALIDATE);
     webApi = getWebApi(parser, uri);
     final Option<Vendor> vendor = webApi.sourceVendor();
     apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
@@ -212,7 +215,8 @@ public class ParserWrapperAmf implements ParserWrapper {
     try {
       return renderer.generateString(document).get();
     } catch (final InterruptedException | ExecutionException e) {
-      return e.getMessage();
+        e.printStackTrace();
+      return "";
     }
   }
 }
