@@ -8,13 +8,13 @@ package org.mule.module.apikit.console;
 
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.specification.ResponseSpecification;
-import java.util.HashMap;
-import java.util.Map;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.given;
 import static java.lang.Boolean.getBoolean;
@@ -34,7 +34,6 @@ public class ConsoleWithoutRouterTestCase extends AbstractMultiParserFunctionalT
   }
 
   @Test
-  @Ignore
   public void getConsoleIndex() throws Exception {
     Map<String, String> headers = new HashMap<>();
     headers.put("Access-Control-Allow-Origin", "*");
@@ -51,7 +50,7 @@ public class ConsoleWithoutRouterTestCase extends AbstractMultiParserFunctionalT
       rs = rs.body(containsString("<title>API console bundle inspector</title>"));
     } else {
       rs = rs.body(startsWith("<!doctype html>"))
-          .body(containsString("this.location.href + '?raml'"));
+          .body(containsString("this.location.href + 'org/mule/module/apikit/console/?raml'"));
     }
 
     rs.when().get(CONSOLE_BASE_PATH);
