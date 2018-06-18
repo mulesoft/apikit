@@ -6,41 +6,21 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
+import com.jayway.restassured.response.Response;
+import org.junit.Rule;
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
+import org.mule.tck.junit4.rule.DynamicPort;
+
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
+public class XxeAttackTestCase extends AbstractMultiParserFunctionalTestCase {
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Response;
-
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-
-@ArtifactClassLoaderRunnerConfig
-public class XxeAttackTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
   @Rule
   public DynamicPort serverPort2 = new DynamicPort("serverPort2");
-
-  @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
 
   @Override
   protected String getConfigFile() {

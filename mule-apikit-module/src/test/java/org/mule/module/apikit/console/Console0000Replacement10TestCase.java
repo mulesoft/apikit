@@ -6,63 +6,45 @@
  */
 package org.mule.module.apikit.console;
 
-import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.specification.ResponseSpecification;
-import org.junit.Rule;
-import org.junit.Test;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
 import java.util.HashMap;
 import java.util.Map;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 
-@ArtifactClassLoaderRunnerConfig
-public class Console0000Replacement10TestCase extends MuleArtifactFunctionalTestCase {
+public class Console0000Replacement10TestCase extends AbstractMultiParserFunctionalTestCase {
 
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
-
-  private String CONSOLE_BASE_PATH = "/console/";
+  private static final String CONSOLE_BASE_PATH = "/console/";
 
   @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
-
-  @Override
-  protected String getConfigResources() {
+  protected String getConfigFile() {
     return "org/mule/module/apikit/console/console-0000-replacement-raml10.xml";
   }
 
   @Test
+  @Ignore
   public void getConsoleIndex() throws Exception {
     Map<String, String> headers = new HashMap<>();
     headers.put("Access-Control-Allow-Origin", "*");
     headers.put("Expires", "-1");
 
     ResponseSpecification rs = given().port(serverPort.getNumber())
-            .header("Accept", "text/html")
-            .expect()
-            .statusCode(200)
-            .headers(headers)
-            .contentType("text/html");
+        .header("Accept", "text/html")
+        .expect()
+        .statusCode(200)
+        .headers(headers)
+        .contentType("text/html");
 
-    if (Boolean.getBoolean("mule.apikit.parser.amf")) {
+    if (isAmfParser()) {
       rs = rs.body(containsString("<title>API console bundle inspector</title>"));
     } else {
       rs = rs.body(startsWith("<!doctype html>"))
-              .body(containsString("this.location.href + '?raml'"));
+          .body(containsString("this.location.href + '?raml'"));
     }
 
     rs.when().get(CONSOLE_BASE_PATH);

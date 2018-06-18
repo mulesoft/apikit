@@ -6,34 +6,13 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
+
 import static com.jayway.restassured.RestAssured.given;
 
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import com.jayway.restassured.RestAssured;
-
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-
-@ArtifactClassLoaderRunnerConfig
-public class XmlSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
-
-  @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
+public class XmlSchemaRefTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
   protected String getConfigFile() {

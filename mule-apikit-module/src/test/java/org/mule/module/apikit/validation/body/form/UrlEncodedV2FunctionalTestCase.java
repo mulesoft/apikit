@@ -6,38 +6,17 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
+
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import com.jayway.restassured.RestAssured;
-
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-
-@ArtifactClassLoaderRunnerConfig
-public class UrlEncodedV2FunctionalTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
+public class UrlEncodedV2FunctionalTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
-
-  @Override
-  protected String getConfigResources() {
+  protected String getConfigFile() {
     return "org/mule/module/apikit/validation/formParameters/mule-config-v2.xml";
   }
 

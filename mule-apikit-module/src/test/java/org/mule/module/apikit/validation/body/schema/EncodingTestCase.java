@@ -12,25 +12,11 @@ import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
-@ArtifactClassLoaderRunnerConfig
-public class EncodingTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
-
-  @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
+public class EncodingTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
   protected String getConfigFile() {

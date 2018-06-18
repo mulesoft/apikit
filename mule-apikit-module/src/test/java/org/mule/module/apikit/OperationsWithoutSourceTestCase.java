@@ -6,39 +6,17 @@
  */
 package org.mule.module.apikit;
 
+import org.junit.Test;
+
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-import org.junit.Rule;
-import org.junit.Test;
-
-import com.jayway.restassured.RestAssured;
-
-@ArtifactClassLoaderRunnerConfig
-public class OperationsWithoutSourceTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
+public class OperationsWithoutSourceTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
-
-  @Override
-  protected String getConfigResources() {
+  protected String getConfigFile() {
     return "org/mule/module/apikit/operations-without-source.xml";
   }
-
 
   @Test
   public void operationsWithoutSource() throws Exception {

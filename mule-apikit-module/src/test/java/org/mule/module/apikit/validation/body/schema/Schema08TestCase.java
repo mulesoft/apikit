@@ -10,6 +10,7 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
@@ -19,25 +20,10 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-@ArtifactClassLoaderRunnerConfig
-public class Schema08TestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
+public class Schema08TestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
-
-  @Override
-  protected String getConfigResources() {
+  protected String getConfigFile() {
     return "org/mule/module/apikit/validation/body/schema/schema-config-08.xml";
   }
 

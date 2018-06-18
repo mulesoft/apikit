@@ -12,7 +12,7 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 public class ParametersInboundTestCase extends ParametersTestCase {
 
   @Override
-  protected String getConfigResources() {
+  protected String getConfigFile() {
     return "org/mule/module/apikit/parameters/parameters-config-inbound.xml";
   }
 }

@@ -6,31 +6,12 @@
  */
 package org.mule.module.apikit.spacesInPath;
 
-import com.jayway.restassured.RestAssured;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 import static com.jayway.restassured.RestAssured.given;
 
-@ArtifactClassLoaderRunnerConfig
-public class SpacesInPathTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
-
-  @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
+public class SpacesInPathTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
   protected String getConfigFile() {

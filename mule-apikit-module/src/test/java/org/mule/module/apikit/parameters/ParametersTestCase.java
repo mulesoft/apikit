@@ -6,12 +6,9 @@
  */
 package org.mule.module.apikit.parameters;
 
-import com.jayway.restassured.RestAssured;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -21,24 +18,10 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.core.Is.is;
 
 @ArtifactClassLoaderRunnerConfig
-public class ParametersTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
+public class ParametersTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
-
-  @Override
-  protected String getConfigResources() {
+  protected String getConfigFile() {
     return "org/mule/module/apikit/parameters/parameters-config.xml";
   }
 

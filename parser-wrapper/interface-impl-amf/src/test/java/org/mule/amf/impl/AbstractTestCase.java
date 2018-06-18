@@ -8,13 +8,16 @@ package org.mule.amf.impl;
 
 import java.util.Map;
 import java.util.Set;
+import org.junit.Ignore;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
+import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -24,6 +27,29 @@ abstract class AbstractTestCase {
   private static final String MISSING_RESOURCE = "Resource '%s' missing in AMF Resources for uri '%s'";
   private static final String MISSING_ACTION = "Action '%s' missing";
   private static final String MISSING_PARAMETER = "Parameter '%s' missing";
+
+  static void assertEqual(final IRaml actual, final IRaml expected) {
+
+    assertThat(actual.getVersion(), is(equalTo(expected.getVersion())));
+    assertThat(actual.getBaseUri(), is(equalTo(expected.getBaseUri())));
+
+    assertParametersEqual(actual.getBaseUriParameters(), expected.getBaseUriParameters());
+
+    //dump("Resources 08",  ramlResources);
+    //dump("Resources AMF",  amfResources);
+    assertResourcesEqual(actual.getResources(), expected.getResources());
+
+    // TODO"
+    //schemas()
+
+    //"Different behaviour in Java Parser 08 & 10"
+    // cleanBaseUriParameters()
+    // consolidatedSchemas()
+    // instance()
+    // getSecuritySchemes()
+    // getTraits()
+    // getUri()
+  }
 
   static void assertResourcesEqual(final IParameter actual, final IParameter expected) {
     assertThat(actual.getDefaultValue(), is(equalTo(expected.getDefaultValue())));
@@ -93,6 +119,8 @@ abstract class AbstractTestCase {
 
     assertParametersEqual(actual.getHeaders(), expected.getHeaders());
     // TODO MORE cases
+    //actual.getBody();
+    //actual.getResource();        
   }
 
   static void assertParametersEqual(final Map<String, IParameter> actual, final Map<String, IParameter> expected) {
@@ -130,5 +158,30 @@ abstract class AbstractTestCase {
 
   static void assertExamplesEqual(final Map<String, String> actual, final Map<String, String> expected) {
     assertThat(actual.size(), is(expected.size()));
+  }
+
+  private static void dump(final String title, Map<String, IResource> resources) {
+    System.out.println(format("------------- %s -------------", title));
+    System.out.println(dump("", resources, ""));
+    System.out.println("-------------------------------------");
+  }
+
+  private static String dump(final String indent, Map<String, IResource> resources, String out) {
+
+    if (resources.isEmpty())
+      return out;
+
+    for (Map.Entry<String, IResource> entry : resources.entrySet()) {
+
+      final IResource value = entry.getValue();
+      final Set<String> actions = value.getActions().keySet().stream().map(Enum::name).collect(toSet());
+      final String resource = "[" + entry.getKey() + "] -> " + value.getUri() + " " + mkString(actions);
+      out += indent + resource + "\n";
+      if (value.getResources().isEmpty())
+        continue;
+
+      out = dump(indent + "  ", value.getResources(), out);
+    }
+    return out;
   }
 }

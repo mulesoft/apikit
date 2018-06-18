@@ -9,6 +9,7 @@ package org.mule.module.apikit.validation.body.schema;
 import static com.jayway.restassured.RestAssured.given;
 
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
@@ -18,23 +19,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
-@ArtifactClassLoaderRunnerConfig
 @Ignore // This tests are failing because of APIMF-551
-public class JsonSchemaRefTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
-
-  @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
+public class JsonSchemaRefTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
   protected String getConfigFile() {

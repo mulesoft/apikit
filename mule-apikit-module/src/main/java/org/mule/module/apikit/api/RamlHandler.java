@@ -27,6 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 public class RamlHandler {
 
@@ -147,7 +148,7 @@ public class RamlHandler {
   }
 
   public String getAMFModel() {
-    return parserService.getAMFModel();
+    return parserService.getAmfModel();
   }
 
   public String getBaseUriReplacement(String apiServer) {
@@ -178,7 +179,7 @@ public class RamlHandler {
         resourcesFullPath += apiResourcesRelativePath.substring(1);
       }
     }
-    return isParserV2() && queryString.equals(RAML_QUERY_STRING)
+    return getApiVendor().equals(RAML_10) && queryString.equals(RAML_QUERY_STRING)
         && ActionType.GET.toString().equals(method.toUpperCase())
         && requestPath.startsWith(resourcesFullPath);
   }

@@ -18,27 +18,12 @@ import org.junit.Test;
 import com.jayway.restassured.RestAssured;
 
 @ArtifactClassLoaderRunnerConfig
-public class RouterTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
+public class RouterTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
-
-  @Override
-  protected String getConfigResources() {
+  protected String getConfigFile() {
     return "org/mule/module/apikit/simple-routing/simple.xml";
   }
-
 
   @Test
   public void simpleRouting() throws Exception {

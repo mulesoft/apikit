@@ -21,28 +21,12 @@ import static com.jayway.restassured.RestAssured.given;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 
-@ArtifactClassLoaderRunnerConfig
-public class RouterRemoteRamlTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
-
-  @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
+public class RouterRemoteRamlTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
   protected String getConfigFile() {
     return "org/mule/module/apikit/router-remote-raml/remote-raml.xml";
   }
-
 
   @Test
   public void simpleRouting() throws Exception {

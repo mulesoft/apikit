@@ -8,11 +8,11 @@
       http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 
     <http:listener-config name="httpListenerConfig">
-        <http:listener-connection host="localhost" port="${http.port}"/>
+        <http:listener-connection host="localhost" port="${serverPort}"/>
     </http:listener-config>
 
     <http:listener-config name="secondHttpListenerConfig">
-        <http:listener-connection host="localhost" port="${second.http.port}"/>
+        <http:listener-connection host="localhost" port="${secondServerPort}"/>
     </http:listener-config>
 
     <apikit:config name="apiConfig" raml="org/mule/module/apikit/console/simple-with-baseuri10.raml"

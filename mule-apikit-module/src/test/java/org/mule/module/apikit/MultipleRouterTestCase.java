@@ -9,37 +9,14 @@ package org.mule.module.apikit;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import com.jayway.restassured.RestAssured;
-
-import org.junit.Rule;
 import org.junit.Test;
 
-@ArtifactClassLoaderRunnerConfig
-public class MultipleRouterTestCase extends MuleArtifactFunctionalTestCase {
-
-  @Rule
-  public DynamicPort serverPort = new DynamicPort("serverPort");
+public class MultipleRouterTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected void doSetUp() throws Exception {
-    RestAssured.port = serverPort.getNumber();
-    super.doSetUp();
-  }
-
-  @Override
-  protected String getConfigResources() {
+  protected String getConfigFile() {
     return "org/mule/module/apikit/multiple-router/multiple-raml.xml";
   }
-
 
   @Test
   public void simpleRouting() throws Exception {
@@ -67,6 +44,4 @@ public class MultipleRouterTestCase extends MuleArtifactFunctionalTestCase {
         .statusCode(415)
         .when().post("/api2/typesPerson");
   }
-
-
 }

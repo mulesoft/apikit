@@ -19,12 +19,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mule.raml.implv1.ParserV1Utils;
+import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.ParserWrapperV2;
+import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.IRaml;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 
@@ -38,13 +43,20 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
   protected final IRaml raml;
   protected final boolean isRaml08;
 
+  protected ParserWrapper ramlWrapper;
+  protected ParserWrapper amfWrapper;
+
   private static final PathMatcher API_MATCHER = FileSystems.getDefault().getPathMatcher("glob:api.raml");
 
   AbstractCompatibilityTestCase(final File input, final String name) {
-    amf = ParserAmfUtils.build(input);
+    final String apiPath = input.toURI().toString();
+    amfWrapper = ParserWrapperAmf.create(apiPath);
+    amf = amfWrapper.build();
     assertNotNull(amf);
-    isRaml08 = name.startsWith("08-");
-    raml = isRaml08 ? buildRaml08(input) : buildRaml10(input);
+    isRaml08 = isRaml08(input);
+    System.out.println(input.getAbsolutePath() + " " + isRaml08);
+    ramlWrapper = isRaml08 ? new ParserWrapperV1(apiPath) : new ParserWrapperV2(apiPath);
+    raml = ramlWrapper.build();
     assertNotNull(raml);
   }
 
@@ -66,33 +78,17 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
         .collect(toList());
   }
 
-  private static IRaml buildRaml08(final File file) {
+  private static boolean isRaml08(final File file) {
+    boolean result = false;
     try {
-      final FileReader fileReader = new FileReader(file);
-      final String content = IOUtils.toString(fileReader);
-      fileReader.close();
-
-      String rootRamlName = file.getName();
-      String ramlFolderPath = null;
-      if (file.getParentFile() != null) {
-        ramlFolderPath = file.getParentFile().getPath();
-      }
-      return ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
-    } catch (Exception e) {
-      Assert.fail(e.getMessage());
+      final Stream<String> lines = Files.lines(file.toPath());
+      final Optional<String> first = lines.findFirst();
+      if (first.isPresent())
+        result = first.get().contains("#%RAML 0.8");
+    } catch (IOException e) {
+      e.printStackTrace();
     }
-    return null;
-  }
-
-  private static IRaml buildRaml10(final File file) {
-
-    try {
-      final DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
-      return ParserV2Utils.build(resourceLoader, file.getAbsolutePath());
-    } catch (Exception e) {
-      Assert.fail(e.getMessage());
-    }
-    return null;
+    return result;
   }
 
 }

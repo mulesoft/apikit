@@ -10,35 +10,28 @@ package org.mule.module.apikit.console;
 import com.jayway.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
 import static com.jayway.restassured.RestAssured.given;
 
-public class InvalidConsolePath extends MuleArtifactFunctionalTestCase {
+public class InvalidConsolePath extends AbstractMultiParserFunctionalTestCase {
 
   @Rule
-  public DynamicPort listenerConsole = new DynamicPort("http.port");
-  @Rule
-  public DynamicPort secondListenerConsole = new DynamicPort("second.http.port");
+  public DynamicPort secondServerPort = new DynamicPort("secondServerPort");
   @Rule
   public DynamicPort inboundEndpointConsole = new DynamicPort("inboundEndpointConsole");
   @Rule
   public DynamicPort secondInboundEndpointConsole = new DynamicPort("secondInboundEndpointConsole");
 
   @Override
-  public int getTestTimeoutSecs() {
-    return 6000;
-  }
-
-  @Override
-  protected String getConfigResources() {
+  protected String getConfigFile() {
     return "org/mule/module/apikit/console/console-invalid-path.xml";
   }
 
   @Test
   public void getConsoleWithInvalidPath() throws Exception {
-    RestAssured.port = listenerConsole.getNumber();
+    RestAssured.port = serverPort.getNumber();
     given().expect()
         .statusCode(500)
         .when().get("/console/");
