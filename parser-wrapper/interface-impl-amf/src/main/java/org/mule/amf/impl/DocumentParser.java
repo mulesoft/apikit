@@ -56,17 +56,17 @@ public class DocumentParser {
   }
 
   public static Document parseFile(final Parser parser, final URI uri, final boolean validate) throws ParserException {
-      final Document document = parseFile(parser, URLDecoder.decode(uri.toString()));
+    final Document document = parseFile(parser, URLDecoder.decode(uri.toString()));
 
-      if (validate) {
-          final ValidationReport parsingReport = DocumentParser.getParsingReport(parser, ProfileNames.RAML());
-          final List<ValidationResult> results = parsingReport.results();
-          if (!results.isEmpty()) {
-              final String message = results.get(0).message();
-              throw new ParserException(message);
-          };
-      }
-      return document;
+    if (validate) {
+      final ValidationReport parsingReport = DocumentParser.getParsingReport(parser, ProfileNames.RAML());
+      final List<ValidationResult> results = parsingReport.results();
+      if (!results.isEmpty()) {
+        final String message = results.get(0).message();
+        throw new ParserException(message);
+      } ;
+    }
+    return document;
   }
 
   private static Document parseFile(final Parser parser, final String url) throws ParserException {

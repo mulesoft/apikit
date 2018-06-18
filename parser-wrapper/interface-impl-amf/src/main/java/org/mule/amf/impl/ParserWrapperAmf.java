@@ -215,7 +215,7 @@ public class ParserWrapperAmf implements ParserWrapper {
     try {
       return renderer.generateString(document).get();
     } catch (final InterruptedException | ExecutionException e) {
-        e.printStackTrace();
+      e.printStackTrace();
       return "";
     }
   }
