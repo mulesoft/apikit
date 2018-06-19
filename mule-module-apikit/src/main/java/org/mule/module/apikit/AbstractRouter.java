@@ -47,9 +47,9 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    FlowConstruct flowConstruct;
+    protected FlowConstruct flowConstruct;
     protected AbstractConfiguration config;
-    private RamlDescriptorHandler ramlHandler;
+    protected RamlDescriptorHandler ramlHandler;
 
     @Override
     public void start() throws MuleException
@@ -86,7 +86,7 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
     }
 
 
-    private MuleEvent processBlocking(MuleEvent event) throws MuleException
+    protected MuleEvent processBlocking(MuleEvent event) throws MuleException
     {
         if (config.isExtensionEnabled() && config.getRouterExtension().isExecutable(event))
         {
@@ -98,7 +98,7 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
         }
     }
 
-    private MuleEvent processBlockingRequest(MuleEvent event) throws MuleException
+    public MuleEvent processBlockingRequest(MuleEvent event) throws MuleException
     {
         RouterRequest result = processRouterRequest(event);
         event = result.getEvent();
@@ -109,7 +109,7 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
         return processRouterResponse(event, result.getSuccessStatus());
     }
 
-    private MuleEvent processNonBlocking(final MuleEvent request) throws MuleException
+    protected MuleEvent processNonBlocking(final MuleEvent request) throws MuleException
     {
         final RouterRequest result = processRouterRequest(request);
 
@@ -158,7 +158,7 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
         };
     }
 
-    private RouterRequest processRouterRequest(MuleEvent event) throws MuleException
+    protected RouterRequest processRouterRequest(MuleEvent event) throws MuleException
     {
         HttpRestRequest request = getHttpRestRequest(event);
 
