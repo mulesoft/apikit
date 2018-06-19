@@ -26,6 +26,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.mule.raml</groupId>
+            <artifactId>raml-parser-interface-impl-amf</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.mule.tools</groupId>
             <artifactId>mule-apikit-common</artifactId>
             <version>${project.version}</version>

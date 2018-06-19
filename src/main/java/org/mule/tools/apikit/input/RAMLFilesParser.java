@@ -6,18 +6,31 @@
  */
 package org.mule.tools.apikit.input;
 
+import amf.client.environment.DefaultEnvironment;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.mule.amf.impl.ParserWrapperAmf;
 import org.mule.raml.implv1.ParserV1Utils;
+import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
+import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.tools.apikit.ParserType;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.output.GenerationModel;
+import org.raml.v2.api.loader.CompositeResourceLoader;
+import org.raml.v2.api.loader.DefaultResourceLoader;
+import org.raml.v2.api.loader.FileResourceLoader;
+import org.raml.v2.api.loader.ResourceLoader;
+import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,13 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.raml.v2.api.loader.CompositeResourceLoader;
-import org.raml.v2.api.loader.DefaultResourceLoader;
-import org.raml.v2.api.loader.FileResourceLoader;
-import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.v2.api.loader.RootRamlFileResourceLoader;
+import static org.mule.tools.apikit.ParserType.AMF;
+import static org.mule.tools.apikit.ParserType.defaultType;
 
 public class RAMLFilesParser {
 
@@ -43,6 +51,10 @@ public class RAMLFilesParser {
   private final Log log;
 
   public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
+    this(log, fileStreams, apiFactory, defaultType());
+  }
+
+  public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory, ParserType parserType) {
     this.log = log;
     this.apiFactory = apiFactory;
     List<File> processedFiles = new ArrayList<>();
@@ -56,31 +68,17 @@ public class RAMLFilesParser {
         break;
 
       }
-      String rootRamlName = ramlFile.getName();
-      String ramlFolderPath = null;
-      File ramlFileParent = null;
-      if (ramlFile.getParentFile() != null) {
-        ramlFolderPath = ramlFile.getParentFile().getPath();
-        ramlFileParent = ramlFile.getParentFile();
-      }
-      if (isValidRaml(rootRamlName, content, ramlFolderPath)) {
-        try {
-          IRaml raml;
-          if (ParserV2Utils.useParserV2(content)) {
-            ResourceLoader resourceLoader =
-                new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFileParent), new DefaultResourceLoader(),
-                                            new FileResourceLoader(ramlFolderPath),
-                                            new ExchangeDependencyResourceLoader(ramlFolderPath));
-            raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
-          } else {
-            raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
-          }
-          collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
-          processedFiles.add(ramlFile);
-        } catch (Exception e) {
-          log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());
-          log.debug(e);
-        }
+
+      try {
+        final ParserWrapper parserWrapper = getParserWrapper(parserType, ramlFile, content);
+        parserWrapper.validate(); // This will fail whether the raml is not valid
+
+        final IRaml raml = parserWrapper.build();
+        collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
+        processedFiles.add(ramlFile);
+      } catch (Exception e) {
+        log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());
+        log.debug(e);
       }
 
     }
@@ -163,6 +161,30 @@ public class RAMLFilesParser {
 
   public Map<ResourceActionMimeTypeTriplet, GenerationModel> getEntries() {
     return entries;
+  }
+
+  private static ParserWrapper getParserWrapper(ParserType parserType, File apiFile, String content) {
+    String apiFolderPath = null;
+    File apiFileParent = null;
+    if (apiFile.getParentFile() != null) {
+      apiFileParent = apiFile.getParentFile();
+      apiFolderPath = apiFileParent.getPath();
+    }
+
+    if (parserType == AMF) {
+      DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+      return ParserWrapperAmf.create(apiFile.toURI());
+    } else {
+      if (ParserV2Utils.useParserV2(content)) {
+        final ResourceLoader resourceLoader =
+            new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
+                                        new FileResourceLoader(apiFolderPath),
+                                        new ExchangeDependencyResourceLoader(apiFolderPath));
+        return new ParserWrapperV2(apiFile.getPath(), resourceLoader);
+      } else {
+        return new ParserWrapperV1(apiFile.getAbsolutePath());
+      }
+    }
   }
 
 }
