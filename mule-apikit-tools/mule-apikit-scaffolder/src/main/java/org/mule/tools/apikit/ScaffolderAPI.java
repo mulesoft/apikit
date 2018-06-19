@@ -126,7 +126,8 @@ public class ScaffolderAPI {
     }
     Scaffolder scaffolder;
     try {
-      scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain, minMuleVersion, runtimeEdition);
+      scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain, minMuleVersion, runtimeEdition,
+                                               parserType);
     } catch (Exception e) {
       throw new RuntimeException("Error executing scaffolder", e);
     }

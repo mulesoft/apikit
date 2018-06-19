@@ -21,6 +21,8 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 import java.io.*;
 import java.util.*;
 
+import static org.mule.tools.apikit.ParserType.defaultType;
+
 /**
  * Goal for apikit:create
  */
@@ -129,7 +131,7 @@ public class CreateMojo
     try {
       final RuntimeEdition muleRuntimeEdition = RuntimeEdition.valueOf(this.runtimeEdition);
       Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile,
-                                                          minMuleVersion, muleRuntimeEdition);
+                                                          minMuleVersion, muleRuntimeEdition, defaultType());
       scaffolder.run();
     } catch (IOException e) {
       throw new MojoExecutionException(e.getMessage());

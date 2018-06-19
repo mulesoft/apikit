@@ -7,31 +7,31 @@ baseUri: http://localhost:8081/api
 schemas:
 - jsonSchema: |
     {
-    "$schema": "http://json-schema.org/draft-03/schema#",
-    "title": "JSON Schema for Saas Transaction",
-    "required": true,
-    "properties": {
-    "tenant": {
-    "type": "integer",
-    "description": "The Tenant ID of the transaction",
-    "required": true
-    },
-    "objectType": {
-    "type": "string",
-    "description": "The type of object being added to the queue",
-    "required": true
-    },
-    "objectKey": {
-    "type": "string",
-    "description": "The unique key of the object being added to the queue",
-    "required": true 
-    },
-    "txnType": {
-    "type": "string",
-    "description": "Create, Update, Delete",
-    "required": true 
-    }
-    }
+      "$schema": "http://json-schema.org/draft-03/schema#",
+      "title": "JSON Schema for Saas Transaction",
+      "required": true,
+      "properties": {
+        "tenant": {
+          "type": "integer",
+          "description": "The Tenant ID of the transaction",
+          "required": true
+        },
+        "objectType": {
+          "type": "string",
+          "description": "The type of object being added to the queue",
+          "required": true
+        },
+        "objectKey": {
+          "type": "string",
+          "description": "The unique key of the object being added to the queue",
+          "required": true
+        },
+        "txnType": {
+          "type": "string",
+          "description": "Create, Update, Delete",
+          "required": true
+        }
+      }
     }
 - xmlSchema: |
     <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">

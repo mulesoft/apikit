@@ -21,6 +21,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 import static org.mule.module.apikit.parser.Parser.AMF;
 import static org.mule.module.apikit.parser.Parser.RAML_V1;
@@ -82,7 +85,7 @@ public class ParserService {
       case RAML_V2:
         return new ParserWrapperV2(ramlPath);
       default:
-        return ParserWrapperAmf.create(ramlPath);
+        return ParserWrapperAmf.create(getPathAsUri(ramlPath));
     }
   }
 
@@ -116,5 +119,32 @@ public class ParserService {
 
   public void updateBaseUri(IRaml api, String baseUri) {
     parserWrapper.updateBaseUri(api, baseUri);
+  }
+
+  private static URI getPathAsUri(String path) {
+    try {
+      final URI uri = new URI(path);
+      if (uri.isAbsolute())
+        return uri;
+      else {
+        //It means that it's a file
+        return getUriFromFile(path);
+      }
+    } catch (URISyntaxException e) {
+      return getUriFromFile(path);
+    }
+  }
+
+  private static URI getUriFromFile(String path) {
+    final URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
+
+    if (resource != null) {
+      try {
+        return resource.toURI();
+      } catch (URISyntaxException e1) {
+        throw new RuntimeException("Couldn't load api in location: " + path);
+      }
+    } else
+      throw new RuntimeException("Couldn't load api in location: " + path);
   }
 }

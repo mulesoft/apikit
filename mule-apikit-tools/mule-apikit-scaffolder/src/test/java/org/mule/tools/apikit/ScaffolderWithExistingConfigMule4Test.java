@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Helper.countOccurences;
@@ -324,13 +325,13 @@ public class ScaffolderWithExistingConfigMule4Test {
     assertTrue(muleXmlSimple.exists());
 
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+    assertEquals(8, countOccurences(s, "post:\\pet"));
     assertTrue(s.contains("post:\\pet:application\\json"));
     assertTrue(s.contains("post:\\pet:text\\xml"));
     assertTrue(s.contains("post:\\pet:application\\x-www-form-urlencoded"));
-    assertTrue(s.contains("post:\\pet"));
-    assertTrue(!s.contains("post:\\pet:application\\xml"));
-    assertTrue(s.contains("post:\\vet"));
-    assertTrue(!s.contains("post:\\vet:application\\xml"));
+    assertFalse(s.contains("post:\\pet:application\\xml"));
+    assertEquals(3, countOccurences(s, "post:\\vet"));
+    assertFalse(s.contains("post:\\vet:application\\xml"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
     assertEquals(0, countOccurences(s, "#[mel:null]"));
