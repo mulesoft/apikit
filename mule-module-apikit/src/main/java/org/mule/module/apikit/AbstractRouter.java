@@ -6,8 +6,7 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.module.http.api.HttpConstants.RequestProperties.HTTP_URI_PARAMS;
-
+import com.google.common.cache.LoadingCache;
 import org.mule.DefaultMuleEvent;
 import org.mule.NonBlockingVoidMuleEvent;
 import org.mule.OptimizedRequestContext;
@@ -20,6 +19,7 @@ import org.mule.api.MuleMessage;
 import org.mule.api.NonBlockingSupported;
 import org.mule.api.construct.FlowConstruct;
 import org.mule.api.lifecycle.StartException;
+import org.mule.api.transport.NonBlockingReplyToHandler;
 import org.mule.api.transport.ReplyToHandler;
 import org.mule.construct.Flow;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
@@ -33,15 +33,14 @@ import org.mule.module.apikit.uri.URIResolver;
 import org.mule.processor.AbstractInterceptingMessageProcessor;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import com.google.common.cache.LoadingCache;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.mule.module.http.api.HttpConstants.RequestProperties.HTTP_URI_PARAMS;
 
 public abstract class AbstractRouter extends AbstractInterceptingMessageProcessor implements ApiRouter, NonBlockingSupported
 {
@@ -110,33 +109,13 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
         return processRouterResponse(event, result.getSuccessStatus());
     }
 
-    protected MuleEvent processNonBlocking(MuleEvent event) throws MuleException
+    protected MuleEvent processNonBlocking(final MuleEvent request) throws MuleException
     {
-        final RouterRequest result = processRouterRequest(event);
+        final RouterRequest result = processRouterRequest(request);
 
-        event = result.getEvent();
+        MuleEvent event = result.getEvent();
 
-        final ReplyToHandler originalReplyToHandler = event.getReplyToHandler();
-        event = new DefaultMuleEvent(event, new ReplyToHandler()
-        {
-            @Override
-            public void processReplyTo(MuleEvent event, MuleMessage returnMessage, Object replyTo) throws MuleException
-            {
-                MuleEvent response = processRouterResponse(new DefaultMuleEvent(event, originalReplyToHandler), result.getSuccessStatus());
-                // Update RequestContext ThreadLocal for backwards compatibility
-                OptimizedRequestContext.unsafeSetEvent(response);
-                if (!NonBlockingVoidMuleEvent.getInstance().equals(response))
-                {
-                    originalReplyToHandler.processReplyTo(response, null, null);
-                }
-            }
-
-            @Override
-            public void processExceptionReplyTo(MessagingException exception, Object replyTo)
-            {
-                originalReplyToHandler.processExceptionReplyTo(exception, replyTo);
-            }
-        });
+        event = new DefaultMuleEvent(event, createReplyToHandler(request, result));
         // Update RequestContext ThreadLocal for backwards compatibility
         OptimizedRequestContext.unsafeSetEvent(event);
 
@@ -149,6 +128,34 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
             return processRouterResponse(event, result.getSuccessStatus());
         }
         return event;
+    }
+
+    private ReplyToHandler createReplyToHandler(final MuleEvent request,final RouterRequest result) {
+        final ReplyToHandler originalReplyToHandler = request.getReplyToHandler();
+        return new NonBlockingReplyToHandler()
+        {
+            @Override
+            public void processReplyTo(MuleEvent event, MuleMessage returnMessage, Object replyTo) throws MuleException
+            {
+                try {
+                    MuleEvent response = processRouterResponse(new DefaultMuleEvent(event, originalReplyToHandler), result.getSuccessStatus());
+                    // Update RequestContext ThreadLocal for backwards compatibility
+                    OptimizedRequestContext.unsafeSetEvent(response);
+                    if (!NonBlockingVoidMuleEvent.getInstance().equals(response)) {
+                        originalReplyToHandler.processReplyTo(response, null, null);
+                    }
+                } catch (Exception e)
+                {
+                    processExceptionReplyTo(new MessagingException(event, e), null);
+                }
+            }
+
+            @Override
+            public void processExceptionReplyTo(MessagingException exception, Object replyTo)
+            {
+                originalReplyToHandler.processExceptionReplyTo(exception, replyTo);
+            }
+        };
     }
 
     protected RouterRequest processRouterRequest(MuleEvent event) throws MuleException
