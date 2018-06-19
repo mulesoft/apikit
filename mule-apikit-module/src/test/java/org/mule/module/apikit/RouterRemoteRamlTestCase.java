@@ -6,19 +6,9 @@
  */
 package org.mule.module.apikit;
 
-import com.jayway.restassured.RestAssured;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.module.apikit.api.RamlHandler;
-import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import java.io.IOException;
 
 import static com.jayway.restassured.RestAssured.given;
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.CoreMatchers.is;
 
 public class RouterRemoteRamlTestCase extends AbstractMultiParserFunctionalTestCase {

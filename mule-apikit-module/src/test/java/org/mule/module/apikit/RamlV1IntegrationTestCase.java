@@ -6,14 +6,12 @@
  */
 package org.mule.module.apikit;
 
+import org.junit.Test;
+
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-import org.junit.Test;
-
-@ArtifactClassLoaderRunnerConfig
 public class RamlV1IntegrationTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override

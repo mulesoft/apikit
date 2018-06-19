@@ -8,16 +8,23 @@ package org.mule.amf.impl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.ApiVendor;
+import org.mule.raml.interfaces.model.IRaml;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
@@ -44,13 +51,32 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
   }
 
   @Test
-  public void dump() {
+  public void dump() throws IOException {
     final String amfDump = amfWrapper.dump(amf, "http://apikit-test");
     final String ramlDump = ramlWrapper.dump(raml, "http://apikit-test");
-    // assertThat(amfDump, is(equalTo(ramlDump)));
 
-    //assertThat(amfDump, containsString("title"));
-    //assertThat(ramlDump, containsString("title"));
+    // Dump to file
+    final Path basePath = Paths.get(input.getPath()).getParent();
+    final Path amfDumpPath = basePath.resolve("amf-dump.raml");
+    final Path ramlDumpPath = basePath.resolve("raml-dump.raml");
+
+    Files.write(amfDumpPath, amfDump.getBytes("UTF-8"));
+    Files.write(ramlDumpPath, ramlDump.getBytes("UTF-8"));
+
+    // Parse java dumped file  
+    final ParserWrapper dumpedRamlWrapper = createJavaParserWrapper(ramlDumpPath.toUri().toString(), isRaml08);
+    final IRaml dumpedRaml = dumpedRamlWrapper.build();
+    assertNotNull(dumpedRaml);
+
+    // TODO APIKIT-1380
+    // Parse amf dumpled file
+    if (!isRaml08) {
+      final ParserWrapper dumpedAmfWrapper = ParserWrapperAmf.create(amfDumpPath.toUri());
+      final IRaml dumpedAmf = dumpedAmfWrapper.build();
+      assertNotNull(dumpedAmf);
+    }
+
+    // assertEqual(dumpedAmf, dumpedRaml);   
   }
 
   @Test

@@ -54,7 +54,7 @@ public class ParserWrapperAmf implements ParserWrapper {
   private static final String VENDOR_RAML_08 = "raml 0.8";
   private static final String VENDOR_RAML_10 = "raml 1.0";
   private static final String VENDOR_OAS_20 = "oas 2.0";
-  private static final boolean VALIDATE = false;
+  private static final boolean VALIDATE = true;
 
   private ParserWrapperAmf(final URI uri, Environment environment) {
     parser = getParserForApi(uri, environment);

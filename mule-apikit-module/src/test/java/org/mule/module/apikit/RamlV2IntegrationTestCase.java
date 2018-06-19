@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.jayway.restassured.RestAssured.given;

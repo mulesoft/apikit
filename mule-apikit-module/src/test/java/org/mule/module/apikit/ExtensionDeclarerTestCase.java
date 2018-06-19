@@ -41,7 +41,7 @@ public class ExtensionDeclarerTestCase {
     assertEquals(2, countOccurences(jsonContent, "NOT_ACCEPTABLE"));
   }
 
-  public int countOccurences(String str, String substring) {
+  private static int countOccurences(String str, String substring) {
     int lastIndex = 0;
     int count = 0;
     while (lastIndex >= 0) {

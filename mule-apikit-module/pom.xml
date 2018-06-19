@@ -217,7 +217,7 @@
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-apikit-spi</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!--test-->
