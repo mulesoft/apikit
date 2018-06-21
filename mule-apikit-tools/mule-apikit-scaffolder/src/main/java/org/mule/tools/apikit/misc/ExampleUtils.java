@@ -67,8 +67,7 @@ public class ExampleUtils {
       return new ObjectMapper().disableDefaultTyping().writeValueAsString(yamlObject);
 
     } catch (JsonProcessingException e) {
-      // If example couldn't have been processed, we return a null JSON.
-      return "null";
+      return example;
     }
   }
 
