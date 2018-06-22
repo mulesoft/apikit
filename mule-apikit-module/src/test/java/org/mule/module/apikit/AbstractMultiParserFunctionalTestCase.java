@@ -7,10 +7,8 @@
 package org.mule.module.apikit;
 
 import com.jayway.restassured.RestAssured;
-import org.junit.Before;
+import org.junit.AfterClass;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -19,12 +17,11 @@ import org.mule.test.runner.RunnerDelegateTo;
 
 import static java.lang.Boolean.valueOf;
 import static java.util.Arrays.asList;
+import static org.mule.module.apikit.api.RamlHandler.MULE_APIKIT_PARSER_AMF;
 
 @RunnerDelegateTo(Parameterized.class)
 @ArtifactClassLoaderRunnerConfig
 public abstract class AbstractMultiParserFunctionalTestCase extends MuleArtifactFunctionalTestCase {
-
-  private static final String MULE_APIKIT_PARSER_AMF = "mule.apikit.parser.amf";
 
   @Parameterized.Parameter(value = 0)
   public String parser;
@@ -48,15 +45,20 @@ public abstract class AbstractMultiParserFunctionalTestCase extends MuleArtifact
     return 6000;
   }
 
+  protected void doSetUpBeforeMuleContextCreation() throws Exception {
+    final String value = valueOf(isAmfParser()).toString();
+    System.setProperty(MULE_APIKIT_PARSER_AMF, value);
+  }
+
   @Override
   protected void doSetUp() throws Exception {
     RestAssured.port = serverPort.getNumber();
     super.doSetUp();
   }
 
-  @Before
-  public void beforeTest() {
-    System.setProperty(MULE_APIKIT_PARSER_AMF, valueOf(isAmfParser()).toString());
+  @AfterClass
+  public static void afterClass() {
+    System.clearProperty(MULE_APIKIT_PARSER_AMF);
   }
 
   protected boolean isAmfParser() {

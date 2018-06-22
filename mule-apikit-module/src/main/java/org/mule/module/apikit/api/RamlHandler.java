@@ -43,7 +43,9 @@ public class RamlHandler {
 
   protected static final Logger logger = LoggerFactory.getLogger(RamlHandler.class);
 
-  private static boolean AMF_ENABLED = Boolean.getBoolean("mule.apikit.parser.amf");
+  public static final String MULE_APIKIT_PARSER_AMF = "mule.apikit.parser.amf";
+
+  private static boolean AMF_ENABLED = Boolean.getBoolean(MULE_APIKIT_PARSER_AMF);
 
   private MuleContext muleContext;
 

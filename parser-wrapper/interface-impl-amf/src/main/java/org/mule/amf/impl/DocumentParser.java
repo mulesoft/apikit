@@ -63,10 +63,6 @@ public class DocumentParser {
       if (!parsingReport.conforms()) {
         final List<ValidationResult> results = parsingReport.results();
         if (!results.isEmpty()) {
-          /*      System.out.println("============= DocumentParser.parseFile ================== " + uri.toString());
-                  results.forEach(err -> System.out.println("level: '" + err.level() + "' " + err.message() + " " + err.position() + " " + err.targetNode()));
-                  System.out.println("=========================================================");
-          */
           final String message = results.get(0).message();
           throw new ParserException(message);
         }

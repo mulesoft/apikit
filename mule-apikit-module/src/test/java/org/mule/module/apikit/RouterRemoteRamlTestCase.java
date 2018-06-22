@@ -6,11 +6,13 @@
  */
 package org.mule.module.apikit;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
+@Ignore
 public class RouterRemoteRamlTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
