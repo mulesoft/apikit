@@ -8,11 +8,14 @@ package org.mule.module.apikit.spi;
 
 import java.util.concurrent.CompletableFuture;
 
+import org.mule.module.apikit.api.RamlHandler;
 import org.mule.runtime.api.event.Event;
-import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.api.exception.MuleException;
+import org.mule.runtime.core.api.event.CoreEvent;
 
 public interface EventProcessor {
 
   public CompletableFuture<Event> processEvent(CoreEvent event) throws MuleException;
+
+  public RamlHandler getRamlHandler();
 }
