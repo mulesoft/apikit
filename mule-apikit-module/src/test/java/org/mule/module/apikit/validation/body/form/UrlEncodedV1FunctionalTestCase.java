@@ -52,16 +52,23 @@ public class UrlEncodedV1FunctionalTestCase extends AbstractMultiParserFunctiona
   }
 
   @Test
-  @Ignore("APIKIT-1368")
   public void getKeyWithMultipleValuesUrlencodedRequest() throws Exception {
+     String body = "second=segundo&second=segundo2&third=true&first=primo";
+     int status = 201;
+    
+    if (isAmfParser()) {
+        status= 400;
+        body= "{message: 'Bad Request'}";
+    }
+    
     given().header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("second", "segundo")
         .formParam("second", "segundo2")
         .formParam("third", "true")
         .expect()
         .response()
-        .body(is("second=segundo&second=segundo2&third=true&first=primo"))
-        .statusCode(201)
+        .body(is(body))
+        .statusCode(status)
         .when().post("/api/url-encoded-duplicated-key");
   }
 
