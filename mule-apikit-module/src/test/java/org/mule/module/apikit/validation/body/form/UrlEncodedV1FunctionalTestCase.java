@@ -53,14 +53,14 @@ public class UrlEncodedV1FunctionalTestCase extends AbstractMultiParserFunctiona
 
   @Test
   public void getKeyWithMultipleValuesUrlencodedRequest() throws Exception {
-     String body = "second=segundo&second=segundo2&third=true&first=primo";
-     int status = 201;
-    
+    String body = "second=segundo&second=segundo2&third=true&first=primo";
+    int status = 201;
+
     if (isAmfParser()) {
-        status= 400;
-        body= "{message: 'Bad Request'}";
+      status = 400;
+      body = "{message: 'Bad Request'}";
     }
-    
+
     given().header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("second", "segundo")
         .formParam("second", "segundo2")

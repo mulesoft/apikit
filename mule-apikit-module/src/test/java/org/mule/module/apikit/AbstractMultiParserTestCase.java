@@ -6,16 +6,20 @@
  */
 package org.mule.module.apikit;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import static java.util.Arrays.asList;
+import static org.mule.module.apikit.api.RamlHandler.MULE_APIKIT_PARSER_AMF;
 
+/**
+ * Use this class when Test are not FunctionTests
+ */
 @RunWith(Parameterized.class)
 public abstract class AbstractMultiParserTestCase {
-
-  private static final String MULE_APIKIT_PARSER_AMF = "mule.apikit.parser.amf";
 
   @Parameterized.Parameter(value = 0)
   public String parser;
@@ -33,7 +37,12 @@ public abstract class AbstractMultiParserTestCase {
 
   @Before
   public void beforeTest() {
-    final Boolean isAmfParser = AMF_PARSER.equals(parser);
-    System.setProperty(MULE_APIKIT_PARSER_AMF, isAmfParser.toString());
+    final Boolean value = AMF_PARSER.equals(parser);
+    System.setProperty(MULE_APIKIT_PARSER_AMF, value.toString());
+  }
+
+  @After
+  public static void afterTest() {
+    System.clearProperty(MULE_APIKIT_PARSER_AMF);
   }
 }
