@@ -268,6 +268,8 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
         {
             for (Map.Entry<String, IParameter> entry : resource.getResolvedUriParameters().entrySet())
             {
+                // version don't need validation
+                if (entry.getKey().equals("version")) continue;
                 String value = (String) resolvedVariables.get(entry.getKey());
                 IParameter uriParameter = entry.getValue();
                 if (!uriParameter.validate(value))
