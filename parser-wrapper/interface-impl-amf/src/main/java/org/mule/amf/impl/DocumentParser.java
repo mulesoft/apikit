@@ -6,6 +6,7 @@
  */
 package org.mule.amf.impl;
 
+import amf.ProfileName;
 import amf.ProfileNames;
 import amf.client.AMF;
 import amf.client.environment.Environment;
@@ -19,12 +20,12 @@ import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
 import amf.plugins.features.validation.AMFValidatorPlugin;
 import amf.plugins.xml.XmlValidationPlugin;
-import java.util.List;
 import org.mule.amf.impl.exceptions.ParserException;
 
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -102,7 +103,7 @@ public class DocumentParser {
     return getParsingReport(parser, ProfileNames.OAS());
   }
 
-  public static ValidationReport getParsingReport(final Parser parser, final String profile) throws ParserException {
+  public static ValidationReport getParsingReport(final Parser parser, final ProfileName profile) throws ParserException {
     return handleFuture(parser.reportValidation(profile));
   }
 
