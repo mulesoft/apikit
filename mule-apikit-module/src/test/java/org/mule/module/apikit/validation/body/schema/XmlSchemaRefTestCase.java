@@ -20,7 +20,6 @@ public class XmlSchemaRefTestCase extends AbstractMultiParserFunctionalTestCase 
   }
 
   @Test
-  @Ignore // This test fails because of APIKIT-1322
   public void validSchema() throws Exception {
     given()
         .body("<message xmlns=\"http://www.example.org/simple\" item=\"hola\"/>").contentType("application/xml")
@@ -37,7 +36,6 @@ public class XmlSchemaRefTestCase extends AbstractMultiParserFunctionalTestCase 
   }
 
   @Test
-  @Ignore // This test fails because of APIKIT-1322
   public void validGlobalSchema() throws Exception {
     given()
         .body("<message xmlns=\"http://www.example.org/simple\" item=\"hola\"/>").contentType("application/xml")
