@@ -7,6 +7,7 @@
 package org.mule.tools.apikit.input;
 
 import amf.client.environment.DefaultEnvironment;
+import amf.client.environment.Environment;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.amf.impl.ParserWrapperAmf;
@@ -172,8 +173,9 @@ public class RAMLFilesParser {
     }
 
     if (parserType == AMF) {
-      DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
-      return ParserWrapperAmf.create(apiFile.toURI());
+      final Environment environment =
+          DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+      return ParserWrapperAmf.create(apiFile.toURI(), environment);
     } else {
       if (ParserV2Utils.useParserV2(content)) {
         final ResourceLoader resourceLoader =
