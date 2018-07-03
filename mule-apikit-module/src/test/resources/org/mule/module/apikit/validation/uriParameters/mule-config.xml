@@ -53,4 +53,8 @@
         <logger level="INFO" message="get:\uriparam\(optional):router-config" />
     </flow>
 
+    <flow name="get:\dateParam\(dateValue)">
+        <logger level="INFO" message="get:\dateParam\(dateValue):router-config" />
+    </flow>
+
 </mule>

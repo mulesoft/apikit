@@ -23,3 +23,11 @@ title: Headers Test Case
       optional:
         required: false
         type: integer
+
+/dateParam:
+  get:
+  /{dateValue}:
+    get:
+    uriParameters:
+      dateValue:
+        type: datetime
