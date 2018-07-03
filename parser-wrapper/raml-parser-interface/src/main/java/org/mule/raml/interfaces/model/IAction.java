@@ -46,4 +46,6 @@ public interface IAction {
   void addSecurityReference(String securityReferenceName);
 
   void addIs(String is);
+
+  IParameter getQueryString();
 }

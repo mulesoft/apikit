@@ -75,4 +75,14 @@ public class ParameterImpl implements IParameter {
     return resolve(parameter).orElse(stringType());
   }
 
+  @Override
+  public boolean isScalar() {
+    return true;
+  }
+
+  @Override
+  public boolean isFacetArray(String facet) {
+    return false;
+  }
+
 }

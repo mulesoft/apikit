@@ -92,6 +92,11 @@ public class ActionImpl implements IAction {
   }
 
   @Override
+  public IParameter getQueryString() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public Map<String, IParameter> getQueryParameters() {
     if (queryParameters == null) {
       queryParameters = loadQueryParameters(method);

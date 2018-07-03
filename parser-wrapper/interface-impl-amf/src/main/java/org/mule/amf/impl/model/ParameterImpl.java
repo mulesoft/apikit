@@ -8,32 +8,46 @@ package org.mule.amf.impl.model;
 
 import amf.client.model.domain.AnyShape;
 import amf.client.model.domain.ArrayShape;
+import amf.client.model.domain.NodeShape;
 import amf.client.model.domain.Parameter;
 import amf.client.model.domain.PropertyShape;
 import amf.client.model.domain.Shape;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
 
 class ParameterImpl implements IParameter {
 
   private AnyShape schema;
   private boolean required;
+  private Collection<String> scalarTypes;
 
   ParameterImpl(final Parameter parameter) {
-    this.schema = getSchema(parameter);
-    this.required = parameter.required().value();
+    this(getSchema(parameter), parameter.required().value());
   }
 
   ParameterImpl(final PropertyShape property) {
-    this.schema = castToAnyShape(property.range());
-    this.required = property.minCount().value() > 0;
+    this(castToAnyShape(property.range()), property.minCount().value() > 0);
+  }
+
+  ParameterImpl(final AnyShape anyShape, boolean required) {
+    this.schema = anyShape;
+    this.required = required;
+
+    final List<ScalarType> typeIds = asList(ScalarType.values());
+
+    this.scalarTypes = typeIds.stream().map(ScalarType::getName).collect(Collectors.toList());
   }
 
   @Override
@@ -125,5 +139,21 @@ class ParameterImpl implements IParameter {
   @Override
   public MetadataType getMetadata() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean isScalar() {
+    return scalarTypes.contains(schema.id());
+  }
+
+  @Override
+  public boolean isFacetArray(String facet) {
+    if (schema instanceof NodeShape) {
+      for (PropertyShape type : ((NodeShape) schema).properties()) {
+        if (facet.equals(type.name().value()))
+          return type.range() instanceof ArrayShape;
+      }
+    }
+    return false;
   }
 }
