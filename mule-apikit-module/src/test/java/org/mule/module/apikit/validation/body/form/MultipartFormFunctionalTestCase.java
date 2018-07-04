@@ -49,7 +49,6 @@ public abstract class MultipartFormFunctionalTestCase extends AbstractMultiParse
   }
 
   @Test
-  @Ignore("This test fails because AMF don't like 5101 as String")
   public void answer200WhenMultipleRequiredFormParameterAreProvided() throws Exception {
     given().multiPart("userId", 5101)
         .multiPart("second", "segundo")
