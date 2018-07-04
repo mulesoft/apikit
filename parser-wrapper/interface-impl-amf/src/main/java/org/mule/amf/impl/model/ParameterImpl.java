@@ -80,7 +80,7 @@ class ParameterImpl implements IParameter {
 
   @Override
   public String getDefaultValue() {
-    return schema.defaultValueStr().value();
+    return schema.defaultValueStr().option().orElse(null);
   }
 
   @Override

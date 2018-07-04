@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.module.apikit.validation.body.form.transformation.DataWeaveTransformer;
@@ -21,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.stream.Collectors.joining;
 
@@ -42,6 +42,8 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
 
     MultiMap<String, String> requestMap = dataWeaveTransformer.getMultiMapFromPayload(originalPayload);
 
+    addDefaults(requestMap);
+
     String yamlMap = toYamlMap(requestMap);
 
     final List<IValidationResult> validationResult;
@@ -60,6 +62,23 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
     }
 
     return dataWeaveTransformer.getXFormUrlEncodedStream(requestMap, originalPayload.getDataType());
+  }
+
+  private void addDefaults(MultiMap<String, String> requestMap) {
+    final Map<String, List<IParameter>> formParameters = actionMimeType.getFormParameters();
+
+    final Set<String> expectedKeys = formParameters.keySet();
+
+    for (String expectedKey : expectedKeys) {
+      final List<String> values = requestMap.getAll(expectedKey);
+      if (values.isEmpty()) {
+        final IParameter parameter = formParameters.get(expectedKey).get(0);
+        final String defaultValue = parameter.getDefaultValue();
+        if (defaultValue != null) {
+          requestMap.put(expectedKey, defaultValue);
+        }
+      }
+    }
   }
 
   private static String toYamlMap(MultiMap<String, String> map) {
