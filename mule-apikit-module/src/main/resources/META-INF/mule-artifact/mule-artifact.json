@@ -24,6 +24,7 @@
         "org.mule.module.apikit.api.validation",
         "org.mule.module.apikit.api.console",
         "org.mule.module.apikit.spi",
+        "org.mule.raml.interfaces",
         "org.mule.raml.interfaces.model"
       ],
       "exportedResources":[
