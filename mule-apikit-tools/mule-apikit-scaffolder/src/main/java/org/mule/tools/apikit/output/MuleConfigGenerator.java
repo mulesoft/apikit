@@ -59,11 +59,6 @@ public class MuleConfigGenerator {
                                                                                            .getNamespace("http",
                                                                                                          "http://www.mulesoft.org/schema/mule/http"),
                                                                                        "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
-  public static final NamespaceWithLocation SPRING_NAMESPACE = new NamespaceWithLocation(
-                                                                                         Namespace
-                                                                                             .getNamespace("spring",
-                                                                                                           "http://www.springframework.org/schema/beans"),
-                                                                                         "http://www.springframework.org/schema/beans/spring-beans-3.1.xsd");
 
   public static final NamespaceWithLocation EE_NAMESPACE = new NamespaceWithLocation(
                                                                                      Namespace
