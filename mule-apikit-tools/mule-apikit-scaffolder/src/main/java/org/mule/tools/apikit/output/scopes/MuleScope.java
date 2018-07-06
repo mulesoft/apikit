@@ -6,19 +6,17 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import static org.mule.tools.apikit.output.MuleConfigGenerator.EE_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.SPRING_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
-
-import org.mule.tools.apikit.misc.APIKitTools;
+import org.jdom2.Element;
 import org.mule.tools.apikit.output.NamespaceWithLocation;
 
 import java.util.Arrays;
 import java.util.List;
 
-import org.jdom2.Element;
+import static org.mule.tools.apikit.misc.APIKitTools.API_KIT_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.EE_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
 
 public class MuleScope implements Scope {
 
@@ -40,8 +38,7 @@ public class MuleScope implements Scope {
     mule.addNamespaceDeclaration(XMLNS_NAMESPACE.getNamespace());
     addLocationEntry(stringBuilder, XMLNS_NAMESPACE);
 
-    List<NamespaceWithLocation> namespaces = Arrays.asList(HTTP_NAMESPACE,
-                                                           APIKitTools.API_KIT_NAMESPACE, SPRING_NAMESPACE);
+    List<NamespaceWithLocation> namespaces = Arrays.asList(HTTP_NAMESPACE, API_KIT_NAMESPACE);
 
     mule.addNamespaceDeclaration(XSI_NAMESPACE.getNamespace());
 
