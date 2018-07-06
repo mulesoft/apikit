@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>mule-apikit-parent</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.1.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
@@ -18,10 +18,10 @@
 
     <properties>
         <!--mule community version-->
-        <mule.version>4.1.1</mule.version>
-        <mule.core.version>4.1.1</mule.core.version>
-        <mule.api.version>1.1.1</mule.api.version>
-        <mule.http.connector.version>1.1.0</mule.http.connector.version>
+        <mule.version>4.1.2</mule.version>
+        <mule.core.version>4.1.2</mule.core.version>
+        <mule.api.version>1.1.2</mule.api.version>
+        <mule.http.connector.version>1.1.1</mule.http.connector.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
@@ -60,7 +60,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.21-SNAPSHOT</version>
+                <version>1.0.24-SNAPSHOT</version>
                 <exclusions>
                     <exclusion>
                         <groupId> org.slf4j</groupId>
