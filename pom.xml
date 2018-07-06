@@ -11,7 +11,6 @@
         <module>parser-wrapper</module>
         <module>mule-apikit-module</module>
         <module>mule-apikit-tools</module>
-        <!--<module>mule-apikit-examples</module>-->
         <module>mule-apikit-metadata</module>
         <module>mule-apikit-common</module>
     </modules>
@@ -21,7 +20,7 @@
         <mule.version>4.1.2</mule.version>
         <mule.core.version>4.1.2</mule.core.version>
         <mule.api.version>1.1.2</mule.api.version>
-        <mule.http.connector.version>1.2.2</mule.http.connector.version>
+        <mule.http.connector.version>1.1.1</mule.http.connector.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <formatterConfigPath>formatter.xml</formatterConfigPath>
