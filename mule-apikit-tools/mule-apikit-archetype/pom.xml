@@ -20,6 +20,8 @@
         <meta.apikit.version>apikit.version</meta.apikit.version>
         <meta.prefix>${</meta.prefix>
         <meta.suffix>}</meta.suffix>
+
+        <sonar.skip>true</sonar.skip>
     </properties>
 
     <build>

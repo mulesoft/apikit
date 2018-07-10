@@ -20,6 +20,8 @@
         
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../../formatter.xml</formatterConfigPath>
+
+        <sonar.jacoco.reportPaths>../../target/jacoco.exec</sonar.jacoco.reportPaths>
     </properties>
 
     <dependencies>

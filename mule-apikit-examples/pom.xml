@@ -17,6 +17,7 @@
 
     <properties>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
+        <sonar.skip>true</sonar.skip>
     </properties>
 
 </project>
