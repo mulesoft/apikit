@@ -103,6 +103,12 @@ public class ActionImpl implements IAction {
     return map;
   }
 
+
+  @Override
+  public IParameter getQueryString() {
+    return null;
+  }
+
   public Map<String, IParameter> getHeaders() {
     if (action.getHeaders() == null) {
       return emptyMap();

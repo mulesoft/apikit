@@ -6,9 +6,11 @@
  */
 package org.mule.amf.impl.model;
 
+import amf.client.model.domain.AnyShape;
 import amf.client.model.domain.Operation;
 import amf.client.model.domain.Request;
 import amf.client.model.domain.Response;
+import amf.client.model.domain.Shape;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -180,5 +182,16 @@ public class ActionImpl implements IAction {
   @Override
   public void addIs(String is) {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public IParameter getQueryString() {
+    final Request request = operation.request();
+
+    if (request == null)
+      return null;
+
+    final Shape shape = request.queryString();
+    return shape == null ? null : new ParameterImpl((AnyShape) shape, request.required().value());
   }
 }
