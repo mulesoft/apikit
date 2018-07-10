@@ -35,4 +35,8 @@ public interface IParameter {
   Object getInstance();
 
   MetadataType getMetadata();
+
+  boolean isScalar();
+
+  boolean isFacetArray(String facet);
 }

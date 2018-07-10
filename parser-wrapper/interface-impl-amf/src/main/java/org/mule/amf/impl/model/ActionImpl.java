@@ -4,8 +4,13 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.raml.implv2.v08.model;
+package org.mule.amf.impl.model;
 
+import amf.client.model.domain.AnyShape;
+import amf.client.model.domain.Operation;
+import amf.client.model.domain.Request;
+import amf.client.model.domain.Response;
+import amf.client.model.domain.Shape;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -19,27 +24,25 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.raml.v2.api.model.v08.bodies.BodyLike;
-import org.raml.v2.api.model.v08.bodies.Response;
-import org.raml.v2.api.model.v08.methods.Method;
-import org.raml.v2.api.model.v08.parameters.Parameter;
+import static java.util.Collections.emptyMap;
 
 public class ActionImpl implements IAction {
 
-  private Method method;
-
+  private final ResourceImpl resource;
+  private final Operation operation;
   private Map<String, IMimeType> bodies;
   private Map<String, IResponse> responses;
   private Map<String, IParameter> queryParameters;
   private Map<String, IParameter> headers;
 
-  public ActionImpl(Method method) {
-    this.method = method;
+  public ActionImpl(final ResourceImpl resource, final Operation operation) {
+    this.resource = resource;
+    this.operation = operation;
   }
 
   @Override
   public IActionType getType() {
-    return IActionType.valueOf(method.method().toUpperCase());
+    return IActionType.valueOf(operation.method().value().toUpperCase());
   }
 
   @Override
@@ -50,40 +53,65 @@ public class ActionImpl implements IAction {
   @Override
   public Map<String, IResponse> getResponses() {
     if (responses == null) {
-      responses = loadResponses(method);
+      responses = loadResponses(operation);
     }
-
     return responses;
   }
 
-  private static Map<String, IResponse> loadResponses(Method method) {
+  private static Map<String, IResponse> loadResponses(final Operation operation) {
     Map<String, IResponse> result = new LinkedHashMap<>();
-    for (Response response : method.responses()) {
-      result.put(response.code().value(), new ResponseImpl(response));
-    }
-    return result;
-  }
-
-  @Override
-  public Map<String, IMimeType> getBody() {
-    if (bodies == null) {
-      bodies = loadBodies(method);
-    }
-
-    return bodies;
-  }
-
-  private static Map<String, IMimeType> loadBodies(Method method) {
-    Map<String, IMimeType> result = new LinkedHashMap<>();
-    for (BodyLike bodyLike : method.body()) {
-      result.put(bodyLike.name(), new MimeTypeImpl(bodyLike));
+    for (Response response : operation.responses()) {
+      result.put(response.statusCode().value(), new ResponseImpl(response));
     }
     return result;
   }
 
   @Override
   public IResource getResource() {
-    return new ResourceImpl(method.resource());
+    return resource;
+  }
+
+  @Override
+  public Map<String, IMimeType> getBody() {
+    if (bodies == null) {
+      bodies = loadBodies(operation);
+    }
+
+    return bodies;
+  }
+
+  private static Map<String, IMimeType> loadBodies(final Operation operation) {
+    final Request request = operation.request();
+    if (request == null)
+      return emptyMap();
+
+    final Map<String, IMimeType> result = new LinkedHashMap<>();
+
+    request.payloads().stream()
+        .filter(payload -> payload.mediaType().nonNull())
+        .forEach(payload -> result.put(payload.mediaType().value(), new MimeTypeImpl(payload)));
+
+    return result;
+  }
+
+  @Override
+  public Map<String, IParameter> getQueryParameters() {
+    if (queryParameters == null) {
+      queryParameters = loadQueryParameters(operation);
+    }
+    return queryParameters;
+  }
+
+  private static Map<String, IParameter> loadQueryParameters(final Operation operation) {
+    final Request request = operation.request();
+    if (request == null)
+      return emptyMap();
+
+    final Map<String, IParameter> result = new HashMap<>();
+    request.queryParameters().forEach(parameter -> {
+      result.put(parameter.name().value(), new ParameterImpl(parameter));
+    });
+    return result;
   }
 
   @Override
@@ -92,41 +120,22 @@ public class ActionImpl implements IAction {
   }
 
   @Override
-  public IParameter getQueryString() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public Map<String, IParameter> getQueryParameters() {
-    if (queryParameters == null) {
-      queryParameters = loadQueryParameters(method);
-    }
-    return queryParameters;
-  }
-
-
-  private static Map<String, IParameter> loadQueryParameters(Method method) {
-    final Map<String, IParameter> result = new HashMap<>();
-    for (Parameter parameter : method.queryParameters()) {
-      result.put(parameter.name(), new ParameterImpl(parameter));
-    }
-    return result;
-  }
-
-  @Override
   public Map<String, IParameter> getHeaders() {
     if (headers == null) {
-      headers = loadHeaders(method);
+      headers = loadHeaders(operation);
     }
-
     return headers;
   }
 
-  private Map<String, IParameter> loadHeaders(Method method) {
-    Map<String, IParameter> result = new HashMap<>();
-    for (Parameter parameter : method.headers()) {
-      result.put(parameter.name(), new ParameterImpl(parameter));
-    }
+  private Map<String, IParameter> loadHeaders(final Operation operation) {
+    final Request request = operation.request();
+    if (request == null)
+      return emptyMap();
+
+    final Map<String, IParameter> result = new HashMap<>();
+    request.headers().forEach(parameter -> {
+      result.put(parameter.name().value(), new ParameterImpl(parameter));
+    });
     return result;
   }
 
@@ -173,5 +182,16 @@ public class ActionImpl implements IAction {
   @Override
   public void addIs(String is) {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public IParameter getQueryString() {
+    final Request request = operation.request();
+
+    if (request == null)
+      return null;
+
+    final Shape shape = request.queryString();
+    return shape == null ? null : new ParameterImpl((AnyShape) shape, request.required().value());
   }
 }

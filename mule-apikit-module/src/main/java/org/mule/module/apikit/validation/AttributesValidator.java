@@ -13,7 +13,9 @@ import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.validation.attributes.HeadersValidator;
 import org.mule.module.apikit.validation.attributes.QueryParameterValidator;
+import org.mule.module.apikit.validation.attributes.QueryStringValidator;
 import org.mule.module.apikit.validation.attributes.UriParametersValidator;
+import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.util.MultiMap;
 
@@ -32,9 +34,15 @@ public class AttributesValidator {
     UriParametersValidator uriParametersValidator = new UriParametersValidator(resource, resolvedVariables);
     uriParams = uriParametersValidator.validateAndAddDefaults(attributes.getUriParams());
 
+    final IAction action = resource.getAction(attributes.getMethod().toLowerCase());
+
+    // queryStrings
+    QueryStringValidator queryStringValidator = new QueryStringValidator(action);
+    queryStringValidator.validate(attributes.getQueryParams());
+
     // queryparams
     QueryParameterValidator queryParamValidator =
-        new QueryParameterValidator(resource.getAction(attributes.getMethod().toLowerCase()));
+        new QueryParameterValidator(action);
     queryParamValidator.validateAndAddDefaults(attributes.getQueryParams(), attributes.getQueryString(),
                                                config.isQueryParamsStrictValidation());
     queryParams = queryParamValidator.getQueryParams();
@@ -42,7 +50,7 @@ public class AttributesValidator {
 
     // headers
     HeadersValidator headersValidator = new HeadersValidator();
-    headersValidator.validateAndAddDefaults(attributes.getHeaders(), resource.getAction(attributes.getMethod().toLowerCase()),
+    headersValidator.validateAndAddDefaults(attributes.getHeaders(), action,
                                             config.isHeadersStrictValidation());
     headers = headersValidator.getNewHeaders();
 

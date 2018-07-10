@@ -164,4 +164,9 @@ public class ActionImpl implements IAction {
   public void addIs(String is) {
     throw new UnsupportedOperationException();
   }
+
+  @Override
+  public IParameter getQueryString() {
+    return method.queryString() == null ? null : new ParameterImpl(method.queryString());
+  }
 }
