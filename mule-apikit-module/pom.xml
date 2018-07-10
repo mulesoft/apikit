@@ -41,6 +41,7 @@
         <mule.service.scheduler.version>1.1.4</mule.service.scheduler.version>
         <project.reactor.version>3.2.0.M1</project.reactor.version>
 
+        <sonar.jacoco.reportPaths>../target/jacoco.exec</sonar.jacoco.reportPaths>
     </properties>
 
     <build>

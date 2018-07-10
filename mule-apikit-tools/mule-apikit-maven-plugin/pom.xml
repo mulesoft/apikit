@@ -14,6 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../../formatter.xml</formatterConfigPath>
+
+        <sonar.jacoco.reportPaths>../../target/jacoco.exec</sonar.jacoco.reportPaths>
     </properties>
 
     <dependencies>

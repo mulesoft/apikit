@@ -13,6 +13,7 @@
     <properties>
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../../formatter.xml</formatterConfigPath>
+        <sonar.skip>true</sonar.skip>
     </properties>
     <dependencies>
         <dependency>
