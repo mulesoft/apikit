@@ -41,6 +41,13 @@
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-core</artifactId>
             <version>${mule.version}</version>
+            <!-- This exclusion should be removed when RP-375 is done -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.yaml</groupId>
+                    <artifactId>snakeyaml</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

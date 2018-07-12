@@ -24,7 +24,7 @@
       "requestUri" : String, 
       "scheme" : String, 
       "uriParams" : {
-
+        "customerId"? : String
       }, 
       "version"? : String, 
       "localAddress" : String

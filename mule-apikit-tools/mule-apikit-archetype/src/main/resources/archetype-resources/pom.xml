@@ -10,8 +10,8 @@
     <name>Mule APIKit Application</name>
 
     <properties>
-        <mule.maven.plugin.version>3.1.1</mule.maven.plugin.version>
-        <mule.http.connector.version>1.1.0</mule.http.connector.version>
+        <mule.maven.plugin.version>3.1.3</mule.maven.plugin.version>
+        <mule.http.connector.version>1.2.2</mule.http.connector.version>
     </properties>
     <build>
         <plugins>
