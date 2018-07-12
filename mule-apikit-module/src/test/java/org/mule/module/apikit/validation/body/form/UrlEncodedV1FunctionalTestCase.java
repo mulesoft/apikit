@@ -39,7 +39,6 @@ public class UrlEncodedV1FunctionalTestCase extends AbstractMultiParserFunctiona
   }
 
   @Test
-  @Ignore("APIKIT-1369")
   public void setDefaultFormParameterForUrlencodedRequest() throws Exception {
     given().header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("second", "segundo")
