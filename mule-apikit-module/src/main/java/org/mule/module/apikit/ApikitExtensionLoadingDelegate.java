@@ -10,7 +10,6 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.ObjectType;
-import org.mule.runtime.api.meta.MuleVersion;
 import org.mule.runtime.api.meta.model.ImportedTypeModel;
 import org.mule.runtime.api.meta.model.XmlDslModel;
 import org.mule.runtime.api.meta.model.declaration.fluent.ConfigurationDeclarer;
@@ -32,7 +31,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
   public static final String PREFIX_NAME = "apikit";
   public static final String EXTENSION_DESCRIPTION = "APIKit plugin";
   public static final String VENDOR = "Mulesoft";
-  public static final String VERSION = "1.1.4-SNAPSHOT";
+  public static final String VERSION = "1.1.4";
   public static final String XSD_FILE_NAME = "mule-apikit.xsd";
   private static final String UNESCAPED_LOCATION_PREFIX = "http://";
   private static final String SCHEMA_LOCATION = "www.mulesoft.org/schema/mule/mule-apikit";
