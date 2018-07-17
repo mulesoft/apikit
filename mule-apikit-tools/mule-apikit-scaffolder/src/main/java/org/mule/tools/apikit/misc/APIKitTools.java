@@ -8,6 +8,7 @@ package org.mule.tools.apikit.misc;
 
 import org.jdom2.Namespace;
 
+import org.mule.tools.apikit.ExtensionManager;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.output.NamespaceWithLocation;
 
