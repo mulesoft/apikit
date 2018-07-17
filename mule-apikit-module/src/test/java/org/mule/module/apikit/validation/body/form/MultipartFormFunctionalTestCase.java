@@ -64,7 +64,6 @@ public abstract class MultipartFormFunctionalTestCase extends AbstractMultiParse
         .when().post("/api/multiple-required-multipart");
   }
 
-  @Ignore //This test fails for RAML 0.8 because of APIMF-760
   @Test
   public void answer200WhenMultipleOptionalFormParameterAreNotProvidedAndAdded() throws Exception {
     given().multiPart("userId", 5101)
@@ -109,7 +108,6 @@ public abstract class MultipartFormFunctionalTestCase extends AbstractMultiParse
         .when().post("/api/announcements");
   }
 
-  @Ignore //This test fails for RAML 0.8 because of APIMF-760
   @Test
   public void setDefaultFormParameterForMultipartRequest() throws Exception {
     given().multiPart("first", "primero", "application/json")
@@ -154,7 +152,6 @@ public abstract class MultipartFormFunctionalTestCase extends AbstractMultiParse
         .when().post("/api/uploadImage");
   }
 
-  @Ignore //This test fails for RAML 0.8 because of APIMF-760
   @Test
   public void answer201WhenOptionalFormParameterIsProvidedAsEmpty() throws Exception {
     given().multiPart("first", "required")

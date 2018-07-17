@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.parameters;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
@@ -88,7 +87,6 @@ public class ParametersTestCase extends AbstractMultiParserFunctionalTestCase {
         .when().get("/api/resources");
   }
 
-  @Ignore //This test is ignored until APIMF-776 is fixed
   @Test
   public void invalidQueryParamPattern() throws Exception {
     given().header("one", "foo").queryParam("first", "1st")

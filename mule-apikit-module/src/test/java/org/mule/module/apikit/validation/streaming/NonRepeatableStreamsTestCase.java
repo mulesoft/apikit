@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.validation.streaming;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
@@ -48,7 +47,6 @@ public class NonRepeatableStreamsTestCase extends AbstractMultiParserFunctionalT
   }
 
   @Test
-  @Ignore("APIKIT-1370")
   public void simpleMultipartRequesWithDefaults() {
     given().multiPart("first", "primero")
         .expect()

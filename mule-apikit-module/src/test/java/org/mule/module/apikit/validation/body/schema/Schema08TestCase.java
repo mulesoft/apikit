@@ -38,7 +38,6 @@ public class Schema08TestCase extends AbstractMultiParserFunctionalTestCase {
   }
 
   @Test
-  @Ignore // This test fails because of APIMF-815
   public void putInvalidJson() throws Exception {
     given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
         .contentType("application/json")

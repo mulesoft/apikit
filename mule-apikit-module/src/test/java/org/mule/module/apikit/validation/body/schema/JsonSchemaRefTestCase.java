@@ -6,20 +6,13 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
+
 import static com.jayway.restassured.RestAssured.given;
 
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import com.jayway.restassured.RestAssured;
-
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-
-@Ignore // This tests are failing because of APIMF-551
+@Ignore("APIKIT-1442")
 public class JsonSchemaRefTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
