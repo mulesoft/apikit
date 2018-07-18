@@ -92,8 +92,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
       // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
       // we will keep the value defined during raml handler instantiation
-      if (ramlHandler.getParser() != parser)
-        parser = ramlHandler.getParser();
+      parser = ramlHandler.getParser();
     } catch (IOException e) {
       throw new InitialisationException(e.fillInStackTrace(), this);
     }
