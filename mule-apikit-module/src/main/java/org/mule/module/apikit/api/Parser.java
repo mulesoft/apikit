@@ -4,12 +4,8 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.tools.apikit;
+package org.mule.module.apikit.api;
 
-public enum ParserType {
-  AMF, RAML;
-
-  public static ParserType defaultType() {
-    return RAML;
-  }
+public enum Parser {
+  AMF, AUTO, RAML
 }

@@ -26,6 +26,9 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static org.mule.module.apikit.api.Parser.AMF;
+import static org.mule.module.apikit.api.Parser.AUTO;
+import static org.mule.module.apikit.api.Parser.RAML;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
@@ -41,28 +44,30 @@ public class RamlHandler {
 
   private String apiResourcesRelativePath = "";
 
+  private Parser parser;
+
   protected static final Logger logger = LoggerFactory.getLogger(RamlHandler.class);
 
-  public static final String MULE_APIKIT_PARSER_AMF = "mule.apikit.parser.amf";
-
-  private static boolean AMF_ENABLED = Boolean.getBoolean(MULE_APIKIT_PARSER_AMF);
+  public static final String MULE_APIKIT_PARSER_AMF = "mule.apikit.parser";
 
   private MuleContext muleContext;
 
   //ramlLocation should be the root raml location, relative of the resources folder
   public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext) throws IOException {
-    this(ramlLocation, keepRamlBaseUri, muleContext, AMF_ENABLED);
+    this(ramlLocation, keepRamlBaseUri, muleContext, null);
   }
 
-  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, boolean amfParserEnabled)
+  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, Parser defaultParser)
       throws IOException {
     this.keepRamlBaseUri = keepRamlBaseUri;
+
+    this.parser = resolveParser(defaultParser);
 
     String rootRamlLocation = findRootRaml(ramlLocation);
     if (rootRamlLocation == null) {
       throw new IOException("Raml not found at: " + ramlLocation);
     }
-    parserService = new ParserService(rootRamlLocation, amfParserEnabled);
+    parserService = new ParserService(rootRamlLocation, parser);
     parserService.validateRaml();
     this.api = parserService.build();
 
@@ -72,6 +77,19 @@ public class RamlHandler {
       this.apiResourcesRelativePath = sanitarizeResourceRelativePath(apiResourcesRelativePath);
     }
     this.muleContext = muleContext;
+  }
+
+  private Parser resolveParser(Parser defaultValue) {
+    final String parserValue = System.getProperty(MULE_APIKIT_PARSER_AMF);
+    if (AMF.name().equals(parserValue))
+      return AMF;
+    if (RAML.name().equals(parserValue))
+      return RAML;
+    return defaultValue == null ? AUTO : defaultValue;
+  }
+
+  public Parser getParser() {
+    return parser;
   }
 
   /**

@@ -11,12 +11,14 @@ import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.runners.Parameterized;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.module.apikit.api.Parser;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import static java.lang.Boolean.valueOf;
 import static java.util.Arrays.asList;
+import static org.mule.module.apikit.api.Parser.AMF;
+import static org.mule.module.apikit.api.Parser.RAML;
 import static org.mule.module.apikit.api.RamlHandler.MULE_APIKIT_PARSER_AMF;
 
 @RunnerDelegateTo(Parameterized.class)
@@ -24,16 +26,13 @@ import static org.mule.module.apikit.api.RamlHandler.MULE_APIKIT_PARSER_AMF;
 public abstract class AbstractMultiParserFunctionalTestCase extends MuleArtifactFunctionalTestCase {
 
   @Parameterized.Parameter(value = 0)
-  public String parser;
-
-  private static String AMF_PARSER = "AmfParser";
-  private static String JAVA_PARSER = "JavaParser";
+  public Parser parser;
 
   @Parameterized.Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
     return asList(new Object[][] {
-        {JAVA_PARSER},
-        {AMF_PARSER}
+        {RAML},
+        {AMF}
     });
   }
 
@@ -46,8 +45,7 @@ public abstract class AbstractMultiParserFunctionalTestCase extends MuleArtifact
   }
 
   protected void doSetUpBeforeMuleContextCreation() throws Exception {
-    final String value = valueOf(isAmfParser()).toString();
-    System.setProperty(MULE_APIKIT_PARSER_AMF, value);
+    System.setProperty(MULE_APIKIT_PARSER_AMF, parser.name());
   }
 
   @Override
@@ -62,6 +60,6 @@ public abstract class AbstractMultiParserFunctionalTestCase extends MuleArtifact
   }
 
   protected boolean isAmfParser() {
-    return AMF_PARSER.equals(parser);
+    return AMF == parser;
   }
 }

@@ -6,13 +6,18 @@
  */
 package org.mule.module.apikit;
 
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import org.mule.module.apikit.api.Parser;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.config.ConsoleConfig;
 import org.mule.module.apikit.api.config.ValidationConfig;
+import org.mule.module.apikit.api.exception.ApikitRuntimeException;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
-import org.mule.module.apikit.api.exception.ApikitRuntimeException;
 import org.mule.module.apikit.spi.RouterService;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
@@ -24,26 +29,20 @@ import org.mule.runtime.core.api.el.ExpressionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-
-//import org.mule.module.apikit.exception.NotFoundException;
-
+import javax.inject.Inject;
+import javax.xml.validation.Schema;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 
-import javax.inject.Inject;
-import javax.xml.validation.Schema;
+//import org.mule.module.apikit.exception.NotFoundException;
 
 
 public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
 
   private boolean disableValidations;
-  private boolean enableAmfParser;
+  private Parser parser;
   private boolean queryParamsStrictValidation;
   private boolean headersStrictValidation;
   private String name;
@@ -89,7 +88,11 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   @Override
   public void initialise() throws InitialisationException {
     try {
-      ramlHandler = new RamlHandler(raml, keepRamlBaseUri, muleContext, isEnableAmfParser());
+      ramlHandler = new RamlHandler(raml, keepRamlBaseUri, muleContext, getParser());
+
+      // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
+      // we will keep the value defined during raml handler instantiation
+      parser = ramlHandler.getParser();
     } catch (IOException e) {
       throw new InitialisationException(e.fillInStackTrace(), this);
     }
@@ -129,12 +132,12 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     this.disableValidations = disableValidations;
   }
 
-  public boolean isEnableAmfParser() {
-    return enableAmfParser || Boolean.getBoolean("mule.apikit.parser.amf");
+  public Parser getParser() {
+    return parser;
   }
 
-  public void setEnableAmfParser(boolean enableAmfParser) {
-    this.enableAmfParser = enableAmfParser;
+  public void setParser(Parser parser) {
+    this.parser = parser;
   }
 
   @Override

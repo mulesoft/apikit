@@ -6,7 +6,6 @@
  */
 package org.mule.amf.impl;
 
-import amf.ProfileNames;
 import amf.client.AMF;
 import amf.client.environment.DefaultEnvironment;
 import amf.client.environment.Environment;
@@ -21,23 +20,29 @@ import amf.client.render.Renderer;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
 import amf.core.remote.Vendor;
-import java.util.List;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
 import org.mule.amf.impl.model.AmfImpl;
+import org.mule.amf.impl.parser.rule.ValidationResultImpl;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.parser.rule.DefaultValidationReport;
+import org.mule.raml.interfaces.parser.rule.IValidationReport;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 
 import java.io.File;
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import static amf.ProfileNames.AMF;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import static org.mule.amf.impl.DocumentParser.getParserForApi;
 import static org.mule.amf.impl.DocumentParser.getWebApi;
 import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
@@ -129,6 +134,24 @@ public class ParserWrapperAmf implements ParserWrapper {
 
       throw new RuntimeException(errorMessge);
     }
+  }
+
+  @Override
+  public IValidationReport validationReport() {
+    final ValidationReport validationReport;
+    try {
+      validationReport = parser.reportValidation(AMF()).get();
+    } catch (InterruptedException | ExecutionException e) {
+      throw new RuntimeException("Unexpected error parsing API: " + e.getMessage(), e);
+    }
+
+    List<IValidationResult> results;
+    if (!validationReport.conforms())
+      results = validationReport.results().stream().map(ValidationResultImpl::new).collect(toList());
+    else
+      results = emptyList();
+
+    return new DefaultValidationReport(results);
   }
 
   @Override

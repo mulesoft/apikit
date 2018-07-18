@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.mule.module.apikit.api.Parser.AMF;
 import static org.mule.module.apikit.api.UrlUtils.getCompletePathFromBasePathAndPath;
 
 public class ConsoleResources {
@@ -37,7 +38,7 @@ public class ConsoleResources {
 
   public ConsoleResources(ConsoleConfig config, String listenerPath, String requestPath, String queryString, String method,
                           String aceptHeader) {
-    CONSOLE_RESOURCES_BASE = config.isEnableAmfParser() ? "/console-resources-amf" : "/console-resources";
+    CONSOLE_RESOURCES_BASE = config.getParser() == AMF ? "/console-resources-amf" : "/console-resources";
 
     this.config = config;
     this.listenerPath = listenerPath;
@@ -139,7 +140,7 @@ public class ConsoleResources {
       return config.getRamlHandler().getRamlV2(resourceRelativePath);
     }
 
-    if (config.isEnableAmfParser() && queryString.equals("amf")) {
+    if (config.getParser() == AMF && queryString.equals("amf")) {
       return config.getRamlHandler().getAMFModel();
     }
 

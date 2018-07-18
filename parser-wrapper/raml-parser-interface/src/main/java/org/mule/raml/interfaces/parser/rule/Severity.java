@@ -4,8 +4,12 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.parser;
+package org.mule.raml.interfaces.parser.rule;
 
-enum Parser {
-  RAML_V1, RAML_V2, AMF
+public enum Severity {
+  INFO, WARNING, ERROR;
+
+  public static Severity fromString(String severity) {
+    return valueOf(severity.toUpperCase());
+  }
 }

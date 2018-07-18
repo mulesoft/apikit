@@ -7,6 +7,7 @@
 package org.mule.raml.implv2.parser.rule;
 
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
+import org.mule.raml.interfaces.parser.rule.Severity;
 import org.raml.v2.api.model.common.ValidationResult;
 
 public class ValidationResultImpl implements IValidationResult {
@@ -40,5 +41,10 @@ public class ValidationResultImpl implements IValidationResult {
   @Override
   public boolean isLineUnknown() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Severity getSeverity() {
+    return Severity.ERROR;
   }
 }

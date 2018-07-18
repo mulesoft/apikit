@@ -6,12 +6,14 @@
  */
 package org.mule.raml.implv2;
 
-import org.apache.commons.lang3.StringUtils;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.parser.rule.DefaultValidationReport;
+import org.mule.raml.interfaces.parser.rule.IValidationReport;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
@@ -76,15 +78,21 @@ public class ParserWrapperV2 implements ParserWrapper {
 
   @Override
   public void validate() {
-    List<String> errors = ParserV2Utils.validate(resourceLoader, ramlPath);
+    List<IValidationResult> errors = ParserV2Utils.validate(resourceLoader, ramlPath);
     if (!errors.isEmpty()) {
       StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
       message.append(errors.size()).append("\n\n");
-      for (String error : errors) {
-        message.append(error).append("\n");
+      for (IValidationResult error : errors) {
+        message.append(error.getMessage()).append("\n");
       }
       throw new RuntimeException(message.toString());
     }
+  }
+
+  @Override
+  public IValidationReport validationReport() {
+    final List<IValidationResult> results = ParserV2Utils.validate(resourceLoader, ramlPath);
+    return new DefaultValidationReport(results);
   }
 
   @Override

@@ -6,6 +6,7 @@
  */
 package org.mule.raml.implv2;
 
+import org.mule.raml.implv2.parser.rule.ValidationResultImpl;
 import org.mule.raml.implv2.v08.model.RamlImpl08V2;
 import org.mule.raml.implv2.v10.model.RamlImpl10V2;
 import org.mule.raml.interfaces.model.IRaml;
@@ -13,6 +14,7 @@ import org.mule.raml.interfaces.model.IRaml;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.raml.v2.api.RamlModelBuilder;
 import org.raml.v2.api.RamlModelResult;
 import org.raml.v2.api.loader.ResourceLoader;
@@ -43,21 +45,21 @@ public class ParserV2Utils {
     return new RamlImpl10V2(ramlModelResult.getApiV10());
   }
 
-  public static List<String> validate(ResourceLoader resourceLoader, String ramlPath, String content) {
-    List<String> result = new ArrayList<>();
+  public static List<IValidationResult> validate(ResourceLoader resourceLoader, String ramlPath, String content) {
+    List<IValidationResult> result = new ArrayList<>();
 
     try {
       RamlModelResult ramlApiResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
       for (ValidationResult validationResult : ramlApiResult.getValidationResults()) {
-        result.add(validationResult.toString());
+        result.add(new ValidationResultImpl(validationResult));
       }
     } catch (Exception e) {
-      result.add("Raml parser uncaught exception: " + e.getMessage());
+      throw new RuntimeException("Raml parser uncaught exception: " + e.getMessage());
     }
     return result;
   }
 
-  public static List<String> validate(ResourceLoader resourceLoader, String ramlPath) {
+  public static List<IValidationResult> validate(ResourceLoader resourceLoader, String ramlPath) {
     return validate(resourceLoader, ramlPath, null);
   }
 

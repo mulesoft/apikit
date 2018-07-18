@@ -6,17 +6,16 @@
  */
 package org.mule.raml.interfaces.parser.rule;
 
-public interface IValidationResult {
+import java.util.List;
 
-  String getMessage();
+import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
 
-  String getIncludeName();
+public interface IValidationReport {
 
-  int getLine();
 
-  boolean isLineUnknown();
+  default boolean conforms() {
+    return getResults().stream().noneMatch(r -> r.getSeverity().equals(ERROR));
+  }
 
-  String getPath();
-
-  Severity getSeverity();
+  List<IValidationResult> getResults();
 }
