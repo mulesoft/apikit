@@ -8,6 +8,7 @@ package org.mule.amf.impl.parser.rule;
 
 import amf.client.validate.ValidationResult;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
+import org.mule.raml.interfaces.parser.rule.Severity;
 
 public class ValidationResultImpl implements IValidationResult {
 
@@ -35,5 +36,10 @@ public class ValidationResultImpl implements IValidationResult {
 
   public String getPath() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Severity getSeverity() {
+    return Severity.fromString(validationResult.level());
   }
 }

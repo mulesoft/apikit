@@ -15,6 +15,9 @@ import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.parser.rule.IValidationReport;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
+import org.mule.raml.interfaces.parser.rule.Severity;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.internal.utils.StreamUtils;
@@ -25,10 +28,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 import static org.mule.module.apikit.api.Parser.AMF;
 import static org.mule.module.apikit.api.Parser.AUTO;
 import static org.mule.module.apikit.api.Parser.RAML;
+import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class ParserService {
 
@@ -86,24 +91,53 @@ public class ParserService {
       parserWrapper = ParserWrapperAmf.create(getPathAsUri(ramlPath));
     }
 
-    try {
-      parserWrapper.validate();
+    final IValidationReport validationReport = parserWrapper.validationReport();
+    if (validationReport.conforms()) {
       if (parser == AUTO)
         parser = AMF;
-    } catch (Exception e) {
+    } else {
+      final List<IValidationResult> foundErrors = validationReport.getResults();
       if (parser == AUTO) {
         parserWrapper = initRamlWrapper(ramlPath);
-        try {
-          parserWrapper.validate();
+        if (parserWrapper.validationReport().conforms()) {
           parser = RAML;
-        } catch (Exception ignored) {
-          throw e;
+          logErrors(foundErrors, WARNING);
+        } else {
+          raiseError(foundErrors);
         }
+      } else {
+        raiseError(foundErrors);
       }
-
-      throw e;
     }
+
     return parserWrapper;
+  }
+
+  private static void logErrors(List<IValidationResult> validationResults) {
+    validationResults.stream().forEach(error -> logError(error, error.getSeverity()));
+  }
+
+  private static void logErrors(List<IValidationResult> validationResults, Severity overridenSeverity) {
+    validationResults.stream().forEach(error -> logError(error, overridenSeverity));
+  }
+
+  private static void logError(IValidationResult error, Severity severity) {
+    if (severity == Severity.INFO)
+      logger.info(error.getMessage());
+    else if (severity == WARNING)
+      logger.warn(error.getMessage());
+    else
+      logger.error(error.getMessage());
+  }
+
+  private static void raiseError(List<IValidationResult> validationResults) {
+    logErrors(validationResults);
+    StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
+    message.append(validationResults.size()).append("\n\n");
+    for (IValidationResult error : validationResults) {
+      message.append(error.getMessage()).append("\n");
+    }
+    throw new RuntimeException(message.toString());
   }
 
   private ParserWrapper initRamlWrapper(String ramlPath) {

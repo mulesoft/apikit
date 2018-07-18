@@ -11,6 +11,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
+import org.mockito.stubbing.Answer;
+import org.mockito.stubbing.Stubber;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.output.GenerationModel;
@@ -20,12 +22,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 
 public class RAMLFilesParserTest {
@@ -33,6 +36,9 @@ public class RAMLFilesParserTest {
   @Test
   public void testCreation() {
     Log log = mock(Log.class);
+    getStubber("[INFO] ").when(log).info(anyString());
+    getStubber("[WARNING] ").when(log).warn(anyString());
+    getStubber("[ERROR] ").when(log).error(anyString());
 
     final URL resourceUrl =
         RAMLFilesParserTest.class.getClassLoader().getResource("scaffolder/simple.raml");
@@ -86,6 +92,10 @@ public class RAMLFilesParserTest {
   @Test
   public void apiWithWarningsShouldBeValid() {
     Log log = mock(Log.class);
+    getStubber("[INFO] ").when(log).info(anyString());
+    getStubber("[WARNING] ").when(log).warn(anyString());
+    getStubber("[ERROR] ").when(log).error(anyString());
+
 
     final URL resourceUrl =
         RAMLFilesParserTest.class.getClassLoader().getResource("scaffolder/apiWithWarnings.raml");
@@ -107,5 +117,13 @@ public class RAMLFilesParserTest {
     Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
     assertNotNull(entries);
     assertEquals(1, entries.size());
+  }
+
+  private Stubber getStubber(String prefix) {
+    return doAnswer((Answer<Void>) invocation -> {
+      Object[] args = invocation.getArguments();
+      System.out.println(prefix + args[0].toString());
+      return null;
+    });
   }
 }

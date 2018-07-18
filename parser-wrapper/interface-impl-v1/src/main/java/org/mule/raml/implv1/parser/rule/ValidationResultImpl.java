@@ -7,6 +7,7 @@
 package org.mule.raml.implv1.parser.rule;
 
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
+import org.mule.raml.interfaces.parser.rule.Severity;
 import org.raml.parser.rule.ValidationResult;
 
 public class ValidationResultImpl implements IValidationResult {
@@ -35,5 +36,10 @@ public class ValidationResultImpl implements IValidationResult {
 
   public String getPath() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Severity getSeverity() {
+    return Severity.fromString(validationResult.getLevel().name());
   }
 }

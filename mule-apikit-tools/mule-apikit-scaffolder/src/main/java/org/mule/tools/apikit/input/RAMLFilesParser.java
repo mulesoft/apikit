@@ -11,7 +11,6 @@ import amf.client.environment.Environment;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.amf.impl.ParserWrapperAmf;
-import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.implv2.ParserWrapperV2;
@@ -21,6 +20,9 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.raml.interfaces.parser.rule.IValidationReport;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
+import org.mule.raml.interfaces.parser.rule.Severity;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
@@ -39,6 +41,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class RAMLFilesParser {
 
@@ -81,32 +85,6 @@ public class RAMLFilesParser {
     } else {
       this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
     }
-  }
-
-  private boolean isValidRaml(String fileName, String content, String filePath) {
-    List<String> errors;
-    if (ParserV2Utils.useParserV2(content)) {
-      ResourceLoader resourceLoader = new CompositeResourceLoader(new RootRamlFileResourceLoader(new File(filePath)),
-                                                                  new DefaultResourceLoader(), new FileResourceLoader(filePath),
-                                                                  new ExchangeDependencyResourceLoader(filePath));
-      errors = ParserV2Utils.validate(resourceLoader, fileName, content);
-    } else {
-      errors = ParserV1Utils.validate(filePath, fileName, content);
-    }
-    if (!errors.isEmpty()) {
-      if (errors.size() == 1 && errors.get(0).toLowerCase().contains("root")) {
-        log.info("File '" + fileName + "' is not a root RAML file.");
-      } else {
-        log.info("File '" + fileName + "' is not a valid root RAML file. It contains some errors/warnings. See below: ");
-        int problemCount = 0;
-        for (String error : errors) {
-          log.info("ERROR " + (++problemCount) + ": " + error);
-        }
-      }
-      return false;
-    }
-    log.info("File '" + fileName + "' is a VALID root RAML file.");
-    return true;
   }
 
   void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version) {
@@ -156,7 +134,7 @@ public class RAMLFilesParser {
     return entries;
   }
 
-  private static ParserWrapper getParserWrapper(File apiFile, String content) {
+  private ParserWrapper getParserWrapper(File apiFile, String content) {
     String apiFolderPath = null;
     File apiFileParent = null;
     if (apiFile.getParentFile() != null) {
@@ -166,12 +144,12 @@ public class RAMLFilesParser {
 
     ParserWrapper parserWrapper;
 
-    try {
-      final Environment environment =
-          DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
-      parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment);
-      parserWrapper.validate();
-    } catch (Exception e) {
+    final Environment environment =
+        DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+    parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment);
+    final IValidationReport validationReport = parserWrapper.validationReport();
+
+    if (!validationReport.conforms()) {
       if (ParserV2Utils.useParserV2(content)) {
         final ResourceLoader resourceLoader =
             new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
@@ -181,14 +159,43 @@ public class RAMLFilesParser {
       } else {
         parserWrapper = new ParserWrapperV1(apiFile.getAbsolutePath());
       }
-      try {
-        parserWrapper.validate();
-      } catch (Exception ignored) {
-        throw e;
+
+      final List<IValidationResult> foundErrors = validationReport.getResults();
+      if (parserWrapper.validationReport().conforms()) {
+        logErrors(foundErrors, WARNING);
+      } else {
+        raiseError(foundErrors);
       }
     }
 
     return parserWrapper;
+  }
+
+  private void logErrors(List<IValidationResult> validationResults) {
+    validationResults.stream().forEach(error -> logError(error, error.getSeverity()));
+  }
+
+  private void logErrors(List<IValidationResult> validationResults, Severity overridenSeverity) {
+    validationResults.stream().forEach(error -> logError(error, overridenSeverity));
+  }
+
+  private void logError(IValidationResult error, Severity severity) {
+    if (severity == Severity.INFO)
+      log.info(error.getMessage());
+    else if (severity == WARNING)
+      log.warn(error.getMessage());
+    else
+      log.error(error.getMessage());
+  }
+
+  private void raiseError(List<IValidationResult> validationResults) {
+    logErrors(validationResults);
+    StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
+    message.append(validationResults.size()).append("\n\n");
+    for (IValidationResult error : validationResults) {
+      message.append(error.getMessage()).append("\n");
+    }
+    throw new RuntimeException(message.toString());
   }
 
 }

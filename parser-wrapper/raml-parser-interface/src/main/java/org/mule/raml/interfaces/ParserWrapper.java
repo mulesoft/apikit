@@ -9,12 +9,15 @@ package org.mule.raml.interfaces;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.parser.rule.IValidationReport;
 
 public interface ParserWrapper {
 
   ApiVendor getApiVendor();
 
   void validate();
+
+  IValidationReport validationReport();
 
   IRaml build();
 
