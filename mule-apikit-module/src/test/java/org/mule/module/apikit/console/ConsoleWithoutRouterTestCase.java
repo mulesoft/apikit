@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.given;
-import static java.lang.Boolean.getBoolean;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 
@@ -58,7 +57,7 @@ public class ConsoleWithoutRouterTestCase extends AbstractMultiParserFunctionalT
 
   @Test
   public void getConsoleJavascriptResource() throws Exception {
-    if (!getBoolean("mule.apikit.parser.amf")) {
+    if (!isAmfParser()) {
       given().port(serverPort.getNumber())
           .header("Accept", "*/*")
           .expect()

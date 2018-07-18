@@ -4,8 +4,8 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.parser;
+package org.mule.module.apikit.api;
 
-enum Parser {
-  RAML_V1, RAML_V2, AMF
+public enum Parser {
+  AMF, AUTO, RAML
 }

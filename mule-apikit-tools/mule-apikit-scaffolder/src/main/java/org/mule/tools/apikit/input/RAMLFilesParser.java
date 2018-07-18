@@ -21,7 +21,6 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
-import org.mule.tools.apikit.ParserType;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
@@ -41,9 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mule.tools.apikit.ParserType.AMF;
-import static org.mule.tools.apikit.ParserType.defaultType;
-
 public class RAMLFilesParser {
 
   private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries =
@@ -52,10 +48,6 @@ public class RAMLFilesParser {
   private final Log log;
 
   public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
-    this(log, fileStreams, apiFactory, defaultType());
-  }
-
-  public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory, ParserType parserType) {
     this.log = log;
     this.apiFactory = apiFactory;
     List<File> processedFiles = new ArrayList<>();
@@ -71,7 +63,7 @@ public class RAMLFilesParser {
       }
 
       try {
-        final ParserWrapper parserWrapper = getParserWrapper(parserType, ramlFile, content);
+        final ParserWrapper parserWrapper = getParserWrapper(ramlFile, content);
         parserWrapper.validate(); // This will fail whether the raml is not valid
 
         final IRaml raml = parserWrapper.build();
@@ -164,7 +156,7 @@ public class RAMLFilesParser {
     return entries;
   }
 
-  private static ParserWrapper getParserWrapper(ParserType parserType, File apiFile, String content) {
+  private static ParserWrapper getParserWrapper(File apiFile, String content) {
     String apiFolderPath = null;
     File apiFileParent = null;
     if (apiFile.getParentFile() != null) {
@@ -172,21 +164,31 @@ public class RAMLFilesParser {
       apiFolderPath = apiFileParent.getPath();
     }
 
-    if (parserType == AMF) {
+    ParserWrapper parserWrapper;
+
+    try {
       final Environment environment =
           DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
-      return ParserWrapperAmf.create(apiFile.toURI(), environment);
-    } else {
+      parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment);
+      parserWrapper.validate();
+    } catch (Exception e) {
       if (ParserV2Utils.useParserV2(content)) {
         final ResourceLoader resourceLoader =
             new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
                                         new FileResourceLoader(apiFolderPath),
                                         new ExchangeDependencyResourceLoader(apiFolderPath));
-        return new ParserWrapperV2(apiFile.getPath(), resourceLoader);
+        parserWrapper = new ParserWrapperV2(apiFile.getPath(), resourceLoader);
       } else {
-        return new ParserWrapperV1(apiFile.getAbsolutePath());
+        parserWrapper = new ParserWrapperV1(apiFile.getAbsolutePath());
+      }
+      try {
+        parserWrapper.validate();
+      } catch (Exception ignored) {
+        throw e;
       }
     }
+
+    return parserWrapper;
   }
 
 }

@@ -9,7 +9,6 @@ package org.mule.tools.apikit;
 import org.apache.commons.lang.Validate;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -18,10 +17,10 @@ import org.codehaus.plexus.util.Scanner;
 import org.mule.tools.apikit.model.RuntimeEdition;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import java.io.*;
-import java.util.*;
-
-import static org.mule.tools.apikit.ParserType.defaultType;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Goal for apikit:create
@@ -131,7 +130,7 @@ public class CreateMojo
     try {
       final RuntimeEdition muleRuntimeEdition = RuntimeEdition.valueOf(this.runtimeEdition);
       Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile,
-                                                          minMuleVersion, muleRuntimeEdition, defaultType());
+                                                          minMuleVersion, muleRuntimeEdition);
       scaffolder.run();
     } catch (IOException e) {
       throw new MojoExecutionException(e.getMessage());
