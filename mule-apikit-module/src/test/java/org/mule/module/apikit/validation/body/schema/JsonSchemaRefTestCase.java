@@ -6,13 +6,11 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 import static com.jayway.restassured.RestAssured.given;
 
-@Ignore("APIKIT-1442")
 public class JsonSchemaRefTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
