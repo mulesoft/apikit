@@ -33,8 +33,7 @@ abstract class AbstractTestCase {
     assertThat(actual.getVersion(), is(equalTo(expected.getVersion())));
     assertThat(actual.getBaseUri(), is(equalTo(expected.getBaseUri())));
 
-    // APIKIT-1449
-    //    assertParametersEqual(actual.getBaseUriParameters(), expected.getBaseUriParameters());
+    assertParametersEqual(actual.getBaseUriParameters(), expected.getBaseUriParameters());
 
     //dump("Resources 08",  ramlResources);
     //dump("Resources AMF",  amfResources);
