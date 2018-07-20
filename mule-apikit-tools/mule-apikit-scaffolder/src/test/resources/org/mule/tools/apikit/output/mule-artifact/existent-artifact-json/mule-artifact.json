@@ -1,25 +1,3 @@
 {
-  "configs": [
-    "other-config.xml",
-    "mule-config.xml"
-  ],
-  "redeploymentEnabled": false,
-  "name": "custom-name",
-  "minMuleVersion": "4.0.0",
-  "requiredProduct": "MULE_EE",
-  "classLoaderModelLoaderDescriptor": {
-    "id": "mule",
-    "attributes": {
-      "exportedPackages": [],
-      "exportedResources": [
-        "api/api.raml",
-        "api/trait.raml",
-        "otherFolder/some.resource"
-      ]
-    }
-  },
-  "bundleDescriptorLoader": {
-    "id": "mule",
-    "attributes": {}
-  }
+  "minMuleVersion":"4.0.0"
 }
