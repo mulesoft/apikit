@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
-import org.mule.runtime.api.deployment.meta.MuleApplicationModel;
 import org.mule.runtime.api.deployment.persistence.MuleApplicationModelJsonSerializer;
 
 import java.io.File;
@@ -51,8 +50,8 @@ public class MuleArtifactJsonGeneratorTestCase {
     final Log log = Mockito.mock(Log.class);
     final MuleArtifactJsonGenerator configGenerator =
         new MuleArtifactJsonGenerator(log, new File(BASE_DIR, testName), DEFAULT_MULE_VERSION);
-    final MuleApplicationModel model = configGenerator.generateArtifact();
-    final String json = serializer.serialize(model);
+
+    final String json = configGenerator.generateArtifact();
 
     final String expectedJson = IOUtils.toString(new FileInputStream(new File(BASE_DIR, testName + "/" + expected)));
 

@@ -32,7 +32,7 @@ public class ToolingClientTestCase
     @Test
     public void loadExtensionModel()
     {
-        ToolingRuntimeClientBootstrap toolingRuntimeClientBootstrap = new ToolingRuntimeClientBootstrap("4.1.1-SNAPSHOT", createMavenConfiguration());
+        ToolingRuntimeClientBootstrap toolingRuntimeClientBootstrap = new ToolingRuntimeClientBootstrap("4.1.1", createMavenConfiguration());
         ExtensionModelService extensionModelService = toolingRuntimeClientBootstrap.newToolingRuntimeClientBuilder().build().extensionModelService();
         ArtifactDescriptor artifactDescriptor = ArtifactDescriptor.newBuilder().withGroupId("org.mule.modules").withArtifactId("mule-apikit-module").withClassifier("mule-plugin").withVersion("1.1.1-SNAPSHOT").build();
         assertEquals("APIKit",extensionModelService.loadExtensionModel(artifactDescriptor).get().getName());
@@ -41,7 +41,7 @@ public class ToolingClientTestCase
     @Test
     public void loadDataSense()
     {
-        ToolingRuntimeClientBootstrap toolingRuntimeClientBootstrap = new ToolingRuntimeClientBootstrap("4.1.1-SNAPSHOT", createMavenConfiguration());
+        ToolingRuntimeClientBootstrap toolingRuntimeClientBootstrap = new ToolingRuntimeClientBootstrap("4.1.1", createMavenConfiguration());
         ToolingRuntimeClient toolingRuntimeClient = toolingRuntimeClientBootstrap.newToolingRuntimeClientBuilder().build();
         ToolingArtifact toolingArtifact = toolingRuntimeClient.newToolingArtifact(() -> this.getClass().getClassLoader().getResource("app"));
         assertNotNull(toolingArtifact);
