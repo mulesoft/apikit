@@ -9,25 +9,25 @@
         "type"? : String, 
         "encoded"? : Binary
       }, 
-      "headers"? : {
+      "headers" : {
 
       }, 
-      "listenerPath"? : String, 
-      "method"? : String, 
-      "queryParams"? : {
+      "listenerPath" : String, 
+      "method" : String, 
+      "queryParams" : {
 
       }, 
-      "queryString"? : String, 
-      "relativePath"? : String, 
-      "remoteAddress"? : String, 
-      "requestPath"? : String, 
-      "requestUri"? : String, 
-      "scheme"? : String, 
-      "uriParams"? : {
+      "queryString" : String, 
+      "relativePath" : String, 
+      "remoteAddress" : String, 
+      "requestPath" : String, 
+      "requestUri" : String, 
+      "scheme" : String, 
+      "uriParams" : {
         "customerId"? : String
       }, 
       "version"? : String, 
-      "localAddress"? : String
+      "localAddress" : String
     }
   }, 
   "variables" : {
