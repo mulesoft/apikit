@@ -4,12 +4,12 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>mule-apikit-parent</artifactId>
-        <version>1.1.4-SNAPSHOT</version>
+        <version>1.1.5</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-apikit-module</artifactId>
-    <version>1.1.4-SNAPSHOT</version>
+    <version>1.1.5</version>
     <packaging>mule-plugin</packaging>
 
     <name>APIKit Module</name>
@@ -34,7 +34,7 @@
         <mule.tests.component.plugin.version>${runtime.version}</mule.tests.component.plugin.version>
 
         <!-- REVISE VERSIONS USED IN RELEASE -->
-        <mule.service.weave.version>2.1.4-SNAPSHOT</mule.service.weave.version>
+        <mule.service.weave.version>2.1.4</mule.service.weave.version>
         <mule.plugin.maven.plugin.version>1.1.3</mule.plugin.maven.plugin.version>
         <mule.http.service.version>1.1.1</mule.http.service.version>
         <mule.extensions.api.version>1.1.1</mule.extensions.api.version>
