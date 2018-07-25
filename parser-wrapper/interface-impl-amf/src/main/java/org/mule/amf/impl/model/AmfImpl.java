@@ -20,6 +20,7 @@ import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
 import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import scala.Option;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
@@ -117,7 +118,8 @@ public class AmfImpl implements IRaml {
 
   @Override
   public String getUri() {
-    throw new UnsupportedOperationException();
+    Option<String> location = webApi._internal().location();
+    return location.isDefined() ? location.get() : null;
   }
 
   @Override
