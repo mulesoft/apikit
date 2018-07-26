@@ -62,6 +62,7 @@ public class Leagues
     public String toJson(Leagues leagues) throws IOException
     {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.disableDefaultTyping();
         return mapper.writeValueAsString(leagues);
     }
 
