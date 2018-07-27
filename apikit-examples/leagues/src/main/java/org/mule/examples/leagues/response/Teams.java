@@ -34,6 +34,7 @@ public class Teams {
     @Transformer(resultMimeType = "application/json")
     public String toJson(Teams teams) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.disableDefaultTyping();
         return mapper.writeValueAsString(teams);
     }
 

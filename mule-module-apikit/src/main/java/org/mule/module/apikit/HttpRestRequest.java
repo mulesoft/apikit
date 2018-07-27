@@ -563,7 +563,7 @@ public class HttpRestRequest
         try
         {
             Map<String, String> payload = requestEvent.getMessage().getPayload() instanceof NullPayload ? Collections.<String, String>emptyMap() : (Map<String, String>) requestEvent.getMessage().getPayload();
-            jsonText = new ObjectMapper().writeValueAsString(payload);
+            jsonText = new ObjectMapper().disableDefaultTyping().writeValueAsString(payload);
         }
         catch (Exception e)
         {
