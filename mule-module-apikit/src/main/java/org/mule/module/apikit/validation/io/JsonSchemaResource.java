@@ -44,7 +44,7 @@ public class JsonSchemaResource extends AbstractFileResolvingResource
                             {
                                 if (objectMapper == null)
                                 {
-                                    objectMapper = new ObjectMapper();
+                                    objectMapper = new ObjectMapper().disableDefaultTyping();
                                 }
 
                                 JsonSchema jsonSchema = this.objectMapper.generateJsonSchema(clazz);

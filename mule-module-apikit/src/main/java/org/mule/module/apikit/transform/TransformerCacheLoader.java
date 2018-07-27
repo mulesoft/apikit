@@ -56,7 +56,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
         {
             JsonToObject jto = new JsonToObject();
             jto.setReturnDataType(resultDataType);
-            jto.setMapper(new ObjectMapper());
+            jto.setMapper(new ObjectMapper().disableDefaultTyping());
             muleContext.getRegistry().applyProcessorsAndLifecycle(jto);
             return jto;
         }
@@ -65,7 +65,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
             ObjectToJson otj = new ObjectToJson();
             otj.setSourceClass(sourceDataType.getType());
             otj.setReturnDataType(resultDataType);
-            otj.setMapper(new ObjectMapper());
+            otj.setMapper(new ObjectMapper().disableDefaultTyping());
             muleContext.getRegistry().applyProcessorsAndLifecycle(otj);
             return otj;
         }
