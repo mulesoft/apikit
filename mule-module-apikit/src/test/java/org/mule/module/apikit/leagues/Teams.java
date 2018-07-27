@@ -58,6 +58,7 @@ public class Teams
     public String toJson(Teams teams) throws IOException
     {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.disableDefaultTyping();
         return mapper.writeValueAsString(teams);
     }
 

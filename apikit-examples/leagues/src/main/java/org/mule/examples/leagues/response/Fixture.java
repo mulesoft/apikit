@@ -35,6 +35,7 @@ public class Fixture {
     public String toJson(Fixture fixture) throws IOException
     {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.disableDefaultTyping();
         return mapper.writeValueAsString(fixture);
     }
 
