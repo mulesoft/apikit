@@ -8,7 +8,7 @@ package org.mule.module.apikit.validation.attributes;
 
 import org.mule.module.apikit.api.exception.InvalidQueryStringException;
 import org.mule.raml.interfaces.model.IAction;
-import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.raml.interfaces.model.IQueryString;
 import org.mule.runtime.api.util.MultiMap;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class QueryStringValidator {
   }
 
   public void validate(MultiMap<String, String> queryParams) throws InvalidQueryStringException {
-    IParameter expected = action.getQueryString();
+    IQueryString expected = action.queryString();
     if (!shouldProcessQueryString(expected))
       return;
 
@@ -33,11 +33,11 @@ public class QueryStringValidator {
     }
   }
 
-  private boolean shouldProcessQueryString(IParameter queryString) {
+  private boolean shouldProcessQueryString(IQueryString queryString) {
     return queryString != null && !queryString.isArray() && !queryString.isScalar();
   }
 
-  private String buildQueryString(IParameter expected, MultiMap<String, String> queryParams) {
+  private String buildQueryString(IQueryString expected, MultiMap<String, String> queryParams) {
     StringBuilder result = new StringBuilder();
 
     for (Object property : queryParams.keySet()) {
@@ -55,7 +55,12 @@ public class QueryStringValidator {
           result.append(o).append("\n");
       }
     }
-    // if empty validate return an empty json
-    return result.length() == 0 ? "{}" : result.toString();
+
+    if (result.length() > 0)
+      return result.toString();
+    if (expected.getDefaultValue() != null)
+      return expected.getDefaultValue();
+
+    return "{}";
   }
 }

@@ -9,20 +9,20 @@ package org.mule.raml.implv2.v08.model;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IQueryString;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.raml.v2.api.model.v08.bodies.BodyLike;
+import org.raml.v2.api.model.v08.bodies.Response;
+import org.raml.v2.api.model.v08.methods.Method;
+import org.raml.v2.api.model.v08.parameters.Parameter;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.raml.v2.api.model.v08.bodies.BodyLike;
-import org.raml.v2.api.model.v08.bodies.Response;
-import org.raml.v2.api.model.v08.methods.Method;
-import org.raml.v2.api.model.v08.parameters.Parameter;
 
 public class ActionImpl implements IAction {
 
@@ -94,6 +94,11 @@ public class ActionImpl implements IAction {
   @Override
   public IParameter getQueryString() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public IQueryString queryString() {
+    return null;
   }
 
   @Override

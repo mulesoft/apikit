@@ -6,10 +6,10 @@
  */
 package org.mule.raml.interfaces.model;
 
+import org.mule.raml.interfaces.model.parameter.IParameter;
+
 import java.util.List;
 import java.util.Map;
-
-import org.mule.raml.interfaces.model.parameter.IParameter;
 
 public interface IAction {
 
@@ -47,5 +47,8 @@ public interface IAction {
 
   void addIs(String is);
 
+  @Deprecated
   IParameter getQueryString();
+
+  IQueryString queryString();
 }

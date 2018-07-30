@@ -36,7 +36,9 @@ public interface IParameter {
 
   MetadataType getMetadata();
 
+  @Deprecated
   boolean isScalar();
 
+  @Deprecated
   boolean isFacetArray(String facet);
 }
