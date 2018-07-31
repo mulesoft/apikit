@@ -10,6 +10,7 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.ObjectType;
+import org.mule.module.apikit.api.Parser;
 import org.mule.runtime.api.meta.model.ImportedTypeModel;
 import org.mule.runtime.api.meta.model.XmlDslModel;
 import org.mule.runtime.api.meta.model.declaration.fluent.ConfigurationDeclarer;
@@ -92,7 +93,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
         .ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("headersStrictValidation").defaultingTo(false)
         .ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withOptionalParameter("parser").defaultingTo(AUTO).ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withOptionalParameter("parser").defaultingTo(AUTO).ofType(typeLoader.load(Parser.class));
     parameterGroupDeclarer.withOptionalParameter("flowMappings")
         .ofType(typeBuilder.arrayType().of(typeLoader.load(FlowMapping.class)).build());
 
