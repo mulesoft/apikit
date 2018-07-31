@@ -88,7 +88,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   @Override
   public void initialise() throws InitialisationException {
     try {
-      ramlHandler = new RamlHandler(raml, keepRamlBaseUri, muleContext, getParser());
+      ramlHandler = new RamlHandler(raml, keepRamlBaseUri, muleContext, getParserType());
 
       // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
       // we will keep the value defined during raml handler instantiation
@@ -132,12 +132,20 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     this.disableValidations = disableValidations;
   }
 
-  public Parser getParser() {
+  private Parser getParserType() {
     return parser;
   }
 
-  public void setParser(Parser parser) {
-    this.parser = parser;
+  public String getParser() {
+    return parser.name();
+  }
+
+  public void setParser(String parser) {
+    try {
+      this.parser = Parser.valueOf(parser);
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Invalid value for parser property. Valid values: AMF, AUTO or RAML");
+    }
   }
 
   @Override

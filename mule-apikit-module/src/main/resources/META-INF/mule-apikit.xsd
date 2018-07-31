@@ -74,9 +74,27 @@
                         </xsd:documentation>
                     </xsd:annotation>
                 </xsd:attribute>
+                <xsd:attribute name="parser" default="AUTO" type="parserType" use="optional" >
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            The parser to be used for request validation. There are three valid values: AMF, RAML and AUTO.
+                            In case of using AUTO, APIkit will try first with AMF and then, if any error was found, will try with RAML
+
+                            Default value: AUTO
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
             </xsd:extension>
         </xsd:complexContent>
     </xsd:complexType>
+
+    <xsd:simpleType name="parserType" final="restriction" >
+        <xsd:restriction base="mule:nonBlankString">
+            <xsd:enumeration value="AMF"/>
+            <xsd:enumeration value="AUTO"/>
+            <xsd:enumeration value="RAML"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 
     <xsd:element name="router" type="routerType" substitutionGroup="mule:abstract-message-processor">
         <xsd:annotation>
