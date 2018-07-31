@@ -82,4 +82,12 @@ public class QueryStringTestCase extends AbstractMultiParserFunctionalTestCase {
         .response()
         .when().get("/api/type-property-type?property={\"firstname\": \"Lionel\", \"nickname\": \"Messi\"}");
   }
+
+  @Test
+  public void defaultValueProperty() {
+    given().queryParam("property", "someValue")
+        .expect().statusCode(200)
+        .response()
+        .when().get("/api/default-value-property");
+  }
 }

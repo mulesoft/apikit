@@ -7,6 +7,7 @@
 package org.mule.raml.implv2.v10.model;
 
 import org.mule.raml.interfaces.model.IQueryString;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
@@ -14,7 +15,9 @@ import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.internal.impl.v10.type.TypeId;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
@@ -67,5 +70,16 @@ public class QueryStringImpl implements IQueryString {
       }
     }
     return false;
+  }
+
+  @Override
+  public Map<String, IParameter> facetsWithDefault() {
+    Map<String, IParameter> result = new HashMap<>();
+    if (typeDeclaration instanceof ObjectTypeDeclaration) {
+      for (TypeDeclaration type : ((ObjectTypeDeclaration) typeDeclaration).properties()) {
+          if (type.defaultValue() != null) result.put(type.name(), new ParameterImpl(type));
+      }
+    }
+    return result;
   }
 }

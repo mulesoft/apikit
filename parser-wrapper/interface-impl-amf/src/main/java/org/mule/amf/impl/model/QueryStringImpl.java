@@ -15,9 +15,12 @@ import amf.client.model.domain.Shape;
 import amf.client.validate.ValidationReport;
 import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
 import org.mule.raml.interfaces.model.IQueryString;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -88,5 +91,16 @@ public class QueryStringImpl implements IQueryString {
       }
     }
     return false;
+  }
+
+  @Override
+  public Map<String, IParameter> facetsWithDefault() {
+    HashMap<String, IParameter> result = new HashMap<>();
+
+    if (schema instanceof NodeShape) {
+      for (PropertyShape type : ((NodeShape) schema).properties())
+         if (type.range().defaultValue() != null) result.put(type.name().value(), new ParameterImpl(type));
+    }
+    return result;
   }
 }

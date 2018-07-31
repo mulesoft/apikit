@@ -9,9 +9,12 @@ package org.mule.module.apikit.validation.attributes;
 import org.mule.module.apikit.api.exception.InvalidQueryStringException;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IQueryString;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class QueryStringValidator {
 
@@ -40,8 +43,10 @@ public class QueryStringValidator {
   private String buildQueryString(IQueryString expected, MultiMap<String, String> queryParams) {
     StringBuilder result = new StringBuilder();
 
-    for (Object property : queryParams.keySet()) {
+    Map<String, IParameter> facetsWithDefault = expected.facetsWithDefault();
 
+    for (Object property : queryParams.keySet()) {
+      facetsWithDefault.remove(property.toString());
       final List<String> actualQueryParam = queryParams.getAll(property.toString());
 
       result.append("\n").append(property).append(": ");
@@ -50,11 +55,16 @@ public class QueryStringValidator {
         for (Object o : actualQueryParam) {
           result.append("\n  - ").append(o);
         }
+        result.append("\n");
       } else {
-        for (Object o : actualQueryParam)
+        for (Object o : actualQueryParam) {
           result.append(o).append("\n");
+        }
       }
     }
+
+    for (Entry<String, IParameter> entry : facetsWithDefault.entrySet())
+      result.append(entry.getKey()).append(": ").append(entry.getValue().getDefaultValue()).append("\n");
 
     if (result.length() > 0)
       return result.toString();

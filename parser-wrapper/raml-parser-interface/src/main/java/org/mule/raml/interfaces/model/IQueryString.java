@@ -6,6 +6,10 @@
  */
 package org.mule.raml.interfaces.model;
 
+import org.mule.raml.interfaces.model.parameter.IParameter;
+
+import java.util.Map;
+
 public interface IQueryString {
 
   String getDefaultValue();
@@ -17,4 +21,6 @@ public interface IQueryString {
   boolean isScalar();
 
   boolean isFacetArray(String facet);
+
+  Map<String, IParameter> facetsWithDefault();
 }
