@@ -20,6 +20,10 @@
     <flow name="get:/type-property-type:query-string-test-config">
         <set-payload value="#[NullPayload.getInstance()]" />
     </flow>
+    <flow name="get:/default-value-property:query-string-test-config">
+        <set-payload value="#[NullPayload.getInstance()]" />
+    </flow>
+
     <apikit:mapping-exception-strategy name="query-string-test-apiKitGlobalExceptionMapping">
         <apikit:mapping statusCode="404">
             <apikit:exception value="org.mule.module.apikit.exception.NotFoundException" />
