@@ -43,7 +43,8 @@ public class ValidationResultImpl implements IValidationResult {
 
   @Override
   public Severity getSeverity() {
-    if (validationResult.getLevel().name().equals(Level.WARN.name())) return WARNING;
+    if (validationResult.getLevel().name().equals(Level.WARN.name()))
+      return WARNING;
     return Severity.fromString(validationResult.getLevel().name());
   }
 }

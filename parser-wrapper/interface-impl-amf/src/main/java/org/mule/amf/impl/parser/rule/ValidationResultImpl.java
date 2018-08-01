@@ -48,7 +48,8 @@ public class ValidationResultImpl implements IValidationResult {
 
   @Override
   public Severity getSeverity() {
-    if (!severities.contains(validationResult.level())) return ERROR;
+    if (!severities.contains(validationResult.level()))
+      return ERROR;
     return Severity.fromString(validationResult.level());
   }
 }
