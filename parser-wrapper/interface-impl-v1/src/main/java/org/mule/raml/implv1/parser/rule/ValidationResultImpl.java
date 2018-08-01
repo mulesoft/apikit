@@ -9,6 +9,9 @@ package org.mule.raml.implv1.parser.rule;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
 import org.raml.parser.rule.ValidationResult;
+import org.raml.parser.rule.ValidationResult.Level;
+
+import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class ValidationResultImpl implements IValidationResult {
 
@@ -40,6 +43,8 @@ public class ValidationResultImpl implements IValidationResult {
 
   @Override
   public Severity getSeverity() {
+    if (validationResult.getLevel().name().equals(Level.WARN.name()))
+      return WARNING;
     return Severity.fromString(validationResult.getLevel().name());
   }
 }

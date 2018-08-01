@@ -146,7 +146,7 @@ public class RAMLFilesParser {
 
     final Environment environment =
         DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
-    parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment);
+    parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
     final IValidationReport validationReport = parserWrapper.validationReport();
 
     if (!validationReport.conforms()) {
