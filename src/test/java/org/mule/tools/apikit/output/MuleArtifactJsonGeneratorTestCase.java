@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
-import org.mule.runtime.api.deployment.persistence.MuleApplicationModelJsonSerializer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,8 +28,6 @@ public class MuleArtifactJsonGeneratorTestCase {
   private String expected;
 
   private static final String BASE_DIR = "src/test/resources/org/mule/tools/apikit/output/mule-artifact";
-
-  private final MuleApplicationModelJsonSerializer serializer = new MuleApplicationModelJsonSerializer();
 
   public MuleArtifactJsonGeneratorTestCase(String testName, String expected) {
     this.testName = testName;
