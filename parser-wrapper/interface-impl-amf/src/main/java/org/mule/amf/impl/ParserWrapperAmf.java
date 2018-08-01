@@ -93,12 +93,7 @@ public class ParserWrapperAmf implements ParserWrapper {
   }
 
   public static ParserWrapperAmf create(URI apiUri, Environment environment) {
-    try {
-      AMF.init().get();
-      return new ParserWrapperAmf(apiUri, environment, VALIDATE);
-    } catch (InterruptedException | ExecutionException e) {
-      return null;
-    }
+    return create(apiUri, environment, VALIDATE);
   }
 
   public static ParserWrapperAmf create(URI apiUri, Environment environment, boolean validate) {
