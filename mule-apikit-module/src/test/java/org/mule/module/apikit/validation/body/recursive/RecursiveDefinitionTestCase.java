@@ -6,10 +6,8 @@
  */
 package org.mule.module.apikit.validation.body.recursive;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-import org.omg.PortableInterceptor.INACTIVE;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -107,7 +105,7 @@ public class RecursiveDefinitionTestCase extends AbstractMultiParserFunctionalTe
 
   }
 
-  @Ignore // https://www.mulesoft.org/jira/browse/APIMF-992
+  @Test
   public void invalidPost2() {
 
     given().header("Content-Type", "application/json")
