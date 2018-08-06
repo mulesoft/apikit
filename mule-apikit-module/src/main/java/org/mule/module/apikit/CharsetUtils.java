@@ -54,7 +54,10 @@ public class CharsetUtils {
           logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
         }
       }
+    } else {
+      logger.debug("Request Content-Type charset: " + logEncoding(encoding));
     }
+
     if (encoding.matches("(?i)UTF-16.+")) {
       encoding = "UTF-16";
     }
