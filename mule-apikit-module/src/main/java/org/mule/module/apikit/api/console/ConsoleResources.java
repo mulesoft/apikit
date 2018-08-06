@@ -38,7 +38,7 @@ public class ConsoleResources {
 
   public ConsoleResources(ConsoleConfig config, String listenerPath, String requestPath, String queryString, String method,
                           String aceptHeader) {
-    CONSOLE_RESOURCES_BASE = config.getParser() == AMF ? "/console-resources-amf" : "/console-resources";
+    CONSOLE_RESOURCES_BASE = AMF == config.getParser() ? "/console-resources-amf" : "/console-resources";
 
     this.config = config;
     this.listenerPath = listenerPath;
@@ -140,7 +140,7 @@ public class ConsoleResources {
       return config.getRamlHandler().getRamlV2(resourceRelativePath);
     }
 
-    if (config.getParser() == AMF && queryString.equals("amf")) {
+    if (AMF == config.getParser() && queryString.equals("amf")) {
       return config.getRamlHandler().getAMFModel();
     }
 

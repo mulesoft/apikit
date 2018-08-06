@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -48,6 +49,7 @@ public class ScaffolderWithExistingConfigMule4Test {
   public void setUp() {
     folder.newFolder("scaffolder");
     folder.newFolder("scaffolder-existing");
+    folder.newFolder("scaffolder-existing-multiples");
     folder.newFolder("scaffolder-existing-extension");
     folder.newFolder("scaffolder-existing-custom-lc");
     folder.newFolder("scaffolder-existing-old");
@@ -56,6 +58,63 @@ public class ScaffolderWithExistingConfigMule4Test {
     folder.newFolder("custom-domain-4");
     folder.newFolder("empty-domain");
     folder.newFolder("custom-domain-multiple-lc-4");
+  }
+
+  @Test
+  public void testAlreadyExistsMultipleConfigurationsFirstFlowsXml() throws Exception {
+    File resourcesFlows = getFile("scaffolder-existing-multiples/resources-flows.xml");
+    File noResourcesFlows = getFile("scaffolder-existing-multiples/no-resources-flows.xml");
+    List<File> ramls = singletonList(getFile("scaffolder-existing-multiples/api.raml"));
+
+    List<File> xmls = Arrays.asList(resourcesFlows, noResourcesFlows);
+    File muleXmlOut = folder.newFolder("mule-xml-out");
+
+    createScaffolder(ramls, xmls, muleXmlOut, null, false, null).run();
+
+    assertTrue(resourcesFlows.exists());
+    assertTrue(noResourcesFlows.exists());
+    String s = IOUtils.toString(new FileInputStream(noResourcesFlows));
+    assertEquals(2, countOccurences(s, "get:\\books"));
+    assertEquals(2, countOccurences(s, "put:\\shows"));
+    assertEquals(0, countOccurences(s, "patch:\\movies"));
+  }
+
+  @Test
+  public void testAlreadyExistsMultipleConfigurationsFirstNoFlowsXml() throws Exception {
+    File noResourcesFlows = getFile("scaffolder-existing-multiples/no-resources-flows.xml");
+    File resourcesFlows = getFile("scaffolder-existing-multiples/resources-flows.xml");
+    List<File> ramls = singletonList(getFile("scaffolder-existing-multiples/api.raml"));
+
+    List<File> xmls = Arrays.asList(noResourcesFlows, resourcesFlows);
+    File muleXmlOut = folder.newFolder("mule-xml-out");
+
+    createScaffolder(ramls, xmls, muleXmlOut, null, false, null).run();
+
+    assertTrue(noResourcesFlows.exists());
+    assertTrue(resourcesFlows.exists());
+    String s = IOUtils.toString(new FileInputStream(noResourcesFlows));
+    assertEquals(2, countOccurences(s, "get:\\books"));
+    assertEquals(2, countOccurences(s, "put:\\shows"));
+    assertEquals(0, countOccurences(s, "patch:\\movies"));
+  }
+
+  private void testAlreadyExistsMultipleConfigurations(String firstConfiguration, String secondConfiguration) throws Exception {
+    File firstConfigurationFile = getFile(firstConfiguration);
+    File secondConfigurationFile = getFile(secondConfiguration);
+    List<File> ramls = singletonList(getFile("scaffolder-existing-multiples/api.raml"));
+
+    List<File> xmls = Arrays.asList(firstConfigurationFile, secondConfigurationFile);
+    File muleXmlOut = folder.newFolder("mule-xml-out");
+
+    createScaffolder(ramls, xmls, muleXmlOut, null, false, null).run();
+
+    assertTrue(firstConfigurationFile.exists());
+    assertTrue(secondConfigurationFile.exists());
+    File noResourceFlowsFile = getFile("scaffolder-existing-multiples/no-resources-flows.xml");
+    String s = IOUtils.toString(new FileInputStream(noResourceFlowsFile));
+    assertEquals(2, countOccurences(s, "get:\\books"));
+    assertEquals(2, countOccurences(s, "put:\\shows"));
+    assertEquals(0, countOccurences(s, "patch:\\movies"));
   }
 
   @Test

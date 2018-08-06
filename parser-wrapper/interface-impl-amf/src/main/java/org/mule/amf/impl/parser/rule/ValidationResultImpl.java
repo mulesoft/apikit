@@ -10,12 +10,20 @@ import amf.client.validate.ValidationResult;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
 
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.stream.Collectors.toList;
+import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
+
 public class ValidationResultImpl implements IValidationResult {
 
-  ValidationResult validationResult;
+  private ValidationResult validationResult;
+  private List<String> severities;
 
   public ValidationResultImpl(ValidationResult validationResult) {
     this.validationResult = validationResult;
+    severities = newArrayList(Severity.values()).stream().map(Enum::name).collect(toList());
   }
 
   public String getMessage() {
@@ -40,6 +48,8 @@ public class ValidationResultImpl implements IValidationResult {
 
   @Override
   public Severity getSeverity() {
+    if (!severities.contains(validationResult.level()))
+      return ERROR;
     return Severity.fromString(validationResult.level());
   }
 }

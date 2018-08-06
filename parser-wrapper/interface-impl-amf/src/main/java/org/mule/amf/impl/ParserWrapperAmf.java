@@ -61,9 +61,9 @@ public class ParserWrapperAmf implements ParserWrapper {
   private static final String VENDOR_OAS_20 = "oas 2.0";
   private static final boolean VALIDATE = true;
 
-  private ParserWrapperAmf(final URI uri, Environment environment) {
+  private ParserWrapperAmf(final URI uri, Environment environment, boolean validate) {
     parser = getParserForApi(uri, environment);
-    document = DocumentParser.parseFile(parser, uri, VALIDATE);
+    document = DocumentParser.parseFile(parser, uri, validate);
     webApi = getWebApi(parser, uri);
     final Option<Vendor> vendor = webApi.sourceVendor();
     apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
@@ -93,9 +93,13 @@ public class ParserWrapperAmf implements ParserWrapper {
   }
 
   public static ParserWrapperAmf create(URI apiUri, Environment environment) {
+    return create(apiUri, environment, VALIDATE);
+  }
+
+  public static ParserWrapperAmf create(URI apiUri, Environment environment, boolean validate) {
     try {
       AMF.init().get();
-      return new ParserWrapperAmf(apiUri, environment);
+      return new ParserWrapperAmf(apiUri, environment, validate);
     } catch (InterruptedException | ExecutionException e) {
       return null;
     }

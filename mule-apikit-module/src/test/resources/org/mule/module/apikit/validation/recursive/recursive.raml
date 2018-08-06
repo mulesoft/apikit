@@ -1,0 +1,24 @@
+#%RAML 1.0
+---
+title: Offices API
+baseUri: http://localhost/tree
+
+types:
+    Tree:
+        type: object
+        properties:
+            value: string
+            left?: Tree
+            right?: Tree
+        additionalProperties: true
+
+/dummy:
+    post:
+        body:
+            application/json:
+                type: Tree   
+        responses:
+            200:
+                body:
+                    application/json:
+                        type: Tree

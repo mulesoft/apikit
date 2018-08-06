@@ -25,22 +25,26 @@
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-message-metadata-model</artifactId>
             <version>${mule.api.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-metadata-model-json</artifactId>
             <version>${mule.api.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-metadata-model-xml</artifactId>
             <version>${mule.api.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-core</artifactId>
             <version>${mule.version}</version>
+            <scope>provided</scope>
             <!-- This exclusion should be removed when RP-375 is done -->
             <exclusions>
                 <exclusion>
@@ -79,6 +83,7 @@
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-module-spring-config</artifactId>
             <version>${mule.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.tests</groupId>
