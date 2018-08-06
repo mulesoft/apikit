@@ -8,6 +8,7 @@ package org.mule.module.apikit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
@@ -166,7 +167,7 @@ public class HttpRestRequest
     private String buildQueryString(IQueryString expected, Map queryParamsMap) {
         StringBuilder result = new StringBuilder();
 
-        Map<String, IParameter> facetsWithDefault = expected.facetsWithDefault();
+        Map<String, IParameter> facetsWithDefault = filterDefaults(expected.facets());
 
         for (Object property : queryParamsMap.keySet()) {
             facetsWithDefault.remove(property.toString());
@@ -194,6 +195,14 @@ public class HttpRestRequest
             return expected.getDefaultValue();
 
         return "{}";
+    }
+
+    private Map<String, IParameter> filterDefaults(Map<String, IParameter> facets) {
+        HashMap<String, IParameter> result = Maps.newHashMap();
+        for (Entry<String, IParameter> entry : facets.entrySet()) {
+            if (entry.getValue().getDefaultValue() != null) result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 
     private void processQueryParameters() throws InvalidQueryParameterException

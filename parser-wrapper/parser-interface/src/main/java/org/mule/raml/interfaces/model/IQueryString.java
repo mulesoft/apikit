@@ -22,5 +22,5 @@ public interface IQueryString {
 
     boolean isFacetArray(String facet);
 
-    Map<String, IParameter> facetsWithDefault();
+    Map<String, IParameter> facets();
 }
