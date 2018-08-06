@@ -167,7 +167,7 @@ public class HttpRestRequest
     private String buildQueryString(IQueryString expected, Map queryParamsMap) {
         StringBuilder result = new StringBuilder();
 
-        Map<String, IParameter> facetsWithDefault = filterDefaults(expected.facets());
+        Map<String, IParameter> facetsWithDefault = getFacetsWithDefaultValue(expected.facets());
 
         for (Object property : queryParamsMap.keySet()) {
             facetsWithDefault.remove(property.toString());
@@ -197,7 +197,7 @@ public class HttpRestRequest
         return "{}";
     }
 
-    private Map<String, IParameter> filterDefaults(Map<String, IParameter> facets) {
+    private Map<String, IParameter> getFacetsWithDefaultValue(Map<String, IParameter> facets) {
         HashMap<String, IParameter> result = Maps.newHashMap();
         for (Entry<String, IParameter> entry : facets.entrySet()) {
             if (entry.getValue().getDefaultValue() != null) result.put(entry.getKey(), entry.getValue());
