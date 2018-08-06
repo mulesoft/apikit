@@ -73,11 +73,11 @@ public class QueryStringImpl implements IQueryString {
   }
 
   @Override
-  public Map<String, IParameter> facetsWithDefault() {
+  public Map<String, IParameter> facets() {
     Map<String, IParameter> result = new HashMap<>();
     if (typeDeclaration instanceof ObjectTypeDeclaration) {
       for (TypeDeclaration type : ((ObjectTypeDeclaration) typeDeclaration).properties()) {
-          if (type.defaultValue() != null) result.put(type.name(), new ParameterImpl(type));
+        result.put(type.name(), new ParameterImpl(type));
       }
     }
     return result;

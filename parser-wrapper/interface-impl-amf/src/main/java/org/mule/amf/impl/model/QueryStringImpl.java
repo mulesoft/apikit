@@ -94,12 +94,12 @@ public class QueryStringImpl implements IQueryString {
   }
 
   @Override
-  public Map<String, IParameter> facetsWithDefault() {
+  public Map<String, IParameter> facets() {
     HashMap<String, IParameter> result = new HashMap<>();
 
     if (schema instanceof NodeShape) {
       for (PropertyShape type : ((NodeShape) schema).properties())
-         if (type.range().defaultValue() != null) result.put(type.name().value(), new ParameterImpl(type));
+        result.put(type.name().value(), new ParameterImpl(type));
     }
     return result;
   }

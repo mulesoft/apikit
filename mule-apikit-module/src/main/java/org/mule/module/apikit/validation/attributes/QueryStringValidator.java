@@ -6,12 +6,14 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import com.google.common.collect.Maps;
 import org.mule.module.apikit.api.exception.InvalidQueryStringException;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IQueryString;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,7 +45,7 @@ public class QueryStringValidator {
   private String buildQueryString(IQueryString expected, MultiMap<String, String> queryParams) {
     StringBuilder result = new StringBuilder();
 
-    Map<String, IParameter> facetsWithDefault = expected.facetsWithDefault();
+    Map<String, IParameter> facetsWithDefault = filterDefaults(expected.facets());
 
     for (Object property : queryParams.keySet()) {
       facetsWithDefault.remove(property.toString());
@@ -72,5 +74,13 @@ public class QueryStringValidator {
       return expected.getDefaultValue();
 
     return "{}";
+  }
+
+  private Map<String, IParameter> filterDefaults(Map<String, IParameter> facets) {
+    HashMap<String, IParameter> result = Maps.newHashMap();
+    for (Entry<String, IParameter> entry : facets.entrySet()) {
+      if (entry.getValue().getDefaultValue() != null) result.put(entry.getKey(), entry.getValue());
+    }
+    return result;
   }
 }
