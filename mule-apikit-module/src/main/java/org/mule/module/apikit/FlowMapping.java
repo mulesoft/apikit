@@ -20,6 +20,7 @@ public class FlowMapping {
   private String action;
   @Parameter
   @Optional
+  @Alias("content-type")
   private String contentType;
   @Parameter
   @Alias("flow-ref")
