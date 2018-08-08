@@ -53,6 +53,7 @@ import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.processor.Processor;
+import org.mule.runtime.core.api.util.StringMessageUtils;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,8 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
       return;
     }
     registry.setApiSource(configuration.getName(), url.get().toString().replace("*", ""));
+
+    LOGGER.info(StringMessageUtils.getBoilerPlate("APIKit Started with Parser: " + configuration.getParser().name()));
   }
 
   @Override

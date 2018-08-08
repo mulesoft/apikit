@@ -64,7 +64,7 @@ public class Console extends AbstractComponent implements Processor, Initialisab
       URI uri = url.get();
       String consoleUrl = uri.toString().replace("*", "");
       String consoleUrlFixed = UrlUtils.getBaseUriReplacement(consoleUrl);
-      logger.info(StringMessageUtils.getBoilerPlate("APIKit ConsoleURL : " + consoleUrlFixed));
+      logger.info(StringMessageUtils.getBoilerPlate("APIKit Console URL: " + consoleUrlFixed));
       publishConsoleUrls(consoleUrlFixed);
     } else {
       logger.error("There was an error retrieving console source.");
