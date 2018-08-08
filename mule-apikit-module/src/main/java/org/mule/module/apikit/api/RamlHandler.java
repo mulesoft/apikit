@@ -61,7 +61,7 @@ public class RamlHandler {
       throws IOException {
     this.keepRamlBaseUri = keepRamlBaseUri;
 
-    this.parser = resolveParser(defaultParser);
+    parser = resolveParser(defaultParser);
 
     String rootRamlLocation = findRootRaml(ramlLocation);
     if (rootRamlLocation == null) {
@@ -70,6 +70,7 @@ public class RamlHandler {
     parserService = new ParserService(rootRamlLocation, parser);
     parserService.validateRaml();
     this.api = parserService.build();
+    parser = parserService.getParser(); // Fix Parser 
 
     int idx = rootRamlLocation.lastIndexOf("/");
     if (idx > 0) {
