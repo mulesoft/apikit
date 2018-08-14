@@ -107,7 +107,7 @@
             <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>18.0</version>
+                <version>25.0-jre</version>
                 <!--required by raml-parser v1 & v2. Workaround for MULE-12439-->
             </dependency>
             <dependency>
@@ -276,6 +276,33 @@
             <modules>
                 <module>mule-apikit-it-tests</module>
             </modules>
+        </profile>
+
+        <profile>
+            <id>security</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.5.1</version>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/lib/</outputDirectory>
+                                    <includeScope>runtime</includeScope>
+                                    <excludeGroupIds>org.raml</excludeGroupIds>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
