@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.parser;
 
+import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
@@ -13,7 +15,13 @@ import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.core.api.util.FileUtils;
-import org.raml.v2.api.loader.CompositeResourceLoader;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.loader.RootRamlFileResourceLoader;
@@ -21,15 +29,10 @@ import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-
-import static java.util.Optional.ofNullable;
-
 public class ParserWrapperV2 implements ParserWrapper {
 
   private static final Logger logger = LoggerFactory.getLogger(ParserWrapperV2.class);
+  private static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s";
 
   private final String ramlPath;
   private final ResourceLoader resourceLoader;
@@ -46,7 +49,22 @@ public class ParserWrapperV2 implements ParserWrapper {
                                                              new ExchangeDependencyResourceLoader(ramlFile.getParentFile()
                                                                  .getAbsolutePath()));
     } else {
-      this.resourceLoader = new DefaultResourceLoader();
+      this.resourceLoader = new ResourceLoader() {
+
+        private ResourceLoader resourceLoader = new DefaultResourceLoader();
+
+        @Nullable
+        @Override
+        public InputStream fetchResource(String s) {
+          if (s.startsWith("/exchange_modules") || s.startsWith("exchange_modules")) {
+            String[] resourceParts = s.split("/");
+            int length = resourceParts.length;
+            return resourceLoader.fetchResource(format(RESOURCE_FORMAT, resourceParts[length - 4], resourceParts[length - 3],
+                                                       resourceParts[length - 2], resourceParts[length - 1]));
+          }
+          return resourceLoader.fetchResource(s);
+        }
+      };
     }
   }
 
