@@ -294,7 +294,6 @@
                                 <configuration>
                                     <outputDirectory>${project.build.directory}/lib/</outputDirectory>
                                     <includeScope>runtime</includeScope>
-                                    <excludeGroupIds>org.raml</excludeGroupIds>
                                 </configuration>
                             </execution>
                         </executions>
