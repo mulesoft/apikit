@@ -30,6 +30,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -266,6 +269,23 @@ public class ScaffolderMule4Test {
     System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
     testSimpleGenerateWithExtensionInNull();
   }
+
+  @Test
+  public void generateWithExamples() throws Exception {
+    String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-with-examples/api.raml").getFile();
+    File file = new File(filepath);
+    File muleXmlOut = folder.newFolder("mule-xml-out");
+    Scaffolder scaffolder = createScaffolder(singletonList(file), emptyList(), muleXmlOut, null, emptySet(), null, EE);
+    scaffolder.run();
+    File xmlOut = new File(muleXmlOut, "api.xml");
+    assertTrue(xmlOut.exists());
+    String s = IOUtils.toString(new FileInputStream(xmlOut));
+    assertNotNull(s);
+    final String expected =
+        IOUtils.toString(ScaffolderTest.class.getClassLoader().getResourceAsStream("scaffolder-with-examples/api.xml"));
+    assertEquals(expected, s);
+  }
+
 
   public void testSimpleGenerateWithExtensionInNull() throws Exception {
     File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("simple", null, null);

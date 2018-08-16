@@ -1,0 +1,100 @@
+#%RAML 1.0
+---
+title: Sample API
+
+types:
+  Person:
+    type: object
+    properties:
+      idNumber: integer
+      firstName:  string
+      middleName?: string
+      lastName: string
+      gender:
+        enum: [F, M]
+    example: |
+      {
+        "idNumber": 35877877,
+        "firstName": "Jose",
+        "middleName": "Ramiro",
+        "lastName": "Funes Mori",
+        "gender": "M"
+      }
+
+  Persona:
+    type: Person
+
+  MyString:
+    type: string
+    example: "Hello World"
+
+  MyDateOnly:
+    type: date-only
+    example: "2018-08-16"
+
+
+/persons:
+  get:
+    responses:
+      200:
+        body:
+          application/json: Person
+
+/customers:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: Person
+            properties:
+              customerId: integer
+            example: |
+              {
+                "idNumber": 35877877,
+                "firstName": "Jose",
+                "middleName": "Ramiro",
+                "lastName": "Funes Mori",
+                "gender": "M",
+                "customerId": 1234
+              }
+
+/providers:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: Person
+            properties:
+              providerId: integer
+
+
+/otherPerson:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            type: Person
+            example: |
+              {
+                "idNumber": 35877876,
+                "firstName": "Rogelio",
+                "lastName": "Funes Mori",
+                "gender": "M"
+              }
+
+/personas:
+  get:
+    responses:
+      200:
+        body:
+          application/json: Persona
+
+/union:
+  get:
+    responses:
+      200:
+        body:
+          application/json: MyString | MyDateOnly
