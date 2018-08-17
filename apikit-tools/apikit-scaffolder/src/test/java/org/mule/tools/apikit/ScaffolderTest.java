@@ -6,6 +6,9 @@
  */
 package org.mule.tools.apikit;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -24,6 +27,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -896,6 +900,24 @@ public class ScaffolderTest {
         assertEquals(0, countOccurences(s, "extensionEnabled"));
         assertEquals(1, countOccurences(s, "<apikit:console"));
         assertEquals(1, countOccurences(s, "consoleEnabled=\"false\""));
+    }
+
+    @Test
+    public void generateWithExamples() throws Exception {
+        String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-with-examples/api.raml").getFile();
+        File file = new File(filepath);
+        File muleXmlOut = folder.newFolder("mule-xml-out");
+        final List<File> ramls = singletonList(file);
+        final List<File> xmls = emptyList();
+        Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
+        scaffolder.run();
+        File xmlOut = new File(muleXmlOut, "api.xml");
+        assertTrue(xmlOut.exists());
+        String s = IOUtils.toString(new FileInputStream(xmlOut));
+        assertNotNull(s);
+        final String expected =
+                IOUtils.toString(ScaffolderTest.class.getClassLoader().getResourceAsStream("scaffolder-with-examples/api.xml"));
+        assertEquals(expected, s);
     }
 
     public void doubleRootRaml() throws Exception
