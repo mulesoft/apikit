@@ -11,6 +11,7 @@ import amf.client.model.domain.NodeShape;
 import amf.client.model.domain.Payload;
 import amf.client.model.domain.PropertyShape;
 import amf.client.model.domain.Shape;
+import amf.client.model.domain.UnionShape;
 import amf.client.validate.ValidationReport;
 import org.mule.amf.impl.parser.rule.ValidationResultImpl;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -90,15 +91,29 @@ public class MimeTypeImpl implements IMimeType {
   public String getExample() {
     final Shape schema = payload.schema();
 
+    if (schema instanceof UnionShape) {
+      final UnionShape unionShape = (UnionShape) schema;
+      for (Shape shape : unionShape.anyOf()) {
+        if (shape instanceof AnyShape) {
+          final String example = getExampleFromAnyShape((AnyShape) shape);
+          if (example != null)
+            return example;
+        }
+      }
+    }
+
     if (schema instanceof AnyShape) {
-      final AnyShape anyShape = (AnyShape) schema;
-      return anyShape.examples().stream().filter(example -> example.name().value() == null)
-          .map(example -> example.value().value())
-          .findFirst()
-          .orElse(null);
+      return getExampleFromAnyShape((AnyShape) schema);
     }
 
     return null;
+  }
+
+  private String getExampleFromAnyShape(AnyShape anyShape) {
+    return anyShape.examples().stream().filter(example -> example.value().value() != null)
+        .map(example -> example.value().value())
+        .findFirst()
+        .orElse(null);
   }
 
   @Override
