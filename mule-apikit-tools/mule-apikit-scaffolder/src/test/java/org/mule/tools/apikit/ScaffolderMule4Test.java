@@ -15,6 +15,8 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mockito.stubbing.Answer;
+import org.mockito.stubbing.Stubber;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.RuntimeEdition;
@@ -37,6 +39,8 @@ import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
@@ -802,6 +806,10 @@ public class ScaffolderMule4Test {
                                       Set<File> ramlsWithExtensionEnabled, String muleVersion, RuntimeEdition runtimeEdition)
       throws FileNotFoundException {
     Log log = mock(Log.class);
+    getStubber("[INFO] ").when(log).info(anyString());
+    getStubber("[WARNING] ").when(log).warn(anyString());
+    getStubber("[ERROR] ").when(log).error(anyString());
+
     Map<File, InputStream> ramlMap = null;
     if (ramls != null) {
       ramlMap = getFileInputStreamMap(ramls);
@@ -874,6 +882,14 @@ public class ScaffolderMule4Test {
     scaffolder.run();
 
     return muleXmlOut;
+  }
+
+  private Stubber getStubber(String prefix) {
+    return doAnswer((Answer<Void>) invocation -> {
+      Object[] args = invocation.getArguments();
+      System.out.println(prefix + args[0].toString());
+      return null;
+    });
   }
 
   @After
