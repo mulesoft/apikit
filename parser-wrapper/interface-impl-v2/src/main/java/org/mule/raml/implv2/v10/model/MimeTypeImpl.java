@@ -76,7 +76,7 @@ public class MimeTypeImpl implements IMimeType
     }
 
     private static ExampleSpec getExampleFromParent(ObjectTypeDeclaration typeDeclaration) {
-        if (!addProperties(typeDeclaration)) {
+        if (!hasLocalProperties(typeDeclaration)) {
             for (TypeDeclaration declaration : typeDeclaration.parentTypes()) {
                 final ExampleSpec parentExample = getExample(declaration);
                 if (parentExample != null) return parentExample;
@@ -85,7 +85,7 @@ public class MimeTypeImpl implements IMimeType
         return null;
     }
 
-    private static boolean addProperties(ObjectTypeDeclaration typeDeclaration) {
+    private static boolean hasLocalProperties(ObjectTypeDeclaration typeDeclaration) {
         final List<TypeDeclaration> parentTypes = typeDeclaration.parentTypes();
         if (parentTypes.isEmpty()) return true;
 
