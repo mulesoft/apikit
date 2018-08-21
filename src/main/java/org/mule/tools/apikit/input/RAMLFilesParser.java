@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.String.format;
 import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class RAMLFilesParser {
@@ -149,7 +150,9 @@ public class RAMLFilesParser {
     parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
     final IValidationReport validationReport = parserWrapper.validationReport();
 
-    if (!validationReport.conforms()) {
+    if (validationReport.conforms()) {
+      log.info(buildParserInfoMessage("AMF"));
+    } else {
       if (ParserV2Utils.useParserV2(content)) {
         final ResourceLoader resourceLoader =
             new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
@@ -162,6 +165,7 @@ public class RAMLFilesParser {
 
       final List<IValidationResult> foundErrors = validationReport.getResults();
       if (parserWrapper.validationReport().conforms()) {
+        log.info(buildParserInfoMessage("RAML Parser"));
         logErrors(foundErrors, WARNING);
       } else {
         raiseError(foundErrors);
@@ -169,6 +173,10 @@ public class RAMLFilesParser {
     }
 
     return parserWrapper;
+  }
+
+  private String buildParserInfoMessage(String parser) {
+    return format("Using %s to load APIs", parser);
   }
 
   private void logErrors(List<IValidationResult> validationResults) {
