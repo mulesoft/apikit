@@ -22,6 +22,8 @@ public class ScaffolderAPI {
   private final static List<String> apiExtensions = Arrays.asList(".yaml", ".raml", ".yml");
   private final static List<String> appExtensions = Arrays.asList(".xml");
 
+
+
   public ScaffolderAPI() {
 
   }
@@ -65,7 +67,8 @@ public class ScaffolderAPI {
     execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
   }
 
-  private void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
+  private ScaffolderReport execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion,
+                                   RuntimeEdition runtimeEdition) {
     List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
     List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
     SystemStreamLog log = new SystemStreamLog();
@@ -82,10 +85,12 @@ public class ScaffolderAPI {
     Scaffolder scaffolder;
     try {
       scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain, minMuleVersion, runtimeEdition);
+
     } catch (Exception e) {
       throw new RuntimeException("Error executing scaffolder", e);
     }
     scaffolder.run();
+    return scaffolder.getScaffolderReport();
   }
 
   private List<String> retrieveFilePaths(File dir, final List<String> extensions) {

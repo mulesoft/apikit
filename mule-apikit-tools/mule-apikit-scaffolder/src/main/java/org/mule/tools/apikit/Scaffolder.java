@@ -38,6 +38,7 @@ public class Scaffolder {
 
   private final MuleConfigGenerator muleConfigGenerator;
   private final MuleArtifactJsonGenerator muleArtifactJsonGenerator;
+  private final ScaffolderReport scaffolderReport;
 
   public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles,
                                             List<String> muleXmlFiles)
@@ -88,6 +89,10 @@ public class Scaffolder {
     RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
 
+    scaffolderReport = new ScaffolderReport();
+    scaffolderReport.setVendorId(RAMLFilesParser.getVendorId());
+    scaffolderReport.setVersion(RAMLFilesParser.getRamlVersion());
+
     if (runtimeEdition == null) {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
     }
@@ -102,6 +107,10 @@ public class Scaffolder {
 
     muleArtifactJsonGenerator =
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
+  }
+
+  public ScaffolderReport getScaffolderReport() {
+    return scaffolderReport;
   }
 
   private static InputStream getDomainStream(Log log, String domainPath) {

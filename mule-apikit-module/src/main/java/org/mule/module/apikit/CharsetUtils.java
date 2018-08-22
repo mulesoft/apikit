@@ -169,7 +169,8 @@ public class CharsetUtils {
    * @param message mule message
    */
   public static String getHeaderCharset(Message message) {
-    return getCharset(AttributesHelper.getHeaderIgnoreCase(((HttpRequestAttributes) message.getAttributes().getValue()), "Content-Type"));
+    return getCharset(AttributesHelper.getHeaderIgnoreCase(((HttpRequestAttributes) message.getAttributes().getValue()),
+                                                           "Content-Type"));
   }
 
   public static String getCharset(String contentType) {

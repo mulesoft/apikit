@@ -16,10 +16,7 @@ import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserWrapper;
-import org.mule.raml.interfaces.model.IAction;
-import org.mule.raml.interfaces.model.IMimeType;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.raml.interfaces.model.IResource;
+import org.mule.raml.interfaces.model.*;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
@@ -51,6 +48,11 @@ public class RAMLFilesParser {
   private final APIFactory apiFactory;
   private final Log log;
 
+  private String vendorId;
+  private String ramlVersion;
+
+
+
   public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
     this.log = log;
     this.apiFactory = apiFactory;
@@ -70,8 +72,13 @@ public class RAMLFilesParser {
         final ParserWrapper parserWrapper = getParserWrapper(ramlFile, content);
         parserWrapper.validate(); // This will fail whether the raml is not valid
 
+        vendorId = parserWrapper.getApiVendor().toString();
+
         final IRaml raml = parserWrapper.build();
-        collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
+
+        ramlVersion = raml.getVersion();
+
+        collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, ramlVersion);
         processedFiles.add(ramlFile);
       } catch (Exception e) {
         log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());
@@ -85,6 +92,15 @@ public class RAMLFilesParser {
     } else {
       this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
     }
+  }
+
+
+  public String getVendorId() {
+    return vendorId;
+  }
+
+  public String getRamlVersion() {
+    return ramlVersion;
   }
 
   void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version) {
