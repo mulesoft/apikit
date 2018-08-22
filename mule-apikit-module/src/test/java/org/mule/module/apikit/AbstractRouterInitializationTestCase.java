@@ -7,32 +7,30 @@
 package org.mule.module.apikit;
 
 import com.jayway.restassured.RestAssured;
-import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-import org.mule.module.apikit.api.Parser;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import org.mule.test.runner.RunnerDelegateTo;
 
 import static java.util.Arrays.asList;
-import static org.mule.module.apikit.api.Parser.AMF;
-import static org.mule.module.apikit.api.Parser.RAML;
-import static org.mule.module.apikit.api.RamlHandler.MULE_APIKIT_PARSER_AMF;
+
 
 @RunnerDelegateTo(Parameterized.class)
 @ArtifactClassLoaderRunnerConfig
-public abstract class AbstractMultiParserFunctionalTestCase extends MuleArtifactFunctionalTestCase {
+public abstract class AbstractRouterInitializationTestCase extends MuleArtifactFunctionalTestCase {
 
-  @Parameterized.Parameter(value = 0)
-  public Parser parser;
+  @Parameter(value = 0)
+  public String path;
 
-  @Parameterized.Parameters(name = "{0}")
-  public static Iterable<Object[]> data() {
-    return asList(new Object[][] {
-        {RAML},
-        {AMF}
+  @Parameters(name = "{0}")
+  public static Iterable<Object> data() {
+    return asList(new Object[] {
+        "amf-only.xml",
+        "raml-parser-only.xml"
     });
   }
 
@@ -44,22 +42,9 @@ public abstract class AbstractMultiParserFunctionalTestCase extends MuleArtifact
     return 6000;
   }
 
-  protected void doSetUpBeforeMuleContextCreation() {
-    System.setProperty(MULE_APIKIT_PARSER_AMF, parser.name());
-  }
-
   @Override
   protected void doSetUp() throws Exception {
     RestAssured.port = serverPort.getNumber();
     super.doSetUp();
-  }
-
-  @AfterClass
-  public static void afterClass() {
-    System.clearProperty(MULE_APIKIT_PARSER_AMF);
-  }
-
-  protected boolean isAmfParser() {
-    return AMF == parser;
   }
 }

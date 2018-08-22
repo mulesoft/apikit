@@ -27,7 +27,7 @@ public class ValidationResultImpl implements IValidationResult {
   }
 
   public String getMessage() {
-    return validationResult.toString();
+    return validationResult.message();
   }
 
   public String getIncludeName() {
