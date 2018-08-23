@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -52,9 +54,11 @@ public class ScaffolderMule4Test {
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
   private FileListUtils fileListUtils = new FileListUtils();
+  private Log logger;
 
   @Before
   public void setUp() throws IOException {
+    folder.newFolder("parser");
     folder.newFolder("scaffolder");
     folder.newFolder("scaffolder-exchange");
     folder.newFolder("scaffolder-exchange/exchange_modules");
@@ -786,6 +790,50 @@ public class ScaffolderMule4Test {
     assertEquals(1, countOccurences(s, "<apikit:console"));
   }
 
+  @Test
+  public void testGenerateWithAMF() throws Exception {
+    File muleXmlSimple = simpleGeneration("parser", "amf-only", null, DEFAULT_MULE_VERSION, EE);
+    assertTrue(muleXmlSimple.exists());
+    String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+    assertEquals(1, countOccurences(s, "<http:listener-config"));
+    assertEquals(2, countOccurences(s, "get:\\test:amf-only-config"));
+    assertEquals(1, countOccurences(s, "<apikit:console"));
+  }
+
+  @Test
+  public void testGenerateWithRAML() throws Exception {
+    File muleXmlSimple = simpleGeneration("parser", "raml-parser-only", null, DEFAULT_MULE_VERSION, EE);
+    assertTrue(muleXmlSimple.exists());
+    String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+    assertEquals(1, countOccurences(s, "<http:listener-config"));
+    assertEquals(2, countOccurences(s, "get:\\test:raml-parser-only-config"));
+    assertEquals(1, countOccurences(s, "<apikit:console"));
+  }
+
+  @Test
+  public void testFailingGenerateWithBothParsers() throws Exception {
+    final List<String> errors = new ArrayList<>();
+
+    // create a logger that accumulates the errors instead of printing them out to standard output
+    logger = mock(Log.class);
+    final Stubber errorAccumulatorStubber = doAnswer((Answer<Void>) invocation -> {
+      Object[] args = invocation.getArguments();
+      errors.add(args[0].toString());
+      return null;
+    });
+    errorAccumulatorStubber.when(logger).error(anyString());
+
+    File muleXmlSimple = simpleGeneration("parser", "failing-api", null, DEFAULT_MULE_VERSION, EE);
+    assertFalse(muleXmlSimple.exists());
+
+    assertEquals(3, errors.size());
+    assertTrue(errors.stream().anyMatch(e -> e.contains("Unresolved reference 'SomeType?' from root context")));
+    assertTrue(errors.stream().anyMatch(e -> e.contains("Unresolved reference 'SomeTypo' from root context")));
+
+    // restoring logger
+    logger = null;
+  }
+
   private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
       throws FileNotFoundException {
     return createScaffolder(ramls, xmls, muleXmlOut, null, null);
@@ -805,10 +853,6 @@ public class ScaffolderMule4Test {
   private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile,
                                       Set<File> ramlsWithExtensionEnabled, String muleVersion, RuntimeEdition runtimeEdition)
       throws FileNotFoundException {
-    Log log = mock(Log.class);
-    getStubber("[INFO] ").when(log).info(anyString());
-    getStubber("[WARNING] ").when(log).warn(anyString());
-    getStubber("[ERROR] ").when(log).error(anyString());
 
     Map<File, InputStream> ramlMap = null;
     if (ramls != null) {
@@ -819,7 +863,19 @@ public class ScaffolderMule4Test {
     if (domainFile != null) {
       domainStream = new FileInputStream(domainFile);
     }
-    return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion, runtimeEdition);
+    return new Scaffolder(getLogger(), muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion,
+                          runtimeEdition);
+  }
+
+  private Log getLogger() {
+    if (logger == null) {
+      logger = mock(Log.class);
+      getStubber("[INFO] ").when(logger).info(anyString());
+      getStubber("[WARNING] ").when(logger).warn(anyString());
+      getStubber("[ERROR] ").when(logger).error(anyString());
+    }
+
+    return logger;
   }
 
   private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
