@@ -12,6 +12,7 @@ import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.core.api.util.FileUtils;
@@ -49,22 +50,8 @@ public class ParserWrapperV2 implements ParserWrapper {
                                                              new ExchangeDependencyResourceLoader(ramlFile.getParentFile()
                                                                  .getAbsolutePath()));
     } else {
-      this.resourceLoader = new ResourceLoader() {
-
-        private ResourceLoader resourceLoader = new DefaultResourceLoader();
-
-        @Nullable
-        @Override
-        public InputStream fetchResource(String s) {
-          if (s.startsWith("/exchange_modules") || s.startsWith("exchange_modules")) {
-            String[] resourceParts = s.split("/");
-            int length = resourceParts.length;
-            return resourceLoader.fetchResource(format(RESOURCE_FORMAT, resourceParts[length - 4], resourceParts[length - 3],
-                                                       resourceParts[length - 2], resourceParts[length - 1]));
-          }
-          return resourceLoader.fetchResource(s);
-        }
-      };
+      this.resourceLoader =
+          new org.raml.v2.api.loader.CompositeResourceLoader(new DefaultResourceLoader(), new ApiSyncResourceLoader());
     }
   }
 
