@@ -14,6 +14,7 @@ import org.mule.raml.interfaces.model.IRaml;
 
 import java.io.*;
 import java.util.Optional;
+import org.mule.runtime.core.api.util.StringUtils;
 
 import static java.lang.Boolean.getBoolean;
 import static java.lang.String.format;

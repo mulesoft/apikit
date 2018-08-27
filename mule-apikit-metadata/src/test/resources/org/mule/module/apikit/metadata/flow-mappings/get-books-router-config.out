@@ -9,25 +9,25 @@
         "type"? : String, 
         "encoded"? : Binary
       }, 
-      "headers"? : {
-        "X-Amount"? : String
+      "headers" : {
+        "X-Amount" : String
       }, 
-      "listenerPath"? : String, 
-      "method"? : String, 
-      "queryParams"? : {
-        "sortAsc"? : Boolean
+      "listenerPath" : String, 
+      "method" : String, 
+      "queryParams" : {
+        "sortAsc" : Boolean
       }, 
-      "queryString"? : String, 
-      "relativePath"? : String, 
-      "remoteAddress"? : String, 
-      "requestPath"? : String, 
-      "requestUri"? : String, 
-      "scheme"? : String, 
-      "uriParams"? : {
+      "queryString" : String, 
+      "relativePath" : String, 
+      "remoteAddress" : String, 
+      "requestPath" : String, 
+      "requestUri" : String, 
+      "scheme" : String, 
+      "uriParams" : {
 
       }, 
-      "version"? : String, 
-      "localAddress"? : String
+      "version" : String, 
+      "localAddress" : String
     }
   }, 
   "variables" : {
@@ -44,8 +44,8 @@
   }, 
   "variables" : {
     "outboundHeaders" : {
-      "header1"? : String, 
-      "header2"? : @int Number
+      "header1" : String, 
+      "header2" : @int Number
     }, 
     "httpStatus" : String
   }
