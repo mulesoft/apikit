@@ -184,7 +184,7 @@ public class RamlHandler {
       final URL url = new URL(ramlLocation);
       return url.toString();
     } catch (MalformedURLException e) {
-      String[] startingLocations = new String[] {"", "api/", "api"};
+      String[] startingLocations = new String[] {"api/", "", "api"};
       for (String start : startingLocations) {
         URL ramlLocationUrl = Thread.currentThread().getContextClassLoader().getResource(start + ramlLocation);
         if (ramlLocationUrl != null) {
