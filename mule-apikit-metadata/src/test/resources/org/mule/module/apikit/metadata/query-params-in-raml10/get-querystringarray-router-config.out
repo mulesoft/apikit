@@ -15,12 +15,12 @@
       "listenerPath" : String, 
       "method" : String, 
       "queryParams" : {
-        "dateQueryParam"? : [String], 
-        "numberQueryParam"? : [Number], 
-        "integerQueryParam"? : [@int Number], 
-        "fileQueryParam"? : [String], 
-        "stringQueryParam"? : [String], 
-        "booleanQueryParam"? : [Boolean]
+        "dateQueryParam" : [String], 
+        "numberQueryParam" : [Number], 
+        "integerQueryParam" : [@int Number], 
+        "fileQueryParam" : [String], 
+        "stringQueryParam" : [String], 
+        "booleanQueryParam" : [Boolean]
       }, 
       "queryString" : String, 
       "relativePath" : String, 
@@ -31,7 +31,7 @@
       "uriParams" : {
 
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

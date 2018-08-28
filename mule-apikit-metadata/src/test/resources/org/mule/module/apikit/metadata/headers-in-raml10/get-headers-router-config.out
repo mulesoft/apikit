@@ -10,13 +10,13 @@
         "encoded"? : Binary
       }, 
       "headers" : {
-        "withoutType"? : String, 
-        "integerHeader"? : @int Number, 
-        "booleanHeader"? : Boolean, 
-        "fileHeader"? : String, 
-        "dateHeader"? : String, 
-        "stringHeader"? : String, 
-        "numberHeader"? : Number
+        "withoutType" : String, 
+        "integerHeader" : @int Number, 
+        "booleanHeader" : Boolean, 
+        "fileHeader" : String, 
+        "dateHeader" : String, 
+        "stringHeader" : String, 
+        "numberHeader" : Number
       }, 
       "listenerPath" : String, 
       "method" : String, 
@@ -32,7 +32,7 @@
       "uriParams" : {
 
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

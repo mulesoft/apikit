@@ -28,7 +28,7 @@
         "v2"? : String, 
         "uriParam1"? : @int Number
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

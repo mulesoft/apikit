@@ -24,9 +24,9 @@
       "requestUri" : String, 
       "scheme" : String, 
       "uriParams" : {
-        "bookId"? : String
+        "bookId" : String
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

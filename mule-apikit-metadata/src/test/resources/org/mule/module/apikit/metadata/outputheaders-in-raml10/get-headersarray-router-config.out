@@ -26,7 +26,7 @@
       "uriParams" : {
 
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 
@@ -39,12 +39,12 @@
   }, 
   "variables" : {
     "outboundHeaders" : {
-      "arrayofstringheader"? : [String], 
-      "arrayofnumberheader"? : [Number], 
-      "arrayofintegerheader"? : [@int Number], 
-      "arrayofdateheader"? : [String], 
-      "arrayofbooleanheader"? : [Boolean], 
-      "arrayoffileheader"? : [String]
+      "arrayofstringheader" : [String], 
+      "arrayofnumberheader" : [Number], 
+      "arrayofintegerheader" : [@int Number], 
+      "arrayofdateheader" : [String], 
+      "arrayofbooleanheader" : [Boolean], 
+      "arrayoffileheader" : [String]
     }, 
     "httpStatus" : String
   }

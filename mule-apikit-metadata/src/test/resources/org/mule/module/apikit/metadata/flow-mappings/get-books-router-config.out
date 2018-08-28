@@ -10,12 +10,12 @@
         "encoded"? : Binary
       }, 
       "headers" : {
-        "X-Amount"? : String
+        "X-Amount" : String
       }, 
       "listenerPath" : String, 
       "method" : String, 
       "queryParams" : {
-        "sortAsc"? : Boolean
+        "sortAsc" : Boolean
       }, 
       "queryString" : String, 
       "relativePath" : String, 
@@ -26,7 +26,7 @@
       "uriParams" : {
 
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 
@@ -44,8 +44,8 @@
   }, 
   "variables" : {
     "outboundHeaders" : {
-      "header1"? : String, 
-      "header2"? : @int Number
+      "header1" : String, 
+      "header2" : @int Number
     }, 
     "httpStatus" : String
   }

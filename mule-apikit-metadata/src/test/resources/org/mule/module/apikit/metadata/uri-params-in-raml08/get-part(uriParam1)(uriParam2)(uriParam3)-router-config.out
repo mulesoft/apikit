@@ -30,7 +30,7 @@
         "uriParam1"? : @int Number, 
         "uriParam2"? : Number
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

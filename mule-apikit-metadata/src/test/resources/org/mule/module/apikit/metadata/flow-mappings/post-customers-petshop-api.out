@@ -29,7 +29,7 @@
       "uriParams" : {
 
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 
