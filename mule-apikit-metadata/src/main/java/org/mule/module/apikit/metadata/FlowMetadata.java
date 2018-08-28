@@ -119,7 +119,8 @@ public class FlowMetadata implements MetadataSource {
 
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-    headers.forEach((name, value) -> builder.addField().key(name.toLowerCase()).value(value.getMetadata()));
+    headers.forEach((name, value) -> builder.addField().key(name.toLowerCase()).value(value.getMetadata())
+        .required(value.isRequired()));
 
     return builder;
   }
@@ -144,7 +145,8 @@ public class FlowMetadata implements MetadataSource {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
     action.getQueryParameters().forEach(
-                                        (key, value) -> builder.addField().key(key).value(value.getMetadata()));
+                                        (key, value) -> builder.addField().key(key).value(value.getMetadata())
+                                            .required(value.isRequired()));
 
     return builder;
   }
@@ -153,7 +155,8 @@ public class FlowMetadata implements MetadataSource {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
     action.getHeaders().forEach(
-                                (key, value) -> builder.addField().key(key).value(value.getMetadata()));
+                                (key, value) -> builder.addField().key(key).value(value.getMetadata())
+                                    .required(value.isRequired()));
 
     return builder;
   }
@@ -163,45 +166,59 @@ public class FlowMetadata implements MetadataSource {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
     builder.addField()
         .key(ATTRIBUTES_CLIENT_CERTIFICATE.getName())
+        .required(false)
         .value(getClientCertificate());
     builder.addField()
         .key(ATTRIBUTES_HEADERS.getName())
+        .required(true)
         .value(getHeaders(action));
     builder.addField()
         .key(ATTRIBUTES_LISTENER_PATH.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_METHOD.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_QUERY_PARAMS.getName())
+        .required(true)
         .value(getQueryParameters(action));
     builder.addField()
         .key(ATTRIBUTES_QUERY_STRING.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_RELATIVE_PATH.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_REMOTE_ADDRESS.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_REQUEST_PATH.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_REQUEST_URI.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_SCHEME.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_URI_PARAMS.getName())
+        .required(true)
         .value(getUriParameters(action, baseUriParameters));
     builder.addField()
         .key(ATTRIBUTES_VERSION.getName())
+        .required(true)
         .value(stringMetadata());
     builder.addField()
         .key(ATTRIBUTES_LOCAL_ADDRESS.getName())
+        .required(true)
         .value(stringMetadata());
 
     return builder.build();
@@ -220,9 +237,11 @@ public class FlowMetadata implements MetadataSource {
   private ObjectTypeBuilder getUriParameters(IAction action, Map<String, IParameter> baseUriParameters) {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-    baseUriParameters.forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata()));
+    baseUriParameters.forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata())
+        .required(parameter.isRequired()));
     action.getResource().getResolvedUriParameters()
-        .forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata()));
+        .forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata())
+            .required(parameter.isRequired()));
 
     return builder;
   }
