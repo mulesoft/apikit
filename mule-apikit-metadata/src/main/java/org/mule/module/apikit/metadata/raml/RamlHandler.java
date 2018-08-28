@@ -35,6 +35,12 @@ public class RamlHandler {
 
   public Optional<IRaml> getRamlApi(String uri) {
     try {
+
+      if (StringUtils.isEmpty(uri)) {
+        notifier.error("RAML document is undefined.");
+        return empty();
+      }
+
       final File resource = resourceLoader.getRamlResource(uri);
 
       if (resource == null) {
