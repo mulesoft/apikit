@@ -4,41 +4,23 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.raml.interfaces.model.parameter;
+package org.mule.raml.interfaces.model;
 
-import org.mule.metadata.api.model.MetadataType;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.Map;
 
-public interface IParameter {
-
-  boolean isRequired();
+public interface IQueryString {
 
   String getDefaultValue();
-
-  boolean isRepeat();
 
   boolean isArray();
 
   boolean validate(String value);
 
-  String message(String value);
-
-  String getDisplayName();
-
-  String getDescription();
-
-  String getExample();
-
-  Map<String, String> getExamples();
-
-  Object getInstance();
-
-  MetadataType getMetadata();
-
-  @Deprecated
   boolean isScalar();
 
-  @Deprecated
   boolean isFacetArray(String facet);
+
+  Map<String, IParameter> facets();
 }

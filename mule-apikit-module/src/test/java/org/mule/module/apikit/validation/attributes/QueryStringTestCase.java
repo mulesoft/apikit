@@ -7,10 +7,8 @@
 package org.mule.module.apikit.validation.attributes;
 
 import com.jayway.restassured.RestAssured;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
 
 import static com.jayway.restassured.RestAssured.given;
 
@@ -83,5 +81,13 @@ public class QueryStringTestCase extends AbstractMultiParserFunctionalTestCase {
     given().expect().statusCode(400)
         .response()
         .when().get("/api/type-property-type?property={\"firstname\": \"Lionel\", \"nickname\": \"Messi\"}");
+  }
+
+  @Test
+  public void defaultValueProperty() {
+    given().queryParam("property", "someValue")
+        .expect().statusCode(200)
+        .response()
+        .when().get("/api/default-value-property");
   }
 }

@@ -14,6 +14,7 @@ import amf.client.model.domain.Shape;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IQueryString;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
@@ -193,5 +194,16 @@ public class ActionImpl implements IAction {
 
     final Shape shape = request.queryString();
     return shape == null ? null : new ParameterImpl((AnyShape) shape, request.required().value());
+  }
+
+  @Override
+  public IQueryString queryString() {
+    final Request request = operation.request();
+
+    if (request == null)
+      return null;
+
+    final Shape shape = request.queryString();
+    return shape == null ? null : new QueryStringImpl((AnyShape) shape, request.required().value());
   }
 }
