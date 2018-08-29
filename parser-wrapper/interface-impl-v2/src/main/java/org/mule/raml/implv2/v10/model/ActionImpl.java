@@ -9,19 +9,19 @@ package org.mule.raml.implv2.v10.model;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IQueryString;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.raml.v2.api.model.v10.bodies.Response;
+import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
+import org.raml.v2.api.model.v10.methods.Method;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.raml.v2.api.model.v10.bodies.Response;
-import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
-import org.raml.v2.api.model.v10.methods.Method;
 
 public class ActionImpl implements IAction {
 
@@ -168,5 +168,10 @@ public class ActionImpl implements IAction {
   @Override
   public IParameter getQueryString() {
     return method.queryString() == null ? null : new ParameterImpl(method.queryString());
+  }
+
+  @Override
+  public IQueryString queryString() {
+    return method.queryString() == null ? null : new QueryStringImpl(method.queryString());
   }
 }
