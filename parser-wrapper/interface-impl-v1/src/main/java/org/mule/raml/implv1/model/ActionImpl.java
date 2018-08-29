@@ -6,15 +6,12 @@
  */
 package org.mule.raml.implv1.model;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
-import org.mule.raml.interfaces.model.IActionType;
+
 import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IQueryString;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
@@ -27,6 +24,11 @@ import org.raml.model.SecurityReference;
 import org.raml.model.parameter.Header;
 import org.raml.model.parameter.QueryParameter;
 import org.raml.model.parameter.UriParameter;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ActionImpl implements IAction
 {
@@ -103,6 +105,12 @@ public class ActionImpl implements IAction
     public IParameter getQueryString() {
         return null;
     }
+
+    @Override
+    public IQueryString queryString() {
+        return null;
+    }
+
 
     public boolean hasBody()
     {

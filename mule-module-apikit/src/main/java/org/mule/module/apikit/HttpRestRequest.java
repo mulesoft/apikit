@@ -8,6 +8,7 @@ package org.mule.module.apikit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
@@ -34,6 +35,7 @@ import org.mule.module.http.internal.ParameterMap;
 import org.mule.raml.implv2.v10.model.MimeTypeImpl;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IQueryString;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.transformer.types.DataTypeFactory;
@@ -57,6 +59,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static java.util.Collections.singletonList;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
@@ -145,7 +148,7 @@ public class HttpRestRequest
 
     private void processQueryString() throws InvalidQueryStringException
     {
-        IParameter expected = action.getQueryString();
+        IQueryString expected = action.queryString();
         if (!shouldProcessQueryString(expected)) return;
 
         Map queryParamsMap = requestEvent.getMessage().getInboundProperty("http.query.params");
@@ -157,14 +160,17 @@ public class HttpRestRequest
         }
     }
 
-    private boolean shouldProcessQueryString(IParameter queryString) {
+    private boolean shouldProcessQueryString(IQueryString queryString) {
         return queryString != null && !queryString.isArray() && !queryString.isScalar();
     }
 
-    private String buildQueryString(IParameter expected, Map queryParamsMap) {
+    private String buildQueryString(IQueryString expected, Map queryParamsMap) {
         StringBuilder result = new StringBuilder();
 
+        Map<String, IParameter> facetsWithDefault = getFacetsWithDefaultValue(expected.facets());
+
         for (Object property : queryParamsMap.keySet()) {
+            facetsWithDefault.remove(property.toString());
 
             Collection<?> actualQueryParam = getActualQueryParam(property.toString());
             result.append("\n").append(property).append(": ");
@@ -179,8 +185,24 @@ public class HttpRestRequest
                     result.append(o).append("\n");
             }
         }
-        // if empty validate return an empty json
-        return result.length() == 0 ? "{}" : result.toString();
+
+        for (Entry<String, IParameter> entry : facetsWithDefault.entrySet())
+            result.append(entry.getKey()).append(": ").append(entry.getValue().getDefaultValue()).append("\n");
+
+        if (result.length() > 0)
+            return result.toString();
+        if (expected.getDefaultValue() != null)
+            return expected.getDefaultValue();
+
+        return "{}";
+    }
+
+    private Map<String, IParameter> getFacetsWithDefaultValue(Map<String, IParameter> facets) {
+        HashMap<String, IParameter> result = Maps.newHashMap();
+        for (Entry<String, IParameter> entry : facets.entrySet()) {
+            if (entry.getValue().getDefaultValue() != null) result.put(entry.getKey(), entry.getValue());
+        }
+        return result;
     }
 
     private void processQueryParameters() throws InvalidQueryParameterException

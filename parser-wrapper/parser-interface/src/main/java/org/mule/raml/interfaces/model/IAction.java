@@ -18,7 +18,9 @@ public interface IAction
     Map<String, IMimeType> getBody();
     Map<String, List<IParameter>> getBaseUriParameters();
     Map<String, IParameter> getQueryParameters();
+    @Deprecated
     IParameter getQueryString();
+    IQueryString queryString();
     boolean hasBody();
     Map<String, IResponse> getResponses();
     Map<String, IParameter> getHeaders();
