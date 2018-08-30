@@ -71,7 +71,7 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
     // TODO APIKIT-1380
     // Parse amf dumpled file
     if (!isRaml08) {
-      final ParserWrapper dumpedAmfWrapper = ParserWrapperAmf.create(amfDumpPath.toUri());
+      final ParserWrapper dumpedAmfWrapper = ParserWrapperAmf.create(amfDumpPath.toUri(), false);
       final IRaml dumpedAmf = dumpedAmfWrapper.build();
       assertNotNull(dumpedAmf);
     }

@@ -19,6 +19,9 @@
 
     <properties>
         <!--mule community version-->
+        <amfVersion>1.9.0-SNAPSHOT</amfVersion>
+        <amfXmlExtensionVersion>1.0.0-SNAPSHOT</amfXmlExtensionVersion>
+
         <mule.version>4.1.2</mule.version>
         <mule.core.version>4.1.2</mule.core.version>
         <mule.api.version>1.1.2</mule.api.version>
@@ -42,6 +45,18 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- AMF -->
+            <dependency>
+                <groupId>com.github.amlorg</groupId>
+                <artifactId>amf-client_2.12</artifactId>
+                <version>${amfVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mule.amf</groupId>
+                <artifactId>amf-xml-extension_2.12</artifactId>
+                <version>${amfXmlExtensionVersion}</version>
+            </dependency>
+
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>

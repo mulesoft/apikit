@@ -56,10 +56,9 @@ public class ParserWrapperAmf implements ParserWrapper {
   private final WebApi webApi;
   private final ApiVendor apiVendor;
 
-  private static final String VENDOR_RAML_08 = "raml 0.8";
-  private static final String VENDOR_RAML_10 = "raml 1.0";
-  private static final String VENDOR_OAS_20 = "oas 2.0";
-  private static final boolean VALIDATE = false;
+  private static final String VENDOR_RAML_08 = "RAML 0.8";
+  private static final String VENDOR_RAML_10 = "RAML 1.0";
+  private static final String VENDOR_OAS_20 = "OAS 2.0";
 
   private ParserWrapperAmf(final URI uri, Environment environment, boolean validate) {
     parser = getParserForApi(uri, environment);
@@ -88,16 +87,8 @@ public class ParserWrapperAmf implements ParserWrapper {
     return result;
   }
 
-  public static ParserWrapperAmf create(URI apiUri) {
-    return create(apiUri, buildEnvironment(apiUri));
-  }
-
-  public static ParserWrapperAmf create(URI apiUri, boolean shouldValidate) {
-    return create(apiUri, buildEnvironment(apiUri), shouldValidate);
-  }
-
-  public static ParserWrapperAmf create(URI apiUri, Environment environment) {
-    return create(apiUri, environment, VALIDATE);
+  public static ParserWrapperAmf create(URI apiUri, boolean validate) {
+    return create(apiUri, buildEnvironment(apiUri), validate);
   }
 
   public static ParserWrapperAmf create(URI apiUri, Environment environment, boolean validate) {

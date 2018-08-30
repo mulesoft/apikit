@@ -52,7 +52,7 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
     assertNotNull(raml);
 
     // Create AMF Wrapper
-    amfWrapper = ParserWrapperAmf.create(uri);
+    amfWrapper = ParserWrapperAmf.create(uri, true);
     amf = amfWrapper.build();
     assertNotNull(amf);
 

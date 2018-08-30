@@ -88,7 +88,7 @@ public class ParserService {
     if (parser == RAML) {
       parserWrapper = initRamlWrapper(ramlPath);
     } else {
-      parserWrapper = ParserWrapperAmf.create(getPathAsUri(ramlPath));
+      parserWrapper = ParserWrapperAmf.create(getPathAsUri(ramlPath), false);
     }
 
     final IValidationReport validationReport = parserWrapper.validationReport();

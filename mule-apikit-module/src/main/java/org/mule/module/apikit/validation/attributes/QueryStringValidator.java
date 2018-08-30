@@ -79,7 +79,8 @@ public class QueryStringValidator {
   private Map<String, IParameter> getFacetsWithDefaultValue(Map<String, IParameter> facets) {
     HashMap<String, IParameter> result = Maps.newHashMap();
     for (Entry<String, IParameter> entry : facets.entrySet()) {
-      if (entry.getValue().getDefaultValue() != null) result.put(entry.getKey(), entry.getValue());
+      if (entry.getValue().getDefaultValue() != null)
+        result.put(entry.getKey(), entry.getValue());
     }
     return result;
   }
