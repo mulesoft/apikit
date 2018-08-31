@@ -132,12 +132,12 @@ public class RamlHandlerTestCase {
                     () -> createRamlHandler("org/mule/module/apikit/raml-handler/failing-api.raml", keepRamlBaseUri, RAML));
   }
 
-  private <A, B> void assertException(Class<A> clazz, String message, Supplier<B> supplier) {
+  private <A extends Exception, B> void assertException(Class<A> clazz, String message, Supplier<B> supplier) {
     try {
       supplier.get();
       fail(clazz.getName() + " was expected");
     } catch (Exception e) {
-      assertEquals(clazz, e.getClass());
+      assertTrue(clazz.isAssignableFrom(e.getClass()));
       assertTrue(e.getMessage().contains(message));
     }
   }

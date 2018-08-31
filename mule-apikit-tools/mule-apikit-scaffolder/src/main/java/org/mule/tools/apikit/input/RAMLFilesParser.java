@@ -43,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.Collections.singletonList;
+import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
 import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class RAMLFilesParser {
@@ -145,35 +147,49 @@ public class RAMLFilesParser {
 
     ParserWrapper parserWrapper;
 
-    final Environment environment =
-        DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
-    parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
-    final IValidationReport validationReport = parserWrapper.validationReport();
-
-    if (validationReport.conforms()) {
-      log.info(buildParserInfoMessage("AMF"));
-    } else {
-      if (ParserV2Utils.useParserV2(content)) {
-        final ResourceLoader resourceLoader =
-            new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
-                                        new FileResourceLoader(apiFolderPath),
-                                        new ExchangeDependencyResourceLoader(apiFolderPath));
-        parserWrapper = new ParserWrapperV2(apiFile.getPath(), resourceLoader);
-      } else {
-        parserWrapper = new ParserWrapperV1(apiFile.getAbsolutePath());
-      }
-
-      final List<IValidationResult> foundErrors = validationReport.getResults();
-      if (parserWrapper.validationReport().conforms()) {
-        log.info(buildParserInfoMessage("RAML Parser"));
-        logErrors(foundErrors, WARNING);
-      } else {
-        raiseError(foundErrors);
-      }
+    try {
+      final Environment environment =
+          DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+      parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
+    } catch (Exception e) {
+      final List<IValidationResult> errors = singletonList(createErrorValidationResult(e));
+      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, errors);
     }
 
-    return parserWrapper;
+    final IValidationReport validationReport = parserWrapper.validationReport();
+    if (validationReport.conforms()) {
+      log.info(buildParserInfoMessage("AMF"));
+      return parserWrapper;
+    } else {
+      final List<IValidationResult> errorsFound = validationReport.getResults();
+      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, errorsFound);
+    }
   }
+
+  private ParserWrapper applyFallback(File apiFile, String content, String apiFolderPath, File apiFileParent,
+                                      List<IValidationResult> errorsFound) {
+    ParserWrapper parserWrapper;
+
+    if (ParserV2Utils.useParserV2(content)) {
+      final ResourceLoader resourceLoader =
+          new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
+                                      new FileResourceLoader(apiFolderPath),
+                                      new ExchangeDependencyResourceLoader(apiFolderPath));
+      parserWrapper = new ParserWrapperV2(apiFile.getPath(), resourceLoader);
+    } else {
+      parserWrapper = new ParserWrapperV1(apiFile.getAbsolutePath());
+    }
+
+    if (parserWrapper.validationReport().conforms()) {
+      log.info(buildParserInfoMessage("RAML Parser"));
+      logErrors(errorsFound, WARNING);
+      return parserWrapper;
+    } else {
+      logErrors(errorsFound);
+      throw new RuntimeException(buildErrorMessage(errorsFound));
+    }
+  }
+
 
   private String buildParserInfoMessage(String parser) {
     return format("Using %s to load APIs", parser);
@@ -196,14 +212,48 @@ public class RAMLFilesParser {
       log.error(error.getMessage());
   }
 
-  private void raiseError(List<IValidationResult> validationResults) {
-    logErrors(validationResults);
-    StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
+  private static String buildErrorMessage(List<IValidationResult> validationResults) {
+    final StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
     message.append(validationResults.size()).append("\n\n");
     for (IValidationResult error : validationResults) {
       message.append(error.getMessage()).append("\n");
     }
-    throw new RuntimeException(message.toString());
+    return message.toString();
+  }
+
+  private static IValidationResult createErrorValidationResult(Exception e) {
+    return new IValidationResult() {
+
+      @Override
+      public String getMessage() {
+        return e.getMessage();
+      }
+
+      @Override
+      public String getIncludeName() {
+        return null;
+      }
+
+      @Override
+      public int getLine() {
+        return 0;
+      }
+
+      @Override
+      public boolean isLineUnknown() {
+        return false;
+      }
+
+      @Override
+      public String getPath() {
+        return null;
+      }
+
+      @Override
+      public Severity getSeverity() {
+        return ERROR;
+      }
+    };
   }
 
 }
