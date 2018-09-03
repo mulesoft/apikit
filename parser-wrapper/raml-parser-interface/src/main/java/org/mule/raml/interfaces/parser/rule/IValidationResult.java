@@ -19,4 +19,39 @@ public interface IValidationResult {
   String getPath();
 
   Severity getSeverity();
+
+  static IValidationResult fromException(final Exception e) {
+    return new IValidationResult() {
+
+      @Override
+      public String getMessage() {
+        return null;
+      }
+
+      @Override
+      public String getIncludeName() {
+        return null;
+      }
+
+      @Override
+      public int getLine() {
+        return 0;
+      }
+
+      @Override
+      public boolean isLineUnknown() {
+        return false;
+      }
+
+      @Override
+      public String getPath() {
+        return null;
+      }
+
+      @Override
+      public Severity getSeverity() {
+        return null;
+      }
+    };
+  }
 }

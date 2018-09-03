@@ -8,6 +8,7 @@ package org.mule.module.apikit.parser;
 
 import org.mule.amf.impl.ParserWrapperAmf;
 import org.mule.module.apikit.api.Parser;
+import org.mule.module.apikit.exception.ParserInitializationException;
 import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.implv2.ParserWrapperV2;
@@ -30,6 +31,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.mule.module.apikit.api.Parser.AMF;
 import static org.mule.module.apikit.api.Parser.AUTO;
 import static org.mule.module.apikit.api.Parser.RAML;
@@ -82,35 +84,48 @@ public class ParserService {
     return ParserV2Utils.useParserV2(dump) ? RAML_V2 : RAML_V1;
   }
 
-  private ParserWrapper initParserWrapper(String ramlPath) {
+  private ParserWrapper initParserWrapper(String ramlPath) throws ParserInitializationException {
     ParserWrapper parserWrapper;
 
-    if (parser == RAML) {
-      parserWrapper = initRamlWrapper(ramlPath);
-    } else {
-      parserWrapper = ParserWrapperAmf.create(getPathAsUri(ramlPath), false);
-    }
-
-    final IValidationReport validationReport = parserWrapper.validationReport();
-    if (validationReport.conforms()) {
-      if (parser == AUTO)
-        parser = AMF;
-    } else {
-      final List<IValidationResult> foundErrors = validationReport.getResults();
-      if (parser == AUTO) {
+    try {
+      if (parser == RAML)
         parserWrapper = initRamlWrapper(ramlPath);
-        if (parserWrapper.validationReport().conforms()) {
-          parser = RAML;
-          logErrors(foundErrors, WARNING);
-        } else {
-          raiseError(foundErrors);
-        }
-      } else {
-        raiseError(foundErrors);
-      }
-    }
+      else
+        parserWrapper = ParserWrapperAmf.create(getPathAsUri(ramlPath), false);
 
-    return parserWrapper;
+      final IValidationReport validationReport = parserWrapper.validationReport();
+
+      if (validationReport.conforms()) {
+        if (parser == AUTO)
+          parser = AMF;
+        return parserWrapper;
+      } else {
+        final List<IValidationResult> errorsFound = validationReport.getResults();
+        return applyFallback(ramlPath, errorsFound);
+      }
+    } catch (Exception e) {
+      if (e instanceof ParserInitializationException)
+        throw e;
+      final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
+      return applyFallback(ramlPath, errors);
+    }
+  }
+
+  private ParserWrapper applyFallback(String ramlPath, List<IValidationResult> errorsFound) throws ParserInitializationException {
+    if (parser == AUTO) {
+      parser = RAML;
+      final ParserWrapper fallbackParser = initRamlWrapper(ramlPath);
+      if (fallbackParser.validationReport().conforms()) {
+        logErrors(errorsFound, WARNING);
+        return fallbackParser;
+      } else {
+        logErrors(errorsFound);
+        throw new ParserInitializationException(buildErrorMessage(errorsFound));
+      }
+    } else {
+      logErrors(errorsFound);
+      throw new ParserInitializationException(buildErrorMessage(errorsFound));
+    }
   }
 
   private static void logErrors(List<IValidationResult> validationResults) {
@@ -130,14 +145,13 @@ public class ParserService {
       logger.error(error.getMessage());
   }
 
-  private static void raiseError(List<IValidationResult> validationResults) {
-    logErrors(validationResults);
-    StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
+  private static String buildErrorMessage(List<IValidationResult> validationResults) {
+    final StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
     message.append(validationResults.size()).append("\n\n");
     for (IValidationResult error : validationResults) {
       message.append(error.getMessage()).append("\n");
     }
-    throw new RuntimeException(message.toString());
+    return message.toString();
   }
 
   private ParserWrapper initRamlWrapper(String ramlPath) {
