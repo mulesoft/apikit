@@ -44,7 +44,6 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Collections.singletonList;
-import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
 import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class RAMLFilesParser {
@@ -152,7 +151,7 @@ public class RAMLFilesParser {
           DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
       parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
     } catch (Exception e) {
-      final List<IValidationResult> errors = singletonList(createErrorValidationResult(e));
+      final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
       return applyFallback(apiFile, content, apiFolderPath, apiFileParent, errors);
     }
 
@@ -219,41 +218,6 @@ public class RAMLFilesParser {
       message.append(error.getMessage()).append("\n");
     }
     return message.toString();
-  }
-
-  private static IValidationResult createErrorValidationResult(Exception e) {
-    return new IValidationResult() {
-
-      @Override
-      public String getMessage() {
-        return e.getMessage();
-      }
-
-      @Override
-      public String getIncludeName() {
-        return null;
-      }
-
-      @Override
-      public int getLine() {
-        return 0;
-      }
-
-      @Override
-      public boolean isLineUnknown() {
-        return false;
-      }
-
-      @Override
-      public String getPath() {
-        return null;
-      }
-
-      @Override
-      public Severity getSeverity() {
-        return ERROR;
-      }
-    };
   }
 
 }

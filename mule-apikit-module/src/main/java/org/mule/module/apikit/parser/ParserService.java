@@ -35,7 +35,6 @@ import static java.util.Collections.singletonList;
 import static org.mule.module.apikit.api.Parser.AMF;
 import static org.mule.module.apikit.api.Parser.AUTO;
 import static org.mule.module.apikit.api.Parser.RAML;
-import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
 import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class ParserService {
@@ -92,7 +91,7 @@ public class ParserService {
       if (parser == RAML)
         parserWrapper = initRamlWrapper(ramlPath);
       else
-        parserWrapper = ParserWrapperAmf.create(getPathAsUri(ramlPath));
+        parserWrapper = ParserWrapperAmf.create(getPathAsUri(ramlPath), false);
 
       final IValidationReport validationReport = parserWrapper.validationReport();
 
@@ -107,7 +106,7 @@ public class ParserService {
     } catch (Exception e) {
       if (e instanceof ParserInitializationException)
         throw e;
-      final List<IValidationResult> errors = singletonList(createErrorValidationResult(e));
+      final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
       return applyFallback(ramlPath, errors);
     }
   }
@@ -222,40 +221,5 @@ public class ParserService {
       }
     } else
       throw new RuntimeException("Couldn't load api in location: " + path);
-  }
-
-  private static IValidationResult createErrorValidationResult(Exception e) {
-    return new IValidationResult() {
-
-      @Override
-      public String getMessage() {
-        return e.getMessage();
-      }
-
-      @Override
-      public String getIncludeName() {
-        return null;
-      }
-
-      @Override
-      public int getLine() {
-        return 0;
-      }
-
-      @Override
-      public boolean isLineUnknown() {
-        return false;
-      }
-
-      @Override
-      public String getPath() {
-        return null;
-      }
-
-      @Override
-      public Severity getSeverity() {
-        return ERROR;
-      }
-    };
   }
 }

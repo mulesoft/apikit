@@ -91,9 +91,12 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
           .error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
       return;
     }
-    registry.setApiSource(configuration.getName(), url.get().toString().replace("*", ""));
+    final String configurationName = configuration.getName();
+    registry.setApiSource(configurationName, url.get().toString().replace("*", ""));
 
-    LOGGER.info(StringMessageUtils.getBoilerPlate("APIKit Started with Parser: " + configuration.getParser().name()));
+    LOGGER.info(StringMessageUtils
+        .getBoilerPlate("APIKit Router for config '" + configurationName + "' started using Parser: "
+            + configuration.getParser().name()));
   }
 
   @Override
