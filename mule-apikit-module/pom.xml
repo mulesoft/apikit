@@ -17,7 +17,7 @@
 
     <properties>
         <runtime.version>4.1.1</runtime.version>
-        <rest.assured.version>1.7.2</rest.assured.version>
+        <rest.assured.version>2.9.0</rest.assured.version>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <testExtensionModelLoaderId>crafted</testExtensionModelLoaderId>
@@ -259,6 +259,13 @@
             <artifactId>rest-assured</artifactId>
             <version>${rest.assured.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <!-- Excluding httpclient in order to use the version shipped by AMF -->
+                <exclusion>
+                    <groupId>org.apache.httpcomponents</groupId>
+                    <artifactId>httpclient</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mule.tests</groupId>
