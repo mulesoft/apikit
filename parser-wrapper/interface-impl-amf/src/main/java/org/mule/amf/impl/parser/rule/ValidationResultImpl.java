@@ -7,16 +7,21 @@
 package org.mule.amf.impl.parser.rule;
 
 import amf.client.validate.ValidationResult;
+import amf.core.parser.Position;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
 
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
 
 public class ValidationResultImpl implements IValidationResult {
+
+  private static final String ERROR_FORMAT = "%s\n  Location: %s\n  Position: %s";
+  private static final String POSITION_FORMAT = "Line %s,  Column %s";
 
   private ValidationResult validationResult;
   private List<String> severities;
@@ -27,7 +32,8 @@ public class ValidationResultImpl implements IValidationResult {
   }
 
   public String getMessage() {
-    return validationResult.message();
+    return buildErrorMessage(validationResult.message(), validationResult.location().orElse(""),
+                             validationResult.position().start());
   }
 
   public String getIncludeName() {
@@ -51,5 +57,13 @@ public class ValidationResultImpl implements IValidationResult {
     if (!severities.contains(validationResult.level()))
       return ERROR;
     return Severity.fromString(validationResult.level());
+  }
+
+  private static String buildErrorMessage(String message, String location, Position startPosition) {
+    return format(ERROR_FORMAT, message, location, getPositionMessage(startPosition));
+  }
+
+  private static String getPositionMessage(Position startPosition) {
+    return format(POSITION_FORMAT, startPosition.line(), startPosition.column());
   }
 }
