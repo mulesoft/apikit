@@ -18,8 +18,8 @@
 
     <properties>
         <!--mule community version-->
-        <mule.version>4.1.2</mule.version>
-        <mule.core.version>4.1.2</mule.core.version>
+        <mule.version>4.1.4-SNAPSHOT</mule.version>
+        <mule.core.version>4.1.4-SNAPSHOT</mule.core.version>
         <mule.api.version>1.1.2</mule.api.version>
         <mule.http.connector.version>1.1.1</mule.http.connector.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
