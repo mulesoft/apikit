@@ -38,15 +38,15 @@ public class ResolveUriVersionParameterTestCase extends MuleArtifactFunctionalTe
   }
 
   @Test
-  public void failWhenInvokingEndpointWithoutVersion() throws Exception {
+  public void failWhenInvokingEndpointWithoutVersion() {
     given()
         .expect()
         .statusCode(404)
-        .when().get("api/resource/{version}");
+        .when().get("api/resource/invalid-version");
   }
 
   @Test
-  public void successWhenInvokingEndpointWithVersion() throws Exception {
+  public void successWhenInvokingEndpointWithVersion() {
     given()
         .expect()
         .statusCode(200)

@@ -71,16 +71,18 @@ public class QueryStringTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Test
   public void validObjectProperty() {
-    given().expect().statusCode(200)
+    given().queryParam("property", "{\"firstname\": \"Lionel\", \"lastname\": \"Messi\"}")
+        .expect().statusCode(200)
         .response()
-        .when().get("/api/type-property-type?property={\"firstname\": \"Lionel\", \"lastname\": \"Messi\"}");
+        .when().get("/api/type-property-type");
   }
 
   @Test
   public void invalidObjectProperty() {
-    given().expect().statusCode(400)
+    given().queryParam("property", "{\"firstname\": \"Lionel\", \"nickname\": \"Messi\"}")
+        .expect().statusCode(400)
         .response()
-        .when().get("/api/type-property-type?property={\"firstname\": \"Lionel\", \"nickname\": \"Messi\"}");
+        .when().get("/api/type-property-type");
   }
 
   @Test
