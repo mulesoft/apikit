@@ -52,6 +52,12 @@
             <artifactId>mule-api</artifactId>
             <version>${mule.api.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.indexer</groupId>
+            <artifactId>indexer-core</artifactId>
+            <version>6.0.0</version>
+        </dependency>
+
 
         <!-- Testing -->
         <dependency>

@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.maven.index.artifact.Gav;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.mule.tools.apikit.model.ApiSyncResourceLoader;
 import org.mule.tools.apikit.model.RuntimeEdition;
 
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
@@ -64,6 +66,18 @@ public class ScaffolderAPI {
    */
   public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
     execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
+  }
+
+  /**
+   * Modifies or creates the Mule config files which are contained in the appDir directory
+   * by running the scaffolder on the ramlFiles contained at gavs passed as parameter.
+   *
+   * @param gavList the gavs that contains the raml files to which the scaffolder will be run on
+   * @param apiSyncResourceLoader a resource to load the raml files from the gav list
+   * @param minMuleVersion currently unused, will be useful in future improvements
+   * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
+   */
+  public void run(List<Gav> gavList, ApiSyncResourceLoader apiSyncResourceLoader, String minMuleVersion, RuntimeEdition runtimeEdition ){
   }
 
   private void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
