@@ -20,6 +20,8 @@ import org.jdom2.output.XMLOutputter;
 
 public class Helper {
 
+  private Helper() {}
+
   public static void testEqualsHelper(Method a, Method b, Method f) throws Exception {
     Object o = new Object();
     Object api = f.invoke(o, a.invoke(o), b.invoke(o));

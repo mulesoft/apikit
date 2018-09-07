@@ -75,7 +75,7 @@ public class ConsoleFlowTest {
     }
     File file = folder.newFile(s);
     file.createNewFile();
-    InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
+    InputStream resourceAsStream = ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(s);
     IOUtils.copy(resourceAsStream,
                  new FileOutputStream(file));
     return file;

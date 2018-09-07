@@ -8,6 +8,8 @@ package org.mule.tools.apikit.input;
 
 import amf.client.environment.DefaultEnvironment;
 import amf.client.environment.Environment;
+import java.util.Collection;
+import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.amf.impl.ParserWrapperAmf;
@@ -49,9 +51,11 @@ import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 public class RAMLFilesParser {
 
   private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries =
-      new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+      new HashMap<>();
   private final APIFactory apiFactory;
   private final Log log;
+
+  public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
   public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
     this.log = log;
@@ -89,7 +93,7 @@ public class RAMLFilesParser {
     }
   }
 
-  void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version) {
+  private void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version) {
     for (IResource resource : resourceMap.values()) {
       for (IAction action : resource.getActions().values()) {
 
@@ -120,7 +124,7 @@ public class RAMLFilesParser {
     }
   }
 
-  void addResource(API api, IResource resource, IAction action, String mimeType, String version) {
+  private void addResource(API api, IResource resource, IAction action, String mimeType, String version) {
 
     String completePath = APIKitTools
         .getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
@@ -136,12 +140,26 @@ public class RAMLFilesParser {
     return entries;
   }
 
-  private ParserWrapper getParserWrapper(File apiFile, String content) {
+  private ParserWrapper getParserWrapper(File apiFile, String content) throws Exception {
     String apiFolderPath = null;
     File apiFileParent = null;
     if (apiFile.getParentFile() != null) {
       apiFileParent = apiFile.getParentFile();
       apiFolderPath = apiFileParent.getPath();
+    }
+
+    // Used for Testing
+    final String parserValue = System.getProperty(MULE_APIKIT_PARSER, "AUTO");
+    if ("AMF".equals(parserValue)) {
+      final Environment environment =
+          DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+      ParserWrapper parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, true);
+      log.info(buildParserInfoMessage("AMF"));
+      return parserWrapper;
+    }
+
+    if ("RAML".equals(parserValue)) {
+      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, Collections.emptyList());
     }
 
     ParserWrapper parserWrapper;

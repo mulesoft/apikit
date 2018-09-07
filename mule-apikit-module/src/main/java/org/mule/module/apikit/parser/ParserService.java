@@ -105,7 +105,7 @@ public class ParserService {
       }
     } catch (Exception e) {
       if (e instanceof ParserInitializationException)
-        throw e;
+        throw (ParserInitializationException) e;
       final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
       return applyFallback(ramlPath, errors);
     }

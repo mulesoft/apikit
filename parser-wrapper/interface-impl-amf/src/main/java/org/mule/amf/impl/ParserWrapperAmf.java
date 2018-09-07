@@ -19,6 +19,7 @@ import amf.client.render.Raml10Renderer;
 import amf.client.render.Renderer;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
+import amf.core.benchmark.Execution;
 import amf.core.remote.Vendor;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
 import org.mule.amf.impl.model.AmfImpl;
@@ -87,17 +88,13 @@ public class ParserWrapperAmf implements ParserWrapper {
     return result;
   }
 
-  public static ParserWrapperAmf create(URI apiUri, boolean validate) {
+  public static ParserWrapperAmf create(URI apiUri, boolean validate) throws Exception {
     return create(apiUri, buildEnvironment(apiUri), validate);
   }
 
-  public static ParserWrapperAmf create(URI apiUri, Environment environment, boolean validate) {
-    try {
-      AMF.init().get();
-      return new ParserWrapperAmf(apiUri, environment, validate);
-    } catch (InterruptedException | ExecutionException e) {
-      return null;
-    }
+  public static ParserWrapperAmf create(URI apiUri, Environment environment, boolean validate) throws Exception {
+    AMF.init().get();
+    return new ParserWrapperAmf(apiUri, environment, validate);
   }
 
   private static Environment buildEnvironment(URI uri) {

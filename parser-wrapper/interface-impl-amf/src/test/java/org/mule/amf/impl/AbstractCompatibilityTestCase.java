@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.junit.Assert;
 import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.interfaces.ParserWrapper;
@@ -29,8 +30,8 @@ import static org.junit.Assert.assertNotNull;
 
 abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
 
-  protected final IRaml amf;
-  protected final IRaml raml;
+  protected IRaml amf;
+  protected IRaml raml;
   protected final boolean isRaml08;
 
   protected ParserWrapper ramlWrapper;
@@ -52,10 +53,14 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
     assertNotNull(raml);
 
     // Create AMF Wrapper
-    amfWrapper = ParserWrapperAmf.create(uri, true);
-    amf = amfWrapper.build();
-    assertNotNull(amf);
-
+    try {
+      amfWrapper = ParserWrapperAmf.create(uri, true);
+      amf = amfWrapper.build();
+      assertNotNull(amf);
+    } catch (Exception e) {
+      Assert.fail(e.getMessage());
+      e.printStackTrace();
+    }
   }
 
   static Collection<Object[]> getData(final URI baseFolder) throws IOException {
