@@ -140,12 +140,12 @@
             <artifactId>mule-apikit-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+       <!-- <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-extensions-api</artifactId>
             <version>${mule.extensions.api.version}</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-core</artifactId>
