@@ -22,8 +22,9 @@ import static org.mule.runtime.deployment.model.api.application.ApplicationDescr
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
 
 @ArtifactClassLoaderRunnerConfig
-public class RouterApiSyncTestCase extends MuleArtifactFunctionalTestCase{
+public class RouterApiSyncTestCase extends MuleArtifactFunctionalTestCase {
 
+/*
   public static final String RAML_LIBRARY = "raml-library";
   public static final String RAML_API = "raml-api";
   private static final BundleDescriptor ramlLibraryDescriptor = new BundleDescriptor.Builder().setGroupId("com.mycompany")
@@ -35,6 +36,7 @@ public class RouterApiSyncTestCase extends MuleArtifactFunctionalTestCase{
   private static final File ramlApiArtifact = installMavenArtifact(RAML_API, ramlApiDescriptor);
 
 
+*/
 
   @Rule
   public DynamicPort serverPort = new DynamicPort("serverPort");
