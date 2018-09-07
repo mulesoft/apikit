@@ -1,0 +1,39 @@
+{
+  "name":"APIKit",
+  "minMuleVersion":"4.1.1",
+  "requiredProduct":"MULE",
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {
+    }
+  },
+  "extensionModelLoaderDescriptor": {
+    "id": "crafted",
+    "attributes": {
+      "type": "org.mule.module.apikit.ApikitExtensionLoadingDelegate"
+    }
+  },
+  "classLoaderModelLoaderDescriptor":{
+    "id":"mule",
+    "attributes":{
+      "exportedPackages":[
+        "org.mule.module.apikit.api",
+        "org.mule.module.apikit.api.config",
+        "org.mule.module.apikit.api.exception",
+        "org.mule.module.apikit.api.uri",
+        "org.mule.module.apikit.api.validation",
+        "org.mule.module.apikit.api.console",
+        "org.mule.module.apikit.spi",
+        "org.mule.raml.interfaces",
+        "org.mule.raml.interfaces.model"
+      ],
+      "exportedResources":[
+        "/META-INF/",
+        "/META-INF/mule-apikit.xsd",
+        "/META-INF/spring.handlers",
+        "/META-INF/spring.schemas",
+        "/plugin-bootstrap.properties"
+      ]
+    }
+  }
+}
