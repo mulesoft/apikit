@@ -13,6 +13,7 @@ import org.mule.tools.apikit.input.RAMLFilesParser;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.RuntimeEdition;
+import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationStrategy;
 import org.mule.tools.apikit.output.MuleArtifactJsonGenerator;
@@ -38,6 +39,7 @@ public class Scaffolder {
 
   private final MuleConfigGenerator muleConfigGenerator;
   private final MuleArtifactJsonGenerator muleArtifactJsonGenerator;
+  private final ScaffolderReport scaffolderReport;
 
   public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles,
                                             List<String> muleXmlFiles)
@@ -88,6 +90,12 @@ public class Scaffolder {
     RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
 
+    scaffolderReport = new ScaffolderReport();
+    scaffolderReport.setVendorId(RAMLFilesParser.getVendorId());
+    scaffolderReport.setVersion(RAMLFilesParser.getRamlVersion());
+
+
+
     if (runtimeEdition == null) {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
     }
@@ -122,6 +130,11 @@ public class Scaffolder {
     return domainStream;
   }
 
+  public ScaffolderReport getScaffolderReport() {
+    return scaffolderReport;
+  }
+
+
   //TODO This is only a hack to get project base directory. Project Base Dir should be informed by api parameter
   private File getProjectBaseDirectory(File muleXmlOutputDirectory) {
     final Path outputDirectory = muleXmlOutputDirectory.toPath();
@@ -134,8 +147,14 @@ public class Scaffolder {
   }
 
   public void run() {
-    muleConfigGenerator.generate();
-    muleArtifactJsonGenerator.generate();
+    try{
+      muleConfigGenerator.generate();
+      muleArtifactJsonGenerator.generate();
+      scaffolderReport.setStatus(ScaffolderReport.SUCCESS);
+    } catch (Exception e){
+      scaffolderReport.setStatus(ScaffolderReport.FAILED);
+    }
+
   }
 
 
