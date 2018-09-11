@@ -45,13 +45,13 @@ public class MuleConfigParser {
     this.log = log;
   }
 
-  public MuleConfigParser parse(Set<File> ramlPaths, Map<File, InputStream> streams) {
+  public MuleConfigParser parse(Set<String> ramlFileNames, Map<File, InputStream> streams) {
     Map<File, Document> configurations = createDocuments(streams);
 
     for (Entry<File, Document> fileStreamEntry : configurations.entrySet()) {
       Document document = fileStreamEntry.getValue();
       File file = fileStreamEntry.getKey();
-      parseConfigsAndApis(file, document, ramlPaths);
+      parseConfigsAndApis(file, document, ramlFileNames);
     }
 
     parseFlows(configurations.values());
@@ -76,10 +76,11 @@ public class MuleConfigParser {
     return result;
   }
 
-  protected void parseConfigsAndApis(File file, Document document, Set<File> ramlPaths) {
+  protected void parseConfigsAndApis(File file, Document document, Set<String> ramlFileNames) {
     apikitConfigs.putAll(new APIKitConfigParser().parse(document));
     httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
-    includedApis.putAll(new APIKitRoutersParser(apikitConfigs, httpListenerConfigs, ramlPaths, file, apiFactory).parse(document));
+    includedApis
+        .putAll(new APIKitRoutersParser(apikitConfigs, httpListenerConfigs, ramlFileNames, file, apiFactory).parse(document));
   }
 
   protected void parseFlows(Collection<Document> documents) {

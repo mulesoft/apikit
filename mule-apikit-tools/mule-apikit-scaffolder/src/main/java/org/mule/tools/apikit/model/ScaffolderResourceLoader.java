@@ -9,7 +9,7 @@ package org.mule.tools.apikit.model;
 import java.io.InputStream;
 import java.net.URL;
 
-public interface ApiSyncResourceLoader {
+public interface ScaffolderResourceLoader {
 
   /**
    * Returns an {@link InputStream} with the resource's data ready to be consumed.
