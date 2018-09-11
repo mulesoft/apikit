@@ -32,7 +32,7 @@ public class APITest {
   }
 
   public static API createAPIBinding(File a, File b) {
-    return new APIFactory().createAPIBindingInboundEndpoint(a, b, "http://localhost:80", "/api/*", null);
+    return new APIFactory().createAPIBindingInboundEndpoint(a.getName(), b, "http://localhost:80", "/api/*", null);
   }
 
   @Test
@@ -44,5 +44,4 @@ public class APITest {
                      APITest.class.getMethod("createFileB"),
                      APITest.class.getMethod("createAPIBinding", File.class, File.class));
   }
-
 }
