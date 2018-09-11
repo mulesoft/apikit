@@ -14,6 +14,7 @@ import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.StringTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
+import org.raml.v2.api.model.v10.datamodel.UnionTypeDeclaration;
 import org.raml.v2.internal.impl.v10.type.TypeId;
 
 import javax.annotation.Nullable;
@@ -24,7 +25,9 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.singletonList;
 import static org.raml.v2.internal.impl.v10.type.TypeId.ARRAY;
 import static org.raml.v2.internal.impl.v10.type.TypeId.OBJECT;
 
@@ -58,10 +61,71 @@ public class ParameterImpl implements IParameter
         return results.isEmpty();
     }
 
+    private boolean validate(TypeDeclaration type, String value)
+    {
+        List<ValidationResult> results = type.validate(value);
+        return results.isEmpty();
+    }
+
+    @Override
+    public void validate(String expectedKey, Object values) throws Exception {
+        Collection<?> properties;
+
+        if (values instanceof Iterable) {
+
+            properties = newArrayList((Iterable) values);
+        } else properties = singletonList(values);
+
+        validateParam(typeDeclaration, expectedKey, properties);
+    }
+
+    private void validateParam(TypeDeclaration type, String paramKey, Collection<?> paramValues) throws Exception
+    {
+        if (type instanceof ArrayTypeDeclaration) {
+
+            validateArray((ArrayTypeDeclaration) type, paramKey, paramValues);
+        } else if (type instanceof UnionTypeDeclaration) {
+
+            validateUnion((UnionTypeDeclaration) type, paramKey, paramValues);
+        } else {
+
+            //todo check if paramValues can be empty
+            if (paramValues.size() > 1) {
+
+                throw new Exception("Parameter " + paramKey + " is not an array");
+            }
+
+            String paramValue = String.valueOf(paramValues.iterator().next());
+            if (!validate(type, paramValue)) {
+
+                String msg = String.format("Invalid value '%s' for Parameter %s. %s", paramValues, paramKey, message(type, paramValue));
+                throw new Exception(msg);
+            }
+        }
+    }
+
+    private void validateArray(ArrayTypeDeclaration type, String paramKeym, Collection<?> paramValues) throws Exception {
+        //todo validate min an max lenght
+        for (Object paramValue : paramValues) {
+            validateParam(type.items(), paramKeym, singletonList(paramValue));
+        }
+    }
+
+    private void validateUnion(UnionTypeDeclaration type, String paramKey, Collection<?> paramValues) throws Exception {
+        for (TypeDeclaration unionComponent : type.of())
+            validateParam(unionComponent, paramKey, paramValues);
+    }
+
     @Override
     public String message(String value)
     {
         List<ValidationResult> results = typeDeclaration.validate(value);
+        return results.isEmpty() ? "OK" : results.get(0).getMessage();
+    }
+
+    private String message(TypeDeclaration type, String value)
+    {
+        List<ValidationResult> results = type.validate(value);
         return results.isEmpty() ? "OK" : results.get(0).getMessage();
     }
 

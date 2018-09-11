@@ -59,6 +59,11 @@ public class ParameterImpl implements IParameter
     }
 
     @Override
+    public void validate(String expectedKey, Object values) throws Exception {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String message(String value)
     {
         throw new UnsupportedOperationException();

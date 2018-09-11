@@ -227,25 +227,10 @@ public class HttpRestRequest
             }
             else
             {
-
-                if (actual.size() > 1 && !(expected.isRepeat() || expected.isArray()))
-                {
-                    throw new InvalidQueryParameterException("Query parameter " + expectedKey + " is not repeatable");
-                }
-
-                if (expected.isArray())
-                {
-                    // raml 1.0 array validation
-                    validateQueryParamArray(expectedKey, expected, actual);
-                }
-                else
-                {
-                    // single query param or repeat
-                    //noinspection unchecked
-                    for (String param : (Collection<String>) actual)
-                    {
-                        validateQueryParam(expectedKey, expected, param);
-                    }
+                try {
+                    expected.validate(expectedKey ,actual);
+                } catch (Exception e) {
+                    throw new InvalidQueryParameterException(e.getMessage());
                 }
             }
         }
@@ -273,33 +258,6 @@ public class HttpRestRequest
             }
         }
         return actual;
-    }
-
-    //only for raml 1.0
-    private void validateQueryParamArray(String paramKey, IParameter expected, Collection<?> paramValues) throws InvalidQueryParameterException
-    {
-        StringBuilder builder = new StringBuilder();
-        for (Object paramValue : paramValues)
-        {
-            final String value = String.valueOf(paramValue);
-            builder.append("- ");
-
-            if (value.startsWith("*") || expected.isStringArray()) builder.append("\"").append(value).append("\"");
-            else builder.append(value);
-
-            builder.append("\n");
-        }
-        validateQueryParam(paramKey, expected, builder.toString());
-    }
-
-    private void validateQueryParam(String paramKey, IParameter expected, String paramValue) throws InvalidQueryParameterException
-    {
-        if (!expected.validate(paramValue))
-        {
-            String msg = String.format("Invalid value '%s' for query parameter %s. %s",
-                                       paramValue, paramKey, expected.message(paramValue));
-            throw new InvalidQueryParameterException(msg);
-        }
     }
 
     private void setQueryParameter(String key, String value)
@@ -334,13 +292,18 @@ public class HttpRestRequest
                 for (String incoming : incomingHeaders.keySet())
                 {
                     if (incoming.matches(regex)) {
-                        validateHeader(expectedKey, expected, incomingHeaders.get(incoming));
+                        try {
+                            expected.validate(expectedKey, incomingHeaders.get(incoming));
+                        } catch (Exception e) {
+                            throw new InvalidHeaderException(e.getMessage());
+                        }
                     }
                 }
             }
             else
             {
                 final Object actual = incomingHeaders.get(expectedKey);
+
                 if (actual == null && expected.isRequired())
                 {
                     throw new InvalidHeaderException("Required header " + expectedKey + " not specified");
@@ -351,35 +314,13 @@ public class HttpRestRequest
                 }
                 if (actual != null)
                 {
-                    validateHeader(expectedKey, expected, actual);
+                    try {
+                        expected.validate(expectedKey, actual);
+                    } catch (Exception e) {
+                        throw new InvalidHeaderException(e.getMessage());
+                    }
                 }
             }
-        }
-    }
-
-    private void validateHeader(String expectedKey, IParameter expected, Object header) throws InvalidHeaderException {
-        if (expected.isArray())
-        {
-            validateHeaderAsString(expectedKey, expected, getArrayHeaderAsString(header));
-        }
-        else if (expected.isRepeat())
-        {
-            for (Object h : (Iterable) header) {
-                validateHeaderAsString(expectedKey, expected, getHeaderAsString(h));
-            }
-        }
-        else
-        {
-            validateHeaderAsString(expectedKey, expected, getHeaderAsString(header));
-        }
-    }
-
-    private void validateHeaderAsString(String expectedKey, IParameter expected, String actual) throws InvalidHeaderException {
-        if (!expected.validate(actual))
-        {
-            final String msg = String.format("Invalid value '%s' for header %s. %s",
-                                       actual, expectedKey, expected.message(actual));
-            throw new InvalidHeaderException(msg);
         }
     }
 

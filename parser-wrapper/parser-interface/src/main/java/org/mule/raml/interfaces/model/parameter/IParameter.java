@@ -12,9 +12,12 @@ public interface IParameter
 {
     boolean isRequired();
     String getDefaultValue();
+    @Deprecated
     boolean isRepeat();
+    @Deprecated
     boolean isArray();
     boolean validate(String value);
+    void validate(String expectedKey, Object values) throws Exception;
     String message(String value);
     String getDisplayName();
     String getDescription();
