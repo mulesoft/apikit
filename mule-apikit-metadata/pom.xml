@@ -5,7 +5,7 @@
     <parent>
         <artifactId>mule-apikit-parent</artifactId>
         <groupId>org.mule.tools</groupId>
-        <version>1.1.7-SNAPSHOT</version>
+        <version>1.1.8-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mule-apikit-metadata</artifactId>
@@ -20,27 +20,37 @@
     </properties>
 
     <dependencies>
-        <!-- Metadata API -->
-        <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-message-metadata-model</artifactId>
-            <version>${mule.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-metadata-model-json</artifactId>
-            <version>${mule.api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-metadata-model-xml</artifactId>
-            <version>${mule.api.version}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-core</artifactId>
             <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-module-spring-config</artifactId>
+            <version>${mule.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Metadata API -->
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-message-metadata-model</artifactId>
+            <version>${mule.metadata.model.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-metadata-model-json</artifactId>
+            <version>${mule.metadata.model.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.runtime</groupId>
+            <artifactId>mule-metadata-model-xml</artifactId>
+            <version>${mule.metadata.model.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -58,20 +68,18 @@
             <artifactId>mule-apikit-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- Test Dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
             <version>1.9.0</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-module-spring-config</artifactId>
-            <version>${mule.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mule.tests</groupId>

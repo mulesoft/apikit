@@ -9,31 +9,31 @@
         "type"? : String, 
         "encoded"? : Binary
       }, 
-      "headers"? : {
-        "withoutType"? : String, 
-        "integerHeader"? : @int Number, 
-        "booleanHeader"? : Boolean, 
-        "fileHeader"? : String, 
-        "dateHeader"? : String, 
-        "stringHeader"? : String, 
-        "numberHeader"? : Number
+      "headers" : {
+        "withoutType" : String, 
+        "integerHeader" : @int Number, 
+        "booleanHeader" : Boolean, 
+        "fileHeader" : String, 
+        "dateHeader" : String, 
+        "stringHeader" : String, 
+        "numberHeader" : Number
       }, 
-      "listenerPath"? : String, 
-      "method"? : String, 
-      "queryParams"? : {
+      "listenerPath" : String, 
+      "method" : String, 
+      "queryParams" : {
 
       }, 
-      "queryString"? : String, 
-      "relativePath"? : String, 
-      "remoteAddress"? : String, 
-      "requestPath"? : String, 
-      "requestUri"? : String, 
-      "scheme"? : String, 
-      "uriParams"? : {
+      "queryString" : String, 
+      "relativePath" : String, 
+      "remoteAddress" : String, 
+      "requestPath" : String, 
+      "requestUri" : String, 
+      "scheme" : String, 
+      "uriParams" : {
 
       }, 
-      "version"? : String, 
-      "localAddress"? : String
+      "version" : String, 
+      "localAddress" : String
     }
   }, 
   "variables" : {
