@@ -106,17 +106,17 @@ public class RAMLFilesParser {
       } catch (IOException ioe) {
         this.log.info("Error loading file " + rootRamlName);
         break;
-    
+
       }
 
       if (isValidRaml(rootRamlName, content, scaffolderResourceLoaderWrapper)) {
         try {
           IRaml raml;
-//          if (ParserV2Utils.useParserV2(content)) {
-            ResourceLoader resourceLoader =
-                    new CompositeResourceLoader( new DefaultResourceLoader(),scaffolderResourceLoaderWrapper);
-            raml = ParserV2Utils.build(resourceLoader, rootRamlName, content);
-         /* } else {
+          //          if (ParserV2Utils.useParserV2(content)) {
+          ResourceLoader resourceLoader =
+              new CompositeResourceLoader(new DefaultResourceLoader(), scaffolderResourceLoaderWrapper);
+          raml = ParserV2Utils.build(resourceLoader, rootRamlName, content);
+          /* } else {
             raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
           }*/
           collectResources(rootRamlName, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
@@ -126,11 +126,11 @@ public class RAMLFilesParser {
           log.debug(e);
         }
       }
-    
+
     }
     if (processedRamls.size() > 0) {
       this.log.info("The following RAML files were parsed correctly: " +
-              processedRamls);
+          processedRamls);
     } else {
       this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
     }
