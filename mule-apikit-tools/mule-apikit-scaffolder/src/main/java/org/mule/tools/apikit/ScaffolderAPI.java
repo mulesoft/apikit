@@ -7,9 +7,11 @@
 package org.mule.tools.apikit;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
@@ -127,9 +129,18 @@ public class ScaffolderAPI {
     return ramlSpecs;
   }
 
-  private String getRootRAMLFileName(InputStream exchangeJson) {
-    //TODO: implement
-    return "test.raml";
+  private String getRootRAMLFileName(InputStream exchangeJsonStream) {
+
+    try {
+      String exchangeJson = IOUtils.toString(exchangeJsonStream);
+      exchangeJson = exchangeJson.substring(exchangeJson.indexOf("\"main\":\"") + "\"main\":\"".length());
+      exchangeJson = exchangeJson.substring(0,exchangeJson.indexOf("\""));
+      return exchangeJson;
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return null;
   }
 
   private void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
