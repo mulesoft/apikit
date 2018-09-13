@@ -7,13 +7,12 @@
 package org.mule.tools.apikit.model;
 
 import org.apache.commons.io.FileUtils;
-import org.raml.v2.api.loader.ResourceLoader;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
 
-public class ScaffolderResourceLoaderWrapper implements ResourceLoader {
+public class ScaffolderResourceLoaderWrapper implements  org.raml.v2.api.loader.ResourceLoader , org.raml.parser.loader.ResourceLoader {
 
   ScaffolderResourceLoader scaffolderResourceLoader;
 

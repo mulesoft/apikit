@@ -112,13 +112,13 @@ public class RAMLFilesParser {
       if (isValidRaml(rootRamlName, content, scaffolderResourceLoaderWrapper)) {
         try {
           IRaml raml;
-          //          if (ParserV2Utils.useParserV2(content)) {
+          if (ParserV2Utils.useParserV2(content)) {
           ResourceLoader resourceLoader =
               new CompositeResourceLoader(new DefaultResourceLoader(), scaffolderResourceLoaderWrapper);
           raml = ParserV2Utils.build(resourceLoader, rootRamlName, content);
-          /* } else {
-            raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
-          }*/
+           } else {
+            raml = ParserV1Utils.build(content, scaffolderResourceLoaderWrapper, rootRamlName);
+          }
           collectResources(rootRamlName, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
           processedRamls.add(rootRamlName);
         } catch (Exception e) {
@@ -164,11 +164,11 @@ public class RAMLFilesParser {
 
   private boolean isValidRaml(String fileName, String content, ScaffolderResourceLoaderWrapper scaffolderResourceLoaderWrapper) {
     List<String> errors = new ArrayList<>();
+    ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), scaffolderResourceLoaderWrapper);
     if (ParserV2Utils.useParserV2(content)) {
-      ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), scaffolderResourceLoaderWrapper);
       errors = ParserV2Utils.validate(resourceLoader, fileName, content);
     } else {
-      //TODO: Implement for raml v0.8
+      errors = ParserV1Utils.validate(scaffolderResourceLoaderWrapper, fileName, content);
     }
     if (!errors.isEmpty()) {
       if (errors.size() == 1 && errors.get(0).toLowerCase().contains("root")) {
