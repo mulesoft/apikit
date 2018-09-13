@@ -134,7 +134,7 @@ public class ScaffolderAPI {
     try {
       String exchangeJson = IOUtils.toString(exchangeJsonStream);
       exchangeJson = exchangeJson.substring(exchangeJson.indexOf("\"main\":\"") + "\"main\":\"".length());
-      exchangeJson = exchangeJson.substring(0,exchangeJson.indexOf("\""));
+      exchangeJson = exchangeJson.substring(0, exchangeJson.indexOf("\""));
       return exchangeJson;
     } catch (IOException e) {
       e.printStackTrace();
