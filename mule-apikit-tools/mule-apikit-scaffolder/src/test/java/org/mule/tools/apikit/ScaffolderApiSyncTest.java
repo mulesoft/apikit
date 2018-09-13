@@ -7,6 +7,7 @@
 package org.mule.tools.apikit;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.maven.model.Dependency;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,10 +17,10 @@ import org.mockito.Mockito;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ScaffolderApiSyncTest {
 
@@ -30,10 +31,19 @@ public class ScaffolderApiSyncTest {
   @Test
   public void testSimpleGeneration() throws IOException {
       ScaffolderResourceLoader scaffolderResourceLoaderMock = Mockito.mock(ScaffolderResourceLoader.class);
-      Mockito.doReturn(getInputStream("src/test/resources/scaffolder/simple.raml")).when(scaffolderResourceLoaderMock).getResourceAsStream("test");
+      final String exchangeJsonResourceURL = "resource::com.mycompany:raml-api:1.0.0:raml:zip:exchange.json";
+      final String rootRamlResourceURL = "resource::com.mycompany:raml-api:1.0.0:raml:zip:simple.raml";
 
 
-      Assert.assertEquals( IOUtils.toString( scaffolderResourceLoaderMock.getResourceAsStream("test")),IOUtils.toString( getInputStream("src/test/resources/scaffolder/simple.raml") ));
+      Mockito.doReturn(getInputStream("src/test/resources/scaffolder/exchange.json")).when(scaffolderResourceLoaderMock).getResourceAsStream(exchangeJsonResourceURL);
+      Mockito.doReturn(getInputStream("src/test/resources/scaffolder/example-v10.raml")).when(scaffolderResourceLoaderMock).getResourceAsStream(rootRamlResourceURL);
+
+      List<Dependency> dependencyList = new ArrayList<>();
+      dependencyList.add(createDependency("com.mycompany","raml-api","1.0.0","raml","zip"));
+      List<File> xmls = Arrays.asList();
+      File muleXmlOut = folder.newFolder("mule-xml-out");
+
+      new ScaffolderAPI().run(dependencyList,scaffolderResourceLoaderMock,muleXmlOut,null,null,null);
   }
 
   private  InputStream getInputStream(String resourcePath){
@@ -46,6 +56,20 @@ public class ScaffolderApiSyncTest {
       }
 
       return resourceStream;
+  }
+
+  private static Dependency createDependency(String groupId,String artifactId,String version,String classifier, String type){
+
+
+      Dependency dependency = new Dependency();
+
+      dependency.setGroupId(groupId);
+      dependency.setArtifactId(artifactId);
+      dependency.setVersion(version);
+      dependency.setClassifier(classifier);
+      dependency.setType(type);
+
+      return dependency;
   }
 
 }
