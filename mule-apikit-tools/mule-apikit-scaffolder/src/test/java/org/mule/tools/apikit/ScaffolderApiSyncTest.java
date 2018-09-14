@@ -30,6 +30,7 @@ import static org.mule.tools.apikit.model.RuntimeEdition.CE;
 import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
 public class ScaffolderApiSyncTest {
+
   public final static String DEFAULT_MULE_VERSION = "4.0.0";
   public final static RuntimeEdition DEFAULT_RUNTIME_EDITION = EE;
   @Rule
@@ -52,7 +53,8 @@ public class ScaffolderApiSyncTest {
     List<File> xmls = Arrays.asList();
     File muleXmlOut = folder.newFolder("mule-xml-out");
 
-    new ScaffolderAPI().run(dependencyList, scaffolderResourceLoaderMock, muleXmlOut, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+    new ScaffolderAPI().run(dependencyList, scaffolderResourceLoaderMock, muleXmlOut, null, DEFAULT_MULE_VERSION,
+                            DEFAULT_RUNTIME_EDITION);
 
     File muleXmlSimple = new File(muleXmlOut, "resource::com.mycompany:raml-api:1.0.0:raml:zip:simpleV10.xml");
 
@@ -76,19 +78,19 @@ public class ScaffolderApiSyncTest {
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(8, countOccurences(s, "http:headers"));
-//    assertEquals(2, countOccurences(s, "get:\\:" + rootRamlResourceURL + "-config"));
-//    assertEquals(2, countOccurences(s, "get:\\pet:" + rootRamlResourceURL + "-config"));
+    //    assertEquals(2, countOccurences(s, "get:\\:" + rootRamlResourceURL + "-config"));
+    //    assertEquals(2, countOccurences(s, "get:\\pet:" + rootRamlResourceURL + "-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
     assertEquals(0, countOccurences(s, "#[null]"));
     assertEquals(0,
-            countOccurences(s,
-                    "expression-component>mel:flowVars['variables.outboundHeaders default {}'].put('Content-Type', 'application/json')</expression-component>"));
+                 countOccurences(s,
+                                 "expression-component>mel:flowVars['variables.outboundHeaders default {}'].put('Content-Type', 'application/json')</expression-component>"));
     assertEquals(0,
-            countOccurences(s,
-                    "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
+                 countOccurences(s,
+                                 "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
     assertEquals(0, countOccurences(s, "exception-strategy"));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
@@ -101,16 +103,17 @@ public class ScaffolderApiSyncTest {
 
 
     Mockito.doReturn(getInputStream("src/test/resources/scaffolder/exchange.json")).when(scaffolderResourceLoaderMock)
-            .getResourceAsStream(exchangeJsonResourceURL);
+        .getResourceAsStream(exchangeJsonResourceURL);
     Mockito.doReturn(getInputStream("src/test/resources/scaffolder/simple.raml")).when(scaffolderResourceLoaderMock)
-            .getResourceAsStream(rootRamlResourceURL);
+        .getResourceAsStream(rootRamlResourceURL);
 
     List<Dependency> dependencyList = new ArrayList<>();
     dependencyList.add(createDependency("com.mycompany", "raml-api", "1.0.0", "raml", "zip"));
     List<File> xmls = Arrays.asList();
     File muleXmlOut = folder.newFolder("mule-xml-out");
 
-    new ScaffolderAPI().run(dependencyList, scaffolderResourceLoaderMock, muleXmlOut, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+    new ScaffolderAPI().run(dependencyList, scaffolderResourceLoaderMock, muleXmlOut, null, DEFAULT_MULE_VERSION,
+                            DEFAULT_RUNTIME_EDITION);
 
     File muleXmlSimple = new File(muleXmlOut, "resource::com.mycompany:raml-api:1.0.0:raml:zip:simple.xml");
 
@@ -133,19 +136,19 @@ public class ScaffolderApiSyncTest {
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
     assertEquals(8, countOccurences(s, "http:headers"));
-//    assertEquals(2, countOccurences(s, "get:\\:" + rootRamlResourceURL + "-config"));
-//    assertEquals(2, countOccurences(s, "get:\\pet:" + rootRamlResourceURL + "-config"));
+    //    assertEquals(2, countOccurences(s, "get:\\:" + rootRamlResourceURL + "-config"));
+    //    assertEquals(2, countOccurences(s, "get:\\pet:" + rootRamlResourceURL + "-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
     assertEquals(0, countOccurences(s, "#[null]"));
     assertEquals(0,
-            countOccurences(s,
-                    "expression-component>mel:flowVars['variables.outboundHeaders default {}'].put('Content-Type', 'application/json')</expression-component>"));
+                 countOccurences(s,
+                                 "expression-component>mel:flowVars['variables.outboundHeaders default {}'].put('Content-Type', 'application/json')</expression-component>"));
     assertEquals(0,
-            countOccurences(s,
-                    "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
+                 countOccurences(s,
+                                 "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
     assertEquals(0, countOccurences(s, "exception-strategy"));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }

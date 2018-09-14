@@ -113,10 +113,10 @@ public class RAMLFilesParser {
         try {
           IRaml raml;
           if (ParserV2Utils.useParserV2(content)) {
-          ResourceLoader resourceLoader =
-              new CompositeResourceLoader(new DefaultResourceLoader(), scaffolderResourceLoaderWrapper);
-          raml = ParserV2Utils.build(resourceLoader, rootRamlName, content);
-           } else {
+            ResourceLoader resourceLoader =
+                new CompositeResourceLoader(new DefaultResourceLoader(), scaffolderResourceLoaderWrapper);
+            raml = ParserV2Utils.build(resourceLoader, rootRamlName, content);
+          } else {
             raml = ParserV1Utils.build(content, scaffolderResourceLoaderWrapper, rootRamlName);
           }
           collectResources(rootRamlName, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
