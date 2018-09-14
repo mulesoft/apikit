@@ -38,8 +38,7 @@ import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 
 public class RAMLFilesParser {
 
-  private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries =
-      new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+  private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = new HashMap<>();
   private final APIFactory apiFactory;
   private final Log log;
 
@@ -68,10 +67,7 @@ public class RAMLFilesParser {
         try {
           IRaml raml;
           if (ParserV2Utils.useParserV2(content)) {
-            ResourceLoader resourceLoader =
-                new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFileParent), new DefaultResourceLoader(),
-                                            new FileResourceLoader(ramlFolderPath),
-                                            new ExchangeDependencyResourceLoader(ramlFolderPath));
+            ResourceLoader resourceLoader = getResourceLoader(ramlFolderPath, ramlFileParent);
             raml = ParserV2Utils.build(resourceLoader, ramlFile.getPath(), content);
           } else {
             raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
@@ -91,6 +87,12 @@ public class RAMLFilesParser {
     } else {
       this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
     }
+  }
+
+  private ResourceLoader getResourceLoader(String ramlFolderPath, File ramlFileParent) {
+    return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFileParent), new DefaultResourceLoader(),
+            new FileResourceLoader(ramlFolderPath),
+            new ExchangeDependencyResourceLoader(ramlFolderPath));
   }
 
   public RAMLFilesParser(Log log, Map<String, InputStream> ramls, ScaffolderResourceLoaderWrapper scaffolderResourceLoaderWrapper,
@@ -139,27 +141,12 @@ public class RAMLFilesParser {
   private boolean isValidRaml(String fileName, String content, String filePath) {
     List<String> errors;
     if (ParserV2Utils.useParserV2(content)) {
-      ResourceLoader resourceLoader = new CompositeResourceLoader(new RootRamlFileResourceLoader(new File(filePath)),
-                                                                  new DefaultResourceLoader(), new FileResourceLoader(filePath),
-                                                                  new ExchangeDependencyResourceLoader(filePath));
+      ResourceLoader resourceLoader = getResourceLoader(filePath, new File(filePath));
       errors = ParserV2Utils.validate(resourceLoader, fileName, content);
     } else {
       errors = ParserV1Utils.validate(filePath, fileName, content);
     }
-    if (!errors.isEmpty()) {
-      if (errors.size() == 1 && errors.get(0).toLowerCase().contains("root")) {
-        log.info("File '" + fileName + "' is not a root RAML file.");
-      } else {
-        log.info("File '" + fileName + "' is not a valid root RAML file. It contains some errors/warnings. See below: ");
-        int problemCount = 0;
-        for (String error : errors) {
-          log.info("ERROR " + (++problemCount) + ": " + error);
-        }
-      }
-      return false;
-    }
-    log.info("File '" + fileName + "' is a VALID root RAML file.");
-    return true;
+    return checkErrors(fileName, errors);
   }
 
   private boolean isValidRaml(String fileName, String content, ScaffolderResourceLoaderWrapper scaffolderResourceLoaderWrapper) {
@@ -170,6 +157,10 @@ public class RAMLFilesParser {
     } else {
       errors = ParserV1Utils.validate(scaffolderResourceLoaderWrapper, fileName, content);
     }
+    return checkErrors(fileName, errors);
+  }
+
+  private boolean checkErrors(String fileName, List<String> errors) {
     if (!errors.isEmpty()) {
       if (errors.size() == 1 && errors.get(0).toLowerCase().contains("root")) {
         log.info("File '" + fileName + "' is not a root RAML file.");
