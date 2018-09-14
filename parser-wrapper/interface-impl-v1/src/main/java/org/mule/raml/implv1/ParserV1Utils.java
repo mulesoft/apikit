@@ -48,6 +48,7 @@ public class ParserV1Utils {
     ramlDocumentBuilder.addPathLookupFirst(resourceFolder);
     return ramlDocumentBuilder.build(content, rootFileName);
   }
+
   public static IRaml build(String content, ResourceLoader resourceLoader, String rootFileName) {
     IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl(resourceLoader);
     return ramlDocumentBuilder.build(content, rootFileName);
