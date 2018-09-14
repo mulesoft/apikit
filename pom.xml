@@ -67,7 +67,11 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
+<<<<<<< 73f8e3b096baf4117d9263c0733ed8934b91eb8b
                 <version>1.0.28-SNAPSHOT</version>
+=======
+                <version>1.0.26</version>
+>>>>>>> APIKIT-1536: Metadata + Apisync initial commit
                 <exclusions>
                     <exclusion>
                         <groupId> org.slf4j</groupId>
