@@ -6,16 +6,15 @@
  */
 package org.mule.module.apikit.metadata.raml;
 
-import org.mule.module.apikit.metadata.interfaces.Parseable;
 import org.mule.raml.implv1.parser.visitor.RamlDocumentBuilderImpl;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
 
 import java.io.File;
 
-public class RamlV1Parser implements Parseable {
+public class RamlV1Parser { //implements Parseable {
 
-  @Override
+  //  @Override
   public IRaml build(File ramlFile, String ramlContent) {
     final IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
     ramlDocumentBuilder.addPathLookupFirst(ramlFile.getParentFile().getPath());

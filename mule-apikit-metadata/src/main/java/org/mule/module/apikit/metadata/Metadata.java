@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.metadata;
 
+import static java.lang.String.format;
 import org.mule.metadata.api.model.FunctionType;
 import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
@@ -44,6 +45,8 @@ public class Metadata {
    */
   public static class Builder {
 
+    private static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s";
+
     private ResourceLoader resourceLoader;
     private ApplicationModel applicationModel;
     private Notifier notifier;
@@ -68,7 +71,16 @@ public class Metadata {
     }
 
     public Metadata build() {
-      return new Metadata(applicationModel, resourceLoader, notifier);
+      return new Metadata(applicationModel, s -> {
+        if (s.startsWith("/exchange_modules") || s.startsWith("exchange_modules")) {
+          String[] resourceParts = s.split("/");
+          int length = resourceParts.length;
+          return resourceLoader.getRamlResource(format(RESOURCE_FORMAT, resourceParts[length - 4], resourceParts[length - 3],
+                                                       resourceParts[length - 2], resourceParts[length - 1]));
+        }
+        return resourceLoader.getRamlResource(s);
+      }, notifier);
+
     }
 
   }

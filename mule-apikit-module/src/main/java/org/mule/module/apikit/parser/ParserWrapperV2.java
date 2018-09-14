@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.parser;
 
-import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
@@ -33,7 +32,6 @@ import org.slf4j.LoggerFactory;
 public class ParserWrapperV2 implements ParserWrapper {
 
   private static final Logger logger = LoggerFactory.getLogger(ParserWrapperV2.class);
-  private static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s";
 
   private final String ramlPath;
   private final ResourceLoader resourceLoader;

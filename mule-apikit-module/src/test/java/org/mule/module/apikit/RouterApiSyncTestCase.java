@@ -7,6 +7,7 @@
 package org.mule.module.apikit;
 
 import com.jayway.restassured.RestAssured;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
@@ -22,6 +23,7 @@ import static org.mule.runtime.deployment.model.api.application.ApplicationDescr
 import static org.mule.test.infrastructure.maven.MavenTestUtils.installMavenArtifact;
 
 @ArtifactClassLoaderRunnerConfig
+@Ignore
 public class RouterApiSyncTestCase extends MuleArtifactFunctionalTestCase {
 
   public static final String RAML_LIBRARY = "raml-library";
