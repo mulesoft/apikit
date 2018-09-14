@@ -9,10 +9,10 @@ package org.mule.module.apikit.validation.body.form;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 @ArtifactClassLoaderRunnerConfig
-public class MultipartFormFunctionalTestCaseRaml10 extends MultipartFormFunctionalTestCase {
+public class MultipartFormFunctionalRaml08TestCase extends MultipartFormFunctionalTestCase {
 
   @Override
   protected String getConfigResources() {
-    return "org/mule/module/apikit/validation/formParameters/mule-config-v2.xml";
+    return "org/mule/module/apikit/validation/formParameters/mule-config-v1.xml";
   }
 }
