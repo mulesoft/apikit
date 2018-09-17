@@ -20,6 +20,7 @@ import org.mule.transformer.AbstractMessageTransformer;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.transport.NullPayload;
 
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -95,6 +96,15 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
             }
             return payload;
         }
+
+        if (payload instanceof InputStream) {
+            if (logger.isDebugEnabled())
+            {
+                logger.debug("Response transformation not required. Message payload type is InputStream");
+            }
+            return payload;
+        }
+
         DataType sourceDataType = DataTypeFactory.create(message.getPayload().getClass(), appendEncoding(msgEncoding, msgMimeType));
         DataType resultDataType = DataTypeFactory.create(String.class, responseRepresentation);
 
