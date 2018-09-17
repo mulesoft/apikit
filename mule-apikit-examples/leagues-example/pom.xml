@@ -373,7 +373,7 @@
         <dependency>
             <groupId>org.mule.services</groupId>
             <artifactId>mule-service-scheduler</artifactId>
-            <version>${mule.api.version}</version>
+            <version>${mule.service.scheduler.version}</version>
             <classifier>mule-service</classifier>
             <scope>test</scope>
         </dependency>

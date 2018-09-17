@@ -91,7 +91,6 @@ public class ScaffolderApiSyncTest {
 
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-    String listenerConfigName = ROOT_RAML_RESOURCE_URL + rootRaml;
 
     assertSimple(s, rootRaml);
   }
