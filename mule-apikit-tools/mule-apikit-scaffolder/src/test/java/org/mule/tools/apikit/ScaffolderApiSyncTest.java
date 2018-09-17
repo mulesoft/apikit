@@ -79,8 +79,8 @@ public class ScaffolderApiSyncTest {
     assertEquals(7, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "post:\\Queue:application\\json:"+ ROOT_RAML_RESOURCE_URL + rootRaml + "-config"));
-    assertEquals(2, countOccurences(s, "post:\\Queue:text\\xml:"+ ROOT_RAML_RESOURCE_URL + rootRaml + "-config"));
+    assertEquals(2, countOccurences(s, "post:\\Queue:application\\json:" + rootRaml + "-config"));
+    assertEquals(2, countOccurences(s, "post:\\Queue:text\\xml:" + rootRaml + "-config"));
     assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
@@ -93,7 +93,7 @@ public class ScaffolderApiSyncTest {
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     String listenerConfigName = ROOT_RAML_RESOURCE_URL + rootRaml;
 
-    assertSimple(s, listenerConfigName);
+    assertSimple(s, rootRaml);
   }
 
   private File generateScaffolder(String ramlFolder, String rootRaml)
@@ -124,7 +124,8 @@ public class ScaffolderApiSyncTest {
   }
 
   private void mockScaffolderResourceLoader(String resourceURL, String folder, String file) throws FileNotFoundException {
-    Mockito.doReturn(getInputStream(folder + file)).doReturn(getInputStream(folder + file)).when(scaffolderResourceLoaderMock).getResourceAsStream(resourceURL);
+    Mockito.doReturn(getInputStream(folder + file)).doReturn(getInputStream(folder + file)).when(scaffolderResourceLoaderMock)
+        .getResourceAsStream(resourceURL);
   }
 
   private void assertSimple(String s, String listenerConfigName) {

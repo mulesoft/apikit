@@ -34,7 +34,15 @@ public class API {
     this.ramlFileName = ramlFileName;
     this.xmlFile = xmlFile;
     this.baseUri = baseUri;
-    id = FilenameUtils.removeExtension(ramlFileName);
+    id = getApiName(ramlFileName);
+  }
+
+  private String getApiName(String ramlFileName){
+    String apiName = ramlFileName;
+    if(ramlFileName.startsWith("resource::")){
+      apiName =  ramlFileName.substring( ramlFileName.lastIndexOf(":") + 1);
+    }
+    return  FilenameUtils.removeExtension(apiName);
   }
 
   public API(String ramlFileName, File xmlFile, String baseUri, String path, APIKitConfig config) {
