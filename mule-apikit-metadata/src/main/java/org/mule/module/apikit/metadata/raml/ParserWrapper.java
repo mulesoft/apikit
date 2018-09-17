@@ -8,7 +8,7 @@ package org.mule.module.apikit.metadata.raml;
 
 import org.mule.raml.interfaces.model.IRaml;
 
-public interface ParserWrapper {
+interface ParserWrapper {
 
   IRaml build();
 }

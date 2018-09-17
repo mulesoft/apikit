@@ -12,20 +12,33 @@ import org.mule.raml.interfaces.model.IRaml;
 import org.raml.model.Raml;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 
-public class ParserWrapperV1 implements ParserWrapper {
+class ParserWrapperV1 implements ParserWrapper {
 
   private final String ramlPath;
   private final ResourceLoader resourceLoader;
 
-  public ParserWrapperV1(String ramlPath, ResourceLoader resourceLoader) {
+  ParserWrapperV1(String ramlPath, ResourceLoader resourceLoader) {
     this.ramlPath = ramlPath;
     this.resourceLoader = resourceLoader;
   }
 
   @Override
   public IRaml build() {
-    RamlDocumentBuilder builder = new RamlDocumentBuilder(s -> resourceLoader.getRamlResource(s));
+    RamlDocumentBuilder builder = new RamlDocumentBuilder(resourceLoader::getRamlResource);
     Raml api = builder.build(ramlPath);
     return new RamlImplV1(api);
   }
+
+
+  /*
+  public class RamlV1Parser { //implements Parseable {
+  
+  //  @Override
+  public IRaml build(File ramlFile, String ramlContent) {
+    final IRamlDocumentBuilder ramlDocumentBuilder = new RamlDocumentBuilderImpl();
+    ramlDocumentBuilder.addPathLookupFirst(ramlFile.getParentFile().getPath());
+    return ramlDocumentBuilder.build(ramlContent, ramlFile.getName());
+  }
+  }
+   */
 }

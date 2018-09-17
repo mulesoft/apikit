@@ -37,12 +37,12 @@ public class API {
     id = getApiName(ramlFileName);
   }
 
-  private String getApiName(String ramlFileName){
+  private String getApiName(String ramlFileName) {
     String apiName = ramlFileName;
-    if(ramlFileName.startsWith("resource::")){
-      apiName =  ramlFileName.substring( ramlFileName.lastIndexOf(":") + 1);
+    if (ramlFileName.startsWith("resource::")) {
+      apiName = ramlFileName.substring(ramlFileName.lastIndexOf(":") + 1);
     }
-    return  FilenameUtils.removeExtension(apiName);
+    return FilenameUtils.removeExtension(apiName);
   }
 
   public API(String ramlFileName, File xmlFile, String baseUri, String path, APIKitConfig config) {
