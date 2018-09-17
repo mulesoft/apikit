@@ -20,22 +20,23 @@ import java.util.List;
 public class ParserV1Utils {
 
   public static List<String> validate(ResourceLoader resourceLoader, String rootFileName, String resourceContent) {
-    return validate(null,resourceLoader,rootFileName,resourceContent);
+    return validate(null, resourceLoader, rootFileName, resourceContent);
   }
 
   public static List<String> validate(String resourceFolder, String rootFileName, String resourceContent) {
-    return validate(resourceFolder,null,rootFileName,resourceContent);
+    return validate(resourceFolder, null, rootFileName, resourceContent);
   }
 
   public static IRaml build(String content, String resourceFolder, String rootFileName) {
-    return build(content,resourceFolder,null,rootFileName);
+    return build(content, resourceFolder, null, rootFileName);
   }
 
   public static IRaml build(String content, ResourceLoader resourceLoader, String rootFileName) {
-    return build(content,null,resourceLoader,rootFileName);
+    return build(content, null, resourceLoader, rootFileName);
   }
 
-  private static List<String> validate(String resourceFolder, ResourceLoader resourceLoader, String rootFileName, String resourceContent) {
+  private static List<String> validate(String resourceFolder, ResourceLoader resourceLoader, String rootFileName,
+                                       String resourceContent) {
     IRamlDocumentBuilder ramlDocumentBuilder = getIRamlDocumentBuilder(resourceFolder, resourceLoader);
 
     List<String> errorsList = new ArrayList<>();
@@ -47,7 +48,7 @@ public class ParserV1Utils {
     return errorsList;
   }
 
-  public static IRaml build(String content, String resourceFolder , ResourceLoader resourceLoader, String rootFileName) {
+  public static IRaml build(String content, String resourceFolder, ResourceLoader resourceLoader, String rootFileName) {
     IRamlDocumentBuilder ramlDocumentBuilder = getIRamlDocumentBuilder(resourceFolder, resourceLoader);
 
     return ramlDocumentBuilder.build(content, rootFileName);

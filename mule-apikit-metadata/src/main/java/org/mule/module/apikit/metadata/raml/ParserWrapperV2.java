@@ -11,31 +11,51 @@ import javax.annotation.Nullable;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ParserWrapperV2 implements ParserWrapper {
-
-  private static final Logger logger = LoggerFactory.getLogger(ParserWrapperV2.class);
+class ParserWrapperV2 implements ParserWrapper {
 
   private final String ramlPath;
   private final ResourceLoader resourceLoader;
 
-  public ParserWrapperV2(String ramlPath, ResourceLoader resourceLoader) {
+  ParserWrapperV2(String ramlPath, ResourceLoader resourceLoader) {
     this.ramlPath = ramlPath;
     this.resourceLoader = resourceLoader;
   }
 
   @Override
   public IRaml build() {
-    return ParserV2Utils.build(new org.raml.v2.api.loader.ResourceLoader() {
+    final org.raml.v2.api.loader.ResourceLoader adaptedResourceLoader = new org.raml.v2.api.loader.ResourceLoader() {
 
       @Nullable
       @Override
       public InputStream fetchResource(String s) {
-        return resourceLoader.getRamlResource(s);
+        return ParserWrapperV2.this.resourceLoader.getRamlResource(s);
       }
-    }, ramlPath);
+    };
+    return ParserV2Utils.build(adaptedResourceLoader, ramlPath);
   }
 
+
+  /* 
+  public class RamlV2Parser { 
+  
+    public IRaml build(File ramlFile, String ramlContent) {
+    org.raml.v2.api.loader.ResourceLoader resourceLoader =
+        new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParentFile().getPath()));
+    RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(ramlContent, ramlFile.getPath());
+    return wrapApiModel(ramlModelResult);
+  }
+  
+  private static IRaml wrapApiModel(RamlModelResult ramlModelResult) {
+    if (ramlModelResult.hasErrors()) {
+      throw new RuntimeException("Invalid RAML descriptor.");
+    }
+    if (ramlModelResult.isVersion08()) {
+      return new RamlImpl08V2(ramlModelResult.getApiV08());
+    }
+    return new RamlImpl10V2(ramlModelResult.getApiV10());
+  }
+  }
+  
+   */
 }

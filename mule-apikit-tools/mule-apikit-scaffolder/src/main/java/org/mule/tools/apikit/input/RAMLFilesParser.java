@@ -91,8 +91,8 @@ public class RAMLFilesParser {
 
   private ResourceLoader getResourceLoader(String ramlFolderPath, File ramlFileParent) {
     return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFileParent), new DefaultResourceLoader(),
-            new FileResourceLoader(ramlFolderPath),
-            new ExchangeDependencyResourceLoader(ramlFolderPath));
+                                       new FileResourceLoader(ramlFolderPath),
+                                       new ExchangeDependencyResourceLoader(ramlFolderPath));
   }
 
   public RAMLFilesParser(Log log, Map<String, InputStream> ramls, ScaffolderResourceLoaderWrapper scaffolderResourceLoaderWrapper,
