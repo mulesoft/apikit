@@ -16,7 +16,7 @@ import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import static com.jayway.restassured.RestAssured.given;
 
 @ArtifactClassLoaderRunnerConfig
-public class EmptyBodyTestCaseRaml10 extends MuleArtifactFunctionalTestCase {
+public class EmptyBodyRaml10TestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
   public DynamicPort serverPort = new DynamicPort("serverPort");
