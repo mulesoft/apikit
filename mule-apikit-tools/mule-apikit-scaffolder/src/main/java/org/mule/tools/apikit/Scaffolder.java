@@ -11,7 +11,10 @@ import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.MuleDomainParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 import org.mule.tools.apikit.misc.FileListUtils;
-import org.mule.tools.apikit.model.*;
+import org.mule.tools.apikit.model.APIFactory;
+import org.mule.tools.apikit.model.RuntimeEdition;
+import org.mule.tools.apikit.model.ScaffolderResourceLoader;
+import org.mule.tools.apikit.model.ScaffolderResourceLoaderWrapper;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationStrategy;
 import org.mule.tools.apikit.output.MuleArtifactJsonGenerator;
@@ -23,7 +26,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.maven.plugin.logging.Log;
 

@@ -7,19 +7,25 @@
 package org.mule.tools.apikit;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.mule.tools.apikit.misc.APISyncUtils;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 import org.mule.tools.apikit.model.RuntimeEdition;
 
 import static java.lang.String.format;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
+
+import static org.mule.tools.apikit.misc.APISyncUtils.EXCHANGE_JSON;
+import static org.mule.tools.apikit.misc.APISyncUtils.RESOURCE_FORMAT;
 
 public class ScaffolderAPI {
 
@@ -113,34 +119,18 @@ public class ScaffolderAPI {
   private Map<String, InputStream> getRamlSpecs(List<Dependency> dependencyList,
                                                 ScaffolderResourceLoader scaffolderResourceLoader) {
     Map<String, InputStream> ramlSpecs = new HashMap<>();
-    final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s:%s:";
-    final String EXCHANGE_JSON = "exchange.json";
 
     for (Dependency dependency : dependencyList) {
-      String dependencyResource = format(RESOURCE_FORMAT, dependency.getGroupId(), dependency.getArtifactId(),
-                                         dependency.getVersion(), dependency.getClassifier(), dependency.getType());
-      InputStream exchangeJson = scaffolderResourceLoader.getResourceAsStream(dependencyResource + EXCHANGE_JSON);
-      String rootRAMLFileName = getRootRAMLFileName(exchangeJson);
-      String rootRAMLResource = dependencyResource + rootRAMLFileName;
+      String dependencyResourceFormat = format(RESOURCE_FORMAT, dependency.getGroupId(), dependency.getArtifactId(),
+                                               dependency.getVersion(), dependency.getClassifier(), dependency.getType(), "%s");
+      InputStream exchangeJson = scaffolderResourceLoader.getResourceAsStream(format(dependencyResourceFormat, EXCHANGE_JSON));
+      String rootRAMLFileName = APISyncUtils.getRootRAMLFileName(exchangeJson);
+      String rootRAMLResource = format(dependencyResourceFormat, rootRAMLFileName);
       InputStream rootRAML = scaffolderResourceLoader.getResourceAsStream(rootRAMLResource);
       ramlSpecs.put(rootRAMLResource, rootRAML);
     }
 
     return ramlSpecs;
-  }
-
-  private String getRootRAMLFileName(InputStream exchangeJsonStream) {
-
-    try {
-      String exchangeJson = IOUtils.toString(exchangeJsonStream);
-      exchangeJson = exchangeJson.substring(exchangeJson.indexOf("\"main\":\"") + "\"main\":\"".length());
-      exchangeJson = exchangeJson.substring(0, exchangeJson.indexOf("\""));
-      return exchangeJson;
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-
-    return null;
   }
 
   private void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
@@ -174,7 +164,7 @@ public class ScaffolderAPI {
   }
 
   private List<String> retrieveFilePaths(List<File> files, List<String> extensions) {
-    List<String> filePaths = new ArrayList<String>();
+    List<String> filePaths = new ArrayList<>();
     if (files != null) {
       for (File file : files) {
         if (containsValidExtension(file, extensions)) {
