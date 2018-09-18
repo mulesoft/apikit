@@ -10,7 +10,6 @@ import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.StreamUtils;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.parser.ParserService;
-import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.api.exception.TypedException;
@@ -116,8 +115,7 @@ public class RamlHandler {
         apiResource = muleContext.getExecutionClassLoader().getResourceAsStream(resourceRelativePath);
 
         if (apiResource == null && resourceRelativePath.startsWith(apiResourcesRelativePath)) {
-          apiResource =
-              (new ApiSyncResourceLoader()).fetchResource(resourceRelativePath.substring(apiResourcesRelativePath.length()));
+          apiResource = parserService.fetchResource(resourceRelativePath.substring(apiResourcesRelativePath.length()));
         }
 
         if (apiResource == null) {
