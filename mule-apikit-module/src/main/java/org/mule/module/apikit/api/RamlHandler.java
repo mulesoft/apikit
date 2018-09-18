@@ -30,6 +30,7 @@ public class RamlHandler {
 
   public static final String APPLICATION_RAML = "application/raml+yaml";
   private static final String RAML_QUERY_STRING = "raml";
+  private static final String API_SYNC_PROTOCOL = "resource::";
 
   private boolean keepRamlBaseUri;
   private String apiServer;
@@ -59,7 +60,10 @@ public class RamlHandler {
     if (idx > 0) {
       this.apiResourcesRelativePath = rootRamlLocation.substring(0, idx + 1);
       this.apiResourcesRelativePath = sanitarizeResourceRelativePath(apiResourcesRelativePath);
+    } else if (rootRamlLocation.startsWith(API_SYNC_PROTOCOL)) {
+      this.apiResourcesRelativePath = rootRamlLocation;
     }
+
     this.muleContext = muleContext;
   }
 
@@ -109,6 +113,10 @@ public class RamlHandler {
       ByteArrayOutputStream baos = null;
       try {
         apiResource = muleContext.getExecutionClassLoader().getResourceAsStream(resourceRelativePath);
+
+        if (apiResource == null && resourceRelativePath.startsWith(apiResourcesRelativePath)) {
+          apiResource = parserService.fetchResource(resourceRelativePath.substring(apiResourcesRelativePath.length()));
+        }
 
         if (apiResource == null) {
           throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
@@ -184,7 +192,7 @@ public class RamlHandler {
       final URL url = new URL(ramlLocation);
       return url.toString();
     } catch (MalformedURLException e) {
-      String[] startingLocations = new String[] {"", "api/", "api"};
+      String[] startingLocations = new String[] {"api/", "", "api"};
       for (String start : startingLocations) {
         URL ramlLocationUrl = Thread.currentThread().getContextClassLoader().getResource(start + ramlLocation);
         if (ramlLocationUrl != null) {

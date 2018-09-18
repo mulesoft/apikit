@@ -6,26 +6,29 @@
  */
 package org.mule.module.apikit.metadata;
 
-import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
-
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
+import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 
 public class TestResourceLoader implements ResourceLoader {
 
   @Override
-  public File getRamlResource(String relativePath) {
+  public InputStream getRamlResource(String relativePath) {
     try {
       URL resource = this.getClass().getResource(relativePath);
       if (resource == null)
         return null;
-      return new File(resource.toURI());
+      final File file = new File(resource.toURI());
 
-    } catch (URISyntaxException e) {
+      return new FileInputStream(file);
+
+    } catch (URISyntaxException | FileNotFoundException e) {
       e.printStackTrace();
     }
-
     return null;
   }
 

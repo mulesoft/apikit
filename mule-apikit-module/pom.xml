@@ -16,29 +16,28 @@
     <description>Module for creating API's using REST/SOAP Web Services</description>
 
     <properties>
-        <runtime.version>4.1.2</runtime.version>
         <rest.assured.version>1.7.2</rest.assured.version>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <testExtensionModelLoaderId>crafted</testExtensionModelLoaderId>
 
-        <mule.tests.infrastructure.version>${runtime.version}</mule.tests.infrastructure.version>
-        <mule.module.spring.config.version>${runtime.version}</mule.module.spring.config.version>
-        <mule.test.functional.version>${runtime.version}</mule.test.functional.version>
-        <mule.module.service.version>${runtime.version}</mule.module.service.version>
-        <mule.service.http.api.version>${runtime.version}</mule.service.http.api.version>
-        <mule.module.extensions.support.version>${runtime.version}</mule.module.extensions.support.version>
-        <mule.module.extensions.spring.support.version>${runtime.version}</mule.module.extensions.spring.support.version>
-        <mule.test.runner.version>${runtime.version}</mule.test.runner.version>
-        <mule.test.unit.version>${runtime.version}</mule.test.unit.version>
-        <mule.tests.component.plugin.version>${runtime.version}</mule.tests.component.plugin.version>
+        <mule.tests.infrastructure.version>${mule.version}</mule.tests.infrastructure.version>
+        <mule.module.spring.config.version>${mule.version}</mule.module.spring.config.version>
+        <mule.test.functional.version>${mule.version}</mule.test.functional.version>
+        <mule.module.service.version>${mule.version}</mule.module.service.version>
+        <mule.service.http.api.version>${mule.version}</mule.service.http.api.version>
+        <mule.module.extensions.support.version>${mule.version}</mule.module.extensions.support.version>
+        <mule.module.extensions.spring.support.version>${mule.version}</mule.module.extensions.spring.support.version>
+        <mule.test.runner.version>${mule.version}</mule.test.runner.version>
+        <mule.test.unit.version>${mule.version}</mule.test.unit.version>
+        <mule.tests.component.plugin.version>${mule.version}</mule.tests.component.plugin.version>
 
         <!-- REVISE VERSIONS USED IN RELEASE -->
         <mule.service.weave.version>2.1.4-SNAPSHOT</mule.service.weave.version>
         <mule.plugin.maven.plugin.version>1.1.3</mule.plugin.maven.plugin.version>
         <mule.http.service.version>1.1.1</mule.http.service.version>
-        <mule.extensions.api.version>1.1.1</mule.extensions.api.version>
-        <mule.service.scheduler.version>1.1.4</mule.service.scheduler.version>
+        <mule.extensions.api.version>1.1.4-SNAPSHOT</mule.extensions.api.version>
+        <mule.service.scheduler.version>1.1.7-SNAPSHOT</mule.service.scheduler.version>
         <project.reactor.version>3.2.0.M1</project.reactor.version>
 
         <sonar.jacoco.reportPaths>../target/jacoco.exec</sonar.jacoco.reportPaths>
@@ -77,12 +76,6 @@
     </build>
 
     <dependencies>
-        <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-api</artifactId>
-            <version>${mule.api.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
@@ -139,12 +132,6 @@
             <groupId>org.mule.tools</groupId>
             <artifactId>mule-apikit-common</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-extensions-api</artifactId>
-            <version>${mule.extensions.api.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.mule.runtime</groupId>

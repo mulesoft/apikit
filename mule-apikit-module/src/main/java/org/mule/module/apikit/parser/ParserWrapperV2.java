@@ -6,26 +6,28 @@
  */
 package org.mule.module.apikit.parser;
 
+import static java.util.Optional.ofNullable;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.core.api.util.FileUtils;
-import org.raml.v2.api.loader.CompositeResourceLoader;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.List;
-
-import static java.util.Optional.ofNullable;
 
 public class ParserWrapperV2 implements ParserWrapper {
 
@@ -46,7 +48,8 @@ public class ParserWrapperV2 implements ParserWrapper {
                                                              new ExchangeDependencyResourceLoader(ramlFile.getParentFile()
                                                                  .getAbsolutePath()));
     } else {
-      this.resourceLoader = new DefaultResourceLoader();
+      this.resourceLoader =
+          new org.raml.v2.api.loader.CompositeResourceLoader(new DefaultResourceLoader(), new ApiSyncResourceLoader());
     }
   }
 
@@ -107,5 +110,11 @@ public class ParserWrapperV2 implements ParserWrapper {
   public void updateBaseUri(IRaml api, String baseUri) {
     // do nothing, as updates are not supported
     logger.debug("RAML 1.0 parser does not support base uri updates");
+  }
+
+  @Override
+  public InputStream fetchResource(String resource) {
+
+    return resourceLoader.fetchResource(resource);
   }
 }

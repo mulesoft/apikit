@@ -82,4 +82,8 @@ public class ParserService {
   public void updateBaseUri(IRaml api, String baseUri) {
     parserWrapper.updateBaseUri(api, baseUri);
   }
+
+  public InputStream fetchResource(String resource) {
+    return parserWrapper.fetchResource(resource);
+  }
 }
