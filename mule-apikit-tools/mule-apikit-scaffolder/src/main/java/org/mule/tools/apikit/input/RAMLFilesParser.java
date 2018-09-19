@@ -17,6 +17,7 @@ import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
+import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 import org.mule.tools.apikit.model.ScaffolderResourceLoaderWrapper;
 import org.mule.tools.apikit.output.GenerationModel;
 
@@ -95,7 +96,7 @@ public class RAMLFilesParser {
                                        new ExchangeDependencyResourceLoader(ramlFolderPath));
   }
 
-  public RAMLFilesParser(Log log, Map<String, InputStream> ramls, ScaffolderResourceLoaderWrapper scaffolderResourceLoaderWrapper,
+  public RAMLFilesParser(Log log, Map<String, InputStream> ramls, ScaffolderResourceLoader scaffolderResourceLoader,
                          APIFactory apiFactory) {
     this.log = log;
     this.apiFactory = apiFactory;
@@ -111,6 +112,8 @@ public class RAMLFilesParser {
 
       }
 
+      ScaffolderResourceLoaderWrapper scaffolderResourceLoaderWrapper =
+          new ScaffolderResourceLoaderWrapper(scaffolderResourceLoader, rootRamlName);
       if (isValidRaml(rootRamlName, content, scaffolderResourceLoaderWrapper)) {
         try {
           IRaml raml;

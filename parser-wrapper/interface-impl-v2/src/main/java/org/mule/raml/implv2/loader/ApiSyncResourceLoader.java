@@ -16,19 +16,54 @@ import static java.lang.String.format;
 
 public class ApiSyncResourceLoader implements ResourceLoader {
 
+  public static final String EXCHANGE_MODULES = "exchange_modules";
   private ResourceLoader resourceLoader = new DefaultResourceLoader();
   private static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s:%s:%s";
+  private static final String RAML_FRAGMENT_CLASSIFIER = "raml-fragment";
+  private static final String EXCHANGE_TYPE = "zip";
+
+  public static final String API_SYNC_PROTOCOL = "resource::";
+
+  private String rootRamlResource;
+
+  public ApiSyncResourceLoader(String rootRaml) {
+    this.rootRamlResource = getRootRamlResource(rootRaml);
+  }
+
+  private String getRootRamlResource(String rootRamlResource) {
+    return rootRamlResource.substring(0, rootRamlResource.lastIndexOf(":") + 1);
+  }
+
 
   @Nullable
   @Override
   public InputStream fetchResource(String s) {
-    if (s.startsWith("/exchange_modules") || s.startsWith("exchange_modules")) {
-      String[] resourceParts = s.split("/");
-      int length = resourceParts.length;
-      return resourceLoader.fetchResource(format(RESOURCE_FORMAT, resourceParts[length - 6], resourceParts[length - 5],
-                                                 resourceParts[length - 4], resourceParts[length - 3],
-                                                 resourceParts[length - 2], resourceParts[length - 1]));
+    InputStream stream = null;
+
+    if (s.startsWith("/"))
+      s = s.substring(1);
+
+    if (s.startsWith(EXCHANGE_MODULES)) {
+      stream = getApiSyncResource(s);
     }
-    return resourceLoader.fetchResource(s);
+
+    if (stream != null)
+      return stream;
+
+    if (s.startsWith(API_SYNC_PROTOCOL))
+      return resourceLoader.fetchResource(s);
+
+    return resourceLoader.fetchResource(rootRamlResource + s);
+  }
+
+  private InputStream getApiSyncResource(String s) {
+    InputStream stream = null;
+    String[] resourceParts = s.split("/");
+    int length = resourceParts.length;
+    if (length > 4)
+      stream = resourceLoader.fetchResource(format(RESOURCE_FORMAT, resourceParts[length - 4], resourceParts[length - 3],
+                                                   resourceParts[length - 2], RAML_FRAGMENT_CLASSIFIER,
+                                                   EXCHANGE_TYPE, resourceParts[length - 1]));
+    return stream;
   }
 }

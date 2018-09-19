@@ -36,7 +36,7 @@ public class ScaffolderApiSyncTest {
 
   private final Dependency dependency = createDependency("com.mycompany", "raml-api", "1.0.0", "raml", "zip");
   private final static String ROOT_RAML_RESOURCE_URL = "resource::com.mycompany:raml-api:1.0.0:raml:zip:";
-  private final static String DEPENDENCIES_RESOURCE_URL = "/exchange_modules/com.mycompany/raml-library/1.1.0/raml-fragment/zip/";
+  private final static String DEPENDENCIES_RESOURCE_URL = "exchange_modules/com.mycompany/raml-library/1.1.0/raml-fragment/zip/";
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();

@@ -29,6 +29,8 @@ import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.mule.raml.implv2.loader.ApiSyncResourceLoader.API_SYNC_PROTOCOL;
+
 public class ParserWrapperV2 implements ParserWrapper {
 
   private static final Logger logger = LoggerFactory.getLogger(ParserWrapperV2.class);
@@ -48,8 +50,12 @@ public class ParserWrapperV2 implements ParserWrapper {
                                                              new ExchangeDependencyResourceLoader(ramlFile.getParentFile()
                                                                  .getAbsolutePath()));
     } else {
-      this.resourceLoader =
-          new org.raml.v2.api.loader.CompositeResourceLoader(new DefaultResourceLoader(), new ApiSyncResourceLoader());
+      if (ramlPath.startsWith(API_SYNC_PROTOCOL)) {
+        this.resourceLoader = new ApiSyncResourceLoader(ramlPath);
+      } else {
+        resourceLoader = new DefaultResourceLoader();
+      }
+
     }
   }
 
