@@ -57,7 +57,7 @@ class ParameterImpl implements IParameter {
 
   private ValidationReport validatePayload(final String value) {
     try {
-      return schema.validate(value).get();
+      return schema.validateParameter(value).get();
     } catch (InterruptedException | ExecutionException e) {
       throw new RuntimeException("Unexpected error validating request", e);
     }
