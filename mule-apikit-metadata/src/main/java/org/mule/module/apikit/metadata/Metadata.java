@@ -7,6 +7,8 @@
 package org.mule.module.apikit.metadata;
 
 import static java.lang.String.format;
+import static org.mule.module.apikit.metadata.raml.APISyncUtils.RESOURCE_FORMAT;
+
 import org.mule.metadata.api.model.FunctionType;
 import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
@@ -44,8 +46,6 @@ public class Metadata {
    * Builder for Metadata module
    */
   public static class Builder {
-
-    private static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s:%s:%s";
 
     private ResourceLoader resourceLoader;
     private ApplicationModel applicationModel;
