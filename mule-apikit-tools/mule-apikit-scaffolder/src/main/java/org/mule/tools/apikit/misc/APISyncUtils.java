@@ -17,8 +17,9 @@ public class APISyncUtils {
   public static final String API_SYNC_PROTOCOL = "resource::";
   public static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s:%s:%s";
 
-
   final static String EXCHANGE_ROOT_RAML_TAG = "\"main\":\"";
+
+  private APISyncUtils() {}
 
   public static String getRootRAMLFileName(InputStream exchangeJsonStream) {
 

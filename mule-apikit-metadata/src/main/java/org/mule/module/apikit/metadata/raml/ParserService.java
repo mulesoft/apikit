@@ -15,25 +15,27 @@ import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 class ParserService {
 
   private final String ramlPath;
-  private ResourceLoader resourceLoader;
   private ParserWrapper parserWrapper;
-  private boolean isParserV2;
 
-  ParserService(String ramlPath, ResourceLoader resourceLoader) {
+  ParserService(final String ramlPath, final ResourceLoader resourceLoader) {
     this.ramlPath = ramlPath;
-    this.resourceLoader = resourceLoader;
-    isParserV2 = checkParserVersion();
-    parserWrapper = parserWrapper(ramlPath, isParserV2);
+    parserWrapper = parserWrapper(ramlPath, resourceLoader);
   }
 
-  private boolean checkParserVersion() {
+  private boolean getParserVersion(final String content) {
+    return ParserV2Utils.useParserV2(content);
+  }
+
+  private String readResource(final String ramlPath, final ResourceLoader resourceLoader) {
     InputStream content = resourceLoader.getRamlResource(ramlPath);
-    final String dump = StreamUtils.toString(content);
-    return ParserV2Utils.useParserV2(dump);
+    return StreamUtils.toString(content);
   }
 
-  private ParserWrapper parserWrapper(String ramlPath, final boolean isParserV2) {
-    return isParserV2 ? new ParserWrapperV2(ramlPath, resourceLoader) : new ParserWrapperV1(ramlPath, resourceLoader);
+  private ParserWrapper parserWrapper(final String ramlPath, final ResourceLoader resourceLoader) {
+    final String content = readResource(ramlPath, resourceLoader);
+    final boolean isParserV2 = getParserVersion(content);
+    return isParserV2 ? new ParserWrapperV2(ramlPath, content, resourceLoader)
+        : new ParserWrapperV1(ramlPath, content, resourceLoader);
   }
 
   public IRaml build() {
