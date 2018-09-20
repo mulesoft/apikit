@@ -102,9 +102,9 @@ public class ScaffolderMule4Test {
                                  "<set-variable variableName=\"outboundHeaders\" value=\"#[{'Content-Type':'application/json'}]\" />"));
     assertEquals(7, countOccurences(s, "<set-variable variableName=\"httpStatus\""));
     assertEquals(2,
-                 countOccurences(s, "<set-variable xmlns=\"\" value=\"#[attributes.uriParams.name]\" variableName=\"name\" />"));
+                 countOccurences(s, "<set-variable value=\"#[attributes.uriParams.name]\" variableName=\"name\" />"));
     assertEquals(1,
-                 countOccurences(s, "<set-variable xmlns=\"\" value=\"#[attributes.uriParams.owner]\" variableName=\"owner\""));
+                 countOccurences(s, "<set-variable value=\"#[attributes.uriParams.owner]\" variableName=\"owner\""));
     assertEquals(7, countOccurences(s, "<set-payload"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));

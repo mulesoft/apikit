@@ -99,7 +99,7 @@ public class APIKitFlowScope implements Scope {
   private List<Element> createCEUriParamsSetVariables(GenerationModel flowEntry) {
     List<Element> result = new ArrayList<>();
     for (String uriParameter : flowEntry.getUriParameters()) {
-      Element element = new Element("set-variable");
+      Element element = new Element("set-variable", XMLNS_NAMESPACE.getNamespace());
       element.setAttribute("value", "#[attributes.uriParams." + uriParameter + "]");
       element.setAttribute("variableName", uriParameter);
       result.add(element);
