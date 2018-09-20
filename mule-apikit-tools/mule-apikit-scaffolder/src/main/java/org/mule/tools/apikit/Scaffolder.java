@@ -128,7 +128,7 @@ public class Scaffolder {
     APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
     MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(ramls.keySet(), xmls);
     RAMLFilesParser RAMLFilesParser =
-        new RAMLFilesParser(log, ramls, new ScaffolderResourceLoaderWrapper(scaffolderResourceLoader), apiFactory);
+        new RAMLFilesParser(log, ramls, scaffolderResourceLoader, apiFactory);
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
 
     if (runtimeEdition == null) {
