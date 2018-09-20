@@ -21,8 +21,8 @@ public class RouterRemoteFragmentTestCase extends AbstractMultiParserFunctionalT
   @Test
   public void simpleRouting() throws Exception {
     given().header("Accept", "*/*")
-            .queryParam("code", "ABC-123")
-            .queryParam("size", "medium")
+        .queryParam("code", "ABC-123")
+        .queryParam("size", "medium")
         .expect()
         .response().body(is("hello"))
         .statusCode(200)
