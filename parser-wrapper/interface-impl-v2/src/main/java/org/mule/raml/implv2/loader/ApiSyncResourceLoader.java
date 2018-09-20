@@ -6,23 +6,19 @@
  */
 package org.mule.raml.implv2.loader;
 
+import org.mule.apikit.common.APISyncUtils;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
 
-import static java.lang.String.format;
+import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
+import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
 
 public class ApiSyncResourceLoader implements ResourceLoader {
 
-  public static final String EXCHANGE_MODULES = "exchange_modules";
   private ResourceLoader resourceLoader;
-  private static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s:%s:%s";
-  private static final String RAML_FRAGMENT_CLASSIFIER = "raml-fragment";
-  private static final String EXCHANGE_TYPE = "zip";
-
-  public static final String API_SYNC_PROTOCOL = "resource::";
 
   private String rootRamlResource;
 
@@ -48,27 +44,23 @@ public class ApiSyncResourceLoader implements ResourceLoader {
     if (s.startsWith("/"))
       s = s.substring(1);
 
-    if (s.startsWith(EXCHANGE_MODULES)) {
+    if (isExchangeModules(s)) {
       stream = getApiSyncResource(s);
     }
 
     if (stream != null)
       return stream;
 
-    if (s.startsWith(API_SYNC_PROTOCOL))
+    if (isSyncProtocol(s))
       return resourceLoader.fetchResource(s);
 
     return resourceLoader.fetchResource(rootRamlResource + s);
   }
 
   private InputStream getApiSyncResource(String s) {
-    InputStream stream = null;
-    String[] resourceParts = s.split("/");
-    int length = resourceParts.length;
-    if (length > 4)
-      stream = resourceLoader.fetchResource(format(RESOURCE_FORMAT, resourceParts[length - 4], resourceParts[length - 3],
-                                                   resourceParts[length - 2], RAML_FRAGMENT_CLASSIFIER,
-                                                   EXCHANGE_TYPE, resourceParts[length - 1]));
-    return stream;
+    String apiSyncResource = APISyncUtils.toApiSyncResource(s);
+    if (apiSyncResource != null)
+      return resourceLoader.fetchResource(apiSyncResource);
+    return null;
   }
 }

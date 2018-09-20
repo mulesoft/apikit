@@ -86,13 +86,14 @@ public class ScaffolderApiSyncTest {
   }
 
   @Test
-  public void libraryReferenceToRoot() throws Exception{
+  public void libraryReferenceToRoot() throws Exception {
     final String rootRaml = "test-api";
     final String ramlFolder = "src/test/resources/api-sync/library-reference-to-root/root/";
     final String libraryFolder = "src/test/resources/api-sync/library-reference-to-root/library/";
     final List<String> libraryFiles = Arrays.asList("library.raml", "reused-fragment.raml");
 
-    File xmlOut = generateScaffolder(ramlFolder,rootRaml,libraryFiles,libraryFolder,Collections.singletonList("library.raml"));
+    File xmlOut =
+        generateScaffolder(ramlFolder, rootRaml, libraryFiles, libraryFolder, Collections.singletonList("library.raml"));
 
     assertTrue(xmlOut.exists());
 
@@ -114,11 +115,12 @@ public class ScaffolderApiSyncTest {
     return generateScaffolder(ramlFolder, rootRaml, null);
   }
 
-  private File generateScaffolder(String ramlFolder, String rootRaml,List<String> referencedFiles) throws FileNotFoundException {
-    return generateScaffolder(ramlFolder,rootRaml,referencedFiles,ramlFolder, null);
+  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles) throws FileNotFoundException {
+    return generateScaffolder(ramlFolder, rootRaml, referencedFiles, ramlFolder, null);
   }
 
-  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles,String referencedFilesFolder, List<String> rootRamlFiles)
+  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles, String referencedFilesFolder,
+                                  List<String> rootRamlFiles)
       throws FileNotFoundException {
     final String exchangeJsonResourceURL = ROOT_RAML_RESOURCE_URL + "exchange.json";
     final String rootRamlResourceURL = ROOT_RAML_RESOURCE_URL + rootRaml + ".raml";
@@ -126,8 +128,8 @@ public class ScaffolderApiSyncTest {
     mockScaffolderResourceLoader(exchangeJsonResourceURL, ramlFolder, rootRaml + ".json");
     mockScaffolderResourceLoader(rootRamlResourceURL, ramlFolder, rootRaml + ".raml");
 
-    if(rootRamlFiles != null){
-      for(String rootRamlFile : rootRamlFiles){
+    if (rootRamlFiles != null) {
+      for (String rootRamlFile : rootRamlFiles) {
         mockScaffolderResourceLoader(DEPENDENCIES_RESOURCE_URL + rootRamlFile, ramlFolder, rootRamlFile);
       }
     }

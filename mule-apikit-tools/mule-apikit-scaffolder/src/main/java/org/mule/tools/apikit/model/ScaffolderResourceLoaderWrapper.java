@@ -7,22 +7,19 @@
 package org.mule.tools.apikit.model;
 
 import org.apache.commons.io.FileUtils;
-import org.mule.tools.apikit.misc.APISyncUtils;
-
+import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
+import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
 
-import static java.lang.String.format;
 
 public class ScaffolderResourceLoaderWrapper
     implements org.raml.v2.api.loader.ResourceLoader, org.raml.parser.loader.ResourceLoader {
 
   private final String rootRamlResource;
   ScaffolderResourceLoader scaffolderResourceLoader;
-  private static final String RAML_FRAGMENT_CLASSIFIER = "raml-fragment";
-  private static final String EXCHANGE_TYPE = "zip";
-  public static final String EXCHANGE_MODULES = "exchange_modules";
+
 
   public ScaffolderResourceLoaderWrapper(ScaffolderResourceLoader scaffolderResourceLoader, String rootRamlName) {
     this.scaffolderResourceLoader = scaffolderResourceLoader;
@@ -42,14 +39,14 @@ public class ScaffolderResourceLoaderWrapper
     if (s.startsWith("/"))
       s = s.substring(1);
 
-    if (s.startsWith(EXCHANGE_MODULES)) {
+    if (isExchangeModules(s)) {
       stream = scaffolderResourceLoader.getResourceAsStream(s);
     }
 
     if (stream != null)
       return stream;
 
-    if (s.startsWith(APISyncUtils.API_SYNC_PROTOCOL))
+    if (isSyncProtocol(s))
       return scaffolderResourceLoader.getResourceAsStream(s);
 
     return scaffolderResourceLoader.getResourceAsStream(rootRamlResource + s);
