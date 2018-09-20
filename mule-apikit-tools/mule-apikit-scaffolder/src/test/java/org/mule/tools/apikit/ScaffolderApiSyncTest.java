@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class ScaffolderApiSyncTest {
 
   private final Dependency dependency = createDependency("com.mycompany", "raml-api", "1.0.0", "raml", "zip");
   private final static String ROOT_RAML_RESOURCE_URL = "resource::com.mycompany:raml-api:1.0.0:raml:zip:";
-  private final static String DEPENDENCIES_RESOURCE_URL = "exchange_modules/com.mycompany/raml-library/1.1.0/raml-fragment/zip/";
+  private final static String DEPENDENCIES_RESOURCE_URL = "exchange_modules/com.mycompany/raml-library/1.1.0/";
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
@@ -84,6 +85,19 @@ public class ScaffolderApiSyncTest {
     assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
+  @Test
+  public void libraryReferenceToRoot() throws Exception{
+    final String rootRaml = "test-api";
+    final String ramlFolder = "src/test/resources/api-sync/library-reference-to-root/root/";
+    final String libraryFolder = "src/test/resources/api-sync/library-reference-to-root/library/";
+    final List<String> libraryFiles = Arrays.asList("library.raml", "reused-fragment.raml");
+
+    File xmlOut = generateScaffolder(ramlFolder,rootRaml,libraryFiles,libraryFolder,Collections.singletonList("library.raml"));
+
+    assertTrue(xmlOut.exists());
+
+  }
+
   private void testSimple(String ramlFolder, String rootRaml) throws IOException {
     List<Dependency> dependencyList = new ArrayList<>();
     dependencyList.add(dependency);
@@ -100,7 +114,11 @@ public class ScaffolderApiSyncTest {
     return generateScaffolder(ramlFolder, rootRaml, null);
   }
 
-  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles)
+  private File generateScaffolder(String ramlFolder, String rootRaml,List<String> referencedFiles) throws FileNotFoundException {
+    return generateScaffolder(ramlFolder,rootRaml,referencedFiles,ramlFolder, null);
+  }
+
+  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles,String referencedFilesFolder, List<String> rootRamlFiles)
       throws FileNotFoundException {
     final String exchangeJsonResourceURL = ROOT_RAML_RESOURCE_URL + "exchange.json";
     final String rootRamlResourceURL = ROOT_RAML_RESOURCE_URL + rootRaml + ".raml";
@@ -108,9 +126,15 @@ public class ScaffolderApiSyncTest {
     mockScaffolderResourceLoader(exchangeJsonResourceURL, ramlFolder, rootRaml + ".json");
     mockScaffolderResourceLoader(rootRamlResourceURL, ramlFolder, rootRaml + ".raml");
 
+    if(rootRamlFiles != null){
+      for(String rootRamlFile : rootRamlFiles){
+        mockScaffolderResourceLoader(DEPENDENCIES_RESOURCE_URL + rootRamlFile, ramlFolder, rootRamlFile);
+      }
+    }
+
     if (referencedFiles != null) {
       for (String file : referencedFiles) {
-        mockScaffolderResourceLoader(DEPENDENCIES_RESOURCE_URL + file, ramlFolder, file);
+        mockScaffolderResourceLoader(DEPENDENCIES_RESOURCE_URL + file, referencedFilesFolder, file);
       }
     }
 
