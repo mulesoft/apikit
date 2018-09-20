@@ -7,6 +7,7 @@
 package org.mule.tools.apikit;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,9 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.mule.tools.apikit.misc.APISyncUtils;
+import org.mule.apikit.common.APISyncUtils;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 import org.mule.tools.apikit.model.RuntimeEdition;
 
@@ -24,8 +26,8 @@ import static java.lang.String.format;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
-import static org.mule.tools.apikit.misc.APISyncUtils.EXCHANGE_JSON;
-import static org.mule.tools.apikit.misc.APISyncUtils.RESOURCE_FORMAT;
+import static org.mule.apikit.common.APISyncUtils.EXCHANGE_JSON;
+import static org.mule.apikit.common.APISyncUtils.RESOURCE_FORMAT;
 
 public class ScaffolderAPI {
 
@@ -92,21 +94,21 @@ public class ScaffolderAPI {
 
   private void execute(List<Dependency> dependencyList, ScaffolderResourceLoader scaffolderResourceLoader, File appDir,
                        File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
-    Map<String, InputStream> ramlSpecs = getRamlSpecs(dependencyList, scaffolderResourceLoader);
-    List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
-    SystemStreamLog log = new SystemStreamLog();
-    String domain = null;
-    if (domainDir != null) {
-      List<String> domainFiles = retrieveFilePaths(domainDir, appExtensions);
-      if (domainFiles.size() > 0) {
-        domain = domainFiles.get(0);
-        if (domainFiles.size() > 1) {
-          log.info("There is more than one domain file inside of the domain folder. The domain: " + domain + " will be used.");
-        }
-      }
-    }
     Scaffolder scaffolder;
     try {
+      Map<String, InputStream> ramlSpecs = getRamlSpecs(dependencyList, scaffolderResourceLoader);
+      List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
+      SystemStreamLog log = new SystemStreamLog();
+      String domain = null;
+      if (domainDir != null) {
+        List<String> domainFiles = retrieveFilePaths(domainDir, appExtensions);
+        if (domainFiles.size() > 0) {
+          domain = domainFiles.get(0);
+          if (domainFiles.size() > 1) {
+            log.info("There is more than one domain file inside of the domain folder. The domain: " + domain + " will be used.");
+          }
+        }
+      }
       scaffolder = Scaffolder.createScaffolder(log, appDir, ramlSpecs, scaffolderResourceLoader, muleXmlFiles, domain,
                                                minMuleVersion, runtimeEdition);
     } catch (Exception e) {
@@ -117,14 +119,15 @@ public class ScaffolderAPI {
 
 
   private Map<String, InputStream> getRamlSpecs(List<Dependency> dependencyList,
-                                                ScaffolderResourceLoader scaffolderResourceLoader) {
+                                                ScaffolderResourceLoader scaffolderResourceLoader)
+      throws IOException {
     Map<String, InputStream> ramlSpecs = new HashMap<>();
 
     for (Dependency dependency : dependencyList) {
       String dependencyResourceFormat = format(RESOURCE_FORMAT, dependency.getGroupId(), dependency.getArtifactId(),
                                                dependency.getVersion(), dependency.getClassifier(), dependency.getType(), "%s");
       InputStream exchangeJson = scaffolderResourceLoader.getResourceAsStream(format(dependencyResourceFormat, EXCHANGE_JSON));
-      String rootRAMLFileName = APISyncUtils.getRootRAMLFileName(exchangeJson);
+      String rootRAMLFileName = APISyncUtils.getMainRaml(IOUtils.toString(exchangeJson));
       String rootRAMLResource = format(dependencyResourceFormat, rootRAMLFileName);
       InputStream rootRAML = scaffolderResourceLoader.getResourceAsStream(rootRAMLResource);
       ramlSpecs.put(rootRAMLResource, rootRAML);
