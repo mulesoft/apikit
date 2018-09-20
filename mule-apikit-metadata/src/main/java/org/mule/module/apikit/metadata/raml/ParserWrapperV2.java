@@ -10,6 +10,7 @@ import java.io.InputStream;
 import javax.annotation.Nullable;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.interfaces.model.IRaml;
 
 class ParserWrapperV2 implements ParserWrapper {
@@ -26,7 +27,7 @@ class ParserWrapperV2 implements ParserWrapper {
 
   @Override
   public IRaml build() {
-    return ParserV2Utils.build(adaptResourceLoader(resourceLoader), ramlPath, content);
+    return ParserV2Utils.build(new ApiSyncResourceLoader(ramlPath, adaptResourceLoader(resourceLoader)), ramlPath, content);
   }
 
   private org.raml.v2.api.loader.ResourceLoader adaptResourceLoader(final ResourceLoader resourceLoader) {

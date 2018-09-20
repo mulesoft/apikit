@@ -17,7 +17,7 @@ import static java.lang.String.format;
 public class ApiSyncResourceLoader implements ResourceLoader {
 
   public static final String EXCHANGE_MODULES = "exchange_modules";
-  private ResourceLoader resourceLoader = new DefaultResourceLoader();
+  private ResourceLoader resourceLoader;
   private static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s:%s:%s";
   private static final String RAML_FRAGMENT_CLASSIFIER = "raml-fragment";
   private static final String EXCHANGE_TYPE = "zip";
@@ -27,6 +27,11 @@ public class ApiSyncResourceLoader implements ResourceLoader {
   private String rootRamlResource;
 
   public ApiSyncResourceLoader(String rootRaml) {
+    this(rootRaml, new DefaultResourceLoader());
+  }
+
+  public ApiSyncResourceLoader(String rootRaml, ResourceLoader resourceLoader) {
+    this.resourceLoader = resourceLoader;
     this.rootRamlResource = getRootRamlResource(rootRaml);
   }
 
