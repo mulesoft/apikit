@@ -37,7 +37,7 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
 
   @Parameterized.Parameters(name = "{1}")
   public static Collection<Object[]> getData() throws IOException, URISyntaxException {
-    final URI baseFolder = CompatibilityTestCase.class.getResource("").toURI(); // 08-resources
+    final URI baseFolder = CompatibilityTestCase.class.getResource("08-leagues").toURI(); // 08-resources
     return getData(baseFolder);
 
   }
@@ -78,17 +78,13 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
     final IRaml dumpedRaml = dumpedRamlWrapper.build();
     assertNotNull(dumpedRaml);
 
-    // TODO APIKIT-1380
-    // Parse amf dumpled file
-    if (!basePath.toString().endsWith("08-leagues")) {
-      try {
-        final ParserWrapper dumpedAmfWrapper = ParserWrapperAmf.create(amfDumpPath.toUri(), true);
-        final IRaml dumpedAmf = dumpedAmfWrapper.build();
-        assertNotNull(dumpedAmf);
-        assertEqual(dumpedAmf, dumpedRaml);
-      } catch (Exception e) {
-        Assert.fail("Error parsing AMF dumped file:\n" + e.getMessage());
-      }
+    try {
+      final ParserWrapper dumpedAmfWrapper = ParserWrapperAmf.create(amfDumpPath.toUri(), true);
+      final IRaml dumpedAmf = dumpedAmfWrapper.build();
+      assertNotNull(dumpedAmf);
+      assertEqual(dumpedAmf, dumpedRaml);
+    } catch (Exception e) {
+      Assert.fail("Error parsing AMF dumped file:\n" + e.getMessage());
     }
   }
 
