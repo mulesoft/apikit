@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,7 +37,7 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
 
   @Parameterized.Parameters(name = "{1}")
   public static Collection<Object[]> getData() throws IOException, URISyntaxException {
-    final URI baseFolder = CompatibilityTestCase.class.getResource("").toURI(); // 08-resources
+    final URI baseFolder = CompatibilityTestCase.class.getResource("08-leagues").toURI(); // 08-resources
     return getData(baseFolder);
 
   }
@@ -49,7 +50,7 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
   }
 
   @Test
-  public void dump() throws IOException {
+  public void dump() {//throws Exception {
     final String amfDump = amfWrapper.dump(amf, "http://apikit-test");
     final String ramlDump = ramlWrapper.dump(raml, "http://apikit-test");
 
@@ -58,28 +59,33 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
     final Path amfDumpPath = basePath.resolve("amf-dump.raml");
     final Path ramlDumpPath = basePath.resolve("raml-dump.raml");
 
-    Files.write(amfDumpPath, amfDump.getBytes("UTF-8"));
-    Files.write(ramlDumpPath, ramlDump.getBytes("UTF-8"));
+    try {
+      Files.write(amfDumpPath, amfDump.getBytes("UTF-8"));
+    } catch (IOException e) {
+      Assert.fail("Error persisting AMF dump file");
+      e.printStackTrace();
+    }
+
+    try {
+      Files.write(ramlDumpPath, ramlDump.getBytes("UTF-8"));
+    } catch (IOException e) {
+      Assert.fail("Error persisting RAML dump file");
+      e.printStackTrace();
+    }
 
     // Parse java dumped file  
     final ParserWrapper dumpedRamlWrapper = createJavaParserWrapper(ramlDumpPath.toUri().toString(), isRaml08);
     final IRaml dumpedRaml = dumpedRamlWrapper.build();
     assertNotNull(dumpedRaml);
 
-    // TODO APIKIT-1380
-    // Parse amf dumpled file
-    if (!isRaml08) {
-      final ParserWrapper dumpedAmfWrapper;
-      try {
-        dumpedAmfWrapper = ParserWrapperAmf.create(amfDumpPath.toUri(), false);
-        final IRaml dumpedAmf = dumpedAmfWrapper.build();
-        assertNotNull(dumpedAmf);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
+    try {
+      final ParserWrapper dumpedAmfWrapper = ParserWrapperAmf.create(amfDumpPath.toUri(), true);
+      final IRaml dumpedAmf = dumpedAmfWrapper.build();
+      assertNotNull(dumpedAmf);
+      assertEqual(dumpedAmf, dumpedRaml);
+    } catch (Exception e) {
+      Assert.fail("Error parsing AMF dumped file:\n" + e.getMessage());
     }
-
-    // assertEqual(dumpedAmf, dumpedRaml);   
   }
 
   @Test

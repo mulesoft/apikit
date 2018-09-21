@@ -6,11 +6,12 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-import java.util.Arrays;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.runtime.core.api.util.IOUtils;
+
+import java.util.Arrays;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
@@ -110,7 +111,7 @@ public abstract class MultipartFormFunctionalTestCase extends AbstractMultiParse
 
   @Test
   public void setDefaultFormParameterForMultipartRequest() throws Exception {
-    given().multiPart("first", "primero", "application/json")
+    given().multiPart("first", "primero")
         .multiPart("payload", "3.4")
         .expect().response()
         .body(is("{\n" +

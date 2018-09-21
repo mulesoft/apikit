@@ -1,0 +1,59 @@
+#%RAML 0.8
+---
+title: Simple API
+baseUri: http://localhost:8081/api
+/multipart:
+  delete:
+    description: Delete an item by Code.
+    body:
+      multipart/form-data:
+        formParameters:
+          code:
+            displayName: Code
+            description: Code of the item to delete.
+            example: "ASX-140"
+            type: string
+            required: true
+            minLength: 3
+            maxLength: 12
+          color:
+            displayName: Color
+            example: "ASX-140"
+            type: string
+            required: false
+            default: black
+            minLength: 3
+            maxLength: 12
+/urlencoded:
+  put:
+    description: Update an item by Code.
+    body:
+      application/x-www-form-urlencoded:
+        formParameters:
+          Id:
+            description: Id of the item
+            type: integer
+            required: true
+            example: 123
+          Code:
+            description: Code of the item
+            type: string
+            required: false
+            example: "AD-12"
+          Color:
+            description: Color of the item
+            type: string
+            required: false
+            example: "blue"
+          Size:
+            description: Size of the item
+            type: string
+            required: false
+            enum: [small, medium, large]
+            example: "medium"
+            default: "medium"
+          Description:
+            description: Description of the item
+            type: string
+            required: false
+            example: "Borders in light blue"

@@ -7,13 +7,6 @@ package org.mule.tools.apikit;
  * LICENSE.txt file.
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Ignore;
@@ -21,6 +14,14 @@ import org.junit.Test;
 import org.mockito.stubbing.Stubber;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.model.RuntimeEdition;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
@@ -455,9 +456,9 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
                                  "<set-variable variableName=\"outboundHeaders\" value=\"#[{'Content-Type':'application/json'}]\" />"));
     assertEquals(7, countOccurences(s, "<set-variable variableName=\"httpStatus\""));
     assertEquals(2,
-                 countOccurences(s, "<set-variable xmlns=\"\" value=\"#[attributes.uriParams.name]\" variableName=\"name\" />"));
+                 countOccurences(s, "<set-variable value=\"#[attributes.uriParams.name]\" variableName=\"name\" />"));
     assertEquals(1,
-                 countOccurences(s, "<set-variable xmlns=\"\" value=\"#[attributes.uriParams.owner]\" variableName=\"owner\""));
+                 countOccurences(s, "<set-variable value=\"#[attributes.uriParams.owner]\" variableName=\"owner\""));
     assertEquals(7, countOccurences(s, "<set-payload"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));

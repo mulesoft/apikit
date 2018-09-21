@@ -1,0 +1,10 @@
+#%RAML 1.0
+title: Sample API
+
+/test:
+  get:
+    queryParameters: !include http://ramltesting.s3.amazonaws.com/queryParams.raml
+    responses:
+        200:
+          body:
+            application/json: ~

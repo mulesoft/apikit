@@ -6,7 +6,6 @@
  */
 package org.mule.tools.apikit;
 
-import org.apache.maven.plugin.logging.Log;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.MuleDomainParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
@@ -29,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.maven.plugin.logging.Log;
 
 import static org.mule.tools.apikit.model.RuntimeEdition.CE;
 
