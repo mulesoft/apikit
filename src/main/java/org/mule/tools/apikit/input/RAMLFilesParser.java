@@ -55,6 +55,18 @@ public class RAMLFilesParser {
   private final APIFactory apiFactory;
   private final Log log;
 
+  private String vendorId;
+
+  public String getVendorId() {
+    return vendorId;
+  }
+
+  public String getRamlVersion() {
+    return ramlVersion;
+  }
+
+  private String ramlVersion;
+
   public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
   public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
@@ -76,7 +88,10 @@ public class RAMLFilesParser {
         final ParserWrapper parserWrapper = getParserWrapper(ramlFile, content);
         parserWrapper.validate(); // This will fail whether the raml is not valid
 
+        vendorId = parserWrapper.getApiVendor().toString();
         final IRaml raml = parserWrapper.build();
+        ramlVersion = raml.getVersion();
+
         collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
         processedFiles.add(ramlFile);
       } catch (Exception e) {
