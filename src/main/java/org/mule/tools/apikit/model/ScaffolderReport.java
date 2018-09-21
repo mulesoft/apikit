@@ -14,8 +14,8 @@ public class ScaffolderReport {
 
   private String status;
 
-  public static String SUCCESS= "success";
-  public static String FAILED= "failed";
+  public static String SUCCESS = "success";
+  public static String FAILED = "failed";
 
   public String getVendorId() {
     return vendorId;
