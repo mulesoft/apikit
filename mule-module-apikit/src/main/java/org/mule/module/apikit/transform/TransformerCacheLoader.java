@@ -7,6 +7,10 @@
 
 package org.mule.module.apikit.transform;
 
+import com.google.common.cache.CacheLoader;
+import com.sun.xml.bind.api.JAXBRIContext;
+import org.apache.log4j.Logger;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleException;
 import org.mule.api.transformer.DataType;
@@ -18,17 +22,11 @@ import org.mule.module.xml.transformer.jaxb.JAXBUnmarshallerTransformer;
 import org.mule.transformer.simple.ObjectToString;
 import org.mule.transformer.types.MimeTypes;
 
-import com.google.common.cache.CacheLoader;
-import com.sun.xml.bind.api.JAXBRIContext;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-
-import org.apache.log4j.Logger;
-import org.codehaus.jackson.map.ObjectMapper;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transformer>
 {
@@ -60,7 +58,7 @@ public class TransformerCacheLoader extends CacheLoader<DataTypePair, Transforme
             muleContext.getRegistry().applyProcessorsAndLifecycle(jto);
             return jto;
         }
-        else if (isJson(resultDataType))
+        else if (isJson(resultDataType) && !InputStream.class.isAssignableFrom(sourceDataType.getType()))
         {
             ObjectToJson otj = new ObjectToJson();
             otj.setSourceClass(sourceDataType.getType());
