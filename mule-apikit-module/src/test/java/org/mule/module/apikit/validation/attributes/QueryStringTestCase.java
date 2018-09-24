@@ -7,17 +7,22 @@
 package org.mule.module.apikit.validation.attributes;
 
 import com.jayway.restassured.RestAssured;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
+import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+import org.mule.tck.junit4.rule.DynamicPort;
 
 import static com.jayway.restassured.RestAssured.given;
 
-public class QueryStringTestCase extends AbstractMultiParserFunctionalTestCase {
+public class QueryStringTestCase extends MuleArtifactFunctionalTestCase {
 
   @Override
   public int getTestTimeoutSecs() {
     return 6000;
   }
+
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
   @Override
   protected void doSetUp() throws Exception {

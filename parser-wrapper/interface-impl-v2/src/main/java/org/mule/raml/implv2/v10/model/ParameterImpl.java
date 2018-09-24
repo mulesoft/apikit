@@ -78,17 +78,17 @@ public class ParameterImpl implements IParameter {
     return typeDeclaration instanceof ArrayTypeDeclaration;
   }
 
-    @Override
-    public String getDisplayName() {
-        final AnnotableStringType type = typeDeclaration.displayName();
-        return type == null ? null : type.value();
-    }
+  @Override
+  public String getDisplayName() {
+    final AnnotableStringType type = typeDeclaration.displayName();
+    return type == null ? null : type.value();
+  }
 
-    @Override
-    public String getDescription() {
-        final MarkdownString description = typeDeclaration.description();
-        return description == null ? null : description.value();
-    }
+  @Override
+  public String getDescription() {
+    final MarkdownString description = typeDeclaration.description();
+    return description == null ? null : description.value();
+  }
 
   @Override
   public String getExample() {
