@@ -71,6 +71,8 @@ public class RequestValidator {
         final RewindableInputStream rewindable = new RewindableInputStream((InputStream) payloadValue);
         return new TypedValue<>(rewindable, typedValue.getDataType());
       }
+    } else if (payload instanceof InputStream && !(payload instanceof RewindableInputStream)) {
+      return new RewindableInputStream((InputStream) payload);
     }
 
     return payload;
