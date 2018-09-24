@@ -11,18 +11,18 @@ import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
+import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.event.CoreEvent;
-import org.mule.runtime.core.api.util.IOUtils;
 import org.raml.parser.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Optional;
+
+import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsByteArray;
 
 public class CharsetUtils {
 
@@ -58,9 +58,7 @@ public class CharsetUtils {
       logger.debug("Request Content-Type charset: " + logEncoding(encoding));
     }
 
-    if (encoding.matches("(?i)UTF-16.+")) {
-      encoding = "UTF-16";
-    }
+    encoding = normalizeCharset(encoding);
     return encoding;
   }
 
@@ -85,9 +83,7 @@ public class CharsetUtils {
         logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
       }
     }
-    if (encoding.matches("(?i)UTF-16.+")) {
-      encoding = "UTF-16";
-    }
+    encoding = normalizeCharset(encoding);
     return encoding;
   }
 
@@ -104,34 +100,65 @@ public class CharsetUtils {
    * @return payload encoding
    */
   public static String getEncoding(Message message, Object input, Logger logger) throws IOException {
-    String encoding = getHeaderCharset(message);
-    byte[] bytes = null;
+    String encoding = normalizeCharset(getHeaderCharset(message));
 
     if (encoding == null) {
-      if (input instanceof InputStream) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        IOUtils.copyLarge((InputStream) input, baos);
-        bytes = baos.toByteArray();
-      } else if (input instanceof byte[]) {
-        bytes = (byte[]) input;
-      } else if (input instanceof String) {
-        bytes = ((String) input).getBytes();
-      }
-
-      if (bytes == null) {
-        return null;
-      }
-      encoding = StreamUtils.detectEncoding(bytes);
-      logger.debug("Detected payload encoding: " + logEncoding(encoding));
-
-      if (encoding == null) {
-        encoding = EventHelper.getEncoding(message).toString();
-        logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
-      }
+      encoding = getEncoding(message.getPayload(), input, logger);
     }
-    if (encoding.matches("(?i)UTF-16.+")) {
+
+    return encoding;
+  }
+
+  private static String normalizeCharset(String encoding) {
+    if (encoding != null && encoding.matches("(?i)UTF-16.+")) {
       encoding = "UTF-16";
     }
+    return encoding;
+  }
+
+  /**
+   * Tries to figure out the encoding of the request in the following order
+   *  - Determine what type is payload
+   *  - detects the payload encoding using BOM, or tries to auto-detect it
+   *  - return the mule message encoding
+   *
+   * @param typedValue mule typed value
+   * @param input payload that would be instrospected
+   * @param logger where to log
+   * @return payload encoding
+   */
+  public static <T> String getEncoding(TypedValue<T> typedValue, Object input, Logger logger) throws IOException {
+    String encoding = getEncoding(input, logger);
+
+    if (encoding == null) {
+      encoding = normalizeCharset(EventHelper.getEncoding(typedValue).toString());
+      logger.debug("Defaulting to mule message encoding: " + logEncoding(encoding));
+    }
+
+    return encoding;
+  }
+
+  /**
+   * Tries to figure out the encoding of the request in the following order
+   *  - Determine what type is payload
+   *  - detects the payload encoding using BOM, or tries to auto-detect it
+   *  - return the mule message encoding
+   *
+   * @param input payload that would be instrospected
+   * @param logger where to log
+   * @return payload encoding
+   */
+  public static String getEncoding(Object input, Logger logger) throws IOException {
+    String encoding;
+
+    byte[] bytes = getPayloadAsByteArray(input);
+
+    if (bytes == null) {
+      return null;
+    }
+    encoding = normalizeCharset(StreamUtils.detectEncoding(bytes));
+    logger.debug("Detected payload encoding: " + logEncoding(encoding));
+
     return encoding;
   }
 
@@ -184,7 +211,7 @@ public class CharsetUtils {
   }
 
   public static String getPayloadCharset(Message message, Logger logger) {
-    Charset charset = message.getPayload().getDataType().getMediaType().getCharset().get();
+    Charset charset = message.getPayload().getDataType().getMediaType().getCharset().orElse(null);
     if (charset != null) {
       logger.debug("Request Payload charset: " + logEncoding(charset.toString()));
       return charset.toString();

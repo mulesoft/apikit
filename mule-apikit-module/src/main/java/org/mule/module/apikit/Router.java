@@ -203,23 +203,8 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
     TypedValue payload = event.getMessage().getPayload();
 
-    final String charset;
-    try {
-      final Object payloadValue = payload.getValue();
-      if (payloadValue instanceof InputStream) {
-        final RewindableInputStream rewindable = new RewindableInputStream((InputStream) payloadValue);
-        charset = getEncoding(event.getMessage(), rewindable, LOGGER);
-        rewindable.rewind();
-        payload = new TypedValue<>(rewindable, payload.getDataType());
-      } else {
-        charset = getEncoding(event.getMessage(), payloadValue, LOGGER);
-      }
-    } catch (IOException e) {
-      throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
-    }
-
     final ValidRequest validRequest =
-        RequestValidator.validate(config, resource, attributes, resolvedVariables, payload, charset);
+        RequestValidator.validate(config, resource, attributes, resolvedVariables, payload);
 
     return EventHelper.regenerateEvent(event.getMessage(), eventBuilder, validRequest);
   }
