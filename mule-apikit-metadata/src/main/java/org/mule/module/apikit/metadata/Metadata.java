@@ -77,7 +77,7 @@ public class Metadata {
         if (isExchangeModules(s)) {
           String apiSyncResource = toApiSyncResource(s);
           if (apiSyncResource != null)
-            return resourceLoader.getRamlResource(toApiSyncResource(s));
+            return resourceLoader.getRamlResource(apiSyncResource);
         }
         return resourceLoader.getRamlResource(s);
       }, notifier);
