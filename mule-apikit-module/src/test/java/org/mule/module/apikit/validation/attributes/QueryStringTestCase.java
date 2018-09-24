@@ -11,9 +11,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
+import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import static com.jayway.restassured.RestAssured.given;
 
+@ArtifactClassLoaderRunnerConfig
 public class QueryStringTestCase extends MuleArtifactFunctionalTestCase {
 
   @Override
