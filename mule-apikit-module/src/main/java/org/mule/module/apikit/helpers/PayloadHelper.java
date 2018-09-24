@@ -24,32 +24,35 @@ public class PayloadHelper {
   protected static final Logger logger = LoggerFactory.getLogger(PayloadHelper.class);
 
   public static String getPayloadAsString(Object input, String charset) throws BadRequestException {
-    final byte[] bytes;
 
     try {
-
-      if (input instanceof CursorStreamProvider)
-        bytes = IOUtils.toByteArray(((CursorStreamProvider) input).openCursor());
-      else if (input instanceof RewindableInputStream) {
-        final RewindableInputStream rewindable = (RewindableInputStream) input;
-        bytes = IOUtils.toByteArray(rewindable);
-        rewindable.rewind();
-      } else if (input instanceof InputStream)
-        bytes = IOUtils.toByteArray((InputStream) input);
-      else if (input instanceof String)
-        bytes = ((String) input).getBytes();
-      else if (input instanceof byte[])
-        bytes = (byte[]) input;
-      else if (input != null)
-        throw new BadRequestException("Don't know how to parse " + input.getClass().getName());
-      else
-        throw new BadRequestException("Don't know how to parse payload");
+      final byte[] bytes = getPayloadAsByteArray(input);
 
       return IOUtils.toString(trimBom(bytes), charset);
 
     } catch (IOException e) {
       throw new BadRequestException("Error processing request: " + e.getMessage());
     }
+  }
+
+  public static byte[] getPayloadAsByteArray(Object input) throws IOException {
+    if (input instanceof CursorStreamProvider)
+      return IOUtils.toByteArray(((CursorStreamProvider) input).openCursor());
+    else if (input instanceof RewindableInputStream) {
+      final RewindableInputStream rewindable = (RewindableInputStream) input;
+      final byte[] bytes = IOUtils.toByteArray(rewindable);
+      rewindable.rewind();
+      return bytes;
+    } else if (input instanceof InputStream)
+      return IOUtils.toByteArray((InputStream) input);
+    else if (input instanceof String)
+      return ((String) input).getBytes();
+    else if (input instanceof byte[])
+      return (byte[]) input;
+    else if (input != null)
+      throw new IOException("Don't know how to parse " + input.getClass().getName());
+    else
+      throw new IOException("Don't know how to parse payload");
   }
 
 }
