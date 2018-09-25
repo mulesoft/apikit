@@ -176,9 +176,4 @@ public class ActionImpl implements IAction {
     action.getIs().add(s);
   }
 
-  @Override
-  public IParameter getQueryString() {
-    return null;
-  }
-
 }

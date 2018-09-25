@@ -166,11 +166,6 @@ public class ActionImpl implements IAction {
   }
 
   @Override
-  public IParameter getQueryString() {
-    return method.queryString() == null ? null : new ParameterImpl(method.queryString());
-  }
-
-  @Override
   public IQueryString queryString() {
     return method.queryString() == null ? null : new QueryStringImpl(method.queryString());
   }
