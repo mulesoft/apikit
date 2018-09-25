@@ -2,7 +2,7 @@
 usage: This library contains some data types
 
 uses:
-  library: library.raml
+  library: /library.raml
 
 types:
   stuff:
@@ -15,10 +15,12 @@ types:
       bar: 42
 
   moreStuff:
-    type: object
+    type: library.ComplexType
     properties:
       foo: string
       bar: boolean
     example:
+      name2: test
+      length2: 2
       foo: "bye"
       bar: false

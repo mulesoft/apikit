@@ -10,33 +10,64 @@ import java.io.InputStream;
 import javax.annotation.Nullable;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.interfaces.model.IRaml;
 
 class ParserWrapperV2 implements ParserWrapper {
 
   private final String ramlPath;
+  private String content;
   private final ResourceLoader resourceLoader;
 
-  ParserWrapperV2(String ramlPath, ResourceLoader resourceLoader) {
+  ParserWrapperV2(String ramlPath, final String content, ResourceLoader resourceLoader) {
     this.ramlPath = ramlPath;
+    this.content = content;
     this.resourceLoader = resourceLoader;
   }
 
   @Override
   public IRaml build() {
-    final org.raml.v2.api.loader.ResourceLoader adaptedResourceLoader = new org.raml.v2.api.loader.ResourceLoader() {
+    return ParserV2Utils.build(new ApiSyncResourceLoader(ramlPath, adaptResourceLoader(resourceLoader)), ramlPath, content);
+  }
+
+  private org.raml.v2.api.loader.ResourceLoader adaptResourceLoader(final ResourceLoader resourceLoader) {
+    return new org.raml.v2.api.loader.ResourceLoader() {
 
       @Nullable
       @Override
       public InputStream fetchResource(String s) {
-        return ParserWrapperV2.this.resourceLoader.getRamlResource(s);
+        return resourceLoader.getRamlResource(s);
       }
     };
-    return ParserV2Utils.build(adaptedResourceLoader, ramlPath);
+  }
+}
+
+
+/*
+
+  // Old Version adapted
+  
+  import org.mule.runtime.core.api.util.FileUtils;
+  import org.raml.v2.api.loader.CompositeResourceLoader;
+  import org.raml.v2.api.loader.DefaultResourceLoader;
+  import org.raml.v2.api.loader.FileResourceLoader;
+  
+  final File ramlFile = fetchRamlFile(ramlPath);
+  org.raml.v2.api.loader.ResourceLoader loader =
+              new CompositeResourceLoader(new DefaultResourceLoader(), new FileResourceLoader(ramlFile.getParentFile().getPath()));
+
+  return ParserV2Utils.build(loader, ramlPath, content);
+
+  private File fetchRamlFile(String ramlPath) {
+        return ofNullable(ramlPath)
+                .map(path -> Thread.currentThread().getContextClassLoader().getResource(path))
+                .filter(FileUtils::isFile)
+                .map(resource -> new File(resource.getFile()))
+                .orElse(null);
   }
 
-
-  /* 
+  // Old version
+  
   public class RamlV2Parser { 
   
     public IRaml build(File ramlFile, String ramlContent) {
@@ -56,6 +87,5 @@ class ParserWrapperV2 implements ParserWrapper {
     return new RamlImpl10V2(ramlModelResult.getApiV10());
   }
   }
-  
-   */
-}
+*/
+

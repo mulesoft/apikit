@@ -7,6 +7,7 @@
 package org.mule.module.apikit.parser;
 
 import static java.util.Optional.ofNullable;
+
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
@@ -20,14 +21,13 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.annotation.Nullable;
-
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
 
 public class ParserWrapperV2 implements ParserWrapper {
 
@@ -48,8 +48,12 @@ public class ParserWrapperV2 implements ParserWrapper {
                                                              new ExchangeDependencyResourceLoader(ramlFile.getParentFile()
                                                                  .getAbsolutePath()));
     } else {
-      this.resourceLoader =
-          new org.raml.v2.api.loader.CompositeResourceLoader(new DefaultResourceLoader(), new ApiSyncResourceLoader());
+      if (isSyncProtocol(ramlPath)) {
+        this.resourceLoader = new ApiSyncResourceLoader(ramlPath);
+      } else {
+        resourceLoader = new DefaultResourceLoader();
+      }
+
     }
   }
 

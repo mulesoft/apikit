@@ -7,11 +7,10 @@
 package org.mule.tools.apikit.model;
 
 import org.apache.commons.io.FilenameUtils;
-import org.mule.tools.apikit.misc.APISyncUtils;
+import org.mule.apikit.common.APISyncUtils;
 
 import java.io.File;
 
-import static org.mule.tools.apikit.misc.APISyncUtils.API_SYNC_PROTOCOL;
 
 public class API {
 
@@ -42,7 +41,7 @@ public class API {
 
   private String getApiName(String ramlFileName) {
     String apiName = ramlFileName;
-    if (ramlFileName.startsWith(API_SYNC_PROTOCOL)) {
+    if (APISyncUtils.isSyncProtocol(ramlFileName)) {
       apiName = ramlFileName.substring(ramlFileName.lastIndexOf(":") + 1);
     }
     return FilenameUtils.removeExtension(apiName);

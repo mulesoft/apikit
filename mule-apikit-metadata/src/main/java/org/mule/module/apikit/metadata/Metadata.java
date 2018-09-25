@@ -7,6 +7,10 @@
 package org.mule.module.apikit.metadata;
 
 import static java.lang.String.format;
+import static org.mule.apikit.common.APISyncUtils.RESOURCE_FORMAT;
+import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
+import static org.mule.apikit.common.APISyncUtils.toApiSyncResource;
+
 import org.mule.metadata.api.model.FunctionType;
 import org.mule.module.apikit.metadata.interfaces.Notifier;
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
@@ -45,8 +49,6 @@ public class Metadata {
    */
   public static class Builder {
 
-    private static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s:%s:%s";
-
     private ResourceLoader resourceLoader;
     private ApplicationModel applicationModel;
     private Notifier notifier;
@@ -72,12 +74,10 @@ public class Metadata {
 
     public Metadata build() {
       return new Metadata(applicationModel, s -> {
-        if (s.startsWith("/exchange_modules") || s.startsWith("exchange_modules")) {
-          String[] resourceParts = s.split("/");
-          int length = resourceParts.length;
-          return resourceLoader.getRamlResource(format(RESOURCE_FORMAT, resourceParts[length - 6], resourceParts[length - 5],
-                                                       resourceParts[length - 4], resourceParts[length - 3],
-                                                       resourceParts[length - 2], resourceParts[length - 1]));
+        if (isExchangeModules(s)) {
+          String apiSyncResource = toApiSyncResource(s);
+          if (apiSyncResource != null)
+            return resourceLoader.getRamlResource(apiSyncResource);
         }
         return resourceLoader.getRamlResource(s);
       }, notifier);

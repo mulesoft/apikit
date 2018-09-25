@@ -7,25 +7,52 @@
 package org.mule.tools.apikit.model;
 
 import org.apache.commons.io.FileUtils;
-
+import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
+import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
 
+
 public class ScaffolderResourceLoaderWrapper
     implements org.raml.v2.api.loader.ResourceLoader, org.raml.parser.loader.ResourceLoader {
 
+  private final String rootRamlResource;
   ScaffolderResourceLoader scaffolderResourceLoader;
 
-  public ScaffolderResourceLoaderWrapper(ScaffolderResourceLoader scaffolderResourceLoader) {
+
+  public ScaffolderResourceLoaderWrapper(ScaffolderResourceLoader scaffolderResourceLoader, String rootRamlName) {
     this.scaffolderResourceLoader = scaffolderResourceLoader;
+    this.rootRamlResource = getRootRamlResource(rootRamlName);
   }
+
+  private String getRootRamlResource(String rootRamlResource) {
+    return rootRamlResource.substring(0, rootRamlResource.lastIndexOf(":") + 1);
+  }
+
 
   @Nullable
   @Override
   public InputStream fetchResource(String s) {
-    return scaffolderResourceLoader.getResourceAsStream(s);
+    InputStream stream = null;
+
+    if (s.startsWith("/"))
+      s = s.substring(1);
+
+    if (isExchangeModules(s)) {
+      stream = scaffolderResourceLoader.getResourceAsStream(s);
+    }
+
+    if (stream != null)
+      return stream;
+
+    if (isSyncProtocol(s))
+      return scaffolderResourceLoader.getResourceAsStream(s);
+
+    return scaffolderResourceLoader.getResourceAsStream(rootRamlResource + s);
   }
+
+
 
   public File getFile(String resource) {
     return FileUtils.toFile(scaffolderResourceLoader.getResource(resource));
