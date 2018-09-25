@@ -89,4 +89,15 @@ public class ParameterImpl implements IParameter {
   public MetadataType getMetadata() {
     return resolve(parameter).orElse(stringType());
   }
+
+  @Override
+  public boolean isScalar() {
+    return true;
+  }
+
+  @Override
+  public boolean isFacetArray(String facet) {
+    return false;
+  }
+
 }

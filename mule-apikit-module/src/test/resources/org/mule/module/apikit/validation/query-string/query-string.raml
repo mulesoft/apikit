@@ -1,0 +1,58 @@
+#%RAML 1.0
+title: Query string test
+
+types:
+   user:
+     properties:
+       firstname:
+       lastname:
+   simple-type:
+    properties:
+      property:
+        required: false
+      default-property:
+        type: string
+        default: "Default value"
+   array-property:
+     properties:
+       property1:
+         type: string[]
+       property2:
+         required: false
+       default-property:
+        type: string
+        default: "Default value"
+   type-property:
+     properties:
+       property: user
+       default-property:
+        type: string
+        default: "Default value"
+   default-value:
+     properties:
+       property:
+        type: string
+        default: "Default value"
+    
+/simple-type:
+  get:
+    queryString:
+      type: simple-type
+
+
+/type-property-array:
+  get:
+    queryString:
+      type: array-property
+
+
+/type-property-type:
+  get:
+    queryString:
+      type: type-property
+
+
+/default-value-property:
+  get:
+    queryString:
+      type: default-value
