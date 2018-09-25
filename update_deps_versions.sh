@@ -4,6 +4,7 @@ set -o nounset
 
 ramlParserV1Version="$1"
 ramlParserV2Version="$2"
+amfParserVersion="$3"
 
 updatePropertiesVersion() {
   VERSION_TO_PROPERTY="$1"
@@ -25,12 +26,17 @@ updatePropertiesVersion() {
 }
 
 
-# Raml Parser V1 Property
+# Raml Parser V1 Version Property
 propertiesRamlParserV1=(ramlParserV1Version)
-VERSION_TO=ramlParserV1Version
+VERSION_TO=$ramlParserV1Version
 updatePropertiesVersion "$VERSION_TO" pom.xml propertiesRamlParserV1[@]
 
-# Raml Parser V2 Property
+# Raml Parser V2 Version Property
 propertiesRamlParserV2=(ramlParserV2Version)
-VERSION_TO=ramlParserV2Version
+VERSION_TO=$ramlParserV2Version
 updatePropertiesVersion "$VERSION_TO" pom.xml propertiesRamlParserV2[@]
+
+# AMF Parser Version Property
+propertiesAmfParser=(amfVersion)
+VERSION_TO=$amfParserVersion
+updatePropertiesVersion "$VERSION_TO" pom.xml propertiesAmfParser[@]

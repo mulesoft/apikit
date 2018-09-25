@@ -6,11 +6,13 @@
  */
 package org.mule.module.apikit;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
+@Ignore
 public class RouterRemoteFragmentTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
@@ -18,7 +20,6 @@ public class RouterRemoteFragmentTestCase extends AbstractMultiParserFunctionalT
     return "org/mule/module/apikit/remote-fragment/remote-fragment.xml";
   }
 
-  @Test
   public void simpleRouting() throws Exception {
     given().header("Accept", "*/*")
         .queryParam("code", "ABC-123")
