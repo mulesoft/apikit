@@ -63,12 +63,16 @@ public class API {
   public File getXmlFile(File rootDirectory) {
     // Case we need to create the file
     if (xmlFile == null) {
-      xmlFile = new File(rootDirectory,
-                         FilenameUtils.getBaseName(
-                                                   ramlFileName)
-                             + ".xml");
+      xmlFile = new File(rootDirectory, getBaseName(ramlFileName) + ".xml");
     }
     return xmlFile;
+  }
+
+  private String getBaseName(String ramlFileName) {
+    String baseFilePath = ramlFileName;
+    if (APISyncUtils.isSyncProtocol(ramlFileName))
+      baseFilePath = APISyncUtils.getFileName(ramlFileName);
+    return FilenameUtils.getBaseName(baseFilePath);
   }
 
   public String getRamlFileName() {
