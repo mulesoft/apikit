@@ -23,6 +23,10 @@ public class APISyncUtils {
     return path.startsWith(API_SYNC_PROTOCOL);
   }
 
+  public static String getFileName(final String apiSyncResource) {
+    return apiSyncResource.substring(apiSyncResource.lastIndexOf(":") + 1);
+  }
+
   public static boolean isExchangeModules(final String path) {
     return path.startsWith(EXCHANGE_MODULES) || path.startsWith("/" + EXCHANGE_MODULES);
   }

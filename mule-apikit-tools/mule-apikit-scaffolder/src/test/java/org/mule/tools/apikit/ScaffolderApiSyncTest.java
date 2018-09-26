@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
+import org.mule.apikit.common.APISyncUtils;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 
 import java.io.File;
@@ -145,7 +146,7 @@ public class ScaffolderApiSyncTest {
     new ScaffolderAPI().run(Collections.singletonList(dependency), scaffolderResourceLoaderMock, muleXmlOut, null, MULE_4_VERSION,
                             EE);
 
-    return new File(muleXmlOut, ROOT_RAML_RESOURCE_URL + rootRaml + ".xml");
+    return new File(muleXmlOut, rootRaml + ".xml");
   }
 
   private void mockScaffolderResourceLoader(String resourceURL, String folder, String file) throws FileNotFoundException {
