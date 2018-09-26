@@ -1,0 +1,84 @@
+INFO  2018-09-26 12:01:04,441 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ New app 'resource-classloading-1.0.0-mule-application'   +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+INFO  2018-09-26 12:01:04,442 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Initializing app                                         +
++ 'resource-classloading-1.0.0-mule-application'           +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+INFO  2018-09-26 12:01:04,481 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.extension.internal.manager.DefaultExtensionManager: Registering extension ee (version: 4.1.4-SNAPSHOT vendor: MuleSoft, Inc. )
+INFO  2018-09-26 12:01:04,487 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.extension.internal.manager.DefaultExtensionManager: Registering extension mule (version: 4.1.4-SNAPSHOT vendor: MuleSoft, Inc. )
+INFO  2018-09-26 12:01:05,628 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.extension.internal.manager.DefaultExtensionManager: Registering extension Sockets (version: 1.1.1 vendor: Mulesoft )
+INFO  2018-09-26 12:01:05,631 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.extension.internal.manager.DefaultExtensionManager: Registering extension APIKit (version: 1.1.7-SNAPSHOT vendor: Mulesoft )
+INFO  2018-09-26 12:01:05,632 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.extension.internal.manager.DefaultExtensionManager: Registering extension HTTP (version: 1.2.0 vendor: Mulesoft )
+INFO  2018-09-26 12:01:07,169 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Initialising RegistryBroker
+INFO  2018-09-26 12:01:07,170 [WrapperListener_start_runner] [event: ] org.mule.runtime.config.internal.MuleArtifactContext: Refreshing org.mule.runtime.config.internal.MuleArtifactContext: resource-classloading-1.0.0-mule-application (APP)
+INFO  2018-09-26 12:01:07,337 [WrapperListener_start_runner] [event: ] org.mule.runtime.config.internal.processor.MuleInjectorProcessor: JSR-330 'javax.inject.Inject' annotation found and supported for autowiring
+INFO  2018-09-26 12:01:07,338 [WrapperListener_start_runner] [event: ] org.mule.runtime.config.internal.ObjectProviderAwareBeanFactory: Overriding bean definition for bean '_muleConfiguration' with a different definition: replacing [Generic bean: class [org.mule.runtime.core.api.config.DefaultMuleConfiguration]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null] with [Generic bean: class [org.mule.runtime.config.internal.MuleConfigurationConfigurator]; scope=; abstract=false; lazyInit=false; autowireMode=0; dependencyCheck=0; autowireCandidate=true; primary=false; factoryBeanName=null; factoryMethodName=null; initMethodName=null; destroyMethodName=null]
+INFO  2018-09-26 12:01:07,762 [WrapperListener_start_runner] [event: ] org.mule.runtime.api.message.AbstractMuleMessageBuilderFactory: Loaded MuleMessageBuilderFactory implementation 'org.mule.runtime.core.internal.message.DefaultMessageBuilderFactory' from classloader 'org.mule.runtime.module.reboot.internal.MuleContainerSystemClassLoader@38c5d4cc'
+INFO  2018-09-26 12:01:08,342 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.util.journal.TransactionJournal: Using files for tx logs /home/jbrasca/mule-workspace/apikit/mule-apikit-module/servers/RouterApiSyncTestCase/mule-enterprise-standalone-4.1.4-SNAPSHOT/./.mule/resource-classloading-1.0.0-mule-application/queue-tx-log/tx1.log and /home/jbrasca/mule-workspace/apikit/mule-apikit-module/servers/RouterApiSyncTestCase/mule-enterprise-standalone-4.1.4-SNAPSHOT/./.mule/resource-classloading-1.0.0-mule-application/queue-tx-log/tx2.log
+INFO  2018-09-26 12:01:08,342 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.util.journal.TransactionJournal: Using files for tx logs /home/jbrasca/mule-workspace/apikit/mule-apikit-module/servers/RouterApiSyncTestCase/mule-enterprise-standalone-4.1.4-SNAPSHOT/./.mule/resource-classloading-1.0.0-mule-application/queue-xa-tx-log/tx1.log and /home/jbrasca/mule-workspace/apikit/mule-apikit-module/servers/RouterApiSyncTestCase/mule-enterprise-standalone-4.1.4-SNAPSHOT/./.mule/resource-classloading-1.0.0-mule-application/queue-xa-tx-log/tx2.log
+INFO  2018-09-26 12:01:08,354 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Initialising Bean: org.mule.runtime.module.extension.internal.runtime.config.ConfigurationProviderToolingAdapter-test-api-httpListenerConfig
+INFO  2018-09-26 12:01:09,109 [WrapperListener_start_runner] [event: ] org.mule.module.apikit.Configuration: Building resource URI cache...
+INFO  2018-09-26 12:01:09,133 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Initialising flow: test-api-main
+INFO  2018-09-26 12:01:09,242 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Initialising Bean: listener
+INFO  2018-09-26 12:01:09,304 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Initialising flow: test-api-console
+INFO  2018-09-26 12:01:09,306 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Initialising Bean: listener
+INFO  2018-09-26 12:01:09,310 [WrapperListener_start_runner] [event: ] org.mule.module.apikit.Console: 
+********************************************************************************
+* APIKit ConsoleURL : http://localhost:38728/console/                          *
+********************************************************************************
+INFO  2018-09-26 12:01:09,311 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Initialising flow: get:\test:test-api-config
+INFO  2018-09-26 12:01:09,382 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Starting app                                             +
++ 'resource-classloading-1.0.0-mule-application'           +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+INFO  2018-09-26 12:01:09,383 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Starting ResourceManager
+INFO  2018-09-26 12:01:09,383 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Started ResourceManager
+INFO  2018-09-26 12:01:09,385 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Starting Bean: org.mule.runtime.module.extension.internal.runtime.config.ConfigurationProviderToolingAdapter-test-api-httpListenerConfig
+INFO  2018-09-26 12:01:09,416 [[MuleRuntime].io.01: [resource-classloading-1.0.0-mule-application].io@org.mule.runtime.module.extension.internal.runtime.config.LifecycleAwareConfigurationInstance.testConnectivity:192 @5d5e8208] [event: ] org.mule.runtime.module.extension.internal.runtime.config.LifecycleAwareConfigurationInstance: Doing testConnectivity() for config test-api-httpListenerConfig
+INFO  2018-09-26 12:01:09,426 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Starting flow: test-api-main
+INFO  2018-09-26 12:01:10,761 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Starting flow: test-api-console
+INFO  2018-09-26 12:01:10,785 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Starting flow: get:\test:test-api-config
+INFO  2018-09-26 12:01:10,841 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Starting Bean: listener
+INFO  2018-09-26 12:01:10,846 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Starting Bean: listener
+INFO  2018-09-26 12:01:10,848 [WrapperListener_start_runner] [event: ] org.mule.runtime.core.internal.context.DefaultMuleContext: 
+**********************************************************************
+* Application: resource-classloading-1.0.0-mule-application          *
+* OS encoding: UTF-8, Mule encoding: UTF-8                           *
+*                                                                    *
+**********************************************************************
+INFO  2018-09-26 12:01:17,089 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Stopping app                                             +
++ 'resource-classloading-1.0.0-mule-application'           +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+INFO  2018-09-26 12:01:17,091 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Stopping flow: test-api-main
+INFO  2018-09-26 12:01:17,092 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Stopping Bean: listener
+INFO  2018-09-26 12:01:17,144 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Stopping flow: test-api-console
+INFO  2018-09-26 12:01:17,145 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Stopping Bean: listener
+INFO  2018-09-26 12:01:17,196 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Stopping flow: get:\test:test-api-config
+INFO  2018-09-26 12:01:17,251 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Stopping Bean: org.mule.runtime.module.extension.internal.runtime.config.ConfigurationProviderToolingAdapter-test-api-httpListenerConfig
+INFO  2018-09-26 12:01:17,263 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Stopping ResourceManager
+INFO  2018-09-26 12:01:17,263 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.internal.util.queue.QueueXaResourceManager: Stopped ResourceManager
+INFO  2018-09-26 12:01:17,319 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Disposing app                                            +
++ 'resource-classloading-1.0.0-mule-application'           +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+INFO  2018-09-26 12:01:17,320 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Disposing RegistryBroker
+INFO  2018-09-26 12:01:17,321 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Disposing flow: test-api-main
+INFO  2018-09-26 12:01:17,322 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Disposing Bean: listener
+INFO  2018-09-26 12:01:17,323 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Disposing flow: test-api-console
+INFO  2018-09-26 12:01:17,323 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Disposing Bean: listener
+INFO  2018-09-26 12:01:17,323 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.internal.construct.FlowConstructLifecycleManager: Disposing flow: get:\test:test-api-config
+INFO  2018-09-26 12:01:17,325 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.privileged.lifecycle.AbstractLifecycleManager: Disposing Bean: org.mule.runtime.module.extension.internal.runtime.config.ConfigurationProviderToolingAdapter-test-api-httpListenerConfig
+INFO  2018-09-26 12:01:17,401 [WrapperListener_stop_runner] [event: ] org.mule.runtime.config.internal.MuleArtifactContext: Closing org.mule.runtime.config.internal.MuleArtifactContext: resource-classloading-1.0.0-mule-application (APP)
+INFO  2018-09-26 12:01:17,405 [WrapperListener_stop_runner] [event: ] org.mule.runtime.core.internal.context.DefaultMuleContext: 
+**********************************************************************
+* Application "resource-classloading-1.0.0-mule-application" shut    *
+* down normally on: 9/26/18 12:01 PM                                 *
+* Up for: 0 days, 0 hours, 0 mins, 8.21 sec                          *
+**********************************************************************
