@@ -186,17 +186,6 @@ public class ActionImpl implements IAction {
   }
 
   @Override
-  public IParameter getQueryString() {
-    final Request request = operation.request();
-
-    if (request == null)
-      return null;
-
-    final Shape shape = request.queryString();
-    return shape == null ? null : new ParameterImpl((AnyShape) shape, request.required().value());
-  }
-
-  @Override
   public IQueryString queryString() {
     final Request request = operation.request();
 

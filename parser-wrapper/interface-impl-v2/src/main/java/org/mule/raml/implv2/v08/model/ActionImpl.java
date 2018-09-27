@@ -92,11 +92,6 @@ public class ActionImpl implements IAction {
   }
 
   @Override
-  public IParameter getQueryString() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public IQueryString queryString() {
     return null;
   }

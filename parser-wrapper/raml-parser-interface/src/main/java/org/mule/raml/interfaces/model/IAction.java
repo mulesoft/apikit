@@ -47,8 +47,5 @@ public interface IAction {
 
   void addIs(String is);
 
-  @Deprecated
-  IParameter getQueryString();
-
   IQueryString queryString();
 }
