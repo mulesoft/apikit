@@ -68,7 +68,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.26</version>
+                <version>1.0.27</version>
                 <exclusions>
                     <exclusion>
                         <groupId> org.slf4j</groupId>
