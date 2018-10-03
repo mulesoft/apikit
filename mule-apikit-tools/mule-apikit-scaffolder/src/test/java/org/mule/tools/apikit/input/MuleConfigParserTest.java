@@ -40,14 +40,14 @@ public class MuleConfigParserTest {
                                                                     "testGetEntries/leagues-flow-config.xml");
     Log log = mock(Log.class);
 
-    HashSet<String> ramlFileNames = new HashSet<>();
-    ramlFileNames.add("leagues.raml");
+    HashSet<File> ramlPaths = new HashSet<File>();
+    ramlPaths.add(new File("leagues.raml"));
 
     HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
     streams.put(new File(""), resourceAsStream);
     Map<String, HttpListener4xConfig> domainHttpListenerConfigs = new HashMap<>();
     MuleConfigParser muleConfigParser =
-        new MuleConfigParser(log, new APIFactory(domainHttpListenerConfigs)).parse(ramlFileNames, streams);
+        new MuleConfigParser(log, new APIFactory(domainHttpListenerConfigs)).parse(ramlPaths, streams);
     Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
     assertNotNull(set);
     assertEquals(6, set.size());
@@ -56,7 +56,7 @@ public class MuleConfigParserTest {
     assertNotNull(apis);
     assertEquals(1, apis.size());
     API api = apis.iterator().next();
-    assertEquals("leagues.raml", api.getRamlFileName());
+    assertEquals("leagues.raml", api.getRamlFile().getName());
     assertEquals("leagues", api.getId());
     assertNotNull(api.getHttpListenerConfig());
     assertEquals("/", api.getHttpListenerConfig().getBasePath());
@@ -83,14 +83,14 @@ public class MuleConfigParserTest {
 
     Log log = mock(Log.class);
 
-    HashSet<String> ramlNames = new HashSet<>();
-    ramlNames.add("leagues.raml");
-    ramlNames.add("api.raml");
+    HashSet<File> ramlPaths = new HashSet<File>();
+    ramlPaths.add(new File("leagues.raml"));
+    ramlPaths.add(new File("api.raml"));
 
     MuleConfigParser muleConfigParser = new MuleConfigParser(log, new APIFactory());
-    muleConfigParser.parseConfigsAndApis(fileWithFlows, documentWithFlows, ramlNames);
+    muleConfigParser.parseConfigsAndApis(fileWithFlows, documentWithFlows, ramlPaths);
     muleConfigParser.parseFlows(Collections.singleton(documentWithFlows));
-    muleConfigParser.parseConfigsAndApis(fileWithoutFlows, documentWithoutFlows, ramlNames);
+    muleConfigParser.parseConfigsAndApis(fileWithoutFlows, documentWithoutFlows, ramlPaths);
     muleConfigParser.parseFlows(Collections.singleton(documentWithoutFlows));
 
     assertEquals(6, muleConfigParser.getEntries().size());
@@ -98,88 +98,87 @@ public class MuleConfigParserTest {
     assertEquals(2, muleConfigParser.getIncludedApis().size());
   }
 
-  /*
-  
+
   @Test
   public void testParseMultipleXmlsWithoutApikitDependency() throws JDOMException, IOException {
     File fileWithFlows = new File("leagues.xml");
     File fileWithoutFlows = new File("api.xml");
-  
+
     final InputStream xmlWithFlows =
         MuleConfigParser.class.getClassLoader().getResourceAsStream("testGetEntries/leagues-flow-config.xml");
     final InputStream xmlWithoutApikitDependency =
         MuleConfigParser.class.getClassLoader().getResourceAsStream("testGetEntries/file-without-apikit-dependency.xml");
-  
+
     Document documentWithFlows = getDocument(xmlWithFlows);
     Document documentWithoutFlows = getDocument(xmlWithoutApikitDependency);
-  
+
     Log log = mock(Log.class);
-  
+
     HashSet<File> ramlPaths = new HashSet<File>();
     ramlPaths.add(new File("leagues.raml"));
     ramlPaths.add(new File("api.raml"));
-  
+
     MuleConfigParser muleConfigParser = new MuleConfigParser(log, new APIFactory());
     muleConfigParser.parseConfigsAndApis(fileWithFlows, documentWithFlows, ramlPaths);
     muleConfigParser.parseFlows(Collections.singleton(documentWithFlows));
     muleConfigParser.parseConfigsAndApis(fileWithoutFlows, documentWithoutFlows, ramlPaths);
     muleConfigParser.parseFlows(Collections.singleton(documentWithoutFlows));
-  
+
     assertEquals(6, muleConfigParser.getEntries().size());
     assertEquals(1, muleConfigParser.getApikitConfigs().size());
     assertEquals(1, muleConfigParser.getIncludedApis().size());
   }
-  
+
   @Test
   public void testParseMultipleXmlsWithFlows() throws JDOMException, IOException {
     File fileWithFlows = new File("leagues.xml");
     File fileWithoutFlows = new File("simple.xml");
-  
+
     final InputStream xmlWithFlows =
         MuleConfigParser.class.getClassLoader().getResourceAsStream("testGetEntries/leagues-flow-config.xml");
     final InputStream xmlWithoutApikitDependency =
         MuleConfigParser.class.getClassLoader().getResourceAsStream("testGetEntries/simple.xml");
-  
+
     Document documentWithFlows = getDocument(xmlWithFlows);
     Document documentWithoutFlows = getDocument(xmlWithoutApikitDependency);
-  
+
     Log log = mock(Log.class);
-  
+
     HashSet<File> ramlPaths = new HashSet<File>();
     ramlPaths.add(new File("leagues.raml"));
     ramlPaths.add(new File("simple.raml"));
-  
+
     MuleConfigParser muleConfigParser = new MuleConfigParser(log, new APIFactory());
     muleConfigParser.parseConfigsAndApis(fileWithFlows, documentWithFlows, ramlPaths);
     muleConfigParser.parseFlows(Collections.singleton(documentWithFlows));
     muleConfigParser.parseConfigsAndApis(fileWithoutFlows, documentWithoutFlows, ramlPaths);
     muleConfigParser.parseFlows(Collections.singleton(documentWithoutFlows));
-  
+
     assertEquals(8, muleConfigParser.getEntries().size());
     assertEquals(2, muleConfigParser.getApikitConfigs().size());
     assertEquals(2, muleConfigParser.getIncludedApis().size());
   }
-  
+
   @Test
   public void testCreationWithEmptyDomainList() {
     final InputStream resourceAsStream =
         MuleConfigParser.class.getClassLoader().getResourceAsStream(
                                                                     "testGetEntries/leagues-flow-config.xml");
     Log log = mock(Log.class);
-  
+
     HashSet<File> ramlPaths = new HashSet<File>();
     ramlPaths.add(new File("leagues.raml"));
-  
+
     HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
     streams.put(new File(""), resourceAsStream);
     HashMap<String, HttpListener4xConfig> domainStreams = new HashMap<>();
-  
+
     MuleConfigParser muleConfigParser =
         new MuleConfigParser(log, new APIFactory(domainStreams)).parse(ramlPaths, streams);
     Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
     assertNotNull(set);
     assertEquals(6, set.size());
-  
+
     Set<API> apis = muleConfigParser.getIncludedApis();
     assertNotNull(apis);
     assertEquals(1, apis.size());
@@ -190,17 +189,17 @@ public class MuleConfigParserTest {
     assertEquals("HTTP_Listener_Configuration", api.getHttpListenerConfig().getName());
     assertEquals("/api/*", api.getPath());
   }
-  
+
   @Test
   public void testCreationWithDomainList() {
     final InputStream resourceAsStream =
         MuleConfigParser.class.getClassLoader().getResourceAsStream(
                                                                     "testGetEntries/leagues-flow-with-custom-lc-config.xml");
     Log log = mock(Log.class);
-  
+
     HashSet<File> ramlPaths = new HashSet<File>();
     ramlPaths.add(new File("leagues.raml"));
-  
+
     HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
     streams.put(new File(""), resourceAsStream);
     HashMap<String, HttpListener4xConfig> domainStreams = new HashMap<>();
@@ -211,7 +210,7 @@ public class MuleConfigParserTest {
     Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
     assertNotNull(set);
     assertEquals(6, set.size());
-  
+
     Set<API> apis = muleConfigParser.getIncludedApis();
     assertNotNull(apis);
     assertEquals(1, apis.size());
@@ -222,30 +221,30 @@ public class MuleConfigParserTest {
     assertEquals("http-lc-0.0.0.0-8081", api.getHttpListenerConfig().getName());
     assertEquals("/api/*", api.getPath());
   }
-  
+
   @Test
   public void testCreationWithCustomAndNormalLC() {
     final InputStream resourceAsStream =
         MuleConfigParser.class.getClassLoader().getResourceAsStream(
                                                                     "testGetEntries/leagues-flow-with-custom-and-normal-lc-config.xml");
     Log log = mock(Log.class);
-  
+
     HashSet<File> ramlPaths = new HashSet<File>();
     ramlPaths.add(new File("leagues.raml"));
-  
+
     HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
     streams.put(new File(""), resourceAsStream);
-  
+
     HashMap<String, HttpListener4xConfig> domainStreams = new HashMap<>();
     HttpListener4xConfig httpListener3xConfig = new HttpListener4xConfig("http-lc-0.0.0.0-8081", "0.0.0.0", "8081", "HTTP", "/");
     domainStreams.put("http-lc-0.0.0.0-8081", httpListener3xConfig);
-  
+
     MuleConfigParser muleConfigParser =
         new MuleConfigParser(log, new APIFactory(domainStreams)).parse(ramlPaths, streams);
     Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
     assertNotNull(set);
     assertEquals(6, set.size());
-  
+
     Set<API> apis = muleConfigParser.getIncludedApis();
     assertNotNull(apis);
     assertEquals(1, apis.size());
@@ -256,27 +255,27 @@ public class MuleConfigParserTest {
     assertEquals("http-lc-0.0.0.0-8081", api.getHttpListenerConfig().getName());
     assertEquals("/api/*", api.getPath());
   }
-  
+
   @Test
   public void testCreationWithConfigRef() {
     final InputStream resourceAsStream =
         MuleConfigParser.class.getClassLoader().getResourceAsStream(
                                                                     "testGetEntries/leagues-flow-with-config-config.xml");
     Log log = mock(Log.class);
-  
+
     HashSet<File> ramlPaths = new HashSet<File>();
     ramlPaths.add(new File("leagues.raml"));
-  
+
     HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
     streams.put(new File(""), resourceAsStream);
-  
+
     Map<String, HttpListener4xConfig> domainHttpListenerConfigs = new HashMap<>();
     MuleConfigParser muleConfigParser =
         new MuleConfigParser(log, new APIFactory(domainHttpListenerConfigs)).parse(ramlPaths, streams);
     Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
     assertNotNull(set);
     assertEquals(6, set.size());
-  
+
     Set<API> apis = muleConfigParser.getIncludedApis();
     assertNotNull(apis);
     assertEquals(1, apis.size());
@@ -289,37 +288,37 @@ public class MuleConfigParserTest {
     assertEquals("${serverPort}", api.getHttpListenerConfig().getPort());
     assertEquals("/", api.getHttpListenerConfig().getBasePath());
     assertEquals("/api/*", api.getPath());
-  
+
     Map<String, APIKitConfig> configs = muleConfigParser.getApikitConfigs();
     APIKitConfig leaguesConfig = configs.get("leagues-config");
     assertNotNull(leaguesConfig);
     assertEquals("leagues-config", leaguesConfig.getName());
     assertEquals("leagues.raml", leaguesConfig.getRaml());
   }
-  
+
   @Test
   public void testCreationWithConfigRefAndCustomLC() {
     final InputStream resourceAsStream =
         MuleConfigParser.class.getClassLoader().getResourceAsStream(
                                                                     "testGetEntries/leagues-flow-with-config-and-custom-lc-config.xml");
     Log log = mock(Log.class);
-  
+
     HashSet<File> ramlPaths = new HashSet<File>();
     ramlPaths.add(new File("leagues.raml"));
-  
+
     HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
     streams.put(new File(""), resourceAsStream);
-  
+
     HashMap<String, HttpListener4xConfig> domainStreams = new HashMap<>();
     HttpListener4xConfig httpListener3xConfig = new HttpListener4xConfig("http-lc-0.0.0.0-8081", "0.0.0.0", "8081", "HTTP", "/");
     domainStreams.put("http-lc-0.0.0.0-8081", httpListener3xConfig);
-  
+
     MuleConfigParser muleConfigParser =
         new MuleConfigParser(log, new APIFactory(domainStreams)).parse(ramlPaths, streams);
     Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
     assertNotNull(set);
     assertEquals(6, set.size());
-  
+
     Set<API> apis = muleConfigParser.getIncludedApis();
     assertNotNull(apis);
     assertEquals(1, apis.size());
@@ -329,20 +328,19 @@ public class MuleConfigParserTest {
     assertNotNull(api.getHttpListenerConfig());
     assertEquals("http-lc-0.0.0.0-8081", api.getHttpListenerConfig().getName());
     assertEquals("/api/*", api.getPath());
-  
+
     Map<String, APIKitConfig> configs = muleConfigParser.getApikitConfigs();
     APIKitConfig leaguesConfig = configs.get("leagues-config");
     assertNotNull(leaguesConfig);
     assertEquals("leagues-config", leaguesConfig.getName());
     assertEquals("leagues.raml", leaguesConfig.getRaml());
   }
-  */
+
   private Document getDocument(InputStream xmlWithFlows) throws JDOMException, IOException {
     SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
     Document document = saxBuilder.build(xmlWithFlows);
     xmlWithFlows.close();
     return document;
   }
-
 
 }

@@ -15,7 +15,6 @@ import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.implv1.model.RamlImplV1;
 import org.mule.raml.interfaces.model.IRaml;
 
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -124,14 +123,6 @@ public class ParserWrapperV1 implements ParserWrapper {
     Raml ramlImpl = getRamlImpl(api);
     ramlImpl.setBaseUri(baseUri);
     cleanBaseUriParameters(ramlImpl);
-  }
-
-  @Override
-  public InputStream fetchResource(String resource) {
-    if (resourceLoader != null)
-      return resourceLoader.fetchResource(resource);
-
-    return null;
   }
 
   private void cleanBaseUriParameters(Raml ramlApi) {

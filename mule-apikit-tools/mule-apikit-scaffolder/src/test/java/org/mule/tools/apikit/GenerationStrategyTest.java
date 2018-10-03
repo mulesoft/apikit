@@ -49,7 +49,7 @@ public class GenerationStrategyTest {
   @Test
   public void testNotEmptyRamlGenerate() throws Exception {
     final API fromRAMLFile =
-        apiFactory.createAPIBindingInboundEndpoint("sample.raml", null, "http://localhost:8080", "/api/*", null);
+        apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), null, "http://localhost:8080", "/api/*", null);
 
     RAMLFilesParser raml = mock(RAMLFilesParser.class);
     MuleConfigParser mule = mock(MuleConfigParser.class);
@@ -69,7 +69,7 @@ public class GenerationStrategyTest {
     RAMLFilesParser raml = mock(RAMLFilesParser.class);
     MuleConfigParser mule = mock(MuleConfigParser.class);
     final API api =
-        apiFactory.createAPIBindingInboundEndpoint("sample.raml", new File("sample.xml"), "http://localhost:8080",
+        apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), new File("sample.xml"), "http://localhost:8080",
                                                    "/api/*", null);
 
     when(mule.getIncludedApis()).thenReturn(new HashSet<API>() {
@@ -101,7 +101,7 @@ public class GenerationStrategyTest {
     RAMLFilesParser raml = mock(RAMLFilesParser.class);
     MuleConfigParser mule = mock(MuleConfigParser.class);
     final API api =
-        apiFactory.createAPIBindingInboundEndpoint("sample.raml", null, "http://localhost:8080", "/api/*", null);
+        apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), null, "http://localhost:8080", "/api/*", null);
 
     when(mule.getIncludedApis()).thenReturn(new HashSet<API>() {
 
@@ -117,7 +117,7 @@ public class GenerationStrategyTest {
       }
     });
     API fromRAMLFile =
-        apiFactory.createAPIBindingInboundEndpoint("sample.raml", null, "http://localhost:8080", "/api/*", null);
+        apiFactory.createAPIBindingInboundEndpoint(new File("sample.raml"), null, "http://localhost:8080", "/api/*", null);
 
     final Map<ResourceActionMimeTypeTriplet, GenerationModel> ramlEntries =
         new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();

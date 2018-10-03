@@ -19,7 +19,7 @@ import org.apache.commons.lang.Validate;
 
 public class APIFactory {
 
-  private Map<String, API> apis = new HashMap<>();
+  private Map<File, API> apis = new HashMap<File, API>();
   private Map<String, HttpListener4xConfig> domainHttpListenerConfigs = new HashMap<>();
 
   public APIFactory(Map<String, HttpListener4xConfig> domainHttpListenerConfigs) {
@@ -28,22 +28,21 @@ public class APIFactory {
 
   public APIFactory() {}
 
-  public API createAPIBindingInboundEndpoint(String ramlFileName, File xmlFile, String baseUri, String path,
-                                             APIKitConfig config) {
-    return createAPIBinding(ramlFileName, xmlFile, baseUri, path, config, null);
+  public API createAPIBindingInboundEndpoint(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config) {
+    return createAPIBinding(ramlFile, xmlFile, baseUri, path, config, null);
   }
 
-  public API createAPIBinding(String ramlFileName, File xmlFile, String baseUri, String path, APIKitConfig config,
+  public API createAPIBinding(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config,
                               HttpListener4xConfig httpListenerConfig) {
-    Validate.notNull(ramlFileName);
-    if (apis.containsKey(ramlFileName)) {
-      API api = apis.get(ramlFileName);
+    Validate.notNull(ramlFile);
+    if (apis.containsKey(ramlFile)) {
+      API api = apis.get(ramlFile);
       if (api.getXmlFile() == null && xmlFile != null) {
         api.setXmlFile(xmlFile);
       }
       return api;
     }
-    API api = new API(ramlFileName, xmlFile, baseUri, path, config);
+    API api = new API(ramlFile, xmlFile, baseUri, path, config);
     if (httpListenerConfig == null) {
       if (domainHttpListenerConfigs.size() > 0) {
         api.setHttpListenerConfig(getFirstLC());
@@ -54,7 +53,7 @@ public class APIFactory {
       api.setHttpListenerConfig(httpListenerConfig);
     }
     api.setConfig(config);
-    apis.put(ramlFileName, api);
+    apis.put(ramlFile, api);
     return api;
   }
 

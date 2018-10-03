@@ -6,18 +6,21 @@
  */
 package org.mule.module.apikit.metadata.interfaces;
 
+import org.mule.raml.interfaces.model.IRaml;
+
 import java.io.File;
 
 /**
- * Represents a way of getting resources from the application
- */
-public interface ResourceLoader {
+ * Interface that wraps a parser implementation
+ **/
+public interface Parseable {
 
   /**
-   * Gets the root RAML File
+   * Parses and builds the model for a RAML API
    *
-   * @param relativePath Location of the root RAML file relative to the /mule/resources/api folder
-   * @return The File containing the RAML and all its includes
+   * @param ramlFile The API
+   * @param ramlContent
+   * @return The RAML Model
    */
-  File getRamlResource(String relativePath);
+  IRaml build(File ramlFile, String ramlContent);
 }

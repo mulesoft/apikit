@@ -6,12 +6,11 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.apache.commons.io.FilenameUtils;
-import org.mule.tools.apikit.misc.APISyncUtils;
+import org.mule.tools.apikit.misc.APIKitTools;
 
 import java.io.File;
 
-import static org.mule.tools.apikit.misc.APISyncUtils.API_SYNC_PROTOCOL;
+import org.apache.commons.io.FilenameUtils;
 
 public class API {
 
@@ -29,27 +28,19 @@ public class API {
 
   private String baseUri;
   private File xmlFile;
-  private String ramlFileName;
+  private File ramlFile;
   private String id;
 
-  public API(String ramlFileName, File xmlFile, String baseUri, String path) {
+  public API(File ramlFile, File xmlFile, String baseUri, String path) {
     this.path = path;
-    this.ramlFileName = ramlFileName;
+    this.ramlFile = ramlFile;
     this.xmlFile = xmlFile;
     this.baseUri = baseUri;
-    id = getApiName(ramlFileName);
+    id = FilenameUtils.removeExtension(ramlFile.getName()).trim();
   }
 
-  private String getApiName(String ramlFileName) {
-    String apiName = ramlFileName;
-    if (ramlFileName.startsWith(API_SYNC_PROTOCOL)) {
-      apiName = ramlFileName.substring(ramlFileName.lastIndexOf(":") + 1);
-    }
-    return FilenameUtils.removeExtension(apiName);
-  }
-
-  public API(String ramlFileName, File xmlFile, String baseUri, String path, APIKitConfig config) {
-    this(ramlFileName, xmlFile, baseUri, path);
+  public API(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config) {
+    this(ramlFile, xmlFile, baseUri, path);
     this.config = config;
   }
 
@@ -66,14 +57,14 @@ public class API {
     if (xmlFile == null) {
       xmlFile = new File(rootDirectory,
                          FilenameUtils.getBaseName(
-                                                   ramlFileName)
+                                                   ramlFile.getAbsolutePath())
                              + ".xml");
     }
     return xmlFile;
   }
 
-  public String getRamlFileName() {
-    return ramlFileName;
+  public File getRamlFile() {
+    return ramlFile;
   }
 
   public String getPath() {
@@ -102,7 +93,7 @@ public class API {
 
   public void setDefaultAPIKitConfig() {
     config = new APIKitConfig();
-    config.setRaml(ramlFileName);
+    config.setRaml(ramlFile.getName());
     config.setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME);
   }
 
@@ -138,7 +129,7 @@ public class API {
 
     API api = (API) o;
 
-    if (!ramlFileName.equals(api.ramlFileName))
+    if (!ramlFile.equals(api.ramlFile))
       return false;
 
     return true;
@@ -146,7 +137,7 @@ public class API {
 
   @Override
   public int hashCode() {
-    return ramlFileName.hashCode();
+    return ramlFile.hashCode();
   }
 
   public String getId() {

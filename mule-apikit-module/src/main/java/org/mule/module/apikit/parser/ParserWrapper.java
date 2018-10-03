@@ -9,8 +9,6 @@ package org.mule.module.apikit.parser;
 import org.mule.module.apikit.injector.RamlUpdater;
 import org.mule.raml.interfaces.model.IRaml;
 
-import java.io.InputStream;
-
 public interface ParserWrapper {
 
   void validate();
@@ -24,6 +22,4 @@ public interface ParserWrapper {
   RamlUpdater getRamlUpdater(IRaml api);
 
   void updateBaseUri(IRaml api, String baseUri);
-
-  InputStream fetchResource(String resource);
 }
