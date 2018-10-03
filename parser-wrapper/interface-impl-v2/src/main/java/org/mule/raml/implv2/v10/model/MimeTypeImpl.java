@@ -6,6 +6,7 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import com.google.common.base.Optional;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.common.ValidationResult;
@@ -24,6 +25,7 @@ public class MimeTypeImpl implements IMimeType
 {
 
     private TypeDeclaration typeDeclaration;
+    private Optional<String> typeAsString;
 
     public MimeTypeImpl(TypeDeclaration typeDeclaration)
     {
@@ -102,7 +104,10 @@ public class MimeTypeImpl implements IMimeType
 
     @Override
     public String getSchema() {
-        return getTypeAsString(typeDeclaration);
+        if (typeAsString == null) {
+            typeAsString = Optional.fromNullable(getTypeAsString(typeDeclaration));
+        }
+        return typeAsString.orNull();
     }
 
     @Override
