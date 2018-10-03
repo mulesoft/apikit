@@ -19,13 +19,16 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.mule.raml.implv2.v10.model.RamlImpl10V2.getTypeAsString;
 
 public class MimeTypeImpl implements IMimeType {
 
   private TypeDeclaration typeDeclaration;
+  private Optional<String> typeAsString;
 
   public MimeTypeImpl(TypeDeclaration typeDeclaration) {
     this.typeDeclaration = typeDeclaration;
@@ -102,7 +105,10 @@ public class MimeTypeImpl implements IMimeType {
 
   @Override
   public String getSchema() {
-    return getTypeAsString(typeDeclaration);
+    if (typeAsString == null) {
+      typeAsString = ofNullable(getTypeAsString(typeDeclaration));
+    }
+    return typeAsString.orElse(null);
   }
 
   @Override
