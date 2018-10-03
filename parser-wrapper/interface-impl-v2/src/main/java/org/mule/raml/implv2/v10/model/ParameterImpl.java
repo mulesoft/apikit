@@ -7,6 +7,7 @@
 package org.mule.raml.implv2.v10.model;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
@@ -23,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Sets.newHashSet;
 import static org.raml.v2.internal.impl.v10.type.TypeId.ARRAY;
@@ -33,6 +35,8 @@ public class ParameterImpl implements IParameter
 
     private TypeDeclaration typeDeclaration;
     private Collection<String> scalarTypes;
+    private Boolean required;
+    private Optional<String> defaultValue;
 
     public ParameterImpl(TypeDeclaration typeDeclaration)
     {
@@ -68,13 +72,20 @@ public class ParameterImpl implements IParameter
     @Override
     public boolean isRequired()
     {
-        return typeDeclaration.required();
+        if (required == null) {
+            required = typeDeclaration.required();
+        }
+        return required;
     }
 
     @Override
     public String getDefaultValue()
     {
-        return typeDeclaration.defaultValue();
+        if (defaultValue == null) {
+            defaultValue = fromNullable(typeDeclaration.defaultValue());
+        }
+
+        return defaultValue.orNull();
     }
 
     @Override
