@@ -12,6 +12,7 @@ import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 
 import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.injector.RamlUpdater;
+import org.mule.raml.implv1.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv1.model.RamlImplV1;
 import org.mule.raml.interfaces.model.IRaml;
 
@@ -43,7 +44,7 @@ public class ParserWrapperV1 implements ParserWrapper {
 
   public ParserWrapperV1(String ramlPath) {
     this.ramlPath = ramlPath;
-    this.resourceLoader = new DefaultResourceLoader();
+    this.resourceLoader = new ApiSyncResourceLoader(ramlPath);
   }
 
   @Override

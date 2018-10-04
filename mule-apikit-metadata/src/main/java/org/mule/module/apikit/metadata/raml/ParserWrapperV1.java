@@ -7,12 +7,17 @@
 package org.mule.module.apikit.metadata.raml;
 
 import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
+import org.mule.raml.implv1.ParserV1Utils;
+import org.mule.raml.implv1.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv1.model.RamlImplV1;
 import org.mule.raml.implv1.parser.visitor.RamlDocumentBuilderImpl;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
 import org.raml.model.Raml;
 import org.raml.parser.visitor.RamlDocumentBuilder;
+
+import javax.annotation.Nullable;
+import java.io.InputStream;
 
 class ParserWrapperV1 implements ParserWrapper {
 
@@ -28,9 +33,18 @@ class ParserWrapperV1 implements ParserWrapper {
 
   @Override
   public IRaml build() {
-    RamlDocumentBuilder builder = new RamlDocumentBuilder(resourceLoader::getRamlResource);
-    Raml api = builder.build(ramlPath);
-    return new RamlImplV1(api);
+    return ParserV1Utils.build(content, new ApiSyncResourceLoader(ramlPath, adaptResourceLoader(resourceLoader)), ramlPath);
+  }
+
+  private org.raml.parser.loader.ResourceLoader adaptResourceLoader(final ResourceLoader resourceLoader) {
+    return new org.raml.parser.loader.ResourceLoader() {
+
+      @Nullable
+      @Override
+      public InputStream fetchResource(String s) {
+        return resourceLoader.getRamlResource(s);
+      }
+    };
   }
 }
 
