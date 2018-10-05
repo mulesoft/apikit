@@ -150,6 +150,14 @@ public class ParametersTestCase extends AbstractMultiParserFunctionalTestCase {
   }
 
   @Test
+  public void defaultValue() throws Exception {
+    given()
+            .expect().response().statusCode(200)
+            .body(is("default"))
+            .when().get("/api/default");
+  }
+
+  @Test
   public void repeatableQueryParam() {
     given().queryParam("status", "a", "b")
         .expect().response().statusCode(200)
