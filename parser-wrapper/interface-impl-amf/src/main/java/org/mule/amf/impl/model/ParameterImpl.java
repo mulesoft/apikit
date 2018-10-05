@@ -8,9 +8,11 @@ package org.mule.amf.impl.model;
 
 import amf.client.model.domain.AnyShape;
 import amf.client.model.domain.ArrayShape;
+import amf.client.model.domain.DataNode;
 import amf.client.model.domain.NodeShape;
 import amf.client.model.domain.Parameter;
 import amf.client.model.domain.PropertyShape;
+import amf.client.model.domain.ScalarNode;
 import amf.client.model.domain.Shape;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
@@ -94,6 +96,8 @@ class ParameterImpl implements IParameter {
 
   @Override
   public String getDefaultValue() {
+    DataNode defaultValue = schema.defaultValue();
+    if (defaultValue instanceof ScalarNode) return ((ScalarNode) defaultValue).value();
     return schema.defaultValueStr().option().orElse(null);
   }
 
