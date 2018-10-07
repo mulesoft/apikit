@@ -21,29 +21,26 @@ import static org.mule.tools.apikit.input.RAMLFilesParser.MULE_APIKIT_PARSER;
 public abstract class AbstractMultiParserTestCase {
 
   @Parameterized.Parameter(value = 0)
-  public String parserName;
+  public String parser;
 
-  @Parameterized.Parameter(value = 1)
-  public String parserValue;
-
-  private static final String AMF_PARSER = "AmfParser";
-  private static final String JAVA_PARSER = "JavaParser";
+  private static final String AMF = "AMF";
+  private static final String RAML = "RAML";
 
   @Parameterized.Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
     return asList(new Object[][] {
-        {AMF_PARSER, "AMF"},
-        {JAVA_PARSER, "RAML"}
+        {AMF},
+        {RAML}
     });
   }
 
   public boolean isAmf() {
-    return "AMF".equals(parserValue);
+    return AMF.equals(parser);
   }
 
   @Before
   public void beforeTest() {
-    System.setProperty(MULE_APIKIT_PARSER, parserValue);
+    System.setProperty(MULE_APIKIT_PARSER, parser);
   }
 
   @After
