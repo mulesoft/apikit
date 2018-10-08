@@ -103,69 +103,70 @@ public class RAMLFilesParserTest {
   }
 
 
-    @Test
-    public void oasCreation() {
+  @Test
+  public void oasCreation() {
 
-        final URL url =
-                RAMLFilesParserTest.class.getClassLoader().getResource("oas/OpenAPI-Specification/examples/v2.0/json/petstore.json");
+    final URL url =
+        RAMLFilesParserTest.class.getClassLoader().getResource("oas/OpenAPI-Specification/examples/v2.0/json/petstore.json");
 
-        System.out.println("RAMLFilesParserTest.oasCreation " + url);
+    System.out.println("RAMLFilesParserTest.oasCreation " + url);
 
-        final Map<File, InputStream> streams = urlToMapStream(url);
+    final Map<File, InputStream> streams = urlToMapStream(url);
 
-        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(mockLog(), streams, new APIFactory());
+    RAMLFilesParser ramlFilesParser = new RAMLFilesParser(mockLog(), streams, new APIFactory());
 
-        Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
+    Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
 
-        assertNotNull(entries);
-        assertEquals(3, entries.size());
-        Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
-        ResourceActionMimeTypeTriplet triplet = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
+    assertNotNull(entries);
+    assertEquals(3, entries.size());
+    Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
+    ResourceActionMimeTypeTriplet triplet = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
 
-            @Override
-            public boolean evaluate(Object property) {
-                ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
-                return "/api/pets".equals(triplet.getUri()) && "GET".equals(triplet.getVerb()) && "/api".equals(triplet.getApi().getPath());
-            }
-        });
-         assertEquals("0.0.0.0", triplet.getApi().getHttpListenerConfig().getHost());
-        assertEquals("8081", triplet.getApi().getHttpListenerConfig().getPort());
-        assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
-        assertEquals("petstore-httpListenerConfig", triplet.getApi().getHttpListenerConfig().getName());
-        ResourceActionMimeTypeTriplet triplet2 = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
+      @Override
+      public boolean evaluate(Object property) {
+        ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
+        return "/api/pets".equals(triplet.getUri()) && "GET".equals(triplet.getVerb())
+            && "/api".equals(triplet.getApi().getPath());
+      }
+    });
+    assertEquals("0.0.0.0", triplet.getApi().getHttpListenerConfig().getHost());
+    assertEquals("8081", triplet.getApi().getHttpListenerConfig().getPort());
+    assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
+    assertEquals("petstore-httpListenerConfig", triplet.getApi().getHttpListenerConfig().getName());
+    ResourceActionMimeTypeTriplet triplet2 = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
 
-            @Override
-            public boolean evaluate(Object property) {
-                ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
-                return "/api/pets".equals(triplet.getUri()) && "GET".equals(triplet.getVerb())
-                        && "/api".equals(triplet.getApi().getPath());
-            }
-        });
-        assertEquals("0.0.0.0", triplet2.getApi().getHttpListenerConfig().getHost());
-        assertEquals("8081", triplet2.getApi().getHttpListenerConfig().getPort());
-        assertEquals("/", triplet2.getApi().getHttpListenerConfig().getBasePath());
-        assertEquals("petstore-httpListenerConfig", triplet2.getApi().getHttpListenerConfig().getName());
+      @Override
+      public boolean evaluate(Object property) {
+        ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
+        return "/api/pets".equals(triplet.getUri()) && "GET".equals(triplet.getVerb())
+            && "/api".equals(triplet.getApi().getPath());
+      }
+    });
+    assertEquals("0.0.0.0", triplet2.getApi().getHttpListenerConfig().getHost());
+    assertEquals("8081", triplet2.getApi().getHttpListenerConfig().getPort());
+    assertEquals("/", triplet2.getApi().getHttpListenerConfig().getBasePath());
+    assertEquals("petstore-httpListenerConfig", triplet2.getApi().getHttpListenerConfig().getName());
 
 
+  }
+
+
+  private static Map<File, InputStream> urlToMapStream(final URL url) {
+    InputStream resourceAsStream;
+    try {
+      resourceAsStream = url.openStream();
+    } catch (IOException e) {
+      resourceAsStream = null;
     }
-    
-    
-    private static Map<File, InputStream> urlToMapStream(final URL url) {
-        InputStream resourceAsStream;
-        try {
-            resourceAsStream = url.openStream();
-        } catch (IOException e) {
-            resourceAsStream = null;
-        }
 
-        final Map<File, InputStream> map = new HashMap<File, InputStream>();
-        map.put(new File(url.getFile()), resourceAsStream);
-        
-        return map;
-    }
-    
+    final Map<File, InputStream> map = new HashMap<File, InputStream>();
+    map.put(new File(url.getFile()), resourceAsStream);
 
-    private Stubber getStubber(String prefix) {
+    return map;
+  }
+
+
+  private Stubber getStubber(String prefix) {
     return doAnswer((Answer<Void>) invocation -> {
       Object[] args = invocation.getArguments();
       System.out.println(prefix + args[0].toString());
@@ -175,11 +176,11 @@ public class RAMLFilesParserTest {
 
   private Log mockLog() {
 
-      Log log = mock(Log.class);
-      getStubber("[INFO] ").when(log).info(anyString());
-      getStubber("[WARNING] ").when(log).warn(anyString());
-      getStubber("[ERROR] ").when(log).error(anyString());
+    Log log = mock(Log.class);
+    getStubber("[INFO] ").when(log).info(anyString());
+    getStubber("[WARNING] ").when(log).warn(anyString());
+    getStubber("[ERROR] ").when(log).error(anyString());
 
-      return log;
+    return log;
   }
 }

@@ -39,7 +39,7 @@ import static org.apache.commons.io.FilenameUtils.getExtension;
 public class DocumentParser {
 
   private static final Logger logger = LoggerFactory.getLogger(DocumentParser.class);
-  
+
   private DocumentParser() {}
 
   private static RamlParser ramlParser(Environment environment) {
@@ -145,7 +145,7 @@ public class DocumentParser {
       AMFValidatorPlugin.withEnabledValidation(true);
       amf.core.AMF.registerPlugin(new XmlValidationPlugin());
     } catch (final Exception e) {
-        logger.error("Error initializing AMF", e);
+      logger.error("Error initializing AMF", e);
     }
   }
 }
