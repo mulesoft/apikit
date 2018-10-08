@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
-    <http:listener-config name="petstore-httpListenerConfig">
+    <http:listener-config name="petstore-simple-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="petstore-config" raml="petstore.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <flow name="petstore-main">
-        <http:listener config-ref="petstore-httpListenerConfig" path="/api/*">
+    <apikit:config name="petstore-simple-config" raml="petstore-simple.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="petstore-simple-main">
+        <http:listener config-ref="petstore-simple-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
@@ -14,7 +14,7 @@
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="petstore-config" />
+        <apikit:router config-ref="petstore-simple-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -96,8 +96,8 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="petstore-console">
-        <http:listener config-ref="petstore-httpListenerConfig" path="/console/*">
+    <flow name="petstore-simple-console">
+        <http:listener config-ref="petstore-simple-httpListenerConfig" path="/console/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
@@ -106,7 +106,7 @@ output application/json
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="petstore-config" />
+        <apikit:console config-ref="petstore-simple-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -123,115 +123,26 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="put:\pet:application\json:petstore-config">
-        <logger level="INFO" message="put:\pet:application\json:petstore-config" />
-    </flow>
-    <flow name="put:\pet:application\xml:petstore-config">
-        <logger level="INFO" message="put:\pet:application\xml:petstore-config" />
-    </flow>
-    <flow name="put:\user\(username):petstore-config">
+    <flow name="delete:\pets\(id):petstore-simple-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
-                <ee:set-variable variableName="username">attributes.uriParams.username</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <logger level="INFO" message="put:\user\(username):petstore-config" />
+        <logger level="INFO" message="delete:\pets\(id):petstore-simple-config" />
     </flow>
-    <flow name="delete:\pet\(petId):petstore-config">
+    <flow name="get:\pets:petstore-simple-config">
+        <logger level="INFO" message="get:\pets:petstore-simple-config" />
+    </flow>
+    <flow name="get:\pets\(id):petstore-simple-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
             <ee:variables>
-                <ee:set-variable variableName="petId">attributes.uriParams.petId</ee:set-variable>
+                <ee:set-variable variableName="id">attributes.uriParams.id</ee:set-variable>
             </ee:variables>
         </ee:transform>
-        <logger level="INFO" message="delete:\pet\(petId):petstore-config" />
+        <logger level="INFO" message="get:\pets\(id):petstore-simple-config" />
     </flow>
-    <flow name="delete:\store\order\(orderId):petstore-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="orderId">attributes.uriParams.orderId</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="delete:\store\order\(orderId):petstore-config" />
-    </flow>
-    <flow name="delete:\user\(username):petstore-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="username">attributes.uriParams.username</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="delete:\user\(username):petstore-config" />
-    </flow>
-    <flow name="get:\pet\findByStatus:petstore-config">
-        <logger level="INFO" message="get:\pet\findByStatus:petstore-config" />
-    </flow>
-    <flow name="get:\pet\findByTags:petstore-config">
-        <logger level="INFO" message="get:\pet\findByTags:petstore-config" />
-    </flow>
-    <flow name="get:\pet\(petId):petstore-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="petId">attributes.uriParams.petId</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="get:\pet\(petId):petstore-config" />
-    </flow>
-    <flow name="get:\store\inventory:petstore-config">
-        <logger level="INFO" message="get:\store\inventory:petstore-config" />
-    </flow>
-    <flow name="get:\store\order\(orderId):petstore-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="orderId">attributes.uriParams.orderId</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="get:\store\order\(orderId):petstore-config" />
-    </flow>
-    <flow name="get:\user\login:petstore-config">
-        <logger level="INFO" message="get:\user\login:petstore-config" />
-    </flow>
-    <flow name="get:\user\logout:petstore-config">
-        <logger level="INFO" message="get:\user\logout:petstore-config" />
-    </flow>
-    <flow name="get:\user\(username):petstore-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="username">attributes.uriParams.username</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="get:\user\(username):petstore-config" />
-    </flow>
-    <flow name="post:\pet\(petId)\uploadImage:multipart\form-data:petstore-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="petId">attributes.uriParams.petId</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="post:\pet\(petId)\uploadImage:multipart\form-data:petstore-config" />
-    </flow>
-    <flow name="post:\pet\(petId):application\x-www-form-urlencoded:petstore-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
-            <ee:variables>
-                <ee:set-variable variableName="petId">attributes.uriParams.petId</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="post:\pet\(petId):application\x-www-form-urlencoded:petstore-config" />
-    </flow>
-    <flow name="post:\pet:application\json:petstore-config">
-        <logger level="INFO" message="post:\pet:application\json:petstore-config" />
-    </flow>
-    <flow name="post:\pet:application\xml:petstore-config">
-        <logger level="INFO" message="post:\pet:application\xml:petstore-config" />
-    </flow>
-    <flow name="post:\store\order:petstore-config">
-        <logger level="INFO" message="post:\store\order:petstore-config" />
-    </flow>
-    <flow name="post:\user:petstore-config">
-        <logger level="INFO" message="post:\user:petstore-config" />
-    </flow>
-    <flow name="post:\user\createWithArray:petstore-config">
-        <logger level="INFO" message="post:\user\createWithArray:petstore-config" />
-    </flow>
-    <flow name="post:\user\createWithList:petstore-config">
-        <logger level="INFO" message="post:\user\createWithList:petstore-config" />
+    <flow name="post:\pets:application\json:petstore-simple-config">
+        <logger level="INFO" message="post:\pets:application\json:petstore-simple-config" />
     </flow>
 </mule>

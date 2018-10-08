@@ -6,7 +6,6 @@
  */
 package org.mule.tools.apikit;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,7 +13,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -35,11 +33,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.stubbing.Stubber;
+import org.mule.amf.impl.DocumentParser;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.RuntimeEdition;
 
 import static java.lang.String.format;
-import static java.nio.file.Files.newBufferedReader;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
@@ -61,9 +59,7 @@ public class ScaffolderOASTest {
   private Log logger;
   private FileListUtils fileListUtils = new FileListUtils();
 
-  // TODO YAMl is procesed using RAMl Parser
-  //private static final PathMatcher API_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.{json,yaml}");
-  private static final PathMatcher API_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.{json}");
+  private static final PathMatcher API_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.{json,yaml, yml}");
 
   public ScaffolderOASTest(final String folderName, final Path api) {
 
@@ -74,7 +70,6 @@ public class ScaffolderOASTest {
   @Before
   public void beforeTest() throws IOException {
     final File outputFolder = outputFolder(api).toFile();
-    System.out.println("Before delete " + outputFolder);
 
     if (outputFolder.exists())
       FileUtils.deleteDirectory(outputFolder);
@@ -145,13 +140,8 @@ public class ScaffolderOASTest {
     if (!isOas)
       return false;
 
-    try {
-      final String header = readHeader(path);
-      System.out.println(header);
-      return header.toLowerCase().contains("swagger") && header.contains("2.0");
-    } catch (IOException e) {
-      return false;
-    }
+    final String vendor = DocumentParser.getVendor(path.toUri());
+    return "OAS".equals(vendor);
   }
 
   private Path simpleGeneration(final Path api) throws Exception {
@@ -211,25 +201,6 @@ public class ScaffolderOASTest {
       throw new RuntimeException(e);
     }
   }
-
-
-  public static String readHeader(final Path path) throws IOException {
-    final StringBuffer buffer = new StringBuffer();
-    int lines = 0;
-    try (BufferedReader reader = newBufferedReader(path, StandardCharsets.UTF_8)) {
-      for (;;) {
-        String line = reader.readLine();
-        if (line == null)
-          break;
-        buffer.append(line);
-        if (++lines == 3)
-          break;
-
-      }
-      return buffer.toString();
-    }
-  }
-
 
   /************************************************************************************************
   // Similar to AbstractScaffolderTestCase but single Parser
