@@ -22,21 +22,24 @@ import amf.plugins.features.validation.AMFValidatorPlugin;
 import amf.plugins.xml.XmlValidationPlugin;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import org.apache.commons.io.IOUtils;
-import org.mule.amf.impl.exceptions.ParserException;
-
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import org.apache.commons.io.IOUtils;
+import org.mule.amf.impl.exceptions.ParserException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.sun.jmx.mbeanserver.Util.cast;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
 public class DocumentParser {
 
+  private static final Logger logger = LoggerFactory.getLogger(DocumentParser.class);
+  
   private DocumentParser() {}
 
   private static RamlParser ramlParser(Environment environment) {
@@ -142,7 +145,7 @@ public class DocumentParser {
       AMFValidatorPlugin.withEnabledValidation(true);
       amf.core.AMF.registerPlugin(new XmlValidationPlugin());
     } catch (final Exception e) {
-      e.printStackTrace();
+        logger.error("Error initializing AMF", e);
     }
   }
 }

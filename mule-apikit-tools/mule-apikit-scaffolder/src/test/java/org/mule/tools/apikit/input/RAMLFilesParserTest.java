@@ -6,10 +6,10 @@
  */
 package org.mule.tools.apikit.input;
 
-import junit.framework.Assert;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.maven.plugin.logging.Log;
+import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 import org.mockito.stubbing.Stubber;
@@ -35,27 +35,15 @@ public class RAMLFilesParserTest {
 
   @Test
   public void testCreation() {
-    Log log = mock(Log.class);
-    getStubber("[INFO] ").when(log).info(anyString());
-    getStubber("[WARNING] ").when(log).warn(anyString());
-    getStubber("[ERROR] ").when(log).error(anyString());
 
     final URL resourceUrl =
         RAMLFilesParserTest.class.getClassLoader().getResource("scaffolder/simple.raml");
 
     assertNotNull(resourceUrl);
 
-    InputStream resourceAsStream;
-    try {
-      resourceAsStream = resourceUrl.openStream();
-    } catch (IOException e) {
-      resourceAsStream = null;
-    }
+    final Map<File, InputStream> streams = urlToMapStream(resourceUrl);
 
-    HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
-    streams.put(new File(resourceUrl.getFile()), resourceAsStream);
-
-    RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory());
+    RAMLFilesParser ramlFilesParser = new RAMLFilesParser(mockLog(), streams, new APIFactory());
 
     Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
     assertNotNull(entries);
@@ -69,10 +57,10 @@ public class RAMLFilesParserTest {
         return "/api/".equals(triplet.getUri()) && "GET".equals(triplet.getVerb()) && "/api".equals(triplet.getApi().getPath());
       }
     });
-    Assert.assertEquals("0.0.0.0", triplet.getApi().getHttpListenerConfig().getHost());
-    Assert.assertEquals("8081", triplet.getApi().getHttpListenerConfig().getPort());
-    Assert.assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
-    Assert.assertEquals("simple-httpListenerConfig", triplet.getApi().getHttpListenerConfig().getName());
+    assertEquals("0.0.0.0", triplet.getApi().getHttpListenerConfig().getHost());
+    assertEquals("8081", triplet.getApi().getHttpListenerConfig().getPort());
+    assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
+    assertEquals("simple-httpListenerConfig", triplet.getApi().getHttpListenerConfig().getName());
     ResourceActionMimeTypeTriplet triplet2 = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
 
       @Override
@@ -82,20 +70,15 @@ public class RAMLFilesParserTest {
             && "/api".equals(triplet.getApi().getPath());
       }
     });
-    Assert.assertEquals("0.0.0.0", triplet2.getApi().getHttpListenerConfig().getHost());
-    Assert.assertEquals("8081", triplet2.getApi().getHttpListenerConfig().getPort());
-    Assert.assertEquals("/", triplet2.getApi().getHttpListenerConfig().getBasePath());
-    Assert.assertEquals("simple-httpListenerConfig", triplet2.getApi().getHttpListenerConfig().getName());
+    assertEquals("0.0.0.0", triplet2.getApi().getHttpListenerConfig().getHost());
+    assertEquals("8081", triplet2.getApi().getHttpListenerConfig().getPort());
+    assertEquals("/", triplet2.getApi().getHttpListenerConfig().getBasePath());
+    assertEquals("simple-httpListenerConfig", triplet2.getApi().getHttpListenerConfig().getName());
 
   }
 
   @Test
   public void apiWithWarningsShouldBeValid() {
-    Log log = mock(Log.class);
-    getStubber("[INFO] ").when(log).info(anyString());
-    getStubber("[WARNING] ").when(log).warn(anyString());
-    getStubber("[ERROR] ").when(log).error(anyString());
-
 
     final URL resourceUrl =
         RAMLFilesParserTest.class.getClassLoader().getResource("scaffolder/apiWithWarnings.raml");
@@ -112,18 +95,91 @@ public class RAMLFilesParserTest {
     final HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
     streams.put(new File(resourceUrl.getFile()), resourceAsStream);
 
-    RAMLFilesParser ramlFilesParser = new RAMLFilesParser(log, streams, new APIFactory());
+    RAMLFilesParser ramlFilesParser = new RAMLFilesParser(mockLog(), streams, new APIFactory());
 
     Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
     assertNotNull(entries);
     assertEquals(1, entries.size());
   }
 
-  private Stubber getStubber(String prefix) {
+
+    @Test
+    public void oasCreation() {
+
+        final URL url =
+                RAMLFilesParserTest.class.getClassLoader().getResource("oas/OpenAPI-Specification/examples/v2.0/json/petstore.json");
+
+        System.out.println("RAMLFilesParserTest.oasCreation " + url);
+
+        final Map<File, InputStream> streams = urlToMapStream(url);
+
+        RAMLFilesParser ramlFilesParser = new RAMLFilesParser(mockLog(), streams, new APIFactory());
+
+        Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
+
+        assertNotNull(entries);
+        assertEquals(3, entries.size());
+        Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
+        ResourceActionMimeTypeTriplet triplet = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
+
+            @Override
+            public boolean evaluate(Object property) {
+                ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
+                return "/api/pets".equals(triplet.getUri()) && "GET".equals(triplet.getVerb()) && "/api".equals(triplet.getApi().getPath());
+            }
+        });
+         assertEquals("0.0.0.0", triplet.getApi().getHttpListenerConfig().getHost());
+        assertEquals("8081", triplet.getApi().getHttpListenerConfig().getPort());
+        assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
+        assertEquals("petstore-httpListenerConfig", triplet.getApi().getHttpListenerConfig().getName());
+        ResourceActionMimeTypeTriplet triplet2 = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
+
+            @Override
+            public boolean evaluate(Object property) {
+                ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
+                return "/api/pets".equals(triplet.getUri()) && "GET".equals(triplet.getVerb())
+                        && "/api".equals(triplet.getApi().getPath());
+            }
+        });
+        assertEquals("0.0.0.0", triplet2.getApi().getHttpListenerConfig().getHost());
+        assertEquals("8081", triplet2.getApi().getHttpListenerConfig().getPort());
+        assertEquals("/", triplet2.getApi().getHttpListenerConfig().getBasePath());
+        assertEquals("petstore-httpListenerConfig", triplet2.getApi().getHttpListenerConfig().getName());
+
+
+    }
+    
+    
+    private static Map<File, InputStream> urlToMapStream(final URL url) {
+        InputStream resourceAsStream;
+        try {
+            resourceAsStream = url.openStream();
+        } catch (IOException e) {
+            resourceAsStream = null;
+        }
+
+        final Map<File, InputStream> map = new HashMap<File, InputStream>();
+        map.put(new File(url.getFile()), resourceAsStream);
+        
+        return map;
+    }
+    
+
+    private Stubber getStubber(String prefix) {
     return doAnswer((Answer<Void>) invocation -> {
       Object[] args = invocation.getArguments();
       System.out.println(prefix + args[0].toString());
       return null;
     });
+  }
+
+  private Log mockLog() {
+
+      Log log = mock(Log.class);
+      getStubber("[INFO] ").when(log).info(anyString());
+      getStubber("[WARNING] ").when(log).warn(anyString());
+      getStubber("[ERROR] ").when(log).error(anyString());
+
+      return log;
   }
 }
