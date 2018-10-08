@@ -8,6 +8,7 @@ package org.mule.amf.impl.parser.rule;
 
 import amf.client.validate.ValidationResult;
 import amf.core.parser.Position;
+import java.net.URLDecoder;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
 
@@ -60,7 +61,7 @@ public class ValidationResultImpl implements IValidationResult {
   }
 
   private static String buildErrorMessage(String message, String location, Position startPosition) {
-    return format(ERROR_FORMAT, message, location, getPositionMessage(startPosition));
+    return format(ERROR_FORMAT, message, URLDecoder.decode(location), getPositionMessage(startPosition));
   }
 
   private static String getPositionMessage(Position startPosition) {
