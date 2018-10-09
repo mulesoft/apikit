@@ -77,8 +77,10 @@ public class MetadataTestCase extends TestDataProvider {
 
     currentMap = types.stream().collect(toMap(FlowFunctionType::getFileName, FlowFunctionType::toString));
 
-    assertThat(format("Number of function metadata differs from the expected ones. File: '%s'", name), currentMap.size(), is(equalTo(expectedMap.size())));
-    assertThat(format("Flow names differs from the expected ones. File: '%s'", name), currentMap.keySet(), is(equalTo(expectedMap.keySet())));
+    assertThat(format("Number of function metadata differs from the expected ones. File: '%s'", name), currentMap.size(),
+               is(equalTo(expectedMap.size())));
+    assertThat(format("Flow names differs from the expected ones. File: '%s'", name), currentMap.keySet(),
+               is(equalTo(expectedMap.keySet())));
 
     currentMap.forEach((name, actual) -> {
       final String expected = expectedMap.get(name);

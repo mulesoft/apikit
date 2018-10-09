@@ -38,7 +38,7 @@
         <amfVersion>1.9.0-SNAPSHOT</amfVersion>
         <amfXmlExtensionVersion>1.0.0-SNAPSHOT</amfXmlExtensionVersion>
         <ramlParserV1Version>0.8.27</ramlParserV1Version>
-        <ramlParserV2Version>1.0.26</ramlParserV2Version>
+        <ramlParserV2Version>1.0.28-SNAPSHOT</ramlParserV2Version>
         
         <!-- MISC -->
         <licensePath>LICENSE_HEADER.txt</licensePath>
