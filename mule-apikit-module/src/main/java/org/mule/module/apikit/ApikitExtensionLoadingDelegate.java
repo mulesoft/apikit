@@ -85,6 +85,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
         .describedAs(PREFIX_NAME);
     ParameterGroupDeclarer parameterGroupDeclarer = apikitConfig.onDefaultParameterGroup();
     parameterGroupDeclarer.withRequiredParameter("raml").ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withRequiredParameter("api").ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withRequiredParameter("outboundHeadersMapName").ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withRequiredParameter("httpStatusVarName").ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("keepRamlBaseUri").defaultingTo(false).ofType(typeLoader.load(String.class));

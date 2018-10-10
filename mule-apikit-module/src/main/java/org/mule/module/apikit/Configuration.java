@@ -10,6 +10,7 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.apache.commons.lang.StringUtils;
 import org.mule.module.apikit.api.Parser;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.config.ConsoleConfig;
@@ -47,6 +48,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private boolean headersStrictValidation;
   private String name;
   private String raml;
+  private String api;
   private boolean keepRamlBaseUri;
   private String outboundHeadersMapName;
   private String httpStatusVarName;
@@ -123,6 +125,14 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   public void setRaml(String raml) {
     this.raml = raml;
   }
+
+  public String getApi() {
+        return StringUtils.isEmpty(api) ? raml : api;
+    }
+
+  public void setApi(String api) {
+        this.api = raml;
+    }
 
   public boolean isDisableValidations() {
     return disableValidations;

@@ -113,7 +113,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     try {
       final CompletableFuture<Event> resultEvent;
       if (configuration.isExtensionEnabled()) {
-        resultEvent = configuration.getExtension().process(event, this, this.configuration.getRaml());
+        resultEvent = configuration.getExtension().process(event, this, this.configuration.getApi());
       } else {
         resultEvent = processEvent(event);
       }
