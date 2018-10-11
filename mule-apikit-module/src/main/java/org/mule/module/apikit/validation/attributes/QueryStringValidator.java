@@ -48,19 +48,20 @@ public class QueryStringValidator {
     Map<String, IParameter> facetsWithDefault = getFacetsWithDefaultValue(expected.facets());
 
     for (Object property : queryParams.keySet()) {
-      facetsWithDefault.remove(property.toString());
-      final List<String> actualQueryParam = queryParams.getAll(property.toString());
+      String facet = property.toString();
+      facetsWithDefault.remove(facet);
+      final List<String> actualQueryParam = queryParams.getAll(facet);
 
       result.append("\n").append(property).append(": ");
 
-      if (actualQueryParam.size() > 1 || expected.isFacetArray(property.toString())) {
-        for (Object o : actualQueryParam) {
-          result.append("\n  - ").append(o);
+      if (actualQueryParam.size() > 1 || expected.isFacetArray(facet)) {
+        for (String o : actualQueryParam) {
+          result.append("\n  - ").append(expected.surroundWithQuotesIfNeeded(facet, o));
         }
         result.append("\n");
       } else {
-        for (Object o : actualQueryParam) {
-          result.append(o).append("\n");
+        for (String o : actualQueryParam) {
+          result.append(expected.surroundWithQuotesIfNeeded(facet, o)).append("\n");
         }
       }
     }
