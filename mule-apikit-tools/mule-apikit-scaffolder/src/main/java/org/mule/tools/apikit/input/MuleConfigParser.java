@@ -85,7 +85,12 @@ public class MuleConfigParser {
 
   protected void parseFlows(Collection<Document> documents) {
     for (Document document : documents) {
-      entries.addAll(new APIKitFlowsParser(log, includedApis).parse(document));
+      try {
+        entries.addAll(new APIKitFlowsParser(log, includedApis).parse(document));
+      } catch (Exception e) {
+        log.error("Error parsing Mule xml config file. Reason: " + e.getMessage());
+        log.debug(e);
+      }
     }
   }
 
