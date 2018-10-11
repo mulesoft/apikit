@@ -231,6 +231,20 @@ public class ScaffolderWithExistingConfigMule4Test {
     testAlreadyExistsGenerate();
   }
 
+  @Test
+  public void testScaffoldWithDifferentConfig() throws Exception {
+    List<File> ramls = Arrays.asList(getFile("scaffolder-existing/api.raml"));
+    File xmlFile = getFile("scaffolder-existing/simple-4.xml");
+    List<File> xmls = Arrays.asList(xmlFile);
+    File muleXmlOut = folder.newFolder("mule-xml-out");
+
+    Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, false, null);
+    scaffolder.run();
+
+    assertTrue(xmlFile.exists());
+    String s = IOUtils.toString(new FileInputStream(xmlFile));
+  }
+
   public void testAlreadyExistsGenerate() throws Exception {
     List<File> ramls = Arrays.asList(getFile("scaffolder-existing/simple.raml"));
     File xmlFile = getFile("scaffolder-existing/simple-4.xml");
