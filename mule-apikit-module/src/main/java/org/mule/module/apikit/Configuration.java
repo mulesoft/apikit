@@ -90,7 +90,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   @Override
   public void initialise() throws InitialisationException {
     try {
-      ramlHandler = new RamlHandler(raml, keepRamlBaseUri, muleContext, getParser());
+      ramlHandler = new RamlHandler(getApi(), keepRamlBaseUri, muleContext, getParser());
 
       // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
       // we will keep the value defined during raml handler instantiation
@@ -131,7 +131,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   }
 
   public void setApi(String api) {
-    this.api = raml;
+    this.api = api;
   }
 
   public boolean isDisableValidations() {

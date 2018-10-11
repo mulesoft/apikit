@@ -15,6 +15,7 @@ import org.mule.tck.junit4.rule.DynamicPort;
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
+@Ignore
 public class RouterOasTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
@@ -30,7 +31,7 @@ public class RouterOasTestCase extends MuleArtifactFunctionalTestCase {
     return "org/mule/module/apikit/router-oas/petstore.xml";
   }
 
-  @Ignore
+  @Test
   public void simpleRouting() throws Exception {
     given().header("Accept", "*/*")
         .expect()
