@@ -6,10 +6,14 @@
       xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd 
       http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
       http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    
     <http:listener-config name="petstore-httpListenerConfig">
         <http:listener-connection host="localhost" port="${serverPort}" />
     </http:listener-config>
-    <apikit:config name="petstore-config" api="petstore.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    
+    <apikit:config name="petstore-config" api="org/mule/module/apikit/router-oas/petstore.json" 
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    
     <flow name="petstore-main">
         <http:listener config-ref="petstore-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">

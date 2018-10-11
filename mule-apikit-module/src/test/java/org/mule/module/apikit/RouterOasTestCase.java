@@ -6,16 +6,18 @@
  */
 package org.mule.module.apikit;
 
+import com.jayway.restassured.RestAssured;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
+import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
-@Ignore
+@ArtifactClassLoaderRunnerConfig
 public class RouterOasTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
@@ -24,6 +26,12 @@ public class RouterOasTestCase extends MuleArtifactFunctionalTestCase {
   @Override
   public int getTestTimeoutSecs() {
     return 6000;
+  }
+
+  @Override
+  protected void doSetUp() throws Exception {
+    RestAssured.port = serverPort.getNumber();
+    super.doSetUp();
   }
 
   @Override
