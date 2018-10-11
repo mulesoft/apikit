@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>mule-apikit-parent</artifactId>
-        <version>1.1.9-SNAPSHOT</version>
+        <version>1.1.10-SNAPSHOT</version>
     </parent>
     <artifactId>mule-apikit-tools</artifactId>
     <packaging>pom</packaging>
