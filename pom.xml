@@ -35,8 +35,8 @@
         <project.reactor.version>3.2.0.M1</project.reactor.version>
 
         <!-- PARSERS -->
-        <amfVersion>1.9.0-SNAPSHOT</amfVersion>
-        <amfXmlExtensionVersion>1.0.0-SNAPSHOT</amfXmlExtensionVersion>
+        <amfVersion>2.1.0-SNAPSHOT</amfVersion>
+        <amfXmlExtensionVersion>1.1.0-SNAPSHOT</amfXmlExtensionVersion>
         <ramlParserV1Version>0.8.27</ramlParserV1Version>
         <ramlParserV2Version>1.0.28-SNAPSHOT</ramlParserV2Version>
         
