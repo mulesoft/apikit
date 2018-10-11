@@ -6,11 +6,9 @@
  */
 package org.mule.module.apikit.spi;
 
-import java.util.concurrent.CompletableFuture;
-
-import org.mule.runtime.api.event.Event;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.event.CoreEvent;
+import org.reactivestreams.Publisher;
 
 /**
  * Extension (SPI) for the APIKit Module
@@ -25,6 +23,6 @@ public interface RouterService {
    * @param ramlPath 	path to the raml
    * @return 			a competable future with the response event
    */
-  CompletableFuture<Event> process(CoreEvent event, EventProcessor router, String ramlPath) throws MuleException;
+  Publisher<CoreEvent> process(CoreEvent event, EventProcessor router, String ramlPath) throws MuleException;
 
 }

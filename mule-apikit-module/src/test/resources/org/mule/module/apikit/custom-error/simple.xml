@@ -31,6 +31,10 @@
                 <set-payload value="{message: 'Bad request'}"/>
                 <set-variable variableName="httpStatus" value="400"/>
             </on-error-propagate>
+            <on-error-propagate type="APP:NOT_FOUND">
+                <set-payload value="{message: 'Not Found'}"/>
+                <set-variable variableName="httpStatus" value="#[vars.httpStatus]"/>
+            </on-error-propagate>
         </error-handler>
     </flow>
 
@@ -39,4 +43,15 @@
         <raise-error type="APP:CUSTOM_ERROR_TYPE" description="Failing on purpose."/>
     </flow>
 
+    <flow name="get:\error">
+        <try>
+            <logger level="INFO" message="inside of get:\resources"/>
+            <raise-error type="APP:NOT_FOUND" description="Failing on purpose."/>
+            <error-handler >
+                <on-error-propagate logException="true">
+                    <set-variable value="#[404]" variableName="httpStatus"/>
+                </on-error-propagate>
+            </error-handler>
+        </try>
+    </flow>
 </mule>
