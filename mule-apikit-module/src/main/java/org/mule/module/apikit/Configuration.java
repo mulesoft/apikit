@@ -127,12 +127,12 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   }
 
   public String getApi() {
-        return StringUtils.isEmpty(api) ? raml : api;
-    }
+    return StringUtils.isEmpty(api) ? raml : api;
+  }
 
   public void setApi(String api) {
-        this.api = raml;
-    }
+    this.api = raml;
+  }
 
   public boolean isDisableValidations() {
     return disableValidations;

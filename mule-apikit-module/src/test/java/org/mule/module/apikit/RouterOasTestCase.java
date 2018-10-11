@@ -17,25 +17,25 @@ import static org.hamcrest.CoreMatchers.is;
 
 public class RouterOasTestCase extends MuleArtifactFunctionalTestCase {
 
-    @Rule
-    public DynamicPort serverPort = new DynamicPort("serverPort");
+  @Rule
+  public DynamicPort serverPort = new DynamicPort("serverPort");
 
-    @Override
-    public int getTestTimeoutSecs() {
-        return 6000;
-    }
-    
-    @Override
-    protected String getConfigFile() {
-        return "org/mule/module/apikit/router-oas/petstore.xml";
-    }
+  @Override
+  public int getTestTimeoutSecs() {
+    return 6000;
+  }
 
-    @Ignore
-    public void simpleRouting() throws Exception {
-        given().header("Accept", "*/*")
-                .expect()
-                .response().body(is("hello"))
-                .statusCode(200)
-                .when().get("/api/pets");
-    }
+  @Override
+  protected String getConfigFile() {
+    return "org/mule/module/apikit/router-oas/petstore.xml";
+  }
+
+  @Ignore
+  public void simpleRouting() throws Exception {
+    given().header("Accept", "*/*")
+        .expect()
+        .response().body(is("hello"))
+        .statusCode(200)
+        .when().get("/api/pets");
+  }
 }
