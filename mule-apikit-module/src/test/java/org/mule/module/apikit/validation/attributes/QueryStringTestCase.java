@@ -97,4 +97,13 @@ public class QueryStringTestCase extends MuleArtifactFunctionalTestCase {
         .response()
         .when().get("/api/default-value-property");
   }
+
+  @Test
+  public void numberToStringProperty() {
+    given().queryParam("firstname", "123")
+        .queryParam("lastname", "456")
+        .expect().statusCode(200)
+        .response()
+        .when().get("/api/number-to-string-property");
+  }
 }
