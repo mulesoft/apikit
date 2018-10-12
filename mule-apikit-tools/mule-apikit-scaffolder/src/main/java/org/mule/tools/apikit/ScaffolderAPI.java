@@ -6,6 +6,10 @@
  */
 package org.mule.tools.apikit;
 
+import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.mule.tools.apikit.model.RuntimeEdition;
+import org.mule.tools.apikit.model.ScaffolderReport;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,8 +50,8 @@ public class ScaffolderAPI {
    * @param appDir the directory which contained the generated Mule config files
    */
 
-  public void run(List<File> ramlFiles, File appDir) {
-    run(ramlFiles, appDir, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+  public ScaffolderReport run(List<File> ramlFiles, File appDir) {
+    return run(ramlFiles, appDir, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
   }
 
   /**
@@ -59,8 +63,8 @@ public class ScaffolderAPI {
    * @param appDir the directory which contained the generated Mule config files
    * @param domainDir the directory which contained the domain used by the mule config files
    */
-  public void run(List<File> ramlFiles, File appDir, File domainDir) {
-    run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+  public ScaffolderReport run(List<File> ramlFiles, File appDir, File domainDir) {
+    return run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
   }
 
 
@@ -74,8 +78,9 @@ public class ScaffolderAPI {
    * @param minMuleVersion currently unused, will be useful in future improvements
    * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
    */
-  public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
-    execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
+  public ScaffolderReport run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion,
+                              RuntimeEdition runtimeEdition) {
+    return execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
   }
 
   /**
@@ -87,13 +92,14 @@ public class ScaffolderAPI {
    * @param minMuleVersion currently unused, will be useful in future improvements
    * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
    */
-  public void run(List<Dependency> dependencyList, ScaffolderResourceLoader scaffolderResourceLoader, File appDir,
-                  File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
-    execute(dependencyList, scaffolderResourceLoader, appDir, domainDir, minMuleVersion, runtimeEdition);
+  public ScaffolderReport run(List<Dependency> dependencyList, ScaffolderResourceLoader scaffolderResourceLoader, File appDir,
+                              File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
+    return execute(dependencyList, scaffolderResourceLoader, appDir, domainDir, minMuleVersion, runtimeEdition);
   }
 
-  private void execute(List<Dependency> dependencyList, ScaffolderResourceLoader scaffolderResourceLoader, File appDir,
-                       File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
+  private ScaffolderReport execute(List<Dependency> dependencyList, ScaffolderResourceLoader scaffolderResourceLoader,
+                                   File appDir,
+                                   File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
     Scaffolder scaffolder;
     try {
       Map<String, InputStream> ramlSpecs = getRamlSpecs(dependencyList, scaffolderResourceLoader);
@@ -115,6 +121,7 @@ public class ScaffolderAPI {
       throw new RuntimeException("Error executing scaffolder", e);
     }
     scaffolder.run();
+    return scaffolder.getScaffolderReport();
   }
 
 
@@ -136,7 +143,8 @@ public class ScaffolderAPI {
     return ramlSpecs;
   }
 
-  private void execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
+  private ScaffolderReport execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion,
+                                   RuntimeEdition runtimeEdition) {
     List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
     List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
     SystemStreamLog log = new SystemStreamLog();
@@ -157,6 +165,7 @@ public class ScaffolderAPI {
       throw new RuntimeException("Error executing scaffolder", e);
     }
     scaffolder.run();
+    return scaffolder.getScaffolderReport();
   }
 
   private List<String> retrieveFilePaths(File dir, final List<String> extensions) {

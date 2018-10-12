@@ -17,6 +17,7 @@ import org.junit.rules.TemporaryFolder;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.RuntimeEdition;
+import org.mule.tools.apikit.model.ScaffolderReport;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -854,6 +855,28 @@ public class ScaffolderMule4Test {
 
     return new File(muleXmlOut, name + ".xml");
   }
+
+  @Test
+  public void ramlWithErrors() throws Exception {
+    String name = "raml-with-error";
+
+    List<File> ramls = Arrays.asList(getFile("scaffolder" + "/" + name + ".raml"));
+    File domainFile = getFile(null);
+
+    List<File> xmls = Arrays.asList();
+    File muleXmlOut = folder.newFolder("mule-xml-out");
+
+    Scaffolder scaffolder =
+        createScaffolder(ramls, xmls, muleXmlOut, domainFile, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+    scaffolder.run();
+
+    ScaffolderReport scaffolderReport = scaffolder.getScaffolderReport();
+
+    assertEquals(ScaffolderReport.FAILED, scaffolderReport.getStatus());
+
+    //    return new File(muleXmlOut, name + ".xml");
+  }
+
 
   private File simpleGenerationWithExtensionEnabled(String raml, String ramlWithExtensionEnabledPath, String domainPath)
       throws Exception {

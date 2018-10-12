@@ -17,6 +17,7 @@ import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
+import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 import org.mule.tools.apikit.model.ScaffolderResourceLoaderWrapper;
 import org.mule.tools.apikit.output.GenerationModel;
@@ -42,6 +43,30 @@ public class RAMLFilesParser {
   private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = new HashMap<>();
   private final APIFactory apiFactory;
   private final Log log;
+
+  private String ramlVersion;
+  private String parseStatus = ScaffolderReport.SUCCESS;
+  private String errorMessage;
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
+
+  public String getVendorId() {
+    return vendorId;
+  }
+
+  public String getRamlVersion() {
+    return ramlVersion;
+  }
+
+  public String getParseStatus() {
+    return parseStatus;
+  }
+
+  private final static String vendorId = "RAML";
+
+  public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
   public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
     this.log = log;
@@ -86,7 +111,9 @@ public class RAMLFilesParser {
       this.log.info("The following RAML files were parsed correctly: " +
           processedFiles);
     } else {
-      this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
+      parseStatus = ScaffolderReport.FAILED;
+      errorMessage = "RAML Root not found. None of the files were recognized as valid root RAML files.";
+      this.log.error(errorMessage);
     }
   }
 
@@ -137,7 +164,9 @@ public class RAMLFilesParser {
       this.log.info("The following RAML files were parsed correctly: " +
           processedRamls);
     } else {
-      this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
+      parseStatus = ScaffolderReport.FAILED;
+      errorMessage = "RAML Root not found. None of the files were recognized as valid root RAML files.";
+      this.log.error(errorMessage);
     }
   }
 
