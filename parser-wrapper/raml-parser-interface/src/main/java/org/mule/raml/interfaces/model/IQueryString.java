@@ -23,4 +23,6 @@ public interface IQueryString {
   boolean isFacetArray(String facet);
 
   Map<String, IParameter> facets();
+
+  String surroundWithQuotesIfNeeded(String facet, String value);
 }

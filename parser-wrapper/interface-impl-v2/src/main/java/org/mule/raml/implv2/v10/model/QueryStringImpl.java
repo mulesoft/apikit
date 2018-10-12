@@ -11,6 +11,7 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
+import org.raml.v2.api.model.v10.datamodel.StringTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.internal.impl.v10.type.TypeId;
 
@@ -81,5 +82,26 @@ public class QueryStringImpl implements IQueryString {
       }
     }
     return result;
+  }
+
+  @Override
+  public String surroundWithQuotesIfNeeded(String facet, String value) {
+    if (typeDeclaration instanceof ObjectTypeDeclaration) {
+      for (TypeDeclaration type : ((ObjectTypeDeclaration) typeDeclaration).properties()) {
+        if (type.name().equals(facet))
+          if (isStringType(type) || isStringArray(type)) {
+            return "\"" + value + "\"";
+          }
+      }
+    }
+    return value;
+  }
+
+  private boolean isStringArray(TypeDeclaration type) {
+    return type instanceof ArrayTypeDeclaration && isStringType(((ArrayTypeDeclaration) type).items());
+  }
+
+  private boolean isStringType(TypeDeclaration type) {
+    return type instanceof StringTypeDeclaration;
   }
 }

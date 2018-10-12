@@ -48,4 +48,8 @@
     <flow name="get:\default-value-property:query-string-test-config">
         <logger level="INFO" message="get:\default-value-property:query-string-test-config" />
     </flow>
+
+    <flow name="get:\number-to-string-property:query-string-test-config">
+        <logger level="INFO" message="get:\number-to-string-property:query-string-test-config" />
+    </flow>
 </mule>
