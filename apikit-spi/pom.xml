@@ -17,6 +17,7 @@
     <!-- Properties -->
     <properties>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
+        <sonar.skip>true</sonar.skip>
     </properties>
 
     <dependencies>
