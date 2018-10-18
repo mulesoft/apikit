@@ -15,4 +15,8 @@
         <module>studio-example</module>
     </modules>
 
+    <properties>
+        <sonar.skip>true</sonar.skip>
+    </properties>
+
 </project>
