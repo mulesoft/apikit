@@ -7,6 +7,7 @@
 package org.mule.amf.impl.model;
 
 import amf.client.model.domain.AnyShape;
+import amf.client.model.domain.Example;
 import amf.client.model.domain.NodeShape;
 import amf.client.model.domain.Payload;
 import amf.client.model.domain.PropertyShape;
@@ -21,6 +22,7 @@ import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static com.sun.jmx.mbeanserver.Util.cast;
@@ -110,6 +112,14 @@ public class MimeTypeImpl implements IMimeType {
   }
 
   private String getExampleFromAnyShape(AnyShape anyShape) {
+    final Optional<Example> trackedExample = anyShape.trackedExample(payload.id());
+
+    if (trackedExample.isPresent()) {
+      final Example example = trackedExample.get();
+      if (example.value().nonNull())
+        return example.value().value();
+    }
+
     return anyShape.examples().stream().filter(example -> example.value().value() != null)
         .map(example -> example.value().value())
         .findFirst()

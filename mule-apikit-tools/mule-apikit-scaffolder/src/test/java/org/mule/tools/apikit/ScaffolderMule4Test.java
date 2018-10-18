@@ -139,7 +139,7 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   @Test
-  @Ignore("APIKIT-1515")
+  @Ignore("APIKIT-1629")
   public void generateWithExamples() throws Exception {
     String filepath = ScaffolderMule4Test.class.getClassLoader().getResource("scaffolder-with-examples/api.raml").getFile();
     File file = new File(filepath);
