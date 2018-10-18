@@ -11,7 +11,6 @@ import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.module.apikit.validation.body.form.transformation.DataWeaveTransformer;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.api.el.ExpressionManager;
@@ -42,50 +41,51 @@ public class UrlencodedFormV2Validator implements FormValidatorStrategy<TypedVal
 
     MultiMap<String, String> requestMap = dataWeaveTransformer.getMultiMapFromPayload(originalPayload);
 
-    addDefaults(requestMap);
-
-    String yamlMap = toYamlMap(requestMap);
-
-    final List<IValidationResult> validationResult;
-    try {
-      validationResult = actionMimeType.validate(yamlMap);
-    } catch (UnsupportedOperationException e) {
-      return originalPayload;
-    }
-
-    if (validationResult.size() > 0) {
-      String resultString = "";
-      for (IValidationResult result : validationResult) {
-        resultString += result.getMessage() + "\n";
-      }
-      throw new InvalidFormParameterException(resultString);
-    }
+    validateAndAddDefaults(requestMap);
 
     return dataWeaveTransformer.getXFormUrlEncodedStream(requestMap, originalPayload.getDataType());
   }
 
-  private void addDefaults(MultiMap<String, String> requestMap) {
+  private void validateAndAddDefaults(MultiMap<String, String> requestMap) throws InvalidFormParameterException {
     final Map<String, List<IParameter>> formParameters = actionMimeType.getFormParameters();
 
     final Set<String> expectedKeys = formParameters.keySet();
 
     for (String expectedKey : expectedKeys) {
+      final IParameter parameter = formParameters.get(expectedKey).get(0);
       final List<String> values = requestMap.getAll(expectedKey);
       if (values.isEmpty()) {
-        final IParameter parameter = formParameters.get(expectedKey).get(0);
         final String defaultValue = parameter.getDefaultValue();
         if (defaultValue != null) {
           requestMap.put(expectedKey, defaultValue);
+        } else if (parameter.isRequired()) {
+          throw new InvalidFormParameterException("Required parameter " + expectedKey + " not specified");
+        }
+      } else {
+        if (parameter.isRepeat() || parameter.isArray()) {
+          validateAsArray(expectedKey, parameter, values);
+        } else if (values.size() > 1)
+          throw new InvalidFormParameterException("Parameter '" + expectedKey + "' is not repeatable");
+        else {
+          validate(expectedKey, parameter, values.get(0));
         }
       }
     }
   }
 
-  private static String toYamlMap(MultiMap<String, String> map) {
-    return map.keySet().stream().map(key -> {
-      final List<String> allValues = map.getAll(key);
-      final String values = allValues.size() == 1 ? allValues.get(0) : "[" + allValues.stream().collect(joining(", ")) + "]";
-      return key + ": " + values;
-    }).collect(joining("\n"));
+  private void validate(String expectedKey, IParameter parameter, String value) throws InvalidFormParameterException {
+    if (!parameter.validate(value))
+      throw new InvalidFormParameterException("Invalid value '" + value + "' for parameter " + expectedKey);
+  }
+
+  private void validateAsArray(String expectedKey, IParameter parameter, List<String> values)
+      throws InvalidFormParameterException {
+    final String valueToValidate = values.stream().map(v -> "- " + v).collect(joining("\n"));
+    if (!parameter.validate(valueToValidate)) {
+      // Numeric values are always parsed as number, this is a workaround to validate them as string
+      if (!parameter.validate(values.stream().map(v -> "- '" + v + "'").collect(joining("\n")))) {
+        throw new InvalidFormParameterException("Invalid value '" + valueToValidate + "' for parameter " + expectedKey);
+      }
+    }
   }
 }
