@@ -11,6 +11,10 @@
     <packaging>pom</packaging>
     <name>APIKit distribution plugin</name>
 
+    <properties>
+        <sonar.jacoco.reportPaths>../target/jacoco.exec</sonar.jacoco.reportPaths>
+    </properties>
+
     <build>
         <plugins>
             <plugin>

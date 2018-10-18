@@ -16,6 +16,8 @@
         <rest.assured.version>1.7.2</rest.assured.version>
         <guava.version>18.0</guava.version>
         <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
+
+        <sonar.jacoco.reportPaths>../target/jacoco.exec</sonar.jacoco.reportPaths>
     </properties>
 
     <build>
