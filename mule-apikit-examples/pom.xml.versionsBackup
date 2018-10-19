@@ -4,23 +4,20 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>mule-apikit-parent</artifactId>
-        <version>1.1.9-BETA-2</version>
+        <version>1.1.9-SNAPSHOT</version>
     </parent>
-    <artifactId>mule-apikit-tools</artifactId>
+    <artifactId>mule-apikit-examples</artifactId>
     <packaging>pom</packaging>
-    <name>APIKit tools</name>
-
-    <properties>
-        <licensePath>../LICENSE_HEADER.txt</licensePath>
-        <formatterConfigPath>../formatter.xml</formatterConfigPath>
-
-        <sonar.jacoco.reportPaths>../target/jacoco.exec</sonar.jacoco.reportPaths>
-    </properties>
+    <name>APIKit examples</name>
 
     <modules>
-        <module>mule-apikit-scaffolder</module>
-        <module>mule-apikit-maven-plugin</module>
-        <module>mule-apikit-archetype</module>
+        <module>leagues-example</module>
+        <module>anypoint-studio-example</module>
     </modules>
+
+    <properties>
+        <formatterConfigPath>../formatter.xml</formatterConfigPath>
+        <sonar.skip>true</sonar.skip>
+    </properties>
 
 </project>

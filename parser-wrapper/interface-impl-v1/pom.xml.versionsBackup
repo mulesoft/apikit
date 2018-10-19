@@ -6,11 +6,11 @@
     <parent>
         <groupId>org.mule.raml</groupId>
         <artifactId>raml-parser-interface-parent</artifactId>
-        <version>1.1.9-BETA-2</version>
+        <version>1.1.9-SNAPSHOT</version>
     </parent>
 
-    <artifactId>raml-parser-interface-impl-v2</artifactId>
-    <name>RAML parser v2 interface implemention</name>
+    <artifactId>raml-parser-interface-impl-v1</artifactId>
+    <name>RAML parser v1 interface implemention</name>
     <packaging>jar</packaging>
 
     <properties>
@@ -23,27 +23,27 @@
     <dependencies>
         <dependency>
             <groupId>org.raml</groupId>
-            <artifactId>raml-parser-2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId> org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <!--required by raml-parser-2. Workaround for MULE-12439-->
+            <artifactId>raml-parser</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
-            <!--required by raml-parser-2. Workaround for MULE-12439-->
+            <!--required by raml-parser. Workaround for MULE-12439-->
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <!--required by raml-parser-2. Workaround for MULE-12439-->
+            <!--required by raml-parser. Workaround for MULE-12439-->
+        </dependency>
+        <dependency>
+            <groupId> org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <!--required by raml-parser. Workaround for MULE-12439-->
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
-            <!--required by raml-parser v2. Workaround for MULE-12439-->
+            <!--required by raml-parser. Workaround for MULE-12439-->
         </dependency>
         <dependency>
             <groupId>org.mule.raml</groupId>
@@ -51,23 +51,10 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-metadata-model-json</artifactId>
-            <version>${mule.api.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.mule.tools</groupId>
             <artifactId>mule-apikit-common</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-        <!-- test dependencies -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
 </project>

@@ -2,31 +2,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>mule-apikit-parent</artifactId>
-        <groupId>org.mule.tools</groupId>
-        <version>1.1.9-BETA-2</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.mule.tools</groupId>
+        <artifactId>mule-apikit-parent</artifactId>
+        <version>1.1.9-SNAPSHOT</version>
+    </parent>
 
-    <artifactId>mule-apikit-common</artifactId>
-    <name>APIKit Common</name>
-
+    <groupId>org.mule.raml</groupId>
+    <artifactId>raml-parser-interface-parent</artifactId>
+    <modules>
+        <module>raml-parser-interface</module>
+        <module>interface-impl-v1</module>
+        <module>interface-impl-v2</module>
+    </modules>
+    <packaging>pom</packaging>
+    <name>RAML Interfaces Project</name>
     <properties>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
+
         <sonar.jacoco.reportPaths>../target/jacoco.exec</sonar.jacoco.reportPaths>
     </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-    </dependencies>
-
 </project>
