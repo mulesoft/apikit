@@ -8,14 +8,14 @@ package org.mule.amf.impl.parser.rule;
 
 import amf.client.validate.ValidationResult;
 import amf.core.parser.Position;
-import java.net.URLDecoder;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
 
+import java.net.URLDecoder;
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
 
@@ -29,7 +29,7 @@ public class ValidationResultImpl implements IValidationResult {
 
   public ValidationResultImpl(ValidationResult validationResult) {
     this.validationResult = validationResult;
-    severities = newArrayList(Severity.values()).stream().map(Enum::name).collect(toList());
+    severities = stream(Severity.values()).map(Enum::name).collect(toList());
   }
 
   public String getMessage() {
