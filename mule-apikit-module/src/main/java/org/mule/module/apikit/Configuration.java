@@ -37,6 +37,8 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 
+import static org.mule.module.apikit.api.Parser.AMF;
+
 //import org.mule.module.apikit.exception.NotFoundException;
 
 
@@ -54,8 +56,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private String httpStatusVarName;
   private FlowMappings flowMappings = new FlowMappings();
 
-  private final static String APIKIT_ROUTER_EXTENSION = "apikit.router.extension";
-  private boolean isExtensionEnabled = Boolean.valueOf(System.getProperty(APIKIT_ROUTER_EXTENSION, "false"));
+  private boolean isExtensionEnabled = false;
 
 
   private final static String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeaders";
@@ -89,6 +90,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   @Override
   public void initialise() throws InitialisationException {
+    isExtensionEnabled = hasExtension();
     try {
       ramlHandler = new RamlHandler(getApi(), keepRamlBaseUri, muleContext, getParser());
 
@@ -310,18 +312,29 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     return expressionManager;
   }
 
+  private boolean hasExtension() {
+    final Iterator<RouterService> iterator = getRouterServiceIterator();
+    if (iterator.hasNext())
+      return true;
+
+    return false;
+  }
+
   public RouterService getExtension() {
+    final Iterator<RouterService> iterator = getRouterServiceIterator();
+    if (iterator.hasNext())
+      return iterator.next();
+
+    throw new ApikitRuntimeException("Couldn't load extension");
+  }
+
+  private Iterator<RouterService> getRouterServiceIterator() {
     final ClassLoader executionClassLoader = muleContext.getExecutionClassLoader();
 
     final ServiceLoader<RouterService> routerServices =
         ServiceLoader.load(RouterService.class, executionClassLoader);
 
-    final Iterator<RouterService> iterator = routerServices.iterator();
-    if (iterator.hasNext()) {
-      return iterator.next();
-    }
-
-    throw new ApikitRuntimeException("Couldn't load extension");
+    return routerServices.iterator();
   }
 
 

@@ -64,6 +64,7 @@ public class Scaffolder {
                             null);
   }
 
+  @Deprecated
   public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specPaths,
                                             List<String> muleXmlPaths, String domainPath, String minMuleVersion,
                                             RuntimeEdition runtimeEdition, List<String> ramlsWithExtensionEnabledPaths)
@@ -72,11 +73,10 @@ public class Scaffolder {
     Map<File, InputStream> ramlStreams = fileUtils.toStreamsOrFail(specPaths);
     Map<File, InputStream> muleStreams = fileUtils.toStreamsOrFail(muleXmlPaths);
     Set<File> ramlWithExtensionEnabled = new TreeSet<>();
-    if (ramlsWithExtensionEnabledPaths != null) {
-      for (String ramlWithEE : ramlsWithExtensionEnabledPaths) {
-        ramlWithExtensionEnabled.add(new File(ramlWithEE));
-      }
-    }
+
+    if (ramlsWithExtensionEnabledPaths != null)
+      log.warn("ExtensionEnabled is deprecated in mule 4");
+
     InputStream domainStream = getDomainStream(log, domainPath);
     return new Scaffolder(log, muleXmlOutputDirectory, ramlStreams, muleStreams, domainStream, ramlWithExtensionEnabled,
                           minMuleVersion, runtimeEdition);
@@ -112,6 +112,7 @@ public class Scaffolder {
     muleArtifactJsonGenerator =
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
   }
+
 
   private static InputStream getDomainStream(Log log, String domainPath) {
     InputStream domainStream = null;

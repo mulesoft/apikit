@@ -26,6 +26,8 @@ public class ScaffolderAPI {
   private final static List<String> apiExtensions = Arrays.asList(".yaml", ".raml", ".yml");
   private final static List<String> appExtensions = Arrays.asList(".xml");
 
+
+
   public ScaffolderAPI() {
 
   }
@@ -56,8 +58,7 @@ public class ScaffolderAPI {
   }
 
   /**
-   * Modifies or creates the Mule config files which are contained in the appDir directory
-   * by running the scaffolder on the ramlFiles passed as parameter.
+   * Looks for an extension point and executes it, relying on the execute method otherwise.
    *
    * @param ramlFiles the ramlFiles to which the scaffolder will be run on
    * @param appDir the directory which contained the generated Mule config files
@@ -88,6 +89,7 @@ public class ScaffolderAPI {
     Scaffolder scaffolder;
     try {
       scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain, minMuleVersion, runtimeEdition);
+
     } catch (Exception e) {
       throw new RuntimeException("Error executing scaffolder", e);
     }

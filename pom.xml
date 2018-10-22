@@ -9,7 +9,6 @@
 
     <modules>
         <module>parser-wrapper</module>
-        <module>mule-apikit-spi</module>
         <module>mule-apikit-module</module>
         <module>mule-apikit-tools</module>
         <module>mule-apikit-examples</module>

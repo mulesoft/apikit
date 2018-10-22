@@ -22,6 +22,7 @@ import java.util.concurrent.CompletableFuture;
 import javax.inject.Inject;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
@@ -107,6 +108,11 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   @Override
   public Publisher<CoreEvent> apply(Publisher<CoreEvent> publisher) {
     return flatMap(publisher, this::processWithExtension, this);
+  }
+
+  @Override
+  public RamlHandler getRamlHandler() {
+    return this.getConfiguration().getRamlHandler();
   }
 
   private Publisher<CoreEvent> processWithExtension(CoreEvent event) {
@@ -217,5 +223,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     }
     return resource;
   }
+
+
 
 }
