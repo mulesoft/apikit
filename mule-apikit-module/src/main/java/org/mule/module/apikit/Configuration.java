@@ -56,7 +56,6 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private String httpStatusVarName;
   private FlowMappings flowMappings = new FlowMappings();
 
-  private final static String APIKIT_ROUTER_EXTENSION = "apikit.router.extension";
   private boolean isExtensionEnabled = false;
 
 
