@@ -152,9 +152,6 @@ public class MuleConfigGenerator {
         if (api.getConfig() == null) {
           api.setDefaultAPIKitConfig();
         }
-        if (ramlsWithExtensionEnabled.contains(api.getRamlFile())) {
-          api.getConfig().setExtensionEnabled(true);
-        }
         generateAPIKitAndListenerConfig(api, doc);
       }
       docs.put(api, doc);

@@ -81,6 +81,17 @@
             <artifactId>plexus-utils</artifactId>
             <version>3.0.24</version>
         </dependency>
+<!--         <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-apikit-module-spi</artifactId>
+            <version>${project.version}</version>
+       </dependency> -->
+       <dependency>
+           <groupId>org.mule.modules</groupId>
+		    <artifactId>mule-apikit-module</artifactId>
+		    <version>${project.version}</version>
+		    <classifier>mule-plugin</classifier>
+       </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
