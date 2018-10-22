@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-public class MultipartFormFunctionalTestCaseRaml10 extends MultipartFormFunctionalTestCase {
+public class MultipartFormFunctionalRaml10TestCase extends MultipartFormFunctionalTestCase {
 
   @Override
   protected String getConfigFile() {

@@ -25,8 +25,8 @@
       "listenerPath" : String, 
       "method" : String, 
       "queryParams" : {
-        "code"? : @length("min" : 3, "max" : 10) String, 
-        "size"? : @enum("values" : ["small","medium","large"]) @default("value" : "medium") String, 
+        "code" : @length("min" : 3, "max" : 10) String, 
+        "size" : @enum("values" : ["small","medium","large"]) @default("value" : "medium") String, 
         "color"? : String, 
         "description"? : String
       }, 
@@ -39,7 +39,7 @@
       "uriParams" : {
 
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

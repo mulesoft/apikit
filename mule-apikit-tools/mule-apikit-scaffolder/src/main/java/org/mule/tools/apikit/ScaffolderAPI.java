@@ -8,11 +8,15 @@ package org.mule.tools.apikit;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.mule.tools.apikit.model.RuntimeEdition;
+import org.mule.tools.apikit.model.ScaffolderReport;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.mule.tools.apikit.model.RuntimeEdition;
 
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
@@ -36,8 +40,8 @@ public class ScaffolderAPI {
    * @param appDir the directory which contained the generated Mule config files
    */
 
-  public void run(List<File> ramlFiles, File appDir) {
-    run(ramlFiles, appDir, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+  public ScaffolderReport run(List<File> ramlFiles, File appDir) {
+    return run(ramlFiles, appDir, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
   }
 
   /**
@@ -49,8 +53,8 @@ public class ScaffolderAPI {
    * @param appDir the directory which contained the generated Mule config files
    * @param domainDir the directory which contained the domain used by the mule config files
    */
-  public void run(List<File> ramlFiles, File appDir, File domainDir) {
-    run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+  public ScaffolderReport run(List<File> ramlFiles, File appDir, File domainDir) {
+    return run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
   }
 
   /**
@@ -62,12 +66,9 @@ public class ScaffolderAPI {
    * @param minMuleVersion currently unused, will be useful in future improvements
    * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
    */
-  public void run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
-    if (ExtensionManager.isScaffolderExtensionEnabled()) {
-      ExtensionManager.getScaffolderExtension().executeScaffolder(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
-    } else {
-      execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
-    }
+  public ScaffolderReport run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion,
+                              RuntimeEdition runtimeEdition) {
+    return execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
   }
 
   private ScaffolderReport execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion,

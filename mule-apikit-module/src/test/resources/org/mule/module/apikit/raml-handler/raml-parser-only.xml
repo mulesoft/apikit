@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="httpListenerConfigDefault">
+        <http:listener-connection host="localhost" port="${serverPort}"/>
+    </http:listener-config>
+
+    <apikit:config name="apikitConfig" raml="org/mule/module/apikit/raml-handler/raml-parser-only.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
+
+    <flow name="doorway">
+        <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus]"><http:headers>#[vars.outboundHeaders]</http:headers></http:response>
+            <http:error-response statusCode="500">
+                <http:headers>#[vars.outboundHeaders]</http:headers></http:error-response>
+        </http:listener>
+        <apikit:router config-ref="apikitConfig"/>
+    </flow>
+
+    <flow name="get:\test">
+        <logger level="INFO" message="inside of get:\test"/>
+        <set-payload value="hello"/>
+    </flow>
+
+    <flow name="get:\some-resource">
+        <logger level="INFO" message="inside of get:\some-resource"/>
+        <set-payload value="some payload"/>
+    </flow>
+
+    <flow name="consoleFlow">
+        <http:listener config-ref="httpListenerConfigDefault" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus]"><http:headers>#[vars.outboundHeaders]</http:headers></http:response>
+            <http:error-response statusCode="500">
+                <http:headers>#[vars.outboundHeaders]</http:headers></http:error-response>
+        </http:listener>
+        <apikit:console config-ref="apikitConfig"/>
+    </flow>
+
+</mule>

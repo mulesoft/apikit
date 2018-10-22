@@ -7,10 +7,12 @@
 package org.mule.amf.impl.model;
 
 import amf.client.model.domain.AnyShape;
+import amf.client.model.domain.Example;
 import amf.client.model.domain.NodeShape;
 import amf.client.model.domain.Payload;
 import amf.client.model.domain.PropertyShape;
 import amf.client.model.domain.Shape;
+import amf.client.model.domain.UnionShape;
 import amf.client.validate.ValidationReport;
 import org.mule.amf.impl.parser.rule.ValidationResultImpl;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -20,6 +22,7 @@ import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static com.sun.jmx.mbeanserver.Util.cast;
@@ -90,15 +93,37 @@ public class MimeTypeImpl implements IMimeType {
   public String getExample() {
     final Shape schema = payload.schema();
 
+    if (schema instanceof UnionShape) {
+      final UnionShape unionShape = (UnionShape) schema;
+      for (Shape shape : unionShape.anyOf()) {
+        if (shape instanceof AnyShape) {
+          final String example = getExampleFromAnyShape((AnyShape) shape);
+          if (example != null)
+            return example;
+        }
+      }
+    }
+
     if (schema instanceof AnyShape) {
-      final AnyShape anyShape = (AnyShape) schema;
-      return anyShape.examples().stream().filter(example -> example.name().value() == null)
-          .map(example -> example.value().value())
-          .findFirst()
-          .orElse(null);
+      return getExampleFromAnyShape((AnyShape) schema);
     }
 
     return null;
+  }
+
+  private String getExampleFromAnyShape(AnyShape anyShape) {
+    final Optional<Example> trackedExample = anyShape.trackedExample(payload.id());
+
+    if (trackedExample.isPresent()) {
+      final Example example = trackedExample.get();
+      if (example.value().nonNull())
+        return example.value().value();
+    }
+
+    return anyShape.examples().stream().filter(example -> example.value().value() != null)
+        .map(example -> example.value().value())
+        .findFirst()
+        .orElse(null);
   }
 
   @Override

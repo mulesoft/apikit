@@ -8,6 +8,8 @@ package org.mule.tools.apikit.input;
 
 import amf.client.environment.DefaultEnvironment;
 import amf.client.environment.Environment;
+import java.util.Collection;
+import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.amf.impl.ParserWrapperAmf;
@@ -39,19 +41,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.String.format;
+import static java.util.Collections.singletonList;
 import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class RAMLFilesParser {
 
   private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries =
-      new HashMap<ResourceActionMimeTypeTriplet, GenerationModel>();
+      new HashMap<>();
   private final APIFactory apiFactory;
   private final Log log;
 
   private String vendorId;
+
+  public String getVendorId() {
+    return vendorId;
+  }
+
+  public String getRamlVersion() {
+    return ramlVersion;
+  }
+
   private String ramlVersion;
 
-
+  public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
   public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
     this.log = log;
@@ -73,15 +86,14 @@ public class RAMLFilesParser {
         parserWrapper.validate(); // This will fail whether the raml is not valid
 
         vendorId = parserWrapper.getApiVendor().toString();
-
         final IRaml raml = parserWrapper.build();
-
         ramlVersion = raml.getVersion();
 
-        collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, ramlVersion);
+        collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
         processedFiles.add(ramlFile);
       } catch (Exception e) {
-        log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());
+        final String reason = e.getMessage() == null ? "" : " Reason: " + e.getMessage();
+        log.info("Could not parse [" + ramlFile + "] as root RAML file." + reason);
         log.debug(e);
       }
 
@@ -94,16 +106,7 @@ public class RAMLFilesParser {
     }
   }
 
-
-  public String getVendorId() {
-    return vendorId;
-  }
-
-  public String getRamlVersion() {
-    return ramlVersion;
-  }
-
-  void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version) {
+  private void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version) {
     for (IResource resource : resourceMap.values()) {
       for (IAction action : resource.getActions().values()) {
 
@@ -134,7 +137,7 @@ public class RAMLFilesParser {
     }
   }
 
-  void addResource(API api, IResource resource, IAction action, String mimeType, String version) {
+  private void addResource(API api, IResource resource, IAction action, String mimeType, String version) {
 
     String completePath = APIKitTools
         .getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
@@ -150,7 +153,7 @@ public class RAMLFilesParser {
     return entries;
   }
 
-  private ParserWrapper getParserWrapper(File apiFile, String content) {
+  private ParserWrapper getParserWrapper(File apiFile, String content) throws Exception {
     String apiFolderPath = null;
     File apiFileParent = null;
     if (apiFile.getParentFile() != null) {
@@ -158,33 +161,68 @@ public class RAMLFilesParser {
       apiFolderPath = apiFileParent.getPath();
     }
 
-    ParserWrapper parserWrapper;
-
-    final Environment environment =
-        DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
-    parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
-    final IValidationReport validationReport = parserWrapper.validationReport();
-
-    if (!validationReport.conforms()) {
-      if (ParserV2Utils.useParserV2(content)) {
-        final ResourceLoader resourceLoader =
-            new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
-                                        new FileResourceLoader(apiFolderPath),
-                                        new ExchangeDependencyResourceLoader(apiFolderPath));
-        parserWrapper = new ParserWrapperV2(apiFile.getPath(), resourceLoader);
-      } else {
-        parserWrapper = new ParserWrapperV1(apiFile.getAbsolutePath());
-      }
-
-      final List<IValidationResult> foundErrors = validationReport.getResults();
-      if (parserWrapper.validationReport().conforms()) {
-        logErrors(foundErrors, WARNING);
-      } else {
-        raiseError(foundErrors);
-      }
+    // Used for Testing
+    final String parserValue = System.getProperty(MULE_APIKIT_PARSER, "AUTO");
+    if ("AMF".equals(parserValue)) {
+      final Environment environment =
+          DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+      ParserWrapper parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, true);
+      log.info(buildParserInfoMessage("AMF"));
+      return parserWrapper;
     }
 
-    return parserWrapper;
+    if ("RAML".equals(parserValue)) {
+      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, Collections.emptyList());
+    }
+
+    ParserWrapper parserWrapper;
+
+    try {
+      final Environment environment =
+          DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+      parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
+    } catch (Exception e) {
+      final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
+      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, errors);
+    }
+
+    final IValidationReport validationReport = parserWrapper.validationReport();
+    if (validationReport.conforms()) {
+      log.info(buildParserInfoMessage("AMF"));
+      return parserWrapper;
+    } else {
+      final List<IValidationResult> errorsFound = validationReport.getResults();
+      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, errorsFound);
+    }
+  }
+
+  private ParserWrapper applyFallback(File apiFile, String content, String apiFolderPath, File apiFileParent,
+                                      List<IValidationResult> errorsFound) {
+    ParserWrapper parserWrapper;
+
+    if (ParserV2Utils.useParserV2(content)) {
+      final ResourceLoader resourceLoader =
+          new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
+                                      new FileResourceLoader(apiFolderPath),
+                                      new ExchangeDependencyResourceLoader(apiFolderPath));
+      parserWrapper = new ParserWrapperV2(apiFile.getPath(), resourceLoader);
+    } else {
+      parserWrapper = new ParserWrapperV1(apiFile.getAbsolutePath());
+    }
+
+    if (parserWrapper.validationReport().conforms()) {
+      log.info(buildParserInfoMessage("RAML Parser"));
+      logErrors(errorsFound, WARNING);
+      return parserWrapper;
+    } else {
+      logErrors(errorsFound);
+      throw new RuntimeException(buildErrorMessage(errorsFound));
+    }
+  }
+
+
+  private String buildParserInfoMessage(String parser) {
+    return format("Using %s to load APIs", parser);
   }
 
   private void logErrors(List<IValidationResult> validationResults) {
@@ -204,14 +242,13 @@ public class RAMLFilesParser {
       log.error(error.getMessage());
   }
 
-  private void raiseError(List<IValidationResult> validationResults) {
-    logErrors(validationResults);
-    StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
+  private static String buildErrorMessage(List<IValidationResult> validationResults) {
+    final StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
     message.append(validationResults.size()).append("\n\n");
     for (IValidationResult error : validationResults) {
       message.append(error.getMessage()).append("\n");
     }
-    throw new RuntimeException(message.toString());
+    return message.toString();
   }
 
 }

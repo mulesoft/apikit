@@ -11,11 +11,11 @@ import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 import static com.jayway.restassured.RestAssured.given;
 
-public class EmptyBodyTestCaseRaml10 extends AbstractMultiParserFunctionalTestCase {
+public class EmptyBodyRaml08TestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Override
   protected String getConfigFile() {
-    return "org/mule/module/apikit/validation/body/empty/mule-config-10.xml";
+    return "org/mule/module/apikit/validation/body/empty/mule-config-08.xml";
   }
 
   @Test

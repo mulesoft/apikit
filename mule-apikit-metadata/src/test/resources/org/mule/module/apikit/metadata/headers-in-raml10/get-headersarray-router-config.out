@@ -10,12 +10,12 @@
         "encoded"? : Binary
       }, 
       "headers" : {
-        "arrayOfStringHeader"? : [String], 
-        "arrayOfNumberHeader"? : [Number], 
-        "arrayOfIntegerHeader"? : [@int Number], 
-        "arrayOfDateHeader"? : [String], 
-        "arrayOfBooleanHeader"? : [Boolean], 
-        "arrayOfFileHeader"? : [String]
+        "arrayOfStringHeader" : [String], 
+        "arrayOfNumberHeader" : [Number], 
+        "arrayOfIntegerHeader" : [@int Number], 
+        "arrayOfDateHeader" : [String], 
+        "arrayOfBooleanHeader" : [Boolean], 
+        "arrayOfFileHeader" : [String]
       }, 
       "listenerPath" : String, 
       "method" : String, 
@@ -31,7 +31,7 @@
       "uriParams" : {
 
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

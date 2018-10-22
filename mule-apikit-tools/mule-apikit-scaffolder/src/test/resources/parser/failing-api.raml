@@ -1,0 +1,26 @@
+#%RAML 1.0
+title: API
+
+types:
+  SomeType:
+    properties:
+      someProperty: SomeType?
+    example:
+        someProperty:
+          someProperty:
+            someProperty: null
+
+
+/test:
+  get:
+    responses:
+      200:
+        body:
+          application/json: string
+
+/some-resource:
+  get:
+    responses:
+      200:
+        body:
+          application/json: SomeTypo

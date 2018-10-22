@@ -6,13 +6,13 @@
  */
 package org.mule.tools.apikit;
 
-import org.apache.maven.plugin.logging.Log;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.MuleDomainParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.RuntimeEdition;
+import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationStrategy;
 import org.mule.tools.apikit.output.MuleArtifactJsonGenerator;
@@ -28,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.apache.maven.plugin.logging.Log;
 
 import static org.mule.tools.apikit.model.RuntimeEdition.CE;
 
@@ -93,6 +95,8 @@ public class Scaffolder {
     scaffolderReport.setVendorId(RAMLFilesParser.getVendorId());
     scaffolderReport.setVersion(RAMLFilesParser.getRamlVersion());
 
+
+
     if (runtimeEdition == null) {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
     }
@@ -109,9 +113,6 @@ public class Scaffolder {
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
   }
 
-  public ScaffolderReport getScaffolderReport() {
-    return scaffolderReport;
-  }
 
   private static InputStream getDomainStream(Log log, String domainPath) {
     InputStream domainStream = null;
@@ -131,6 +132,11 @@ public class Scaffolder {
     return domainStream;
   }
 
+  public ScaffolderReport getScaffolderReport() {
+    return scaffolderReport;
+  }
+
+
   //TODO This is only a hack to get project base directory. Project Base Dir should be informed by api parameter
   private File getProjectBaseDirectory(File muleXmlOutputDirectory) {
     final Path outputDirectory = muleXmlOutputDirectory.toPath();
@@ -143,8 +149,14 @@ public class Scaffolder {
   }
 
   public void run() {
-    muleConfigGenerator.generate();
-    muleArtifactJsonGenerator.generate();
+    try {
+      muleConfigGenerator.generate();
+      muleArtifactJsonGenerator.generate();
+      scaffolderReport.setStatus(ScaffolderReport.SUCCESS);
+    } catch (Exception e) {
+      scaffolderReport.setStatus(ScaffolderReport.FAILED);
+    }
+
   }
 
 

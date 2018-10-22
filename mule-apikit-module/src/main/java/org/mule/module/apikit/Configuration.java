@@ -10,6 +10,7 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import org.apache.commons.lang.StringUtils;
 import org.mule.module.apikit.api.Parser;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.config.ConsoleConfig;
@@ -49,6 +50,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private boolean headersStrictValidation;
   private String name;
   private String raml;
+  private String api;
   private boolean keepRamlBaseUri;
   private String outboundHeadersMapName;
   private String httpStatusVarName;
@@ -91,8 +93,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   public void initialise() throws InitialisationException {
     isExtensionEnabled = hasExtension();
     try {
-
-      ramlHandler = new RamlHandler(raml, keepRamlBaseUri, muleContext, isExtensionEnabled ? AMF : getParser());
+      ramlHandler = new RamlHandler(getApi(), keepRamlBaseUri, muleContext, getParser());
 
       // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
       // we will keep the value defined during raml handler instantiation
@@ -126,6 +127,14 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   public void setRaml(String raml) {
     this.raml = raml;
+  }
+
+  public String getApi() {
+    return StringUtils.isEmpty(api) ? raml : api;
+  }
+
+  public void setApi(String api) {
+    this.api = api;
   }
 
   public boolean isDisableValidations() {
@@ -305,18 +314,18 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   }
 
   private boolean hasExtension() {
-      final Iterator<RouterService> iterator = getRouterServiceIterator();
-      if (iterator.hasNext())
-        return true;
+    final Iterator<RouterService> iterator = getRouterServiceIterator();
+    if (iterator.hasNext())
+      return true;
 
-      return false;
+    return false;
   }
 
   public RouterService getExtension() {
     final Iterator<RouterService> iterator = getRouterServiceIterator();
     if (iterator.hasNext())
-        return iterator.next();
-    
+      return iterator.next();
+
     throw new ApikitRuntimeException("Couldn't load extension");
   }
 
@@ -324,7 +333,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     final ClassLoader executionClassLoader = muleContext.getExecutionClassLoader();
 
     final ServiceLoader<RouterService> routerServices =
-            ServiceLoader.load(RouterService.class, executionClassLoader);
+        ServiceLoader.load(RouterService.class, executionClassLoader);
 
     return routerServices.iterator();
   }

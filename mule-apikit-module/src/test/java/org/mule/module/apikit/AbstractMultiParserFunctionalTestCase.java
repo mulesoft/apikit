@@ -44,7 +44,7 @@ public abstract class AbstractMultiParserFunctionalTestCase extends MuleArtifact
     return 6000;
   }
 
-  protected void doSetUpBeforeMuleContextCreation() throws Exception {
+  protected void doSetUpBeforeMuleContextCreation() {
     System.setProperty(MULE_APIKIT_PARSER_AMF, parser.name());
   }
 

@@ -37,7 +37,8 @@ public class CreateMojo
    */
   @Parameter
   private String[] specIncludes =
-      new String[] {"src/main/resources/api/**/*.yaml", "src/main/resources/api/**/*.yml", "src/main/resources/api/**/*.raml"};
+      new String[] {"src/main/resources/api/**/*.yaml", "src/main/resources/api/**/*.yml", "src/main/resources/api/**/*.raml",
+          "src/main/resources/api/**/*.json"};
 
   /**
    * Pattern of what to exclude searching for .yaml files.

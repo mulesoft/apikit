@@ -24,10 +24,10 @@
       "requestUri" : String, 
       "scheme" : String, 
       "uriParams" : {
-        "v1"? : String, 
-        "v2"? : String
+        "v1" : String, 
+        "v2" : String
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

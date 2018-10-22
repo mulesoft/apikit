@@ -24,9 +24,9 @@
       "requestUri" : String, 
       "scheme" : String, 
       "uriParams" : {
-        "name"? : String
+        "name" : String
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

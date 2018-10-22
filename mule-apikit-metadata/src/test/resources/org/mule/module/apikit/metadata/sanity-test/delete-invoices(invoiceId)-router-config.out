@@ -26,7 +26,7 @@
       "uriParams" : {
         "invoiceId"? : @int Number
       }, 
-      "version"? : String, 
+      "version" : String, 
       "localAddress" : String
     }
   }, 

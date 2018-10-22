@@ -16,7 +16,7 @@
             <defaultValue>default</defaultValue>
         </requiredProperty>
         <requiredProperty key="lightweightPackage">
-            <defaultValue>true</defaultValue>
+            <defaultValue>false</defaultValue>
         </requiredProperty>
     </requiredProperties>
     <fileSets>

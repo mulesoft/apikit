@@ -92,9 +92,12 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
           .error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
       return;
     }
-    registry.setApiSource(configuration.getName(), url.get().toString().replace("*", ""));
+    final String configurationName = configuration.getName();
+    registry.setApiSource(configurationName, url.get().toString().replace("*", ""));
 
-    LOGGER.info(StringMessageUtils.getBoilerPlate("APIKit Started with Parser: " + configuration.getParser().name()));
+    LOGGER.info(StringMessageUtils
+        .getBoilerPlate("APIKit Router for config '" + configurationName + "' started using Parser: "
+            + configuration.getParser().name()));
   }
 
   @Override
@@ -116,7 +119,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     try {
       final CompletableFuture<Event> resultEvent;
       if (configuration.isExtensionEnabled()) {
-        resultEvent = configuration.getExtension().process(event, this);
+        resultEvent = configuration.getExtension().process(event, this, this.configuration.getApi());
       } else {
         resultEvent = processEvent(event);
       }
@@ -206,23 +209,8 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
     TypedValue payload = event.getMessage().getPayload();
 
-    final String charset;
-    try {
-      final Object payloadValue = payload.getValue();
-      if (payloadValue instanceof InputStream) {
-        final RewindableInputStream rewindable = new RewindableInputStream((InputStream) payloadValue);
-        charset = getEncoding(event.getMessage(), rewindable, LOGGER);
-        rewindable.rewind();
-        payload = new TypedValue<>(rewindable, payload.getDataType());
-      } else {
-        charset = getEncoding(event.getMessage(), payloadValue, LOGGER);
-      }
-    } catch (IOException e) {
-      throw ApikitErrorTypes.throwErrorType(new BadRequestException("Error processing request: " + e.getMessage()));
-    }
-
     final ValidRequest validRequest =
-        RequestValidator.validate(config, resource, attributes, resolvedVariables, payload, charset);
+        RequestValidator.validate(config, resource, attributes, resolvedVariables, payload);
 
     return EventHelper.regenerateEvent(event.getMessage(), eventBuilder, validRequest);
   }
