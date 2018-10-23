@@ -89,18 +89,10 @@ public class APISyncUtils {
     }
 
     public boolean equals(APISyncResource resource, Boolean checkVersion) {
-      if (checkVersion == false) {
-        return groupId.equals(resource.groupId)
-            && artifact.equals(resource.artifact)
-            && classifier.equals(resource.classifier)
-            && packager.equals(resource.packager)
-            && file.equals(resource.file);
-
-      }
 
       return groupId.equals(resource.groupId)
           && artifact.equals(resource.artifact)
-          && version.equals(resource.version)
+          && (!checkVersion || version.equals(resource.version))
           && classifier.equals(resource.classifier)
           && packager.equals(resource.packager)
           && file.equals(resource.file);
