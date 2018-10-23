@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit.input.parsers;
 
+import org.mule.apikit.common.APISyncUtils;
 import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
@@ -57,7 +58,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
       APIKitConfig config = getApikitConfig(element);
 
       for (String ramlFileName : ramlFileNames) {
-        if (config.getRaml().endsWith(ramlFileName)) {
+        if (compareRamlsLocation(config.getRaml(), ramlFileName)) {
           Element source = findListenerOrInboundEndpoint(element.getParentElement().getChildren());
           String configId = config.getName() != null ? config.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
 
@@ -73,6 +74,14 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
       }
     }
     return includedApis;
+  }
+
+  private boolean compareRamlsLocation(String configRaml, String currentRootRaml) {
+    if (APISyncUtils.isSyncProtocol(configRaml) && APISyncUtils.isSyncProtocol(currentRootRaml)) {
+      return APISyncUtils.compareResourcesLocation(configRaml, currentRootRaml, false);
+    }
+
+    return configRaml.endsWith(currentRootRaml);
   }
 
   public APIKitConfig getApikitConfig(Element element) throws IllegalStateException {
