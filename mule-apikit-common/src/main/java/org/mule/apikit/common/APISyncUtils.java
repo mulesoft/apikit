@@ -48,7 +48,7 @@ public class APISyncUtils {
     return apiSyncResource;
   }
 
-  public static boolean compareResources(String resourceA, String resourceB, Boolean checkVersion) {
+  public static boolean compareResourcesLocation(String resourceA, String resourceB, Boolean checkVersion) {
     APISyncResource apiSyncResourceA = null;
     APISyncResource apiSyncResourceB = null;
     try {
@@ -90,14 +90,20 @@ public class APISyncUtils {
 
     public boolean equals(APISyncResource resource, Boolean checkVersion) {
       if (checkVersion == false) {
-        return groupId.equals(resource.groupId) && artifact.equals(resource.artifact) &&
-            classifier.equals(resource.classifier) && packager.equals(resource.packager) && file.equals(resource.file);
+        return groupId.equals(resource.groupId)
+            && artifact.equals(resource.artifact)
+            && classifier.equals(resource.classifier)
+            && packager.equals(resource.packager)
+            && file.equals(resource.file);
 
       }
 
-      return groupId.equals(resource.groupId) && artifact.equals(resource.artifact) && version.equals(resource.version)
-          && classifier.equals(resource.classifier) && packager.equals(resource.packager) &&
-          file.equals(resource.file);
+      return groupId.equals(resource.groupId)
+          && artifact.equals(resource.artifact)
+          && version.equals(resource.version)
+          && classifier.equals(resource.classifier)
+          && packager.equals(resource.packager)
+          && file.equals(resource.file);
     }
 
   }

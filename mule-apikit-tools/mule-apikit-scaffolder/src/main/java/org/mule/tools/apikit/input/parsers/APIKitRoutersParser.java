@@ -58,7 +58,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
       APIKitConfig config = getApikitConfig(element);
 
       for (String ramlFileName : ramlFileNames) {
-        if (compareRamls(config.getRaml(), ramlFileName)) {
+        if (compareRamlsLocation(config.getRaml(), ramlFileName)) {
           Element source = findListenerOrInboundEndpoint(element.getParentElement().getChildren());
           String configId = config.getName() != null ? config.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
 
@@ -76,9 +76,9 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
     return includedApis;
   }
 
-  private boolean compareRamls(String configRaml, String currentRootRaml) {
+  private boolean compareRamlsLocation(String configRaml, String currentRootRaml) {
     if (APISyncUtils.isSyncProtocol(configRaml) && APISyncUtils.isSyncProtocol(currentRootRaml)) {
-      return APISyncUtils.compareResources(configRaml, currentRootRaml, false);
+      return APISyncUtils.compareResourcesLocation(configRaml, currentRootRaml, false);
     }
 
     return configRaml.endsWith(currentRootRaml);
