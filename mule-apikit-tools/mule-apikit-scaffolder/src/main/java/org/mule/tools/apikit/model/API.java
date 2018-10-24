@@ -6,11 +6,9 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.mule.tools.apikit.misc.APIKitTools;
-
 import java.io.File;
 
-import org.apache.commons.io.FilenameUtils;
+import static java.io.File.separator;
 
 public class API {
 
@@ -21,6 +19,8 @@ public class API {
   public static final String DEFAULT_PROTOCOL = "HTTP";
   public static final String DEFAULT_CONSOLE_PATH = "/console/*";
   public static final String DEFAULT_CONSOLE_PATH_INBOUND = "http://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/console";
+  public static final String RESOURCE_API_FOLDER =
+      "src" + separator + "main" + separator + "resources" + separator + "api" + separator;
 
   private APIKitConfig config;
   private HttpListener4xConfig httpListenerConfig;
@@ -31,16 +31,25 @@ public class API {
   private File ramlFile;
   private String id;
 
-  public API(File ramlFile, File xmlFile, String baseUri, String path) {
+  public API(String id, File ramlFile, File xmlFile, String baseUri, String path) {
     this.path = path;
     this.ramlFile = ramlFile;
     this.xmlFile = xmlFile;
     this.baseUri = baseUri;
-    id = FilenameUtils.removeExtension(ramlFile.getName()).trim();
+    this.id = id;
   }
 
-  public API(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config) {
-    this(ramlFile, xmlFile, baseUri, path);
+  private String getRelativePath(File ramlFile) {
+    final String path = ramlFile.getAbsolutePath();
+
+    if (path.contains(RESOURCE_API_FOLDER))
+      return path.substring(path.lastIndexOf(RESOURCE_API_FOLDER) + RESOURCE_API_FOLDER.length());
+
+    return path;
+  }
+
+  public API(String id, File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config) {
+    this(id, ramlFile, xmlFile, baseUri, path);
     this.config = config;
   }
 
@@ -55,10 +64,7 @@ public class API {
   public File getXmlFile(File rootDirectory) {
     // Case we need to create the file
     if (xmlFile == null) {
-      xmlFile = new File(rootDirectory,
-                         FilenameUtils.getBaseName(
-                                                   ramlFile.getAbsolutePath())
-                             + ".xml");
+      xmlFile = new File(rootDirectory, id + ".xml");
     }
     return xmlFile;
   }
@@ -93,7 +99,7 @@ public class API {
 
   public void setDefaultAPIKitConfig() {
     config = new APIKitConfig();
-    config.setRaml(ramlFile.getName());
+    config.setRaml(getRelativePath(ramlFile));
     config.setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME);
   }
 

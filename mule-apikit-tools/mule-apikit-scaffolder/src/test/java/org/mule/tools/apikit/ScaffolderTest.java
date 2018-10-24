@@ -115,7 +115,8 @@ public class ScaffolderTest {
   @Test
   @Ignore
   public void generateWithIncludes10() throws Exception {
-    String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-10/api.raml").getFile();
+    String filepath =
+        ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-10/api.raml").getFile();
     File file = new File(filepath);
     List<File> ramls = Arrays.asList(file);
     List<File> xmls = Arrays.asList();
