@@ -4,19 +4,19 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>mule-apikit-parent</artifactId>
-        <version>1.1.9-SNAPSHOT</version>
+        <version>1.1.9-BETA-3</version>
     </parent>
 
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-apikit-module</artifactId>
-    <version>1.1.9-SNAPSHOT</version>
+    <version>1.1.9-BETA-3</version>
     <packaging>mule-plugin</packaging>
 
     <name>APIKit Module</name>
     <description>Module for creating API's using REST/SOAP Web Services</description>
 
     <properties>
-        <runtime.version>4.1.4-SNAPSHOT</runtime.version>
+        <runtime.version>4.1.4</runtime.version>
         <rest.assured.version>1.7.2</rest.assured.version>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
