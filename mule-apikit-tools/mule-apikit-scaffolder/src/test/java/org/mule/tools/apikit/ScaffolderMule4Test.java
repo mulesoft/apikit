@@ -388,7 +388,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(1, countOccurences(s, "get:\\resource1:api-config"));
     assertEquals(1, countOccurences(s, "get:\\resource2:api-config"));
     assertEquals(1, countOccurences(s, "get:\\resource3:api-config"));
-    assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
   }
 
@@ -466,7 +465,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(2, countOccurences(s, "get:\\:" + name + "-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:" + name + "-config"));
     assertEquals(2, countOccurences(s, "get:\\pet\\v1:" + name + "-config"));
-    assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
@@ -505,7 +503,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(8, countOccurences(s, "http:headers"));
     assertEquals(2, countOccurences(s, "get:\\:" + name + "-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:" + name + "-config"));
-    assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
@@ -539,7 +536,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
-    assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -564,7 +560,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
-    assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -591,7 +586,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
-    assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -618,7 +612,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
-    assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -646,7 +639,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
-    assertEquals(1, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -790,7 +782,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(1, countOccurences(s, "<http:listener-config"));
     assertEquals(2, countOccurences(s, "get:\\:simple-config"));
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
-    assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
     assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
@@ -807,7 +798,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(2, countOccurences(s2, "post:\\pet:two-config"));
     assertEquals(2, countOccurences(s2, "get:\\car:two-config"));
     assertEquals(2, countOccurences(s2, "post:\\car:two-config"));
-    assertEquals(0, countOccurences(s2, "extensionEnabled"));
     assertEquals(0, countOccurences(s2, "interpretRequestErrors=\"true\""));
     assertEquals(4, countOccurences(s2, "<logger level=\"INFO\" message="));
     assertEquals(2, countOccurences(s2, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
