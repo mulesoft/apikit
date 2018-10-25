@@ -14,7 +14,6 @@ import org.jdom2.input.sax.XMLReaders;
 import org.junit.Test;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
-import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
@@ -56,7 +55,7 @@ public class MuleConfigParserTest {
     assertNotNull(apis);
     assertEquals(1, apis.size());
     API api = apis.iterator().next();
-    assertEquals("leagues.raml", api.getRamlFileName());
+    assertEquals("leagues.raml", api.getRamlFilePath());
     assertEquals("leagues", api.getId());
     assertNotNull(api.getHttpListenerConfig());
     assertEquals("/", api.getHttpListenerConfig().getBasePath());

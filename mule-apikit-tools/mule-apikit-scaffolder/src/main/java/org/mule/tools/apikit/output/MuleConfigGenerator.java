@@ -101,7 +101,7 @@ public class MuleConfigGenerator {
       try {
         doc = getOrCreateDocument(docs, api);
       } catch (Exception e) {
-        log.error("Error generating xml for file: [" + api.getRamlFileName() + "]", e);
+        log.error("Error generating xml for file: [" + api.getRamlFilePath() + "]", e);
         continue;
       }
 
@@ -153,7 +153,7 @@ public class MuleConfigGenerator {
         if (api.getConfig() == null) {
           api.setDefaultAPIKitConfig();
         }
-        if (ramlsWithExtensionEnabledContains(api.getRamlFileName())) {
+        if (ramlsWithExtensionEnabledContains(api.getRamlFilePath())) {
           api.getConfig().setExtensionEnabled(true);
         }
         generateAPIKitAndListenerConfig(api, doc);
@@ -165,7 +165,7 @@ public class MuleConfigGenerator {
 
   private boolean ramlsWithExtensionEnabledContains(String ramlFileName) {
     for (File ramlWithExtensionEnabled : ramlsWithExtensionEnabled) {
-      if (FilenameUtils.getName(ramlWithExtensionEnabled.getAbsolutePath()).equals(ramlFileName))
+      if (FilenameUtils.getName(ramlWithExtensionEnabled.getAbsolutePath()).equals(FilenameUtils.getName(ramlFileName)))
         return true;
     }
 

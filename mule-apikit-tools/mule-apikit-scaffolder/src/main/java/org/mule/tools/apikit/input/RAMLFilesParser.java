@@ -98,7 +98,7 @@ public class RAMLFilesParser {
           } else {
             raml = ParserV1Utils.build(content, ramlFolderPath, rootRamlName);
           }
-          collectResources(ramlFile.getName(), raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
+          collectResources(ramlFile.getAbsolutePath(), raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
           processedFiles.add(ramlFile);
         } catch (Exception e) {
           log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());

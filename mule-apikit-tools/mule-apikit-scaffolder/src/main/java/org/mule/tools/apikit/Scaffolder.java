@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit;
 
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.MuleDomainParser;
@@ -15,7 +16,6 @@ import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.RuntimeEdition;
 import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
-import org.mule.tools.apikit.model.ScaffolderResourceLoaderWrapper;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationStrategy;
 import org.mule.tools.apikit.output.MuleArtifactJsonGenerator;
@@ -32,8 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.apache.maven.plugin.logging.Log;
 
 import static org.mule.tools.apikit.model.RuntimeEdition.CE;
 
@@ -93,7 +91,7 @@ public class Scaffolder {
                     RuntimeEdition runtimeEdition) {
     MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
     APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
-    MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(getNamesSet(ramls.keySet()), xmls);
+    MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(getFilePathSet(ramls.keySet()), xmls);
     RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
 
@@ -120,11 +118,11 @@ public class Scaffolder {
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
   }
 
-  private Set<String> getNamesSet(Set<File> fileSet) {
+  private Set<String> getFilePathSet(Set<File> fileSet) {
     Set<String> fileNamesSet = new HashSet<>();
 
     for (File file : fileSet) {
-      fileNamesSet.add(file.getName());
+      fileNamesSet.add(file.getAbsolutePath());
     }
 
     return fileNamesSet;
