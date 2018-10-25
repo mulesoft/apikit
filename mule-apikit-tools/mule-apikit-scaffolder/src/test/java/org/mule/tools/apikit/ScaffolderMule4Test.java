@@ -24,12 +24,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
@@ -174,8 +175,8 @@ public class ScaffolderMule4Test {
   public void generateWithIncludes08() throws Exception {
     String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-08/api.raml").getFile();
     File file = new File(filepath);
-    List<File> ramls = Arrays.asList(file);
-    List<File> xmls = Arrays.asList();
+    List<File> ramls = asList(file);
+    List<File> xmls = asList();
     File muleXmlOut = folder.newFolder("mule-xml-out");
     Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, null);
     scaffolder.run();
@@ -202,10 +203,11 @@ public class ScaffolderMule4Test {
 
   @Test
   public void generateWithIncludes10() throws Exception {
-    String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-10/api.raml").getFile();
+    String filepath =
+        ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-10/api.raml").getFile();
     File file = new File(filepath);
-    List<File> ramls = Arrays.asList(file);
-    List<File> xmls = Arrays.asList();
+    List<File> ramls = asList(file);
+    List<File> xmls = asList();
     File muleXmlOut = folder.newFolder("mule-xml-out");
     Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, null);
     scaffolder.run();
@@ -272,7 +274,8 @@ public class ScaffolderMule4Test {
 
   @Test
   public void generateWithExamples() throws Exception {
-    String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-with-examples/api.raml").getFile();
+    String filepath =
+        ScaffolderTest.class.getClassLoader().getResource("scaffolder-with-examples/src/main/resources/api/api.raml").getFile();
     File file = new File(filepath);
     File muleXmlOut = folder.newFolder("mule-xml-out");
     Scaffolder scaffolder = createScaffolder(singletonList(file), emptyList(), muleXmlOut, null, emptySet(), null, EE);
@@ -573,9 +576,9 @@ public class ScaffolderMule4Test {
   @Test
   public void testSimpleGenerationWithRamlInsideAFolder() throws Exception {
     File ramlFile = getFile("raml-inside-folder/folder/api.raml");
-    List<File> ramls = Arrays.asList(ramlFile);
+    List<File> ramls = asList(ramlFile);
     File xmlFile = getFile("raml-inside-folder/api.xml");
-    List<File> xmls = Arrays.asList(xmlFile);
+    List<File> xmls = asList(xmlFile);
     File muleXmlOut = folder.newFolder("raml-inside-folder");
 
     Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
@@ -721,9 +724,9 @@ public class ScaffolderMule4Test {
   }
 
   public void doubleRootRaml() throws Exception {
-    List<File> ramls = Arrays.asList(getFile("double-root-raml/simple.raml"), getFile("double-root-raml/two.raml"));
+    List<File> ramls = asList(getFile("double-root-raml/simple.raml"), getFile("double-root-raml/two.raml"));
 
-    List<File> xmls = Arrays.asList();
+    List<File> xmls = asList();
     File muleXmlOut = folder.newFolder("mule-xml-out");
 
     Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, null);
@@ -778,6 +781,36 @@ public class ScaffolderMule4Test {
     assertEquals(1, countOccurences(s, "get:\\resource3:api-config"));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
+  }
+
+  @Test
+  public void testGenerateFromTwoApis() throws Exception {
+    final String testFolder = "scaffolder-from-two-apis/";
+    final String basePath = testFolder + "src/main/resources/api/";
+    final String api1 =
+        ScaffolderTest.class.getClassLoader().getResource(basePath + "api1/api.raml").getFile();
+    final String api2 =
+        ScaffolderTest.class.getClassLoader().getResource(basePath + "api2/api.raml").getFile();
+    File muleXmlOut = folder.newFolder("mule-xml-out");
+
+    final List<File> ramls = new ArrayList<>();
+    ramls.add(new File(api1));
+    ramls.add(new File(api2));
+
+    Scaffolder scaffolder = createScaffolder(ramls, emptyList(), muleXmlOut, null, emptySet(), null, EE);
+    scaffolder.run();
+
+    final File xmlOut1 = new File(muleXmlOut, "api.xml");
+    assertTrue(xmlOut1.exists());
+    final File xmlOut2 = new File(muleXmlOut, "api-2.xml");
+    assertTrue(xmlOut2.exists());
+
+
+    assertEquals(IOUtils.toString(ScaffolderTest.class.getClassLoader().getResourceAsStream(testFolder + "api.xml")),
+                 IOUtils.toString(new FileInputStream(xmlOut1)));
+
+    assertEquals(IOUtils.toString(ScaffolderTest.class.getClassLoader().getResourceAsStream(testFolder + "api-2.xml")),
+                 IOUtils.toString(new FileInputStream(xmlOut2)));
   }
 
   private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
@@ -843,10 +876,10 @@ public class ScaffolderMule4Test {
 
   private File simpleGeneration(String apiPath, String name, String domainPath, String muleVersion, RuntimeEdition runtimeEdition)
       throws Exception {
-    List<File> ramls = Arrays.asList(getFile(apiPath + "/" + name + ".raml"));
+    List<File> ramls = asList(getFile(apiPath + "/" + name + ".raml"));
     File domainFile = getFile(domainPath);
 
-    List<File> xmls = Arrays.asList();
+    List<File> xmls = asList();
     File muleXmlOut = folder.newFolder("mule-xml-out");
 
     Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, domainFile, null, muleVersion, runtimeEdition);
@@ -857,7 +890,7 @@ public class ScaffolderMule4Test {
 
   private File simpleGenerationWithExtensionEnabled(String raml, String ramlWithExtensionEnabledPath, String domainPath)
       throws Exception {
-    List<File> ramlList = Arrays.asList(getFile("scaffolder/" + raml + ".raml"));
+    List<File> ramlList = asList(getFile("scaffolder/" + raml + ".raml"));
     Set<File> ramlWithExtensionEnabled = null;
     if (ramlWithExtensionEnabledPath != null) {
       ramlWithExtensionEnabled = new TreeSet<>();
@@ -865,7 +898,7 @@ public class ScaffolderMule4Test {
     }
     File domainFile = getFile(domainPath);
 
-    List<File> xmls = Arrays.asList();
+    List<File> xmls = asList();
     File muleXmlOut = folder.newFolder("mule-xml-out");
 
     Scaffolder scaffolder = createScaffolder(ramlList, xmls, muleXmlOut, domainFile, ramlWithExtensionEnabled);

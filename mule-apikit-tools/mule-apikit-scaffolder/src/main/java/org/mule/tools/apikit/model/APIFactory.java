@@ -13,9 +13,19 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import joptsimple.internal.Strings;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static joptsimple.internal.Strings.isNullOrEmpty;
+import static org.mule.tools.apikit.model.APIKitConfig.DEFAULT_CONFIG_NAME;
 
 public class APIFactory {
 
@@ -42,7 +52,7 @@ public class APIFactory {
       }
       return api;
     }
-    API api = new API(ramlFile, xmlFile, baseUri, path, config);
+    API api = new API(buildApiId(ramlFile), ramlFile, xmlFile, baseUri, path, config);
     if (httpListenerConfig == null) {
       if (domainHttpListenerConfigs.size() > 0) {
         api.setHttpListenerConfig(getFirstLC());
@@ -55,6 +65,31 @@ public class APIFactory {
     api.setConfig(config);
     apis.put(ramlFile, api);
     return api;
+  }
+
+  private String buildApiId(File ramlFile) {
+    final String apiId = FilenameUtils.removeExtension(ramlFile.getName()).trim();;
+
+
+    final List<String> apiIds = apis.values().stream().map(API::getId).collect(toList());
+
+    final List<String> configNames = apis.values().stream()
+        .filter(a -> a.getConfig() != null)
+        .map(a -> a.getConfig().getName()).collect(toList());
+
+    final List<String> httpConfigNames = apis.values().stream()
+        .filter(a -> a.getHttpListenerConfig() != null)
+        .map(a -> a.getHttpListenerConfig().getName()).collect(toList());
+
+    int count = 0;
+    String id;
+    do {
+      count++;
+      id = (count > 1 ? apiId + "-" + count : apiId);
+    } while (apiIds.contains(id) || configNames.contains(id + "-" + DEFAULT_CONFIG_NAME)
+        || httpConfigNames.contains(id + "-" + HttpListener4xConfig.DEFAULT_CONFIG_NAME));
+
+    return id;
   }
 
   public Map<String, HttpListener4xConfig> getDomainHttpListenerConfigs() {

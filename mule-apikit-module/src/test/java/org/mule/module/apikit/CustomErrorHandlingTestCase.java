@@ -51,10 +51,10 @@ public class CustomErrorHandlingTestCase extends MuleArtifactFunctionalTestCase 
   @Test
   public void testVariablesPropagationOnErrorHandling() throws Exception {
     given().header("Accept", "*/*")
-            .expect()
-            .response().body(is("{message: 'Not Found'}"))
-            .statusCode(404)
-            .when().get("/api/error");
+        .expect()
+        .response().body(is("{message: 'Not Found'}"))
+        .statusCode(404)
+        .when().get("/api/error");
   }
 
 }
