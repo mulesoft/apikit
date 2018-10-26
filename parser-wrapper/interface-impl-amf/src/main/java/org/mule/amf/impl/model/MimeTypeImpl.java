@@ -14,6 +14,7 @@ import amf.client.model.domain.PropertyShape;
 import amf.client.model.domain.Shape;
 import amf.client.model.domain.UnionShape;
 import amf.client.validate.ValidationReport;
+import amf.client.validation.PayloadValidator;
 import org.mule.amf.impl.parser.rule.ValidationResultImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -30,13 +31,19 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
+import static org.mule.amf.impl.model.MediaType.APPLICATION_XML;
+import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
 
 public class MimeTypeImpl implements IMimeType {
 
-  Payload payload;
+  private final Payload payload;
+  private final Shape shape;
+  private final PayloadValidator validator;
 
   public MimeTypeImpl(final Payload payload) {
     this.payload = payload;
+    this.shape = payload.schema();
+    this.validator = shape instanceof AnyShape ? ((AnyShape) shape).payloadValidator() : null;
   }
 
   @Override
@@ -46,13 +53,11 @@ public class MimeTypeImpl implements IMimeType {
 
   @Override
   public String getSchema() {
-    final Shape schema = payload.schema();
-
-    if (schema.getClass() == AnyShape.class)
+    if (shape.getClass() == AnyShape.class)
       return null;
 
-    if (schema instanceof AnyShape)
-      return ((AnyShape) schema).toJsonSchema();
+    if (shape instanceof AnyShape)
+      return ((AnyShape) shape).toJsonSchema();
 
     return null;
   }
@@ -62,15 +67,13 @@ public class MimeTypeImpl implements IMimeType {
     final String mediaType = payload.mediaType().value();
 
     if (mediaType.startsWith("multipart/") || mediaType.equals("application/x-www-form-urlencoded")) {
-      final Shape schema = payload.schema();
-
-      if (schema.getClass() == AnyShape.class)
+      if (shape.getClass() == AnyShape.class)
         return emptyMap();
 
-      if (!(schema instanceof NodeShape))
-        throw new RuntimeException("Unexpected Shape " + schema.getClass());
+      if (!(shape instanceof NodeShape))
+        throw new RuntimeException("Unexpected Shape " + shape.getClass());
 
-      final NodeShape nodeShape = cast(schema);
+      final NodeShape nodeShape = cast(shape);
 
       final Map<String, List<IParameter>> parameters = new LinkedHashMap<>();
 
@@ -91,10 +94,8 @@ public class MimeTypeImpl implements IMimeType {
 
   @Override
   public String getExample() {
-    final Shape schema = payload.schema();
-
-    if (schema instanceof UnionShape) {
-      final UnionShape unionShape = (UnionShape) schema;
+    if (shape instanceof UnionShape) {
+      final UnionShape unionShape = (UnionShape) shape;
       for (Shape shape : unionShape.anyOf()) {
         if (shape instanceof AnyShape) {
           final String example = getExampleFromAnyShape((AnyShape) shape);
@@ -104,8 +105,8 @@ public class MimeTypeImpl implements IMimeType {
       }
     }
 
-    if (schema instanceof AnyShape) {
-      return getExampleFromAnyShape((AnyShape) schema);
+    if (shape instanceof AnyShape) {
+      return getExampleFromAnyShape((AnyShape) shape);
     }
 
     return null;
@@ -133,20 +134,34 @@ public class MimeTypeImpl implements IMimeType {
 
   @Override
   public List<IValidationResult> validate(String payload) {
-    final Shape schema = this.payload.schema();
+    final String mimeType = getMimeTypeForValue(payload);
 
-    if (schema instanceof AnyShape) {
-      try {
-        final ValidationReport validationReport = ((AnyShape) schema).validate(payload).get();
-        if (validationReport.conforms())
-          return emptyList();
-        else
-          return validationReport.results().stream().map(ValidationResultImpl::new).collect(toList());
-      } catch (InterruptedException | ExecutionException e) {
-        throw new RuntimeException("Unexpected Error validating payload");
-      }
+    if (APPLICATION_XML.equals(mimeType))
+      return validateXml(payload);
+    else
+      return validatePayload(payload, mimeType);
+  }
+
+  private List<IValidationResult> validatePayload(String payload, String mimeType) {
+    if (validator != null) {
+      return mapToValidationResult(validator.reportValidation(mimeType, payload));
     }
-
     return null;
+  }
+
+  private List<IValidationResult> validateXml(String payload) {
+    try {
+      final ValidationReport validationReport = ((AnyShape) shape).validate(payload).get();
+      return mapToValidationResult(validationReport);
+    } catch (InterruptedException | ExecutionException e) {
+      throw new RuntimeException("Unexpected Error validating payload");
+    }
+  }
+
+  private static List<IValidationResult> mapToValidationResult(ValidationReport validationReport) {
+    if (validationReport.conforms())
+      return emptyList();
+    else
+      return validationReport.results().stream().map(ValidationResultImpl::new).collect(toList());
   }
 }

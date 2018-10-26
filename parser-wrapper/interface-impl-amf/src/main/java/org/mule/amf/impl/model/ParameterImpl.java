@@ -15,6 +15,7 @@ import amf.client.model.domain.ScalarShape;
 import amf.client.model.domain.Shape;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
+import amf.client.validation.ParameterValidator;
 import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -28,10 +29,13 @@ import java.util.stream.Collectors;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
 import static org.mule.amf.impl.model.ScalarType.ScalarTypes.STRING_ID;
+import static org.mule.amf.impl.model.MediaType.APPLICATION_XML;
+import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
 
 class ParameterImpl implements IParameter {
 
   private AnyShape schema;
+  private final ParameterValidator validator;
   private boolean required;
   private Collection<String> scalarTypes;
 
@@ -45,6 +49,7 @@ class ParameterImpl implements IParameter {
 
   ParameterImpl(final AnyShape anyShape, boolean required) {
     this.schema = anyShape;
+    this.validator = schema != null ? schema.parameterValidator() : null;
     this.required = required;
 
     final List<ScalarType> typeIds = asList(ScalarType.values());
@@ -58,10 +63,26 @@ class ParameterImpl implements IParameter {
   }
 
   private ValidationReport validatePayload(final String value) {
+    final String mimeType = getMimeTypeForValue(value);
+
+    if (APPLICATION_XML.equals(mimeType))
+      return validateXml(value);
+    else
+      return validatePayload(value, mimeType);
+  }
+
+  private ValidationReport validatePayload(String value, String mimeType) {
+    if (validator != null) {
+      return validator.reportValidation(mimeType, value);
+    }
+    throw new RuntimeException("Unexpected error validating request");
+  }
+
+  private ValidationReport validateXml(String payload) {
     try {
-      return schema.validateParameter(value).get();
+      return schema.validate(payload).get();
     } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException("Unexpected error validating request", e);
+      throw new RuntimeException("Unexpected Error validating payload");
     }
   }
 
