@@ -1,0 +1,128 @@
+--> Wrapper Started as Daemon
+Java Service Wrapper Standard Edition 64-bit 3.5.35
+  Copyright (C) 1999-2018 Tanuki Software, Ltd. All Rights Reserved.
+    http://wrapper.tanukisoftware.com
+  Licensed to MuleSoft Inc. for Mule Runtime Enterprise Edition
+
+Launching a JVM...
+
+Valid license key --> Evaluation = true, Expiration Date = Fri Oct 26 00:00:00 ART 2018, Contact Name = MuleSoft Support, Contact Email Address = support@mulesoft.com, Contact Telephone = support@mulesoft.com, Contact Company = MuleSoft, Contact Country = US, Entitlements = 
+
+Starting the Mule Container...
+WrapperManager: Initializing...
+INFO  2018-09-26 12:00:47,084 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.MuleContainer: 
+**********************************************************************
+* Mule Runtime and Integration Platform                              *
+* Version: 4.1.4-SNAPSHOT Build: 1195d778                            *
+* MuleSoft, Inc.                                                     *
+* For more information go to                                         *
+* https://www.mulesoft.com/platform/soa/mule-esb-enterprise          *
+*                                                                    *
+* Server started: 9/26/18 12:00 PM                                   *
+* JDK: 1.8.0_171 (mixed mode)                                        *
+* JDK properties:                                                    *
+*  - java.vendor = Oracle Corporation                                *
+*  - java.vm.name = Java HotSpot(TM) 64-Bit Server VM                *
+*  - java.home = /usr/lib/jvm/java-8-oracle/jre                      *
+* OS: Linux (4.4.0-134-generic, amd64)                               *
+* Host: code54-thinkpad (10.8.50.140)                                *
+* Mule services:                                                     *
+*  - mule-service-scheduler-1.1.7-SNAPSHOT-mule-service.jar          *
+*  - mule-service-http-ee-1.1.4-SNAPSHOT-mule-service.jar            *
+*  - mule-service-soap-1.1.7-SNAPSHOT-mule-service.jar               *
+*  - mule-service-oauth-1.1.5-SNAPSHOT-mule-service.jar              *
+*  - mule-service-weave-ee-2.1.6-SNAPSHOT-mule-service.jar           *
+*  - api-gateway-contract-service-1.0.1-mule-service.jar             *
+* Mule system properties:                                            *
+*  - mule.metadata.cache.expirationInterval.millis = 5000            *
+* - mule.base =                                                      *
+* /home/jbrasca/mule-workspace/apikit/mule-apikit-module/servers/Rou *
+* terApiSyncTestCase/mule-enterprise-standalone-4.1.4-SNAPSHOT       *
+* - mule.home =                                                      *
+* /home/jbrasca/mule-workspace/apikit/mule-apikit-module/servers/Rou *
+* terApiSyncTestCase/mule-enterprise-standalone-4.1.4-SNAPSHOT       *
+*  - mule.metadata.cache.entryTtl.minutes = 10                       *
+**********************************************************************
+INFO  2018-09-26 12:00:48,407 [WrapperListener_start_runner] [event: ] org.mule.service.scheduler.internal.config.ContainerThreadPoolsConfig: Loading thread pools configuration from /home/jbrasca/mule-workspace/apikit/mule-apikit-module/servers/RouterApiSyncTestCase/mule-enterprise-standalone-4.1.4-SNAPSHOT/conf/scheduler-pools.conf
+INFO  2018-09-26 12:00:49,230 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.service.internal.manager.MuleServiceManager: 
+**********************************************************************
+* Started DefaultSchedulerService                                    *
+*                                                                    *
+* Resolved configuration values:                                     *
+*                                                                    *
+* gracefulShutdownTimeout:       15000 ms                            *
+* cpuLight.threadPool.size:      8                                   *
+* cpuLight.workQueue.size:       0                                   *
+* io.threadPool.maxSize:         148                                 *
+* io.threadPool.threadKeepAlive: 30000 ms                            *
+* cpuIntensive.threadPool.size:  8                                   *
+* cpuIntensive.workQueue.size:   1024                                *
+*                                                                    *
+* These can be modified by editing 'conf/scheduler-pools.conf'       *
+**********************************************************************
+INFO  2018-09-26 12:00:49,556 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Initializing core extensions
+INFO  2018-09-26 12:00:49,601 [WrapperListener_start_runner] [event: ] com.mulesoft.mule.runtime.module.cluster.internal.config.ClusterTicketFileLoader: /home/jbrasca/mule-workspace/apikit/mule-apikit-module/servers/RouterApiSyncTestCase/mule-enterprise-standalone-4.1.4-SNAPSHOT/.mule/mule-cluster.properties (No such file or directory)
+WARN  2018-09-26 12:00:49,602 [WrapperListener_start_runner] [event: ] com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension: No cluster ID was specified -- High Availability will be disabled:
+INFO  2018-09-26 12:00:49,603 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@6b4f8d57' initialized
+INFO  2018-09-26 12:00:49,622 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@5afc3a76' initialized
+INFO  2018-09-26 12:00:49,715 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@546e01b8' initialized
+INFO  2018-09-26 12:00:49,989 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@20aed660' initialized
+INFO  2018-09-26 12:00:49,989 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Starting core extensions
+INFO  2018-09-26 12:00:49,990 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@6b4f8d57' started
+INFO  2018-09-26 12:00:49,990 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@5afc3a76' started
+INFO  2018-09-26 12:00:49,990 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@546e01b8' started
+INFO  2018-09-26 12:00:49,990 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@20aed660' started
+INFO  2018-09-26 12:00:50,059 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.deployment.internal.DefaultArchiveDeployer: ================== New Exploded Artifact: default
+INFO  2018-09-26 12:00:53,713 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.deployment.impl.internal.domain.DefaultMuleDomain: 
+**********************************************************************
+* Started domain 'default'                                           *
+**********************************************************************
+INFO  2018-09-26 12:00:53,723 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.deployment.internal.ArtifactArchiveInstaller: Exploding a Mule artifact archive: /home/jbrasca/mule-workspace/apikit/mule-apikit-module/servers/RouterApiSyncTestCase/mule-enterprise-standalone-4.1.4-SNAPSHOT/apps/resource-classloading-1.0.0-mule-application.jar
+WARN  2018-09-26 12:01:09,374 [WrapperListener_start_runner] [event: ] com.mulesoft.mule.runtime.gw.client.provider.ApiPlatformClientProvider: Client ID or Client Secret were not provided. API Platform client is DISABLED.
+INFO  2018-09-26 12:01:10,852 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.deployment.impl.internal.application.DefaultMuleApplication: 
+**********************************************************************
+* Started app 'resource-classloading-1.0.0-mule-application'         *
+* Application plugins:                                               *
+*  - Sockets (mule-sockets-connector-1.1.1-mule-plugin)              *
+*  - HTTP (mule-http-connector-1.2.0-mule-plugin)                    *
+*  - APIKit (mule-apikit-module-1.1.8-SNAPSHOT-mule-plugin)          *
+* Application libraries:                                             *
+*  - raml-api-1.0.0-raml.zip                                         *
+*  - raml-library-1.1.0-raml-fragment.zip                            *
+**********************************************************************
+INFO  2018-09-26 12:01:10,884 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.deployment.internal.DeploymentDirectoryWatcher: 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Mule is up and kicking (every 5000ms)                    +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+INFO  2018-09-26 12:01:10,894 [WrapperListener_start_runner] [event: ] org.mule.runtime.module.deployment.internal.StartupSummaryDeploymentListener: 
+**********************************************************************
+*              - - + DOMAIN + - -               * - - + STATUS + - - *
+**********************************************************************
+* default                                       * DEPLOYED           *
+**********************************************************************
+
+*******************************************************************************************************
+*            - - + APPLICATION + - -            *       - - + DOMAIN + - -       * - - + STATUS + - - *
+*******************************************************************************************************
+* resource-classloading-1.0.0-mule-application  * default                        * DEPLOYED           *
+*******************************************************************************************************
+
+TERM trapped.  Shutting down.
+INFO  2018-09-26 12:01:17,085 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.MuleContainer: Mule container shutting down due to normal shutdown request
+INFO  2018-09-26 12:01:17,431 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.deployment.impl.internal.domain.DefaultMuleDomain: 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++ Disposing domain 'default'                               +
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+INFO  2018-09-26 12:01:17,450 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Stopping core extensions
+INFO  2018-09-26 12:01:17,451 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@20aed660' stopped
+INFO  2018-09-26 12:01:17,472 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@546e01b8' stopped
+INFO  2018-09-26 12:01:17,472 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@5afc3a76' stopped
+INFO  2018-09-26 12:01:17,472 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@6b4f8d57' stopped
+INFO  2018-09-26 12:01:17,472 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Disposing core extensions
+INFO  2018-09-26 12:01:17,472 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.plugin.ServerPluginCoreExtension@5afc3a76' disposed
+INFO  2018-09-26 12:01:17,472 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.module.cluster.internal.HazelcastClusterCoreExtension@6b4f8d57' disposed
+INFO  2018-09-26 12:01:17,571 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.analytics.AnalyticsCoreExtension@20aed660' disposed
+INFO  2018-09-26 12:01:17,572 [WrapperListener_stop_runner] [event: ] org.mule.runtime.module.launcher.coreextension.DefaultMuleCoreExtensionManagerServer: Core extension 'com.mulesoft.mule.runtime.gw.deployment.ApiDeploymentCoreExtension@546e01b8' disposed
+INFO  2018-09-26 12:01:17,645 [WrapperListener_stop_runner] [event: ] org.mule.service.scheduler.internal.DefaultSchedulerService: Stopping DefaultSchedulerService...
+INFO  2018-09-26 12:01:17,753 [WrapperListener_stop_runner] [event: ] org.mule.service.scheduler.internal.DefaultSchedulerService: Stopped org.mule.service.scheduler.internal.DefaultSchedulerService$2@3cc6c1ee
+<-- Wrapper Stopped

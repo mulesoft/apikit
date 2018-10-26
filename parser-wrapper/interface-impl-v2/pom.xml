@@ -56,6 +56,11 @@
             <version>${mule.api.version}</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mule.tools</groupId>
+            <artifactId>mule-apikit-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>

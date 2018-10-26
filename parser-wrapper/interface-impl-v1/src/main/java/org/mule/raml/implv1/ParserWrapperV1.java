@@ -13,6 +13,7 @@ import static org.raml.parser.rule.ValidationResult.Level.WARN;
 import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 
 import org.mule.raml.implv1.injector.RamlUpdater;
+import org.mule.raml.implv1.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv1.model.RamlImplV1;
 import org.mule.raml.implv1.parser.rule.ValidationResultImpl;
 import org.mule.raml.interfaces.ParserWrapper;
@@ -20,9 +21,9 @@ import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.SerializationUtils;
@@ -33,6 +34,7 @@ import org.raml.emitter.RamlEmitter;
 import org.raml.model.Action;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
+import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
@@ -51,7 +53,7 @@ public class ParserWrapperV1 implements ParserWrapper {
 
   public ParserWrapperV1(String ramlPath) {
     this.ramlPath = ramlPath;
-    this.resourceLoader = new DefaultResourceLoader();
+    this.resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new ApiSyncResourceLoader(ramlPath));;
   }
 
   @Override
@@ -144,6 +146,14 @@ public class ParserWrapperV1 implements ParserWrapper {
     Raml ramlImpl = getRamlImpl(api);
     ramlImpl.setBaseUri(baseUri);
     cleanBaseUriParameters(ramlImpl);
+  }
+
+  @Override
+  public InputStream fetchResource(String resource) {
+    if (resourceLoader != null)
+      return resourceLoader.fetchResource(resource);
+
+    return null;
   }
 
   private void cleanBaseUriParameters(Raml ramlApi) {
