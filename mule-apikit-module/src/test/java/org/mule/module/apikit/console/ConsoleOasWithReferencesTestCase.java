@@ -21,7 +21,7 @@ public class ConsoleOasWithReferencesTestCase extends MuleArtifactFunctionalTest
 
   @Override
   protected String getConfigFile() {
-    return "org/mule/module/apikit/console/console-oas-references.xml";
+    return "org/mule/module/apikit/console/oas/console-oas-references.xml";
   }
 
   @Test

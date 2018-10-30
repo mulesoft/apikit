@@ -4,7 +4,7 @@
     <http:listener-config name="mule-config-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${serverPort}" />
     </http:listener-config>
-    <apikit:config name="mule-config-config" raml="org/mule/module/apikit/console/api.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="mule-config-config" raml="org/mule/module/apikit/console/oas/api.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="mule-config-main">
         <http:listener config-ref="mule-config-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
