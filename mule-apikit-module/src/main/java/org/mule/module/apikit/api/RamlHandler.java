@@ -113,15 +113,18 @@ public class RamlHandler {
     this.api = api;
   }
 
+  public String dumpRaml() {
+    return parserService.dumpRaml(api);
+  }
+
   public String getRamlV1() {
     if (keepRamlBaseUri) {
-      return parserService.dumpRaml(api);
+      return dumpRaml();
     } else {
       String baseUriReplacement = getBaseUriReplacement(apiServer);
       return parserService.dumpRaml(api, baseUriReplacement);
     }
   }
-
 
   //resourcesRelativePath should not contain the console path
   public String getRamlV2(String resourceRelativePath) throws TypedException {
@@ -131,7 +134,7 @@ public class RamlHandler {
     }
     if (apiResourcesRelativePath.equals(resourceRelativePath)) {
       //root raml
-      String rootRaml = parserService.dumpRaml(api);
+      String rootRaml = dumpRaml();
       if (keepRamlBaseUri) {
         return rootRaml;
       }
