@@ -6,8 +6,14 @@
  */
 package org.mule.raml.implv2;
 
+import static java.util.Optional.ofNullable;
+import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
+
+import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.common.RamlUtils;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
@@ -27,9 +33,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-import static java.util.Optional.ofNullable;
-import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
+import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
 
 public class ParserWrapperV2 implements ParserWrapper {
 
@@ -55,7 +59,12 @@ public class ParserWrapperV2 implements ParserWrapper {
                                          new DefaultResourceLoader(),
                                          new ExchangeDependencyResourceLoader(ramlFile.getParentFile().getAbsolutePath()));
     } else {
-      return new DefaultResourceLoader();
+      if (isSyncProtocol(ramlPath)) {
+        return new ApiSyncResourceLoader(ramlPath);
+      } else {
+        return new DefaultResourceLoader();
+      }
+
     }
   }
 
@@ -102,7 +111,7 @@ public class ParserWrapperV2 implements ParserWrapper {
 
   @Override
   public String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort) {
-    return replaceBaseUri(ramlContent, newSchemeHostPort);
+    return RamlUtils.replaceBaseUri(ramlContent, newSchemeHostPort);
   }
 
   @Override
@@ -131,5 +140,11 @@ public class ParserWrapperV2 implements ParserWrapper {
   public void updateBaseUri(IRaml api, String baseUri) {
     // do nothing, as updates are not supported
     logger.debug("RAML 1.0 parser does not support base uri updates");
+  }
+
+  @Override
+  public InputStream fetchResource(String resource) {
+
+    return resourceLoader.fetchResource(resource);
   }
 }

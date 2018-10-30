@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import scala.Option;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -211,5 +212,10 @@ public class ParserWrapperAmf implements ParserWrapper {
       e.printStackTrace();
       return "";
     }
+  }
+
+  public InputStream fetchResource(String resource) {
+    //TODO: Implement!!!
+    return null;
   }
 }

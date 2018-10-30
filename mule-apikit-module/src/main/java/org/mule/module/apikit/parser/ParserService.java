@@ -210,6 +210,10 @@ public class ParserService {
     }
   }
 
+  public InputStream fetchResource(String resource) {
+    return parserWrapper.fetchResource(resource);
+  }
+
   private static URI getUriFromFile(String path) {
     final URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
 

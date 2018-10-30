@@ -72,7 +72,7 @@ public class MuleConfigGeneratorTest {
     HttpListener4xConfig listenerConfig =
         new HttpListener4xConfig(HttpListener4xConfig.DEFAULT_CONFIG_NAME, "localhost", "8080", "HTTP", API.DEFAULT_BASE_PATH);
     when(api.getId()).thenReturn("hello");
-    when(api.getRamlFile()).thenReturn(raml);
+    when(api.getRamlFilePath()).thenReturn("hello.raml");
     when(api.getXmlFile(any(File.class))).thenReturn(file);
     when(api.getPath()).thenReturn("/api/*");
     when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
@@ -168,7 +168,7 @@ public class MuleConfigGeneratorTest {
     when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
     File raml = mock(File.class);
     when(raml.getName()).thenReturn("hello.raml");
-    when(api.getRamlFile()).thenReturn(raml);
+    when(api.getRamlFilePath()).thenReturn("hello.raml");
     when(api.getId()).thenReturn("hello");
     File file = folder.newFile("hello.xml");
     when(api.getXmlFile(any(File.class))).thenReturn(file);
@@ -217,7 +217,7 @@ public class MuleConfigGeneratorTest {
     when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
     File raml = mock(File.class);
     when(raml.getName()).thenReturn("hello.raml");
-    when(api.getRamlFile()).thenReturn(raml);
+    when(api.getRamlFilePath()).thenReturn("hello.raml");
     when(api.getId()).thenReturn("hello");
     File file = folder.newFile("hello.xml");
     when(api.getXmlFile(any(File.class))).thenReturn(file);

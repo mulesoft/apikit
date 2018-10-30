@@ -7,6 +7,7 @@
 package org.mule.module.apikit.api;
 
 import org.apache.commons.io.IOUtils;
+import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.StreamUtils;
 import org.mule.module.apikit.exception.NotFoundException;
@@ -70,13 +71,16 @@ public class RamlHandler {
     parserService = new ParserService(rootRamlLocation, parser);
     parserService.validateRaml();
     this.api = parserService.build();
-    parser = parserService.getParser(); // Fix Parser 
+    parser = parserService.getParser(); // Fix Parser
 
     int idx = rootRamlLocation.lastIndexOf("/");
     if (idx > 0) {
       this.apiResourcesRelativePath = rootRamlLocation.substring(0, idx + 1);
       this.apiResourcesRelativePath = sanitarizeResourceRelativePath(apiResourcesRelativePath);
+    } else if (isSyncProtocol(apiResourcesRelativePath)) {
+      this.apiResourcesRelativePath = rootRamlLocation;
     }
+
     this.muleContext = muleContext;
   }
 
@@ -147,6 +151,10 @@ public class RamlHandler {
       ByteArrayOutputStream baos = null;
       try {
         apiResource = muleContext.getExecutionClassLoader().getResourceAsStream(resourceRelativePath);
+
+        if (apiResource == null && resourceRelativePath.startsWith(apiResourcesRelativePath)) {
+          apiResource = parserService.fetchResource(resourceRelativePath.substring(apiResourcesRelativePath.length()));
+        }
 
         if (apiResource == null) {
           throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
@@ -226,7 +234,7 @@ public class RamlHandler {
       final URL url = new URL(ramlLocation);
       return url.toString();
     } catch (MalformedURLException e) {
-      String[] startingLocations = new String[] {"", "api/", "api"};
+      String[] startingLocations = new String[] {"api/", "", "api"};
       for (String start : startingLocations) {
         URL ramlLocationUrl = Thread.currentThread().getContextClassLoader().getResource(start + ramlLocation);
         if (ramlLocationUrl != null) {

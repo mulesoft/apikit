@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit.input.parsers;
 
+import org.mule.apikit.common.APISyncUtils;
 import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
@@ -30,18 +31,18 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
 
   private final Map<String, APIKitConfig> apikitConfigs;
   private final Map<String, HttpListener4xConfig> httpListenerConfigs;
-  private final Set<File> ramlPaths;
+  private final Set<String> ramlFilePaths;
   private final File file;
   private final APIFactory apiFactory;
 
   public APIKitRoutersParser(final Map<String, APIKitConfig> apikitConfigs,
                              final Map<String, HttpListener4xConfig> httpListenerConfigs,
-                             final Set<File> ramlPaths,
+                             final Set<String> ramlFilePaths,
                              final File file,
                              final APIFactory apiFactory) {
     this.apikitConfigs = apikitConfigs;
     this.httpListenerConfigs = httpListenerConfigs;
-    this.ramlPaths = ramlPaths;
+    this.ramlFilePaths = ramlFilePaths;
     this.file = file;
     this.apiFactory = apiFactory;
   }
@@ -56,15 +57,15 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
     for (Element element : elements) {
       APIKitConfig config = getApikitConfig(element);
 
-      for (File ramlPath : ramlPaths) {
-        if (ramlPath.getPath().endsWith(config.getRaml())) {
+      for (String ramlFilePath : ramlFilePaths) {
+        if (compareRamlsLocation(config.getRaml(), ramlFilePath)) {
           Element source = findListenerOrInboundEndpoint(element.getParentElement().getChildren());
           String configId = config.getName() != null ? config.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
 
           if ("listener".equals(source.getName())) {
-            includedApis.put(configId, handleListenerSource(source, ramlPath, config));
+            includedApis.put(configId, handleListenerSource(source, ramlFilePath, config));
           } else if ("inbound-endpoint".equals(source.getName())) {
-            includedApis.put(configId, handleInboundEndpointSource(source, ramlPath, config));
+            includedApis.put(configId, handleInboundEndpointSource(source, ramlFilePath, config));
           } else {
             throw new IllegalStateException("The first element of the main flow must be an " +
                 "inbound-endpoint or listener");
@@ -73,6 +74,14 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
       }
     }
     return includedApis;
+  }
+
+  private boolean compareRamlsLocation(String configRaml, String currentRootRaml) {
+    if (APISyncUtils.isSyncProtocol(configRaml) && APISyncUtils.isSyncProtocol(currentRootRaml)) {
+      return APISyncUtils.compareResourcesLocation(configRaml, currentRootRaml, false);
+    }
+
+    return currentRootRaml.endsWith(configRaml);
   }
 
   public APIKitConfig getApikitConfig(Element element) throws IllegalStateException {
@@ -86,14 +95,14 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
     return config;
   }
 
-  public API handleListenerSource(Element source, File ramlFile, APIKitConfig config) {
+  public API handleListenerSource(Element source, String ramlFilePath, APIKitConfig config) {
     HttpListener4xConfig httpListenerConfig = getHTTPListenerConfig(source);
     String path = getPathFromInbound(source);
     //TODO PARSE HTTPSTATUSVARNAME AND OUTBOUNDHEADERSMAPNAME
-    return apiFactory.createAPIBinding(ramlFile, file, null, path, config, httpListenerConfig);
+    return apiFactory.createAPIBinding(ramlFilePath, file, null, path, config, httpListenerConfig);
   }
 
-  public API handleInboundEndpointSource(Element source, File ramlFile, APIKitConfig config) {
+  public API handleInboundEndpointSource(Element source, String ramlFilePath, APIKitConfig config) {
     String baseUri = null;
     String path = source.getAttributeValue("path");
 
@@ -110,7 +119,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
     } else if (!path.startsWith("/")) {
       path = "/" + path;
     }
-    return apiFactory.createAPIBinding(ramlFile, file, baseUri, path, config, null);
+    return apiFactory.createAPIBinding(ramlFilePath, file, baseUri, path, config, null);
   }
 
   private Element findListenerOrInboundEndpoint(List<Element> elements) {
