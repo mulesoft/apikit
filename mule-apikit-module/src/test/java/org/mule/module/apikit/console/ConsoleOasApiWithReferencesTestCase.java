@@ -10,11 +10,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
-import static org.hamcrest.CoreMatchers.is;
+import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 
 import static com.jayway.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
 
-public class ConsoleOasWithReferencesTestCase extends MuleArtifactFunctionalTestCase {
+
+@ArtifactClassLoaderRunnerConfig
+public class ConsoleOasApiWithReferencesTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
   public DynamicPort serverPort = new DynamicPort("serverPort");
