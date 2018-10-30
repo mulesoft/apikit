@@ -107,7 +107,8 @@ public class RAMLFilesParserTest {
   public void oasCreation() {
 
     final URL url =
-        RAMLFilesParserTest.class.getClassLoader().getResource("oas/OpenAPI-Specification/examples/v2.0/json/petstore.json");
+        RAMLFilesParserTest.class.getClassLoader()
+            .getResource("oas/OpenAPI-Specification/examples/v2.0/json/src/main/resources/api/petstore.json");
 
     System.out.println("RAMLFilesParserTest.oasCreation " + url);
 
