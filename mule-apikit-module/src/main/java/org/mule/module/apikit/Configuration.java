@@ -11,7 +11,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.apache.commons.lang.StringUtils;
-import org.mule.module.apikit.api.Parser;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.config.ConsoleConfig;
 import org.mule.module.apikit.api.config.ValidationConfig;
@@ -22,6 +21,7 @@ import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 import org.mule.module.apikit.spi.RouterService;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
+import org.mule.raml.interfaces.ParserType;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -37,15 +37,10 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 
-import static org.mule.module.apikit.api.Parser.AMF;
-
-//import org.mule.module.apikit.exception.NotFoundException;
-
-
 public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
 
   private boolean disableValidations;
-  private Parser parser;
+  private ParserType parserType;
   private boolean queryParamsStrictValidation;
   private boolean headersStrictValidation;
   private String name;
@@ -96,8 +91,8 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
       // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
       // we will keep the value defined during raml handler instantiation
-      parser = ramlHandler.getParser();
-    } catch (IOException e) {
+      parserType = ramlHandler.getParserType();
+    } catch (final Exception e) {
       throw new InitialisationException(e.fillInStackTrace(), this);
     }
     flowFinder = new FlowFinder(ramlHandler, getName(), locator, flowMappings.getFlowMappings());
@@ -144,12 +139,12 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     this.disableValidations = disableValidations;
   }
 
-  public Parser getParser() {
-    return parser;
+  public ParserType getParser() {
+    return parserType;
   }
 
-  public void setParser(Parser parser) {
-    this.parser = parser;
+  public void setParser(ParserType parserType) {
+    this.parserType = parserType;
   }
 
   @Override

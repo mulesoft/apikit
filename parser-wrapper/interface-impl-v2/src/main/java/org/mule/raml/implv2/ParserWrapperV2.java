@@ -12,6 +12,7 @@ import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
+import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.common.RamlUtils;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
@@ -83,6 +84,11 @@ public class ParserWrapperV2 implements ParserWrapper {
   @Override
   public ApiVendor getApiVendor() {
     return RAML_10; // TODO Support both ApiVendor parsing RAML file
+  }
+
+  @Override
+  public ParserType getParserType() {
+    return ParserType.RAML;
   }
 
   @Override

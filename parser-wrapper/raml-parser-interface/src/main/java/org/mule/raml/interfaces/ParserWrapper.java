@@ -17,6 +17,8 @@ public interface ParserWrapper {
 
   ApiVendor getApiVendor();
 
+  ParserType getParserType();
+
   void validate();
 
   IValidationReport validationReport();

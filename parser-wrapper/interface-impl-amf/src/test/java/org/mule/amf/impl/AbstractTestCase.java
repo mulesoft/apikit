@@ -6,6 +6,9 @@
  */
 package org.mule.amf.impl;
 
+import java.io.File;
+import java.util.List;
+import org.mule.raml.interfaces.model.ApiRef;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IRaml;
@@ -39,6 +42,8 @@ abstract class AbstractTestCase {
     //dump("Resources AMF",  amfResources);
     assertResourcesEqual(actual.getResources(), expected.getResources());
 
+    // assertEqual(actual.getAllReferences(), expected.getAllReferences());
+
     // TODO"
     //schemas()
 
@@ -51,18 +56,8 @@ abstract class AbstractTestCase {
     // getUri()
   }
 
-  static void assertResourcesEqual(final IParameter actual, final IParameter expected) {
-    assertThat(actual.getDefaultValue(), is(equalTo(expected.getDefaultValue())));
-    assertThat(actual.isRepeat(), is(expected.isRepeat()));
-    assertThat(actual.isArray(), is(expected.isArray()));
-    //  boolean validate(String value);
-    //  String message(String value);
-    assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
-    assertThat(actual.getDescription(), is(equalTo(expected.getDescription())));
-    assertThat(actual.getExample(), is(equalTo(expected.getExample())));
-    assertExamplesEqual(actual.getExamples(), expected.getExamples());
-    // Object getInstance();
-    // MetadataType getMetadata();
+  static void assertEqual(final List<ApiRef> actual, final List<ApiRef> expected) {
+    assertThat(actual.size(), is(expected.size()));
   }
 
   static void assertResourcesEqual(final Map<String, IResource> actual, final Map<String, IResource> expected) {

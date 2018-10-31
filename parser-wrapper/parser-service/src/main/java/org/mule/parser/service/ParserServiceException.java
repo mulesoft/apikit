@@ -4,19 +4,19 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.exception;
+package org.mule.parser.service;
 
-public class ParserInitializationException extends RuntimeException {
+public class ParserServiceException extends RuntimeException {
 
-  public ParserInitializationException(String message) {
+  public ParserServiceException(String message) {
     super(message);
   }
 
-  public ParserInitializationException(String message, Throwable t) {
+  public ParserServiceException(String message, Throwable t) {
     super(message, t);
   }
 
-  public ParserInitializationException(Throwable t) {
+  public ParserServiceException(Throwable t) {
     super(t);
   }
 }

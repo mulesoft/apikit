@@ -6,12 +6,19 @@
  */
 package org.mule.module.apikit.api;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.apache.commons.io.IOUtils;
-import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
+import org.mule.amf.impl.ParserWrapperAmf;
 import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.StreamUtils;
 import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.module.apikit.parser.ParserService;
+import org.mule.parser.service.ParserService;
+import org.mule.raml.interfaces.ParserType;
+import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
@@ -21,15 +28,10 @@ import org.raml.model.ActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import static org.mule.module.apikit.api.Parser.AMF;
-import static org.mule.module.apikit.api.Parser.AUTO;
-import static org.mule.module.apikit.api.Parser.RAML;
+import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.ParserType.AMF;
+import static org.mule.raml.interfaces.ParserType.AUTO;
+import static org.mule.raml.interfaces.ParserType.RAML;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
@@ -41,11 +43,11 @@ public class RamlHandler {
   private boolean keepRamlBaseUri;
   private String apiServer;
   private IRaml api;
-  private ParserService parserService;
+  private ParserWrapper parserWrapper;
 
   private String apiResourcesRelativePath = "";
 
-  private Parser parser;
+  private ParserType parser;
 
   protected static final Logger logger = LoggerFactory.getLogger(RamlHandler.class);
 
@@ -58,7 +60,7 @@ public class RamlHandler {
     this(ramlLocation, keepRamlBaseUri, muleContext, null);
   }
 
-  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, Parser defaultParser)
+  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, ParserType defaultParser)
       throws IOException {
     this.keepRamlBaseUri = keepRamlBaseUri;
 
@@ -68,10 +70,10 @@ public class RamlHandler {
     if (rootRamlLocation == null) {
       throw new IOException("Raml not found at: " + ramlLocation);
     }
-    parserService = new ParserService(rootRamlLocation, parser);
-    parserService.validateRaml();
-    this.api = parserService.build();
-    parser = parserService.getParser(); // Fix Parser
+    parserWrapper = ParserService.create(rootRamlLocation, parser);
+    parserWrapper.validate();
+    this.api = parserWrapper.build();
+    parser = parserWrapper.getParserType(); // Fix Parser 
 
     int idx = rootRamlLocation.lastIndexOf("/");
     if (idx > 0) {
@@ -84,7 +86,7 @@ public class RamlHandler {
     this.muleContext = muleContext;
   }
 
-  private Parser resolveParser(Parser defaultValue) {
+  private ParserType resolveParser(ParserType defaultValue) {
     final String parserValue = System.getProperty(MULE_APIKIT_PARSER_AMF);
     if (AMF.name().equals(parserValue))
       return AMF;
@@ -93,7 +95,7 @@ public class RamlHandler {
     return defaultValue == null ? AUTO : defaultValue;
   }
 
-  public Parser getParser() {
+  public ParserType getParserType() {
     return parser;
   }
 
@@ -102,11 +104,12 @@ public class RamlHandler {
    */
   @Deprecated
   public boolean isParserV2() {
-    return parserService.isParserV2();
+    final ParserType parser = getParserType();
+    return parser == AMF || (parser == RAML && ApiVendor.RAML_10 == getApiVendor());
   }
 
   public ApiVendor getApiVendor() {
-    return parserService.getApiVendor();
+    return parserWrapper.getApiVendor();
   }
 
   public IRaml getApi() {
@@ -119,10 +122,10 @@ public class RamlHandler {
 
   public String getRamlV1() {
     if (keepRamlBaseUri) {
-      return parserService.dumpRaml(api);
+      return parserWrapper.dump(api, null);
     } else {
       String baseUriReplacement = getBaseUriReplacement(apiServer);
-      return parserService.dumpRaml(api, baseUriReplacement);
+      return parserWrapper.dump(api, baseUriReplacement);
     }
   }
 
@@ -135,7 +138,7 @@ public class RamlHandler {
     }
     if (apiResourcesRelativePath.equals(resourceRelativePath)) {
       //root raml
-      String rootRaml = parserService.dumpRaml(api);
+      String rootRaml = parserWrapper.dump(api, null);
       if (keepRamlBaseUri) {
         return rootRaml;
       }
@@ -153,7 +156,7 @@ public class RamlHandler {
         apiResource = muleContext.getExecutionClassLoader().getResourceAsStream(resourceRelativePath);
 
         if (apiResource == null && resourceRelativePath.startsWith(apiResourcesRelativePath)) {
-          apiResource = parserService.fetchResource(resourceRelativePath.substring(apiResourcesRelativePath.length()));
+          apiResource = parserWrapper.fetchResource(resourceRelativePath.substring(apiResourcesRelativePath.length()));
         }
 
         if (apiResource == null) {
@@ -177,7 +180,7 @@ public class RamlHandler {
   }
 
   public String getAMFModel() {
-    return parserService.getAmfModel();
+    return (parserWrapper instanceof ParserWrapperAmf) ? ((ParserWrapperAmf) parserWrapper).getAmfModel() : "";
   }
 
   public String getBaseUriReplacement(String apiServer) {

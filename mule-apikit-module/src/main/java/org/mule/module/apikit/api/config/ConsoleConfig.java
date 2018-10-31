@@ -6,12 +6,12 @@
  */
 package org.mule.module.apikit.api.config;
 
-import org.mule.module.apikit.api.Parser;
 import org.mule.module.apikit.api.RamlHandler;
+import org.mule.raml.interfaces.ParserType;
 
 public interface ConsoleConfig {
 
   RamlHandler getRamlHandler();
 
-  Parser getParser();
+  ParserType getParser();
 }
