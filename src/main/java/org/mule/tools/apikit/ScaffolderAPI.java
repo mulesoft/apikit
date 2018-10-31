@@ -35,10 +35,8 @@ import static org.mule.apikit.common.APISyncUtils.RESOURCE_FORMAT;
 
 public class ScaffolderAPI {
 
-  private final static List<String> apiExtensions = Arrays.asList(".yaml", ".raml", ".yml");
+  private final static List<String> apiExtensions = Arrays.asList(".yaml", ".raml", ".yml", ".json");
   private final static List<String> appExtensions = Arrays.asList(".xml");
-
-
 
   public ScaffolderAPI() {
 
