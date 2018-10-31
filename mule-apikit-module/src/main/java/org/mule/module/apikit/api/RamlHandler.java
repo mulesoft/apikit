@@ -19,6 +19,7 @@ import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.parser.service.ParserService;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.model.ApiRef;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
@@ -70,7 +71,7 @@ public class RamlHandler {
     if (rootRamlLocation == null) {
       throw new IOException("Raml not found at: " + ramlLocation);
     }
-    parserWrapper = ParserService.create(rootRamlLocation, parser);
+    parserWrapper = ParserService.create(ApiRef.create(rootRamlLocation), parser);
     parserWrapper.validate();
     this.api = parserWrapper.build();
     parser = parserWrapper.getParserType(); // Fix Parser 

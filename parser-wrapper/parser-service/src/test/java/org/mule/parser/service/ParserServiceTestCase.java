@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.model.ApiRef;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -27,7 +28,7 @@ public class ParserServiceTestCase {
 
     final URI api = resource("/api-08.raml");
 
-    final ParserWrapper wrapper = ParserService.create(api, ParserType.RAML);
+    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.RAML);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.RAML));
     assertThat(wrapper.getApiVendor(), is(RAML_08));
@@ -38,7 +39,7 @@ public class ParserServiceTestCase {
 
     final URI api = resource("/api-10.raml");
 
-    final ParserWrapper wrapper = ParserService.create(api, ParserType.RAML);
+    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.RAML);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.RAML));
     assertThat(wrapper.getApiVendor(), is(RAML_10));
@@ -49,7 +50,7 @@ public class ParserServiceTestCase {
 
     final URI api = resource("/petstore.json");
 
-    final ParserWrapper wrapper = ParserService.create(api, ParserType.AMF);
+    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.AMF));
     assertThat(wrapper.getApiVendor(), is(OAS_20));
@@ -60,7 +61,7 @@ public class ParserServiceTestCase {
 
     final URI api = resource("/petstore.yaml");
 
-    final ParserWrapper wrapper = ParserService.create(api, ParserType.AMF);
+    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.AMF));
     assertThat(wrapper.getApiVendor(), is(OAS_20));

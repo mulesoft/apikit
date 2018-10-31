@@ -7,29 +7,54 @@
 package org.mule.raml.interfaces.model;
 
 import java.io.File;
+import java.net.URI;
 import java.util.Optional;
 
-public class ApiRef {
+public interface ApiRef {
 
-  private String location;
-
-  private ApiRef(final String location) {
-    this.location = location;
+  static ApiRef create(final String location) {
+    return new ByPath(location);
   }
 
-  public static ApiRef create(final String location) {
-    return new ApiRef(location);
+  static ApiRef create(final URI uri) {
+    return new ByURI(uri);
   }
 
-  public String getLocation() {
-    return location;
+  String getLocation();
+
+  default boolean isFile() {
+    return getLocation().startsWith("file://");
   }
 
-  public boolean isFile() {
-    return location.startsWith("file://");
+  default Optional<File> toFile() {
+    return isFile() ? Optional.of(new File(getLocation())) : Optional.empty();
   }
 
-  public Optional<File> toFile() {
-    return isFile() ? Optional.of(new File(location)) : Optional.empty();
+  class ByPath implements ApiRef {
+
+    private String location;
+
+    ByPath(final String location) {
+      this.location = location;
+    }
+
+    @Override
+    public String getLocation() {
+      return location;
+    }
+  }
+
+  class ByURI implements ApiRef {
+
+    private URI uri;
+
+    ByURI(final URI uri) {
+      this.uri = uri;
+    }
+
+    @Override
+    public String getLocation() {
+      return uri.toString();
+    }
   }
 }

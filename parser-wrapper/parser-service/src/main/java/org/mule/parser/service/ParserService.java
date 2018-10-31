@@ -17,6 +17,7 @@ import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.model.ApiRef;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
@@ -42,21 +43,17 @@ public class ParserService {
   private static final String HEADER_RAML_08 = "#%RAML 0.8";
 
 
-  public static ParserWrapper create(final URI path, ParserType parserType) {
-    return createParserWrapper(path.toString(), parserType);
-  }
-
-  public static ParserWrapper create(final String path, ParserType parserType) {
-    return createParserWrapper(path, parserType);
+  public static ParserWrapper create(final ApiRef apiRef, ParserType parserType) {
+    return createParserWrapper(apiRef.getLocation(), parserType);
   }
 
   private static ParserWrapper createParserWrapper(final String path, ParserType parserType) throws ParserServiceException {
     ParserWrapper parserWrapper;
 
     try {
-      if (parserType == RAML)
+      if (parserType == RAML) {
         parserWrapper = createRamlParserWrapper(path, getRamlVersion(path).get());
-      else
+      } else
         parserWrapper = ParserWrapperAmf.create(getPathAsUri(path), false);
 
       final IValidationReport validationReport = parserWrapper.validationReport();
