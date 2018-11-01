@@ -79,6 +79,24 @@ public class DocumentParser {
     return document;
   }
 
+  public static Document parseFile(final Parser parser, final String rootRamlPath, final boolean validate)
+      throws ParserException {
+    final Document document = parseFile(parser, rootRamlPath);
+
+    if (validate) {
+      final ProfileName profile = parser instanceof Oas20Parser ? ProfileNames.OAS() : ProfileNames.RAML();
+      final ValidationReport parsingReport = DocumentParser.getParsingReport(parser, profile);
+      if (!parsingReport.conforms()) {
+        final List<ValidationResult> results = parsingReport.results();
+        if (!results.isEmpty()) {
+          final String message = results.get(0).message();
+          throw new ParserException(message);
+        }
+      }
+    }
+    return document;
+  }
+
   private static Document parseFile(final Parser parser, final String url) throws ParserException {
     return handleFuture(parser.parseFileAsync(url));
   }
@@ -91,6 +109,11 @@ public class DocumentParser {
     final String vendor = getVendor(apiDefinition);
     return "RAML".equals(vendor) ? ramlParser(environment) : oas20Parser(environment);
   }
+
+  public static Parser getRamlParserForApi(Environment environment) {
+    return ramlParser(environment);
+  }
+
 
   private static WebApi getWebApi(final Parser parser, final Path path) throws ParserException {
     return getWebApi(parseFile(parser, path.toUri().toString()));

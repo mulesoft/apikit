@@ -44,7 +44,7 @@ import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
-public class ScaffolderWithExistingConfigApiSyncTest {
+public class ScaffolderWithExistingConfigApiSyncTest extends AbstractScaffolderTestCase {
 
   private final static ScaffolderResourceLoader scaffolderResourceLoaderMock = Mockito.mock(ScaffolderResourceLoader.class);
 
@@ -142,12 +142,6 @@ public class ScaffolderWithExistingConfigApiSyncTest {
                           DEFAULT_RUNTIME_EDITION);
   }
 
-  private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
-    if (ramls == null) {
-      return EMPTY_MAP;
-    }
-    return fileListUtils.toStreamFromFiles(ramls);
-  }
 
   private Map<String, InputStream> getRamlInputStreamMap(List<File> ramls) throws IOException {
     Map<String, InputStream> map = new HashMap<>();
@@ -161,6 +155,8 @@ public class ScaffolderWithExistingConfigApiSyncTest {
       Mockito.doReturn(FileUtils.openInputStream(rootRaml)).doReturn(FileUtils.openInputStream(rootRaml))
           .when(scaffolderResourceLoaderMock)
           .getResourceAsStream(resource);
+      Mockito.doReturn((rootRaml.toURI().toURL())).when(scaffolderResourceLoaderMock)
+          .getResource(resource);
     }
 
     return map;
