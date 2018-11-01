@@ -21,6 +21,7 @@
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
         <testExtensionModelLoaderId>crafted</testExtensionModelLoaderId>
 
+        <mule.mule.distro.tests.version>${mule.version}</mule.mule.distro.tests.version>
         <mule.tests.infrastructure.version>${mule.version}</mule.tests.infrastructure.version>
         <mule.module.spring.config.version>${mule.version}</mule.module.spring.config.version>
         <mule.test.functional.version>${mule.version}</mule.test.functional.version>
@@ -69,12 +70,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-api</artifactId>
-            <version>${mule.api.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>io.projectreactor</groupId>
             <artifactId>reactor-core</artifactId>
             <version>${project.reactor.version}</version>
@@ -118,17 +113,7 @@
         </dependency>
         <dependency>
             <groupId>org.mule.raml</groupId>
-            <artifactId>raml-parser-interface-impl-v1</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.raml</groupId>
-            <artifactId>raml-parser-interface-impl-v2</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.raml</groupId>
-            <artifactId>raml-parser-interface-impl-amf</artifactId>
+            <artifactId>parser-service</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -136,12 +121,13 @@
             <artifactId>mule-apikit-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
-            <groupId>org.mule.runtime</groupId>
-            <artifactId>mule-extensions-api</artifactId>
-            <version>${mule.extensions.api.version}</version>
-            <scope>provided</scope>
+            <groupId>org.mule.tools</groupId>
+            <artifactId>mule-apikit-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-core</artifactId>
@@ -294,6 +280,13 @@
             <artifactId>mule-tests-component-plugin</artifactId>
             <version>${mule.tests.component.plugin.version}</version>
             <classifier>mule-plugin</classifier>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.distributions</groupId>
+            <artifactId>mule-distro-tests</artifactId>
+            <version>${mule.mule.distro.tests.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
     </dependencies>

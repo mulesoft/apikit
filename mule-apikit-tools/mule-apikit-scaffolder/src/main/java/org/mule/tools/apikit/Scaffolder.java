@@ -6,6 +6,8 @@
  */
 package org.mule.tools.apikit;
 
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.MuleDomainParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
@@ -13,6 +15,7 @@ import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.RuntimeEdition;
 import org.mule.tools.apikit.model.ScaffolderReport;
+import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.mule.tools.apikit.output.GenerationStrategy;
 import org.mule.tools.apikit.output.MuleArtifactJsonGenerator;
@@ -24,12 +27,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.apache.maven.plugin.logging.Log;
 
 import static org.mule.tools.apikit.model.RuntimeEdition.CE;
 
@@ -41,6 +43,8 @@ public class Scaffolder {
   private final MuleConfigGenerator muleConfigGenerator;
   private final MuleArtifactJsonGenerator muleArtifactJsonGenerator;
   private final ScaffolderReport scaffolderReport;
+
+
 
   public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles,
                                             List<String> muleXmlFiles)
@@ -87,13 +91,14 @@ public class Scaffolder {
                     RuntimeEdition runtimeEdition) {
     MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
     APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
-    MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(ramls.keySet(), xmls);
+    MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(getFilePathSet(ramls.keySet()), xmls);
     RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
 
     scaffolderReport = new ScaffolderReport();
     scaffolderReport.setVendorId(RAMLFilesParser.getVendorId());
     scaffolderReport.setVersion(RAMLFilesParser.getRamlVersion());
+    scaffolderReport.setStatus(RAMLFilesParser.getParseStatus());
 
 
 
@@ -113,6 +118,46 @@ public class Scaffolder {
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
   }
 
+  private Set<String> getFilePathSet(Set<File> fileSet) {
+    Set<String> fileNamesSet = new HashSet<>();
+
+    for (File file : fileSet) {
+      fileNamesSet.add(file.getAbsolutePath());
+    }
+
+    return fileNamesSet;
+  }
+
+  public Scaffolder(Log log, File muleXmlOutputDirectory, Map<String, InputStream> ramls,
+                    ScaffolderResourceLoader scaffolderResourceLoader, Map<File, InputStream> xmls, InputStream domainStream,
+                    String minMuleVersion, RuntimeEdition runtimeEdition) {
+    MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
+    APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
+    MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(ramls.keySet(), xmls);
+    RAMLFilesParser RAMLFilesParser =
+        new RAMLFilesParser(log, ramls, scaffolderResourceLoader, apiFactory);
+    List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
+
+    scaffolderReport = new ScaffolderReport();
+    scaffolderReport.setVendorId(RAMLFilesParser.getVendorId());
+    scaffolderReport.setVersion(RAMLFilesParser.getRamlVersion());
+    scaffolderReport.setStatus(RAMLFilesParser.getParseStatus());
+
+    if (runtimeEdition == null) {
+      runtimeEdition = DEFAULT_RUNTIME_EDITION;
+    }
+
+    if (minMuleVersion == null) {
+      minMuleVersion = DEFAULT_MULE_VERSION;
+    }
+
+    muleConfigGenerator =
+        new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(),
+                                null, minMuleVersion, runtimeEdition);
+
+    muleArtifactJsonGenerator =
+        new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
+  }
 
   private static InputStream getDomainStream(Log log, String domainPath) {
     InputStream domainStream = null;
@@ -132,10 +177,22 @@ public class Scaffolder {
     return domainStream;
   }
 
+  public static Scaffolder createScaffolder(SystemStreamLog log, File appDir, Map<String, InputStream> ramlSpecs,
+                                            ScaffolderResourceLoader scaffolderResourceLoader, List<String> muleXmlFiles,
+                                            String domain, String minMuleVersion, RuntimeEdition runtimeEdition)
+      throws IOException {
+    FileListUtils fileUtils = new FileListUtils(log);
+    Map<File, InputStream> muleStreams = fileUtils.toStreamsOrFail(muleXmlFiles);
+    InputStream domainStream = getDomainStream(log, domain);
+
+    return new Scaffolder(log, appDir, ramlSpecs, scaffolderResourceLoader, muleStreams, domainStream, minMuleVersion,
+                          runtimeEdition);
+
+  }
+
   public ScaffolderReport getScaffolderReport() {
     return scaffolderReport;
   }
-
 
   //TODO This is only a hack to get project base directory. Project Base Dir should be informed by api parameter
   private File getProjectBaseDirectory(File muleXmlOutputDirectory) {

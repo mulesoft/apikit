@@ -9,6 +9,8 @@ package org.mule.raml.implv2.v10.model;
 import static java.util.Collections.emptyMap;
 import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
 
+import java.io.File;
+import org.mule.raml.interfaces.model.ApiRef;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
@@ -134,6 +136,12 @@ public class RamlImpl10V2 implements IRaml {
   @Override
   public void cleanBaseUriParameters() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public List<ApiRef> getAllReferences() {
+    // TODO implement this
+    return Collections.emptyList();
   }
 
   @Override

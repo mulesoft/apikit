@@ -853,4 +853,3 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
 }
-

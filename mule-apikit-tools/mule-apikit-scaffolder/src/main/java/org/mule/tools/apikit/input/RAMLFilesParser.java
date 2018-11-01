@@ -8,11 +8,11 @@ package org.mule.tools.apikit.input;
 
 import amf.client.environment.DefaultEnvironment;
 import amf.client.environment.Environment;
-import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.amf.impl.ParserWrapperAmf;
+import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.implv2.ParserWrapperV2;
@@ -30,6 +30,9 @@ import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
+import org.mule.tools.apikit.model.ScaffolderReport;
+import org.mule.tools.apikit.model.ScaffolderResourceLoader;
+import org.mule.tools.apikit.model.ScaffolderResourceLoaderWrapper;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
@@ -51,12 +54,17 @@ import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class RAMLFilesParser {
 
-  private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries =
-      new HashMap<>();
+  private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = new HashMap<>();
   private final APIFactory apiFactory;
   private final Log log;
 
-  private String vendorId;
+  private String ramlVersion;
+  private String parseStatus = ScaffolderReport.SUCCESS;
+  private String errorMessage;
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
 
   public String getVendorId() {
     return vendorId;
@@ -66,7 +74,11 @@ public class RAMLFilesParser {
     return ramlVersion;
   }
 
-  private String ramlVersion;
+  public String getParseStatus() {
+    return parseStatus;
+  }
+
+  private static String vendorId = "RAML";
 
   public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
@@ -93,7 +105,7 @@ public class RAMLFilesParser {
         final IRaml raml = parserWrapper.build();
         ramlVersion = raml.getVersion();
 
-        collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
+        collectResources(ramlFile.getAbsolutePath(), raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
         processedFiles.add(ramlFile);
       } catch (Exception e) {
         final String reason = e.getMessage() == null ? "" : " Reason: " + e.getMessage();
@@ -106,16 +118,119 @@ public class RAMLFilesParser {
       this.log.info("The following RAML files were parsed correctly: " +
           processedFiles);
     } else {
-      this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
+      parseStatus = ScaffolderReport.FAILED;
+      errorMessage = "RAML Root not found. None of the files were recognized as valid root RAML files.";
+      this.log.error(errorMessage);
     }
   }
 
-  private void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version) {
+  private ResourceLoader getResourceLoader(String ramlFolderPath, File ramlFileParent) {
+    return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFileParent), new DefaultResourceLoader(),
+                                       new FileResourceLoader(ramlFolderPath),
+                                       new ExchangeDependencyResourceLoader(ramlFolderPath));
+  }
+
+  public RAMLFilesParser(Log log, Map<String, InputStream> ramls, ScaffolderResourceLoader scaffolderResourceLoader,
+                         APIFactory apiFactory) {
+    this.log = log;
+    this.apiFactory = apiFactory;
+    List<String> processedRamls = new ArrayList<>();
+    for (Map.Entry<String, InputStream> fileInputStreamEntry : ramls.entrySet()) {
+      String content;
+      String rootRamlName = fileInputStreamEntry.getKey();
+      try {
+        content = IOUtils.toString(fileInputStreamEntry.getValue());
+      } catch (IOException ioe) {
+        this.log.info("Error loading file " + rootRamlName);
+        break;
+
+      }
+
+      ScaffolderResourceLoaderWrapper scaffolderResourceLoaderWrapper =
+          new ScaffolderResourceLoaderWrapper(scaffolderResourceLoader, rootRamlName);
+      if (isValidRaml(rootRamlName, content, scaffolderResourceLoaderWrapper)) {
+        try {
+          IRaml raml;
+          if (ParserV2Utils.useParserV2(content)) {
+            ResourceLoader resourceLoader =
+                new CompositeResourceLoader(new DefaultResourceLoader(), scaffolderResourceLoaderWrapper);
+            raml = ParserV2Utils.build(resourceLoader, rootRamlName, content);
+          } else {
+            raml = ParserV1Utils.build(content, scaffolderResourceLoaderWrapper, rootRamlName);
+          }
+          collectResources(rootRamlName, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
+          processedRamls.add(rootRamlName);
+        } catch (Exception e) {
+          log.info("Could not parse [" + rootRamlName + "] as root RAML file. Reason: " + e.getMessage());
+          log.debug(e);
+        }
+      }
+
+    }
+    if (processedRamls.size() > 0) {
+      this.log.info("The following RAML files were parsed correctly: " +
+          processedRamls);
+    } else {
+      parseStatus = ScaffolderReport.FAILED;
+      errorMessage = "RAML Root not found. None of the files were recognized as valid root RAML files.";
+      this.log.error(errorMessage);
+    }
+  }
+
+  private boolean isValidRaml(String fileName, String content, String filePath) {
+    List<String> errors;
+    if (ParserV2Utils.useParserV2(content)) {
+      ResourceLoader resourceLoader = getResourceLoader(filePath, new File(filePath));
+      errors = toErrorList(ParserV2Utils.validate(resourceLoader, fileName, content));
+    } else {
+      errors = ParserV1Utils.validate(filePath, fileName, content);
+    }
+    return checkErrors(fileName, errors);
+  }
+
+  private List<String> toErrorList(List<IValidationResult> results) {
+    List<String> errors = new ArrayList<>();
+    for (IValidationResult result : results) {
+      errors.add(result.getMessage());
+    }
+    return errors;
+  }
+
+  private boolean isValidRaml(String fileName, String content, ScaffolderResourceLoaderWrapper scaffolderResourceLoaderWrapper) {
+    List<String> errors = new ArrayList<>();
+    ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), scaffolderResourceLoaderWrapper);
+    if (ParserV2Utils.useParserV2(content)) {
+      errors = toErrorList(ParserV2Utils.validate(resourceLoader, fileName, content));
+    } else {
+      errors = ParserV1Utils.validate(scaffolderResourceLoaderWrapper, fileName, content);
+    }
+    return checkErrors(fileName, errors);
+  }
+
+  private boolean checkErrors(String fileName, List<String> errors) {
+    if (!errors.isEmpty()) {
+      if (errors.size() == 1 && errors.get(0).toLowerCase().contains("root")) {
+        log.info("File '" + fileName + "' is not a root RAML file.");
+      } else {
+        log.info("File '" + fileName + "' is not a valid root RAML file. It contains some errors/warnings. See below: ");
+        int problemCount = 0;
+        for (String error : errors) {
+          log.info("ERROR " + (++problemCount) + ": " + error);
+        }
+      }
+      return false;
+    }
+    log.info("File '" + fileName + "' is a VALID root RAML file.");
+    return true;
+  }
+
+  void collectResources(String filePath, Map<String, IResource> resourceMap, String baseUri, String version) {
     for (IResource resource : resourceMap.values()) {
       for (IAction action : resource.getActions().values()) {
 
 
-        API api = apiFactory.createAPIBinding(filename, null, baseUri, APIKitTools.getPathFromUri(baseUri, false), null, null);
+        API api = apiFactory.createAPIBinding(filePath, null, baseUri, APIKitTools.getPathFromUri(baseUri, false), null,
+                                              null);
 
         Map<String, IMimeType> mimeTypes = action.getBody();
         boolean addGenericAction = false;
@@ -137,7 +252,7 @@ public class RAMLFilesParser {
         }
       }
 
-      collectResources(filename, resource.getResources(), baseUri, version);
+      collectResources(filePath, resource.getResources(), baseUri, version);
     }
   }
 

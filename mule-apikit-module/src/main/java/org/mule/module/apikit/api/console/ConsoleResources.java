@@ -17,8 +17,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.mule.module.apikit.api.Parser.AMF;
 import static org.mule.module.apikit.api.UrlUtils.getCompletePathFromBasePathAndPath;
+import static org.mule.raml.interfaces.ParserType.AMF;
 
 public class ConsoleResources {
 

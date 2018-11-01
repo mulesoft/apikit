@@ -10,7 +10,7 @@ import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.ObjectType;
-import org.mule.module.apikit.api.Parser;
+import org.mule.raml.interfaces.ParserType;
 import org.mule.runtime.api.meta.model.ImportedTypeModel;
 import org.mule.runtime.api.meta.model.XmlDslModel;
 import org.mule.runtime.api.meta.model.declaration.fluent.ConfigurationDeclarer;
@@ -24,7 +24,7 @@ import org.mule.runtime.extension.api.loader.ExtensionLoadingContext;
 import org.mule.runtime.extension.api.loader.ExtensionLoadingDelegate;
 
 import static org.mule.metadata.api.model.MetadataFormat.JAVA;
-import static org.mule.module.apikit.api.Parser.AUTO;
+import static org.mule.raml.interfaces.ParserType.AUTO;
 import static org.mule.runtime.api.meta.Category.COMMUNITY;
 
 public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate {
@@ -94,7 +94,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
         .ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("headersStrictValidation").defaultingTo(false)
         .ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withOptionalParameter("parser").defaultingTo(AUTO).ofType(typeLoader.load(Parser.class));
+    parameterGroupDeclarer.withOptionalParameter("parser").defaultingTo(AUTO).ofType(typeLoader.load(ParserType.class));
     parameterGroupDeclarer.withOptionalParameter("flowMappings")
         .ofType(typeBuilder.arrayType().of(typeLoader.load(FlowMapping.class)).build());
 

@@ -16,6 +16,7 @@
         <module>interface-impl-v1</module>
         <module>interface-impl-v2</module>
         <module>interface-impl-amf</module>
+        <module>parser-service</module>
     </modules>
     <packaging>pom</packaging>
     <name>RAML Interfaces Project</name>

@@ -6,11 +6,7 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.mule.tools.apikit.misc.APIKitTools;
-
 import java.io.File;
-
-import org.apache.commons.io.FilenameUtils;
 
 public class API {
 
@@ -28,19 +24,20 @@ public class API {
 
   private String baseUri;
   private File xmlFile;
-  private File ramlFile;
+  private String ramlFilPath;
   private String id;
 
-  public API(File ramlFile, File xmlFile, String baseUri, String path) {
+  public API(String id, String ramlFilePath, File xmlFile, String baseUri, String path) {
     this.path = path;
-    this.ramlFile = ramlFile;
+    this.ramlFilPath = ramlFilePath;
     this.xmlFile = xmlFile;
     this.baseUri = baseUri;
-    id = FilenameUtils.removeExtension(ramlFile.getName()).trim();
+    this.id = id;
   }
 
-  public API(File ramlFile, File xmlFile, String baseUri, String path, APIKitConfig config) {
-    this(ramlFile, xmlFile, baseUri, path);
+
+  public API(String id, String ramlFileName, File xmlFile, String baseUri, String path, APIKitConfig config) {
+    this(id, ramlFileName, xmlFile, baseUri, path);
     this.config = config;
   }
 
@@ -55,16 +52,13 @@ public class API {
   public File getXmlFile(File rootDirectory) {
     // Case we need to create the file
     if (xmlFile == null) {
-      xmlFile = new File(rootDirectory,
-                         FilenameUtils.getBaseName(
-                                                   ramlFile.getAbsolutePath())
-                             + ".xml");
+      xmlFile = new File(rootDirectory, id + ".xml");
     }
     return xmlFile;
   }
 
-  public File getRamlFile() {
-    return ramlFile;
+  public String getRamlFilePath() {
+    return ramlFilPath;
   }
 
   public String getPath() {
@@ -93,7 +87,7 @@ public class API {
 
   public void setDefaultAPIKitConfig() {
     config = new APIKitConfig();
-    config.setRaml(ramlFile.getName());
+    config.setRaml(ramlFilPath);
     config.setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME);
   }
 
@@ -103,15 +97,6 @@ public class API {
     httpListenerConfig = new HttpListener4xConfig(httpListenerConfigName);
   }
 
-  //public Boolean useInboundEndpoint()
-  //{
-  //    return APIKitTools.defaultIsInboundEndpoint(muleVersion);
-  //}
-
-  //public boolean setUseInboundEndpoint(Boolean useInboundEndpoint)
-  //{
-  //    return this.useInboundEndpoint = useInboundEndpoint;
-  //}
   public String getBaseUri() {
     return baseUri;
   }
@@ -129,7 +114,7 @@ public class API {
 
     API api = (API) o;
 
-    if (!ramlFile.equals(api.ramlFile))
+    if (!ramlFilPath.equals(api.ramlFilPath) || !id.equals(api.id))
       return false;
 
     return true;
@@ -137,7 +122,7 @@ public class API {
 
   @Override
   public int hashCode() {
-    return ramlFile.hashCode();
+    return ramlFilPath.hashCode();
   }
 
   public String getId() {
