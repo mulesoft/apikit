@@ -122,7 +122,7 @@ public class RamlHandler {
   }
 
   public String dumpRaml() {
-      return parserWrapper.dump(api, null);
+    return parserWrapper.dump(api, null);
   }
 
   public String getRamlV1() {

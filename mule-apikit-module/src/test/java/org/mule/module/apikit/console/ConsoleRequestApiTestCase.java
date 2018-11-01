@@ -17,18 +17,18 @@ import static org.hamcrest.CoreMatchers.is;
 
 
 @ArtifactClassLoaderRunnerConfig
-public class ConsoleOasApiWithReferencesTestCase extends MuleArtifactFunctionalTestCase {
+public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
   public DynamicPort serverPort = new DynamicPort("serverPort");
 
   @Override
   protected String getConfigFile() {
-    return "org/mule/module/apikit/console/oas/console-oas-references.xml";
+    return "org/mule/module/apikit/console/api/console-api.xml";
   }
 
   @Test
-  public void getOas() throws Exception {
+  public void getOasApi() throws Exception {
 
     given().port(serverPort.getNumber())
         .expect()
@@ -132,6 +132,54 @@ public class ConsoleOasApiWithReferencesTestCase extends MuleArtifactFunctionalT
             "    }\n" +
             "  }\n" +
             "}\n"))
-        .when().get("/console/api?api");
+        .when().get("/console-oas/org/mule/module/apikit/console/api/?api");
   }
+
+  @Test
+  public void getRaml10Api() throws Exception {
+    given().port(serverPort.getNumber())
+        .expect()
+        .statusCode(200)
+        .body(is("#%RAML 1.0\n" +
+            "title: hola\n" +
+            "/top:\n" +
+            "  type:\n" +
+            "    library1.foo:\n" +
+            "      foo: description\n" +
+            "  get:\n" +
+            "    description: get something\n" +
+            "  (library1.bar): hi\n" +
+            "uses:\n" +
+            "  library1: library.raml\n"))
+        .when().get("/console-raml-10/org/mule/module/apikit/console/api/?api");
+  }
+
+  @Test
+  public void getRaml10Library() throws Exception {
+    given().port(serverPort.getNumber())
+        .expect()
+        .statusCode(200)
+        .body(is("#%RAML 1.0 Library\n" +
+            "resourceTypes:\n" +
+            "   foo:\n" +
+            "    <<foo>>: This is a collection <<foo | !singularize>> and else\n" +
+            "annotationTypes:\n" +
+            "   bar:\n" +
+            "     type: string\n"))
+        .when().get("/console-raml-10/org/mule/module/apikit/console/api/library.raml");
+  }
+
+  @Test
+  public void getRaml08() throws Exception {
+    given().port(serverPort.getNumber())
+        .expect()
+        .statusCode(200)
+        .body(is("#%RAML 0.8\n" +
+            "title: emtpy body\n" +
+            "/bug:\n" +
+            "  post:\n" +
+            "    body: {}\n"))
+        .when().get("/console-raml-08/org/mule/module/apikit/console/api/?api");
+  }
+
 }

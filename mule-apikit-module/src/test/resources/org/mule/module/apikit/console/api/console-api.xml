@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+    <http:listener-config name="mule-config-httpListenerConfig">
+        <http:listener-connection host="0.0.0.0" port="${serverPort}" />
+    </http:listener-config>
+
+    <apikit:config name="oas-config" raml="org/mule/module/apikit/console/api/api.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="raml-10-config" raml="org/mule/module/apikit/console/api/api-10.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="raml-08-config" raml="org/mule/module/apikit/console/api/api-08.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+
+    <!-- OAS -->
+    <flow name="oas-config-main">
+        <http:listener config-ref="mule-config-httpListenerConfig" path="/api-oas/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="oas-config" />
+
+    </flow>
+    <flow name="mule-config-console">
+        <http:listener config-ref="mule-config-httpListenerConfig" path="/console-oas/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="oas-config" />
+
+    </flow>
+    <flow name="get:\pets\(petId):oas-config">
+        <logger level="INFO" message="get:\pets\(petId):oas-config" />
+    </flow>
+
+    <!-- RAML 1.0 -->
+
+    <flow name="raml-10-config-main">
+        <http:listener config-ref="mule-config-httpListenerConfig" path="/api-raml-10/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="raml-10-config" />
+    </flow>
+    <flow name="input-console">
+        <http:listener config-ref="mule-config-httpListenerConfig" path="/console-raml-10/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="raml-10-config" />
+    </flow>
+    <flow name="get:\top:raml-10-config">
+        <logger level="INFO" message="get:\top:raml-10-config" />
+    </flow>
+
+    <!-- RAML 0.8 -->
+
+    <flow name="raml-08-config-main">
+        <http:listener config-ref="mule-config-httpListenerConfig" path="/api-raml-08/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="raml-08-config" />
+    </flow>
+    <flow name="empty-body-console">
+        <http:listener config-ref="mule-config-httpListenerConfig" path="/console-raml-08/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="raml-08-config" />
+    </flow>
+    <flow name="post:\bug:raml-08-config">
+        <logger level="INFO" message="post:\bug:raml-08-config" />
+    </flow>
+
+</mule>
