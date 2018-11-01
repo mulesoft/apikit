@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.metadata.internal.raml;
 
+import javax.annotation.Nullable;
 import org.mule.metadata.api.builder.ObjectTypeBuilder;
 import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
@@ -15,6 +16,7 @@ import org.mule.metadata.xml.api.ModelFactory;
 import org.mule.metadata.xml.api.SchemaCollector;
 import org.mule.metadata.xml.api.XmlTypeLoader;
 import org.mule.metadata.xml.api.utils.XmlSchemaUtils;
+import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import javax.xml.namespace.QName;
@@ -27,10 +29,77 @@ import static org.mule.metadata.api.builder.BaseTypeBuilder.create;
 
 class MetadataFactory {
 
+  private static final String MIME_APPLICATION_JSON = "application/json";
+  private static final String MIME_APPLICATION_XML = "application/xml";
+  private static final String MIME_MULTIPART_FORM_DATA = "multipart/form-data";
+  private static final String MIME_APPLICATION_URL_ENCODED = "application/x-www-form-urlencoded";
+
   private static final MetadataType DEFAULT_METADATA = create(MetadataFormat.JAVA).anyType().build();
   private static final MetadataType STRING_METADATA = create(MetadataFormat.JAVA).stringType().build();
 
   private MetadataFactory() {}
+
+  public static MetadataType payloadMetadata(final RamlApiWrapper api, final @Nullable IMimeType body) {
+    if (body == null) {
+      return MetadataFactory.defaultMetadata();
+    }
+
+    final String type = body.getType();
+    final String schema = resolveSchema(api, body);
+    final String example = body.getExample();
+
+    switch (type) {
+      case MIME_APPLICATION_JSON:
+        return applicationJsonMetadata(schema, example);
+      case MIME_APPLICATION_XML:
+        return applicationXmlMetadata(schema, example);
+      case MIME_APPLICATION_URL_ENCODED:
+        return formMetadata(body.getFormParameters());
+      case MIME_MULTIPART_FORM_DATA:
+        return formMetadata(body.getFormParameters());
+      default:
+        return MetadataFactory.defaultMetadata();
+    }
+  }
+
+  private static String resolveSchema(RamlApiWrapper api, IMimeType body) {
+    String schema = body.getSchema();
+
+    // As body.getSchema() can return the name of the schema, null or
+    // the schema itself, first we assume that it has the schema name
+    // and we try to get the schema def from the api consolidated
+    // schemas
+    if (api.getConsolidatedSchemas().containsKey(schema)) {
+      schema = api.getConsolidatedSchemas().get(schema);
+    }
+
+    return schema;
+  }
+
+  private static MetadataType formMetadata(Map<String, List<IParameter>> formParameters) {
+    return MetadataFactory.fromFormMetadata(formParameters);
+  }
+
+  private static MetadataType applicationXmlMetadata(String schema, String example) {
+    if (schema != null) {
+      return MetadataFactory.fromXSDSchema(schema, example);
+    } else if (example != null) {
+      return MetadataFactory.fromXMLExample(example);
+    }
+
+    return MetadataFactory.defaultMetadata();
+  }
+
+  private static MetadataType applicationJsonMetadata(String schema, String example) {
+    if (schema != null) {
+      return MetadataFactory.fromJsonSchema(schema);
+    } else if (example != null) {
+      return MetadataFactory.fromJsonExample(example);
+    }
+
+    return MetadataFactory.defaultMetadata();
+  }
+
 
   /**
    * Creates metadata from a JSON Schema

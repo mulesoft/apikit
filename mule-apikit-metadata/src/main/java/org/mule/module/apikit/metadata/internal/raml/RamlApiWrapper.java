@@ -9,6 +9,7 @@ package org.mule.module.apikit.metadata.internal.raml;
 import org.mule.module.apikit.metadata.api.MetadataSource;
 import org.mule.module.apikit.metadata.api.Notifier;
 import org.mule.module.apikit.metadata.internal.model.ApiCoordinate;
+import org.mule.module.apikit.metadata.internal.model.MetadataResolver;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -19,7 +20,7 @@ import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 
-public class RamlApiWrapper {
+public class RamlApiWrapper implements MetadataResolver {
 
   private final Map<String, IResource> ramlResources = new HashMap<>();
   private final Map<String, IParameter> baseUriParameters;
@@ -40,11 +41,12 @@ public class RamlApiWrapper {
     });
   }
 
-  public Optional<MetadataSource> getActionForFlow(RamlApiWrapper api, ApiCoordinate coordinate, String httpStatusVar,
-                                                   String outboundHeadersVar) {
+  public Optional<MetadataSource> getMetadataSource(ApiCoordinate coordinate, String httpStatusVar,
+                                                    String outboundHeadersVar) {
     return ofNullable(ramlResources.get(coordinate.getResource()))
         .map(resource -> resource.getAction(coordinate.getMethod()))
-        .map(action -> new FlowMetadata(api, action, coordinate, baseUriParameters, httpStatusVar, outboundHeadersVar, notifier));
+        .map(action -> new FlowMetadata(this, action, coordinate, baseUriParameters, httpStatusVar, outboundHeadersVar,
+                                        notifier));
   }
 
   public Map<String, String> getConsolidatedSchemas() {

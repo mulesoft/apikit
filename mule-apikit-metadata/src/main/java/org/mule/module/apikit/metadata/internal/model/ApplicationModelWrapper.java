@@ -11,10 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 import org.mule.module.apikit.metadata.api.Notifier;
-import org.mule.module.apikit.metadata.internal.raml.RamlHandler;
-import org.mule.raml.interfaces.model.IRaml;
+import org.mule.module.apikit.metadata.api.ResourceLoader;
 import org.mule.runtime.api.component.ComponentIdentifier;
 import org.mule.runtime.config.internal.model.ApplicationModel;
 import org.mule.runtime.config.internal.model.ComponentModel;
@@ -32,36 +30,35 @@ import static org.mule.runtime.api.component.ComponentIdentifier.buildFromString
 public class ApplicationModelWrapper {
 
   private final static String PARAMETER_NAME = "name";
-  private final static String PARAMETER_RAML = "raml";
+  private final static String PARAMETER_API_DEFINITION = "raml";
   private final static String PARAMETER_OUTPUT_HEADERS_VAR = "outboundHeadersMapName";
   private final static String PARAMETER_HTTP_STATUS_VAR = "httpStatusVarName";
+  private final static String PARAMETER_PARSER = "parser";
+
   private final static String PARAMETER_RESOURCE = "resource";
   private final static String PARAMETER_ACTION = "action";
   private final static String PARAMETER_CONTENT_TYPE = "content-type";
   private final static String PARAMETER_FLOW_REF = "flow-ref";
 
   private static final ComponentIdentifier FLOW = buildFromStringRepresentation("flow");
+  private static final ComponentIdentifier APIKIT_CONFIG = buildFromStringRepresentation("apikit:config");
 
-  private ApplicationModel applicationModel;
-  private RamlHandler ramlHandler;
-  private Notifier notifier;
+  private final ApplicationModel applicationModel;
+  private final ResourceLoader resourceLoader;
+  private final Notifier notifier;
 
   private Map<String, ApikitConfig> configMap;
   private Map<String, ApiCoordinate> metadataFlows;
 
-  public ApplicationModelWrapper(ApplicationModel applicationModel, RamlHandler ramlHandler, Notifier notifier) {
+  public ApplicationModelWrapper(final ApplicationModel applicationModel, final ResourceLoader loader, final Notifier notifier) {
     this.applicationModel = applicationModel;
-    this.ramlHandler = ramlHandler;
+    this.resourceLoader = loader;
     this.notifier = notifier;
-    initialize();
+    configMap = loadConfigs();
+    metadataFlows = loadFlows();
   }
 
-  private void initialize() {
-    loadConfigs();
-    loadFlows();
-  }
-
-  private void loadFlows() {
+  private Map<String, ApiCoordinate> loadFlows() {
     // Finding all valid flows
     final List<Flow> flows = findFlows();
 
@@ -71,12 +68,12 @@ public class ApplicationModelWrapper {
     final Map<String, ApiCoordinate> flowMappingCoordinates = createCoordinatesForMappingFlows(flows, coordsFactory);
 
     // Merging both results
-    metadataFlows = merge(asList(conventionCoordinates, flowMappingCoordinates));
+    return merge(asList(conventionCoordinates, flowMappingCoordinates));
   }
 
-  private void loadConfigs() {
-    configMap = applicationModel.getRootComponentModel().getInnerComponents().stream()
-        .filter(ApikitElementIdentifiers::isApikitConfig)
+  private Map<String, ApikitConfig> loadConfigs() {
+    return applicationModel.getRootComponentModel().getInnerComponents().stream()
+        .filter(ApplicationModelWrapper::isApikitConfig)
         .map(this::createApikitConfig)
         .collect(toMap(ApikitConfig::getName, identity()));
   }
@@ -85,80 +82,37 @@ public class ApplicationModelWrapper {
     return configMap.keySet();
   }
 
-  public Collection<ApikitConfig> getConfigurations() {
+  Collection<ApikitConfig> getConfigurations() {
     return configMap.values();
-  }
-
-  private Map<String, ApiCoordinate> createCoordinatesForMappingFlows(List<Flow> flows, ApiCoordinateFactory coordsFactory) {
-    final Set<String> flowNames = flows.stream().map(Flow::getName).collect(toSet());
-
-    return configMap.values().stream()
-        .flatMap(config -> config.getFlowMappings().stream())
-        .filter(mapping -> flowNames.contains(mapping.getFlowRef()))
-        .map(coordsFactory::createFromFlowMapping)
-        .collect(toMap(ApiCoordinate::getFlowName, identity()));
   }
 
   private Map<String, ApiCoordinate> createCoordinatesForConventionFlows(final List<Flow> flows,
                                                                          final ApiCoordinateFactory coordsFactory) {
     return flows
         .stream()
-        .map(flow -> coordsFactory.createFromFlowName(flow.getName()))
+        .map(flow -> coordsFactory.fromFlowName(flow.getName()))
         .filter(Optional::isPresent).map(Optional::get)
         .collect(toMap(ApiCoordinate::getFlowName, identity()));
   }
 
-
-  private ApikitConfig createApikitConfig(ComponentModel unwrappedApikitConfig) {
-    final Map<String, String> parameters = unwrappedApikitConfig.getParameters();
+  private ApikitConfig createApikitConfig(final ComponentModel config) {
+    final Map<String, String> parameters = config.getParameters();
     final String configName = parameters.get(PARAMETER_NAME);
-    final String configRaml = parameters.get(PARAMETER_RAML);
+    final String apiDefinition = parameters.get(PARAMETER_API_DEFINITION);
     final String outputHeadersVarName = parameters.get(PARAMETER_OUTPUT_HEADERS_VAR);
     final String httpStatusVarName = parameters.get(PARAMETER_HTTP_STATUS_VAR);
+    final String parser = parameters.get(PARAMETER_PARSER);
 
-    final List<FlowMapping> flowMappings = unwrappedApikitConfig.getInnerComponents()
+    final List<FlowMapping> flowMappings = config.getInnerComponents()
         .stream()
-        .filter(config -> ApikitElementIdentifiers.isFlowMappings(config.getIdentifier()))
+        .filter(cfg -> ApikitElementIdentifiers.isFlowMappings(cfg.getIdentifier()))
         .flatMap(flowMappingsElement -> flowMappingsElement.getInnerComponents().stream())
         .filter(flowMapping -> ApikitElementIdentifiers.isFlowMapping(flowMapping.getIdentifier()))
         .map(unwrappedFlowMapping -> createFlowMapping(configName, unwrappedFlowMapping))
         .collect(toList());
 
-    final RamlHandlerSupplier ramlSupplier = RamlHandlerSupplier.create(configRaml, ramlHandler);
-
-    return new ApikitConfig(configName, configRaml, flowMappings, ramlSupplier, httpStatusVarName, outputHeadersVarName,
-                            notifier);
-  }
-
-  private static class RamlHandlerSupplier implements Supplier<Optional<IRaml>> {
-
-    private String configRaml;
-    private RamlHandler handler;
-
-    private RamlHandlerSupplier(String configRaml, RamlHandler handler) {
-      this.configRaml = configRaml;
-      this.handler = handler;
-    }
-
-    private static RamlHandlerSupplier create(String configRaml, RamlHandler handler) {
-      return new RamlHandlerSupplier(configRaml, handler);
-    }
-
-    @Override
-    public Optional<IRaml> get() {
-      return handler.getRamlApi(configRaml);
-    }
-  }
-
-  private FlowMapping createFlowMapping(String configName, ComponentModel unwrappedFlowMapping) {
-    Map<String, String> flowMappingParameters = unwrappedFlowMapping.getParameters();
-
-    String resource = flowMappingParameters.get(PARAMETER_RESOURCE);
-    String action = flowMappingParameters.get(PARAMETER_ACTION);
-    String contentType = flowMappingParameters.get(PARAMETER_CONTENT_TYPE);
-    String flowRef = flowMappingParameters.get(PARAMETER_FLOW_REF);
-
-    return new FlowMapping(configName, resource, action, contentType, flowRef);
+    return new ApikitConfig(configName, apiDefinition, flowMappings, httpStatusVarName, outputHeadersVarName,
+                            parser, resourceLoader, notifier);
   }
 
   public List<Flow> findFlows() {
@@ -178,22 +132,48 @@ public class ApplicationModelWrapper {
     return new Flow(flowName);
   }
 
-  private static boolean isFlow(final ComponentModel component) {
-    return component.getIdentifier().equals(FLOW);
-  }
-
-  public Optional<ApiCoordinate> getRamlCoordinatesForFlow(String flowName) {
+  public Optional<ApiCoordinate> getApiCoordinate(final String flowName) {
     return ofNullable(metadataFlows.get(flowName));
   }
 
-  public Optional<ApikitConfig> getConfig(String configName) {
+  public Optional<ApikitConfig> getConfig(final String name) {
     if (configMap.isEmpty()) {
       return empty();
     }
 
     // If the flow is not explicitly naming the config it belongs, we assume there is only one API
-    return Optional.of(configMap.getOrDefault(configName, configMap.values().iterator().next()));
+    return Optional.of(configMap.getOrDefault(name, configMap.values().iterator().next()));
   }
 
+  private Map<String, ApiCoordinate> createCoordinatesForMappingFlows(final List<Flow> flows,
+                                                                      final ApiCoordinateFactory factory) {
+    final Set<String> flowNames = flows.stream().map(Flow::getName).collect(toSet());
+
+    return configMap.values().stream()
+        .flatMap(config -> config.getFlowMappings().stream())
+        .filter(mapping -> flowNames.contains(mapping.getFlowRef()))
+        .map(factory::createFromFlowMapping)
+        .collect(toMap(ApiCoordinate::getFlowName, identity()));
+  }
+
+
+  private static boolean isFlow(final ComponentModel component) {
+    return component.getIdentifier().equals(FLOW);
+  }
+
+  private static boolean isApikitConfig(final ComponentModel component) {
+    return component.getIdentifier().equals(APIKIT_CONFIG);
+  }
+
+  private static FlowMapping createFlowMapping(final String configName, final ComponentModel component) {
+    final Map<String, String> flowMappingParameters = component.getParameters();
+
+    final String resource = flowMappingParameters.get(PARAMETER_RESOURCE);
+    final String action = flowMappingParameters.get(PARAMETER_ACTION);
+    final String contentType = flowMappingParameters.get(PARAMETER_CONTENT_TYPE);
+    final String flowRef = flowMappingParameters.get(PARAMETER_FLOW_REF);
+
+    return new FlowMapping(configName, resource, action, contentType, flowRef);
+  }
 
 }

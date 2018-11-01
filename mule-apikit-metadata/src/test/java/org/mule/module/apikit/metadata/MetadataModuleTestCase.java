@@ -8,9 +8,9 @@ package org.mule.module.apikit.metadata;
 
 import org.junit.Test;
 import org.mule.metadata.api.model.FunctionType;
+import org.mule.module.apikit.metadata.api.Metadata;
 import org.mule.module.apikit.metadata.api.Notifier;
 import org.mule.module.apikit.metadata.api.ResourceLoader;
-import org.mule.module.apikit.metadata.internal.raml.Metadata;
 import org.mule.module.apikit.metadata.utils.MockedApplicationModel;
 import org.mule.module.apikit.metadata.utils.TestNotifier;
 import org.mule.module.apikit.metadata.utils.TestResourceLoader;
@@ -109,15 +109,29 @@ public class MetadataModuleTestCase {
     assertThat(postMultipart.isPresent(), is(true));
   }
 
-  private ApplicationModel createApplicationModel(String resourceName) throws Exception {
-    final MockedApplicationModel.Builder builder = new MockedApplicationModel.Builder();
-    builder.addConfig("apiKitSample", getClass().getClassLoader().getResourceAsStream(resourceName));
-    final MockedApplicationModel mockedApplicationModel = builder.build();
-    return mockedApplicationModel.getApplicationModel();
+  @Test
+  public void testNotifyingOnlyInfoMesages() throws Exception {
+
+    ResourceLoader resourceLoader = new TestResourceLoader();
+    TestNotifier notifier = new TestNotifier();
+
+    ApplicationModel applicationModel = createApplicationModel("org/mule/module/apikit/metadata/api-in-raml08/app.xml");
+    assertThat(applicationModel, notNullValue());
+
+    final Metadata metadata = new Metadata.Builder()
+        .withApplicationModel(applicationModel)
+        .withResourceLoader(resourceLoader)
+        .withNotifier(notifier)
+        .build();
+
+    assertNotifierMessages(notifier, 0, 0, 0, 0);
+
+    metadata.getMetadataForFlow("get:\\resources:router-config");
+    assertNotifierMessages(notifier, 0, 0, 0, 0);
   }
 
   @Test
-  public void testNotifyingOnlyOneErrorPerLifespan() throws Exception {
+  public void testNotifyingOnlyErrorMessages() throws Exception {
     final ResourceLoader resourceLoader = new TestResourceLoader();
     final TestNotifier notifier = new TestNotifier();
 
@@ -130,30 +144,31 @@ public class MetadataModuleTestCase {
         .withNotifier(notifier)
         .build();
 
-    assertThat(notifier.messages(ERROR).size(), is(0));
-    assertThat(notifier.messages(DEBUG).size(), is(0));
-    assertThat(notifier.messages(INFO).size(), is(0));
-    assertThat(notifier.messages(WARN).size(), is(0));
+    assertNotifierMessages(notifier, 0, 0, 0, 0);
 
     metadata.getMetadataForFlow("get:\\flow1:router-config");
-
-    assertThat(notifier.messages(ERROR).size(), is(1));
-    assertThat(notifier.messages(DEBUG).size(), is(0));
-    assertThat(notifier.messages(INFO).size(), is(0));
-    assertThat(notifier.messages(WARN).size(), is(0));
+    assertNotifierMessages(notifier, 1, 0, 0, 0);
 
     metadata.getMetadataForFlow("get:\\flow2:router-config");
-
-    assertThat(notifier.messages(ERROR).size(), is(1));
-    assertThat(notifier.messages(DEBUG).size(), is(0));
-    assertThat(notifier.messages(INFO).size(), is(0));
-    assertThat(notifier.messages(WARN).size(), is(0));
+    assertNotifierMessages(notifier, 1, 0, 0, 0);
 
     metadata.getMetadataForFlow("get:\\flow3:router-config");
+    assertNotifierMessages(notifier, 1, 0, 0, 0);
 
-    assertThat(notifier.messages(ERROR).size(), is(1));
-    assertThat(notifier.messages(DEBUG).size(), is(0));
-    assertThat(notifier.messages(INFO).size(), is(0));
-    assertThat(notifier.messages(WARN).size(), is(0));
+  }
+
+  private ApplicationModel createApplicationModel(String resourceName) throws Exception {
+    final MockedApplicationModel.Builder builder = new MockedApplicationModel.Builder();
+    builder.addConfig("apiKitSample", getClass().getClassLoader().getResourceAsStream(resourceName));
+    final MockedApplicationModel mockedApplicationModel = builder.build();
+    return mockedApplicationModel.getApplicationModel();
+  }
+
+
+  private static void assertNotifierMessages(TestNotifier notifier, int error, int warning, int info, int debug) {
+    assertThat(notifier.messages(ERROR).size(), is(error));
+    assertThat(notifier.messages(WARN).size(), is(warning));
+    assertThat(notifier.messages(INFO).size(), is(info));
+    assertThat(notifier.messages(DEBUG).size(), is(debug));
   }
 }

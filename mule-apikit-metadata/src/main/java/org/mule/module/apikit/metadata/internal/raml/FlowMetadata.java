@@ -20,6 +20,8 @@ import org.mule.metadata.message.api.MuleEventMetadataTypeBuilder;
 import org.mule.module.apikit.metadata.api.MetadataSource;
 import org.mule.module.apikit.metadata.api.Notifier;
 import org.mule.module.apikit.metadata.internal.model.ApiCoordinate;
+import org.mule.module.apikit.metadata.internal.model.CertificateFields;
+import org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
@@ -33,26 +35,6 @@ import java.util.Optional;
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
 import static java.util.Optional.of;
-import static org.mule.module.apikit.metadata.internal.model.CertificateFields.CLIENT_CERTIFICATE_ENCODED;
-import static org.mule.module.apikit.metadata.internal.model.CertificateFields.CLIENT_CERTIFICATE_PUBLIC_KEY;
-import static org.mule.module.apikit.metadata.internal.model.CertificateFields.CLIENT_CERTIFICATE_TYPE;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_CLIENT_CERTIFICATE;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_HEADERS;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_LISTENER_PATH;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_LOCAL_ADDRESS;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_METHOD;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_QUERY_PARAMS;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_QUERY_STRING;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_RELATIVE_PATH;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_REMOTE_ADDRESS;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_REQUEST_PATH;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_REQUEST_URI;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_SCHEME;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_URI_PARAMS;
-import static org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields.ATTRIBUTES_VERSION;
-import static org.mule.module.apikit.metadata.internal.raml.MetadataFactory.binaryMetadata;
-import static org.mule.module.apikit.metadata.internal.raml.MetadataFactory.objectMetadata;
-import static org.mule.module.apikit.metadata.internal.raml.MetadataFactory.stringMetadata;
 
 public class FlowMetadata implements MetadataSource {
 
@@ -66,9 +48,10 @@ public class FlowMetadata implements MetadataSource {
   final private RamlApiWrapper api;
   final private Notifier notifier;
 
-  public FlowMetadata(RamlApiWrapper api, IAction action, ApiCoordinate coordinate, Map<String, IParameter> baseUriParameters,
-                      String httpStatusVar,
-                      String outboundHeadersVar, Notifier notifier) {
+  public FlowMetadata(final RamlApiWrapper api, final IAction action, final ApiCoordinate coordinate,
+                      final Map<String, IParameter> baseUriParameters,
+                      final String httpStatusVar,
+                      final String outboundHeadersVar, Notifier notifier) {
     this.api = api;
     this.action = action;
     this.coordinate = coordinate;
@@ -93,8 +76,8 @@ public class FlowMetadata implements MetadataSource {
     return of(function);
   }
 
-  private MuleEventMetadataType inputMetadata(IAction action, ApiCoordinate coordinate,
-                                              Map<String, IParameter> baseUriParameters) {
+  private MuleEventMetadataType inputMetadata(final IAction action, final ApiCoordinate coordinate,
+                                              final Map<String, IParameter> baseUriParameters) {
     final MessageMetadataType message = new MessageMetadataTypeBuilder()
         .payload(getInputPayload(action, coordinate))
         .attributes(getInputAttributes(action, baseUriParameters)).build();
@@ -102,17 +85,18 @@ public class FlowMetadata implements MetadataSource {
     return new MuleEventMetadataTypeBuilder().message(message).build();
   }
 
-  private MuleEventMetadataType outputMetadata(IAction action, ApiCoordinate coordinate, String outboundHeadersVar,
+  private MuleEventMetadataType outputMetadata(final IAction action, final ApiCoordinate coordinate,
+                                               final String outboundHeadersVar,
                                                String httpStatusVar) {
     final MessageMetadataType message = new MessageMetadataTypeBuilder()
         .payload(getOutputPayload(action, coordinate)).build();
 
     return new MuleEventMetadataTypeBuilder().message(message)
-        .addVariable(outboundHeadersVar, getOutputHeadersMetadata(action).build())
-        .addVariable(httpStatusVar, stringMetadata()).build();
+        .addVariable(outboundHeadersVar, getOutputHeaders(action).build())
+        .addVariable(httpStatusVar, MetadataFactory.stringMetadata()).build();
   }
 
-  private ObjectTypeBuilder getOutputHeadersMetadata(IAction action) {
+  private ObjectTypeBuilder getOutputHeaders(final IAction action) {
     final Map<String, IParameter> headers = findFirstResponse(action).map(IResponse::getHeaders).orElse(emptyMap());
 
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
@@ -123,7 +107,7 @@ public class FlowMetadata implements MetadataSource {
     return builder;
   }
 
-  private Optional<IResponse> findFirstResponse(IAction action) {
+  private Optional<IResponse> findFirstResponse(final IAction action) {
     final Optional<IResponse> response = getResponse(action, "200");
 
     if (response.isPresent())
@@ -135,7 +119,7 @@ public class FlowMetadata implements MetadataSource {
         .findFirst();
   }
 
-  private Optional<IResponse> getResponse(IAction action, String statusCode) {
+  private Optional<IResponse> getResponse(final IAction action, final String statusCode) {
     return Optional.ofNullable(action.getResponses().get(statusCode)).filter(IResponse::hasBody);
   }
 
@@ -149,7 +133,7 @@ public class FlowMetadata implements MetadataSource {
     return builder;
   }
 
-  private ObjectTypeBuilder getHeaders(IAction action) {
+  private ObjectTypeBuilder getInputHeaders(final IAction action) {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
     action.getHeaders().forEach(
@@ -159,65 +143,65 @@ public class FlowMetadata implements MetadataSource {
     return builder;
   }
 
-  private ObjectType getInputAttributes(IAction action, Map<String, IParameter> baseUriParameters) {
+  private ObjectType getInputAttributes(final IAction action, final Map<String, IParameter> baseUriParameters) {
 
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
     builder.addField()
-        .key(ATTRIBUTES_CLIENT_CERTIFICATE.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_CLIENT_CERTIFICATE.getName())
         .required(false)
         .value(getClientCertificate());
     builder.addField()
-        .key(ATTRIBUTES_HEADERS.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_HEADERS.getName())
         .required(true)
-        .value(getHeaders(action));
+        .value(getInputHeaders(action));
     builder.addField()
-        .key(ATTRIBUTES_LISTENER_PATH.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_LISTENER_PATH.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_METHOD.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_METHOD.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_QUERY_PARAMS.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_QUERY_PARAMS.getName())
         .required(true)
         .value(getQueryParameters(action));
     builder.addField()
-        .key(ATTRIBUTES_QUERY_STRING.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_QUERY_STRING.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_RELATIVE_PATH.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_RELATIVE_PATH.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_REMOTE_ADDRESS.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_REMOTE_ADDRESS.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_REQUEST_PATH.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_REQUEST_PATH.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_REQUEST_URI.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_REQUEST_URI.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_SCHEME.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_SCHEME.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_URI_PARAMS.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_URI_PARAMS.getName())
         .required(true)
         .value(getUriParameters(action, baseUriParameters));
     builder.addField()
-        .key(ATTRIBUTES_VERSION.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_VERSION.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
     builder.addField()
-        .key(ATTRIBUTES_LOCAL_ADDRESS.getName())
+        .key(HttpRequestAttributesFields.ATTRIBUTES_LOCAL_ADDRESS.getName())
         .required(true)
-        .value(stringMetadata());
+        .value(MetadataFactory.stringMetadata());
 
     return builder.build();
   }
@@ -225,14 +209,14 @@ public class FlowMetadata implements MetadataSource {
   private MetadataType getClientCertificate() {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
-    builder.addField().key(CLIENT_CERTIFICATE_PUBLIC_KEY.getName()).value(objectMetadata());
-    builder.addField().key(CLIENT_CERTIFICATE_TYPE.getName()).value(stringMetadata());
-    builder.addField().key(CLIENT_CERTIFICATE_ENCODED.getName()).value(binaryMetadata());
+    builder.addField().key(CertificateFields.CLIENT_CERTIFICATE_PUBLIC_KEY.getName()).value(MetadataFactory.objectMetadata());
+    builder.addField().key(CertificateFields.CLIENT_CERTIFICATE_TYPE.getName()).value(MetadataFactory.stringMetadata());
+    builder.addField().key(CertificateFields.CLIENT_CERTIFICATE_ENCODED.getName()).value(MetadataFactory.binaryMetadata());
 
     return builder.build();
   }
 
-  private ObjectTypeBuilder getUriParameters(IAction action, Map<String, IParameter> baseUriParameters) {
+  private ObjectTypeBuilder getUriParameters(final IAction action, Map<String, IParameter> baseUriParameters) {
     final ObjectTypeBuilder builder = BaseTypeBuilder.create(MetadataFormat.JAVA).objectType();
 
     baseUriParameters.forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata())
@@ -244,7 +228,7 @@ public class FlowMetadata implements MetadataSource {
     return builder;
   }
 
-  private MetadataType getOutputPayload(IAction action, ApiCoordinate coordinate) {
+  private MetadataType getOutputPayload(final IAction action, final ApiCoordinate coordinate) {
     final Optional<Collection<IMimeType>> mimeTypes = findFirstResponse(action)
         .map(response -> response.getBody().values());
 
@@ -259,7 +243,7 @@ public class FlowMetadata implements MetadataSource {
     return loadIOPayloadMetadata(mimeType, coordinate, api, "output");
   }
 
-  private MetadataType getInputPayload(IAction action, ApiCoordinate coordinate) {
+  private MetadataType getInputPayload(final IAction action, final ApiCoordinate coordinate) {
     @Nullable
     IMimeType mimeType = null;
 
@@ -274,10 +258,10 @@ public class FlowMetadata implements MetadataSource {
     return loadIOPayloadMetadata(mimeType, coordinate, api, "input");
   }
 
-  private MetadataType loadIOPayloadMetadata(IMimeType mimeType, ApiCoordinate coordinate, RamlApiWrapper api,
-                                             String payloadDescription) {
+  private MetadataType loadIOPayloadMetadata(final IMimeType mimeType, final ApiCoordinate coordinate, final RamlApiWrapper api,
+                                             final String payloadDescription) {
     try {
-      return Payload.metadata(api, mimeType);
+      return MetadataFactory.payloadMetadata(api, mimeType);
     } catch (Exception e) {
       notifier.warn(format("Error while trying to resolve %s payload metadata for flow '%s'.\nDetails: %s", payloadDescription,
                            coordinate.getFlowName(), e.getMessage()));

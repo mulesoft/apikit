@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.metadata;
 
+import java.util.Optional;
 import org.junit.Test;
-import org.mule.module.apikit.metadata.internal.model.ApiCoordinate;
 
 import java.util.HashSet;
-import java.util.Optional;
+import org.mule.module.apikit.metadata.internal.model.ApiCoordinate;
 import org.mule.module.apikit.metadata.internal.model.ApiCoordinateFactory;
 
 import static java.util.Arrays.asList;
@@ -24,7 +24,7 @@ public class ApiCoordinateFactoryTest {
   public void twoConfigsTest() {
     final ApiCoordinateFactory factory = new ApiCoordinateFactory(set("config1", "config2"));
 
-    Optional<ApiCoordinate> coord = factory.createFromFlowName("get:\\persons:config1");
+    Optional<ApiCoordinate> coord = factory.fromFlowName("get:\\persons:config1");
     assertTrue(coord.isPresent());
     assertEquals("get:\\persons:config1", coord.get().getFlowName());
     assertEquals("get", coord.get().getMethod());
@@ -32,7 +32,7 @@ public class ApiCoordinateFactoryTest {
     assertNull(coord.get().getMediaType());
     assertEquals("config1", coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("post:\\offices:config2");
+    coord = factory.fromFlowName("post:\\offices:config2");
     assertTrue(coord.isPresent());
     assertEquals("post:\\offices:config2", coord.get().getFlowName());
     assertEquals("post", coord.get().getMethod());
@@ -40,7 +40,7 @@ public class ApiCoordinateFactoryTest {
     assertNull(coord.get().getMediaType());
     assertEquals("config2", coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("post:\\offices:application\\json:config2");
+    coord = factory.fromFlowName("post:\\offices:application\\json:config2");
     assertTrue(coord.isPresent());
     assertEquals("post:\\offices:application\\json:config2", coord.get().getFlowName());
     assertEquals("post", coord.get().getMethod());
@@ -48,13 +48,13 @@ public class ApiCoordinateFactoryTest {
     assertEquals("application/json", coord.get().getMediaType());
     assertEquals("config2", coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("post:\\offices");
+    coord = factory.fromFlowName("post:\\offices");
     assertTrue(!coord.isPresent());
 
-    coord = factory.createFromFlowName("post:\\incomplete:application\\json:config2:illegal");
+    coord = factory.fromFlowName("post:\\incomplete:application\\json:config2:illegal");
     assertTrue(!coord.isPresent());
 
-    coord = factory.createFromFlowName("post:\\offices:application\\json:unknown-config");
+    coord = factory.fromFlowName("post:\\offices:application\\json:unknown-config");
     assertTrue(!coord.isPresent());
   }
 
@@ -62,7 +62,7 @@ public class ApiCoordinateFactoryTest {
   public void oneConfigTest() {
     final ApiCoordinateFactory factory = new ApiCoordinateFactory(set("config"));
 
-    Optional<ApiCoordinate> coord = factory.createFromFlowName("get:\\persons");
+    Optional<ApiCoordinate> coord = factory.fromFlowName("get:\\persons");
     assertTrue(coord.isPresent());
     assertEquals("get:\\persons", coord.get().getFlowName());
     assertEquals("get", coord.get().getMethod());
@@ -70,7 +70,7 @@ public class ApiCoordinateFactoryTest {
     assertNull(coord.get().getMediaType());
     assertNull(coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("get:\\persons");
+    coord = factory.fromFlowName("get:\\persons");
     assertTrue(coord.isPresent());
     assertEquals("get:\\persons", coord.get().getFlowName());
     assertEquals("get", coord.get().getMethod());
@@ -78,7 +78,7 @@ public class ApiCoordinateFactoryTest {
     assertNull(coord.get().getMediaType());
     assertNull(coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("get:\\persons:application\\json:config");
+    coord = factory.fromFlowName("get:\\persons:application\\json:config");
     assertTrue(coord.isPresent());
     assertEquals("get:\\persons:application\\json:config", coord.get().getFlowName());
     assertEquals("get", coord.get().getMethod());
@@ -86,7 +86,7 @@ public class ApiCoordinateFactoryTest {
     assertEquals("application/json", coord.get().getMediaType());
     assertEquals("config", coord.get().getConfigName());
 
-    coord = factory.createFromFlowName("get:\\persons:application\\json:unknownConfig");
+    coord = factory.fromFlowName("get:\\persons:application\\json:unknownConfig");
     assertTrue(!coord.isPresent());
   }
 

@@ -8,6 +8,7 @@ package org.mule.module.apikit.metadata.api;
 
 import java.util.Optional;
 import org.mule.metadata.api.model.FunctionType;
+import org.mule.module.apikit.metadata.internal.model.MetadataModel;
 import org.mule.runtime.config.internal.model.ApplicationModel;
 
 import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
@@ -53,14 +54,18 @@ public interface Metadata {
     }
 
     public Metadata build() {
-      return new org.mule.module.apikit.metadata.internal.raml.Metadata(applicationModel, s -> {
+      return new MetadataModel(applicationModel, doMagic(resourceLoader), notifier);
+    }
+
+    private static ResourceLoader doMagic(final ResourceLoader resourceLoader) {
+      return s -> {
         if (isExchangeModules(s)) {
           String apiSyncResource = toApiSyncResource(s);
           if (apiSyncResource != null)
             return resourceLoader.getResource(apiSyncResource);
         }
         return resourceLoader.getResource(s);
-      }, notifier);
+      };
     }
   }
 }

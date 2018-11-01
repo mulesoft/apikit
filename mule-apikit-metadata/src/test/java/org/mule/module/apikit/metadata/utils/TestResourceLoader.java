@@ -52,7 +52,6 @@ public class TestResourceLoader implements ResourceLoader {
     String groupId = parts[2];
     String fileName = parts[7];
     String version = parts[4];
-
     if (type.equals("raml"))
       return artifactId + "/" + fileName;
 

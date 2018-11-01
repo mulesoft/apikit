@@ -6,10 +6,7 @@
  */
 package org.mule.module.apikit.metadata.internal.model;
 
-import org.mule.apikit.common.FlowName;
-import org.mule.module.apikit.metadata.internal.model.FlowMapping;
-import org.mule.module.apikit.metadata.internal.model.ApiCoordinate;
-
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,47 +15,26 @@ import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
 
 public class ApiCoordinateFactory {
 
-  private Set<String> apiConfigNames;
+  private Set<String> configNames;
 
-  public ApiCoordinateFactory(Set<String> apiConfigNames) {
-    this.apiConfigNames = apiConfigNames;
+  public ApiCoordinateFactory(final Set<String> configNames) {
+    this.configNames = configNames;
   }
 
-  public Optional<ApiCoordinate> createFromFlowName(String flowName) {
+  public Optional<ApiCoordinate> fromFlowName(final String flowName) {
 
-    final String[] parts = FlowName.decode(flowName).split(FLOW_NAME_SEPARATOR);
+    final String[] parts = org.mule.apikit.common.FlowName.decode(flowName).split(FLOW_NAME_SEPARATOR);
 
-    if (parts.length < 2 || parts.length > 4) {
+    if (parts.length < 2 || parts.length > 4)
       return empty();
-    }
 
-    final Builder builder = Builder.create(flowName, parts[0], parts[1]);
+    final ApiCoordinateBuilder builder = ApiCoordinateBuilder.create(flowName, parts, configNames);
 
-    if (parts.length == 3) {
-      if (apiConfigNames.contains(parts[2])) {
-        builder.configName(parts[2]);
-      } else {
-        builder.mediaType(parts[2]);
-      }
-    } else if (parts.length == 4) {
-      builder.mediaType(parts[2]).configName(parts[3]);
-    }
+    return builder.build();
 
-    final ApiCoordinate coord = builder.build();
-
-    if (coord.getConfigName() != null && !apiConfigNames.contains(coord.getConfigName())) {
-      return empty();
-    }
-
-    if (apiConfigNames.size() > 1 && coord.getConfigName() == null) {
-      return empty();
-    }
-
-    return Optional.of(coord);
   }
 
-
-  public ApiCoordinate createFromFlowMapping(FlowMapping mapping) {
+  public ApiCoordinate createFromFlowMapping(final FlowMapping mapping) {
 
     final String flowName = mapping.getFlowRef();
     final String configName = mapping.getConfigName();
@@ -68,36 +44,63 @@ public class ApiCoordinateFactory {
     return new ApiCoordinate(flowName, action, resource, contentType, configName);
   }
 
-  private static class Builder {
+  private static class ApiCoordinateBuilder {
 
     final private String flowName;
     final private String methodName;
     final private String resourceName;
     private String mediaType = null;
     private String configName = null;
+    private Set<String> configNames = Collections.emptySet();
 
-    private Builder(String flowName, String methodName, String resourceName) {
+    private ApiCoordinateBuilder(final String flowName, final String methodName, final String resourceName) {
       this.flowName = flowName;
       this.methodName = methodName;
       this.resourceName = resourceName;
     }
 
-    static Builder create(String key, String methodName, String resourceName) {
-      return new Builder(key, methodName, resourceName);
+    static ApiCoordinateBuilder create(final String flowName, final String[] parts, final Set<String> configNames) {
+
+      final ApiCoordinateBuilder builder = new ApiCoordinateBuilder(flowName, parts[0], parts[1]);
+
+      if (parts.length == 3) {
+        if (configNames.contains(parts[2])) {
+          builder.withConfigName(parts[2]);
+        } else {
+          builder.withMediaType(parts[2]);
+        }
+      } else if (parts.length == 4) {
+        builder.withMediaType(parts[2]).withConfigName(parts[3]);
+      }
+
+      builder.withConfigNames(configNames);
+
+      return builder;
     }
 
-    Builder mediaType(String value) {
+    ApiCoordinateBuilder withMediaType(final String value) {
       this.mediaType = value;
       return this;
     }
 
-    Builder configName(String value) {
+    ApiCoordinateBuilder withConfigName(final String value) {
       this.configName = value;
       return this;
     }
 
-    private ApiCoordinate build() {
-      return new ApiCoordinate(flowName, methodName, resourceName, mediaType, configName);
+    ApiCoordinateBuilder withConfigNames(final Set<String> configNames) {
+      this.configNames = configNames;
+      return this;
+    }
+
+    private Optional<ApiCoordinate> build() {
+      final ApiCoordinate coord = new ApiCoordinate(flowName, methodName, resourceName, mediaType, configName);
+
+      if ((coord.getConfigName() != null && !configNames.contains(coord.getConfigName()))
+          || (configNames.size() > 1 && coord.getConfigName() == null)) {
+        return empty();
+      }
+      return Optional.of(coord);
     }
   }
 }
