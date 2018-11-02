@@ -156,4 +156,9 @@ class ParameterImpl implements IParameter {
     }
     return false;
   }
+
+  @Override
+  public String surroundWithQuotesIfNeeded(String value) {
+    return value;
+  }
 }
