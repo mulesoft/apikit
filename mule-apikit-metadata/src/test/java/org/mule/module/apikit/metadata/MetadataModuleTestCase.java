@@ -127,7 +127,7 @@ public class MetadataModuleTestCase {
     assertNotifierMessages(notifier, 0, 0, 0, 0);
 
     metadata.getMetadataForFlow("get:\\resources:router-config");
-    assertNotifierMessages(notifier, 0, 0, 0, 0);
+    assertNotifierMessages(notifier, 0, 0, 1, 0);
   }
 
   @Test
@@ -147,13 +147,13 @@ public class MetadataModuleTestCase {
     assertNotifierMessages(notifier, 0, 0, 0, 0);
 
     metadata.getMetadataForFlow("get:\\flow1:router-config");
-    assertNotifierMessages(notifier, 1, 0, 0, 0);
+    assertNotifierMessages(notifier, 2, 0, 0, 0);
 
     metadata.getMetadataForFlow("get:\\flow2:router-config");
-    assertNotifierMessages(notifier, 1, 0, 0, 0);
+    assertNotifierMessages(notifier, 2, 0, 0, 0);
 
     metadata.getMetadataForFlow("get:\\flow3:router-config");
-    assertNotifierMessages(notifier, 1, 0, 0, 0);
+    assertNotifierMessages(notifier, 2, 0, 0, 0);
 
   }
 

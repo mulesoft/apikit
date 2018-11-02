@@ -1,0 +1,56 @@
+%type _:Java = (inputMetadata:{
+  "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
+    "payload" : Any, 
+    "attributes" : {
+      "clientCertificate"? : {
+        "publicKey"? : {
+
+        }, 
+        "type"? : String, 
+        "encoded"? : Binary
+      }, 
+      "headers" : {
+
+      }, 
+      "listenerPath" : String, 
+      "method" : String, 
+      "queryParams" : {
+        "size"? : @enum("values" : ["small","large","medium"]) String
+      }, 
+      "queryString" : String, 
+      "relativePath" : String, 
+      "remoteAddress" : String, 
+      "requestPath" : String, 
+      "requestUri" : String, 
+      "scheme" : String, 
+      "uriParams" : {
+        "version" : String
+      }, 
+      "version" : String, 
+      "localAddress" : String
+    }
+  }, 
+  "variables" : {
+
+  }
+}) -> {
+  "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
+    "payload" : @typeId("value" : "http://jsonschema.net") {
+      "items"? : [@typeId("value" : "http://jsonschema.net/items/0") {
+          "code"? : String, 
+          "color"? : String, 
+          "size"? : String, 
+          "description"? : String, 
+          "id"? : Number, 
+          * : Any
+        }], 
+      * : Any
+    }
+  }, 
+  "variables" : {
+    "outboundHeaders" : {
+
+    }, 
+    "httpStatus" : String
+  }
+}

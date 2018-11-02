@@ -24,6 +24,7 @@ baseUri: https://www.example.com/api/
             default: 15
           dateQueryParam:
             type: datetime
+            format: rfc2616
             default: "Sun, 06 Nov 1994 08:49:37 GMT"
           booleanQueryParam:
             type: boolean
@@ -39,18 +40,18 @@ baseUri: https://www.example.com/api/
             type: string[]
             minItems: 3
             maxItems: 10
-            default: "enum1"
+            default: ["1", "2", "3"]
           numberQueryParam:
             type: number[]
-            default: 15.15
+            default: [15.15]
           integerQueryParam:
             type: integer[]
-            default: 15
+            default: [15]
           dateQueryParam:
             type: datetime[]
-            default: "Sun, 06 Nov 1994 08:49:37 GMT"
+            default: ["2016-02-28T16:41:41.090Z"]
           booleanQueryParam:
             type: boolean[]
-            default: false
+            default: [false]
           fileQueryParam:
             type: file[]

@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.Optional;
 import org.mule.module.apikit.metadata.api.Notifier;
 import org.mule.module.apikit.metadata.api.ResourceLoader;
-//import org.mule.module.apikit.metadata.internal.amf.AmfHandler;
-//import org.mule.module.apikit.metadata.internal.amf.AutoHandler;
+import org.mule.module.apikit.metadata.internal.amf.AmfHandler;
+import org.mule.module.apikit.metadata.internal.amf.AutoHandler;
 import org.mule.module.apikit.metadata.internal.raml.RamlHandler;
+import org.mule.raml.interfaces.ParserType;
 
 import static org.mule.module.apikit.metadata.api.Metadata.MULE_APIKIT_PARSER;
 
@@ -40,7 +41,6 @@ class ApikitConfig {
     this.httpStatusVarName = httpStatusVarName;
     this.outputHeadersVarName = outputHeadersVarName;
     this.parser = parser;
-    this.metadataResolverFactory = metadataResolverFactory;
     this.resourceLoader = resourceLoader;
     this.notifier = notifier;
   }
@@ -70,18 +70,20 @@ class ApikitConfig {
 
   private MetadataResolverFactory getMetadataResolverFactory() {
     if (metadataResolverFactory == null) {
-      final String finalParser = getOverridedParser();
-      metadataResolverFactory = new RamlHandler(resourceLoader, notifier);
-      /*
-      metadataResolverFactory = "RAML".equals(finalParser) ? new RamlHandler(resourceLoader, notifier)
-          : "AMF".equals(finalParser) ? new AmfHandler(resourceLoader, notifier) : new AutoHandler(resourceLoader, notifier);
-      */
+      final ParserType parserType = getParserType(parser);
+      metadataResolverFactory = ParserType.RAML.equals(parserType) ? new RamlHandler(resourceLoader, notifier)
+          : ParserType.AMF.equals(parserType) ? new AmfHandler(resourceLoader, notifier)
+              : new AutoHandler(resourceLoader, notifier);
     }
     return metadataResolverFactory;
   }
 
-  private String getOverridedParser() {
+  private static ParserType getParserType(final String parser) {
     final String value = System.getProperty(MULE_APIKIT_PARSER, parser);
-    return value == null ? "AUTO" : value;
+    try {
+      return ParserType.valueOf(value);
+    } catch (final Exception ignore) {
+      return ParserType.AUTO;
+    }
   }
 }

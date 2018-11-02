@@ -6,19 +6,18 @@
  */
 package org.mule.module.apikit.metadata.internal.raml;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.net.URI;
+import org.apache.commons.io.IOUtils;
+import org.mule.module.apikit.metadata.api.ResourceLoader;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
-import org.raml.v2.internal.utils.StreamUtils;
-import org.mule.module.apikit.metadata.api.ResourceLoader;
 
 class ParserService {
 
-  private final String ramlPath;
   private ParserWrapper parserWrapper;
 
   ParserService(final String ramlPath, final ResourceLoader resourceLoader) {
-    this.ramlPath = ramlPath;
     parserWrapper = parserWrapper(ramlPath, resourceLoader);
   }
 
@@ -27,8 +26,13 @@ class ParserService {
   }
 
   private String readResource(final String ramlPath, final ResourceLoader resourceLoader) {
-    InputStream content = resourceLoader.getResource(ramlPath);
-    return StreamUtils.toString(content);
+    URI uri = resourceLoader.getResource(ramlPath);
+
+    try {
+      return IOUtils.toString(uri);
+    } catch (final IOException e) {
+      return "";
+    }
   }
 
   private ParserWrapper parserWrapper(final String ramlPath, final ResourceLoader resourceLoader) {

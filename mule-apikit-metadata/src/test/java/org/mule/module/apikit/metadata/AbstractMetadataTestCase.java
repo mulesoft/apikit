@@ -20,12 +20,14 @@ import java.util.Optional;
 import org.mule.metadata.api.model.FunctionType;
 import org.mule.metadata.internal.utils.MetadataTypeWriter;
 import org.mule.module.apikit.metadata.api.Metadata;
+import org.mule.module.apikit.metadata.internal.model.ApplicationModelWrapper;
 import org.mule.module.apikit.metadata.internal.model.Flow;
 import org.mule.module.apikit.metadata.utils.MockedApplicationModel;
 import org.mule.module.apikit.metadata.utils.TestNotifier;
 import org.mule.module.apikit.metadata.utils.TestResourceLoader;
 import org.mule.runtime.config.internal.model.ApplicationModel;
 
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 public class AbstractMetadataTestCase {
@@ -43,7 +45,7 @@ public class AbstractMetadataTestCase {
   protected static List<File> scan(final URI resources) throws IOException {
 
     return Files.walk(Paths.get(resources))
-        // .peek(path -> System.out.println("Path:" + path + " isApi:" + API_MATCHER.matches(path.getFileName())))
+        //.peek(path -> System.out.println("Path:" + path + " isMuleApp:" + API_MATCHER.matches(path.getFileName())))
         .filter(path -> Files.isRegularFile(path) && API_MATCHER.matches(path.getFileName()))
         .map(Path::toFile)
         .collect(toList());
@@ -60,7 +62,7 @@ public class AbstractMetadataTestCase {
     final ApplicationModel applicationModel = createApplicationModel(app);
 
     // Only flow with metadata included
-    return org.mule.module.apikit.metadata.internal.model.ApplicationModelWrapper.findFlows(applicationModel).stream()
+    return ApplicationModelWrapper.findFlows(applicationModel).stream()
         .filter(flow -> hasMetadata(applicationModel, flow)).collect(toList());
   }
 

@@ -7,6 +7,7 @@
 package org.mule.module.apikit.metadata.internal.raml;
 
 import java.io.InputStream;
+import java.net.URI;
 import javax.annotation.Nullable;
 import org.mule.module.apikit.metadata.api.ResourceLoader;
 import org.mule.raml.implv2.ParserV2Utils;
@@ -36,7 +37,8 @@ class ParserWrapperV2 implements ParserWrapper {
       @Nullable
       @Override
       public InputStream fetchResource(String s) {
-        return resourceLoader.getResource(s);
+        final URI uri = resourceLoader.getResource(s);
+        return ParserWrapper.toInputStream(uri);
       }
     };
   }

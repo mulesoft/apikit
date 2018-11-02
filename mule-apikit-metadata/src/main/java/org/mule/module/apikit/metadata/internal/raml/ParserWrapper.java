@@ -6,9 +6,26 @@
  */
 package org.mule.module.apikit.metadata.internal.raml;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URL;
 import org.mule.raml.interfaces.model.IRaml;
 
 interface ParserWrapper {
 
   IRaml build();
+
+  static InputStream toInputStream(final URI uri) {
+
+    InputStream inputStream = null;
+    try {
+      URL url = uri.toURL();
+      inputStream = new BufferedInputStream(url.openStream());
+    } catch (IOException e) {
+      // ignore on resource not found
+    }
+    return inputStream;
+  }
 }

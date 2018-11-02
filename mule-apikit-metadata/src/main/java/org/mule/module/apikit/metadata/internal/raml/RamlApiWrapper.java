@@ -49,7 +49,7 @@ public class RamlApiWrapper implements MetadataResolver {
                                         notifier));
   }
 
-  public Map<String, String> getConsolidatedSchemas() {
+  Map<String, String> getConsolidatedSchemas() {
     return consolidatedSchemas;
   }
 }

@@ -34,14 +34,12 @@ import static org.mule.module.apikit.metadata.api.Metadata.MULE_APIKIT_PARSER;
 public class MetadataTestCase extends AbstractMetadataTestCase {
 
   private String parser;
-  private String folderName;
   private File app;
   private Flow flow;
 
   public MetadataTestCase(final String parser, final String folderName, final File app, final Flow flow) {
 
     this.parser = parser;
-    this.folderName = folderName;
     this.app = app;
     this.flow = flow;
   }
@@ -56,14 +54,9 @@ public class MetadataTestCase extends AbstractMetadataTestCase {
     System.clearProperty(MULE_APIKIT_PARSER);
   }
 
-
-
   @Test
   public void checkMetadata() throws Exception {
     final File goldenFile = goldenFile(flow, app, parser);
-
-    //final boolean amf = Boolean.getBoolean(MULE_APIKIT_PARSER_AMF);
-    //System.out.println("MetadataTestCase2 [" + parser + "] " + amf + " " + folderName + " " + goldenFile);
 
     final ApplicationModel applicationModel = createApplicationModel(app);
     assertThat(applicationModel, notNullValue());
@@ -98,7 +91,7 @@ public class MetadataTestCase extends AbstractMetadataTestCase {
         final String folderName = app.getParentFile().getName();
         findFlows(app).forEach(flow -> {
           parameters.add(new Object[] {RAML, folderName, app, flow});
-          // parameters.add(new Object[] {AMF, folderName, app, flow});
+          parameters.add(new Object[] {AMF, folderName, app, flow});
         });
       } catch (Exception e) {
         throw new RuntimeException(e);

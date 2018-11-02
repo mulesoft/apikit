@@ -6,13 +6,9 @@
  */
 package org.mule.module.apikit.metadata.utils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-
 import org.mule.apikit.common.APISyncUtils;
 import org.mule.module.apikit.metadata.MetadataTestCase;
 import org.mule.module.apikit.metadata.api.ResourceLoader;
@@ -20,25 +16,21 @@ import org.mule.module.apikit.metadata.api.ResourceLoader;
 public class TestResourceLoader implements ResourceLoader {
 
   @Override
-  public InputStream getResource(String relativePath) {
+  public URI getResource(String relativePath) {
     try {
       if (APISyncUtils.isSyncProtocol(relativePath))
         relativePath = getTestPathForApiSync(relativePath);
 
-      URL resource = MetadataTestCase.class.getResource(relativePath);
-      if (resource == null)
-        return null;
-      final File file = new File(resource.toURI());
+      final URL resource = MetadataTestCase.class.getResource(relativePath);
+      return resource == null ? null : resource.toURI();
 
-      return new FileInputStream(file);
-
-    } catch (URISyntaxException | FileNotFoundException e) {
+    } catch (final URISyntaxException e) {
       e.printStackTrace();
     }
     return null;
   }
 
-  private String getTestPathForApiSync(String relativePath) throws URISyntaxException {
+  private static String getTestPathForApiSync(String relativePath) throws URISyntaxException {
     String[] parts = relativePath.split(":");
 
 

@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit.metadata.api;
 
-import java.io.InputStream;
+import java.net.URI;
 
 /**
  * Represents a way of getting resources from the application
@@ -18,8 +18,8 @@ public interface ResourceLoader {
    *
    * @param relativePath Location of the root RAML file relative to the /mule/resources/api folder or a resource:: in case
    *                     when the API is defined as a dependency (API sync)
-   * @return {@link InputStream} to the RAML resource
+   * @return {@link URI} to the RAML resource
    */
-  InputStream getResource(String relativePath);
+  URI getResource(String relativePath);
 
 }
