@@ -51,7 +51,7 @@ public class ConsoleResources {
   public Resource getConsoleResource(String resourceRelativePath) {
 
     // For getting RAML resources
-    String raml = getRamlResourceIfRequested(resourceRelativePath);
+    String raml = getApiResourceIfRequested(resourceRelativePath);
     if (raml != null) {
       return new RamlResource(raml);
     }
@@ -131,7 +131,11 @@ public class ConsoleResources {
     }
   }
 
-  public String getRamlResourceIfRequested(String resourceRelativePath) {
+  public String getApiResourceIfRequested(String resourceRelativePath) {
+    if (queryString.equals("api")) {
+      return config.getRamlHandler().dumpRaml();
+    }
+
     if (config.getRamlHandler().isRequestingRamlV1ForConsole(listenerPath, requestPath, queryString, method, aceptHeader)) {
       return config.getRamlHandler().getRamlV1();
     }
