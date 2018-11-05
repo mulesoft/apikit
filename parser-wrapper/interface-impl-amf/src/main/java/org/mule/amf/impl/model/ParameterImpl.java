@@ -82,17 +82,13 @@ class ParameterImpl implements IParameter {
     }
 
     if (payloadValidator.isPresent()) {
-      return payloadValidator.get().validate(mimeType, value);
+      try {
+        return payloadValidator.get().validate(mimeType, value).get();
+      } catch (InterruptedException | ExecutionException e) {
+        throw new RuntimeException("Unexpected Error validating request", e);
+      }
     } else {
       throw new RuntimeException("Unexpected Error validating request");
-    }
-  }
-
-  private ValidationReport validateXml(String payload) {
-    try {
-      return schema.validate(payload).get();
-    } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException("Unexpected Error validating payload");
     }
   }
 

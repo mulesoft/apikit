@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import static com.sun.jmx.mbeanserver.Util.cast;
 import static java.util.Collections.emptyList;
@@ -150,7 +151,13 @@ public class MimeTypeImpl implements IMimeType {
     }
 
     if (payloadValidator.isPresent()) {
-      return mapToValidationResult(payloadValidator.get().validate(mimeType, payload));
+      final ValidationReport result;
+      try {
+        result = payloadValidator.get().validate(mimeType, payload).get();
+      } catch (InterruptedException | ExecutionException e) {
+        throw new RuntimeException("Unexpected Error validating payload", e);
+      }
+      return mapToValidationResult(result);
     } else {
       throw new RuntimeException("Unexpected Error validating payload");
     }

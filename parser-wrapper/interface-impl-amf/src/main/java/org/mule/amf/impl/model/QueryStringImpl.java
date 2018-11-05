@@ -12,6 +12,7 @@ import amf.client.model.domain.NodeShape;
 import amf.client.model.domain.Parameter;
 import amf.client.model.domain.PropertyShape;
 import amf.client.model.domain.Shape;
+import amf.client.validate.PayloadValidator;
 import amf.client.validate.ValidationReport;
 import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
 import org.mule.raml.interfaces.model.IQueryString;
@@ -21,10 +22,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static org.mule.amf.impl.model.MediaType.APPLICATION_YAML;
+import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
 
 public class QueryStringImpl implements IQueryString {
 
@@ -32,6 +36,8 @@ public class QueryStringImpl implements IQueryString {
   private boolean required;
   private Collection<String> scalarTypes;
 
+  private final Map<String, Optional<PayloadValidator>> payloadValidatorMap = new HashMap<>();
+  private final String defaultMediaType = APPLICATION_YAML;
 
   QueryStringImpl(final AnyShape anyShape, boolean required) {
     this.schema = anyShape;
@@ -69,11 +75,30 @@ public class QueryStringImpl implements IQueryString {
     return validatePayload(value).conforms();
   }
 
-  private ValidationReport validatePayload(final String value) {
-    try {
-      return schema.validate(value).get();
-    } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException("Unexpected error validating request", e);
+  private ValidationReport validatePayload(String value) {
+    final String mimeType = getMimeTypeForValue(value);
+
+    Optional<PayloadValidator> payloadValidator;
+    if (!payloadValidatorMap.containsKey(mimeType)) {
+      payloadValidator = schema.payloadValidator(mimeType);
+
+      if (!payloadValidator.isPresent()) {
+        payloadValidator = schema.payloadValidator(defaultMediaType);
+      }
+
+      payloadValidatorMap.put(mimeType, payloadValidator);
+    } else {
+      payloadValidator = payloadValidatorMap.get(mimeType);
+    }
+
+    if (payloadValidator.isPresent()) {
+      try {
+        return payloadValidator.get().validate(mimeType, value).get();
+      } catch (InterruptedException | ExecutionException e) {
+        throw new RuntimeException("Unexpected Error validating request", e);
+      }
+    } else {
+      throw new RuntimeException("Unexpected Error validating request");
     }
   }
 
