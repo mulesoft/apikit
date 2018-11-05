@@ -12,6 +12,7 @@ import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
+import org.raml.v2.api.model.v10.datamodel.StringTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.system.types.AnnotableStringType;
 import org.raml.v2.api.model.v10.system.types.MarkdownString;
@@ -142,5 +143,16 @@ public class ParameterImpl implements IParameter {
       }
     }
     return false;
+  }
+
+  @Override
+  public String surroundWithQuotesIfNeeded(String value) {
+    if (value.startsWith("*") || isStringArray())
+      return "\"" + value + "\"";
+    return value;
+  }
+
+  private boolean isStringArray() {
+    return isArray() && ((ArrayTypeDeclaration) typeDeclaration).items() instanceof StringTypeDeclaration;
   }
 }

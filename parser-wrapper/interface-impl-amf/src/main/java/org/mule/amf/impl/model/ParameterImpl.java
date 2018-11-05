@@ -11,6 +11,7 @@ import amf.client.model.domain.ArrayShape;
 import amf.client.model.domain.NodeShape;
 import amf.client.model.domain.Parameter;
 import amf.client.model.domain.PropertyShape;
+import amf.client.model.domain.ScalarShape;
 import amf.client.model.domain.Shape;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
@@ -155,5 +156,23 @@ class ParameterImpl implements IParameter {
       }
     }
     return false;
+  }
+
+  @Override
+  public String surroundWithQuotesIfNeeded(String value) {
+    if (isStringArray()) {
+      return "\"" + value + "\"";
+    }
+    return value;
+  }
+
+  private boolean isStringArray() {
+    if (!(schema instanceof ArrayShape)) return false;
+
+    Shape items = ((ArrayShape) schema).items();
+
+    if (!(items instanceof  ScalarShape)) return false;
+
+    return ((ScalarShape) items).dataType().value().equals("string");
   }
 }
