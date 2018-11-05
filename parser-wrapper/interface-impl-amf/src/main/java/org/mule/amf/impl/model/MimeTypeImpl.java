@@ -13,37 +13,37 @@ import amf.client.model.domain.Payload;
 import amf.client.model.domain.PropertyShape;
 import amf.client.model.domain.Shape;
 import amf.client.model.domain.UnionShape;
+import amf.client.validate.PayloadValidator;
 import amf.client.validate.ValidationReport;
-import amf.client.validation.PayloadValidator;
 import org.mule.amf.impl.parser.rule.ValidationResultImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import static com.sun.jmx.mbeanserver.Util.cast;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.mule.amf.impl.model.MediaType.APPLICATION_XML;
 import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
 
 public class MimeTypeImpl implements IMimeType {
 
   private final Payload payload;
   private final Shape shape;
-  private final PayloadValidator validator;
+  private final Map<String, Optional<PayloadValidator>> payloadValidatorMap = new HashMap<>();
+  private final String defaultMediaType;
 
   public MimeTypeImpl(final Payload payload) {
     this.payload = payload;
     this.shape = payload.schema();
-    this.validator = shape instanceof AnyShape ? ((AnyShape) shape).payloadValidator() : null;
+    this.defaultMediaType = this.payload.mediaType().option().orElse(null);
   }
 
   @Override
@@ -136,26 +136,28 @@ public class MimeTypeImpl implements IMimeType {
   public List<IValidationResult> validate(String payload) {
     final String mimeType = getMimeTypeForValue(payload);
 
-    if (APPLICATION_XML.equals(mimeType))
-      return validateXml(payload);
-    else
-      return validatePayload(payload, mimeType);
-  }
+    Optional<PayloadValidator> payloadValidator;
+    if (!payloadValidatorMap.containsKey(mimeType)) {
+      payloadValidator = getPayloadValidator(mimeType);
 
-  private List<IValidationResult> validatePayload(String payload, String mimeType) {
-    if (validator != null) {
-      return mapToValidationResult(validator.reportValidation(mimeType, payload));
+      if (!payloadValidator.isPresent()) {
+        payloadValidator = getPayloadValidator(defaultMediaType);
+      }
+
+      payloadValidatorMap.put(mimeType, payloadValidator);
+    } else {
+      payloadValidator = payloadValidatorMap.get(mimeType);
     }
-    return null;
-  }
 
-  private List<IValidationResult> validateXml(String payload) {
-    try {
-      final ValidationReport validationReport = ((AnyShape) shape).validate(payload).get();
-      return mapToValidationResult(validationReport);
-    } catch (InterruptedException | ExecutionException e) {
+    if (payloadValidator.isPresent()) {
+      return mapToValidationResult(payloadValidator.get().validate(mimeType, payload));
+    } else {
       throw new RuntimeException("Unexpected Error validating payload");
     }
+  }
+
+  private Optional<PayloadValidator> getPayloadValidator(String mediaType) {
+    return ((AnyShape) shape).payloadValidator(mediaType);
   }
 
   private static List<IValidationResult> mapToValidationResult(ValidationReport validationReport) {

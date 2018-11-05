@@ -13,31 +13,35 @@ import amf.client.model.domain.Parameter;
 import amf.client.model.domain.PropertyShape;
 import amf.client.model.domain.ScalarShape;
 import amf.client.model.domain.Shape;
+import amf.client.validate.PayloadValidator;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
-import amf.client.validation.ParameterValidator;
 import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
 import static org.mule.amf.impl.model.ScalarType.ScalarTypes.STRING_ID;
-import static org.mule.amf.impl.model.MediaType.APPLICATION_XML;
+import static org.mule.amf.impl.model.MediaType.APPLICATION_YAML;
 import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
 
 class ParameterImpl implements IParameter {
 
   private AnyShape schema;
-  private final ParameterValidator validator;
   private boolean required;
   private Collection<String> scalarTypes;
+
+  private final Map<String, Optional<PayloadValidator>> payloadValidatorMap = new HashMap<>();
+  private final String defaultMediaType = APPLICATION_YAML;
 
   ParameterImpl(final Parameter parameter) {
     this(getSchema(parameter), parameter.required().value());
@@ -49,7 +53,6 @@ class ParameterImpl implements IParameter {
 
   ParameterImpl(final AnyShape anyShape, boolean required) {
     this.schema = anyShape;
-    this.validator = schema != null ? schema.parameterValidator() : null;
     this.required = required;
 
     final List<ScalarType> typeIds = asList(ScalarType.values());
@@ -62,20 +65,27 @@ class ParameterImpl implements IParameter {
     return validatePayload(value).conforms();
   }
 
-  private ValidationReport validatePayload(final String value) {
+  private ValidationReport validatePayload(String value) {
     final String mimeType = getMimeTypeForValue(value);
 
-    if (APPLICATION_XML.equals(mimeType))
-      return validateXml(value);
-    else
-      return validatePayload(value, mimeType);
-  }
+    Optional<PayloadValidator> payloadValidator;
+    if (!payloadValidatorMap.containsKey(mimeType)) {
+      payloadValidator = schema.parameterValidator(mimeType);
 
-  private ValidationReport validatePayload(String value, String mimeType) {
-    if (validator != null) {
-      return validator.reportValidation(mimeType, value);
+      if (!payloadValidator.isPresent()) {
+        payloadValidator = schema.parameterValidator(defaultMediaType);
+      }
+
+      payloadValidatorMap.put(mimeType, payloadValidator);
+    } else {
+      payloadValidator = payloadValidatorMap.get(mimeType);
     }
-    throw new RuntimeException("Unexpected error validating request");
+
+    if (payloadValidator.isPresent()) {
+      return payloadValidator.get().validate(mimeType, value);
+    } else {
+      throw new RuntimeException("Unexpected Error validating request");
+    }
   }
 
   private ValidationReport validateXml(String payload) {
