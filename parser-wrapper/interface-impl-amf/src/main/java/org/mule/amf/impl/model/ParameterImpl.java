@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
+import static org.mule.amf.impl.model.ScalarType.ScalarTypes.STRING_ID;
 
 class ParameterImpl implements IParameter {
 
@@ -160,19 +161,21 @@ class ParameterImpl implements IParameter {
 
   @Override
   public String surroundWithQuotesIfNeeded(String value) {
-    if (isStringArray()) {
+    if (value.startsWith("*") || isStringArray()) {
       return "\"" + value + "\"";
     }
     return value;
   }
 
   private boolean isStringArray() {
-    if (!(schema instanceof ArrayShape)) return false;
+    if (!(schema instanceof ArrayShape))
+      return false;
 
     Shape items = ((ArrayShape) schema).items();
 
-    if (!(items instanceof  ScalarShape)) return false;
+    if (!(items instanceof ScalarShape))
+      return false;
 
-    return ((ScalarShape) items).dataType().value().equals("string");
+    return ((ScalarShape) items).dataType().value().equals(STRING_ID);
   }
 }
