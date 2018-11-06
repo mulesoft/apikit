@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +32,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
-public class ScaffolderApiSyncTest {
+public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
   private final static String MULE_4_VERSION = "4.0.0";
   private final static ScaffolderResourceLoader scaffolderResourceLoaderMock = Mockito.mock(ScaffolderResourceLoader.class);
@@ -44,7 +45,7 @@ public class ScaffolderApiSyncTest {
   public TemporaryFolder folder = new TemporaryFolder();
 
   @Test
-  public void testSimpleGenerationV08() throws IOException {
+  public void testSimpleGenerationV08() throws Exception {
     final String ramlFolder = "src/test/resources/scaffolder/";
     final String rootRaml = "simpleV10";
 
@@ -53,7 +54,7 @@ public class ScaffolderApiSyncTest {
 
 
   @Test
-  public void testSimpleGenerationV10() throws IOException {
+  public void testSimpleGenerationV10() throws Exception {
     final String rootRaml = "simpleV10";
     final String ramlFolder = "src/test/resources/scaffolder/";
 
@@ -100,7 +101,7 @@ public class ScaffolderApiSyncTest {
 
   }
 
-  private void testSimple(String ramlFolder, String rootRaml) throws IOException {
+  private void testSimple(String ramlFolder, String rootRaml) throws Exception {
     List<Dependency> dependencyList = new ArrayList<>();
     dependencyList.add(dependency);
     File muleXmlSimple = generateScaffolder(ramlFolder, rootRaml);
@@ -112,17 +113,17 @@ public class ScaffolderApiSyncTest {
   }
 
   private File generateScaffolder(String ramlFolder, String rootRaml)
-      throws IOException {
+      throws Exception {
     return generateScaffolder(ramlFolder, rootRaml, null);
   }
 
-  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles) throws IOException {
+  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles) throws Exception {
     return generateScaffolder(ramlFolder, rootRaml, referencedFiles, ramlFolder, null);
   }
 
   private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles, String referencedFilesFolder,
                                   List<String> rootRamlFiles)
-      throws IOException {
+      throws Exception {
     final String exchangeJsonResourceURL = ROOT_RAML_RESOURCE_URL + "exchange.json";
     final String rootRamlResourceURL = ROOT_RAML_RESOURCE_URL + rootRaml + ".raml";
 
@@ -149,8 +150,11 @@ public class ScaffolderApiSyncTest {
     return new File(muleXmlOut, rootRaml + ".xml");
   }
 
-  private void mockScaffolderResourceLoader(String resourceURL, String folder, String file) throws FileNotFoundException {
-    Mockito.doReturn(getInputStream(folder + file)).doReturn(getInputStream(folder + file)).when(scaffolderResourceLoaderMock)
+  private void mockScaffolderResourceLoader(String resourceURL, String folder, String file) throws Exception {
+    Mockito.doReturn(((new File(folder + file)).toURI().toURL())).when(scaffolderResourceLoaderMock)
+        .getResource(resourceURL);
+    Mockito.doReturn(getInputStream(folder + file)).doReturn(getInputStream(folder + file))
+        .doReturn(getInputStream(folder + file)).when(scaffolderResourceLoaderMock)
         .getResourceAsStream(resourceURL);
   }
 
