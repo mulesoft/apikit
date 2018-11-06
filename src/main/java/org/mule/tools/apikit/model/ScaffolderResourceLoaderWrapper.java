@@ -6,16 +6,24 @@
  */
 package org.mule.tools.apikit.model;
 
+import amf.client.remote.Content;
+import amf.client.resource.FileResourceLoader;
+import amf.client.resource.ResourceLoader;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+
 import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
 import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
 import javax.annotation.Nullable;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
+import java.util.concurrent.CompletableFuture;
 
 
 public class ScaffolderResourceLoaderWrapper
-    implements org.raml.v2.api.loader.ResourceLoader, org.raml.parser.loader.ResourceLoader {
+    implements org.raml.v2.api.loader.ResourceLoader, org.raml.parser.loader.ResourceLoader, ResourceLoader {
 
   private final String rootRamlResource;
   ScaffolderResourceLoader scaffolderResourceLoader;
@@ -56,5 +64,41 @@ public class ScaffolderResourceLoaderWrapper
 
   public File getFile(String resource) {
     return FileUtils.toFile(scaffolderResourceLoader.getResource(resource));
+  }
+
+  @Override
+  public CompletableFuture<Content> fetch(String s) {
+    CompletableFuture<Content> future = new CompletableFuture<>();
+
+    if (s.startsWith("/"))
+      s = s.substring(1);
+
+
+    if (!(isSyncProtocol(s) || isExchangeModules(s))) {
+      s = rootRamlResource + s;
+    }
+    if (s == null || s.isEmpty()) {
+      future.completeExceptionally(new Exception("Failed to apply."));
+      return future;
+    }
+
+    try {
+      Content content =
+          new Content(IOUtils.toString(scaffolderResourceLoader.getResourceAsStream(s)),
+                      scaffolderResourceLoader.getResource(s).toURI().toURL().toString());
+      future.complete(content);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
+
+    return future;
+
+  }
+
+  private CompletableFuture<Content> fail() {
+    return CompletableFuture.supplyAsync(() -> {
+      throw new RuntimeException("Failed to apply.");
+    });
   }
 }

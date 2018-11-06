@@ -30,6 +30,7 @@ import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.RuntimeEdition;
 
+import static java.util.Collections.EMPTY_MAP;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -76,6 +77,9 @@ public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTest
 
 
   protected final Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
+    if (ramls == null) {
+      return EMPTY_MAP;
+    }
     return fileListUtils.toStreamFromFiles(ramls);
   }
 
