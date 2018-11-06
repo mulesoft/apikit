@@ -57,6 +57,7 @@ public class MetadataFactory {
     Optional<MetadataType> root = Optional.empty();
 
     JsonExampleTypeLoader jsonExampleTypeLoader = new JsonExampleTypeLoader(jsonExample);
+    jsonExampleTypeLoader.setFieldRequirementDefault(false);
     root = jsonExampleTypeLoader.load(null);
 
     // We didn't managed to parse the schema.
