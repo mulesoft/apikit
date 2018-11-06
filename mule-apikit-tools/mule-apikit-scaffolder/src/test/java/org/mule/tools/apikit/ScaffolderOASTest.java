@@ -47,6 +47,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_JSON;
+import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_YAML;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
@@ -140,8 +142,8 @@ public class ScaffolderOASTest {
     if (!isOas)
       return false;
 
-    final String vendor = DocumentParser.getVendor(path.toUri());
-    return "OAS".equals(vendor);
+    final DocumentParser.VendorEx vendor = DocumentParser.getVendor(path.toUri());
+    return OAS20_JSON.equals(vendor) || OAS20_YAML.equals(vendor);
   }
 
   private Path simpleGeneration(final Path api) throws Exception {

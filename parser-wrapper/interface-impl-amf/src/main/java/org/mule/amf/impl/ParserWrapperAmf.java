@@ -13,6 +13,7 @@ import amf.client.model.document.BaseUnit;
 import amf.client.model.document.Document;
 import amf.client.model.domain.WebApi;
 import amf.client.parse.Parser;
+import amf.client.parse.RamlParser;
 import amf.client.render.AmfGraphRenderer;
 import amf.client.render.Oas20Renderer;
 import amf.client.render.Raml08Renderer;
@@ -21,6 +22,14 @@ import amf.client.render.Renderer;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
 import amf.core.remote.Vendor;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import org.mule.amf.impl.loader.ApiSyncResourceLoader;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
 import org.mule.amf.impl.model.AmfImpl;
@@ -39,21 +48,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
 import static amf.ProfileNames.AMF;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.mule.amf.impl.DocumentParser.getParserForApi;
-import static org.mule.amf.impl.DocumentParser.getRamlParserForApi;
 import static org.mule.amf.impl.DocumentParser.getWebApi;
 import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
 
@@ -80,15 +79,14 @@ public class ParserWrapperAmf implements ParserWrapper {
     apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
   }
 
-
-  private ParserWrapperAmf(final String rootRamlPath, Environment environment, boolean validate) {
-    parser = getRamlParserForApi(environment);
-    document = DocumentParser.parseFile(parser, rootRamlPath, validate);
+  // TODO Improve this !!! We are working only with RAML Parser on APISync
+  private ParserWrapperAmf(final String apiPath, Environment environment, boolean validate) {
+    parser = new RamlParser(environment);
+    document = DocumentParser.parseFile(parser, apiPath, validate);
     references = getReferences(document.references());
     webApi = getWebApi(document);
     final Option<Vendor> vendor = webApi.sourceVendor();
     apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
-
   }
 
   private List<ApiRef> getReferences(final List<BaseUnit> references) {
