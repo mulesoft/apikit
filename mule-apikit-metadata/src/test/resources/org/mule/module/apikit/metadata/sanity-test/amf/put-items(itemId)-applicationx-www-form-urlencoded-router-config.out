@@ -2,7 +2,7 @@
   "message" : @typeId("value" : "org.mule.runtime.api.message.Message") {
     "payload" : {
       "Description"? : String, 
-      "Size"? : @enum("values" : ["small","large","medium"]) String, 
+      "Size"? : @enum("values" : ["small","large","medium"]) String & String, 
       "Color"? : String, 
       "Id"? : @int Number, 
       "Code"? : String

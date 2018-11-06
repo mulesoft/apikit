@@ -91,7 +91,7 @@ public class MetadataTestCase extends AbstractMetadataTestCase {
         final String folderName = app.getParentFile().getName();
         findFlows(app).forEach(flow -> {
           parameters.add(new Object[] {RAML, folderName, app, flow});
-          parameters.add(new Object[] {AMF, folderName, app, flow});
+          //         parameters.add(new Object[] {AMF, folderName, app, flow});
         });
       } catch (Exception e) {
         throw new RuntimeException(e);

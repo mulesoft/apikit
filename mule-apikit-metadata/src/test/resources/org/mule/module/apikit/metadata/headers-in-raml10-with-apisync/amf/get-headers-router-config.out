@@ -10,7 +10,7 @@
         "encoded"? : Binary
       }, 
       "headers" : {
-        "stringHeader" : @enum("values" : ["enum2","enum1"]) String, 
+        "stringHeader" : @enum("values" : ["enum2","enum1"]) String & @length("min" : 2, "max" : 10) String, 
         "numberHeader" : @range("from" : 10.1, "to" : 20.2) Number, 
         "integerHeader" : @range("from" : 10, "to" : 20) @int Number, 
         "dateHeader" : String, 

@@ -18,6 +18,7 @@ import amf.client.parse.Parser;
 import amf.client.parse.RamlParser;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
+import amf.core.remote.Vendor;
 import amf.plugins.features.validation.AMFValidatorPlugin;
 import amf.plugins.xml.XmlValidationPlugin;
 import java.io.BufferedReader;
@@ -26,6 +27,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.IOUtils;
@@ -42,11 +44,12 @@ public class DocumentParser {
 
   private DocumentParser() {}
 
-  private static RamlParser ramlParser(Environment environment) {
+  private static Parser ramlParser(Environment environment) {
     return new RamlParser(environment);
   }
 
-  private static Oas20Parser oas20Parser(Environment environment) {
+  private static Parser oas20Parser(Environment environment) {
+    //return new Parser("OAS 2.0", "application/yaml", environment);
     return new Oas20Parser(environment);
   }
 

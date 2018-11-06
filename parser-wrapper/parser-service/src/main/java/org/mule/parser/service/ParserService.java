@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import org.mule.amf.impl.ParserWrapperAmf;
+import org.mule.amf.impl.exceptions.ParserException;
 import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.interfaces.ParserType;
@@ -69,6 +70,8 @@ public class ParserService {
     } catch (Exception e) {
       if (e instanceof ParserServiceException)
         throw (ParserServiceException) e;
+      if (e instanceof ParserException)
+        throw new ParserServiceException(e);
       final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
       return applyFallback(path, parserType, errors);
     }

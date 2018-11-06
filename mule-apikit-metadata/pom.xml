@@ -11,7 +11,6 @@
     <artifactId>mule-apikit-metadata</artifactId>
     <name>APIKit Metadata</name>
 
-
     <properties>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
@@ -44,6 +43,12 @@
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-metadata-model-json</artifactId>
             <version>${mule.metadata.model.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.everit.json</groupId>
+                    <artifactId>org.everit.json.schema</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>provided</scope>
         </dependency>
         <dependency>
