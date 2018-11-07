@@ -89,4 +89,7 @@
     <flow name="post:\uploadFile:multipart\form-data:router-config">
         <set-payload value="#[output text/plain --- payload.parts.document.content]"/>
     </flow>
+    <flow name="post:\url-encoded-with-arrays:application\x-www-form-urlencoded:router-config">
+        <set-payload value="#[payload]"/>
+    </flow>
 </mule>
