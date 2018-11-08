@@ -21,7 +21,8 @@ import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
-import org.mule.module.apikit.spi.EventProcessor;
+import org.mule.module.apikit.spi.AbstractRouter;
+import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
@@ -52,7 +53,7 @@ import static org.mule.runtime.core.privileged.processor.MessageProcessors.proce
 import static reactor.core.publisher.Flux.from;
 import static reactor.core.publisher.Mono.error;
 
-public class Router extends AbstractComponent implements Processor, Initialisable, EventProcessor
+public class Router extends AbstractComponent implements Processor, Initialisable, AbstractRouter
 
 {
 
@@ -101,9 +102,13 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     return flatMap(publisher, this::processWithExtension, this);
   }
 
-  @Override
   public RamlHandler getRamlHandler() {
     return this.getConfiguration().getRamlHandler();
+  }
+
+  @Override
+  public IRaml getRaml() {
+    return this.getRamlHandler().getApi();
   }
 
   private Publisher<CoreEvent> processWithExtension(CoreEvent event) {

@@ -23,6 +23,6 @@ public interface RouterService {
    * @param ramlPath 	path to the raml
    * @return 			a competable future with the response event
    */
-  Publisher<CoreEvent> process(CoreEvent event, EventProcessor router, String ramlPath) throws MuleException;
+  Publisher<CoreEvent> process(CoreEvent event, AbstractRouter router, String ramlPath) throws MuleException;
 
 }

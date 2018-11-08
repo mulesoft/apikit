@@ -6,14 +6,14 @@
  */
 package org.mule.module.apikit.spi;
 
-import org.mule.module.apikit.api.RamlHandler;
+import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.reactivestreams.Publisher;
 
-public interface EventProcessor {
+public interface AbstractRouter {
 
   Publisher<CoreEvent> processEvent(CoreEvent event) throws MuleException;
 
-  RamlHandler getRamlHandler();
+  IRaml getRaml();
 }
