@@ -79,32 +79,32 @@ public class ParserServiceTestCase {
     assertThat(wrapper.getApiVendor(), is(OAS_20));
   }
 
-    @Ignore
-    public void oasJson20Examples() throws URISyntaxException {
+  @Ignore
+  public void oasJson20Examples() throws URISyntaxException {
 
-        final URI api = resource("/api-with-examples.json");
+    final URI api = resource("/api-with-examples.json");
 
-        final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
-        assertNotNull(wrapper);
-        assertThat(wrapper.getParserType(), is(ParserType.AMF));
-        assertThat(wrapper.getApiVendor(), is(OAS_20));
+    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
+    assertNotNull(wrapper);
+    assertThat(wrapper.getParserType(), is(ParserType.AMF));
+    assertThat(wrapper.getApiVendor(), is(OAS_20));
 
-        final IRaml raml = wrapper.build();
-        final Map<String, IResource> resources = raml.getResources();
-        
-        assertThat(resources.size(), is(2));
+    final IRaml raml = wrapper.build();
+    final Map<String, IResource> resources = raml.getResources();
 
-        final Map<IActionType, IAction> actions = resources.get("/").getActions();
-        assertThat(actions.size(), is(1));
+    assertThat(resources.size(), is(2));
 
-        final IAction action = actions.get(IActionType.GET);
-        final Map<String, IResponse> responses = action.getResponses();
-        final String example = getExampleWrapper(responses);
+    final Map<IActionType, IAction> actions = resources.get("/").getActions();
+    assertThat(actions.size(), is(1));
 
-        System.out.println("ParserServiceTestCase.oasJson20Example\n" + example);
-        assertThat(example, not(isEmptyOrNullString()));
+    final IAction action = actions.get(IActionType.GET);
+    final Map<String, IResponse> responses = action.getResponses();
+    final String example = getExampleWrapper(responses);
 
-    }
+    System.out.println("ParserServiceTestCase.oasJson20Example\n" + example);
+    assertThat(example, not(isEmptyOrNullString()));
+
+  }
 
   private static URI resource(final String path) {
     URI result = null;
@@ -117,43 +117,43 @@ public class ParserServiceTestCase {
   }
 
   // Same code used for Scaffolding
-    private String getExampleWrapper(Map<String, IResponse> responses) {
+  private String getExampleWrapper(Map<String, IResponse> responses) {
 
-        IResponse response = responses.get("200");
+    IResponse response = responses.get("200");
 
-        if (response == null || response.getBody() == null) {
-            for (IResponse response1 : responses.values()) {
-                if (response1.getBody() != null) {
-                    Map<String, IMimeType> responseBody1 = response1.getBody();
-                    IMimeType mimeType = responseBody1.get("application/json");
-                    if (mimeType != null && mimeType.getExample() != null) {
-                        return mimeType.getExample();
-                    } else {
-                        for (IMimeType type : responseBody1.values()) {
-                            if (type.getExample() != null) {
-                                return type.getExample();
-                            }
-                        }
-                    }
-                }
+    if (response == null || response.getBody() == null) {
+      for (IResponse response1 : responses.values()) {
+        if (response1.getBody() != null) {
+          Map<String, IMimeType> responseBody1 = response1.getBody();
+          IMimeType mimeType = responseBody1.get("application/json");
+          if (mimeType != null && mimeType.getExample() != null) {
+            return mimeType.getExample();
+          } else {
+            for (IMimeType type : responseBody1.values()) {
+              if (type.getExample() != null) {
+                return type.getExample();
+              }
             }
+          }
         }
-
-        if (response != null && response.getBody() != null) {
-            Map<String, IMimeType> body = response.getBody();
-            IMimeType mimeType = body.get("application/json");
-            if (mimeType != null && mimeType.getExample() != null) {
-                return mimeType.getExample();
-            }
-
-            for (IMimeType mimeType2 : response.getBody().values()) {
-                if (mimeType2 != null && mimeType2.getExample() != null) {
-                    return mimeType2.getExample();
-                }
-            }
-        }
-
-        return null;
-
+      }
     }
+
+    if (response != null && response.getBody() != null) {
+      Map<String, IMimeType> body = response.getBody();
+      IMimeType mimeType = body.get("application/json");
+      if (mimeType != null && mimeType.getExample() != null) {
+        return mimeType.getExample();
+      }
+
+      for (IMimeType mimeType2 : response.getBody().values()) {
+        if (mimeType2 != null && mimeType2.getExample() != null) {
+          return mimeType2.getExample();
+        }
+      }
+    }
+
+    return null;
+
+  }
 }

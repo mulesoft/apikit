@@ -122,11 +122,10 @@ class MetadataFactory {
    * @param jsonExample
    * @return The metadata if the example is valid, null otherwise
    */
-  public static MetadataType fromJsonExample(String jsonExample) {
-    Optional<MetadataType> root = Optional.empty();
-
+  private static MetadataType fromJsonExample(String jsonExample) {
     JsonExampleTypeLoader jsonExampleTypeLoader = new JsonExampleTypeLoader(jsonExample);
-    root = jsonExampleTypeLoader.load(null);
+    jsonExampleTypeLoader.setFieldRequirementDefault(false);
+    Optional<MetadataType> root = jsonExampleTypeLoader.load(null);
 
     // We didn't managed to parse the schema.
     return root.orElse(defaultMetadata());

@@ -45,7 +45,8 @@ class MetadataFactory {
 
         final List<Example> examples = anyShape.examples();
         final TypeLoader typeLoader = anyShape.isDefaultEmpty() && !examples.isEmpty()
-            ? new JsonExampleTypeLoader(examples.get(0).value().value()) : new JsonTypeLoader(anyShape.toJsonSchema());
+            ? createJsonExampleTypeLoader(examples.get(0).value().value()) : new JsonTypeLoader(anyShape.toJsonSchema());
+
         metadataType = typeLoader.load(null);
       }
     } catch (final Throwable e) {
@@ -61,6 +62,12 @@ class MetadataFactory {
 
     }
     return metadataType.orElse(defaultMetadata());
+  }
+
+  public static JsonExampleTypeLoader createJsonExampleTypeLoader(final String example) {
+    final JsonExampleTypeLoader typeLoader = new JsonExampleTypeLoader(example);
+    typeLoader.setFieldRequirementDefault(false);
+    return typeLoader;
   }
 
   /**
