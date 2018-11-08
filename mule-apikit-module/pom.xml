@@ -127,9 +127,14 @@
             <artifactId>mule-apikit-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.mule.modules</groupId>
+            <artifactId>mule-apikit-module-spi</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
-            <groupId>org.mule.runtime</groupId>
+        <groupId>org.mule.runtime</groupId>
             <artifactId>mule-core</artifactId>
             <version>${mule.core.version}</version>
             <exclusions>

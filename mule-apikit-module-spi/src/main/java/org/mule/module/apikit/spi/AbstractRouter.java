@@ -6,16 +6,14 @@
  */
 package org.mule.module.apikit.spi;
 
-import java.util.concurrent.CompletableFuture;
-
-import org.mule.module.apikit.api.RamlHandler;
-import org.mule.runtime.api.event.Event;
+import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.event.CoreEvent;
+import org.reactivestreams.Publisher;
 
-public interface EventProcessor {
+public interface AbstractRouter {
 
-  public CompletableFuture<Event> processEvent(CoreEvent event) throws MuleException;
+  Publisher<CoreEvent> processEvent(CoreEvent event) throws MuleException;
 
-  public RamlHandler getRamlHandler();
+  IRaml getRaml();
 }
