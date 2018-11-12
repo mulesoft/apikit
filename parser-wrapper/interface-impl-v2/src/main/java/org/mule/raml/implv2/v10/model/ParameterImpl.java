@@ -89,8 +89,6 @@ public class ParameterImpl implements IParameter
 
             validateUnion((UnionTypeDeclaration) type, paramKey, paramValues);
         } else if (!(type instanceof AnyTypeDeclaration)) {
-
-            //todo check if paramValues can be empty
             if (paramValues.size() > 1) {
 
                 throw new Exception("Parameter " + paramKey + " is not an array");
@@ -106,7 +104,10 @@ public class ParameterImpl implements IParameter
     }
 
     private void validateArray(ArrayTypeDeclaration type, String paramKeym, Collection<?> paramValues) throws Exception {
-        //todo validate min an max lenght
+        Integer minItems = type.minItems();
+        if (minItems != null && minItems > paramValues.size()) throw new Exception("Expected min items for " + paramKeym);
+        Integer maxItems = type.maxItems();
+        if (maxItems != null && paramValues.size() > maxItems) throw new Exception("Expected max items for " + paramKeym);
         for (Object paramValue : paramValues) {
             validateParam(type.items(), paramKeym, singletonList(paramValue));
         }
