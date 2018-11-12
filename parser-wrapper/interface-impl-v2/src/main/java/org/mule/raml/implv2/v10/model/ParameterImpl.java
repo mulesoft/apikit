@@ -9,6 +9,7 @@ package org.mule.raml.implv2.v10.model;
 import com.google.common.base.Function;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.common.ValidationResult;
+import org.raml.v2.api.model.v10.datamodel.AnyTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
@@ -87,7 +88,7 @@ public class ParameterImpl implements IParameter
         } else if (type instanceof UnionTypeDeclaration) {
 
             validateUnion((UnionTypeDeclaration) type, paramKey, paramValues);
-        } else {
+        } else if (!(type instanceof AnyTypeDeclaration)) {
 
             //todo check if paramValues can be empty
             if (paramValues.size() > 1) {
