@@ -24,6 +24,7 @@ public interface IParameter
     String getExample();
     Map<String, String> getExamples();
     Object getInstance();
+    @Deprecated
     boolean isStringArray();
     @Deprecated
     boolean isScalar();
