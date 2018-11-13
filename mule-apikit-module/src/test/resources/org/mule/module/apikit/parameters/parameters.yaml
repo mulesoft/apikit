@@ -67,3 +67,10 @@ title: Parameters API
         description: id of the order
         type: string
         required: true
+
+/default:
+  get:
+    queryParameters:
+      param:
+        default: "default"
+        required: false
