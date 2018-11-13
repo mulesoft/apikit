@@ -54,6 +54,12 @@
             <groupId>org.mule.runtime</groupId>
             <artifactId>mule-metadata-model-json</artifactId>
             <version>${mule.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mule.tools</groupId>
+            <artifactId>mule-apikit-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- test dependencies -->

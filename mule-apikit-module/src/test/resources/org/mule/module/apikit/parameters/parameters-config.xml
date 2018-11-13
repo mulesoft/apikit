@@ -96,11 +96,11 @@
     </flow>
 
     <flow name="get:\repeat">
-        <logger level="INFO" message="status: #[mel:httpStatus]"/>
+        <logger level="INFO" message="#[attributes]"/>
     </flow>
 
     <flow name="get:\trackOrder">
-        <logger level="INFO" message="status: #[mel:httpStatus]"/>
+        <logger level="INFO" message="#[attributes]"/>
     </flow>
 
     <flow name="get:\default">

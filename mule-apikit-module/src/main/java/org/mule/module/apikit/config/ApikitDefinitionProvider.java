@@ -41,6 +41,7 @@ public class ApikitDefinitionProvider implements ComponentBuildingDefinitionProv
         .withTypeDefinition(fromType(Configuration.class))
         .withSetterParameterDefinition("name", fromSimpleParameter("name").build())
         .withSetterParameterDefinition("raml", fromSimpleParameter("raml").build())
+        .withSetterParameterDefinition("api", fromSimpleParameter("api").build())
         .withSetterParameterDefinition("outboundHeadersMapName", fromSimpleParameter("outboundHeadersMapName").build())
         .withSetterParameterDefinition("httpStatusVarName", fromSimpleParameter("httpStatusVarName").build())
         .withSetterParameterDefinition("keepRamlBaseUri", fromSimpleParameter("keepRamlBaseUri").build())

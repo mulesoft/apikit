@@ -1,0 +1,18 @@
+#%RAML 1.0
+title: Scalar Types test
+
+/resources:
+  get:
+    queryParameters:
+      str?: string
+      num?: number
+      int?: integer
+      bool?: boolean
+      dateOnly?: date-only
+      time?: time-only
+      datetimeOnly?: datetime-only
+      datetime?: datetime
+    responses:
+      200:
+        body:
+          application/json: ~

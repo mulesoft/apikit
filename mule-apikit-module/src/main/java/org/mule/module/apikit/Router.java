@@ -6,25 +6,11 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
-import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
-import static reactor.core.publisher.Mono.error;
-import static reactor.core.publisher.Mono.fromFuture;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-
-import javax.inject.Inject;
-
+import com.google.common.cache.LoadingCache;
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
-import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.api.uri.URIPattern;
@@ -35,17 +21,13 @@ import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
-import org.mule.module.apikit.input.stream.RewindableInputStream;
-import org.mule.module.apikit.spi.EventProcessor;
+import org.mule.module.apikit.spi.AbstractRouter;
+import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
-import org.mule.runtime.api.component.execution.ComponentExecutionException;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.component.location.Location;
-import org.mule.runtime.api.event.Event;
-import org.mule.runtime.api.exception.DefaultMuleException;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.exception.TypedException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -58,9 +40,20 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.cache.LoadingCache;
+import javax.inject.Inject;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Optional;
 
-public class Router extends AbstractComponent implements Processor, Initialisable, EventProcessor
+import static java.util.Optional.ofNullable;
+import static org.mule.runtime.core.api.event.CoreEvent.builder;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.processWithChildContext;
+import static reactor.core.publisher.Flux.from;
+import static reactor.core.publisher.Mono.error;
+
+public class Router extends AbstractComponent implements Processor, Initialisable, AbstractRouter
 
 {
 
@@ -109,16 +102,21 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     return flatMap(publisher, this::processWithExtension, this);
   }
 
+  public RamlHandler getRamlHandler() {
+    return this.getConfiguration().getRamlHandler();
+  }
+
+  @Override
+  public IRaml getRaml() {
+    return this.getRamlHandler().getApi();
+  }
+
   private Publisher<CoreEvent> processWithExtension(CoreEvent event) {
     try {
-      final CompletableFuture<Event> resultEvent;
-      if (configuration.isExtensionEnabled()) {
-        resultEvent = configuration.getExtension().process(event, this, this.configuration.getRaml());
-      } else {
-        resultEvent = processEvent(event);
-      }
-
-      return fromFuture(resultEvent).cast(CoreEvent.class).onErrorMap(this::buildMuleException);
+      if (configuration.isExtensionEnabled())
+        return configuration.getExtension().process(event, this, this.configuration.getApi());
+      else
+        return processEvent(event);
     } catch (MuleRestException e) {
       return error(ApikitErrorTypes.throwErrorType(e));
     } catch (MuleException e) {
@@ -126,7 +124,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     }
   }
 
-  public CompletableFuture<Event> processEvent(CoreEvent event) throws MuleRestException {
+  public Publisher<CoreEvent> processEvent(CoreEvent event) throws MuleRestException {
     Configuration config = registry.getConfiguration(getConfiguration().getName());
     CoreEvent.Builder eventBuilder = CoreEvent.builder(event);
     eventBuilder.addVariable(config.getOutboundHeadersMapName(), new HashMap<>());
@@ -136,21 +134,8 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     return doRoute(event, config, eventBuilder, attributes);
   }
 
-  private Throwable buildMuleException(Throwable e) {
-    if (e instanceof ComponentExecutionException) {
-      return new TypedException(e.getCause(),
-                                ((ComponentExecutionException) e).getEvent().getError().get().getErrorType());
-    }
-
-    if (e instanceof MuleException || e instanceof MuleRuntimeException) {
-      return e;
-    }
-
-    return new DefaultMuleException(e);
-  }
-
-  private CompletableFuture<Event> doRoute(CoreEvent event, Configuration config, CoreEvent.Builder eventBuilder,
-                                           HttpRequestAttributes attributes)
+  private Publisher<CoreEvent> doRoute(CoreEvent event, Configuration config, CoreEvent.Builder eventBuilder,
+                                       HttpRequestAttributes attributes)
       throws MuleRestException {
     String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRequestPath());
     path = path.isEmpty() ? "/" : path;
@@ -166,10 +151,20 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     }
     String contentType = AttributesHelper.getMediaType(attributes);
     Flow flow = config.getFlowFinder().getFlow(resource, attributes.getMethod().toLowerCase(), contentType);
-    String successStatusCode =
-        config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
-    eventBuilder.addVariable(config.getHttpStatusVarName(), successStatusCode);
-    return flow.execute(eventBuilder.build());
+
+    final Publisher<CoreEvent> flowResult =
+        processWithChildContext(eventBuilder.build(), flow, ofNullable(getLocation()), flow.getExceptionListener());
+
+    return from(flowResult)
+        .map(result -> {
+          if (result.getVariables().get(config.getHttpStatusVarName()) == null) {
+            // If status code is missing, a default one is added
+            final String successStatusCode =
+                config.getRamlHandler().getSuccessStatusCode(resource.getAction(attributes.getMethod().toLowerCase()));
+            return builder(result).addVariable(config.getHttpStatusVarName(), successStatusCode).build();
+          }
+          return result;
+        });
   }
 
   private <T> T findInCache(String key, LoadingCache<String, T> cache) {
@@ -217,5 +212,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     }
     return resource;
   }
+
+
 
 }

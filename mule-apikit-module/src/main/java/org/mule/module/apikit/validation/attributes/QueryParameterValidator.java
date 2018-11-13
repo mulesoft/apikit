@@ -98,12 +98,7 @@ public class QueryParameterValidator {
     paramValues.forEach(paramValue -> {
       final String value = String.valueOf(paramValue);
       builder.append("- ");
-
-      if (value.startsWith("*"))
-        builder.append("\"").append(value).append("\"");
-      else
-        builder.append(value);
-
+      builder.append(expected.surroundWithQuotesIfNeeded(value));
       builder.append("\n");
     });
 

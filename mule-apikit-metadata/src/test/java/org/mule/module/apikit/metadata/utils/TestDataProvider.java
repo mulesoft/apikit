@@ -122,8 +122,10 @@ public class TestDataProvider {
     @Override
     public FileVisitResult preVisitDirectory(Path scenarioPath, BasicFileAttributes attrs) throws IOException {
       if (!scenarioPath.endsWith("include")) {
-        outputFiles.clear();
-        inputFile = null;
+        if (!scenarioPath.toString().contains("exchange")) {
+          outputFiles.clear();
+          inputFile = null;
+        }
       }
 
       return CONTINUE;
@@ -133,7 +135,7 @@ public class TestDataProvider {
     public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
       final File scenarioDir = dir.toFile();
 
-      if (inputFile != null && !dir.endsWith("include")) {
+      if (inputFile != null && !dir.endsWith("include") && !dir.toString().contains("exchange")) {
         final Map<String, String> outputMap = outputFiles.stream().collect(toMap(File::getName, TestDataProvider::readFile));
         parameters.add(new Object[] {inputFile, outputMap, scenarioDir.getName()});
       }

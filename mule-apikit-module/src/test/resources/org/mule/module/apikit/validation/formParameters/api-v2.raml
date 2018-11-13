@@ -143,3 +143,17 @@ title: Parameters API
             default: true
     responses:
       201: ~
+
+/url-encoded-with-arrays:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          first:
+            type: string[]
+          second:
+            type: integer[]
+          third:
+            type: string
+    responses:
+      201: ~

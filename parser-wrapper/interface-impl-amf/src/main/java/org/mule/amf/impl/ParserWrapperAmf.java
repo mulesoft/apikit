@@ -9,9 +9,11 @@ package org.mule.amf.impl;
 import amf.client.AMF;
 import amf.client.environment.DefaultEnvironment;
 import amf.client.environment.Environment;
+import amf.client.model.document.BaseUnit;
 import amf.client.model.document.Document;
 import amf.client.model.domain.WebApi;
 import amf.client.parse.Parser;
+import amf.client.parse.RamlParser;
 import amf.client.render.AmfGraphRenderer;
 import amf.client.render.Oas20Renderer;
 import amf.client.render.Raml08Renderer;
@@ -19,13 +21,24 @@ import amf.client.render.Raml10Renderer;
 import amf.client.render.Renderer;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
-import amf.core.benchmark.Execution;
 import amf.core.remote.Vendor;
+import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import org.mule.amf.impl.loader.ApiSyncResourceLoader;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
 import org.mule.amf.impl.model.AmfImpl;
 import org.mule.amf.impl.parser.rule.ValidationResultImpl;
+import org.mule.apikit.common.APISyncUtils;
+import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
+import org.mule.raml.interfaces.model.ApiRef;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.parser.rule.DefaultValidationReport;
@@ -34,11 +47,6 @@ import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import scala.Option;
-
-import java.io.File;
-import java.net.URI;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import static amf.ProfileNames.AMF;
 import static java.util.Collections.emptyList;
@@ -56,6 +64,7 @@ public class ParserWrapperAmf implements ParserWrapper {
   private final Document document;
   private final WebApi webApi;
   private final ApiVendor apiVendor;
+  private final List<ApiRef> references;
 
   private static final String VENDOR_RAML_08 = "RAML 0.8";
   private static final String VENDOR_RAML_10 = "RAML 1.0";
@@ -64,9 +73,40 @@ public class ParserWrapperAmf implements ParserWrapper {
   private ParserWrapperAmf(final URI uri, Environment environment, boolean validate) {
     parser = getParserForApi(uri, environment);
     document = DocumentParser.parseFile(parser, uri, validate);
+    references = getReferences(document.references());
     webApi = getWebApi(parser, uri);
     final Option<Vendor> vendor = webApi.sourceVendor();
     apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
+  }
+
+  // TODO Improve this !!! We are working only with RAML Parser on APISync
+  private ParserWrapperAmf(final String apiPath, Environment environment, boolean validate) {
+    parser = new RamlParser(environment);
+    document = DocumentParser.parseFile(parser, apiPath, validate);
+    references = getReferences(document.references());
+    webApi = getWebApi(document);
+    final Option<Vendor> vendor = webApi.sourceVendor();
+    apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
+  }
+
+  private List<ApiRef> getReferences(final List<BaseUnit> references) {
+
+    final List<ApiRef> result = new ArrayList<>();
+    appendReferences(references, new HashSet<>(), result);
+    return result;
+  }
+
+  private void appendReferences(final List<BaseUnit> references, final Set<String> alreadyAdded, final List<ApiRef> result) {
+
+    for (final BaseUnit reference : references) {
+      final String id = reference.id();
+      if (!alreadyAdded.contains(id)) {
+        final String location = reference.location();
+        result.add(ApiRef.create(location));
+        alreadyAdded.add(id);
+        appendReferences(reference.references(), alreadyAdded, result);
+      }
+    }
   }
 
   private static ApiVendor getApiVendor(final Vendor vendor) {
@@ -92,6 +132,19 @@ public class ParserWrapperAmf implements ParserWrapper {
     return create(apiUri, buildEnvironment(apiUri), validate);
   }
 
+  public static ParserWrapperAmf create(String rootRaml, URI apiUri, boolean validate) throws Exception {
+    if (APISyncUtils.isSyncProtocol(rootRaml)) {
+      return create(rootRaml, buildApiSyncEnvironment(rootRaml), validate);
+    } else {
+      return create(apiUri, buildEnvironment(apiUri), validate);
+    }
+  }
+
+  public static ParserWrapperAmf create(String rootRaml, Environment environment, boolean validate) throws Exception {
+    AMF.init().get();
+    return new ParserWrapperAmf(rootRaml, environment, validate);
+  }
+
   public static ParserWrapperAmf create(URI apiUri, Environment environment, boolean validate) throws Exception {
     AMF.init().get();
     return new ParserWrapperAmf(apiUri, environment, validate);
@@ -107,9 +160,22 @@ public class ParserWrapperAmf implements ParserWrapper {
     return environment;
   }
 
+  private static Environment buildApiSyncEnvironment(String rootRaml) {
+    Environment environment = DefaultEnvironment.apply();
+    if (rootRaml != null) {
+      environment = environment.add(new ApiSyncResourceLoader(rootRaml));
+    }
+    return environment;
+  }
+
   @Override
   public ApiVendor getApiVendor() {
     return apiVendor;
+  }
+
+  @Override
+  public ParserType getParserType() {
+    return ParserType.AMF;
   }
 
   @Override
@@ -152,7 +218,7 @@ public class ParserWrapperAmf implements ParserWrapper {
 
   @Override
   public IRaml build() {
-    return new AmfImpl(webApi);
+    return new AmfImpl(webApi, references);
   }
 
   @Override
@@ -211,5 +277,10 @@ public class ParserWrapperAmf implements ParserWrapper {
       e.printStackTrace();
       return "";
     }
+  }
+
+  public InputStream fetchResource(String resource) {
+    //TODO: Implement!!!
+    return null;
   }
 }

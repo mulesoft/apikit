@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
+import org.mule.module.apikit.metadata.internal.model.HttpRequestAttributesFields;
 
 import static com.google.common.collect.Sets.difference;
 import static java.lang.reflect.Modifier.isPrivate;

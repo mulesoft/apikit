@@ -8,16 +8,17 @@ package org.mule.tools.apikit.input;
 
 import amf.client.environment.DefaultEnvironment;
 import amf.client.environment.Environment;
-import java.util.Collection;
 import java.util.Collections;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.mule.amf.impl.ParserWrapperAmf;
+import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserWrapper;
+
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
@@ -29,6 +30,9 @@ import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
+import org.mule.tools.apikit.model.ScaffolderReport;
+import org.mule.tools.apikit.model.ScaffolderResourceLoader;
+import org.mule.tools.apikit.model.ScaffolderResourceLoaderWrapper;
 import org.mule.tools.apikit.output.GenerationModel;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
@@ -50,12 +54,17 @@ import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class RAMLFilesParser {
 
-  private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries =
-      new HashMap<>();
+  private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = new HashMap<>();
   private final APIFactory apiFactory;
   private final Log log;
 
-  private String vendorId;
+  private String ramlVersion;
+  private String parseStatus = ScaffolderReport.SUCCESS;
+  private String errorMessage;
+
+  public String getErrorMessage() {
+    return errorMessage;
+  }
 
   public String getVendorId() {
     return vendorId;
@@ -65,7 +74,11 @@ public class RAMLFilesParser {
     return ramlVersion;
   }
 
-  private String ramlVersion;
+  public String getParseStatus() {
+    return parseStatus;
+  }
+
+  private static String vendorId = "RAML";
 
   public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
@@ -92,10 +105,11 @@ public class RAMLFilesParser {
         final IRaml raml = parserWrapper.build();
         ramlVersion = raml.getVersion();
 
-        collectResources(ramlFile, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
+        collectResources(ramlFile.getAbsolutePath(), raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
         processedFiles.add(ramlFile);
       } catch (Exception e) {
-        log.info("Could not parse [" + ramlFile + "] as root RAML file. Reason: " + e.getMessage());
+        final String reason = e.getMessage() == null ? "" : " Reason: " + e.getMessage();
+        log.info("Could not parse [" + ramlFile + "] as root RAML file." + reason);
         log.debug(e);
       }
 
@@ -104,16 +118,69 @@ public class RAMLFilesParser {
       this.log.info("The following RAML files were parsed correctly: " +
           processedFiles);
     } else {
-      this.log.error("RAML Root not found. None of the files were recognized as valid root RAML files.");
+      parseStatus = ScaffolderReport.FAILED;
+      errorMessage = "RAML Root not found. None of the files were recognized as valid root RAML files.";
+      this.log.error(errorMessage);
     }
   }
 
-  private void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version) {
+  private ResourceLoader getResourceLoader(String ramlFolderPath, File ramlFileParent) {
+    return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFileParent), new DefaultResourceLoader(),
+                                       new FileResourceLoader(ramlFolderPath),
+                                       new ExchangeDependencyResourceLoader(ramlFolderPath));
+  }
+
+  public RAMLFilesParser(Log log, Map<String, InputStream> ramls, ScaffolderResourceLoader scaffolderResourceLoader,
+                         APIFactory apiFactory) {
+    this.log = log;
+    this.apiFactory = apiFactory;
+    List<String> processedRamls = new ArrayList<>();
+    for (Map.Entry<String, InputStream> fileInputStreamEntry : ramls.entrySet()) {
+      String content;
+      String rootRamlName = fileInputStreamEntry.getKey();
+      try {
+        content = IOUtils.toString(fileInputStreamEntry.getValue());
+      } catch (IOException ioe) {
+        this.log.info("Error loading file " + rootRamlName);
+        break;
+
+      }
+
+      try {
+        final ParserWrapper parserWrapper = getParserWrapper(null, content, rootRamlName, scaffolderResourceLoader);
+        parserWrapper.validate(); // This will fail whether the raml is not valid
+
+        vendorId = parserWrapper.getApiVendor().toString();
+        final IRaml raml = parserWrapper.build();
+        ramlVersion = raml.getVersion();
+
+        collectResources(rootRamlName, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
+        processedRamls.add(rootRamlName);
+      } catch (Exception e) {
+        final String reason = e.getMessage() == null ? "" : " Reason: " + e.getMessage();
+        log.info("Could not parse [" + rootRamlName + "] as root RAML." + reason);
+        log.debug(e);
+      }
+
+    }
+    if (processedRamls.size() > 0) {
+      this.log.info("The following RAML files were parsed correctly: " +
+          processedRamls);
+    } else {
+      parseStatus = ScaffolderReport.FAILED;
+      errorMessage = "RAML Root not found. None of the files were recognized as valid root RAML files.";
+      this.log.error(errorMessage);
+    }
+  }
+
+
+  void collectResources(String filePath, Map<String, IResource> resourceMap, String baseUri, String version) {
     for (IResource resource : resourceMap.values()) {
       for (IAction action : resource.getActions().values()) {
 
 
-        API api = apiFactory.createAPIBinding(filename, null, baseUri, APIKitTools.getPathFromUri(baseUri, false), null, null);
+        API api = apiFactory.createAPIBinding(filePath, null, baseUri, APIKitTools.getPathFromUri(baseUri, false), null,
+                                              null);
 
         Map<String, IMimeType> mimeTypes = action.getBody();
         boolean addGenericAction = false;
@@ -135,7 +202,7 @@ public class RAMLFilesParser {
         }
       }
 
-      collectResources(filename, resource.getResources(), baseUri, version);
+      collectResources(filePath, resource.getResources(), baseUri, version);
     }
   }
 
@@ -156,9 +223,15 @@ public class RAMLFilesParser {
   }
 
   private ParserWrapper getParserWrapper(File apiFile, String content) throws Exception {
+    return getParserWrapper(apiFile, content, null, null);
+  }
+
+  private ParserWrapper getParserWrapper(File apiFile, String content, String rootRamlPath,
+                                         ScaffolderResourceLoader scaffolderResourceLoader)
+      throws Exception {
     String apiFolderPath = null;
     File apiFileParent = null;
-    if (apiFile.getParentFile() != null) {
+    if (apiFile != null && apiFile.getParentFile() != null) {
       apiFileParent = apiFile.getParentFile();
       apiFolderPath = apiFileParent.getPath();
     }
@@ -166,26 +239,37 @@ public class RAMLFilesParser {
     // Used for Testing
     final String parserValue = System.getProperty(MULE_APIKIT_PARSER, "AUTO");
     if ("AMF".equals(parserValue)) {
-      final Environment environment =
-          DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+      Environment environment = DefaultEnvironment.apply();
+      if (scaffolderResourceLoader == null) {
+        environment = environment.add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+      } else {
+        environment = environment.add(new org.mule.amf.impl.loader.ApiSyncResourceLoader(rootRamlPath));
+      }
       ParserWrapper parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, true);
       log.info(buildParserInfoMessage("AMF"));
       return parserWrapper;
     }
 
     if ("RAML".equals(parserValue)) {
-      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, Collections.emptyList());
+      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, Collections.emptyList(), rootRamlPath,
+                           scaffolderResourceLoader);
     }
 
     ParserWrapper parserWrapper;
 
     try {
-      final Environment environment =
-          DefaultEnvironment.apply().add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
-      parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
+      Environment environment = DefaultEnvironment.apply();
+      if (scaffolderResourceLoader == null) {
+        environment = environment.add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+        parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
+      } else {
+        environment = environment.add(new ScaffolderResourceLoaderWrapper(scaffolderResourceLoader, rootRamlPath));
+        parserWrapper = ParserWrapperAmf.create(rootRamlPath, environment, false);
+
+      }
     } catch (Exception e) {
       final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
-      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, errors);
+      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, errors, rootRamlPath, scaffolderResourceLoader);
     }
 
     final IValidationReport validationReport = parserWrapper.validationReport();
@@ -194,22 +278,36 @@ public class RAMLFilesParser {
       return parserWrapper;
     } else {
       final List<IValidationResult> errorsFound = validationReport.getResults();
-      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, errorsFound);
+      return applyFallback(apiFile, content, apiFolderPath, apiFileParent, errorsFound, rootRamlPath, scaffolderResourceLoader);
     }
   }
 
   private ParserWrapper applyFallback(File apiFile, String content, String apiFolderPath, File apiFileParent,
-                                      List<IValidationResult> errorsFound) {
+                                      List<IValidationResult> errorsFound, String rootRamlPath,
+                                      ScaffolderResourceLoader scaffolderResourceLoader) {
     ParserWrapper parserWrapper;
 
     if (ParserV2Utils.useParserV2(content)) {
-      final ResourceLoader resourceLoader =
-          new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
-                                      new FileResourceLoader(apiFolderPath),
-                                      new ExchangeDependencyResourceLoader(apiFolderPath));
-      parserWrapper = new ParserWrapperV2(apiFile.getPath(), resourceLoader);
+      ResourceLoader resourceLoader = null;
+      if (scaffolderResourceLoader == null) {
+        resourceLoader =
+            new CompositeResourceLoader(new RootRamlFileResourceLoader(apiFileParent), new DefaultResourceLoader(),
+                                        new FileResourceLoader(apiFolderPath),
+                                        new ExchangeDependencyResourceLoader(apiFolderPath));
+        parserWrapper = new ParserWrapperV2(apiFile.getPath(), resourceLoader);
+      } else {
+        ScaffolderResourceLoaderWrapper scaffolderResourceLoaderWrapper =
+            new ScaffolderResourceLoaderWrapper(scaffolderResourceLoader, rootRamlPath);
+        resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), scaffolderResourceLoaderWrapper);
+        parserWrapper = new ParserWrapperV2(rootRamlPath, resourceLoader);
+
+      }
     } else {
-      parserWrapper = new ParserWrapperV1(apiFile.getAbsolutePath());
+      if (rootRamlPath != null) {
+        parserWrapper = new ParserWrapperV1(rootRamlPath);
+      } else {
+        parserWrapper = new ParserWrapperV1(apiFile.getAbsolutePath());
+      }
     }
 
     if (parserWrapper.validationReport().conforms()) {

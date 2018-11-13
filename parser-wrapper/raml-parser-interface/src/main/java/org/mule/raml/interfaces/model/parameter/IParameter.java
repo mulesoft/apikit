@@ -41,4 +41,6 @@ public interface IParameter {
 
   @Deprecated
   boolean isFacetArray(String facet);
+
+  String surroundWithQuotesIfNeeded(String value);
 }

@@ -6,134 +6,98 @@
  */
 package org.mule.module.apikit.metadata;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mule.metadata.api.model.FunctionType;
-import org.mule.metadata.internal.utils.MetadataTypeWriter;
-import org.mule.module.apikit.metadata.interfaces.Notifier;
-import org.mule.module.apikit.metadata.interfaces.ResourceLoader;
-import org.mule.module.apikit.metadata.model.Flow;
-import org.mule.module.apikit.metadata.raml.RamlHandler;
-import org.mule.module.apikit.metadata.utils.MockedApplicationModel;
-import org.mule.module.apikit.metadata.utils.TestDataProvider;
+import org.mule.module.apikit.metadata.internal.model.Flow;
 import org.mule.runtime.config.internal.model.ApplicationModel;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
+import static org.mule.module.apikit.metadata.api.Metadata.MULE_APIKIT_PARSER;
 
 @RunWith(Parameterized.class)
-public class MetadataTestCase extends TestDataProvider {
+public class MetadataTestCase extends AbstractMetadataTestCase {
 
-  private static final Pattern OUTPUT_PATTERN = Pattern.compile(".*\\.out");
+  private String parser;
+  private File app;
+  private Flow flow;
 
-  public MetadataTestCase(File input, Map<String, String> expectedOutput, String name) {
-    super(input, expectedOutput, name);
+  public MetadataTestCase(final String parser, final String folderName, final File app, final Flow flow) {
+
+    this.parser = parser;
+    this.app = app;
+    this.flow = flow;
   }
 
-  @Parameterized.Parameters(name = "{2}")
-  public static Collection<Object[]> getData() throws IOException, URISyntaxException {
-    final URI baseFolder = MetadataTestCase.class.getResource("").toURI(); //body-type-in-raml10
-    return getData(baseFolder, "app.xml", OUTPUT_PATTERN);
+  @Before
+  public void beforeTest() {
+    System.setProperty(MULE_APIKIT_PARSER, parser);
+  }
+
+  @After
+  public void afterTest() {
+    System.clearProperty(MULE_APIKIT_PARSER);
   }
 
   @Test
-  public void runTest() throws Exception {
-    final ResourceLoader resourceLoader = new TestResourceLoader();
-    final TestNotifier notifier = new TestNotifier();
-    final RamlHandler ramlHandler = new RamlHandler(resourceLoader, notifier);
+  public void checkMetadata() throws Exception {
+    final File goldenFile = goldenFile(flow, app, parser);
 
-    final ApplicationModel applicationModel = createApplicationModel(input);
+    final ApplicationModel applicationModel = createApplicationModel(app);
     assertThat(applicationModel, notNullValue());
 
-    final ApplicationModelWrapper wrapper = new ApplicationModelWrapper(applicationModel, ramlHandler, notifier);
+    final Optional<FunctionType> metadata = getMetadata(applicationModel, flow);
+    assertThat(metadata.isPresent(), is(true));
 
-    final Metadata metadata = new Metadata.Builder()
-        .withApplicationModel(applicationModel)
-        .withResourceLoader(resourceLoader)
-        .withNotifier(notifier).build();
+    final String current = metadataToString(metadata.get());
 
-    // Search metadata for each flow
-    final List<FlowFunctionType> types = wrapper.findFlows().stream()
-        .map(flow -> getMetadata(metadata, flow))
-        .filter(Optional::isPresent).map(Optional::get)
-        .collect(toList());
+    final Path goldenPath = goldenFile.exists() ? goldenFile.toPath() : createGoldenFile(goldenFile, current);
+    final String expected = readFile(goldenPath);
 
-    currentMap = types.stream().collect(toMap(FlowFunctionType::getFileName, FlowFunctionType::toString));
+    try {
+      assertThat(format("Function metadata differ from expected. File: '%s'", goldenFile.getName()), current,
+                 is(equalTo(expected)));
+    } catch (final AssertionError error) {
+      final String name = goldenFile.getName();
+      final File folder = goldenFile.getParentFile();
+      final File newGoldenFile = new File(folder, name);
+      createGoldenFile(newGoldenFile, current);
+      throw error;
+    }
+  }
 
-    assertThat("Number of function metadata differs from the expected ones.", currentMap.size(), is(equalTo(expectedMap.size())));
-    assertThat("Flow names differs from the expected ones.", currentMap.keySet(), is(equalTo(expectedMap.keySet())));
+  @Parameterized.Parameters(name = "{0} -> {1}-{3}")
+  public static Collection<Object[]> getData() throws IOException, URISyntaxException {
 
-    currentMap.forEach((name, actual) -> {
-      final String expected = expectedMap.get(name);
-      assertThat(format("Function metadata differ from expected. File: '%s'", name), actual, is(equalTo(expected)));
+    final List<Object[]> parameters = new ArrayList<>();
+
+    scanApps().forEach(app -> {
+      try {
+        final String folderName = app.getParentFile().getName();
+        findFlows(app).forEach(flow -> {
+          parameters.add(new Object[] {RAML, folderName, app, flow});
+          //         parameters.add(new Object[] {AMF, folderName, app, flow});
+        });
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     });
 
-    notifier.messages.keySet()
-        .forEach(key -> notifier.messages(key).forEach(message -> System.out.println(key.toUpperCase() + " - " + message)));
+    return parameters;
   }
-
-  private static Optional<FlowFunctionType> getMetadata(Metadata metadata, Flow flow) {
-    final Optional<FunctionType> metadataForFlow = metadata.getMetadataForFlow(flow.getName());
-
-    return metadataForFlow.map(type -> FlowFunctionType.create(type, flow));
-  }
-
-  private ApplicationModel createApplicationModel(File resource) throws Exception {
-    final MockedApplicationModel.Builder builder = new MockedApplicationModel.Builder();
-    builder.addConfig("apiKitSample", resource);
-    final MockedApplicationModel mockedApplicationModel = builder.build();
-    return mockedApplicationModel.getApplicationModel();
-  }
-
-  private static class FlowFunctionType {
-
-    private final FunctionType type;
-    private final Flow flow;
-
-    private FlowFunctionType(FunctionType type, Flow flow) {
-      this.type = type;
-      this.flow = flow;
-    }
-
-    private static FlowFunctionType create(FunctionType type, Flow flow) {
-      return new FlowFunctionType(type, flow);
-    }
-
-    private FunctionType getType() {
-      return type;
-    }
-
-    private Flow getFlow() {
-      return flow;
-    }
-
-    private String getFileName() {
-      return flow.getName()
-          .replace("\\", "")
-          .replace(":", "-") + ".out";
-    }
-
-    @Override
-    public String toString() {
-      return new MetadataTypeWriter().toString(type);
-    }
-  }
-
 }

@@ -12,6 +12,7 @@ import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
+import org.raml.v2.api.model.v10.datamodel.StringTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.system.types.AnnotableStringType;
 import org.raml.v2.api.model.v10.system.types.MarkdownString;
@@ -21,10 +22,12 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Optional.ofNullable;
 import static org.mule.raml.implv2.v10.MetadataResolver.anyType;
 import static org.mule.raml.implv2.v10.MetadataResolver.resolve;
 import static org.raml.v2.internal.impl.v10.type.TypeId.ARRAY;
@@ -34,6 +37,8 @@ public class ParameterImpl implements IParameter {
 
   private TypeDeclaration typeDeclaration;
   private Collection<String> scalarTypes;
+  private Boolean required;
+  private Optional<String> defaultValue;
 
   public ParameterImpl(TypeDeclaration typeDeclaration) {
     this.typeDeclaration = typeDeclaration;
@@ -59,12 +64,19 @@ public class ParameterImpl implements IParameter {
 
   @Override
   public boolean isRequired() {
-    return typeDeclaration.required();
+    if (required == null) {
+      required = typeDeclaration.required();
+    }
+    return required;
   }
 
   @Override
   public String getDefaultValue() {
-    return typeDeclaration.defaultValue();
+    if (defaultValue == null) {
+      defaultValue = ofNullable(typeDeclaration.defaultValue());
+    }
+
+    return defaultValue.orElse(null);
   }
 
   @Override
@@ -131,5 +143,16 @@ public class ParameterImpl implements IParameter {
       }
     }
     return false;
+  }
+
+  @Override
+  public String surroundWithQuotesIfNeeded(String value) {
+    if (value.startsWith("*") || isStringArray())
+      return "\"" + value + "\"";
+    return value;
+  }
+
+  private boolean isStringArray() {
+    return isArray() && ((ArrayTypeDeclaration) typeDeclaration).items() instanceof StringTypeDeclaration;
   }
 }

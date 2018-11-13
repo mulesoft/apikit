@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit.output;
 
+import org.apache.commons.io.FilenameUtils;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
@@ -100,7 +101,7 @@ public class MuleConfigGenerator {
       try {
         doc = getOrCreateDocument(docs, api);
       } catch (Exception e) {
-        log.error("Error generating xml for file: [" + api.getRamlFile() + "]", e);
+        log.error("Error generating xml for file: [" + api.getRamlFilePath() + "]", e);
         continue;
       }
 
@@ -152,7 +153,7 @@ public class MuleConfigGenerator {
         if (api.getConfig() == null) {
           api.setDefaultAPIKitConfig();
         }
-        if (ramlsWithExtensionEnabled.contains(api.getRamlFile())) {
+        if (ramlsWithExtensionEnabledContains(api.getRamlFilePath())) {
           api.getConfig().setExtensionEnabled(true);
         }
         generateAPIKitAndListenerConfig(api, doc);
@@ -160,6 +161,15 @@ public class MuleConfigGenerator {
       docs.put(api, doc);
     }
     return doc;
+  }
+
+  private boolean ramlsWithExtensionEnabledContains(String ramlFileName) {
+    for (File ramlWithExtensionEnabled : ramlsWithExtensionEnabled) {
+      if (FilenameUtils.getName(ramlWithExtensionEnabled.getAbsolutePath()).equals(FilenameUtils.getName(ramlFileName)))
+        return true;
+    }
+
+    return false;
   }
 
   private Document getDocument(API api) throws IOException, JDOMException {

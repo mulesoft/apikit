@@ -82,4 +82,19 @@ public class UrlEncodedV2FunctionalTestCase extends AbstractMultiParserFunctiona
         .when().post("/api/url-encoded-duplicated-key");
   }
 
+  @Test
+  public void getKeyWithArraysUrlencodedRequest() throws Exception {
+    given().header("Content-Type", "application/x-www-form-urlencoded")
+        .formParam("first", "1234")
+        .formParam("first", "5678")
+        .formParam("second", "1234")
+        .formParam("second", "5678")
+        .formParam("third", "1234")
+        .expect()
+        .response()
+        .body(is("first=1234&first=5678&second=1234&second=5678&third=1234"))
+        .statusCode(201)
+        .when().post("/api/url-encoded-with-arrays");
+  }
+
 }

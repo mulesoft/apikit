@@ -37,7 +37,7 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
 
   @Parameterized.Parameters(name = "{1}")
   public static Collection<Object[]> getData() throws IOException, URISyntaxException {
-    final URI baseFolder = CompatibilityTestCase.class.getResource("08-leagues").toURI(); // 08-resources
+    final URI baseFolder = CompatibilityTestCase.class.getResource("").toURI(); // 08-resources
     return getData(baseFolder);
 
   }

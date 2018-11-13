@@ -1,0 +1,106 @@
+#%RAML 1.0
+---
+title: Mix Resources Definitions
+version: 1.0
+baseUri: http://localhost:8080/api
+
+traits:
+  response-json:
+    responses:
+      200:
+        body:
+          application/json:
+/sales:
+  get:
+    is: [response-json]
+ 
+  /{id}/{itemId}:
+    uriParameters:
+      id:
+        type: string
+      itemId:
+        type: string
+    get:
+      is: [response-json]
+    put:
+      body:
+        application/json:
+ 
+      
+/categories/{id1}/{id2}/{id3}:
+  uriParameters:
+    id1:
+      type: string
+    id2:
+      type: string
+    id3:
+      type: string
+  get:
+    is: [response-json]
+
+  /{id4}/{id5}:
+    uriParameters:
+      id4:
+        type: string
+      id5:
+        type: string
+    get:
+      is: [response-json]
+
+  /fixed/{id6}:
+    uriParameters:
+      id6:
+        type: string
+    get:
+      is: [response-json]
+
+/categories/{id1}/overlap:
+  uriParameters:
+    id1:
+      type: string
+
+  get:
+    is: [response-json]
+
+/brands:
+  get:
+    is: [response-json]
+
+  /one:
+    get:
+      is: [response-json]
+
+    /two:
+      get:
+        is: [response-json]
+
+      /three:
+        get:
+          is: [response-json]
+
+        /four:
+          get:
+            is: [response-json]
+
+/resource/{param}:
+  uriParameters:
+    param:
+      type: integer
+      required: true
+  get:
+
+/list/{param}:
+  uriParameters:
+    param:
+      type: integer
+      required: false
+  get:
+
+/uriparam:
+  get:
+  /{optional}:
+    get:
+    uriParameters:
+      optional:
+        required: false
+        type: integer

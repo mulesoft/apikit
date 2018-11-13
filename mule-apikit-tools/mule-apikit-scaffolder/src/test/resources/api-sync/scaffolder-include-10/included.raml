@@ -1,0 +1,21 @@
+displayName: Transaction Queue
+description: A queue that is used to push transactions onto the ESB for processing.
+post:
+  description: Add a new transaction to the queue.
+  body: 
+    application/json:
+      schema: jsonSchema 
+      
+    text/xml:
+      schema: xmlSchema
+      example: |
+        <saasTxn>
+        <tenant>100</tenant>
+        <objectType>Business Partner</objectType>
+        <objectKey>12345</objectKey>
+        <txnType>Update</txnType>
+        </saasTxn>
+  responses:
+    201:
+      description: A new transaction was created on the queue.
+      body: null

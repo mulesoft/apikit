@@ -11,10 +11,11 @@ import amf.core.parser.Position;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
 
+import java.net.URLDecoder;
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static java.lang.String.format;
+import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
 
@@ -28,7 +29,7 @@ public class ValidationResultImpl implements IValidationResult {
 
   public ValidationResultImpl(ValidationResult validationResult) {
     this.validationResult = validationResult;
-    severities = newArrayList(Severity.values()).stream().map(Enum::name).collect(toList());
+    severities = stream(Severity.values()).map(Enum::name).collect(toList());
   }
 
   public String getMessage() {
@@ -60,7 +61,7 @@ public class ValidationResultImpl implements IValidationResult {
   }
 
   private static String buildErrorMessage(String message, String location, Position startPosition) {
-    return format(ERROR_FORMAT, message, location, getPositionMessage(startPosition));
+    return format(ERROR_FORMAT, message, URLDecoder.decode(location), getPositionMessage(startPosition));
   }
 
   private static String getPositionMessage(Position startPosition) {
