@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit.metadata.api;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 
 /**
@@ -14,12 +16,20 @@ import java.net.URI;
 public interface ResourceLoader {
 
   /**
-   * Gets the root RAML File
+   * Gets the root API File
    *
-   * @param relativePath Location of the root RAML file relative to the /mule/resources/api folder or a resource:: in case
+   * @param relativePath Location of the root API file relative to the /mule/resources/api folder or a resource:: in case
    *                     when the API is defined as a dependency (API sync)
-   * @return {@link URI} to the RAML resource
+   * @return {@link URI} to the API resource
    */
   URI getResource(String relativePath);
 
+  default InputStream getResourceAsStream(String relativePath) {
+    URI uri = getResource(relativePath);
+    try {
+      return uri != null ? uri.toURL().openStream() : null;
+    } catch (IOException e) {
+      return null;
+    }
+  }
 }

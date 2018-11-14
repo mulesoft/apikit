@@ -236,16 +236,19 @@ public class RAMLFilesParser {
       apiFolderPath = apiFileParent.getPath();
     }
 
-    // Used for Testing
+    ParserWrapper parserWrapper;
+
+    // Used for Testing, we don't want fallback
     final String parserValue = System.getProperty(MULE_APIKIT_PARSER, "AUTO");
     if ("AMF".equals(parserValue)) {
       Environment environment = DefaultEnvironment.apply();
       if (scaffolderResourceLoader == null) {
         environment = environment.add(new org.mule.amf.impl.loader.ExchangeDependencyResourceLoader(apiFolderPath));
+        parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, false);
       } else {
-        environment = environment.add(new org.mule.amf.impl.loader.ApiSyncResourceLoader(rootRamlPath));
+        environment = environment.add(new ScaffolderResourceLoaderWrapper(scaffolderResourceLoader, rootRamlPath));
+        parserWrapper = ParserWrapperAmf.create(rootRamlPath, environment, false);
       }
-      ParserWrapper parserWrapper = ParserWrapperAmf.create(apiFile.toURI(), environment, true);
       log.info(buildParserInfoMessage("AMF"));
       return parserWrapper;
     }
@@ -254,8 +257,7 @@ public class RAMLFilesParser {
       return applyFallback(apiFile, content, apiFolderPath, apiFileParent, Collections.emptyList(), rootRamlPath,
                            scaffolderResourceLoader);
     }
-
-    ParserWrapper parserWrapper;
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     try {
       Environment environment = DefaultEnvironment.apply();

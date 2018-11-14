@@ -22,6 +22,7 @@ import org.mule.metadata.internal.utils.MetadataTypeWriter;
 import org.mule.module.apikit.metadata.api.Metadata;
 import org.mule.module.apikit.metadata.internal.model.ApplicationModelWrapper;
 import org.mule.module.apikit.metadata.internal.model.Flow;
+import org.mule.module.apikit.metadata.utils.MetadataFixer;
 import org.mule.module.apikit.metadata.utils.MockedApplicationModel;
 import org.mule.module.apikit.metadata.utils.TestNotifier;
 import org.mule.module.apikit.metadata.utils.TestResourceLoader;
@@ -61,9 +62,18 @@ public class AbstractMetadataTestCase {
   protected static List<Flow> findFlows(final File app) throws Exception {
     final ApplicationModel applicationModel = createApplicationModel(app);
 
-    // Only flow with metadata included
+    // Only APIKit flows
     return ApplicationModelWrapper.findFlows(applicationModel).stream()
-        .filter(flow -> hasMetadata(applicationModel, flow)).collect(toList());
+        .filter(flow -> isApikitFlow(flow)).collect(toList());
+  }
+
+  private static boolean isApikitFlow(final Flow flow) {
+    final String name = flow.getName();
+
+    return name.startsWith("get:") || name.startsWith("post:") || name.startsWith("put:") ||
+        name.startsWith("delete:") || name.startsWith("head:") || name.startsWith("patch:") ||
+        name.startsWith("options:") || name.startsWith("trace:") || name.startsWith("connect:");
+
   }
 
   private static boolean hasMetadata(final ApplicationModel applicationModel, final Flow flow) {
@@ -88,8 +98,9 @@ public class AbstractMetadataTestCase {
     return metadata.getMetadataForFlow(flow.getName());
   }
 
-  protected static String metadataToString(final FunctionType functionType) {
-    return new MetadataTypeWriter().toString(functionType);
+  protected static String metadataToString(String parser, final FunctionType functionType) {
+    final String result = new MetadataTypeWriter().toString(functionType);
+    return AMF.equals(parser) ? MetadataFixer.normalizeEnums(result) : result;
   }
 
   protected File goldenFile(final Flow flow, final File app, final String parser) {

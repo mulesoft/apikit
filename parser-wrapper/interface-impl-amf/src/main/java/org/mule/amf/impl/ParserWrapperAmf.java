@@ -53,7 +53,6 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.mule.amf.impl.DocumentParser.getParserForApi;
-import static org.mule.amf.impl.DocumentParser.getWebApi;
 import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
 
 public class ParserWrapperAmf implements ParserWrapper {
@@ -74,7 +73,7 @@ public class ParserWrapperAmf implements ParserWrapper {
     parser = getParserForApi(uri, environment);
     document = DocumentParser.parseFile(parser, uri, validate);
     references = getReferences(document.references());
-    webApi = getWebApi(parser, uri);
+    webApi = DocumentParser.getWebApi(parser, uri);
     final Option<Vendor> vendor = webApi.sourceVendor();
     apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
   }
@@ -84,7 +83,7 @@ public class ParserWrapperAmf implements ParserWrapper {
     parser = new RamlParser(environment);
     document = DocumentParser.parseFile(parser, apiPath, validate);
     references = getReferences(document.references());
-    webApi = getWebApi(document);
+    webApi = DocumentParser.getWebApi(document);
     final Option<Vendor> vendor = webApi.sourceVendor();
     apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
   }
@@ -176,6 +175,10 @@ public class ParserWrapperAmf implements ParserWrapper {
   @Override
   public ParserType getParserType() {
     return ParserType.AMF;
+  }
+
+  public WebApi getWebApi() {
+    return webApi;
   }
 
   @Override

@@ -62,9 +62,15 @@ public class MetadataTestCase extends AbstractMetadataTestCase {
     assertThat(applicationModel, notNullValue());
 
     final Optional<FunctionType> metadata = getMetadata(applicationModel, flow);
+
+    if (isInvalidFileLocation()) {
+      assertThat(metadata.isPresent(), is(false));
+      return;
+    }
+
     assertThat(metadata.isPresent(), is(true));
 
-    final String current = metadataToString(metadata.get());
+    final String current = metadataToString(parser, metadata.get());
 
     final Path goldenPath = goldenFile.exists() ? goldenFile.toPath() : createGoldenFile(goldenFile, current);
     final String expected = readFile(goldenPath);
@@ -75,7 +81,7 @@ public class MetadataTestCase extends AbstractMetadataTestCase {
     } catch (final AssertionError error) {
       final String name = goldenFile.getName();
       final File folder = goldenFile.getParentFile();
-      final File newGoldenFile = new File(folder, name);
+      final File newGoldenFile = new File(folder, name + ".fixed");
       createGoldenFile(newGoldenFile, current);
       throw error;
     }
@@ -91,7 +97,7 @@ public class MetadataTestCase extends AbstractMetadataTestCase {
         final String folderName = app.getParentFile().getName();
         findFlows(app).forEach(flow -> {
           parameters.add(new Object[] {RAML, folderName, app, flow});
-          //         parameters.add(new Object[] {AMF, folderName, app, flow});
+          parameters.add(new Object[] {AMF, folderName, app, flow});
         });
       } catch (Exception e) {
         throw new RuntimeException(e);
@@ -99,5 +105,9 @@ public class MetadataTestCase extends AbstractMetadataTestCase {
     });
 
     return parameters;
+  }
+
+  private boolean isInvalidFileLocation() {
+    return app.getPath().contains("invalid-raml-file-location");
   }
 }
