@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns="http://www.mulesoft.org/schema/mule/core" 
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" 
+      xmlns:http="http://www.mulesoft.org/schema/mule/http" 
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+             http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+             http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="httpListenerConfig">
+        <http:listener-connection host="localhost" port="${serverPort}" />
+    </http:listener-config>
+
+    <apikit:config name="router-config-5" api="org/mule/module/apikit/router-oas-with-validation/api.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" parser="AMF"/>
+
+    <flow name="main-api-6">
+        <http:listener config-ref="httpListenerConfig" path="/api/amf/oas/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="router-config-5" />
+    </flow>
+    
+    <flow name="put:\pet\(petId):application\json:router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="99e62d08-c0f3-4e7e-a43b-4c2a0460f158" />
+    </flow>
+    <flow name="put:\pet\(petId):application\xml:router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="8fb43ff0-4907-49d5-a760-447a1b671da8" />
+    </flow>
+    <flow name="put:\user\(username):router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="fd75d362-9759-4478-bb51-faf0561b0484" />
+    </flow>
+    <flow name="delete:\pet\(petId):router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="abe98124-3cd6-4e2b-91ff-eed01f2edbbd" />
+    </flow>
+    <flow name="delete:\user\(username):router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="c76e62c8-f5e9-4e24-81a9-e0547c6151f8" />
+    </flow>
+    <flow name="get:\pet\findByStatus:router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="2ffcb916-86be-43b4-b793-938a9090c592" />
+    </flow>
+    <flow name="get:\pet:router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="33b139ab-a689-4151-ada2-a6625eed452e" />
+    </flow>
+    <flow name="get:\user:router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="5e4b088c-8e02-4a00-9e70-1b1720c2386b" />
+    </flow>
+    <flow name="get:\pet\(petId):router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="8d84ec39-0578-4353-8c7d-f7a633804500" />
+    </flow>
+    <flow name="get:\user\(username):router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="378ec579-1ea0-4f92-b87c-8316f4f6e4f4" />
+    </flow>
+    <flow name="post:\pet:application\json:router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="7f083414-a1d0-454b-9118-fa9f1c91f5a3" />
+    </flow>
+    <flow name="post:\pet:application\xml:router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="6bdcfded-fa04-43e3-a902-38c875c1b0c2" />
+    </flow>
+    <flow name="post:\user:application\json:router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="9ce62dc8-319b-41f8-b28d-8c369b930d49" />
+    </flow>
+    <flow name="post:\user:application\xml:router-config-5">
+        <set-payload value="#[payload]" doc:name="Set Payload" doc:id="ef2c076d-bf84-4e8e-8d07-c3bf775c2307" />
+    </flow>
+</mule>
