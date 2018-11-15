@@ -126,7 +126,8 @@ class ParameterImpl implements IParameter {
   @Override
   public String getDefaultValue() {
     DataNode defaultValue = schema.defaultValue();
-    if (defaultValue instanceof ScalarNode) return ((ScalarNode) defaultValue).value();
+    if (defaultValue instanceof ScalarNode)
+      return ((ScalarNode) defaultValue).value();
     return schema.defaultValueStr().option().orElse(null);
   }
 

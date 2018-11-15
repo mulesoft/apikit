@@ -101,4 +101,9 @@
     <flow name="get:\trackOrder">
         <logger level="INFO" message="#[attributes]"/>
     </flow>
+
+    <flow name="get:\default">
+        <set-payload value="#[attributes.queryParams.param]">
+        </set-payload>
+    </flow>
 </mule>

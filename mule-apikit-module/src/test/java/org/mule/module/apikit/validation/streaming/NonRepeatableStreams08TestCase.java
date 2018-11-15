@@ -34,14 +34,11 @@ public class NonRepeatableStreams08TestCase extends AbstractMultiParserFunctiona
 
   @Test
   public void urlencodedRequest() {
-
-    final String sizeValue = isAmfParser() ? "%22medium%22" : "medium";
-
     given().header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("Id", 12345)
         .expect()
         .response()
-        .body(is("Id=12345&Size=" + sizeValue))
+        .body(is("Id=12345&Size=medium"))
         .statusCode(200)
         .when().put("/api/urlencoded");
   }
