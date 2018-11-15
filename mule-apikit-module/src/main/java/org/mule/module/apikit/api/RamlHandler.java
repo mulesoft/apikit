@@ -19,7 +19,7 @@ import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.parser.service.ParserService;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
-import org.mule.raml.interfaces.model.ApiRef;
+import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
@@ -29,7 +29,7 @@ import org.raml.model.ActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
 import static org.mule.raml.interfaces.ParserType.AMF;
 import static org.mule.raml.interfaces.ParserType.AUTO;
 import static org.mule.raml.interfaces.ParserType.RAML;

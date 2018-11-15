@@ -21,23 +21,27 @@ import java.util.stream.Stream;
 public class ClassPathResourceLoader implements ResourceLoader {
 
   @Override
-  public CompletableFuture<Content> fetch(String resource) {
+  public CompletableFuture<Content> fetch(String resourceName) {
 
     CompletableFuture<Content> future = new CompletableFuture<>();
-    if (resource == null || resource.isEmpty()) {
+    if (resourceName == null || resourceName.isEmpty()) {
       future.completeExceptionally(new Exception("Failed to apply."));
       return future;
     }
 
-    try {
-      Content content =
-          new Content(IOUtils.toString(Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)),
-                      Thread.currentThread().getContextClassLoader().getResource(resource).toString());
-      future.complete(content);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+    final URL resource = contextClassLoader.getResource(resourceName);
 
+    if (resource != null) {
+      final String resourceAsString;
+      try {
+        resourceAsString = IOUtils.toString(resource.openStream());
+        final Content content = new Content(resourceAsString, resource.toString());
+        future.complete(content);
+      } catch (IOException e) {
+        future.completeExceptionally(new Exception("Failed to fetch resource '" + resourceName + "'"));
+      }
+    }
 
     return future;
   }

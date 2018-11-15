@@ -21,17 +21,15 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.mule.apikit.common.APISyncUtils;
+import org.mule.raml.interfaces.common.APISyncUtils;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
-import org.mule.tools.apikit.model.RuntimeEdition;
 
 import static java.lang.String.format;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
-import static org.mule.apikit.common.APISyncUtils.EXCHANGE_JSON;
-import static org.mule.apikit.common.APISyncUtils.RESOURCE_FORMAT;
+import static org.mule.raml.interfaces.common.APISyncUtils.EXCHANGE_JSON;
+import static org.mule.raml.interfaces.common.APISyncUtils.RESOURCE_FORMAT;
 
 public class ScaffolderAPI {
 
@@ -131,10 +129,11 @@ public class ScaffolderAPI {
     for (Dependency dependency : dependencyList) {
       String dependencyResourceFormat = format(RESOURCE_FORMAT, dependency.getGroupId(), dependency.getArtifactId(),
                                                dependency.getVersion(), dependency.getClassifier(), dependency.getType(), "%s");
-      InputStream exchangeJson = scaffolderResourceLoader.getResourceAsStream(format(dependencyResourceFormat, EXCHANGE_JSON));
+      InputStream exchangeJson =
+          scaffolderResourceLoader.getResource(format(dependencyResourceFormat, EXCHANGE_JSON)).openStream();
       String rootRAMLFileName = APISyncUtils.getMainRaml(IOUtils.toString(exchangeJson));
       String rootRAMLResource = format(dependencyResourceFormat, rootRAMLFileName);
-      InputStream rootRAML = scaffolderResourceLoader.getResourceAsStream(rootRAMLResource);
+      InputStream rootRAML = scaffolderResourceLoader.getResource(rootRAMLResource).openStream();
       ramlSpecs.put(rootRAMLResource, rootRAML);
     }
 

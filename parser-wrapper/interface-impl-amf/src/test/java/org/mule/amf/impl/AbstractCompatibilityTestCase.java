@@ -24,6 +24,7 @@ import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.api.ApiRef;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertNotNull;
@@ -54,7 +55,7 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
 
     // Create AMF Wrapper
     try {
-      amfWrapper = ParserWrapperAmf.create(uri, true);
+      amfWrapper = ParserWrapperAmf.create(ApiRef.create(uri), true);
       amf = amfWrapper.build();
       assertNotNull(amf);
     } catch (Exception e) {

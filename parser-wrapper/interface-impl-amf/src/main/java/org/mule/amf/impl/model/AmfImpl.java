@@ -9,14 +9,14 @@ package org.mule.amf.impl.model;
 import amf.client.model.domain.EndPoint;
 import amf.client.model.domain.Server;
 import amf.client.model.domain.WebApi;
-import java.io.File;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.mule.raml.interfaces.model.ApiRef;
+import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;

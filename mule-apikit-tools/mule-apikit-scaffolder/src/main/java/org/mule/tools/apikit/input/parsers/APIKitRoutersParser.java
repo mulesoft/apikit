@@ -6,7 +6,7 @@
  */
 package org.mule.tools.apikit.input.parsers;
 
-import org.mule.apikit.common.APISyncUtils;
+import org.mule.raml.interfaces.common.APISyncUtils;
 import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;

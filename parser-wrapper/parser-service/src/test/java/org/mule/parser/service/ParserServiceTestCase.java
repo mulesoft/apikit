@@ -14,7 +14,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
-import org.mule.raml.interfaces.model.ApiRef;
+import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -38,7 +38,7 @@ public class ParserServiceTestCase {
   @Test
   public void raml08Wrapper() throws URISyntaxException {
 
-    final URI api = resource("/api-08.raml");
+    final String api = resource("/api-08.raml");
 
     final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.RAML);
     assertNotNull(wrapper);
@@ -49,7 +49,7 @@ public class ParserServiceTestCase {
   @Test
   public void raml10Wrapper() throws URISyntaxException {
 
-    final URI api = resource("/api-10.raml");
+    final String api = resource("/api-10.raml");
 
     final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.RAML);
     assertNotNull(wrapper);
@@ -60,7 +60,7 @@ public class ParserServiceTestCase {
   @Test
   public void oasJson20Wrapper() throws URISyntaxException {
 
-    final URI api = resource("/petstore.json");
+    final String api = resource("/petstore.json");
 
     final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
     assertNotNull(wrapper);
@@ -71,7 +71,7 @@ public class ParserServiceTestCase {
   @Test
   public void oasYaml20Wrapper() throws URISyntaxException {
 
-    final URI api = resource("/petstore.yaml");
+    final String api = resource("/petstore.yaml");
 
     final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
     assertNotNull(wrapper);
@@ -82,7 +82,7 @@ public class ParserServiceTestCase {
   @Ignore
   public void oasJson20Examples() throws URISyntaxException {
 
-    final URI api = resource("/api-with-examples.json");
+    final String api = resource("/api-with-examples.json");
 
     final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
     assertNotNull(wrapper);
@@ -106,14 +106,15 @@ public class ParserServiceTestCase {
 
   }
 
-  private static URI resource(final String path) {
+  private static String resource(final String path) {
     URI result = null;
+
     try {
       result = ParserServiceTestCase.class.getResource(path).toURI();
     } catch (URISyntaxException e) {
       Assert.fail(e.getMessage());
     }
-    return result;
+    return result.toString();
   }
 
   // Same code used for Scaffolding

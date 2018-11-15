@@ -8,10 +8,10 @@ package org.mule.amf.impl.loader;
 
 import amf.client.remote.Content;
 import amf.client.resource.ResourceLoader;
-import org.mule.apikit.common.APISyncUtils;
+import org.mule.raml.interfaces.common.APISyncUtils;
 
-import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
-import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.common.APISyncUtils.isExchangeModules;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
 import java.util.concurrent.CompletableFuture;
 
 public class ApiSyncResourceLoader implements ResourceLoader {

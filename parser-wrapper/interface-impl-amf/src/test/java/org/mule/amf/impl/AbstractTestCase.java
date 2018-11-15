@@ -6,9 +6,8 @@
  */
 package org.mule.amf.impl;
 
-import java.io.File;
 import java.util.List;
-import org.mule.raml.interfaces.model.ApiRef;
+import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IRaml;

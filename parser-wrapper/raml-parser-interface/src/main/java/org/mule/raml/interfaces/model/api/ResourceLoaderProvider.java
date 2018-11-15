@@ -4,12 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.raml.interfaces.model;
+package org.mule.raml.interfaces.model.api;
 
-public enum ApiVendor {
-  RAML,
-  RAML_08,
-  RAML_10,
-  OAS,
-  OAS_20;
+import org.mule.raml.interfaces.loader.ResourceLoader;
+
+public interface ResourceLoaderProvider {
+
+  ResourceLoader getResourceLoader();
 }

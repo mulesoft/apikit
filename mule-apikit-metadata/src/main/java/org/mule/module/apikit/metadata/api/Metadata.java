@@ -11,8 +11,8 @@ import org.mule.metadata.api.model.FunctionType;
 import org.mule.module.apikit.metadata.internal.model.MetadataModel;
 import org.mule.runtime.config.internal.model.ApplicationModel;
 
-import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
-import static org.mule.apikit.common.APISyncUtils.toApiSyncResource;
+import static org.mule.raml.interfaces.common.APISyncUtils.isExchangeModules;
+import static org.mule.raml.interfaces.common.APISyncUtils.toApiSyncResource;
 
 public interface Metadata {
 

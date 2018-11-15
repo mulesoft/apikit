@@ -6,7 +6,7 @@
  */
 package org.mule.raml.interfaces.model;
 
-import java.io.File;
+import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.io.Serializable;
