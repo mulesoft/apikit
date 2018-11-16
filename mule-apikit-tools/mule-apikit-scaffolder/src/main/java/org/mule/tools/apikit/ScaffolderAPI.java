@@ -130,10 +130,10 @@ public class ScaffolderAPI {
       String dependencyResourceFormat = format(RESOURCE_FORMAT, dependency.getGroupId(), dependency.getArtifactId(),
                                                dependency.getVersion(), dependency.getClassifier(), dependency.getType(), "%s");
       InputStream exchangeJson =
-          scaffolderResourceLoader.getResource(format(dependencyResourceFormat, EXCHANGE_JSON)).openStream();
+          scaffolderResourceLoader.getResource(format(dependencyResourceFormat, EXCHANGE_JSON)).toURL().openStream();
       String rootRAMLFileName = APISyncUtils.getMainRaml(IOUtils.toString(exchangeJson));
       String rootRAMLResource = format(dependencyResourceFormat, rootRAMLFileName);
-      InputStream rootRAML = scaffolderResourceLoader.getResource(rootRAMLResource).openStream();
+      InputStream rootRAML = scaffolderResourceLoader.getResource(rootRAMLResource).toURL().openStream();
       ramlSpecs.put(rootRAMLResource, rootRAML);
     }
 

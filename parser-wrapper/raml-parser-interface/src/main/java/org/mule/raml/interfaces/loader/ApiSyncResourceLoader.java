@@ -7,19 +7,43 @@
 package org.mule.raml.interfaces.loader;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+
+import static org.mule.raml.interfaces.common.APISyncUtils.isExchangeModules;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.common.APISyncUtils.toApiSyncResource;
 
 public class ApiSyncResourceLoader implements ResourceLoader {
 
+  private ResourceLoader resourceLoader;
+  private String rootRamlResource;
+
+  public ApiSyncResourceLoader(String resource) {
+    this(resource, new ClassPathResourceLoader());
+  }
+
+  public ApiSyncResourceLoader(String resource, ResourceLoader resourceLoader) {
+    this.rootRamlResource = getRootRamlResource(resource);
+    this.resourceLoader = resourceLoader;
+  }
+
   @Override
-  public URI getResource(String relativePath) {
-    try {
-      final URL resource = Thread.currentThread().getContextClassLoader().getResource(relativePath);
-      return resource != null ? resource.toURI() : null;
-    } catch (URISyntaxException e) {
-      return null;
-    }
+  public URI getResource(String path) {
+    final String resourcePath;
+    if (path.startsWith("/"))
+      resourcePath = path.substring(1);
+    else
+      resourcePath = path;
+
+    if (isExchangeModules(resourcePath))
+      return resourceLoader.getResource(toApiSyncResource(resourcePath));
+    else if (isSyncProtocol(path))
+      return resourceLoader.getResource(resourcePath);
+    else
+      return resourceLoader.getResource(rootRamlResource + resourcePath);
+  }
+
+  private String getRootRamlResource(String rootRamlResource) {
+    return rootRamlResource.substring(0, rootRamlResource.lastIndexOf(":") + 1);
   }
 
 }

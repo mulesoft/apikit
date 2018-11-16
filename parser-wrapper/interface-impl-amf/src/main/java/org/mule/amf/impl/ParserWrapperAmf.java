@@ -13,16 +13,18 @@ import amf.client.model.document.BaseUnit;
 import amf.client.model.document.Document;
 import amf.client.model.domain.WebApi;
 import amf.client.parse.Parser;
-import amf.client.parse.RamlParser;
+import amf.client.remote.Content;
 import amf.client.render.AmfGraphRenderer;
 import amf.client.render.Oas20Renderer;
 import amf.client.render.Raml08Renderer;
 import amf.client.render.Raml10Renderer;
 import amf.client.render.Renderer;
+import amf.client.resource.ResourceLoader;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
-import amf.core.remote.Vendor;
+
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -31,12 +33,14 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import org.mule.amf.impl.loader.ApiSyncResourceLoader;
+
+import org.apache.commons.io.IOUtils;
+import org.mule.amf.impl.loader.ProvidedResourceLoader;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
 import org.mule.amf.impl.model.AmfImpl;
 import org.mule.amf.impl.parser.rule.ValidationResultImpl;
-import org.mule.raml.interfaces.common.APISyncUtils;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
@@ -49,7 +53,6 @@ import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.Option;
 
 import static amf.ProfileNames.AMF;
 import static java.util.Collections.emptyList;
@@ -122,6 +125,10 @@ public class ParserWrapperAmf implements ParserWrapper {
 
   // It means that it's a file
   private static URI getUriFromFile(String path) {
+    final File file = new File(path);
+    if (file.exists())
+      return file.toURI();
+
     final URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
 
     if (resource != null) {
@@ -146,9 +153,11 @@ public class ParserWrapperAmf implements ParserWrapper {
 
   private static Environment buildApiSyncEnvironment(ApiRef apiRef) {
     Environment environment = DefaultEnvironment.apply();
+
     if (apiRef != null) {
-      environment = environment.add(new ApiSyncResourceLoader(apiRef.getLocation()));
+      environment = environment.add(new ProvidedResourceLoader(((ResourceLoaderProvider) apiRef).getResourceLoader()));
     }
+
     return environment;
   }
 

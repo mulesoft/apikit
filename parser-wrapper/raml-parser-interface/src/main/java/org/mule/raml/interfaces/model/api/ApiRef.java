@@ -6,12 +6,10 @@
  */
 package org.mule.raml.interfaces.model.api;
 
-import com.sun.istack.internal.NotNull;
 import org.mule.raml.interfaces.common.APISyncUtils;
 import org.mule.raml.interfaces.loader.ResourceLoader;
 import org.mule.raml.interfaces.model.ApiVendor;
 
-import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;

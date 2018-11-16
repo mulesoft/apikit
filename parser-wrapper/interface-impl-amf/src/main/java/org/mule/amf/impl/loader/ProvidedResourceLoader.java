@@ -7,35 +7,35 @@
 package org.mule.amf.impl.loader;
 
 import amf.client.remote.Content;
-import amf.client.resource.FileResourceLoader;
-import amf.client.resource.ResourceLoader;
 import org.apache.commons.io.IOUtils;
+import org.mule.raml.interfaces.loader.ResourceLoader;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.URI;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
-public class ClassPathResourceLoader implements ResourceLoader {
+public class ProvidedResourceLoader implements amf.client.resource.ResourceLoader {
+
+  private ResourceLoader resourceLoader;
+
+  public ProvidedResourceLoader(ResourceLoader resourceLoader) {
+    this.resourceLoader = resourceLoader;
+  }
 
   @Override
   public CompletableFuture<Content> fetch(String resourceName) {
-
     CompletableFuture<Content> future = new CompletableFuture<>();
     if (resourceName == null || resourceName.isEmpty()) {
       future.completeExceptionally(new Exception("Failed to apply."));
       return future;
     }
 
-    final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-    final URL resource = contextClassLoader.getResource(resourceName);
+    final URI resource = resourceLoader.getResource(resourceName);
 
     if (resource != null) {
       final String resourceAsString;
       try {
-        resourceAsString = IOUtils.toString(resource.openStream());
+        resourceAsString = IOUtils.toString(resource.toURL().openStream());
         final Content content = new Content(resourceAsString, resource.toString());
         future.complete(content);
       } catch (IOException e) {
@@ -46,11 +46,9 @@ public class ClassPathResourceLoader implements ResourceLoader {
     return future;
   }
 
-
   private CompletableFuture<Content> fail() {
     return CompletableFuture.supplyAsync(() -> {
       throw new RuntimeException("Failed to apply.");
     });
   }
-
 }

@@ -112,7 +112,8 @@ public class ParserService {
       return new ParserWrapperV1(path);
     } else {
       if (apiRef instanceof ResourceLoaderProvider) {
-        final ResourceLoader resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader()/*, scaffolderResourceLoaderWrapper*/);
+        final ResourceLoader resourceLoader =
+            new CompositeResourceLoader(new DefaultResourceLoader()/*, scaffolderResourceLoaderWrapper*/);
         return new ParserWrapperV2(path, resourceLoader);
       }
       return new ParserWrapperV2(path);

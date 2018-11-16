@@ -8,6 +8,7 @@ package org.mule.raml.interfaces.model.api;
 
 import org.mule.raml.interfaces.common.APISyncUtils;
 import org.mule.raml.interfaces.loader.ApiSyncResourceLoader;
+import org.mule.raml.interfaces.loader.ClassPathResourceLoader;
 import org.mule.raml.interfaces.loader.ResourceLoader;
 
 import java.io.InputStream;
@@ -28,11 +29,11 @@ class ApiSyncApiRef implements ApiRef, ResourceLoaderProvider {
   private ResourceLoader resourceLoader;
 
   ApiSyncApiRef(String resource) {
-    this(resource, new ApiSyncResourceLoader());
+    this(resource, new ClassPathResourceLoader());
   }
 
   ApiSyncApiRef(String resource, ResourceLoader resourceLoader) {
-    this.resourceLoader = resourceLoader;
+    this.resourceLoader = new ApiSyncResourceLoader(resource, resourceLoader);
     if (!APISyncUtils.isSyncProtocol(resource))
       throw new RuntimeException("Invalid APISync Resource");
 

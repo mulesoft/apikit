@@ -6,21 +6,9 @@
  */
 package org.mule.tools.apikit.input;
 
-import amf.client.environment.DefaultEnvironment;
-import amf.client.environment.Environment;
-import java.util.Collections;
-import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.mule.amf.impl.ParserWrapperAmf;
 import org.mule.parser.service.ParserService;
-import org.mule.raml.implv1.ParserV1Utils;
-import org.mule.raml.implv1.ParserWrapperV1;
-import org.mule.raml.implv2.ParserV2Utils;
-import org.mule.raml.implv2.ParserWrapperV2;
-import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
-import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
-
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
@@ -35,24 +23,19 @@ import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
-import org.mule.tools.apikit.model.ScaffolderResourceLoaderWrapper;
 import org.mule.tools.apikit.output.GenerationModel;
-import org.raml.v2.api.loader.CompositeResourceLoader;
-import org.raml.v2.api.loader.DefaultResourceLoader;
-import org.raml.v2.api.loader.FileResourceLoader;
-import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.mule.raml.interfaces.ParserType.AMF;
 import static org.mule.raml.interfaces.ParserType.RAML;
 import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
@@ -87,26 +70,25 @@ public class RAMLFilesParser {
 
   public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
-  public RAMLFilesParser(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
+
+  private RAMLFilesParser(Log log, List<ApiRef> specs, APIFactory apiFactory, ScaffolderResourceLoader scaffolderResourceLoader) {
     this.log = log;
     this.apiFactory = apiFactory;
-    List<File> processedFiles = new ArrayList<>();
-    for (Map.Entry<File, InputStream> fileInputStreamEntry : fileStreams.entrySet()) {
-      File ramlFile = fileInputStreamEntry.getKey();
-
+    List<ApiRef> processedFiles = new ArrayList<>();
+    for (ApiRef spec : specs) {
       try {
-        final ParserWrapper parserWrapper = getParserWrapper(ramlFile);
+        final ParserWrapper parserWrapper = getParserWrapper(spec, scaffolderResourceLoader);
         parserWrapper.validate(); // This will fail whether the raml is not valid
 
         vendorId = parserWrapper.getApiVendor().toString();
         final IRaml raml = parserWrapper.build();
         ramlVersion = raml.getVersion();
 
-        collectResources(ramlFile.getAbsolutePath(), raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
-        processedFiles.add(ramlFile);
+        collectResources(spec.getLocation(), raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
+        processedFiles.add(spec);
       } catch (Exception e) {
         final String reason = e.getMessage() == null ? "" : " Reason: " + e.getMessage();
-        log.info("Could not parse [" + ramlFile + "] as root RAML file." + reason);
+        log.info("Could not parse [" + spec.getLocation() + "] as root RAML file." + reason);
         log.debug(e);
       }
 
@@ -121,57 +103,25 @@ public class RAMLFilesParser {
     }
   }
 
-  private ResourceLoader getResourceLoader(String ramlFolderPath, File ramlFileParent) {
-    return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFileParent), new DefaultResourceLoader(),
-                                       new FileResourceLoader(ramlFolderPath),
-                                       new ExchangeDependencyResourceLoader(ramlFolderPath));
+  public static RAMLFilesParser create(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
+    final List<ApiRef> specs = fileStreams.entrySet().stream()
+        .map(e -> ApiRef.create(e.getKey().getAbsolutePath()))
+        .collect(toList());
+
+    return new RAMLFilesParser(log, specs, apiFactory, null);
   }
 
-  public RAMLFilesParser(Log log, Map<String, InputStream> ramls, ScaffolderResourceLoader scaffolderResourceLoader,
-                         APIFactory apiFactory) {
-    this.log = log;
-    this.apiFactory = apiFactory;
-    List<String> processedRamls = new ArrayList<>();
-    for (Map.Entry<String, InputStream> fileInputStreamEntry : ramls.entrySet()) {
-      String content;
-      String rootRamlName = fileInputStreamEntry.getKey();
-      try {
-        content = IOUtils.toString(fileInputStreamEntry.getValue());
-      } catch (IOException ioe) {
-        this.log.info("Error loading file " + rootRamlName);
-        break;
+  public static RAMLFilesParser create(Log log, Map<String, InputStream> apis, ScaffolderResourceLoader scaffolderResourceLoader,
+                                       APIFactory apiFactory) {
+    final List<ApiRef> specs = apis.entrySet().stream()
+        .map(e -> ApiRef.create(e.getKey()))
+        .collect(toList());
 
-      }
-
-      try {
-        final ParserWrapper parserWrapper = getParserWrapper(null, scaffolderResourceLoader);
-        parserWrapper.validate(); // This will fail whether the raml is not valid
-
-        vendorId = parserWrapper.getApiVendor().toString();
-        final IRaml raml = parserWrapper.build();
-        ramlVersion = raml.getVersion();
-
-        collectResources(rootRamlName, raml.getResources(), API.DEFAULT_BASE_URI, raml.getVersion());
-        processedRamls.add(rootRamlName);
-      } catch (Exception e) {
-        final String reason = e.getMessage() == null ? "" : " Reason: " + e.getMessage();
-        log.info("Could not parse [" + rootRamlName + "] as root RAML." + reason);
-        log.debug(e);
-      }
-
-    }
-    if (processedRamls.size() > 0) {
-      this.log.info("The following RAML files were parsed correctly: " +
-          processedRamls);
-    } else {
-      parseStatus = ScaffolderReport.FAILED;
-      errorMessage = "RAML Root not found. None of the files were recognized as valid root RAML files.";
-      this.log.error(errorMessage);
-    }
+    return new RAMLFilesParser(log, specs, apiFactory, scaffolderResourceLoader);
   }
 
 
-  void collectResources(String filePath, Map<String, IResource> resourceMap, String baseUri, String version) {
+  private void collectResources(String filePath, Map<String, IResource> resourceMap, String baseUri, String version) {
     for (IResource resource : resourceMap.values()) {
       for (IAction action : resource.getActions().values()) {
 
@@ -219,33 +169,20 @@ public class RAMLFilesParser {
     return entries;
   }
 
-  private ParserWrapper getParserWrapper(File apiFile) {
-    return getParserWrapper(apiFile, null);
-  }
+  private ParserWrapper getParserWrapper(ApiRef apiRef, ScaffolderResourceLoader scaffolderResourceLoader) {
+    // Used for Testing
+    final String parserValue = System.getProperty(MULE_APIKIT_PARSER, "AUTO");
 
-  private ParserWrapper getParserWrapper(File apiFile, ScaffolderResourceLoader scaffolderResourceLoader) {
-    String apiFolderPath = null;
-    File apiFileParent = null;
-    if (apiFile != null && apiFile.getParentFile() != null) {
-      apiFileParent = apiFile.getParentFile();
-      apiFolderPath = apiFileParent.getPath();
+    if (scaffolderResourceLoader == null) {
+      apiRef = ApiRef.create(apiRef.getLocation());
+    } else {
+      apiRef = ApiRef.create(apiRef.getLocation(), scaffolderResourceLoader);
     }
 
     ParserWrapper parserWrapper;
 
-    // Used for Testing, we don't want fallback
-    final String parserValue = System.getProperty(MULE_APIKIT_PARSER, "AUTO");
-
-    final ApiRef apiRef;
-    if (scaffolderResourceLoader == null) {
-      apiRef = ApiRef.create(apiFile.getAbsolutePath());
-    } else {
-      apiRef = ApiRef.create(apiFile.getAbsolutePath(), scaffolderResourceLoader);
-//      environment = environment.add(new ScaffolderResourceLoaderWrapper(scaffolderResourceLoader, rootRamlPath));
-    }
-
     if ("AMF".equals(parserValue)) {
-      ParserWrapper parserWrapper = ParserService.create(apiRef, AMF);
+      parserWrapper = ParserService.create(apiRef, AMF);
       log.info(buildParserInfoMessage("AMF"));
       return parserWrapper;
     }

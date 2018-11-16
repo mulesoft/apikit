@@ -13,7 +13,7 @@ import java.net.URI;
 /**
  * Represents a way of getting resources from the application
  */
-public interface ResourceLoader {
+public interface ResourceLoader extends org.mule.raml.interfaces.loader.ResourceLoader {
 
   /**
    * Gets the root API File
