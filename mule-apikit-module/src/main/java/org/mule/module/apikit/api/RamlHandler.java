@@ -61,20 +61,18 @@ public class RamlHandler {
     this(ramlLocation, keepRamlBaseUri, muleContext, null);
   }
 
-  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, ParserType defaultParser)
+  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, ParserType parserType)
       throws IOException {
     this.keepRamlBaseUri = keepRamlBaseUri;
-
-    parser = resolveParser(defaultParser);
 
     String rootRamlLocation = findRootRaml(ramlLocation);
     if (rootRamlLocation == null) {
       throw new IOException("Raml not found at: " + ramlLocation);
     }
-    parserWrapper = ParserService.create(ApiRef.create(rootRamlLocation), parser);
+    parserWrapper = new ParserService().getParser(ApiRef.create(rootRamlLocation), parserType);
     parserWrapper.validate();
     this.api = parserWrapper.build();
-    parser = parserWrapper.getParserType(); // Fix Parser
+    parser = parserWrapper.getParserType();
 
     int idx = rootRamlLocation.lastIndexOf("/");
     if (idx > 0) {
@@ -85,15 +83,6 @@ public class RamlHandler {
     }
 
     this.muleContext = muleContext;
-  }
-
-  private ParserType resolveParser(ParserType defaultValue) {
-    final String parserValue = System.getProperty(MULE_APIKIT_PARSER_AMF);
-    if (AMF.name().equals(parserValue))
-      return AMF;
-    if (RAML.name().equals(parserValue))
-      return RAML;
-    return defaultValue == null ? AUTO : defaultValue;
   }
 
   public ParserType getParserType() {

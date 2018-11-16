@@ -40,7 +40,7 @@ public class ParserServiceTestCase {
 
     final String api = resource("/api-08.raml");
 
-    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.RAML);
+    final ParserWrapper wrapper = new ParserService().getParser(ApiRef.create(api), ParserType.RAML);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.RAML));
     assertThat(wrapper.getApiVendor(), is(RAML_08));
@@ -51,7 +51,7 @@ public class ParserServiceTestCase {
 
     final String api = resource("/api-10.raml");
 
-    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.RAML);
+    final ParserWrapper wrapper = new ParserService().getParser(ApiRef.create(api), ParserType.RAML);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.RAML));
     assertThat(wrapper.getApiVendor(), is(RAML_10));
@@ -62,7 +62,7 @@ public class ParserServiceTestCase {
 
     final String api = resource("/petstore.json");
 
-    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
+    final ParserWrapper wrapper = new ParserService().getParser(ApiRef.create(api), ParserType.AMF);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.AMF));
     assertThat(wrapper.getApiVendor(), is(OAS_20));
@@ -73,7 +73,7 @@ public class ParserServiceTestCase {
 
     final String api = resource("/petstore.yaml");
 
-    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
+    final ParserWrapper wrapper = new ParserService().getParser(ApiRef.create(api), ParserType.AMF);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.AMF));
     assertThat(wrapper.getApiVendor(), is(OAS_20));
@@ -84,7 +84,7 @@ public class ParserServiceTestCase {
 
     final String api = resource("/api-with-examples.json");
 
-    final ParserWrapper wrapper = ParserService.create(ApiRef.create(api), ParserType.AMF);
+    final ParserWrapper wrapper = new ParserService().getParser(ApiRef.create(api), ParserType.AMF);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.AMF));
     assertThat(wrapper.getApiVendor(), is(OAS_20));

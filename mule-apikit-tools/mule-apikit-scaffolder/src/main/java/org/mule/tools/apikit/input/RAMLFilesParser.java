@@ -8,15 +8,13 @@ package org.mule.tools.apikit.input;
 
 import org.apache.maven.plugin.logging.Log;
 import org.mule.parser.service.ParserService;
+import org.mule.parser.service.logger.Logger;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.api.ApiRef;
-import org.mule.raml.interfaces.parser.rule.IValidationReport;
-import org.mule.raml.interfaces.parser.rule.IValidationResult;
-import org.mule.raml.interfaces.parser.rule.Severity;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
@@ -28,17 +26,12 @@ import org.mule.tools.apikit.output.GenerationModel;
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.mule.raml.interfaces.ParserType.AMF;
-import static org.mule.raml.interfaces.ParserType.RAML;
-import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class RAMLFilesParser {
 
@@ -170,57 +163,16 @@ public class RAMLFilesParser {
   }
 
   private ParserWrapper getParserWrapper(ApiRef apiRef, ScaffolderResourceLoader scaffolderResourceLoader) {
-    // Used for Testing
-    final String parserValue = System.getProperty(MULE_APIKIT_PARSER, "AUTO");
-
     if (scaffolderResourceLoader == null) {
       apiRef = ApiRef.create(apiRef.getLocation());
     } else {
       apiRef = ApiRef.create(apiRef.getLocation(), scaffolderResourceLoader);
     }
 
-    ParserWrapper parserWrapper;
-
-    if ("AMF".equals(parserValue)) {
-      parserWrapper = ParserService.create(apiRef, AMF);
-      log.info(buildParserInfoMessage("AMF"));
-      return parserWrapper;
-    }
-
-    if ("RAML".equals(parserValue)) {
-      return applyFallback(apiRef, Collections.emptyList());
-    }
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    try {
-      parserWrapper = ParserService.create(apiRef, AMF);
-    } catch (Exception e) {
-      final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
-      return applyFallback(apiRef, errors);
-    }
-
-    final IValidationReport validationReport = parserWrapper.validationReport();
-    if (validationReport.conforms()) {
-      log.info(buildParserInfoMessage("AMF"));
-      return parserWrapper;
-    } else {
-      final List<IValidationResult> errorsFound = validationReport.getResults();
-      return applyFallback(apiRef, errorsFound);
-    }
-  }
-
-  private ParserWrapper applyFallback(ApiRef apiRef, List<IValidationResult> errorsFound) {
-
-    final ParserWrapper parserWrapper = ParserService.create(apiRef, RAML);
-
-    if (parserWrapper.validationReport().conforms()) {
-      log.info(buildParserInfoMessage("RAML Parser"));
-      logErrors(errorsFound, WARNING);
-      return parserWrapper;
-    } else {
-      logErrors(errorsFound);
-      throw new RuntimeException(buildErrorMessage(errorsFound));
-    }
+    final ParserService parserService = new ParserService(LoggerWrapper.getLogger(log));
+    final ParserWrapper parser = parserService.getParser(apiRef);
+    log.info(buildParserInfoMessage(parser.getParserType().name()));
+    return parser;
   }
 
 
@@ -228,30 +180,56 @@ public class RAMLFilesParser {
     return format("Using %s to load APIs", parser);
   }
 
-  private void logErrors(List<IValidationResult> validationResults) {
-    validationResults.stream().forEach(error -> logError(error, error.getSeverity()));
-  }
+  private static class LoggerWrapper implements Logger {
 
-  private void logErrors(List<IValidationResult> validationResults, Severity overridenSeverity) {
-    validationResults.stream().forEach(error -> logError(error, overridenSeverity));
-  }
+    private final Log logger;
 
-  private void logError(IValidationResult error, Severity severity) {
-    if (severity == Severity.INFO)
-      log.info(error.getMessage());
-    else if (severity == WARNING)
-      log.warn(error.getMessage());
-    else
-      log.error(error.getMessage());
-  }
-
-  private static String buildErrorMessage(List<IValidationResult> validationResults) {
-    final StringBuilder message = new StringBuilder("Invalid API descriptor -- errors found: ");
-    message.append(validationResults.size()).append("\n\n");
-    for (IValidationResult error : validationResults) {
-      message.append(error.getMessage()).append("\n");
+    private LoggerWrapper(Log logger) {
+      this.logger = logger;
     }
-    return message.toString();
-  }
 
+    static LoggerWrapper getLogger(Log logger) {
+      return new LoggerWrapper(logger);
+    }
+
+    @Override
+    public void debug(String msg) {
+      logger.debug(msg);
+    }
+
+    @Override
+    public void debug(String msg, Throwable error) {
+      logger.debug(msg, error);
+    }
+
+    @Override
+    public void info(String msg) {
+      logger.info(msg);
+    }
+
+    @Override
+    public void info(String msg, Throwable error) {
+      logger.info(msg, error);
+    }
+
+    @Override
+    public void warn(String msg) {
+      logger.warn(msg);
+    }
+
+    @Override
+    public void warn(String msg, Throwable error) {
+      logger.warn(msg, error);
+    }
+
+    @Override
+    public void error(String msg) {
+      logger.error(msg);
+    }
+
+    @Override
+    public void error(String msg, Throwable error) {
+      logger.error(msg, error);
+    }
+  }
 }

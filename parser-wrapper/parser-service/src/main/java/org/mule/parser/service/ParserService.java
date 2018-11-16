@@ -8,6 +8,8 @@ package org.mule.parser.service;
 
 import org.mule.amf.impl.ParserWrapperAmf;
 import org.mule.amf.impl.exceptions.ParserException;
+import org.mule.parser.service.logger.Logger;
+import org.mule.parser.service.logger.LoggerFactory;
 import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.interfaces.ParserType;
@@ -20,11 +22,7 @@ import org.mule.raml.interfaces.parser.rule.Severity;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-import java.io.InputStream;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -36,9 +34,43 @@ import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class ParserService {
 
-  private static final Logger logger = LoggerFactory.getLogger(ParserService.class);
+  public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
-  public static ParserWrapper create(final ApiRef apiRef, ParserType parserType) {
+  private static final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(ParserService.class);
+
+  private Logger logger;
+
+  public ParserService() {
+    this(DEFAULT_LOGGER);
+  }
+
+  public ParserService(Logger logger) {
+    this.logger = logger;
+  }
+
+  public ParserWrapper getParser(final ApiRef apiRef) {
+    return getParser(apiRef, AUTO);
+  }
+
+
+  public ParserWrapper getParser(final ApiRef apiRef, ParserType parserType) {
+    final ParserType overridden = getOverriddenParserType();
+    if (overridden != AUTO)
+      return getParserFor(apiRef, overridden);
+    else
+      return getParserFor(apiRef, parserType);
+  }
+
+  private ParserType getOverriddenParserType() {
+    final String parserValue = System.getProperty(MULE_APIKIT_PARSER);
+    if (AMF.name().equals(parserValue))
+      return AMF;
+    if (RAML.name().equals(parserValue))
+      return RAML;
+    return AUTO;
+  }
+
+  private ParserWrapper getParserFor(final ApiRef apiRef, ParserType parserType) {
     ParserWrapper parserWrapper;
 
     try {
@@ -68,7 +100,7 @@ public class ParserService {
   }
 
   // Only fallback if is RAML
-  private static ParserWrapper applyFallback(ApiRef apiRef, ParserType parserType, List<IValidationResult> errorsFound)
+  private ParserWrapper applyFallback(ApiRef apiRef, ParserType parserType, List<IValidationResult> errorsFound)
       throws ParserServiceException {
     if (parserType == AUTO) {
       final ParserWrapper fallbackParser = createRamlParserWrapper(apiRef);
@@ -81,15 +113,15 @@ public class ParserService {
     throw new ParserServiceException(buildErrorMessage(errorsFound));
   }
 
-  private static void logErrors(List<IValidationResult> validationResults) {
+  private void logErrors(List<IValidationResult> validationResults) {
     validationResults.forEach(error -> logError(error, error.getSeverity()));
   }
 
-  private static void logErrors(List<IValidationResult> validationResults, Severity overridenSeverity) {
+  private void logErrors(List<IValidationResult> validationResults, Severity overridenSeverity) {
     validationResults.forEach(error -> logError(error, overridenSeverity));
   }
 
-  private static void logError(IValidationResult error, Severity severity) {
+  private void logError(IValidationResult error, Severity severity) {
     if (severity == Severity.INFO)
       logger.info(error.getMessage());
     else if (severity == WARNING)
