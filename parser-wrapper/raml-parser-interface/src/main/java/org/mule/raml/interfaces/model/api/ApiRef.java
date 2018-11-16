@@ -13,6 +13,7 @@ import org.mule.raml.interfaces.model.ApiVendor;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 import static org.mule.raml.interfaces.common.ApiVendorUtils.deduceApiVendor;
 import static org.mule.raml.interfaces.common.ApiVendorUtils.getRamlVendor;
@@ -28,12 +29,12 @@ public interface ApiRef {
     try {
       final URI uri = new URI(location);
       if (uri.isAbsolute())
-        return new URIApiRef(uri);
+        return new URIApiRef(uri, resourceLoader);
     } catch (URISyntaxException ignored) {
     }
 
     // File is the default implementation
-    return new DefaultApiRef(location);
+    return new DefaultApiRef(location, resourceLoader);
   }
 
   static ApiRef create(final String location) {
@@ -63,4 +64,6 @@ public interface ApiRef {
 
     return deduceApiVendor(resolve());
   }
+
+  Optional<ResourceLoader> getResourceLoader();
 }

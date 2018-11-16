@@ -13,18 +13,30 @@ import amf.client.model.document.BaseUnit;
 import amf.client.model.document.Document;
 import amf.client.model.domain.WebApi;
 import amf.client.parse.Parser;
-import amf.client.remote.Content;
 import amf.client.render.AmfGraphRenderer;
 import amf.client.render.Oas20Renderer;
 import amf.client.render.Raml08Renderer;
 import amf.client.render.Raml10Renderer;
 import amf.client.render.Renderer;
-import amf.client.resource.ResourceLoader;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
+import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
+import org.mule.amf.impl.loader.ProvidedResourceLoader;
+import org.mule.amf.impl.model.AmfImpl;
+import org.mule.amf.impl.parser.rule.ValidationResultImpl;
+import org.mule.raml.interfaces.ParserType;
+import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.injector.IRamlUpdater;
+import org.mule.raml.interfaces.model.ApiVendor;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.api.ApiRef;
+import org.mule.raml.interfaces.parser.rule.DefaultValidationReport;
+import org.mule.raml.interfaces.parser.rule.IValidationReport;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,26 +45,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
-import org.apache.commons.io.IOUtils;
-import org.mule.amf.impl.loader.ProvidedResourceLoader;
-import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
-import org.mule.amf.impl.model.AmfImpl;
-import org.mule.amf.impl.parser.rule.ValidationResultImpl;
-import org.mule.raml.interfaces.ParserType;
-import org.mule.raml.interfaces.ParserWrapper;
-import org.mule.raml.interfaces.injector.IRamlUpdater;
-import org.mule.raml.interfaces.model.api.ApiRef;
-import org.mule.raml.interfaces.model.ApiVendor;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.raml.interfaces.model.api.ResourceLoaderProvider;
-import org.mule.raml.interfaces.parser.rule.DefaultValidationReport;
-import org.mule.raml.interfaces.parser.rule.IValidationReport;
-import org.mule.raml.interfaces.parser.rule.IValidationResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static amf.ProfileNames.AMF;
 import static java.util.Collections.emptyList;
@@ -74,14 +67,9 @@ public class ParserWrapperAmf implements ParserWrapper {
   private ParserWrapperAmf(final ApiRef apiRef, boolean validate) throws ExecutionException, InterruptedException {
     AMF.init().get();
 
-    final URI uri = getPathAsUri(apiRef.getLocation());
+    final Environment environment = buildEnvironment(apiRef);
 
-    final Environment environment;
-    if (apiRef instanceof ResourceLoaderProvider) {
-      environment = buildApiSyncEnvironment(apiRef);
-    } else {
-      environment = buildEnvironment(uri);
-    }
+    final URI uri = getPathAsUri(apiRef);
 
     parser = getParserForApi(uri, environment);
     document = DocumentParser.parseFile(parser, uri, validate);
@@ -114,48 +102,53 @@ public class ParserWrapperAmf implements ParserWrapper {
     return new ParserWrapperAmf(apiRef, validate);
   }
 
-  private static URI getPathAsUri(String path) {
+  private static URI getPathAsUri(ApiRef apiRef) {
     try {
-      final URI uri = new URI(path);
-      return uri.isAbsolute() ? uri : getUriFromFile(path);
+      final URI uri = new URI(apiRef.getLocation());
+      return uri.isAbsolute() ? uri : getUriFromFile(apiRef);
     } catch (URISyntaxException e) {
-      return getUriFromFile(path);
+      return getUriFromFile(apiRef);
     }
   }
 
   // It means that it's a file
-  private static URI getUriFromFile(String path) {
-    final File file = new File(path);
+  private static URI getUriFromFile(ApiRef apiRef) {
+    final String location = apiRef.getLocation();
+    if (apiRef.getResourceLoader().isPresent()) {
+      final URI uri = apiRef.getResourceLoader().map(loader -> loader.getResource(location)).orElse(null);
+      if (uri != null)
+        return uri;
+    }
+
+    final File file = new File(location);
     if (file.exists())
       return file.toURI();
 
-    final URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
+    final URL resource = Thread.currentThread().getContextClassLoader().getResource(location);
 
     if (resource != null) {
       try {
         return resource.toURI();
       } catch (URISyntaxException e1) {
-        throw new RuntimeException("Couldn't load api in location: " + path);
+        throw new RuntimeException("Couldn't load api in location: " + location);
       }
     } else
-      throw new RuntimeException("Couldn't load api in location: " + path);
+      throw new RuntimeException("Couldn't load api in location: " + location);
   }
 
-  private static Environment buildEnvironment(URI uri) {
+  private static Environment buildEnvironment(ApiRef apiRef) {
+    final URI uri = getPathAsUri(apiRef);
+
     Environment environment = DefaultEnvironment.apply();
+
     if (uri.getScheme() != null && uri.getScheme().startsWith("file")) {
       final File file = new File(uri);
       final String rootDir = file.isDirectory() ? file.getPath() : file.getParent();
       environment = environment.add(new ExchangeDependencyResourceLoader(rootDir));
     }
-    return environment;
-  }
 
-  private static Environment buildApiSyncEnvironment(ApiRef apiRef) {
-    Environment environment = DefaultEnvironment.apply();
-
-    if (apiRef != null) {
-      environment = environment.add(new ProvidedResourceLoader(((ResourceLoaderProvider) apiRef).getResourceLoader()));
+    if (apiRef.getResourceLoader().isPresent()) {
+      environment = environment.add(new ProvidedResourceLoader(apiRef.getResourceLoader().get()));
     }
 
     return environment;

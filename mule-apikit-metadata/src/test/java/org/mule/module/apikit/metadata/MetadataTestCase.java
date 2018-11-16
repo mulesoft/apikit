@@ -32,7 +32,6 @@ import static org.junit.Assert.assertThat;
 import static org.mule.module.apikit.metadata.api.Metadata.MULE_APIKIT_PARSER;
 
 @RunWith(Parameterized.class)
-@Ignore
 public class MetadataTestCase extends AbstractMetadataTestCase {
 
   private String parser;

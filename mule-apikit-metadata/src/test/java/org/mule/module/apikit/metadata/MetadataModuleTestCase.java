@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.metadata;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.metadata.api.model.FunctionType;
 import org.mule.module.apikit.metadata.api.Metadata;
@@ -22,8 +21,8 @@ import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
-import static org.mule.module.apikit.metadata.utils.TestNotifier.ERROR;
 import static org.mule.module.apikit.metadata.utils.TestNotifier.DEBUG;
+import static org.mule.module.apikit.metadata.utils.TestNotifier.ERROR;
 import static org.mule.module.apikit.metadata.utils.TestNotifier.INFO;
 import static org.mule.module.apikit.metadata.utils.TestNotifier.WARN;
 
@@ -111,7 +110,6 @@ public class MetadataModuleTestCase {
   }
 
   @Test
-  @Ignore
   public void testNotifyingOnlyInfoMesages() throws Exception {
 
     ResourceLoader resourceLoader = new TestResourceLoader();

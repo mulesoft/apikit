@@ -51,12 +51,7 @@ public class AmfHandler implements MetadataResolverFactory {
     final ParserWrapperAmf parserWrapper;
 
     try {
-      final ApiRef apiRef;
-      if (APISyncUtils.isSyncProtocol(apiDefinition)) {
-        apiRef = ApiRef.create(apiDefinition, resourceLoader);
-      } else {
-        apiRef = ApiRef.create(apiDefinition);
-      }
+      final ApiRef apiRef = ApiRef.create(apiDefinition, resourceLoader);;
       parserWrapper = ParserWrapperAmf.create(apiRef, true);
     } catch (Exception e) {
       notifier.error(format("Error reading API definition '%s' using AMF parser. Detail: %s", apiDefinition, e.getMessage()));

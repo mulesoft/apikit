@@ -12,10 +12,11 @@ import org.mule.raml.interfaces.loader.ClassPathResourceLoader;
 import org.mule.raml.interfaces.loader.ResourceLoader;
 
 import java.io.InputStream;
+import java.util.Optional;
 
 import static java.lang.String.format;
 
-class ApiSyncApiRef implements ApiRef, ResourceLoaderProvider {
+class ApiSyncApiRef implements ApiRef {
 
   private static final String RESOURCE_FORMAT = "resource::%s:%s:%s:%s:%s:%s";
 
@@ -72,11 +73,11 @@ class ApiSyncApiRef implements ApiRef, ResourceLoaderProvider {
 
   @Override
   public InputStream resolve() {
-    return getResourceLoader().getResourceAsStream(getLocation());
+    return resourceLoader.getResourceAsStream(getLocation());
   }
 
   @Override
-  public ResourceLoader getResourceLoader() {
-    return resourceLoader;
+  public Optional<ResourceLoader> getResourceLoader() {
+    return Optional.of(resourceLoader);
   }
 }

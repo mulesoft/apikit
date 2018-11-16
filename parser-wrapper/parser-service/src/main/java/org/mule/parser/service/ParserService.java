@@ -15,7 +15,6 @@ import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.api.ApiRef;
-import org.mule.raml.interfaces.model.api.ResourceLoaderProvider;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
@@ -145,8 +144,8 @@ public class ParserService {
     if (RAML_08.equals(apiRef.getVendor())) {
       return new ParserWrapperV1(path);
     } else {
-      if (apiRef instanceof ResourceLoaderProvider) {
-        final org.mule.raml.interfaces.loader.ResourceLoader apiLoader = ((ResourceLoaderProvider) apiRef).getResourceLoader();
+      if (apiRef.getResourceLoader().isPresent()) {
+        final org.mule.raml.interfaces.loader.ResourceLoader apiLoader = apiRef.getResourceLoader().get();
         final ResourceLoader resourceLoader =
             new CompositeResourceLoader(new DefaultResourceLoader(), apiLoader::getResourceAsStream);
         return new ParserWrapperV2(path, resourceLoader);

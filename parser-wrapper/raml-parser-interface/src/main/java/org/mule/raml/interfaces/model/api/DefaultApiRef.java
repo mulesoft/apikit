@@ -8,17 +8,25 @@ package org.mule.raml.interfaces.model.api;
 
 
 import org.apache.commons.io.FilenameUtils;
+import org.mule.raml.interfaces.loader.ResourceLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Optional;
 
 class DefaultApiRef implements ApiRef {
 
   private String location;
+  private Optional<ResourceLoader> resourceLoader;
 
   DefaultApiRef(final String location) {
+    this(location, null);
+  }
+
+  DefaultApiRef(final String location, ResourceLoader resourceLoader) {
     this.location = location;
+    this.resourceLoader = Optional.ofNullable(resourceLoader);
   }
 
   @Override
@@ -33,16 +41,25 @@ class DefaultApiRef implements ApiRef {
 
   @Override
   public InputStream resolve() {
-    final File file = new File(location);
+    if (resourceLoader.isPresent())
+      return resourceLoader.map(loader -> loader.getResourceAsStream(location)).orElse(null);
+    else {
+      final File file = new File(location);
 
-    if (file.exists()) {
-      try {
-        return new FileInputStream(file);
-      } catch (Exception e) {
-        return null;
+      if (file.exists()) {
+        try {
+          return new FileInputStream(file);
+        } catch (Exception e) {
+          return null;
+        }
+      } else {
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(location);
       }
-    } else {
-      return Thread.currentThread().getContextClassLoader().getResourceAsStream(location);
     }
+  }
+
+  @Override
+  public Optional<ResourceLoader> getResourceLoader() {
+    return resourceLoader;
   }
 }

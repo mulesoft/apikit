@@ -7,18 +7,26 @@
 package org.mule.raml.interfaces.model.api;
 
 import org.apache.commons.io.FilenameUtils;
+import org.mule.raml.interfaces.loader.ResourceLoader;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Optional;
 
 class URIApiRef implements ApiRef {
 
   private URI uri;
+  private Optional<ResourceLoader> resourceLoader;
 
   URIApiRef(final URI uri) {
+    this(uri, null);
+  }
+
+  URIApiRef(final URI uri, final ResourceLoader resourceLoader) {
     this.uri = uri;
+    this.resourceLoader = Optional.ofNullable(resourceLoader);
   }
 
   @Override
@@ -33,10 +41,19 @@ class URIApiRef implements ApiRef {
 
   @Override
   public InputStream resolve() {
-    try {
-      return new BufferedInputStream(uri.toURL().openStream());
-    } catch (IOException e) {
-      return null;
+    if (resourceLoader.isPresent())
+      return resourceLoader.map(loader -> loader.getResourceAsStream(getLocation())).orElse(null);
+    else {
+      try {
+        return new BufferedInputStream(uri.toURL().openStream());
+      } catch (IOException e) {
+        return null;
+      }
     }
+  }
+
+  @Override
+  public Optional<ResourceLoader> getResourceLoader() {
+    return resourceLoader;
   }
 }
