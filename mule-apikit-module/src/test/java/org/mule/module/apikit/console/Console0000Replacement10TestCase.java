@@ -6,14 +6,14 @@
  */
 package org.mule.module.apikit.console;
 
-import com.jayway.restassured.specification.ResponseSpecification;
+import io.restassured.specification.ResponseSpecification;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.startsWith;
 

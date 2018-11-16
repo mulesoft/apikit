@@ -9,7 +9,7 @@ package org.mule.module.apikit.parameters;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 
 public class QueryParametersTestCase extends AbstractMultiParserFunctionalTestCase {
 

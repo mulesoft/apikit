@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-import com.jayway.restassured.RestAssured;
+import io.restassured.RestAssured;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 
 public class QueryStringTestCase extends AbstractMultiParserFunctionalTestCase {
 

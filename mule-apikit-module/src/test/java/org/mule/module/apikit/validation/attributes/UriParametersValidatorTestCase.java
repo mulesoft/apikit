@@ -10,7 +10,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 public class UriParametersValidatorTestCase extends AbstractMultiParserFunctionalTestCase {

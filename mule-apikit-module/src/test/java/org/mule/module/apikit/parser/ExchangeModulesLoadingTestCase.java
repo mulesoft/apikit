@@ -9,7 +9,7 @@ package org.mule.module.apikit.parser;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 
 public class ExchangeModulesLoadingTestCase extends AbstractMultiParserFunctionalTestCase {

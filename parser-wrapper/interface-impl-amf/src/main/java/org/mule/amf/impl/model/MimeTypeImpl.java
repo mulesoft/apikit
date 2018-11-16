@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-import static com.sun.jmx.mbeanserver.Util.cast;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.singletonList;
@@ -74,7 +73,7 @@ public class MimeTypeImpl implements IMimeType {
       if (!(shape instanceof NodeShape))
         throw new RuntimeException("Unexpected Shape " + shape.getClass());
 
-      final NodeShape nodeShape = cast(shape);
+      final NodeShape nodeShape = (NodeShape) shape;
 
       final Map<String, List<IParameter>> parameters = new LinkedHashMap<>();
 

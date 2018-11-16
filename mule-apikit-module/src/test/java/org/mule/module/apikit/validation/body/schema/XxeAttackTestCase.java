@@ -6,13 +6,13 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import com.jayway.restassured.response.Response;
+import io.restassured.response.Response;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertThat;

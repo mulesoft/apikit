@@ -13,7 +13,7 @@ import org.mule.runtime.core.api.util.IOUtils;
 
 import java.util.Arrays;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 

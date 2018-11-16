@@ -8,7 +8,7 @@ package org.mule.module.apikit;
 
 import org.junit.Test;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 public class OperationsWithoutSourceTestCase extends AbstractMultiParserFunctionalTestCase {

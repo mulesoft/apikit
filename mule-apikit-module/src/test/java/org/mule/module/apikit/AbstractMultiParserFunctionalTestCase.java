@@ -6,7 +6,7 @@
  */
 package org.mule.module.apikit;
 
-import com.jayway.restassured.RestAssured;
+import io.restassured.RestAssured;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.runners.Parameterized;

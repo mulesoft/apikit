@@ -9,7 +9,7 @@ package org.mule.module.apikit.validation.body.empty;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 
 public class EmptyBodyRaml08TestCase extends AbstractMultiParserFunctionalTestCase {
 
