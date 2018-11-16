@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.metadata;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.metadata.api.model.FunctionType;
 import org.mule.module.apikit.metadata.api.Metadata;
@@ -110,6 +111,7 @@ public class MetadataModuleTestCase {
   }
 
   @Test
+  @Ignore
   public void testNotifyingOnlyInfoMesages() throws Exception {
 
     ResourceLoader resourceLoader = new TestResourceLoader();

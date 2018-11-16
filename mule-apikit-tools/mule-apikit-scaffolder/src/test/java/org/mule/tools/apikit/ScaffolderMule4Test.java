@@ -404,6 +404,7 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   @Test
+  @Ignore
   public void testGenerateWithRAML() throws Exception {
     if (isAmf())
       return;
@@ -416,6 +417,7 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   @Test
+  @Ignore
   public void testFailingGenerateWithBothParsers() throws Exception {
     final List<String> errors = new ArrayList<>();
 

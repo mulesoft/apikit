@@ -6,10 +6,6 @@
  */
 package org.mule.raml.implv2;
 
-import static java.util.Optional.ofNullable;
-import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
-
 import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserType;
@@ -35,7 +31,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
+import static java.util.Optional.ofNullable;
 import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 public class ParserWrapperV2 implements ParserWrapper {
 

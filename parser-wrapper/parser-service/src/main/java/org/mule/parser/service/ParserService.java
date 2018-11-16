@@ -23,6 +23,8 @@ import org.raml.v2.api.loader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
+import java.io.InputStream;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -112,8 +114,9 @@ public class ParserService {
       return new ParserWrapperV1(path);
     } else {
       if (apiRef instanceof ResourceLoaderProvider) {
+        final org.mule.raml.interfaces.loader.ResourceLoader apiLoader = ((ResourceLoaderProvider) apiRef).getResourceLoader();
         final ResourceLoader resourceLoader =
-            new CompositeResourceLoader(new DefaultResourceLoader()/*, scaffolderResourceLoaderWrapper*/);
+            new CompositeResourceLoader(new DefaultResourceLoader(), apiLoader::getResourceAsStream);
         return new ParserWrapperV2(path, resourceLoader);
       }
       return new ParserWrapperV2(path);
