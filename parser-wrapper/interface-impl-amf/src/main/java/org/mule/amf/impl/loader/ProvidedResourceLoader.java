@@ -24,25 +24,28 @@ public class ProvidedResourceLoader implements amf.client.resource.ResourceLoade
 
   @Override
   public CompletableFuture<Content> fetch(String resourceName) {
-    return CompletableFuture.supplyAsync(() -> {
-      if (resourceName == null || resourceName.isEmpty()) {
-        throw new RuntimeException("Failed to apply.");
+    final CompletableFuture<Content> future = new CompletableFuture<>();
+
+    if (resourceName == null || resourceName.isEmpty()) {
+      throw new RuntimeException("Failed to apply.");
+    }
+
+    final URI resource = resourceLoader.getResource(resourceName);
+
+    if (resource != null) {
+      final String resourceAsString;
+      try {
+        resourceAsString = IOUtils.toString(resource.toURL().openStream());
+        final Content content = new Content(resourceAsString, resource.toString());
+        future.complete(content);
+      } catch (IOException e) {
+        future.completeExceptionally(new RuntimeException("Failed to fetch resource '" + resourceName + "'"));
       }
+    } else {
+      future.completeExceptionally(new Exception("Failed to fetch resource '" + resourceName + "'"));
+    }
 
-      final URI resource = resourceLoader.getResource(resourceName);
-
-      if (resource != null) {
-        final String resourceAsString;
-        try {
-          resourceAsString = IOUtils.toString(resource.toURL().openStream());
-          return new Content(resourceAsString, resource.toString());
-        } catch (IOException e) {
-          throw new RuntimeException("Failed to fetch resource '" + resourceName + "'");
-        }
-      }
-
-      throw new RuntimeException("Failed to fetch resource '" + resourceName + "'");
-    });
+    return future;
   }
 
   private CompletableFuture<Content> fail() {

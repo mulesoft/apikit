@@ -71,7 +71,7 @@ public class ParserWrapperAmf implements ParserWrapper {
 
     final URI uri = getPathAsUri(apiRef);
 
-    parser = getParserForApi(uri, environment);
+    parser = getParserForApi(apiRef, environment);
     document = DocumentParser.parseFile(parser, uri, validate);
     references = getReferences(document.references());
     webApi = DocumentParser.getWebApi(parser, uri);

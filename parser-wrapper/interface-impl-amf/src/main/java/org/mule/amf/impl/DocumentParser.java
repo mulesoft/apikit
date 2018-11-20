@@ -91,10 +91,6 @@ public class DocumentParser {
     return handleFuture(parser.parseFileAsync(url));
   }
 
-  public static WebApi getWebApi(final URI apiDefinition, Environment environment) throws ParserException {
-    return getWebApi(getParserForApi(apiDefinition, environment), apiDefinition);
-  }
-
   public static Parser getParserForApi(final ApiRef apiRef, Environment environment) {
     final ApiVendor vendor = apiRef.getVendor();
 
@@ -112,24 +108,6 @@ public class DocumentParser {
       default:
         return new RamlParser(environment);
     }
-  }
-
-  public static Parser getParserForApi(final URI apiDefinition, Environment environment) {
-    final VendorEx vendor = getVendor(apiDefinition);
-    final Parser parser;
-    switch (vendor) {
-      case OAS20_JSON:
-        parser = new Oas20Parser(environment);
-        break;
-      case OAS20_YAML:
-        parser = new Oas20YamlParser(environment);
-        break;
-      case RAML:
-      default:
-        parser = new RamlParser(environment);
-        break;
-    }
-    return parser;
   }
 
   private static WebApi getWebApi(final Parser parser, final Path path) throws ParserException {
