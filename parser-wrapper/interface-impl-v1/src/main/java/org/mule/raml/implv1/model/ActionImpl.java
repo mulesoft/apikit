@@ -30,10 +30,12 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.emptyMap;
+import static org.mule.raml.implv1.model.ResourceImpl.loadResolvedUriParameters;
 
 public class ActionImpl implements IAction {
 
-  Action action;
+  private Action action;
+  private Map<String, IParameter> resolvedUriParameters;
 
   public ActionImpl(Action action) {
     this.action = action;
@@ -76,6 +78,15 @@ public class ActionImpl implements IAction {
       map.put(entry.getKey(), list);
     }
     return map;
+  }
+
+  @Override
+  public Map<String, IParameter> getResolvedUriParameters() {
+    if (resolvedUriParameters == null) {
+      resolvedUriParameters = loadResolvedUriParameters(action.getResource());
+    }
+
+    return resolvedUriParameters;
   }
 
   public Map<String, IParameter> getQueryParameters() {

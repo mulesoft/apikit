@@ -21,6 +21,8 @@ public interface IAction {
 
   Map<String, List<IParameter>> getBaseUriParameters();
 
+  Map<String, IParameter> getResolvedUriParameters();
+
   Map<String, IParameter> getQueryParameters();
 
   boolean hasBody();
