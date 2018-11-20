@@ -6,10 +6,13 @@
  */
 package org.mule.tools.apikit.model;
 
+import org.mule.raml.interfaces.loader.ResourceLoader;
+
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 
-public interface ScaffolderResourceLoader {
+public interface ScaffolderResourceLoader extends ResourceLoader {
 
   /**
    * Returns an {@link InputStream} with the resource's data ready to be consumed.
@@ -25,5 +28,5 @@ public interface ScaffolderResourceLoader {
    * @param resource the resource to be found.
    * @return A URL pointing to the resource.
    */
-  URL getResource(String resource);
+  URI getResource(String resource);
 }
