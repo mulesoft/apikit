@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>apikit-parent</artifactId>
-    <version>3.9.2-SNAPSHOT</version>
+    <version>3.9.2</version>
     <packaging>pom</packaging>
     <name>APIKit parent</name>
 
@@ -18,8 +18,8 @@
 
     <properties>
         <!--mule community version-->
-        <mule.version>3.9.2-SNAPSHOT</mule.version>
-        <cors.module.version>2.1.4-SNAPSHOT</cors.module.version>
+        <mule.version>3.9.2</mule.version>
+        <cors.module.version>2.1.4</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -35,7 +35,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser</artifactId>
-                <version>0.9-SNAPSHOT</version>
+                <version>0.8.29</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
@@ -60,7 +60,7 @@
             <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
-                <version>1.0.29-SNAPSHOT</version>
+                <version>1.0.28</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
