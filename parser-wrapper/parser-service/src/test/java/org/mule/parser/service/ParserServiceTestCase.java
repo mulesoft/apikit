@@ -14,19 +14,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
-import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
+import org.mule.raml.interfaces.model.api.ApiRef;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mule.raml.interfaces.model.ApiVendor.OAS_20;
@@ -54,6 +52,17 @@ public class ParserServiceTestCase {
     final ParserWrapper wrapper = new ParserService().getParser(ApiRef.create(api), ParserType.RAML);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.RAML));
+    assertThat(wrapper.getApiVendor(), is(RAML_10));
+  }
+
+  @Test
+  public void raml10AmfWrapper() throws URISyntaxException {
+
+    final String api = resource("/example-with-include/example-with-include.raml");
+
+    final ParserWrapper wrapper = new ParserService().getParser(ApiRef.create(api), ParserType.AMF);
+    assertNotNull(wrapper);
+    assertThat(wrapper.getParserType(), is(ParserType.AMF));
     assertThat(wrapper.getApiVendor(), is(RAML_10));
   }
 

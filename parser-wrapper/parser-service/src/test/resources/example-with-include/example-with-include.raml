@@ -1,0 +1,59 @@
+#%RAML 1.0
+---
+title: Simple API
+baseUri: http://localhost:8081
+
+types:
+  team: !include schemas/team.raml
+
+  Person:
+    type: object
+    properties:
+      name:
+        required: true
+        type: string
+/resources:
+  get:
+    responses:
+        200:
+            body:
+                application/json: !!null
+                text/xml: !!null
+/types-test:
+  post:
+    body:
+        application/json:
+            type: Person
+    responses:
+      200: ~
+  put:
+    body:
+        application/json:
+          type: Person
+    responses:
+      200: ~
+/reusing-payload:
+  post:
+    body:
+        application/json:
+            type: Person
+    responses:
+      200: ~
+/response-json-only:
+  get:
+    responses:
+        200:
+            body:
+                application/json: !!null
+/error:
+  post:
+    body:
+      application/x-www-form-urlencoded:
+        properties:
+          first:
+            type: string
+    responses:
+        200:
+            body:
+                application/json: !!null
+                text/xml: !!null
