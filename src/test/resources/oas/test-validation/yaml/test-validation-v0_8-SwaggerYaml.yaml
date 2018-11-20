@@ -1,0 +1,102 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Simple API
+  contact: {}
+host: localhost:8081
+basePath: /api
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /multipart:
+    delete:
+      description: Delete an item by Code.
+      summary: Multipart_DELETE
+      tags:
+      - multipart
+      operationId: MultipartDelete
+      produces:
+      - application/json
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: code
+        in: formData
+        required: true
+        type: string
+        minLength: 3
+        maxLength: 12
+        description: Code of the item to delete.
+      - name: color
+        in: formData
+        required: false
+        type: string
+        minLength: 3
+        maxLength: 12
+        description: ''
+      responses:
+        200:
+          description: ''
+  /urlencoded:
+    put:
+      description: Update an item by Code.
+      summary: Urlencoded_PUT
+      tags:
+      - urlencoded
+      operationId: UrlencodedPut
+      produces:
+      - application/json
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: Id
+        in: formData
+        required: true
+        type: integer
+        format: int32
+        description: Id of the item
+      - name: Code
+        in: formData
+        required: false
+        type: string
+        description: Code of the item
+      - name: Color
+        in: formData
+        required: false
+        type: string
+        description: Color of the item
+      - name: Size
+        in: formData
+        required: false
+        enum:
+        - small
+        - medium
+        - large
+        type: string
+        description: Size of the item
+      - name: Description
+        in: formData
+        required: false
+        type: string
+        description: Description of the item
+      responses:
+        200:
+          description: ''
+definitions:
+  SizeEnum:
+    title: SizeEnum
+    example: small
+    type: string
+    enum:
+    - small
+    - medium
+    - large
+tags:
+- name: multipart
+  description: ''
+- name: urlencoded
+  description: ''

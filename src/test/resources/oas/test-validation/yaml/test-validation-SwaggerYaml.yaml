@@ -1,0 +1,109 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Simple API
+  contact: {}
+host: localhost:8081
+basePath: /
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /resources:
+    get:
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+          schema:
+            type: string
+  /types-test:
+    post:
+      parameters:
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/Person'
+      responses:
+        200:
+          description: ''
+  /reusing-payload:
+    post:
+      produces:
+      - application/json
+      parameters:
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/Person'
+      responses:
+        200:
+          description: ''
+  /requiredQueryParameter:
+    post:
+      produces:
+      - application/json
+      parameters:
+      - name: limit
+        in: query
+        required: true
+        default: 3
+        type: integer
+        format: int32
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: ''
+      responses:
+        200:
+          description: ''
+  /defaultQueryParameter:
+    post:
+      produces:
+      - application/json
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        default: 3
+        type: integer
+        format: int32
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: ''
+      - name: offset
+        in: query
+        required: false
+        default: 0
+        type: integer
+        format: int32
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: ''
+      - name: other
+        in: query
+        required: false
+        default: thisis a string value
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+definitions:
+  Person:
+    title: Person
+    type: object
+    properties:
+      name:
+        description: ''
+        type: string
+    required:
+    - name

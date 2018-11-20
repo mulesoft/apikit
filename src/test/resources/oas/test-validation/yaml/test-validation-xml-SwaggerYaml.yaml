@@ -1,0 +1,142 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: Simple API
+  contact: {}
+host: localhost:8081
+basePath: /api
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /resources:
+    get:
+      summary: Resources_GET
+      tags:
+      - resources
+      operationId: ResourcesGet
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+          schema:
+            type: object
+  /types-test:
+    post:
+      summary: TypesTest_POST
+      tags:
+      - types
+      operationId: TypesTestPost
+      produces:
+      - application/json
+      parameters:
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          type: object
+      responses:
+        200:
+          description: ''
+  /reusing-payload:
+    post:
+      summary: ReusingPayload_POST
+      tags:
+      - reusing
+      operationId: ReusingPayloadPost
+      produces:
+      - application/json
+      parameters:
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          type: object
+      responses:
+        200:
+          description: ''
+  /requiredQueryParameter:
+    post:
+      summary: RequiredQueryParameter_POST
+      tags:
+      - requiredQueryParameter
+      operationId: RequiredQueryParameterPost
+      produces:
+      - application/json
+      parameters:
+      - name: limit
+        in: query
+        required: true
+        default: 3
+        type: integer
+        format: int32
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: ''
+      responses:
+        200:
+          description: ''
+  /defaultQueryParameter:
+    post:
+      summary: DefaultQueryParameter_POST
+      tags:
+      - defaultQueryParameter
+      operationId: DefaultQueryParameterPost
+      produces:
+      - application/json
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        default: 3
+        type: integer
+        format: int32
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: ''
+      - name: offset
+        in: query
+        required: false
+        default: 0
+        type: integer
+        format: int32
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: ''
+      - name: other
+        in: query
+        required: false
+        default: thisis a string value
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+definitions:
+  Person:
+    title: Person
+    type: object
+    properties:
+      name:
+        description: ''
+        type: string
+    required:
+    - name
+tags:
+- name: resources
+  description: ''
+- name: types
+  description: ''
+- name: reusing
+  description: ''
+- name: requiredQueryParameter
+  description: ''
+- name: defaultQueryParameter
+  description: ''
