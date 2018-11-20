@@ -16,7 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
@@ -32,9 +31,9 @@ public class AmfImpl implements IRaml {
 
   private WebApi webApi;
   private Map<String, Map<String, IResource>> resources = new HashMap<>();
-  private List<ApiRef> references;
+  private List<String> references;
 
-  public AmfImpl(final WebApi webApi, final List<ApiRef> references) {
+  public AmfImpl(final WebApi webApi, final List<String> references) {
     this.webApi = webApi;
     resources = buildResources(webApi.endPoints());
     this.references = references;
@@ -142,7 +141,7 @@ public class AmfImpl implements IRaml {
   }
 
   @Override
-  public List<ApiRef> getAllReferences() {
+  public List<String> getAllReferences() {
     return references;
   }
 

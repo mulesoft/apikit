@@ -6,7 +6,6 @@
  */
 package org.mule.raml.implv2.v08.model;
 
-import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
@@ -120,7 +119,7 @@ public class RamlImpl08V2 implements IRaml {
   }
 
   @Override
-  public List<ApiRef> getAllReferences() {
+  public List<String> getAllReferences() {
     return Collections.emptyList();
   }
 

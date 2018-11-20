@@ -6,7 +6,6 @@
  */
 package org.mule.raml.interfaces.model;
 
-import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.io.Serializable;
@@ -43,7 +42,7 @@ public interface IRaml extends Serializable {
 
   void cleanBaseUriParameters();
 
-  List<ApiRef> getAllReferences();
+  List<String> getAllReferences();
 
   void injectTrait(String name);
 

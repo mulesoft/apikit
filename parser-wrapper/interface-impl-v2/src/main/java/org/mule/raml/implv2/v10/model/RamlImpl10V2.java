@@ -9,7 +9,6 @@ package org.mule.raml.implv2.v10.model;
 import static java.util.Collections.emptyMap;
 import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
 
-import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
@@ -137,8 +136,7 @@ public class RamlImpl10V2 implements IRaml {
   }
 
   @Override
-  public List<ApiRef> getAllReferences() {
-    // TODO implement this
+  public List<String> getAllReferences() {
     return Collections.emptyList();
   }
 

@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
-import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
@@ -142,7 +141,7 @@ public class RamlImplV1 implements IRaml {
   }
 
   @Override
-  public List<ApiRef> getAllReferences() {
+  public List<String> getAllReferences() {
     return Collections.emptyList();
   }
 

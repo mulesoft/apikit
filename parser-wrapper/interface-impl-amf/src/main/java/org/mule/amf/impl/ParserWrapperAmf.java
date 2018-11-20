@@ -48,6 +48,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import static amf.ProfileNames.AMF;
+import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -58,14 +59,16 @@ public class ParserWrapperAmf implements ParserWrapper {
 
   private static final Logger logger = LoggerFactory.getLogger(ParserWrapperAmf.class);
 
+  private final ApiRef apiRef;
   private final Parser parser;
   private final Document document;
   private final WebApi webApi;
   private final ApiVendor apiVendor;
-  private final List<ApiRef> references;
+  private final List<String> references;
 
   private ParserWrapperAmf(final ApiRef apiRef, boolean validate) throws ExecutionException, InterruptedException {
     AMF.init().get();
+    this.apiRef = apiRef;
 
     final Environment environment = buildEnvironment(apiRef);
 
@@ -78,20 +81,20 @@ public class ParserWrapperAmf implements ParserWrapper {
     apiVendor = apiRef.getVendor();
   }
 
-  private List<ApiRef> getReferences(final List<BaseUnit> references) {
+  private List<String> getReferences(final List<BaseUnit> references) {
 
-    final List<ApiRef> result = new ArrayList<>();
+    final List<String> result = new ArrayList<>();
     appendReferences(references, new HashSet<>(), result);
     return result;
   }
 
-  private void appendReferences(final List<BaseUnit> references, final Set<String> alreadyAdded, final List<ApiRef> result) {
+  private void appendReferences(final List<BaseUnit> references, final Set<String> alreadyAdded, final List<String> result) {
 
     for (final BaseUnit reference : references) {
       final String id = reference.id();
       if (!alreadyAdded.contains(id)) {
         final String location = reference.location();
-        result.add(ApiRef.create(location));
+        result.add(location);
         alreadyAdded.add(id);
         appendReferences(reference.references(), alreadyAdded, result);
       }
@@ -219,7 +222,7 @@ public class ParserWrapperAmf implements ParserWrapper {
   @Override
 
   public String dump(final IRaml api, final String newBaseUri) {
-    String dump = dumpRaml(api);
+    String dump = dumpRaml();
     if (newBaseUri != null) {
       dump = replaceBaseUri(dump, newBaseUri);
     }
@@ -231,7 +234,7 @@ public class ParserWrapperAmf implements ParserWrapper {
     throw new UnsupportedOperationException();
   }
 
-  private String dumpRaml(final IRaml api) {
+  private String dumpRaml() {
     return renderApi();
   }
 
@@ -264,7 +267,7 @@ public class ParserWrapperAmf implements ParserWrapper {
     try {
       return renderer.generateString(document).get();
     } catch (final InterruptedException | ExecutionException e) {
-      e.printStackTrace();
+      logger.error(format("Error render API '%s' to '%s'", apiRef.getLocation(), apiVendor.name()), e);
       return "";
     }
   }
