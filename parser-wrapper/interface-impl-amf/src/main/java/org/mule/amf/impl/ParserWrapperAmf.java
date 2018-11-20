@@ -13,7 +13,6 @@ import amf.client.model.document.BaseUnit;
 import amf.client.model.document.Document;
 import amf.client.model.domain.WebApi;
 import amf.client.parse.Parser;
-import amf.client.parse.RamlParser;
 import amf.client.render.AmfGraphRenderer;
 import amf.client.render.Oas20Renderer;
 import amf.client.render.Raml08Renderer;
@@ -21,32 +20,32 @@ import amf.client.render.Raml10Renderer;
 import amf.client.render.Renderer;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
-import amf.core.remote.Vendor;
-import java.io.File;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import org.mule.amf.impl.loader.ApiSyncResourceLoader;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
+import org.mule.amf.impl.loader.ProvidedResourceLoader;
 import org.mule.amf.impl.model.AmfImpl;
 import org.mule.amf.impl.parser.rule.ValidationResultImpl;
-import org.mule.apikit.common.APISyncUtils;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
-import org.mule.raml.interfaces.model.ApiRef;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.parser.rule.DefaultValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.Option;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import static amf.ProfileNames.AMF;
 import static java.util.Collections.emptyList;
@@ -65,27 +64,18 @@ public class ParserWrapperAmf implements ParserWrapper {
   private final ApiVendor apiVendor;
   private final List<ApiRef> references;
 
-  private static final String VENDOR_RAML_08 = "RAML 0.8";
-  private static final String VENDOR_RAML_10 = "RAML 1.0";
-  private static final String VENDOR_OAS_20 = "OAS 2.0";
+  private ParserWrapperAmf(final ApiRef apiRef, boolean validate) throws ExecutionException, InterruptedException {
+    AMF.init().get();
 
-  private ParserWrapperAmf(final URI uri, Environment environment, boolean validate) {
-    parser = getParserForApi(uri, environment);
+    final Environment environment = buildEnvironment(apiRef);
+
+    final URI uri = getPathAsUri(apiRef);
+
+    parser = getParserForApi(apiRef, environment);
     document = DocumentParser.parseFile(parser, uri, validate);
     references = getReferences(document.references());
     webApi = DocumentParser.getWebApi(parser, uri);
-    final Option<Vendor> vendor = webApi.sourceVendor();
-    apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
-  }
-
-  // TODO Improve this !!! We are working only with RAML Parser on APISync
-  private ParserWrapperAmf(final String apiPath, Environment environment, boolean validate) {
-    parser = new RamlParser(environment);
-    document = DocumentParser.parseFile(parser, apiPath, validate);
-    references = getReferences(document.references());
-    webApi = DocumentParser.getWebApi(document);
-    final Option<Vendor> vendor = webApi.sourceVendor();
-    apiVendor = vendor.isDefined() ? getApiVendor(vendor.get()) : ApiVendor.RAML_10;
+    apiVendor = apiRef.getVendor();
   }
 
   private List<ApiRef> getReferences(final List<BaseUnit> references) {
@@ -108,62 +98,59 @@ public class ParserWrapperAmf implements ParserWrapper {
     }
   }
 
-  private static ApiVendor getApiVendor(final Vendor vendor) {
-
-    final ApiVendor result;
-
-    final String name = vendor.name();
-    switch (name) {
-      case VENDOR_OAS_20:
-        result = ApiVendor.OAS_20;
-        break;
-      case VENDOR_RAML_08:
-        result = ApiVendor.RAML_08;
-        break;
-      default:
-        result = ApiVendor.RAML_10;
-        break;
-    }
-    return result;
+  public static ParserWrapperAmf create(ApiRef apiRef, boolean validate) throws Exception {
+    return new ParserWrapperAmf(apiRef, validate);
   }
 
-  public static ParserWrapperAmf create(URI apiUri, boolean validate) throws Exception {
-    return create(apiUri, buildEnvironment(apiUri), validate);
-  }
-
-  public static ParserWrapperAmf create(String rootRaml, URI apiUri, boolean validate) throws Exception {
-    if (APISyncUtils.isSyncProtocol(rootRaml)) {
-      return create(rootRaml, buildApiSyncEnvironment(rootRaml), validate);
-    } else {
-      return create(apiUri, buildEnvironment(apiUri), validate);
+  private static URI getPathAsUri(ApiRef apiRef) {
+    try {
+      final URI uri = new URI(apiRef.getLocation());
+      return uri.isAbsolute() ? uri : getUriFromFile(apiRef);
+    } catch (URISyntaxException e) {
+      return getUriFromFile(apiRef);
     }
   }
 
-  public static ParserWrapperAmf create(String rootRaml, Environment environment, boolean validate) throws Exception {
-    AMF.init().get();
-    return new ParserWrapperAmf(rootRaml, environment, validate);
+  // It means that it's a file
+  private static URI getUriFromFile(ApiRef apiRef) {
+    final String location = apiRef.getLocation();
+    if (apiRef.getResourceLoader().isPresent()) {
+      final URI uri = apiRef.getResourceLoader().map(loader -> loader.getResource(location)).orElse(null);
+      if (uri != null)
+        return uri;
+    }
+
+    final File file = new File(location);
+    if (file.exists())
+      return file.toURI();
+
+    final URL resource = Thread.currentThread().getContextClassLoader().getResource(location);
+
+    if (resource != null) {
+      try {
+        return resource.toURI();
+      } catch (URISyntaxException e1) {
+        throw new RuntimeException("Couldn't load api in location: " + location);
+      }
+    } else
+      throw new RuntimeException("Couldn't load api in location: " + location);
   }
 
-  public static ParserWrapperAmf create(URI apiUri, Environment environment, boolean validate) throws Exception {
-    AMF.init().get();
-    return new ParserWrapperAmf(apiUri, environment, validate);
-  }
+  private static Environment buildEnvironment(ApiRef apiRef) {
+    final URI uri = getPathAsUri(apiRef);
 
-  private static Environment buildEnvironment(URI uri) {
     Environment environment = DefaultEnvironment.apply();
+
     if (uri.getScheme() != null && uri.getScheme().startsWith("file")) {
       final File file = new File(uri);
       final String rootDir = file.isDirectory() ? file.getPath() : file.getParent();
       environment = environment.add(new ExchangeDependencyResourceLoader(rootDir));
     }
-    return environment;
-  }
 
-  private static Environment buildApiSyncEnvironment(String rootRaml) {
-    Environment environment = DefaultEnvironment.apply();
-    if (rootRaml != null) {
-      environment = environment.add(new ApiSyncResourceLoader(rootRaml));
+    if (apiRef.getResourceLoader().isPresent()) {
+      environment = environment.add(new ProvidedResourceLoader(apiRef.getResourceLoader().get()));
     }
+
     return environment;
   }
 

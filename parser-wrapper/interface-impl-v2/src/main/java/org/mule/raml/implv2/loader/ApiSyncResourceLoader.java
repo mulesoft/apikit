@@ -6,15 +6,15 @@
  */
 package org.mule.raml.implv2.loader;
 
-import org.mule.apikit.common.APISyncUtils;
+import org.mule.raml.interfaces.common.APISyncUtils;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
 
-import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
-import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.common.APISyncUtils.isExchangeModules;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
 
 public class ApiSyncResourceLoader implements ResourceLoader {
 

@@ -12,15 +12,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
-import org.mule.apikit.common.APISyncUtils;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -39,7 +37,7 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
   private final Dependency dependency = createDependency("com.mycompany", "raml-api", "1.0.0", "raml", "zip");
   private final static String ROOT_RAML_RESOURCE_URL = "resource::com.mycompany:raml-api:1.0.0:raml:zip:";
-  private final static String DEPENDENCIES_RESOURCE_URL = "exchange_modules/com.mycompany/raml-library/1.1.0/";
+  private final static String DEPENDENCIES_RESOURCE_URL = "resource::com.mycompany:raml-library:1.1.0:raml-fragment:zip:";
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
@@ -151,11 +149,15 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
   }
 
   private void mockScaffolderResourceLoader(String resourceURL, String folder, String file) throws Exception {
-    Mockito.doReturn(((new File(folder + file)).toURI().toURL())).when(scaffolderResourceLoaderMock)
+    Mockito.doReturn(getToBeReturned(folder, file)).when(scaffolderResourceLoaderMock)
         .getResource(resourceURL);
     Mockito.doReturn(getInputStream(folder + file)).doReturn(getInputStream(folder + file))
         .doReturn(getInputStream(folder + file)).when(scaffolderResourceLoaderMock)
         .getResourceAsStream(resourceURL);
+  }
+
+  private URI getToBeReturned(String folder, String file) {
+    return new File(folder + file).toURI();
   }
 
   private void assertSimple(String s, String listenerConfigName) {

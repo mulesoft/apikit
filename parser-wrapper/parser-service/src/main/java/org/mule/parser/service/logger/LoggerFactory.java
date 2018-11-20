@@ -4,12 +4,13 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.raml.interfaces.model;
+package org.mule.parser.service.logger;
 
-public enum ApiVendor {
-  RAML,
-  RAML_08,
-  RAML_10,
-  OAS,
-  OAS_20;
+public class LoggerFactory {
+
+  private LoggerFactory() {}
+
+  public static Logger getLogger(Class clazz) {
+    return new DefaultLogger(clazz);
+  }
 }

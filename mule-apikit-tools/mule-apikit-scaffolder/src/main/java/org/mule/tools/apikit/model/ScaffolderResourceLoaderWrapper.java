@@ -7,18 +7,16 @@
 package org.mule.tools.apikit.model;
 
 import amf.client.remote.Content;
-import amf.client.resource.FileResourceLoader;
 import amf.client.resource.ResourceLoader;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
-import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
-import static org.mule.apikit.common.APISyncUtils.isExchangeModules;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.common.APISyncUtils.isExchangeModules;
 import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -62,8 +60,8 @@ public class ScaffolderResourceLoaderWrapper
 
 
 
-  public File getFile(String resource) {
-    return FileUtils.toFile(scaffolderResourceLoader.getResource(resource));
+  public File getFile(String resource) throws MalformedURLException {
+    return FileUtils.toFile(scaffolderResourceLoader.getResource(resource).toURL());
   }
 
   @Override
@@ -85,7 +83,7 @@ public class ScaffolderResourceLoaderWrapper
     try {
       Content content =
           new Content(IOUtils.toString(scaffolderResourceLoader.getResourceAsStream(s)),
-                      scaffolderResourceLoader.getResource(s).toURI().toURL().toString());
+                      scaffolderResourceLoader.getResource(s).toURL().toString());
       future.complete(content);
     } catch (Exception e) {
       e.printStackTrace();

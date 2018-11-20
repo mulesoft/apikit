@@ -4,7 +4,7 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.metadata.api;
+package org.mule.raml.interfaces.loader;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,14 +13,14 @@ import java.net.URI;
 /**
  * Represents a way of getting resources from the application
  */
-public interface ResourceLoader extends org.mule.raml.interfaces.loader.ResourceLoader {
+public interface ResourceLoader {
 
   /**
-   * Gets the root API File
+   * Gets the root RAML File
    *
-   * @param relativePath Location of the root API file relative to the /mule/resources/api folder or a resource:: in case
+   * @param relativePath Location of the root RAML file relative to the /mule/resources/api folder or a resource:: in case
    *                     when the API is defined as a dependency (API sync)
-   * @return {@link URI} to the API resource
+   * @return {@link URI} to the RAML resource
    */
   URI getResource(String relativePath);
 
@@ -32,4 +32,5 @@ public interface ResourceLoader extends org.mule.raml.interfaces.loader.Resource
       return null;
     }
   }
+
 }

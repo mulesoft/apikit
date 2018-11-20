@@ -6,56 +6,77 @@
  */
 package org.mule.parser.service;
 
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.List;
-import java.util.Optional;
 import org.mule.amf.impl.ParserWrapperAmf;
 import org.mule.amf.impl.exceptions.ParserException;
+import org.mule.parser.service.logger.Logger;
+import org.mule.parser.service.logger.LoggerFactory;
 import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
-import org.mule.raml.interfaces.model.ApiRef;
+import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
+import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.v2.internal.utils.StreamUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 import static java.util.Collections.singletonList;
 import static org.mule.raml.interfaces.ParserType.AMF;
 import static org.mule.raml.interfaces.ParserType.AUTO;
 import static org.mule.raml.interfaces.ParserType.RAML;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
 import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class ParserService {
 
-  private static final Logger logger = LoggerFactory.getLogger(ParserService.class);
+  public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
-  private static final String RAML_V1 = "RAML_V1";
-  private static final String RAML_V2 = "RAML_V2";
-  private static final String HEADER_RAML_10 = "#%RAML 1.0";
-  private static final String HEADER_RAML_08 = "#%RAML 0.8";
+  private static final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(ParserService.class);
 
+  private Logger logger;
 
-  public static ParserWrapper create(final ApiRef apiRef, ParserType parserType) {
-    return createParserWrapper(apiRef.getLocation(), parserType);
+  public ParserService() {
+    this(DEFAULT_LOGGER);
   }
 
-  private static ParserWrapper createParserWrapper(final String path, ParserType parserType) throws ParserServiceException {
+  public ParserService(Logger logger) {
+    this.logger = logger;
+  }
+
+  public ParserWrapper getParser(final ApiRef apiRef) {
+    return getParser(apiRef, AUTO);
+  }
+
+
+  public ParserWrapper getParser(final ApiRef apiRef, ParserType parserType) {
+    final ParserType overridden = getOverriddenParserType();
+    if (overridden != AUTO)
+      return getParserFor(apiRef, overridden);
+    else
+      return getParserFor(apiRef, parserType);
+  }
+
+  private ParserType getOverriddenParserType() {
+    final String parserValue = System.getProperty(MULE_APIKIT_PARSER);
+    if (AMF.name().equals(parserValue))
+      return AMF;
+    if (RAML.name().equals(parserValue))
+      return RAML;
+    return AUTO;
+  }
+
+  private ParserWrapper getParserFor(final ApiRef apiRef, ParserType parserType) {
     ParserWrapper parserWrapper;
 
     try {
       if (parserType == RAML) {
-        parserWrapper = createRamlParserWrapper(path, getRamlVersion(path).get());
+        parserWrapper = createRamlParserWrapper(apiRef);
       } else
-        parserWrapper = ParserWrapperAmf.create(getPathAsUri(path), false);
+        parserWrapper = ParserWrapperAmf.create(apiRef, false);
 
       final IValidationReport validationReport = parserWrapper.validationReport();
 
@@ -65,7 +86,7 @@ public class ParserService {
         return parserWrapper;
       } else {
         final List<IValidationResult> errorsFound = validationReport.getResults();
-        return applyFallback(path, parserType, errorsFound);
+        return applyFallback(apiRef, parserType, errorsFound);
       }
     } catch (Exception e) {
       if (e instanceof ParserServiceException)
@@ -73,36 +94,33 @@ public class ParserService {
       if (e instanceof ParserException)
         throw new ParserServiceException(e);
       final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
-      return applyFallback(path, parserType, errors);
+      return applyFallback(apiRef, parserType, errors);
     }
   }
 
   // Only fallback if is RAML
-  private static ParserWrapper applyFallback(String path, ParserType parserType, List<IValidationResult> errorsFound)
+  private ParserWrapper applyFallback(ApiRef apiRef, ParserType parserType, List<IValidationResult> errorsFound)
       throws ParserServiceException {
     if (parserType == AUTO) {
-      final Optional<String> ramlVersion = getRamlVersion(path);
-      if (ramlVersion.isPresent()) {
-        final ParserWrapper fallbackParser = createRamlParserWrapper(path, ramlVersion.get());
-        if (fallbackParser.validationReport().conforms()) {
-          logErrors(errorsFound, WARNING);
-          return fallbackParser;
-        }
+      final ParserWrapper fallbackParser = createRamlParserWrapper(apiRef);
+      if (fallbackParser.validationReport().conforms()) {
+        logErrors(errorsFound, WARNING);
+        return fallbackParser;
       }
     }
     logErrors(errorsFound);
     throw new ParserServiceException(buildErrorMessage(errorsFound));
   }
 
-  private static void logErrors(List<IValidationResult> validationResults) {
+  private void logErrors(List<IValidationResult> validationResults) {
     validationResults.forEach(error -> logError(error, error.getSeverity()));
   }
 
-  private static void logErrors(List<IValidationResult> validationResults, Severity overridenSeverity) {
+  private void logErrors(List<IValidationResult> validationResults, Severity overridenSeverity) {
     validationResults.forEach(error -> logError(error, overridenSeverity));
   }
 
-  private static void logError(IValidationResult error, Severity severity) {
+  private void logError(IValidationResult error, Severity severity) {
     if (severity == Severity.INFO)
       logger.info(error.getMessage());
     else if (severity == WARNING)
@@ -120,41 +138,19 @@ public class ParserService {
     return message.toString();
   }
 
-  private static ParserWrapper createRamlParserWrapper(final String path, final String ramlVersion) {
-    return RAML_V1.equals(ramlVersion) ? new ParserWrapperV1(path) : new ParserWrapperV2(path);
-  }
-
-  private static Optional<String> getRamlVersion(final String path) {
-    final ResourceLoader resourceLoaderV2 = new DefaultResourceLoader();
-    final InputStream inputStream = resourceLoaderV2.fetchResource(path);
-    if (inputStream == null)
-      throw new RuntimeException("Couldn't find file '" + path + "'");
-
-    final String content = StreamUtils.toString(inputStream);
-    return content.startsWith(HEADER_RAML_10) ? Optional.of(RAML_V2)
-        : content.startsWith(HEADER_RAML_08) ? Optional.of(RAML_V1) : Optional.empty();
-  }
-
-  private static URI getPathAsUri(String path) {
-    try {
-      final URI uri = new URI(path);
-      return uri.isAbsolute() ? uri : getUriFromFile(path);
-    } catch (URISyntaxException e) {
-      return getUriFromFile(path);
-    }
-  }
-
-  // It means that it's a file
-  private static URI getUriFromFile(String path) {
-    final URL resource = Thread.currentThread().getContextClassLoader().getResource(path);
-
-    if (resource != null) {
-      try {
-        return resource.toURI();
-      } catch (URISyntaxException e1) {
-        throw new RuntimeException("Couldn't load api in location: " + path);
+  private static ParserWrapper createRamlParserWrapper(ApiRef apiRef) {
+    final String path = apiRef.getLocation();
+    // TODO consider whether to use v1 or v2 when vendor is raml 0.8 (ParserV2Utils.useParserV2)
+    if (RAML_08.equals(apiRef.getVendor())) {
+      return new ParserWrapperV1(path);
+    } else {
+      if (apiRef.getResourceLoader().isPresent()) {
+        final org.mule.raml.interfaces.loader.ResourceLoader apiLoader = apiRef.getResourceLoader().get();
+        final ResourceLoader resourceLoader =
+            new CompositeResourceLoader(new DefaultResourceLoader(), apiLoader::getResourceAsStream);
+        return new ParserWrapperV2(path, resourceLoader);
       }
-    } else
-      throw new RuntimeException("Couldn't load api in location: " + path);
+      return new ParserWrapperV2(path);
+    }
   }
 }

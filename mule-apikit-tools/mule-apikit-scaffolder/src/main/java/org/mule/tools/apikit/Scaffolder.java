@@ -92,13 +92,13 @@ public class Scaffolder {
     MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
     APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
     MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(getFilePathSet(ramls.keySet()), xmls);
-    RAMLFilesParser RAMLFilesParser = new RAMLFilesParser(log, ramls, apiFactory);
-    List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
+    RAMLFilesParser filesParser = RAMLFilesParser.create(log, ramls, apiFactory);
+    List<GenerationModel> generationModels = new GenerationStrategy(log).generate(filesParser, muleConfigParser);
 
     scaffolderReport = new ScaffolderReport();
-    scaffolderReport.setVendorId(RAMLFilesParser.getVendorId());
-    scaffolderReport.setVersion(RAMLFilesParser.getRamlVersion());
-    scaffolderReport.setStatus(RAMLFilesParser.getParseStatus());
+    scaffolderReport.setVendorId(filesParser.getVendorId());
+    scaffolderReport.setVersion(filesParser.getRamlVersion());
+    scaffolderReport.setStatus(filesParser.getParseStatus());
 
 
 
@@ -134,14 +134,13 @@ public class Scaffolder {
     MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
     APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
     MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(ramls.keySet(), xmls);
-    RAMLFilesParser RAMLFilesParser =
-        new RAMLFilesParser(log, ramls, scaffolderResourceLoader, apiFactory);
-    List<GenerationModel> generationModels = new GenerationStrategy(log).generate(RAMLFilesParser, muleConfigParser);
+    RAMLFilesParser filesParser = RAMLFilesParser.create(log, ramls, scaffolderResourceLoader, apiFactory);
+    List<GenerationModel> generationModels = new GenerationStrategy(log).generate(filesParser, muleConfigParser);
 
     scaffolderReport = new ScaffolderReport();
-    scaffolderReport.setVendorId(RAMLFilesParser.getVendorId());
-    scaffolderReport.setVersion(RAMLFilesParser.getRamlVersion());
-    scaffolderReport.setStatus(RAMLFilesParser.getParseStatus());
+    scaffolderReport.setVendorId(filesParser.getVendorId());
+    scaffolderReport.setVersion(filesParser.getRamlVersion());
+    scaffolderReport.setStatus(filesParser.getParseStatus());
 
     if (runtimeEdition == null) {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;

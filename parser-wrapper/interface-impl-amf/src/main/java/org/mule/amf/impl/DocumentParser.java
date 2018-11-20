@@ -16,6 +16,8 @@ import amf.client.model.domain.WebApi;
 import amf.client.parse.Oas20Parser;
 import amf.client.parse.Oas20YamlParser;
 import amf.client.parse.Parser;
+import amf.client.parse.Raml08Parser;
+import amf.client.parse.Raml10Parser;
 import amf.client.parse.RamlParser;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
@@ -28,11 +30,12 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.IOUtils;
 import org.mule.amf.impl.exceptions.ParserException;
+import org.mule.raml.interfaces.model.api.ApiRef;
+import org.mule.raml.interfaces.model.ApiVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,26 +91,23 @@ public class DocumentParser {
     return handleFuture(parser.parseFileAsync(url));
   }
 
-  public static WebApi getWebApi(final URI apiDefinition, Environment environment) throws ParserException {
-    return getWebApi(getParserForApi(apiDefinition, environment), apiDefinition);
-  }
+  public static Parser getParserForApi(final ApiRef apiRef, Environment environment) {
+    final ApiVendor vendor = apiRef.getVendor();
 
-  public static Parser getParserForApi(final URI apiDefinition, Environment environment) {
-    final VendorEx vendor = getVendor(apiDefinition);
-    final Parser parser;
     switch (vendor) {
-      case OAS20_JSON:
-        parser = new Oas20Parser(environment);
-        break;
-      case OAS20_YAML:
-        parser = new Oas20YamlParser(environment);
-        break;
-      case RAML:
+      case OAS:
+      case OAS_20:
+        if ("JSON".equalsIgnoreCase(apiRef.getFormat()))
+          return new Oas20Parser(environment);
+        else
+          return new Oas20YamlParser(environment);
+      case RAML_08:
+        return new Raml08Parser(environment);
+      case RAML_10:
+        return new Raml10Parser(environment);
       default:
-        parser = new RamlParser(environment);
-        break;
+        return new RamlParser(environment);
     }
-    return parser;
   }
 
   private static WebApi getWebApi(final Parser parser, final Path path) throws ParserException {

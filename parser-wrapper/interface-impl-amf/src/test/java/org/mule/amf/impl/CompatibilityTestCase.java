@@ -21,6 +21,7 @@ import org.junit.runners.Parameterized;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.api.ApiRef;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
@@ -79,7 +80,7 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
     assertNotNull(dumpedRaml);
 
     try {
-      final ParserWrapper dumpedAmfWrapper = ParserWrapperAmf.create(amfDumpPath.toUri(), true);
+      final ParserWrapper dumpedAmfWrapper = ParserWrapperAmf.create(ApiRef.create(amfDumpPath.toUri()), true);
       final IRaml dumpedAmf = dumpedAmfWrapper.build();
       assertNotNull(dumpedAmf);
       assertEqual(dumpedAmf, dumpedRaml);

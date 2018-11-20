@@ -155,7 +155,7 @@ public class ScaffolderWithExistingConfigApiSyncTest extends AbstractScaffolderT
       Mockito.doReturn(FileUtils.openInputStream(rootRaml)).doReturn(FileUtils.openInputStream(rootRaml))
           .when(scaffolderResourceLoaderMock)
           .getResourceAsStream(resource);
-      Mockito.doReturn((rootRaml.toURI().toURL())).when(scaffolderResourceLoaderMock)
+      Mockito.doReturn((rootRaml.toURI())).when(scaffolderResourceLoaderMock)
           .getResource(resource);
     }
 

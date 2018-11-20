@@ -6,10 +6,6 @@
  */
 package org.mule.raml.implv2;
 
-import static java.util.Optional.ofNullable;
-import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
-
 import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserType;
@@ -23,6 +19,7 @@ import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
+import org.raml.v2.api.loader.FileResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 import org.raml.v2.internal.utils.StreamUtils;
@@ -34,7 +31,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-import static org.mule.apikit.common.APISyncUtils.isSyncProtocol;
+import static java.util.Optional.ofNullable;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 public class ParserWrapperV2 implements ParserWrapper {
 
@@ -56,9 +56,11 @@ public class ParserWrapperV2 implements ParserWrapper {
     final File ramlFile = fetchRamlFile(ramlPath);
 
     if (ramlFile != null && ramlFile.getParent() != null) {
-      return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFile.getParentFile()),
+      final File ramlFolder = ramlFile.getParentFile();
+      return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFolder),
                                          new DefaultResourceLoader(),
-                                         new ExchangeDependencyResourceLoader(ramlFile.getParentFile().getAbsolutePath()));
+                                         new FileResourceLoader(ramlFolder.getAbsolutePath()),
+                                         new ExchangeDependencyResourceLoader(ramlFolder.getAbsolutePath()));
     } else {
       if (isSyncProtocol(ramlPath)) {
         return new ApiSyncResourceLoader(ramlPath);

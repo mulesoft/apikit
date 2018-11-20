@@ -6,7 +6,6 @@
  */
 package org.mule.raml.implv1.model;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
-import org.mule.raml.interfaces.model.ApiRef;
+import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
