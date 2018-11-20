@@ -144,6 +144,9 @@ public class DocumentParser {
         return VendorEx.RAML;
 
       final boolean isJson = firstLine.startsWith("{") || firstLine.startsWith("[");
+      // Some times swagger version is in the first line too, e.g. yaml files
+      if (firstLine.toUpperCase().contains("SWAGGER"))
+        return isJson ? VendorEx.OAS20_JSON : VendorEx.OAS20_YAML;
 
       int lines = 0;
       String inputLine;

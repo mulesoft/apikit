@@ -1,0 +1,699 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Example API for Automation
+  description: ''
+  contact: {}
+host: localhost:8081
+basePath: /gateway/proxy/v4/apikit
+securityDefinitions:
+  auth:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: http://localhost:9999/authorize
+    tokenUrl: http://localhost:9999/access-token
+    scopes: {}
+schemes:
+- http
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /v4/items:
+    get:
+      description: Get a list of all the available items.
+      summary: GET_v4-items
+      operationId: V4ItemsGet
+      produces:
+      - application/json
+      parameters:
+      - name: size
+        in: query
+        required: false
+        enum:
+        - small
+        - medium
+        - large
+        type: string
+        description: Size of the item.
+      responses:
+        200:
+          description: All items retreived.
+          schema:
+            type: object
+          examples:
+            application/json:
+              {
+                "items":
+                  [
+                    {
+                      "id":123,
+                      "code":"AD-12",
+                      "color":"blue",
+                      "size":"medium",
+                      "description":"Borders in light blue"
+                    },
+                    {
+                      "id":321,
+                      "code":"AD-13",
+                      "color":"pink",
+                      "size":"small",
+                      "description":"Borders in red"
+                    }
+                  ]
+                }
+        400:
+          description: Bad Request.
+          schema: {}
+        404:
+          description: The item could not be found
+          schema: {}
+        405:
+          description: Get not allowed
+          schema: {}
+        406:
+          description: Not acceptable
+          schema: {}
+        409:
+          description: Conflict
+          schema: {}
+        415:
+          description: Unsupported media type
+          schema: {}
+      security:
+      - auth: []
+    post:
+      description: Create a new item.
+      summary: POST_v4-items
+      operationId: V4ItemsPost
+      produces:
+      - application/json
+      consumes:
+      - multipart/form-data
+      parameters:
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/items'
+      responses:
+        201:
+          description: ''
+        400:
+          description: Bad Request.
+          schema: {}
+        404:
+          description: The item could not be found
+          schema: {}
+        405:
+          description: Post not allowed
+          schema: {}
+        406:
+          description: Not acceptable
+          schema: {}
+        409:
+          description: Conflict
+          schema: {}
+        415:
+          description: Unsupported media type
+          schema: {}
+      security:
+      - auth: []
+  /v4/items/{itemId}:
+    get:
+      description: Get one item by id.
+      summary: GET_v4-items-itemId
+      operationId: V4ItemsByItemIdGet
+      produces:
+      - application/json
+      parameters:
+      - name: itemId
+        in: path
+        required: true
+        type: integer
+        format: int32
+        minimum: 0
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: Id that identifies the item.
+      - name: user
+        in: header
+        required: false
+        type: string
+        description: ''
+      responses:
+        200:
+          description: The <<resourcePathName | !singularize> was successfully retrieved.
+          schema:
+            $ref: '#/definitions/item'
+        400:
+          description: Bad Request.
+          schema: {}
+        404:
+          description: The item could not be found
+          schema: {}
+        405:
+          description: Get not allowed
+          schema: {}
+        406:
+          description: Not acceptable
+          schema: {}
+        409:
+          description: Conflict
+          schema: {}
+        415:
+          description: Unsupported media type
+          schema: {}
+      security:
+      - auth: []
+    put:
+      description: Update an item by Code.
+      summary: PUT_v4-items-itemId
+      operationId: V4ItemsByItemIdPut
+      produces:
+      - application/json
+      consumes:
+      - application/x-www-form-urlencoded
+      parameters:
+      - name: body
+        in: body
+        required: true
+        description: ''
+        schema:
+          $ref: '#/definitions/item'
+      - name: itemId
+        in: path
+        required: true
+        type: integer
+        format: int32
+        minimum: 0
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: Id that identifies the item.
+      responses:
+        201:
+          description: ''
+        400:
+          description: Bad Request.
+          schema: {}
+        404:
+          description: The item could not be found
+          schema: {}
+        405:
+          description: Put not allowed
+          schema: {}
+        406:
+          description: Not acceptable
+          schema: {}
+        409:
+          description: Conflict
+          schema: {}
+        415:
+          description: Unsupported media type
+          schema: {}
+      security:
+      - auth: []
+    delete:
+      description: Delete an item by Code.
+      summary: DELETE_v4-items-itemId
+      operationId: V4ItemsByItemIdDelete
+      produces:
+      - application/json
+      parameters:
+      - name: code
+        in: query
+        required: true
+        type: string
+        minLength: 3
+        maxLength: 10
+        description: Code that identifies the item.
+      - name: size
+        in: query
+        required: true
+        enum:
+        - small
+        - medium
+        - large
+        default: medium
+        type: string
+        description: Size of the item. Note that it must be lower case.
+      - name: itemId
+        in: path
+        required: true
+        type: integer
+        format: int32
+        minimum: 0
+        exclusiveMaximum: false
+        exclusiveMinimum: false
+        description: Id that identifies the item.
+      - name: color
+        in: query
+        required: false
+        type: string
+        description: Color of the item.
+      - name: description
+        in: query
+        required: false
+        type: string
+        description: Detailed description of the item.
+      responses:
+        204:
+          description: ''
+        400:
+          description: Bad Request.
+          schema: {}
+        404:
+          description: Resource not found
+          schema: {}
+        405:
+          description: Delete not allowed
+          schema: {}
+        406:
+          description: Not acceptable
+          schema: {}
+        409:
+          description: Conflict
+          schema: {}
+        415:
+          description: Unsupported media type
+          schema: {}
+      security:
+      - auth: []
+  /v4/filtered/resources:
+    get:
+      summary: GET_v4-filtered-resources
+      operationId: V4FilteredResourcesGet
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    put:
+      summary: PUT_v4-filtered-resources
+      operationId: V4FilteredResourcesPut
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    post:
+      summary: POST_v4-filtered-resources
+      operationId: V4FilteredResourcesPost
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    patch:
+      summary: PATCH_v4-filtered-resources
+      operationId: V4FilteredResourcesPatch
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+  /v4/filtered/resources/level2.1:
+    get:
+      summary: GET_v4-filtered-resources-level2-1
+      operationId: V4FilteredResourcesLevel21Get
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    put:
+      summary: PUT_v4-filtered-resources-level2-1
+      operationId: V4FilteredResourcesLevel21Put
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    post:
+      summary: POST_v4-filtered-resources-level2-1
+      operationId: V4FilteredResourcesLevel21Post
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    patch:
+      summary: PATCH_v4-filtered-resources-level2-1
+      operationId: V4FilteredResourcesLevel21Patch
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+  /v4/filtered/resources/level2:
+    get:
+      summary: GET_v4-filtered-resources-level2
+      operationId: V4FilteredResourcesLevel2Get
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    put:
+      summary: PUT_v4-filtered-resources-level2
+      operationId: V4FilteredResourcesLevel2Put
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    post:
+      summary: POST_v4-filtered-resources-level2
+      operationId: V4FilteredResourcesLevel2Post
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    patch:
+      summary: PATCH_v4-filtered-resources-level2
+      operationId: V4FilteredResourcesLevel2Patch
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+  /v4/filtered/resources/level2/level3.1:
+    get:
+      summary: GET_v4-filtered-resources-level2-level3-1
+      operationId: V4FilteredResourcesLevel2Level31Get
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    put:
+      summary: PUT_v4-filtered-resources-level2-level3-1
+      operationId: V4FilteredResourcesLevel2Level31Put
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    post:
+      summary: POST_v4-filtered-resources-level2-level3-1
+      operationId: V4FilteredResourcesLevel2Level31Post
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    patch:
+      summary: PATCH_v4-filtered-resources-level2-level3-1
+      operationId: V4FilteredResourcesLevel2Level31Patch
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+  /v4/filtered/resources/level2/level3:
+    get:
+      summary: GET_v4-filtered-resources-level2-level3
+      operationId: V4FilteredResourcesLevel2Level3Get
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    put:
+      summary: PUT_v4-filtered-resources-level2-level3
+      operationId: V4FilteredResourcesLevel2Level3Put
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    post:
+      summary: POST_v4-filtered-resources-level2-level3
+      operationId: V4FilteredResourcesLevel2Level3Post
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    patch:
+      summary: PATCH_v4-filtered-resources-level2-level3
+      operationId: V4FilteredResourcesLevel2Level3Patch
+      produces:
+      - application/json
+      parameters: []
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+  /v4/filtered/resources/level2/level3/{levelId}:
+    get:
+      summary: GET_v4-filtered-resources-level2-level3-levelId
+      operationId: V4FilteredResourcesLevel2Level3ByLevelIdGet
+      produces:
+      - application/json
+      parameters:
+      - name: levelId
+        in: path
+        required: true
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    put:
+      summary: PUT_v4-filtered-resources-level2-level3-levelId
+      operationId: V4FilteredResourcesLevel2Level3ByLevelIdPut
+      produces:
+      - application/json
+      parameters:
+      - name: levelId
+        in: path
+        required: true
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    post:
+      summary: POST_v4-filtered-resources-level2-level3-levelId
+      operationId: V4FilteredResourcesLevel2Level3ByLevelIdPost
+      produces:
+      - application/json
+      parameters:
+      - name: levelId
+        in: path
+        required: true
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+    patch:
+      summary: PATCH_v4-filtered-resources-level2-level3-levelId
+      operationId: V4FilteredResourcesLevel2Level3ByLevelIdPatch
+      produces:
+      - application/json
+      parameters:
+      - name: levelId
+        in: path
+        required: true
+        type: string
+        description: ''
+      responses:
+        200:
+          description: ''
+        default:
+          description: ''
+          schema: {}
+      security:
+      - auth: []
+definitions:
+  items:
+    title: items
+    type: object
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/Items1'
+  item:
+    title: item
+    type: object
+    properties:
+      code:
+        type: string
+      color:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+        format: int32
+      size:
+        type: string
+    required:
+    - code
+    - color
+    - description
+    - id
+    - size
+  Items1:
+    title: Items1
+    type: object
+    properties:
+      code:
+        type: string
+      color:
+        type: string
+      description:
+        type: string
+      id:
+        type: number
+        format: double
+      size:
+        type: string
+  size:
+    title: size
+    example: small
+    type: string
+    enum:
+    - small
+    - medium
+    - large
+tags: []

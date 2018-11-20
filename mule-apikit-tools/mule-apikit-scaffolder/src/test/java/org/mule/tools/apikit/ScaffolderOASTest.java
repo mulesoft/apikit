@@ -129,7 +129,7 @@ public class ScaffolderOASTest {
 
   private static List<Path> scan(final Path root) throws IOException {
     return Files.walk(root)
-        //.peek(path -> System.out.println("Path:" + path + " isApi:" + isOas(path)))
+        .peek(path -> System.out.println("Path:" + path + " isApi:" + isOas(path)))
         .filter(ScaffolderOASTest::isOas)
         .collect(toList());
   }
