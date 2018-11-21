@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
-    <http:listener-config name="test-validation-xml-SwaggerYaml-httpListenerConfig">
+    <http:listener-config name="test-validation-json-schema-SwaggerYaml-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="test-validation-xml-SwaggerYaml-config" raml="/Users/alejandro.amura/Mulesoft/apikit4-amf/mule-apikit-tools/mule-apikit-scaffolder/target/test-classes/oas/test-validation/yaml/test-validation-xml-SwaggerYaml.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <flow name="test-validation-xml-SwaggerYaml-main">
-        <http:listener config-ref="test-validation-xml-SwaggerYaml-httpListenerConfig" path="/api/*">
+    <apikit:config name="test-validation-json-schema-SwaggerYaml-config" raml="test-validation-json-schema-SwaggerYaml.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="test-validation-json-schema-SwaggerYaml-main">
+        <http:listener config-ref="test-validation-json-schema-SwaggerYaml-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
@@ -14,7 +14,7 @@
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="test-validation-xml-SwaggerYaml-config" />
+        <apikit:router config-ref="test-validation-json-schema-SwaggerYaml-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -96,8 +96,8 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="test-validation-xml-SwaggerYaml-console">
-        <http:listener config-ref="test-validation-xml-SwaggerYaml-httpListenerConfig" path="/console/*">
+    <flow name="test-validation-json-schema-SwaggerYaml-console">
+        <http:listener config-ref="test-validation-json-schema-SwaggerYaml-httpListenerConfig" path="/console/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
@@ -106,7 +106,7 @@ output application/json
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="test-validation-xml-SwaggerYaml-config" />
+        <apikit:console config-ref="test-validation-json-schema-SwaggerYaml-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -123,19 +123,19 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\resources:test-validation-xml-SwaggerYaml-config">
-        <logger level="INFO" message="get:\resources:test-validation-xml-SwaggerYaml-config" />
+    <flow name="get:\resources:test-validation-json-schema-SwaggerYaml-config">
+        <logger level="INFO" message="get:\resources:test-validation-json-schema-SwaggerYaml-config" />
     </flow>
-    <flow name="post:\defaultQueryParameter:test-validation-xml-SwaggerYaml-config">
-        <logger level="INFO" message="post:\defaultQueryParameter:test-validation-xml-SwaggerYaml-config" />
+    <flow name="post:\defaultQueryParameter:test-validation-json-schema-SwaggerYaml-config">
+        <logger level="INFO" message="post:\defaultQueryParameter:test-validation-json-schema-SwaggerYaml-config" />
     </flow>
-    <flow name="post:\requiredQueryParameter:test-validation-xml-SwaggerYaml-config">
-        <logger level="INFO" message="post:\requiredQueryParameter:test-validation-xml-SwaggerYaml-config" />
+    <flow name="post:\requiredQueryParameter:test-validation-json-schema-SwaggerYaml-config">
+        <logger level="INFO" message="post:\requiredQueryParameter:test-validation-json-schema-SwaggerYaml-config" />
     </flow>
-    <flow name="post:\reusing-payload:application\json:test-validation-xml-SwaggerYaml-config">
-        <logger level="INFO" message="post:\reusing-payload:application\json:test-validation-xml-SwaggerYaml-config" />
+    <flow name="post:\reusing-payload:application\json:test-validation-json-schema-SwaggerYaml-config">
+        <logger level="INFO" message="post:\reusing-payload:application\json:test-validation-json-schema-SwaggerYaml-config" />
     </flow>
-    <flow name="post:\types-test:application\json:test-validation-xml-SwaggerYaml-config">
-        <logger level="INFO" message="post:\types-test:application\json:test-validation-xml-SwaggerYaml-config" />
+    <flow name="post:\types-test:application\json:test-validation-json-schema-SwaggerYaml-config">
+        <logger level="INFO" message="post:\types-test:application\json:test-validation-json-schema-SwaggerYaml-config" />
     </flow>
 </mule>
