@@ -8,7 +8,7 @@
     </parent>
     <artifactId>mule-apikit-tools</artifactId>
     <packaging>pom</packaging>
-    <name>APIKit tools</name>
+    <name>APIKit Tools</name>
 
     <properties>
         <licensePath>../LICENSE_HEADER.txt</licensePath>

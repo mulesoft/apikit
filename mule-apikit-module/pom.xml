@@ -9,7 +9,6 @@
 
     <groupId>org.mule.modules</groupId>
     <artifactId>mule-apikit-module</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
     <packaging>mule-plugin</packaging>
 
     <name>APIKit Module</name>
