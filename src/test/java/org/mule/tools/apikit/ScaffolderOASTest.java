@@ -41,9 +41,7 @@ import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -97,8 +95,7 @@ public class ScaffolderOASTest {
 
     // When Golden file existe we comparate both Scaffolder versions
     final String expected = readFile(goldenPath);
-    assertThat(format("Scaffolder differs for API '%s'", api.getFileName()), current,
-               is(equalTo(expected)));
+    assertEquals(format("Scaffolder differs for API '%s'", api.getFileName()), current, expected);
   }
 
   @Parameterized.Parameters(name = "{0}")
