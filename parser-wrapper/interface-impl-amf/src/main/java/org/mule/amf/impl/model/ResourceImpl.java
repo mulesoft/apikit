@@ -7,13 +7,14 @@
 package org.mule.amf.impl.model;
 
 import amf.client.model.domain.EndPoint;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 import static org.mule.raml.interfaces.ParserUtils.resolveVersion;

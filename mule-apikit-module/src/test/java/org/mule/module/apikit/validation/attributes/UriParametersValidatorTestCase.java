@@ -17,7 +17,7 @@ public class UriParametersValidatorTestCase extends AbstractMultiParserFunctiona
 
   @Override
   protected String getConfigFile() {
-    return "org/mule/module/apikit/validation/uriParameters/mule-config.xml";
+    return "org/mule/module/apikit/validation/uriParameters/resource/mule-config.xml";
   }
 
   @Test

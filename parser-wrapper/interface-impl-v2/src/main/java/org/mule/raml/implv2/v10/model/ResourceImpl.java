@@ -102,7 +102,7 @@ public class ResourceImpl implements IResource {
     return resolvedUriParameters;
   }
 
-  private static Map<String, IParameter> loadResolvedUriParameters(Resource resource) {
+  static Map<String, IParameter> loadResolvedUriParameters(Resource resource) {
     Map<String, IParameter> result = new HashMap<>();
     Resource current = resource;
     while (current != null) {

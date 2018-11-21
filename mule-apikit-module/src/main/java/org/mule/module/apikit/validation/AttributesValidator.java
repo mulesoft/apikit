@@ -30,11 +30,11 @@ public class AttributesValidator {
     String queryString;
     MultiMap<String, String> uriParams;
 
-    // uriparams
-    UriParametersValidator uriParametersValidator = new UriParametersValidator(resource, resolvedVariables);
-    uriParams = uriParametersValidator.validateAndAddDefaults(attributes.getUriParams());
-
     final IAction action = resource.getAction(attributes.getMethod().toLowerCase());
+
+    // uriparams
+    UriParametersValidator uriParametersValidator = new UriParametersValidator(action, resolvedVariables);
+    uriParams = uriParametersValidator.validateAndAddDefaults(attributes.getUriParams());
 
     // queryStrings
     QueryStringValidator queryStringValidator = new QueryStringValidator(action);

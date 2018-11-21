@@ -7,9 +7,9 @@
 package org.mule.module.apikit.validation.attributes;
 
 import org.mule.module.apikit.api.exception.InvalidUriParameterException;
-import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
-import org.mule.raml.interfaces.model.IResource;
+import org.mule.module.apikit.helpers.AttributesHelper;
+import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
 
@@ -18,18 +18,18 @@ import java.util.Map;
 public class UriParametersValidator {
 
   MultiMap<String, String> uriParams;
-  IResource resource;
+  IAction action;
   ResolvedVariables resolvedVariables;
 
-  public UriParametersValidator(IResource resource, ResolvedVariables resolvedVariables) {
-    this.resource = resource;
+  public UriParametersValidator(IAction action, ResolvedVariables resolvedVariables) {
+    this.action = action;
     this.resolvedVariables = resolvedVariables;
   }
 
   public MultiMap<String, String> validateAndAddDefaults(Map<String, String> uriParams)
       throws InvalidUriParameterException {
     this.uriParams = new MultiMap<>(uriParams);
-    for (Map.Entry<String, IParameter> entry : resource.getResolvedUriParameters().entrySet()) {
+    for (Map.Entry<String, IParameter> entry : action.getResolvedUriParameters().entrySet()) {
       String value = (String) resolvedVariables.get(entry.getKey());
       IParameter uriParameter = entry.getValue();
       if (!uriParameter.validate(value)) {

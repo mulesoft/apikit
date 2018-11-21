@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toMap;
 
 public class ActionImpl implements IAction {
 
@@ -35,6 +36,7 @@ public class ActionImpl implements IAction {
   private Map<String, IResponse> responses;
   private Map<String, IParameter> queryParameters;
   private Map<String, IParameter> headers;
+  private Map<String, IParameter> resolvedUriParameters;
 
   public ActionImpl(final ResourceImpl resource, final Operation operation) {
     this.resource = resource;
@@ -118,6 +120,30 @@ public class ActionImpl implements IAction {
   @Override
   public Map<String, List<IParameter>> getBaseUriParameters() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Map<String, IParameter> getResolvedUriParameters() {
+    if (resolvedUriParameters == null) {
+      resolvedUriParameters = loadResolvedUriParameters(resource, operation);
+    }
+
+    return resolvedUriParameters;
+  }
+
+  private static Map<String, IParameter> loadResolvedUriParameters(final IResource resource, Operation operation) {
+    final Map<String, IParameter> operationUriParams;
+    if (operation.request() != null) {
+      operationUriParams = operation.request().uriParameters().stream()
+          .collect(toMap(p -> p.name().value(), ParameterImpl::new));
+    } else {
+      operationUriParams = new HashMap<>();
+    }
+
+    final Map<String, IParameter> uriParameters = resource.getResolvedUriParameters();
+    uriParameters.forEach(operationUriParams::putIfAbsent);
+
+    return operationUriParams;
   }
 
   @Override

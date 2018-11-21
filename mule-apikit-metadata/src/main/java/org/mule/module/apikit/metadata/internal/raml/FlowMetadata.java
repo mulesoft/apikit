@@ -221,7 +221,7 @@ public class FlowMetadata implements MetadataSource {
 
     baseUriParameters.forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata())
         .required(parameter.isRequired()));
-    action.getResource().getResolvedUriParameters()
+    action.getResolvedUriParameters()
         .forEach((name, parameter) -> builder.addField().key(name).value(parameter.getMetadata())
             .required(parameter.isRequired()));
 

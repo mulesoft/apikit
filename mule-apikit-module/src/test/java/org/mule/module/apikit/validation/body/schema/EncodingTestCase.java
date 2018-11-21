@@ -6,15 +6,10 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import java.io.IOException;
-
-import com.jayway.restassured.RestAssured;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-import org.mule.tck.junit4.rule.DynamicPort;
-import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
+
+import java.io.IOException;
 
 public class EncodingTestCase extends AbstractMultiParserFunctionalTestCase {
 

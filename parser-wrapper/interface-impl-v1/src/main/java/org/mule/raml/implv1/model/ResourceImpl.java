@@ -6,20 +6,20 @@
  */
 package org.mule.raml.implv1.model;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
-import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.model.Action;
 import org.raml.model.ActionType;
 import org.raml.model.Resource;
 import org.raml.model.parameter.UriParameter;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
@@ -96,6 +96,10 @@ public class ResourceImpl implements IResource {
   }
 
   public Map<String, IParameter> getResolvedUriParameters() {
+    return loadResolvedUriParameters(resource);
+  }
+
+  static Map<String, IParameter> loadResolvedUriParameters(Resource resource) {
     if (resource.getResolvedUriParameters() == null) {
       return null;
     }

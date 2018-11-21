@@ -6,14 +6,14 @@
  */
 package org.mule.amf.impl;
 
-import java.util.List;
-import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -89,7 +89,6 @@ abstract class AbstractTestCase {
       assertThat(actualAction, is(equalTo(expectedAction)));
 
     });
-    assertParametersEqual(actual.getResolvedUriParameters(), expected.getResolvedUriParameters());
     assertResourcesEqual(actual.getResources(), expected.getResources());
 
     // Different behaviour in Java Parser 08 & 10
@@ -112,6 +111,7 @@ abstract class AbstractTestCase {
     assertThat(actual.getType(), is(equalTo(expected.getType())));
 
     assertParametersEqual(actual.getHeaders(), expected.getHeaders());
+    assertParametersEqual(actual.getResolvedUriParameters(), expected.getResolvedUriParameters());
     // TODO MORE cases
     //actual.getBody();
     //actual.getResource();        

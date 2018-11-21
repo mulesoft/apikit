@@ -23,6 +23,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mule.raml.implv2.v10.model.ResourceImpl.loadResolvedUriParameters;
+
 public class ActionImpl implements IAction {
 
   private Method method;
@@ -30,6 +32,7 @@ public class ActionImpl implements IAction {
   private Map<String, IResponse> responses;
   private Map<String, IParameter> queryParameters;
   private Map<String, IParameter> headers;
+  private Map<String, IParameter> resolvedUriParameters;
 
   public ActionImpl(Method method) {
     this.method = method;
@@ -102,6 +105,15 @@ public class ActionImpl implements IAction {
   @Override
   public Map<String, List<IParameter>> getBaseUriParameters() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Map<String, IParameter> getResolvedUriParameters() {
+    if (resolvedUriParameters == null) {
+      resolvedUriParameters = loadResolvedUriParameters(method.resource());
+    }
+
+    return resolvedUriParameters;
   }
 
   @Override
