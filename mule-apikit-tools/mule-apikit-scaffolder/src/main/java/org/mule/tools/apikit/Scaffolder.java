@@ -12,6 +12,7 @@ import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.MuleDomainParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 import org.mule.tools.apikit.misc.FileListUtils;
+import org.mule.tools.apikit.misc.VersionUtils;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.RuntimeEdition;
 import org.mule.tools.apikit.model.ScaffolderReport;
@@ -38,6 +39,7 @@ import static org.mule.tools.apikit.model.RuntimeEdition.CE;
 public class Scaffolder {
 
   public final static String DEFAULT_MULE_VERSION = "4.0.0";
+  public final static String APISYNC_MIN_MULE_VERSION = "4.1.4";
   public final static RuntimeEdition DEFAULT_RUNTIME_EDITION = CE;
 
   private final MuleConfigGenerator muleConfigGenerator;
@@ -107,7 +109,7 @@ public class Scaffolder {
     }
 
     if (minMuleVersion == null) {
-      minMuleVersion = DEFAULT_MULE_VERSION;
+      minMuleVersion = APISYNC_MIN_MULE_VERSION;
     }
 
     muleConfigGenerator =
@@ -146,9 +148,8 @@ public class Scaffolder {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
     }
 
-    if (minMuleVersion == null) {
-      minMuleVersion = DEFAULT_MULE_VERSION;
-    }
+    minMuleVersion = VersionUtils.getMaxVersion(minMuleVersion, APISYNC_MIN_MULE_VERSION);
+
 
     muleConfigGenerator =
         new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(),

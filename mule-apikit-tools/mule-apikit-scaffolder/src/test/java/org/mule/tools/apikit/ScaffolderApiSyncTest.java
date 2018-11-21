@@ -17,6 +17,7 @@ import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
   private final Dependency dependency = createDependency("com.mycompany", "raml-api", "1.0.0", "raml", "zip");
   private final static String ROOT_RAML_RESOURCE_URL = "resource::com.mycompany:raml-api:1.0.0:raml:zip:";
   private final static String DEPENDENCIES_RESOURCE_URL = "resource::com.mycompany:raml-library:1.1.0:raml-fragment:zip:";
+  private final static String MULE_ARTIFACT = "{\"minMuleVersion\":\"4.1.4\"}";
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
@@ -145,7 +147,16 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     new ScaffolderAPI().run(Collections.singletonList(dependency), scaffolderResourceLoaderMock, muleXmlOut, null, MULE_4_VERSION,
                             EE);
 
+    assertMuleArtifact(muleXmlOut);
+
     return new File(muleXmlOut, rootRaml + ".xml");
+  }
+
+  private void assertMuleArtifact(File muleXmlOut) throws IOException {
+    File muleArtficat = new File(muleXmlOut, "mule-artifact.json");
+    assertTrue(muleArtficat.exists());
+    String s = IOUtils.toString(new FileInputStream(muleArtficat));
+    assertEquals(MULE_ARTIFACT, s);
   }
 
   private void mockScaffolderResourceLoader(String resourceURL, String folder, String file) throws Exception {
