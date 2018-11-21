@@ -69,7 +69,7 @@ public class ParameterImpl implements IParameter
     }
 
     @Override
-    public void validate(String expectedKey, Object values) throws Exception {
+    public void validate(String expectedKey, Object values, String parameterType) throws Exception {
         Collection<?> properties;
 
         if (values instanceof Iterable) {
@@ -77,17 +77,17 @@ public class ParameterImpl implements IParameter
             properties = newArrayList((Iterable) values);
         } else properties = singletonList(values);
 
-        validateParam(typeDeclaration, expectedKey, properties);
+        validateParam(typeDeclaration, expectedKey, properties, parameterType);
     }
 
-    private void validateParam(TypeDeclaration type, String paramKey, Collection<?> paramValues) throws Exception
+    private void validateParam(TypeDeclaration type, String paramKey, Collection<?> paramValues, String parameterType) throws Exception
     {
         if (type instanceof ArrayTypeDeclaration) {
 
-            validateArray((ArrayTypeDeclaration) type, paramKey, paramValues);
+            validateArray((ArrayTypeDeclaration) type, paramKey, paramValues, parameterType);
         } else if (type instanceof UnionTypeDeclaration) {
 
-            validateUnion((UnionTypeDeclaration) type, paramKey, paramValues);
+            validateUnion((UnionTypeDeclaration) type, paramKey, paramValues, parameterType);
         } else if (!(type instanceof AnyTypeDeclaration)) {
             if (paramValues.size() > 1) {
 
@@ -97,25 +97,25 @@ public class ParameterImpl implements IParameter
             String paramValue = String.valueOf(paramValues.iterator().next());
             if (!validate(type, paramValue)) {
 
-                String msg = String.format("Invalid value '%s' for Parameter %s. %s", paramValues, paramKey, message(type, paramValue));
+                String msg = String.format("Invalid value '%s' for %s %s. %s", paramValues, parameterType, paramKey, message(type, paramValue));
                 throw new Exception(msg);
             }
         }
     }
 
-    private void validateArray(ArrayTypeDeclaration type, String paramKeym, Collection<?> paramValues) throws Exception {
+    private void validateArray(ArrayTypeDeclaration type, String paramKeym, Collection<?> paramValues, String parameterType) throws Exception {
         Integer minItems = type.minItems();
         if (minItems != null && minItems > paramValues.size()) throw new Exception("Expected min items for " + paramKeym);
         Integer maxItems = type.maxItems();
         if (maxItems != null && paramValues.size() > maxItems) throw new Exception("Expected max items for " + paramKeym);
         for (Object paramValue : paramValues) {
-            validateParam(type.items(), paramKeym, singletonList(paramValue));
+            validateParam(type.items(), paramKeym, singletonList(paramValue), parameterType);
         }
     }
 
-    private void validateUnion(UnionTypeDeclaration type, String paramKey, Collection<?> paramValues) throws Exception {
+    private void validateUnion(UnionTypeDeclaration type, String paramKey, Collection<?> paramValues, String parameterType) throws Exception {
         for (TypeDeclaration unionComponent : type.of())
-            validateParam(unionComponent, paramKey, paramValues);
+            validateParam(unionComponent, paramKey, paramValues, parameterType);
     }
 
     @Override

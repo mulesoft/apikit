@@ -74,7 +74,7 @@ public class HttpRestRequest
 
     private static final List<Integer> DEFAULT_SUCCESS_STATUS = Arrays.asList(200);
     private static final String HEADER = "header";
-    private static final String QUERY_PARAM = "query param";
+    private static final String QUERY_PARAMETER = "query parameter";
     protected static final Logger logger = LoggerFactory.getLogger(HttpRestRequest.class);
 
     protected MuleEvent requestEvent;
@@ -230,7 +230,7 @@ public class HttpRestRequest
             else
             {
                 try {
-                    expected.validate(expectedKey ,actual, QUERY_PARAM);
+                    expected.validate(expectedKey ,actual, QUERY_PARAMETER);
                 } catch (Exception e) {
                     throw new InvalidQueryParameterException(e.getMessage());
                 }

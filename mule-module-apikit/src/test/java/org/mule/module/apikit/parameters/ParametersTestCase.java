@@ -56,7 +56,7 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given().header("one", "invalid")
                 .expect().response().statusCode(400)
-                .body(is("Invalid value 'invalid' for Parameter one. Value must be one of [foo, bar]"))
+                .body(is("Invalid value 'invalid' for header one. Value must be one of [foo, bar]"))
                 .when().get("/api/resources?first=fi");
     }
 
@@ -65,7 +65,7 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given().header("mule-special", "dough").header("one", "foo")
                 .expect().response().statusCode(400)
-                .body(is("Invalid value 'dough' for Parameter mule-{?}. Value must be one of [wow, yeah]"))
+                .body(is("Invalid value 'dough' for header mule-{?}. Value must be one of [wow, yeah]"))
                 .when().get("/api/resources?first=fi");
     }
 
@@ -99,7 +99,7 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given().header("one", "foo").queryParam("first", "f")
                 .expect().response().statusCode(400)
-                .body(is("Invalid value 'f' for Parameter first. Value length is shorter than 2"))
+                .body(is("Invalid value 'f' for query parameter first. Value length is shorter than 2"))
                 .when().get("/api/resources");
     }
 
@@ -108,7 +108,7 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given().header("one", "foo").queryParam("first", "first")
                 .expect().response().statusCode(400)
-                .body(is("Invalid value 'first' for Parameter first. Value length is longer than 3"))
+                .body(is("Invalid value 'first' for query parameter first. Value length is longer than 3"))
                 .when().get("/api/resources");
     }
 
@@ -117,7 +117,7 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given().header("one", "foo").queryParam("first", "1st")
                 .expect().response().statusCode(400)
-                .body(is("Invalid value '1st' for Parameter first. Value does not match pattern [^0-9]*"))
+                .body(is("Invalid value '1st' for query parameter first. Value does not match pattern [^0-9]*"))
                 .when().get("/api/resources");
     }
 
@@ -178,7 +178,7 @@ public class ParametersTestCase extends FunctionalTestCase
     {
         given()
                 .expect().response().statusCode(400)
-                .body(is("Invalid value 'yes' for Parameter third. Value must be one of [true, false]"))
+                .body(is("Invalid value 'yes' for query parameter third. Value must be one of [true, false]"))
                 .when().get("/api/resources?first=fi&third=yes");
     }
 
