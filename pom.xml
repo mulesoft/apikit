@@ -9,6 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mule-apikit-scaffolder</artifactId>
+    <name>APIKit Scaffolder</name>
+    
     <properties>
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../../formatter.xml</formatterConfigPath>
