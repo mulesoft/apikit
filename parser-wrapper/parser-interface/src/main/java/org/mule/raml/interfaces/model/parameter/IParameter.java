@@ -17,7 +17,7 @@ public interface IParameter
     @Deprecated
     boolean isArray();
     boolean validate(String value);
-    void validate(String expectedKey, Object values) throws Exception;
+    void validate(String expectedKey, Object values, String parameterType) throws Exception;
     String message(String value);
     String getDisplayName();
     String getDescription();

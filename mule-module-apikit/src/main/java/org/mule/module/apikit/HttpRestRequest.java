@@ -73,6 +73,8 @@ public class HttpRestRequest
 {
 
     private static final List<Integer> DEFAULT_SUCCESS_STATUS = Arrays.asList(200);
+    private static final String HEADER = "header";
+    private static final String QUERY_PARAM = "query param";
     protected static final Logger logger = LoggerFactory.getLogger(HttpRestRequest.class);
 
     protected MuleEvent requestEvent;
@@ -228,7 +230,7 @@ public class HttpRestRequest
             else
             {
                 try {
-                    expected.validate(expectedKey ,actual);
+                    expected.validate(expectedKey ,actual, QUERY_PARAM);
                 } catch (Exception e) {
                     throw new InvalidQueryParameterException(e.getMessage());
                 }
@@ -286,6 +288,7 @@ public class HttpRestRequest
         {
             final IParameter expected = action.getHeaders().get(expectedKey);
 
+
             if (expectedKey.contains("{?}"))
             {
                 final String regex = expectedKey.replace("{?}", ".*");
@@ -293,7 +296,7 @@ public class HttpRestRequest
                 {
                     if (incoming.matches(regex)) {
                         try {
-                            expected.validate(expectedKey, incomingHeaders.get(incoming));
+                            expected.validate(expectedKey, incomingHeaders.get(incoming), HEADER);
                         } catch (Exception e) {
                             throw new InvalidHeaderException(e.getMessage());
                         }
@@ -315,7 +318,7 @@ public class HttpRestRequest
                 if (actual != null)
                 {
                     try {
-                        expected.validate(expectedKey, actual);
+                        expected.validate(expectedKey, actual, HEADER);
                     } catch (Exception e) {
                         throw new InvalidHeaderException(e.getMessage());
                     }

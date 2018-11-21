@@ -56,16 +56,12 @@ public class ParameterImpl implements IParameter
     }
 
     @Override
-    public void validate(String expectedKey, Object values) throws Exception {
+    public void validate(String expectedKey, Object values, String parameterType) throws Exception {
         Collection<?> properties;
 
         if (values instanceof Iterable) {
             properties = newArrayList((Iterable) values);
         }
-
-//        else if (values instanceof Collection) {
-//            properties = (Collection) values;
-//        }
 
         else properties = singletonList(values);
 
@@ -85,8 +81,8 @@ public class ParameterImpl implements IParameter
         for (String param : stringProperties)
         {
             if (!parameter.validate(param)) {
-                String msg = String.format("Invalid value '%s' for Parameter %s. %s",
-                        param, expectedKey, message(param));
+                String msg = String.format("Invalid value '%s' for %s %s. %s",
+                        param, parameterType,expectedKey, message(param));
                 throw new Exception(msg);
             }
         }
