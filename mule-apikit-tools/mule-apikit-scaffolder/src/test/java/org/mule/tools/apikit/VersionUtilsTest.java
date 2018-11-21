@@ -7,7 +7,7 @@
 package org.mule.tools.apikit;
 
 import org.junit.Test;
-import static org.mule.tools.apikit.misc.VersionUtils.getMinVersion;
+import static org.mule.tools.apikit.misc.VersionUtils.getMaxVersion;
 import static org.junit.Assert.assertEquals;
 
 public class VersionUtilsTest {
@@ -19,21 +19,21 @@ public class VersionUtilsTest {
 
     String version;
 
-    version = getMinVersion("4.0.0", minVersion);
+    version = getMaxVersion("4.0.0", minVersion);
     assertEquals(minVersion, version);
 
-    version = getMinVersion(null, minVersion);
+    version = getMaxVersion(null, minVersion);
     assertEquals(minVersion, version);
 
-    version = getMinVersion("Not Valid Version", minVersion);
+    version = getMaxVersion("Not Valid Version", minVersion);
     assertEquals(minVersion, version);
 
-    version = getMinVersion("4.2", minVersion);
+    version = getMaxVersion("4.2", minVersion);
     assertEquals(minVersion, version);
 
     final String greaterVersion = "4.1.5";
 
-    version = getMinVersion(greaterVersion, minVersion);
+    version = getMaxVersion(greaterVersion, minVersion);
     assertEquals(greaterVersion, version);
 
 

@@ -8,23 +8,23 @@ package org.mule.tools.apikit.misc;
 
 public class VersionUtils {
 
-  public static String getMinVersion(String version, String minVersion) {
-    if (version == null || !version.matches("[0-9]+(\\.[0-9]+)*"))
-      return minVersion;
+  public static String getMaxVersion(String versionA, String versionB) {
+    if (versionA == null || !versionA.matches("[0-9]+(\\.[0-9]+)*"))
+      return versionB;
 
-    String[] versionParts = version.split("\\.");
-    String[] minVersionParts = minVersion.split("\\.");
+    String[] versionParts = versionA.split("\\.");
+    String[] minVersionParts = versionB.split("\\.");
 
     if (versionParts.length != minVersionParts.length)
-      return minVersion;
+      return versionB;
 
     int length = minVersionParts.length;
 
     for (int i = 0; i < length; i++) {
       if (Integer.parseInt(versionParts[i]) < Integer.parseInt(minVersionParts[i]))
-        return minVersion;
+        return versionB;
     }
 
-    return version;
+    return versionA;
   }
 }

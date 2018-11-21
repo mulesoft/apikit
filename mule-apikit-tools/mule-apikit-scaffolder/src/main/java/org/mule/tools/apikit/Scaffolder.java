@@ -148,7 +148,7 @@ public class Scaffolder {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
     }
 
-    minMuleVersion = VersionUtils.getMinVersion(minMuleVersion, APISYNC_MIN_MULE_VERSION);
+    minMuleVersion = VersionUtils.getMaxVersion(minMuleVersion, APISYNC_MIN_MULE_VERSION);
 
 
     muleConfigGenerator =
