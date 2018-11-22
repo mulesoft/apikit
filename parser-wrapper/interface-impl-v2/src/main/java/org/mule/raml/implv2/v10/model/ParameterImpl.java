@@ -10,11 +10,13 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.common.ValidationResult;
+import org.raml.v2.api.model.v10.datamodel.AnyTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.StringTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
+import org.raml.v2.api.model.v10.datamodel.UnionTypeDeclaration;
 import org.raml.v2.internal.impl.v10.type.TypeId;
 
 import javax.annotation.Nullable;
@@ -26,7 +28,9 @@ import java.util.Set;
 
 import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.util.Collections.singletonList;
 import static org.raml.v2.internal.impl.v10.type.TypeId.ARRAY;
 import static org.raml.v2.internal.impl.v10.type.TypeId.OBJECT;
 
@@ -62,10 +66,72 @@ public class ParameterImpl implements IParameter
         return results.isEmpty();
     }
 
+    private boolean validate(TypeDeclaration type, String value)
+    {
+        List<ValidationResult> results = type.validate(value);
+        return results.isEmpty();
+    }
+
+    @Override
+    public void validate(String expectedKey, Object values, String parameterType) throws Exception {
+        Collection<?> properties;
+
+        if (values instanceof Iterable) {
+
+            properties = newArrayList((Iterable) values);
+        } else properties = singletonList(values);
+
+        validateParam(typeDeclaration, expectedKey, properties, parameterType);
+    }
+
+    private void validateParam(TypeDeclaration type, String paramKey, Collection<?> paramValues, String parameterType) throws Exception
+    {
+        if (type instanceof ArrayTypeDeclaration) {
+
+            validateArray((ArrayTypeDeclaration) type, paramKey, paramValues, parameterType);
+        } else if (type instanceof UnionTypeDeclaration) {
+
+            validateUnion((UnionTypeDeclaration) type, paramKey, paramValues, parameterType);
+        } else if (!(type instanceof AnyTypeDeclaration)) {
+            if (paramValues.size() > 1) {
+
+                throw new Exception("Parameter " + paramKey + " is not an array");
+            }
+
+            String paramValue = String.valueOf(paramValues.iterator().next());
+            if (!validate(type, paramValue)) {
+
+                String msg = String.format("Invalid value '%s' for %s %s. %s", paramValues, parameterType, paramKey, message(type, paramValue));
+                throw new Exception(msg);
+            }
+        }
+    }
+
+    private void validateArray(ArrayTypeDeclaration type, String paramKeym, Collection<?> paramValues, String parameterType) throws Exception {
+        Integer minItems = type.minItems();
+        if (minItems != null && minItems > paramValues.size()) throw new Exception("Expected min items for " + paramKeym);
+        Integer maxItems = type.maxItems();
+        if (maxItems != null && paramValues.size() > maxItems) throw new Exception("Expected max items for " + paramKeym);
+        for (Object paramValue : paramValues) {
+            validateParam(type.items(), paramKeym, singletonList(paramValue), parameterType);
+        }
+    }
+
+    private void validateUnion(UnionTypeDeclaration type, String paramKey, Collection<?> paramValues, String parameterType) throws Exception {
+        for (TypeDeclaration unionComponent : type.of())
+            validateParam(unionComponent, paramKey, paramValues, parameterType);
+    }
+
     @Override
     public String message(String value)
     {
         List<ValidationResult> results = typeDeclaration.validate(value);
+        return results.isEmpty() ? "OK" : results.get(0).getMessage();
+    }
+
+    private String message(TypeDeclaration type, String value)
+    {
+        List<ValidationResult> results = type.validate(value);
         return results.isEmpty() ? "OK" : results.get(0).getMessage();
     }
 

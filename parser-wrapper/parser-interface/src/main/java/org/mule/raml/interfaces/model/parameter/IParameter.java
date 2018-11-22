@@ -12,15 +12,19 @@ public interface IParameter
 {
     boolean isRequired();
     String getDefaultValue();
+    @Deprecated
     boolean isRepeat();
+    @Deprecated
     boolean isArray();
     boolean validate(String value);
+    void validate(String expectedKey, Object values, String parameterType) throws Exception;
     String message(String value);
     String getDisplayName();
     String getDescription();
     String getExample();
     Map<String, String> getExamples();
     Object getInstance();
+    @Deprecated
     boolean isStringArray();
     @Deprecated
     boolean isScalar();

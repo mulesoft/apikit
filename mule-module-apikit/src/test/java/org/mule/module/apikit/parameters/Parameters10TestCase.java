@@ -86,4 +86,12 @@ public class Parameters10TestCase extends FunctionalTestCase
                 .when().get("/api/repeatHeader");
     }
 
+    @Test
+    public void unionString()
+    {
+        given().header("union-string", "100")
+                .expect().response().statusCode(200)
+                .when().get("/api/repeat");
+    }
+
 }

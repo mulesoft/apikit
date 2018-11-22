@@ -6,11 +6,18 @@
  */
 package org.mule.raml.implv1.model.parameter;
 
+import com.google.common.base.Function;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.model.parameter.AbstractParam;
 
+import javax.annotation.Nullable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.singletonList;
 
 public class ParameterImpl implements IParameter
 {
@@ -46,6 +53,39 @@ public class ParameterImpl implements IParameter
     public boolean validate(String s)
     {
         return parameter.validate(s);
+    }
+
+    @Override
+    public void validate(String expectedKey, Object values, String parameterType) throws Exception {
+        Collection<?> properties;
+
+        if (values instanceof Iterable) {
+            properties = newArrayList((Iterable) values);
+        }
+
+        else properties = singletonList(values);
+
+        if (properties.size() > 1 && !isRepeat())
+        {
+            throw new Exception("Parameter " + expectedKey + " is not a repetable");
+        }
+
+        Collection<String> stringProperties = transform(properties, new Function<Object, String>() {
+            @Nullable
+            @Override
+            public String apply(@Nullable Object input) {
+                return String.valueOf(input);
+            }
+        });
+
+        for (String param : stringProperties)
+        {
+            if (!parameter.validate(param)) {
+                String msg = String.format("Invalid value '%s' for %s %s. %s",
+                        param, parameterType,expectedKey, message(param));
+                throw new Exception(msg);
+            }
+        }
     }
 
     public String message(String s)
