@@ -156,22 +156,22 @@ public class FlowFinder {
     String resource = coords[1];
     String type = coords.length == 3 ? coords[2] : null;
     String key = String.format("%s:%s", method, resource);
+
     if (type != null) {
       key = key + ":" + type;
     }
+
     IResource apiResource = flatResourceTree.get(resource);
     if (apiResource != null) {
       IAction action = apiResource.getAction(method);
       if (action != null) {
-        if (type == null) {
+        if (type == null)
           return key;
-        } else {
-          if (action.hasBody() && action.getBody().get(type) != null) {
-            return key;
-          }
-        }
+        if (!action.hasBody() || action.getBody().get(type) != null)
+          return key;
       }
     }
+
     logger.warn(String.format("Flow named \"%s\" does not match any RAML descriptor resource", key));
     return null;
   }
