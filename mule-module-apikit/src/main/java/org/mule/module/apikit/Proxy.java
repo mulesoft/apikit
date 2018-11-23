@@ -110,10 +110,15 @@ public class Proxy extends AbstractRouter
                 throw new StartException(MessageFactory.createStaticMessage("APIKit Proxy configuration not Found"), this);
             }
         }
+
         ((ProxyConfiguration) config).setChain(next);
-        config.initializeRestFlowMapWrapper();
-        config.loadApiDefinition(flowConstruct);
-        basicFlow = buildBasicFlow();
+
+        if (basicFlow == null)
+        {
+            config.initializeRestFlowMapWrapper();
+            config.loadApiDefinition(flowConstruct);
+            basicFlow = buildBasicFlow();
+        }
     }
 
     private Flow buildBasicFlow()
