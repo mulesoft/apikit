@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -270,10 +269,5 @@ public class ParserWrapperAmf implements ParserWrapper {
       logger.error(format("Error render API '%s' to '%s'", apiRef.getLocation(), apiVendor.name()), e);
       return "";
     }
-  }
-
-  public InputStream fetchResource(String resource) {
-    //TODO: Implement!!!
-    return null;
   }
 }

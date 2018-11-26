@@ -19,6 +19,8 @@ import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.parser.service.ParserService;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.loader.ApiSyncResourceLoader;
+import org.mule.raml.interfaces.loader.ClassPathResourceLoader;
 import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IAction;
@@ -78,7 +80,7 @@ public class RamlHandler {
     if (idx > 0) {
       this.apiResourcesRelativePath = rootRamlLocation.substring(0, idx + 1);
       this.apiResourcesRelativePath = sanitarizeResourceRelativePath(apiResourcesRelativePath);
-    } else if (isSyncProtocol(apiResourcesRelativePath)) {
+    } else if (isSyncProtocol(rootRamlLocation)) {
       this.apiResourcesRelativePath = rootRamlLocation;
     }
 
@@ -146,10 +148,11 @@ public class RamlHandler {
       InputStream apiResource = null;
       ByteArrayOutputStream baos = null;
       try {
-        apiResource = muleContext.getExecutionClassLoader().getResourceAsStream(resourceRelativePath);
-
-        if (apiResource == null && resourceRelativePath.startsWith(apiResourcesRelativePath)) {
-          apiResource = parserWrapper.fetchResource(resourceRelativePath.substring(apiResourcesRelativePath.length()));
+        if (isSyncProtocol(apiResourcesRelativePath)) {
+          final String resourcePath = resourceRelativePath.substring(apiResourcesRelativePath.length());
+          apiResource = new ApiSyncResourceLoader(apiResourcesRelativePath).getResourceAsStream(resourcePath);
+        } else {
+          apiResource = new ClassPathResourceLoader().getResourceAsStream(resourceRelativePath);
         }
 
         if (apiResource == null) {

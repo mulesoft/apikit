@@ -149,10 +149,4 @@ public class ParserWrapperV2 implements ParserWrapper {
     // do nothing, as updates are not supported
     logger.debug("RAML 1.0 parser does not support base uri updates");
   }
-
-  @Override
-  public InputStream fetchResource(String resource) {
-
-    return resourceLoader.fetchResource(resource);
-  }
 }

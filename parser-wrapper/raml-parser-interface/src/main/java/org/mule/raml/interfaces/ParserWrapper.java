@@ -11,8 +11,6 @@ import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 
-import java.io.InputStream;
-
 public interface ParserWrapper {
 
   ApiVendor getApiVendor();
@@ -32,6 +30,4 @@ public interface ParserWrapper {
   IRamlUpdater getRamlUpdater(IRaml api);
 
   void updateBaseUri(IRaml api, String baseUri);
-
-  InputStream fetchResource(String resource);
 }
