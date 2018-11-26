@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mule.tools</groupId>
     <artifactId>mule-apikit-parent</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0-RC-2</version>
     <packaging>pom</packaging>
     <name>APIKit Parent POM</name>
 
@@ -33,8 +33,8 @@
         <project.reactor.version>3.2.0.M1</project.reactor.version>
 
         <!-- PARSERS -->
-        <amfVersion>3.0.2-SNAPSHOT</amfVersion>
-        <amfXmlExtensionVersion>1.2.0-SNAPSHOT</amfXmlExtensionVersion>
+        <amfVersion>3.0.2</amfVersion>
+        <amfXmlExtensionVersion>1.2.0</amfXmlExtensionVersion>
         <ramlParserV1Version>0.8.29</ramlParserV1Version>
         <ramlParserV2Version>1.0.28</ramlParserV2Version>
 
