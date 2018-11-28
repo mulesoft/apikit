@@ -12,7 +12,7 @@ public class ScaffolderReport {
   private String vendorId;
   private String version;
 
-  private String status;
+  private String status = this.SUCCESS;
 
   public static String SUCCESS = "success";
   public static String FAILED = "failed";
