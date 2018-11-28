@@ -208,7 +208,6 @@ public class Scaffolder {
     try {
       muleConfigGenerator.generate();
       muleArtifactJsonGenerator.generate();
-      scaffolderReport.setStatus(ScaffolderReport.SUCCESS);
     } catch (Exception e) {
       scaffolderReport.setStatus(ScaffolderReport.FAILED);
     }
