@@ -17,7 +17,6 @@ import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.RequestValidator;
 import org.mule.module.apikit.api.validation.ValidRequest;
-import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
@@ -26,7 +25,6 @@ import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.api.exception.MuleException;
-import org.mule.runtime.api.exception.TypedException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.metadata.TypedValue;
@@ -120,7 +118,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     URIResolver uriResolver = findInCache(path, config.getUriResolverCache());
     ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
 
-    IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
+    IResource resource = config.getFlowFinder().getResource(uriPattern);
     if (!config.isDisableValidations()) {
       eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
     }
@@ -192,15 +190,6 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
         RequestValidator.validate(config, resource, attributes, resolvedVariables, payload, charset);
 
     return EventHelper.regenerateEvent(event.getMessage(), eventBuilder, validRequest);
-  }
-
-  private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException {
-    IResource resource = configuration.getFlowFinder().getResource(uriPattern);
-    if (resource.getAction(method) == null) {
-      throw ApikitErrorTypes.throwErrorType(new MethodNotAllowedException(resource
-          .getResolvedUri(configuration.getRamlHandler().getApi().getVersion()) + " : " + method));
-    }
-    return resource;
   }
 
 }
