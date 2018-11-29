@@ -44,6 +44,8 @@ import static org.raml.parser.rule.ValidationResult.UNKNOWN;
 
 public class ParserWrapperV1 implements ParserWrapper {
 
+  public static final ResourceLoader DEFAULT_RESOURCE_LOADER = new DefaultResourceLoader();
+
   private static final Logger logger = LoggerFactory.getLogger(ParserWrapperV1.class);
 
   private final String ramlPath;
@@ -51,8 +53,16 @@ public class ParserWrapperV1 implements ParserWrapper {
   private Raml baseApi; //original api to clone
 
   public ParserWrapperV1(String ramlPath) {
+    this(ramlPath, DEFAULT_RESOURCE_LOADER, new ApiSyncResourceLoader(ramlPath));
+  }
+
+  public ParserWrapperV1(String ramlPath, ResourceLoader... resourceLoader) {
+    this(ramlPath, new CompositeResourceLoader(resourceLoader));
+  }
+
+  private ParserWrapperV1(String ramlPath, ResourceLoader resourceLoader) {
     this.ramlPath = ramlPath;
-    this.resourceLoader = new CompositeResourceLoader(new DefaultResourceLoader(), new ApiSyncResourceLoader(ramlPath));;
+    this.resourceLoader = resourceLoader;
   }
 
   @Override

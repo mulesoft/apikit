@@ -14,13 +14,11 @@ import org.mule.raml.implv1.ParserWrapperV1;
 import org.mule.raml.implv2.ParserWrapperV2;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.loader.ResourceLoader;
 import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
-import org.raml.v2.api.loader.CompositeResourceLoader;
-import org.raml.v2.api.loader.DefaultResourceLoader;
-import org.raml.v2.api.loader.ResourceLoader;
 
 import java.util.List;
 
@@ -140,17 +138,24 @@ public class ParserService {
 
   private static ParserWrapper createRamlParserWrapper(ApiRef apiRef) {
     final String path = apiRef.getLocation();
+
+    final ResourceLoader apiLoader = apiRef.getResourceLoader().orElse(null);
+
     // TODO consider whether to use v1 or v2 when vendor is raml 0.8 (ParserV2Utils.useParserV2)
     if (RAML_08.equals(apiRef.getVendor())) {
-      return new ParserWrapperV1(path);
+      return createRamlParserWrapperV1(path, apiLoader);
     } else {
-      if (apiRef.getResourceLoader().isPresent()) {
-        final org.mule.raml.interfaces.loader.ResourceLoader apiLoader = apiRef.getResourceLoader().get();
-        final ResourceLoader resourceLoader =
-            new CompositeResourceLoader(new DefaultResourceLoader(), apiLoader::getResourceAsStream);
-        return new ParserWrapperV2(path, resourceLoader);
-      }
-      return new ParserWrapperV2(path);
+      return createRamlParserWrapperV2(path, apiLoader);
     }
+  }
+
+  private static ParserWrapperV1 createRamlParserWrapperV1(String path, ResourceLoader apiLoader) {
+    return apiLoader != null ? new ParserWrapperV1(path, ParserWrapperV1.DEFAULT_RESOURCE_LOADER, apiLoader::getResourceAsStream)
+        : new ParserWrapperV1(path);
+  }
+
+  private static ParserWrapperV2 createRamlParserWrapperV2(String path, ResourceLoader apiLoader) {
+    return apiLoader != null ? new ParserWrapperV2(path, ParserWrapperV2.DEFAULT_RESOURCE_LOADER, apiLoader::getResourceAsStream)
+        : new ParserWrapperV2(path);
   }
 }

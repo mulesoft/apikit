@@ -38,6 +38,8 @@ import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 public class ParserWrapperV2 implements ParserWrapper {
 
+  public static final ResourceLoader DEFAULT_RESOURCE_LOADER = new DefaultResourceLoader();
+
   private static final Logger logger = LoggerFactory.getLogger(ParserWrapperV2.class);
 
   private final String ramlPath;
@@ -52,20 +54,24 @@ public class ParserWrapperV2 implements ParserWrapper {
     this.resourceLoader = resourceLoader;
   }
 
+  public ParserWrapperV2(String ramlPath, ResourceLoader... resourceLoader) {
+    this(ramlPath, new CompositeResourceLoader(resourceLoader));
+  }
+
   private static ResourceLoader buildResourceLoader(String ramlPath) {
     final File ramlFile = fetchRamlFile(ramlPath);
 
     if (ramlFile != null && ramlFile.getParent() != null) {
       final File ramlFolder = ramlFile.getParentFile();
       return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFolder),
-                                         new DefaultResourceLoader(),
+                                         DEFAULT_RESOURCE_LOADER,
                                          new FileResourceLoader(ramlFolder.getAbsolutePath()),
                                          new ExchangeDependencyResourceLoader(ramlFolder.getAbsolutePath()));
     } else {
       if (isSyncProtocol(ramlPath)) {
         return new ApiSyncResourceLoader(ramlPath);
       } else {
-        return new DefaultResourceLoader();
+        return DEFAULT_RESOURCE_LOADER;
       }
 
     }
