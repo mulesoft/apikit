@@ -28,6 +28,6 @@ public class AmfModelRenderTestCase {
     ApiRef apiRef = ApiRef.create(apiLocation);
     String amfModel = ParserWrapperAmf.create(apiRef, true).getAmfModel();
 
-    Assert.assertEquals(amfModel, goldenAmfModel);
+    Assert.assertEquals(goldenAmfModel, amfModel.substring());
   }
 }
