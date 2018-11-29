@@ -12,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
+import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 
 import java.io.File;
@@ -86,6 +87,16 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
   }
 
   @Test
+  public void apiWithErrors() throws Exception {
+
+    final String rootRaml = "simpleV10-with-errors";
+    final String ramlFolder = "src/test/resources/api-sync/with-errors/";
+
+    generateScaffolder(ramlFolder, rootRaml, null, ramlFolder, null, ScaffolderReport.FAILED);
+  }
+
+
+  @Test
   public void libraryReferenceToRoot() throws Exception {
     final String rootRaml = "test-api";
     final String ramlFolder = "src/test/resources/api-sync/library-reference-to-root/root/";
@@ -93,7 +104,7 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     final List<String> libraryFiles = Arrays.asList("library.raml", "reused-fragment.raml");
 
     File xmlOut =
-        generateScaffolder(ramlFolder, rootRaml, libraryFiles, libraryFolder, Collections.singletonList("library.raml"));
+        generateScaffolder(ramlFolder, rootRaml, libraryFiles, libraryFolder, Collections.singletonList("library.raml"), null);
 
     assertTrue(xmlOut.exists());
 
@@ -116,14 +127,17 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
   }
 
   private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles) throws Exception {
-    return generateScaffolder(ramlFolder, rootRaml, referencedFiles, ramlFolder, null);
+    return generateScaffolder(ramlFolder, rootRaml, referencedFiles, ramlFolder, null, null);
   }
 
   private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles, String referencedFilesFolder,
-                                  List<String> rootRamlFiles)
+                                  List<String> rootRamlFiles, String expectedStatus)
       throws Exception {
     final String exchangeJsonResourceURL = ROOT_RAML_RESOURCE_URL + "exchange.json";
     final String rootRamlResourceURL = ROOT_RAML_RESOURCE_URL + rootRaml + ".raml";
+
+    if (expectedStatus == null)
+      expectedStatus = ScaffolderReport.SUCCESS;
 
     mockScaffolderResourceLoader(exchangeJsonResourceURL, ramlFolder, rootRaml + ".json");
     mockScaffolderResourceLoader(rootRamlResourceURL, ramlFolder, rootRaml + ".raml");
@@ -142,9 +156,11 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
     File muleXmlOut = folder.newFolder("mule-xml-out");
 
-    new ScaffolderAPI().run(Collections.singletonList(dependency), scaffolderResourceLoaderMock, muleXmlOut, null, MULE_4_VERSION,
-                            EE);
+    ScaffolderReport scaffolderReport = new ScaffolderAPI().run(Collections.singletonList(dependency),
+                                                                scaffolderResourceLoaderMock, muleXmlOut, null, MULE_4_VERSION,
+                                                                EE);
 
+    assertEquals(expectedStatus, scaffolderReport.getStatus());
     return new File(muleXmlOut, rootRaml + ".xml");
   }
 
