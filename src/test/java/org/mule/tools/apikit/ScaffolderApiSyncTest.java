@@ -227,4 +227,28 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     return dependency;
   }
 
+
+  @Test
+  public void testRaml08Fallback() throws Exception {
+    File api = generateApi("src/test/resources/api-sync/fallback-raml-08", "api", null);
+
+    assertTrue(api.exists());
+  }
+
+  private File generateApi(String ramlFolder, String rootRaml, String expectedStatus)
+      throws Exception {
+
+    if (expectedStatus == null)
+      expectedStatus = ScaffolderReport.SUCCESS;
+
+    File muleXmlOut = folder.newFolder("mule-xml-out");
+
+    ScaffolderReport scaffolderReport = new ScaffolderAPI().run(Collections.singletonList(dependency),
+                                                                new TestScaffolderResourceLoader(ramlFolder), muleXmlOut, null,
+                                                                MULE_4_VERSION,
+                                                                EE);
+
+    assertEquals(expectedStatus, scaffolderReport.getStatus());
+    return new File(muleXmlOut, rootRaml + ".xml");
+  }
 }
