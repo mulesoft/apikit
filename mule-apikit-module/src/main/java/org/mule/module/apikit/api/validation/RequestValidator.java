@@ -7,11 +7,13 @@
 package org.mule.module.apikit.api.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.CharsetUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
+import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.module.apikit.validation.AttributesValidator;
@@ -25,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 
+import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsByteArray;
 
@@ -55,9 +58,15 @@ public class RequestValidator {
       }
     }
 
+    final String method = attributes.getMethod().toLowerCase();
+    if (resource.getAction(method) == null) {
+      final String version = cast(resolvedVariables.get("version"));
+      throw new MethodNotAllowedException(resource.getResolvedUri(version) + " : " + method);
+    }
+
     return ValidRequest.builder()
         .withAttributes(AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables, config))
-        .withBody(BodyValidator.validate(resource.getAction(attributes.getMethod().toLowerCase()), attributes, payload, config,
+        .withBody(BodyValidator.validate(resource.getAction(method), attributes, payload, config,
                                          charset))
         .build();
 
