@@ -72,8 +72,15 @@ public class RamlHandlerTestCase {
     String apiServer = "http://pepe.com";
     RamlHandler handler = createRamlHandler(ramlLocation, false);
     handler.setApiServer(apiServer);
-    String rootRaml = handler.getRamlV2("org/mule/module/apikit/raml-handler/?raml");
-    assertTrue(rootRaml.contains("baseUri: " + apiServer));
+
+    String ramlV1 = handler.getRamlV1();
+    assertTrue(ramlV1.contains("baseUri: " + apiServer));
+
+    String ramlV2 = handler.getRamlV2("org/mule/module/apikit/raml-handler/?raml");
+    assertTrue(ramlV2.contains("baseUri: " + apiServer));
+
+    String ramlAmf = handler.getAMFModel();
+    assertTrue(ramlAmf.contains("\"" + apiServer + "\""));
   }
 
   @Test
