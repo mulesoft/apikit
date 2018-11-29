@@ -7,7 +7,6 @@
 package org.mule.module.apikit.api.validation;
 
 import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.CharsetUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
@@ -19,6 +18,7 @@ import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.module.apikit.validation.AttributesValidator;
 import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.util.MultiMap;
 import org.slf4j.Logger;
@@ -30,6 +30,7 @@ import java.io.InputStream;
 import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsByteArray;
+import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 
 public class RequestValidator {
 
@@ -46,6 +47,9 @@ public class RequestValidator {
   public static ValidRequest validate(ValidationConfig config, IResource resource, HttpRequestAttributes attributes,
                                       ResolvedVariables resolvedVariables, Object payload, String charset)
       throws MuleRestException {
+
+    if (resource == null)
+      throw new MuleRuntimeException(createStaticMessage("Unexpected error. Resource cannot be null"));
 
     payload = makePayloadRepeatable(payload);
 
