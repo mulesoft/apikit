@@ -37,6 +37,7 @@ public class ConsoleRamlApiTestCase extends MuleArtifactFunctionalTestCase {
             "types:\n" +
             "  Person:\n" +
             "    type: object\n" +
+            "    additionalProperties: true\n" +
             "    properties:\n" +
             "      name:\n" +
             "        type: string\n" +
@@ -47,12 +48,19 @@ public class ConsoleRamlApiTestCase extends MuleArtifactFunctionalTestCase {
             "      200:\n" +
             "        body:\n" +
             "          application/json:\n" +
+            "            type: any\n" +
             "          text/xml:\n" +
+            "            type: any\n" +
             "/types-test:\n" +
             "  post:\n" +
             "    body:\n" +
             "      application/json:\n" +
-            "        type: Person\n" +
+            "        type: object\n" +
+            "        additionalProperties: true\n" +
+            "        properties:\n" +
+            "          name:\n" +
+            "            type: string\n" +
+            "            required: true\n" +
             "    responses:\n" +
             "      200: {}\n"))
         .when().get("/console/api?api");

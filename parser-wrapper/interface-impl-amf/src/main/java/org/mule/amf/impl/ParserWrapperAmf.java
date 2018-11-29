@@ -65,6 +65,7 @@ public class ParserWrapperAmf implements ParserWrapper {
   private final WebApi webApi;
   private final ApiVendor apiVendor;
   private final List<String> references;
+  private String amfModel;
 
   private ParserWrapperAmf(final ApiRef apiRef, boolean validate) throws ExecutionException, InterruptedException {
     AMF.init().get();
@@ -77,7 +78,7 @@ public class ParserWrapperAmf implements ParserWrapper {
     parser = getParserForApi(apiRef, environment);
     document = DocumentParser.parseFile(parser, uri, validate);
     references = getReferences(document.references());
-    webApi = DocumentParser.getWebApi(parser, uri);
+    webApi = DocumentParser.getWebApi(document);
     apiVendor = apiRef.getVendor();
   }
 
@@ -245,11 +246,14 @@ public class ParserWrapperAmf implements ParserWrapper {
   }
 
   public String getAmfModel() {
-    try {
-      return new AmfGraphRenderer().generateString(document).get();
-    } catch (InterruptedException | ExecutionException e) {
-      return e.getMessage();
+    if (amfModel == null) {
+      try {
+        amfModel = new AmfGraphRenderer().generateString(document).get();
+      } catch (InterruptedException | ExecutionException e) {
+        return e.getMessage();
+      }
     }
+    return amfModel;
   }
 
   private String renderApi() {

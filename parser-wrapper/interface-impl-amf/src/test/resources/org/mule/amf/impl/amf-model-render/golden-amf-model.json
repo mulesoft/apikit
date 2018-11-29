@@ -1,0 +1,500 @@
+[
+{
+"@id": "amf://id",
+"@type": [
+"http://a.ml/vocabularies/document#Document",
+"http://a.ml/vocabularies/document#Fragment",
+"http://a.ml/vocabularies/document#Module",
+"http://a.ml/vocabularies/document#Unit"
+],
+"http://a.ml/vocabularies/document#encodes": [
+{
+"@id": "amf://id#19",
+"@type": [
+"http://schema.org/WebAPI",
+"http://a.ml/vocabularies/document#RootDomainElement",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://schema.org/name": [
+{
+"@value": "Test API"
+}
+],
+"http://schema.org/description": [
+{
+"@value": "To test stuff"
+}
+],
+"http://a.ml/vocabularies/http#scheme": [
+{
+"@value": "HTTP"
+}
+],
+"http://schema.org/version": [
+{
+"@value": "2.0.0"
+}
+],
+"http://a.ml/vocabularies/http#endpoint": [
+{
+"@id": "amf://id#20",
+"@type": [
+"http://a.ml/vocabularies/http#EndPoint",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/http#path": [
+{
+"@value": "/test"
+}
+],
+"http://www.w3.org/ns/hydra/core#supportedOperation": [
+{
+"@id": "amf://id#21",
+"@type": [
+"http://www.w3.org/ns/hydra/core#Operation",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/hydra/core#method": [
+{
+"@value": "get"
+}
+],
+"http://schema.org/description": [
+{
+"@value": "uses dependency type"
+}
+],
+"http://www.w3.org/ns/hydra/core#returns": [
+{
+"@id": "amf://id#22",
+"@type": [
+"http://a.ml/vocabularies/http#Response",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://schema.org/name": [
+{
+"@value": "200"
+}
+],
+"http://schema.org/description": [
+{
+"@value": "a dependency type"
+}
+],
+"http://www.w3.org/ns/hydra/core#statusCode": [
+{
+"@value": "200"
+}
+],
+"http://a.ml/vocabularies/http#payload": [
+{
+"@id": "amf://id#23",
+"@type": [
+"http://a.ml/vocabularies/http#Payload",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/http#mediaType": [
+{
+"@value": "application/json"
+}
+],
+"http://a.ml/vocabularies/http#schema": [
+{
+"@id": "amf://id#11/linked_2",
+"@type": [
+"http://www.w3.org/ns/shacl#NodeShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/document#link-target": [
+{
+"@id": "amf://id#11"
+}
+],
+"http://a.ml/vocabularies/document#link-label": [
+{
+"@value": "moreStuff"
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+],
+"http://a.ml/vocabularies/document#references": [
+{
+"@id": "amf://id#1",
+"@type": [
+"http://a.ml/vocabularies/document#Module",
+"http://a.ml/vocabularies/document#Unit"
+],
+"http://a.ml/vocabularies/document#declares": [
+{
+"@id": "amf://id#2",
+"@type": [
+"http://www.w3.org/ns/shacl#NodeShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#closed": [
+{
+"@value": false
+}
+],
+"http://www.w3.org/ns/shacl#property": [
+{
+"@id": "amf://id#3",
+"@type": [
+"http://www.w3.org/ns/shacl#PropertyShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape"
+],
+"http://www.w3.org/ns/shacl#path": [
+{
+"@id": "http://a.ml/vocabularies/data#foo"
+}
+],
+"http://a.ml/vocabularies/shapes#range": [
+{
+"@id": "amf://id#4",
+"@type": [
+"http://a.ml/vocabularies/shapes#ScalarShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#datatype": [
+{
+"@id": "http://www.w3.org/2001/XMLSchema#string"
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "foo"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#minCount": [
+{
+"@value": 1
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "foo"
+}
+]
+},
+{
+"@id": "amf://id#5",
+"@type": [
+"http://www.w3.org/ns/shacl#PropertyShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape"
+],
+"http://www.w3.org/ns/shacl#path": [
+{
+"@id": "http://a.ml/vocabularies/data#bar"
+}
+],
+"http://a.ml/vocabularies/shapes#range": [
+{
+"@id": "amf://id#6",
+"@type": [
+"http://a.ml/vocabularies/shapes#ScalarShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#datatype": [
+{
+"@id": "http://a.ml/vocabularies/shapes#number"
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "bar"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#minCount": [
+{
+"@value": 1
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "bar"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "stuff"
+}
+],
+"http://a.ml/vocabularies/document#examples": [
+{
+"@id": "amf://id#7",
+"@type": [
+"http://a.ml/vocabularies/document#Example",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/document#strict": [
+{
+"@value": true
+}
+],
+"http://a.ml/vocabularies/document#structuredValue": [
+{
+"@id": "amf://id#8",
+"@type": [
+"http://a.ml/vocabularies/data#Object"
+],
+"http://a.ml/vocabularies/data#bar": [
+{
+"@id": "amf://id#9",
+"@type": [
+"http://a.ml/vocabularies/data#Scalar"
+],
+"http://a.ml/vocabularies/data#value": [
+{
+"@value": "42",
+"@type": "http://www.w3.org/2001/XMLSchema#integer"
+}
+]
+}
+],
+"http://a.ml/vocabularies/data#foo": [
+{
+"@id": "amf://id#10",
+"@type": [
+"http://a.ml/vocabularies/data#Scalar"
+],
+"http://a.ml/vocabularies/data#value": [
+{
+"@value": "hello",
+"@type": "http://www.w3.org/2001/XMLSchema#string"
+}
+]
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#raw": [
+{
+"@value": "      foo: \"hello\"\n      bar: 42\n\n"
+}
+]
+}
+]
+},
+[
+{
+"@id": "amf://id#11/linked_3",
+"@type": [
+"http://www.w3.org/ns/shacl#NodeShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/document#link-target": [
+{
+"@id": "amf://id#11"
+}
+],
+"http://a.ml/vocabularies/document#link-label": [
+{
+"@value": "moreStuff"
+}
+]
+}
+]
+],
+"http://a.ml/vocabularies/document#usage": [
+{
+"@value": "This library contains some data types"
+}
+]
+}
+],
+"http://a.ml/vocabularies/document#declares": [
+{
+"@id": "amf://id#11",
+"@type": [
+"http://www.w3.org/ns/shacl#NodeShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#closed": [
+{
+"@value": false
+}
+],
+"http://www.w3.org/ns/shacl#property": [
+{
+"@id": "amf://id#12",
+"@type": [
+"http://www.w3.org/ns/shacl#PropertyShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape"
+],
+"http://www.w3.org/ns/shacl#path": [
+{
+"@id": "http://a.ml/vocabularies/data#foo"
+}
+],
+"http://a.ml/vocabularies/shapes#range": [
+{
+"@id": "amf://id#13",
+"@type": [
+"http://a.ml/vocabularies/shapes#ScalarShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#datatype": [
+{
+"@id": "http://www.w3.org/2001/XMLSchema#string"
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "foo"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#minCount": [
+{
+"@value": 1
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "foo"
+}
+]
+},
+{
+"@id": "amf://id#14",
+"@type": [
+"http://www.w3.org/ns/shacl#PropertyShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape"
+],
+"http://www.w3.org/ns/shacl#path": [
+{
+"@id": "http://a.ml/vocabularies/data#bar"
+}
+],
+"http://a.ml/vocabularies/shapes#range": [
+{
+"@id": "amf://id#15",
+"@type": [
+"http://a.ml/vocabularies/shapes#ScalarShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#datatype": [
+{
+"@id": "http://www.w3.org/2001/XMLSchema#boolean"
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "bar"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#minCount": [
+{
+"@value": 1
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "bar"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "moreStuff"
+}
+],
+"http://a.ml/vocabularies/document#examples": [
+{
+"@id": "amf://id#16",
+"@type": [
+"http://a.ml/vocabularies/document#Example",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/document#strict": [
+{
+"@value": true
+}
+],
+"http://a.ml/vocabularies/document#structuredValue": [
+{
+"@id": "amf://id#16",
+"@type": [
+"http://a.ml/vocabularies/data#Object"
+],
+"http://a.ml/vocabularies/data#bar": [
+{
+"@id": "amf://id#17",
+"@type": [
+"http://a.ml/vocabularies/data#Scalar"
+],
+"http://a.ml/vocabularies/data#value": [
+{
+"@value": "false",
+"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+}
+]
+}
+],
+"http://a.ml/vocabularies/data#foo": [
+{
+"@id": "amf://id#18",
+"@type": [
+"http://a.ml/vocabularies/data#Scalar"
+],
+"http://a.ml/vocabularies/data#value": [
+{
+"@value": "bye",
+"@type": "http://www.w3.org/2001/XMLSchema#string"
+}
+]
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#raw": [
+{
+"@value": "      foo: \"bye\"\n      bar: false\n"
+}
+]
+}
+]
+}
+]
+}
+]

@@ -41,13 +41,13 @@ public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
             "    \"description\": \"A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification\",\n"
             +
             "    \"termsOfService\": \"http://swagger.io/terms/\",\n" +
-            "    \"contact\": {\n" +
-            "      \"name\": \"Swagger API Team\",\n" +
-            "      \"url\": \"http://swagger.io\"\n" +
-            "    },\n" +
             "    \"license\": {\n" +
             "      \"name\": \"Creative Commons 4.0 International\",\n" +
             "      \"url\": \"http://creativecommons.org/licenses/by/4.0/\"\n" +
+            "    },\n" +
+            "    \"contact\": {\n" +
+            "      \"name\": \"Swagger API Team\",\n" +
+            "      \"url\": \"http://swagger.io\"\n" +
             "    }\n" +
             "  },\n" +
             "  \"host\": \"my.api.com\",\n" +
@@ -56,23 +56,12 @@ public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
             "    \"http\",\n" +
             "    \"https\"\n" +
             "  ],\n" +
-            "  \"consumes\": [\n" +
-            "    \"application/json\"\n" +
-            "  ],\n" +
-            "  \"produces\": [\n" +
-            "    \"application/json\",\n" +
-            "    \"application/xml\"\n" +
-            "  ],\n" +
             "  \"paths\": {\n" +
             "    \"/pets/{petId}\": {\n" +
             "      \"get\": {\n" +
             "        \"description\": \"Returns a pet based on ID\",\n" +
             "        \"summary\": \"Find pet by ID\",\n" +
             "        \"operationId\": \"getPetsById\",\n" +
-            "        \"produces\": [\n" +
-            "          \"application/json\",\n" +
-            "          \"text/html\"\n" +
-            "        ],\n" +
             "        \"parameters\": [\n" +
             "          {\n" +
             "            \"name\": \"petId\",\n" +
@@ -89,11 +78,25 @@ public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
             "        \"responses\": {\n" +
             "          \"200\": {\n" +
             "            \"description\": \"pet response\",\n" +
-            "            \"schema\": {}\n" +
+            "            \"x-amf-mediaType\": \"application/json\",\n" +
+            "            \"schema\": {},\n" +
+            "            \"x-amf-responsePayloads\": [\n" +
+            "              {\n" +
+            "                \"mediaType\": \"text/html\",\n" +
+            "                \"schema\": {}\n" +
+            "              }\n" +
+            "            ]\n" +
             "          },\n" +
             "          \"default\": {\n" +
             "            \"description\": \"error payload\",\n" +
-            "            \"schema\": {}\n" +
+            "            \"x-amf-mediaType\": \"application/json\",\n" +
+            "            \"schema\": {},\n" +
+            "            \"x-amf-responsePayloads\": [\n" +
+            "              {\n" +
+            "                \"mediaType\": \"text/html\",\n" +
+            "                \"schema\": {}\n" +
+            "              }\n" +
+            "            ]\n" +
             "          }\n" +
             "        }\n" +
             "      }\n" +
@@ -101,6 +104,8 @@ public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
             "  },\n" +
             "  \"definitions\": {\n" +
             "    \"Pet\": {\n" +
+            "      \"type\": \"object\",\n" +
+            "      \"additionalProperties\": true,\n" +
             "      \"required\": [\n" +
             "        \"name\"\n" +
             "      ],\n" +
@@ -111,10 +116,11 @@ public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
             "        \"tag\": {\n" +
             "          \"type\": \"string\"\n" +
             "        }\n" +
-            "      },\n" +
-            "      \"type\": \"object\"\n" +
+            "      }\n" +
             "    },\n" +
             "    \"ErrorModel\": {\n" +
+            "      \"type\": \"object\",\n" +
+            "      \"additionalProperties\": true,\n" +
             "      \"required\": [\n" +
             "        \"code\",\n" +
             "        \"message\"\n" +
@@ -127,8 +133,7 @@ public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
             "        \"message\": {\n" +
             "          \"type\": \"string\"\n" +
             "        }\n" +
-            "      },\n" +
-            "      \"type\": \"object\"\n" +
+            "      }\n" +
             "    }\n" +
             "  }\n" +
             "}\n"))
@@ -143,12 +148,10 @@ public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
         .body(is("#%RAML 1.0\n" +
             "title: hola\n" +
             "/top:\n" +
-            "  type:\n" +
-            "    library1.foo:\n" +
-            "      foo: description\n" +
             "  get:\n" +
             "    description: get something\n" +
             "  (library1.bar): hi\n" +
+            "  description: This is a collection description and else\n" +
             "uses:\n" +
             "  library1: library.raml\n"))
         .when().get("/console-raml-10/org/mule/module/apikit/console/api/?api");
