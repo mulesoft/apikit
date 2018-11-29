@@ -31,6 +31,7 @@ import org.raml.model.ActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
 import static org.mule.raml.interfaces.ParserType.AMF;
 import static org.mule.raml.interfaces.ParserType.AUTO;
@@ -176,7 +177,15 @@ public class RamlHandler {
   }
 
   public String getAMFModel() {
-    return (parserWrapper instanceof ParserWrapperAmf) ? ((ParserWrapperAmf) parserWrapper).getAmfModel() : "";
+    if (parserWrapper instanceof ParserWrapperAmf) {
+      ParserWrapperAmf parserWrapperAmf = cast(parserWrapper);
+      if (!keepRamlBaseUri) {
+        String baseUriReplacement = getBaseUriReplacement(apiServer);
+        parserWrapperAmf.updateBaseUri(api, baseUriReplacement);
+      }
+      return parserWrapperAmf.getAmfModel();
+    }
+    return "";
   }
 
   public String getBaseUriReplacement(String apiServer) {

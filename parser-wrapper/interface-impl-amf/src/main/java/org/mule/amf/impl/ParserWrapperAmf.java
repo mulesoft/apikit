@@ -11,6 +11,7 @@ import amf.client.environment.DefaultEnvironment;
 import amf.client.environment.Environment;
 import amf.client.model.document.BaseUnit;
 import amf.client.model.document.Document;
+import amf.client.model.domain.Server;
 import amf.client.model.domain.WebApi;
 import amf.client.parse.Parser;
 import amf.client.render.AmfGraphRenderer;
@@ -166,10 +167,6 @@ public class ParserWrapperAmf implements ParserWrapper {
     return ParserType.AMF;
   }
 
-  public WebApi getWebApi() {
-    return webApi;
-  }
-
   @Override
   public void validate() {
 
@@ -238,7 +235,14 @@ public class ParserWrapperAmf implements ParserWrapper {
   }
 
   @Override
-  public void updateBaseUri(IRaml api, String baseUri) {}
+  public void updateBaseUri(IRaml ignored, String baseUri) {
+    final Server server = webApi.servers().size() > 0 ? webApi.servers().get(0) : null;
+    if (server != null) {
+      server.withUrl(baseUri);
+      server.variables().clear();
+      document.withEncodes(webApi);
+    }
+  }
 
   public String getAmfModel() {
     try {
