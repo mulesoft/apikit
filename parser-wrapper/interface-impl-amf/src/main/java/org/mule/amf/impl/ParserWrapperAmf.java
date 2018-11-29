@@ -18,6 +18,7 @@ import amf.client.render.Oas20Renderer;
 import amf.client.render.Raml08Renderer;
 import amf.client.render.Raml10Renderer;
 import amf.client.render.Renderer;
+import amf.client.resolve.AmfGraphResolver;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
@@ -64,6 +65,7 @@ public class ParserWrapperAmf implements ParserWrapper {
   private final WebApi webApi;
   private final ApiVendor apiVendor;
   private final List<String> references;
+  private String amfModel;
 
   private ParserWrapperAmf(final ApiRef apiRef, boolean validate) throws ExecutionException, InterruptedException {
     AMF.init().get();
@@ -241,11 +243,15 @@ public class ParserWrapperAmf implements ParserWrapper {
   public void updateBaseUri(IRaml api, String baseUri) {}
 
   public String getAmfModel() {
-    try {
-      return new AmfGraphRenderer().generateString(document).get();
-    } catch (InterruptedException | ExecutionException e) {
-      return e.getMessage();
+    if (amfModel == null) {
+      try {
+        new AmfGraphResolver().resolve(document);
+        amfModel = new AmfGraphRenderer().generateString(document).get();
+      } catch (InterruptedException | ExecutionException e) {
+        return e.getMessage();
+      }
     }
+    return amfModel;
   }
 
   private String renderApi() {

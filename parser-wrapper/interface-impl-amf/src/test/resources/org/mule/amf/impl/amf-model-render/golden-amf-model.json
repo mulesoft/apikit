@@ -1,0 +1,510 @@
+[
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/api-to-render.raml",
+"@type": [
+"http://a.ml/vocabularies/document#Document",
+"http://a.ml/vocabularies/document#Fragment",
+"http://a.ml/vocabularies/document#Module",
+"http://a.ml/vocabularies/document#Unit"
+],
+"http://a.ml/vocabularies/document#encodes": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/api-to-render.raml#/web-api",
+"@type": [
+"http://schema.org/WebAPI",
+"http://a.ml/vocabularies/document#RootDomainElement",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://schema.org/name": [
+{
+"@value": "Test API"
+}
+],
+"http://schema.org/description": [
+{
+"@value": "To test stuff"
+}
+],
+"http://a.ml/vocabularies/http#accepts": [
+{
+"@value": "application/json"
+}
+],
+"http://a.ml/vocabularies/http#contentType": [
+{
+"@value": "application/json"
+}
+],
+"http://a.ml/vocabularies/http#scheme": [
+{
+"@value": "HTTP"
+}
+],
+"http://schema.org/version": [
+{
+"@value": "2.0.0"
+}
+],
+"http://a.ml/vocabularies/http#endpoint": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/api-to-render.raml#/web-api/end-points/%2Ftest",
+"@type": [
+"http://a.ml/vocabularies/http#EndPoint",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/http#path": [
+{
+"@value": "/test"
+}
+],
+"http://www.w3.org/ns/hydra/core#supportedOperation": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/api-to-render.raml#/web-api/end-points/%2Ftest/get",
+"@type": [
+"http://www.w3.org/ns/hydra/core#Operation",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/hydra/core#method": [
+{
+"@value": "get"
+}
+],
+"http://schema.org/description": [
+{
+"@value": "uses dependency type"
+}
+],
+"http://www.w3.org/ns/hydra/core#returns": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/api-to-render.raml#/web-api/end-points/%2Ftest/get/200",
+"@type": [
+"http://a.ml/vocabularies/http#Response",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://schema.org/name": [
+{
+"@value": "200"
+}
+],
+"http://schema.org/description": [
+{
+"@value": "a dependency type"
+}
+],
+"http://www.w3.org/ns/hydra/core#statusCode": [
+{
+"@value": "200"
+}
+],
+"http://a.ml/vocabularies/http#payload": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/api-to-render.raml#/web-api/end-points/%2Ftest/get/200/application%2Fjson",
+"@type": [
+"http://a.ml/vocabularies/http#Payload",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/http#mediaType": [
+{
+"@value": "application/json"
+}
+],
+"http://a.ml/vocabularies/http#schema": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/linked_2",
+"@type": [
+"http://www.w3.org/ns/shacl#NodeShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/document#link-target": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff"
+}
+],
+"http://a.ml/vocabularies/document#link-label": [
+{
+"@value": "moreStuff"
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+]
+}
+],
+"http://a.ml/vocabularies/document#references": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml",
+"@type": [
+"http://a.ml/vocabularies/document#Module",
+"http://a.ml/vocabularies/document#Unit"
+],
+"http://a.ml/vocabularies/document#declares": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/stuff",
+"@type": [
+"http://www.w3.org/ns/shacl#NodeShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#closed": [
+{
+"@value": false
+}
+],
+"http://www.w3.org/ns/shacl#property": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/stuff/property/foo",
+"@type": [
+"http://www.w3.org/ns/shacl#PropertyShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape"
+],
+"http://www.w3.org/ns/shacl#path": [
+{
+"@id": "http://a.ml/vocabularies/data#foo"
+}
+],
+"http://a.ml/vocabularies/shapes#range": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/stuff/property/foo/scalar/foo",
+"@type": [
+"http://a.ml/vocabularies/shapes#ScalarShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#datatype": [
+{
+"@id": "http://www.w3.org/2001/XMLSchema#string"
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "foo"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#minCount": [
+{
+"@value": 1
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "foo"
+}
+]
+},
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/stuff/property/bar",
+"@type": [
+"http://www.w3.org/ns/shacl#PropertyShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape"
+],
+"http://www.w3.org/ns/shacl#path": [
+{
+"@id": "http://a.ml/vocabularies/data#bar"
+}
+],
+"http://a.ml/vocabularies/shapes#range": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/stuff/property/bar/scalar/bar",
+"@type": [
+"http://a.ml/vocabularies/shapes#ScalarShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#datatype": [
+{
+"@id": "http://a.ml/vocabularies/shapes#number"
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "bar"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#minCount": [
+{
+"@value": 1
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "bar"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "stuff"
+}
+],
+"http://a.ml/vocabularies/document#examples": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/stuff/example/default-example",
+"@type": [
+"http://a.ml/vocabularies/document#Example",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/document#strict": [
+{
+"@value": true
+}
+],
+"http://a.ml/vocabularies/document#structuredValue": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/stuff/example/default-example/object_1",
+"@type": [
+"http://a.ml/vocabularies/data#Object"
+],
+"http://a.ml/vocabularies/data#bar": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/stuff/example/default-example/object_1/scalar_3",
+"@type": [
+"http://a.ml/vocabularies/data#Scalar"
+],
+"http://a.ml/vocabularies/data#value": [
+{
+"@value": "42",
+"@type": "http://www.w3.org/2001/XMLSchema#integer"
+}
+]
+}
+],
+"http://a.ml/vocabularies/data#foo": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/stuff/example/default-example/object_1/scalar_2",
+"@type": [
+"http://a.ml/vocabularies/data#Scalar"
+],
+"http://a.ml/vocabularies/data#value": [
+{
+"@value": "hello",
+"@type": "http://www.w3.org/2001/XMLSchema#string"
+}
+]
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#raw": [
+{
+"@value": "      foo: \"hello\"\n      bar: 42\n\n"
+}
+]
+}
+]
+},
+[
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/linked_3",
+"@type": [
+"http://www.w3.org/ns/shacl#NodeShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/document#link-target": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff"
+}
+],
+"http://a.ml/vocabularies/document#link-label": [
+{
+"@value": "moreStuff"
+}
+]
+}
+]
+],
+"http://a.ml/vocabularies/document#usage": [
+{
+"@value": "This library contains some data types"
+}
+]
+}
+],
+"http://a.ml/vocabularies/document#declares": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff",
+"@type": [
+"http://www.w3.org/ns/shacl#NodeShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#closed": [
+{
+"@value": false
+}
+],
+"http://www.w3.org/ns/shacl#property": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/property/foo",
+"@type": [
+"http://www.w3.org/ns/shacl#PropertyShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape"
+],
+"http://www.w3.org/ns/shacl#path": [
+{
+"@id": "http://a.ml/vocabularies/data#foo"
+}
+],
+"http://a.ml/vocabularies/shapes#range": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/property/foo/scalar/foo",
+"@type": [
+"http://a.ml/vocabularies/shapes#ScalarShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#datatype": [
+{
+"@id": "http://www.w3.org/2001/XMLSchema#string"
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "foo"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#minCount": [
+{
+"@value": 1
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "foo"
+}
+]
+},
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/property/bar",
+"@type": [
+"http://www.w3.org/ns/shacl#PropertyShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape"
+],
+"http://www.w3.org/ns/shacl#path": [
+{
+"@id": "http://a.ml/vocabularies/data#bar"
+}
+],
+"http://a.ml/vocabularies/shapes#range": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/property/bar/scalar/bar",
+"@type": [
+"http://a.ml/vocabularies/shapes#ScalarShape",
+"http://www.w3.org/ns/shacl#Shape",
+"http://a.ml/vocabularies/shapes#Shape",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://www.w3.org/ns/shacl#datatype": [
+{
+"@id": "http://www.w3.org/2001/XMLSchema#boolean"
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "bar"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#minCount": [
+{
+"@value": 1
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "bar"
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#name": [
+{
+"@value": "moreStuff"
+}
+],
+"http://a.ml/vocabularies/document#examples": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/example/default-example",
+"@type": [
+"http://a.ml/vocabularies/document#Example",
+"http://a.ml/vocabularies/document#DomainElement"
+],
+"http://a.ml/vocabularies/document#strict": [
+{
+"@value": true
+}
+],
+"http://a.ml/vocabularies/document#structuredValue": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/example/default-example",
+"@type": [
+"http://a.ml/vocabularies/data#Object"
+],
+"http://a.ml/vocabularies/data#bar": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/example/default-example/object_1/scalar_3",
+"@type": [
+"http://a.ml/vocabularies/data#Scalar"
+],
+"http://a.ml/vocabularies/data#value": [
+{
+"@value": "false",
+"@type": "http://www.w3.org/2001/XMLSchema#boolean"
+}
+]
+}
+],
+"http://a.ml/vocabularies/data#foo": [
+{
+"@id": "file:///Users/santiagofuentes/projects/apikit-4.x/parser-wrapper/interface-impl-amf/target/test-classes/org/mule/amf/impl/amf-model-render/reused-fragment.raml#/declarations/types/moreStuff/example/default-example/object_1/scalar_2",
+"@type": [
+"http://a.ml/vocabularies/data#Scalar"
+],
+"http://a.ml/vocabularies/data#value": [
+{
+"@value": "bye",
+"@type": "http://www.w3.org/2001/XMLSchema#string"
+}
+]
+}
+]
+}
+],
+"http://www.w3.org/ns/shacl#raw": [
+{
+"@value": "      foo: \"bye\"\n      bar: false\n"
+}
+]
+}
+]
+}
+]
+}
+]
