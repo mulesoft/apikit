@@ -145,7 +145,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     URIResolver uriResolver = findInCache(path, config.getUriResolverCache());
     ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
 
-    IResource resource = getResource(config, attributes.getMethod().toLowerCase(), uriPattern);
+    IResource resource = config.getFlowFinder().getResource(uriPattern);
     if (!config.isDisableValidations()) {
       eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
     }
@@ -203,16 +203,5 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
     return EventHelper.regenerateEvent(event.getMessage(), eventBuilder, validRequest);
   }
-
-  private IResource getResource(Configuration configuration, String method, URIPattern uriPattern) throws TypedException {
-    IResource resource = configuration.getFlowFinder().getResource(uriPattern);
-    if (resource.getAction(method) == null) {
-      throw ApikitErrorTypes.throwErrorType(new MethodNotAllowedException(resource
-          .getResolvedUri(configuration.getRamlHandler().getApi().getVersion()) + " : " + method));
-    }
-    return resource;
-  }
-
-
 
 }
