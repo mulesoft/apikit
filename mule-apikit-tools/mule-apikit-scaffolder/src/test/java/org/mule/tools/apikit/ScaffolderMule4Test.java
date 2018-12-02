@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -783,6 +784,7 @@ public class ScaffolderMule4Test {
     assertEquals(1, countOccurences(s, "<apikit:console"));
   }
 
+  @Ignore
   @Test
   public void testGenerateFromTwoApis() throws Exception {
     final String testFolder = "scaffolder-from-two-apis/";
