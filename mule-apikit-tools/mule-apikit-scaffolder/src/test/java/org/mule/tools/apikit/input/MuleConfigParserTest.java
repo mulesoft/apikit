@@ -20,9 +20,11 @@ import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -87,9 +89,11 @@ public class MuleConfigParserTest {
     ramlNames.add("api.raml");
 
     MuleConfigParser muleConfigParser = new MuleConfigParser(log, new APIFactory());
-    muleConfigParser.parseConfigsAndApis(fileWithFlows, documentWithFlows, ramlNames);
+    muleConfigParser.parseConfigs(fileWithFlows, documentWithFlows, ramlNames);
+    muleConfigParser.parseApis(fileWithFlows, documentWithFlows, ramlNames);
     muleConfigParser.parseFlows(Collections.singleton(documentWithFlows));
-    muleConfigParser.parseConfigsAndApis(fileWithoutFlows, documentWithoutFlows, ramlNames);
+    muleConfigParser.parseConfigs(fileWithoutFlows, documentWithoutFlows, ramlNames);
+    muleConfigParser.parseApis(fileWithoutFlows, documentWithoutFlows, ramlNames);
     muleConfigParser.parseFlows(Collections.singleton(documentWithoutFlows));
 
     assertEquals(6, muleConfigParser.getEntries().size());
@@ -336,6 +340,35 @@ public class MuleConfigParserTest {
     assertEquals("leagues.raml", leaguesConfig.getRaml());
   }
   */
+  @Test
+  public void testSeparateConfigsOrders() throws IOException {
+    final URL api =
+        MuleConfigParser.class.getClassLoader().getResource("separate-config/simple.xml");
+    final URL config =
+        MuleConfigParser.class.getClassLoader().getResource("separate-config/global.xml");
+
+    LinkedHashMap<File, InputStream> streams = new LinkedHashMap<>();
+    streams.put(new File(api.getFile()), api.openStream());
+    streams.put(new File(config.getFile()), config.openStream());
+
+
+    Log log = mock(Log.class);
+
+    HashSet<String> ramlPaths = new HashSet<>();
+    ramlPaths.add("separate-config/simple.raml");
+
+    MuleConfigParser muleConfigParser = new MuleConfigParser(log, new APIFactory());
+
+    muleConfigParser.parse(ramlPaths, streams);
+
+    LinkedHashMap<File, InputStream> streamsReverse = new LinkedHashMap<>();
+    streamsReverse.put(new File(config.getFile()), config.openStream());
+    streamsReverse.put(new File(api.getFile()), api.openStream());
+
+    muleConfigParser.parse(ramlPaths, streamsReverse);
+  }
+
+
   private Document getDocument(InputStream xmlWithFlows) throws JDOMException, IOException {
     SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
     Document document = saxBuilder.build(xmlWithFlows);
