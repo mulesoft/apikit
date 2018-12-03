@@ -3,7 +3,7 @@
     <http:listener-config name="test-validation-xml-SwaggerYaml-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="test-validation-xml-SwaggerYaml-config" raml="test-validation-xml-SwaggerYaml.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="test-validation-xml-SwaggerYaml-config" api="test-validation-xml-SwaggerYaml.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="test-validation-xml-SwaggerYaml-main">
         <http:listener config-ref="test-validation-xml-SwaggerYaml-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">

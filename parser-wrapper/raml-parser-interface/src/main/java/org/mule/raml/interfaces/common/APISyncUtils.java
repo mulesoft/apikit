@@ -31,7 +31,7 @@ public class APISyncUtils {
     return path.startsWith(EXCHANGE_MODULES) || path.startsWith("/" + EXCHANGE_MODULES);
   }
 
-  public static String getMainRaml(String exchangeJson) {
+  public static String getMainApi(String exchangeJson) {
     exchangeJson = exchangeJson.substring(exchangeJson.indexOf(EXCHANGE_ROOT_RAML_TAG) + EXCHANGE_ROOT_RAML_TAG.length());
     exchangeJson = exchangeJson.substring(0, exchangeJson.indexOf("\""));
     return exchangeJson;

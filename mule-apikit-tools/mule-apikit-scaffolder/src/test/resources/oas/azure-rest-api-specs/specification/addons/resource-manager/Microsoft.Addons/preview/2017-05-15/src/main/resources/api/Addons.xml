@@ -3,7 +3,7 @@
     <http:listener-config name="Addons-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="Addons-config" raml="Addons.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="Addons-config" api="Addons.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="Addons-main">
         <http:listener config-ref="Addons-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
