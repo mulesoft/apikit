@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 
+import java.util.List;
+
 public class InterfaceV10TestCase {
 
   @Test
@@ -28,5 +30,13 @@ public class InterfaceV10TestCase {
     assertThat(raml.getSchemas().get(0).get("User"),
                is("{\"$ref\":\"#/definitions/User\",\"definitions\":{\"User\":{\"type\":\"object\",\"properties\":{\"firstname\":{\"type\":\"string\"},\"lastname\":{\"type\":\"string\"},\"age\":{\"type\":\"number\"}},\"required\":[\"firstname\",\"lastname\",\"age\"]}},\"$schema\":\"http://json-schema.org/draft-04/schema#\"}"));
     assertThat(raml.getSchemas().get(0).get("UserJson"), CoreMatchers.containsString("firstname"));
+  }
+
+  @Test
+  public void references() {
+    ResourceLoader resourceLoader = new DefaultResourceLoader();
+    IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v10/references/input.raml");
+
+    List<String> allReferences = raml.getAllReferences();
   }
 }
