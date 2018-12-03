@@ -361,11 +361,20 @@ public class MuleConfigParserTest {
 
     muleConfigParser.parse(ramlPaths, streams);
 
+    assertEquals(2,muleConfigParser.getEntries().size());
+    assertEquals(1,muleConfigParser.getIncludedApis().size());
+    assertEquals(1,muleConfigParser.getApikitConfigs().size());
+
     LinkedHashMap<File, InputStream> streamsReverse = new LinkedHashMap<>();
     streamsReverse.put(new File(config.getFile()), config.openStream());
     streamsReverse.put(new File(api.getFile()), api.openStream());
 
+    muleConfigParser = new MuleConfigParser(log, new APIFactory());
     muleConfigParser.parse(ramlPaths, streamsReverse);
+
+    assertEquals(2,muleConfigParser.getEntries().size());
+    assertEquals(1,muleConfigParser.getIncludedApis().size());
+    assertEquals(1,muleConfigParser.getApikitConfigs().size());
   }
 
 
