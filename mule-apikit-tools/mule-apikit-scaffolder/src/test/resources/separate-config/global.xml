@@ -13,7 +13,7 @@
         <http:listener-connection host="localhost" port="${serverPort}" />
     </http:listener-config>
 
-    <apikit:config raml="simple-console.raml" name="simpleV10-config"
+    <apikit:config raml="simple.raml" name="simpleV10-config"
                    outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
 
 </mule>

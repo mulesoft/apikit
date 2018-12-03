@@ -23,20 +23,11 @@
         <apikit:router config-ref="simpleV10-config" />
     </flow>
 
-    <flow name="get:\">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:set-payload><![CDATA[%output application/java
-             ---
-             Root!]]></ee:set-payload>
-        </ee:transform>
+    <flow name="get:\:simpleV10-config">
+        <logger level="INFO" message="get:\:simple-config" />
     </flow>
-
-    <flow name="get:\pet">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:set-payload><![CDATA[%output application/java
-             ---
-             Hello world!]]></ee:set-payload>
-        </ee:transform>
+    <flow name="post:\pet:simpleV10-config">
+        <logger level="INFO" message="post:\pet:simple-config" />
     </flow>
 
 </mule>
