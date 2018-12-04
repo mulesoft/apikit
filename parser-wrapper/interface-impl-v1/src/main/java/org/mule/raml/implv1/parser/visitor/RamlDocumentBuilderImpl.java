@@ -9,7 +9,10 @@ package org.mule.raml.implv1.parser.visitor;
 import org.mule.raml.implv1.model.RamlImplV1;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
-import org.raml.parser.loader.*;
+import org.raml.parser.loader.ClassPathResourceLoader;
+import org.raml.parser.loader.CompositeResourceLoader;
+import org.raml.parser.loader.FileResourceLoader;
+import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 
 import static org.mule.raml.implv1.ParserWrapperV1.DEFAULT_RESOURCE_LOADER;
