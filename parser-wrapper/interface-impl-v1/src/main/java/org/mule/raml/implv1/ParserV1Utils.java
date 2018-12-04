@@ -13,11 +13,20 @@ import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
 import org.mule.raml.interfaces.parser.visitor.IRamlValidationService;
 import org.raml.parser.loader.ResourceLoader;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.error.MarkedYAMLException;
+import org.yaml.snakeyaml.nodes.*;
 
+import java.io.File;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ParserV1Utils {
+
+  private static final Yaml YAML_PARSER = new Yaml();
+  private static final String INCLUDE_KEYWORD = "!include";
 
   public static List<String> validate(ResourceLoader resourceLoader, String rootFileName, String resourceContent) {
     return validate(null, resourceLoader, rootFileName, resourceContent);
@@ -68,4 +77,47 @@ public class ParserV1Utils {
     return ramlDocumentBuilder;
   }
 
+  public static List<String> detectIncludes(String rootFilePath, String fileContent) {
+    try {
+      final Node rootNode = YAML_PARSER.compose(new StringReader(fileContent));
+      if (rootNode == null) {
+        return Collections.emptyList();
+      } else {
+        return includedFilesIn(rootFilePath, rootNode);
+      }
+    } catch (final MarkedYAMLException e) {
+      return Collections.emptyList();
+    }
+  }
+
+  private static List<String> includedFilesIn(final String rootFilePath, final Node rootNode) {
+    final List<String> includedFiles = new ArrayList<>();
+    if (rootNode.getNodeId() == NodeId.scalar) {
+      final ScalarNode includedNode = (ScalarNode) rootNode;
+      final Tag nodeTag = includedNode.getTag();
+      if (nodeTag != null && nodeTag.toString().equals(INCLUDE_KEYWORD)) {
+        final String includedNodeValue = includedNode.getValue();
+        final String includeAbsolutePath = rootFilePath + File.separator + includedNodeValue;
+
+        final File includedFile = new File(includeAbsolutePath);
+        if (includedFile.isFile() && includedFile.exists() && includedFile.canRead()) {
+          includedFiles.add(includedFile.getAbsolutePath());
+        }
+      }
+    } else if (rootNode.getNodeId() == NodeId.mapping) {
+      final MappingNode mappingNode = (MappingNode) rootNode;
+      final List<NodeTuple> children = mappingNode.getValue();
+      for (final NodeTuple childNode : children) {
+        final Node valueNode = childNode.getValueNode();
+        includedFiles.addAll(includedFilesIn(rootFilePath, valueNode));
+      }
+    } else if (rootNode.getNodeId() == NodeId.sequence) {
+      final SequenceNode sequenceNode = (SequenceNode) rootNode;
+      final List<Node> children = sequenceNode.getValue();
+      for (final Node childNode : children) {
+        includedFiles.addAll(includedFilesIn(rootFilePath, childNode));
+      }
+    }
+    return includedFiles;
+  }
 }

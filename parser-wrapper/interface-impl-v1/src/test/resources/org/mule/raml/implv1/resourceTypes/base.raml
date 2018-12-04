@@ -1,0 +1,30 @@
+get?:
+  responses: 
+    200: 
+      body: 
+        application/atom+xml:
+          schema: atom 
+post?:
+  responses: 
+    200?: 
+      body: 
+        application/atom+xml:
+          schema: atom
+    201?: 
+      body: 
+        application/atom+xml:
+          schema: atom
+put?: 
+  responses: 
+    200: 
+      body: 
+        application/atom+xml:
+          schema: atom
+    412:
+delete?: 
+  responses: 
+    412: 
+
+usage: |
+  All resources are versioned
+is: [ versioned ]

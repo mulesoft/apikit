@@ -6,30 +6,42 @@
  */
 package org.mule.raml.implv1.model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.apache.commons.io.IOUtils;
+import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
 import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.raml.model.Raml;
+import org.raml.model.Resource;
 import org.raml.model.SecurityScheme;
 import org.raml.model.Template;
 import org.raml.model.parameter.UriParameter;
-import org.raml.model.Raml;
-import org.raml.model.Resource;
+import org.raml.parser.loader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.*;
+
+import static java.util.Collections.emptyList;
 import static java.util.Collections.emptyMap;
 
 public class RamlImplV1 implements IRaml {
 
   private Raml raml;
+  private ResourceLoader resourceLoader;
+  private String ramlPath;
+  private Logger logger;
+
+  public RamlImplV1(Raml raml, ResourceLoader resourceLoader, String ramlPath) {
+    this.raml = raml;
+    this.resourceLoader = resourceLoader;
+    this.ramlPath = ramlPath;
+    this.logger = LoggerFactory.getLogger(RamlImplV1.class);
+  }
 
   public RamlImplV1(Raml raml) {
     this.raml = raml;
@@ -142,7 +154,15 @@ public class RamlImplV1 implements IRaml {
 
   @Override
   public List<String> getAllReferences() {
-    return Collections.emptyList();
+    try {
+      String content = IOUtils.toString(resourceLoader.fetchResource(ramlPath));
+      String rootFilePath = ramlPath.substring(ramlPath.indexOf("/"), ramlPath.lastIndexOf("/"));
+
+      return ParserV1Utils.detectIncludes(rootFilePath, content);
+    } catch (IOException e) {
+      logger.error(e.getMessage());
+    }
+    return emptyList();
   }
 
   public void injectTrait(String name) {
