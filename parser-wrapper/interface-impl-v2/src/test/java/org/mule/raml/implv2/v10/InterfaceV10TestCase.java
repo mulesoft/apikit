@@ -35,7 +35,7 @@ public class InterfaceV10TestCase {
   @Test
   public void references() {
     ResourceLoader resourceLoader = new DefaultResourceLoader();
-    IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v10/references/input.raml");
+    IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v10/references/api.raml");
 
     List<String> allReferences = raml.getAllReferences();
     Assert.assertEquals(4, raml.getAllReferences().size());
