@@ -9,10 +9,7 @@ package org.mule.raml.implv1.parser.visitor;
 import org.mule.raml.implv1.model.RamlImplV1;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
-import org.raml.parser.loader.ClassPathResourceLoader;
-import org.raml.parser.loader.CompositeResourceLoader;
-import org.raml.parser.loader.FileResourceLoader;
-import org.raml.parser.loader.ResourceLoader;
+import org.raml.parser.loader.*;
 import org.raml.parser.visitor.RamlDocumentBuilder;
 
 public class RamlDocumentBuilderImpl implements IRamlDocumentBuilder {
@@ -28,11 +25,11 @@ public class RamlDocumentBuilderImpl implements IRamlDocumentBuilder {
   }
 
   public IRaml build(String content, String resourceLocation) {
-    return new RamlImplV1(ramlDocumentBuilder.build(content, resourceLocation));
+    return new RamlImplV1(ramlDocumentBuilder.build(content, resourceLocation), new DefaultResourceLoader(), resourceLocation);
   }
 
   public IRaml build(String resourceLocation) {
-    return new RamlImplV1(ramlDocumentBuilder.build(resourceLocation));
+    return new RamlImplV1(ramlDocumentBuilder.build(resourceLocation), new DefaultResourceLoader(), resourceLocation);
   }
 
   public IRamlDocumentBuilder addPathLookupFirst(String path) {

@@ -10,10 +10,6 @@ import org.mule.raml.implv2.parser.rule.ValidationResultImpl;
 import org.mule.raml.implv2.v08.model.RamlImpl08V2;
 import org.mule.raml.implv2.v10.model.RamlImpl10V2;
 import org.mule.raml.interfaces.model.IRaml;
-
-import java.io.File;
-import java.util.*;
-
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.raml.v2.api.RamlModelBuilder;
 import org.raml.v2.api.RamlModelResult;
@@ -25,7 +21,10 @@ import org.raml.v2.internal.impl.v10.nodes.LibraryLinkNode;
 import org.raml.yagi.framework.nodes.Node;
 import org.raml.yagi.framework.nodes.snakeyaml.SYIncludeNode;
 
-import static java.util.Collections.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class ParserV2Utils {
 
@@ -42,7 +41,7 @@ public class ParserV2Utils {
     return wrapApiModel(ramlModelResult, resourceLoader, ramlPath);
   }
 
-  private static IRaml wrapApiModel(RamlModelResult ramlModelResult, ResourceLoader resourceLoader,String ramlPath) {
+  private static IRaml wrapApiModel(RamlModelResult ramlModelResult, ResourceLoader resourceLoader, String ramlPath) {
     if (ramlModelResult.hasErrors()) {
       throw new RuntimeException("Invalid RAML descriptor.");
     }
@@ -89,7 +88,8 @@ public class ParserV2Utils {
     return includePaths;
   }
 
-  private static void findIncludeNodes(final String pathRelativeToRoot, final List<String> includePaths, final List<Node> currents, String ramlPath) {
+  private static void findIncludeNodes(final String pathRelativeToRoot, final List<String> includePaths,
+                                       final List<Node> currents, String ramlPath) {
     final String rootPath = new File(ramlPath).getParent();
 
     for (final Node current : currents) {
@@ -144,9 +144,9 @@ public class ParserV2Utils {
   private static String computeIncludePath(final String rootPath, final String pathRelativeToRoot, final String includePath) {
     // according to RAML 1.0 spec: https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md
     String resolvedPath = isAbsolute(includePath) //
-            ? rootPath + includePath
-            // relative path: A path that neither begins with a single slash ("/") nor constitutes a URL, and is interpreted relative to the location of the included file.
-            : rootPath + (pathRelativeToRoot.isEmpty() ? "" : File.separator + pathRelativeToRoot) + File.separator + includePath;
+        ? rootPath + includePath
+        // relative path: A path that neither begins with a single slash ("/") nor constitutes a URL, and is interpreted relative to the location of the included file.
+        : rootPath + (pathRelativeToRoot.isEmpty() ? "" : File.separator + pathRelativeToRoot) + File.separator + includePath;
 
     // uses File class to normalize the resolved path acording with the OS (every slash in the path must be in the same direction)
     return new File(resolvedPath).getPath();

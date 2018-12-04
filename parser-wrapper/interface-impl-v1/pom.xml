@@ -55,6 +55,13 @@
             <artifactId>mule-apikit-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- test dependencies -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

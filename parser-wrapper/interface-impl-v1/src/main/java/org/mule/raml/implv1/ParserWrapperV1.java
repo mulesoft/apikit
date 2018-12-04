@@ -116,7 +116,7 @@ public class ParserWrapperV1 implements ParserWrapper {
   public IRaml build() {
     RamlDocumentBuilder builder = new RamlDocumentBuilder(resourceLoader);
     Raml api = builder.build(ramlPath);
-    return new RamlImplV1(api);
+    return new RamlImplV1(api, resourceLoader, ramlPath);
   }
 
   @Override

@@ -6,18 +6,18 @@
  */
 package org.mule.raml.implv2.v10;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-
 import org.hamcrest.CoreMatchers;
+import org.junit.Assert;
+import org.junit.Test;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
-
-import org.junit.Test;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 
 import java.util.List;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class InterfaceV10TestCase {
 
@@ -38,5 +38,6 @@ public class InterfaceV10TestCase {
     IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v10/references/input.raml");
 
     List<String> allReferences = raml.getAllReferences();
+    Assert.assertEquals(4, raml.getAllReferences().size());
   }
 }
