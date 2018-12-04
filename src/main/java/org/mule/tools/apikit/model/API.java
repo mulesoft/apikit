@@ -24,20 +24,20 @@ public class API {
 
   private String baseUri;
   private File xmlFile;
-  private String ramlFilPath;
+  private String apiFilPath;
   private String id;
 
-  public API(String id, String ramlFilePath, File xmlFile, String baseUri, String path) {
+  public API(String id, String apiFilePath, File xmlFile, String baseUri, String path) {
     this.path = path;
-    this.ramlFilPath = ramlFilePath;
+    this.apiFilPath = apiFilePath;
     this.xmlFile = xmlFile;
     this.baseUri = baseUri;
     this.id = id;
   }
 
 
-  public API(String id, String ramlFileName, File xmlFile, String baseUri, String path, APIKitConfig config) {
-    this(id, ramlFileName, xmlFile, baseUri, path);
+  public API(String id, String apiFileName, File xmlFile, String baseUri, String path, APIKitConfig config) {
+    this(id, apiFileName, xmlFile, baseUri, path);
     this.config = config;
   }
 
@@ -57,8 +57,8 @@ public class API {
     return xmlFile;
   }
 
-  public String getRamlFilePath() {
-    return ramlFilPath;
+  public String getApiFilePath() {
+    return apiFilPath;
   }
 
   public String getPath() {
@@ -87,7 +87,7 @@ public class API {
 
   public void setDefaultAPIKitConfig() {
     config = new APIKitConfig();
-    config.setRaml(ramlFilPath);
+    config.setApi(apiFilPath);
     config.setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME);
   }
 
@@ -114,7 +114,7 @@ public class API {
 
     API api = (API) o;
 
-    if (!ramlFilPath.equals(api.ramlFilPath) || !id.equals(api.id))
+    if (!apiFilPath.equals(api.apiFilPath) || !id.equals(api.id))
       return false;
 
     return true;
@@ -122,7 +122,7 @@ public class API {
 
   @Override
   public int hashCode() {
-    return ramlFilPath.hashCode();
+    return apiFilPath.hashCode();
   }
 
   public String getId() {

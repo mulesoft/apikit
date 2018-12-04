@@ -98,7 +98,7 @@ public class ScaffolderAPI {
                                    File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
     Scaffolder scaffolder;
     try {
-      Map<String, InputStream> ramlSpecs = getRamlSpecs(dependencyList, scaffolderResourceLoader);
+      Map<String, InputStream> apiSpecs = getApiSpecs(dependencyList, scaffolderResourceLoader);
       List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
       SystemStreamLog log = new SystemStreamLog();
       String domain = null;
@@ -111,7 +111,7 @@ public class ScaffolderAPI {
           }
         }
       }
-      scaffolder = Scaffolder.createScaffolder(log, appDir, ramlSpecs, scaffolderResourceLoader, muleXmlFiles, domain,
+      scaffolder = Scaffolder.createScaffolder(log, appDir, apiSpecs, scaffolderResourceLoader, muleXmlFiles, domain,
                                                minMuleVersion, runtimeEdition);
     } catch (Exception e) {
       throw new RuntimeException("Error executing scaffolder", e);
@@ -121,23 +121,23 @@ public class ScaffolderAPI {
   }
 
 
-  private Map<String, InputStream> getRamlSpecs(List<Dependency> dependencyList,
-                                                ScaffolderResourceLoader scaffolderResourceLoader)
+  private Map<String, InputStream> getApiSpecs(List<Dependency> dependencyList,
+                                               ScaffolderResourceLoader scaffolderResourceLoader)
       throws IOException {
-    Map<String, InputStream> ramlSpecs = new HashMap<>();
+    Map<String, InputStream> apiSpecs = new HashMap<>();
 
     for (Dependency dependency : dependencyList) {
       String dependencyResourceFormat = format(RESOURCE_FORMAT, dependency.getGroupId(), dependency.getArtifactId(),
                                                dependency.getVersion(), dependency.getClassifier(), dependency.getType(), "%s");
       InputStream exchangeJson =
           scaffolderResourceLoader.getResource(format(dependencyResourceFormat, EXCHANGE_JSON)).toURL().openStream();
-      String rootRAMLFileName = APISyncUtils.getMainRaml(IOUtils.toString(exchangeJson));
-      String rootRAMLResource = format(dependencyResourceFormat, rootRAMLFileName);
-      InputStream rootRAML = scaffolderResourceLoader.getResource(rootRAMLResource).toURL().openStream();
-      ramlSpecs.put(rootRAMLResource, rootRAML);
+      String rootApiFileName = APISyncUtils.getMainApi(IOUtils.toString(exchangeJson));
+      String rootApiResource = format(dependencyResourceFormat, rootApiFileName);
+      InputStream rootApi = scaffolderResourceLoader.getResource(rootApiResource).toURL().openStream();
+      apiSpecs.put(rootApiResource, rootApi);
     }
 
-    return ramlSpecs;
+    return apiSpecs;
   }
 
   private ScaffolderReport execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion,

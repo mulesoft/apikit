@@ -101,7 +101,7 @@ public class MuleConfigGenerator {
       try {
         doc = getOrCreateDocument(docs, api);
       } catch (Exception e) {
-        log.error("Error generating xml for file: [" + api.getRamlFilePath() + "]", e);
+        log.error("Error generating xml for file: [" + api.getApiFilePath() + "]", e);
         continue;
       }
 
@@ -153,7 +153,7 @@ public class MuleConfigGenerator {
         if (api.getConfig() == null) {
           api.setDefaultAPIKitConfig();
         }
-        if (ramlsWithExtensionEnabledContains(api.getRamlFilePath())) {
+        if (ramlsWithExtensionEnabledContains(api.getApiFilePath())) {
           api.getConfig().setExtensionEnabled(true);
         }
         generateAPIKitAndListenerConfig(api, doc);

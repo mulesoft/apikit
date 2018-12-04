@@ -3,7 +3,7 @@
     <http:listener-config name="ADHybridHealthService-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="ADHybridHealthService-config" raml="ADHybridHealthService.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="ADHybridHealthService-config" api="ADHybridHealthService.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="ADHybridHealthService-main">
         <http:listener config-ref="ADHybridHealthService-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">

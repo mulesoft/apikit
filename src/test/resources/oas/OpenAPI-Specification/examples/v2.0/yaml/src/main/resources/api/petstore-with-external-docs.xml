@@ -3,7 +3,7 @@
     <http:listener-config name="petstore-with-external-docs-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="petstore-with-external-docs-config" raml="petstore-with-external-docs.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="petstore-with-external-docs-config" api="petstore-with-external-docs.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="petstore-with-external-docs-main">
         <http:listener config-ref="petstore-with-external-docs-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">

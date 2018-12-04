@@ -3,7 +3,7 @@
     <http:listener-config name="uber-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="uber-config" raml="uber.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="uber-config" api="uber.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="uber-main">
         <http:listener config-ref="uber-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
