@@ -168,6 +168,10 @@ public class ParserWrapperAmf implements ParserWrapper {
     return ParserType.AMF;
   }
 
+  public WebApi getWebApi() {
+    return webApi;
+  }
+
   @Override
   public void validate() {
 
