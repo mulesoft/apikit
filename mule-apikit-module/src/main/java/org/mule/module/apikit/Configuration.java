@@ -46,7 +46,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private String name;
   private String raml;
   private String api;
-  private Boolean keepApiBaseUri;
+  private boolean keepApiBaseUri;
   private boolean keepRamlBaseUri;
   private String outboundHeadersMapName;
   private String httpStatusVarName;
@@ -166,17 +166,16 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     this.headersStrictValidation = headersStrictValidation;
   }
 
+  @Deprecated
   public boolean isKeepRamlBaseUri() {
     return keepRamlBaseUri;
   }
 
   public boolean isKeepApiBaseUri() {
-    if (keepApiBaseUri != null)
-      return keepApiBaseUri;
-    else
-      return isKeepRamlBaseUri();
+    return keepApiBaseUri || isKeepRamlBaseUri();
   }
 
+  @Deprecated
   public void setKeepRamlBaseUri(boolean keepRamlBaseUri) {
     this.keepRamlBaseUri = keepRamlBaseUri;
   }

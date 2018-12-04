@@ -73,7 +73,7 @@ public class ConsoleWithKABUWithBaseUriTestCase extends AbstractMultiParserFunct
         .response()
         .statusCode(200)
         .body(containsString("/types-test:"))
-        .body(containsString("baseUri: http://localhost:" + portNumber + "/api-2/"))
+        .body(containsString("baseUri: http://www.google.com"))
         .when().get("consoleWithRouter-2/org/mule/module/apikit/console/?raml");
   }
 }
