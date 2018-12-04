@@ -22,6 +22,6 @@ public class InterfaceV08TestCase {
     IRaml raml = new ParserWrapperV1(path).build();
 
     List<String> allReferences = raml.getAllReferences();
-    Assert.assertEquals(25, allReferences.size());
+    Assert.assertEquals(8, allReferences.size());
   }
 }

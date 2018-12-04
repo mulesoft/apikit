@@ -20,6 +20,8 @@ import org.raml.model.SecurityScheme;
 import org.raml.model.Template;
 import org.raml.model.parameter.UriParameter;
 import org.raml.parser.loader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -32,11 +34,13 @@ public class RamlImplV1 implements IRaml {
   private Raml raml;
   private ResourceLoader resourceLoader;
   private String ramlPath;
+  private Logger logger;
 
   public RamlImplV1(Raml raml, ResourceLoader resourceLoader, String ramlPath) {
     this.raml = raml;
     this.resourceLoader = resourceLoader;
     this.ramlPath = ramlPath;
+    this.logger = LoggerFactory.getLogger(RamlImplV1.class);
   }
 
   public RamlImplV1(Raml raml) {
@@ -156,7 +160,7 @@ public class RamlImplV1 implements IRaml {
 
       return ParserV1Utils.detectIncludes(rootFilePath, content);
     } catch (IOException e) {
-      e.printStackTrace();
+      logger.error(e.getMessage());
     }
     return emptyList();
   }
