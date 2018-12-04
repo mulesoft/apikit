@@ -11,6 +11,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.matchers.JUnitMatchers.hasItems;
 
+import org.mule.module.launcher.application.Application;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.infrastructure.deployment.AbstractFakeMuleServerTestCase;
 
@@ -47,6 +48,32 @@ public class ProxyTestCase extends AbstractFakeMuleServerTestCase
         muleServer.start();
         muleServer.deployAppFromClasspathFolder(getProxyAppFolder(), "proxy");
         muleServer.assertDeploymentSuccess("proxy");
+        getOnLeaguesJson();
+        getOnLeagueJson();
+        notAcceptable();
+        notFound();
+        methodNotAllowed();
+        getWithRequiredQueryParam();
+    }
+
+    @Test
+    public void proxyStartStop() throws Exception
+    {
+        muleServer.deployAppFromClasspathFolder("org/mule/module/apikit/proxy/proxied-app", "proxied");
+        muleServer.start();
+        muleServer.deployAppFromClasspathFolder(getProxyAppFolder(), "proxy");
+        muleServer.assertDeploymentSuccess("proxy");
+        getOnLeaguesJson();
+        getOnLeagueJson();
+        notAcceptable();
+        notFound();
+        methodNotAllowed();
+        getWithRequiredQueryParam();
+
+        Application application = muleServer.findApplication("proxied");
+        application.stop();
+        application.start();
+
         getOnLeaguesJson();
         getOnLeagueJson();
         notAcceptable();
