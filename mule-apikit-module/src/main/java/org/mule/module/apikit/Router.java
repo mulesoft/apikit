@@ -81,7 +81,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
     if (!url.isPresent()) {
       LOGGER
-          .error("There was an error retrieving api source. Console will work only if the keepRamlBaseUri property is set to true.");
+          .error("There was an error retrieving api source. Console will work only if the keepApiBaseUri property is set to true.");
       return;
     }
     final String configurationName = configuration.getName();

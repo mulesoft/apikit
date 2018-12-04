@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+      http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+      http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+
+    <http:listener-config name="httpListenerConfigDefault">
+    <http:listener-connection host="localhost" port="${serverPort}"/>
+    </http:listener-config>
+
+    <apikit:config name="apikitConfigWithoutRouter" raml="org/mule/module/apikit/console/simple-with-baseuri10.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" keepApiBaseUri="true"/>
+
+    <apikit:config name="apikitConfigWithRouter" raml="org/mule/module/apikit/console/simple-with-baseuri10.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" keepApiBaseUri="false"/>
+
+    <apikit:config name="apikitConfigWithoutRouter2" raml="org/mule/module/apikit/console/simple-with-baseuri10.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" keepApiBaseUri="true" keepRamlBaseUri="false"/>
+
+    <apikit:config name="apikitConfigWithRouter2" raml="org/mule/module/apikit/console/simple-with-baseuri10.raml"
+                   outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" keepApiBaseUri="false" keepRamlBaseUri="true"/>
+
+    <flow name="api-consoleWithoutRouter">
+        <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithoutRouter/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:console config-ref="apikitConfigWithoutRouter" />
+    </flow>
+
+
+    <flow name="api-apiWithRouter">
+        <http:listener config-ref="httpListenerConfigDefault" path="/api/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:router config-ref="apikitConfigWithRouter" />
+    </flow>
+
+    <flow name="api-consoleWithRouter">
+        <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithRouter/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:console config-ref="apikitConfigWithRouter" />
+    </flow>
+
+    <flow name="api-consoleWithoutRouter-2">
+        <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithoutRouter-2/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:console config-ref="apikitConfigWithoutRouter2" />
+    </flow>
+
+
+    <flow name="api-apiWithRouter-2">
+        <http:listener config-ref="httpListenerConfigDefault" path="/api-2/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:router config-ref="apikitConfigWithRouter2" />
+    </flow>
+
+    <flow name="api-consoleWithRouter-2">
+        <http:listener config-ref="httpListenerConfigDefault" path="/consoleWithRouter-2/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+        </http:listener>
+        <apikit:console config-ref="apikitConfigWithRouter2" />
+    </flow>
+
+</mule>

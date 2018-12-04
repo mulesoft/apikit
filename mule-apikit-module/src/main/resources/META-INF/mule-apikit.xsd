@@ -52,6 +52,7 @@
                 <xsd:attribute name="api" type="mule:nonBlankString" use="optional"/>
                 <xsd:attribute name="outboundHeadersMapName" type="mule:nonBlankString" use="required"/>
                 <xsd:attribute name="httpStatusVarName" type="mule:nonBlankString" use="required"/>
+                <xsd:attribute name="keepApiBaseUri" type="mule:substitutableBoolean" use="optional"/>
                 <xsd:attribute name="keepRamlBaseUri" type="mule:substitutableBoolean" default="false" use="optional"/>
                 <xsd:attribute name="disableValidations" type="mule:substitutableBoolean" default="false" use="optional">
                     <xsd:annotation>
