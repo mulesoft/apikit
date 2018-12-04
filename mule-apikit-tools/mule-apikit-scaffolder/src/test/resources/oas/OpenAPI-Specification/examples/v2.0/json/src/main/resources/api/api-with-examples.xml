@@ -3,7 +3,7 @@
     <http:listener-config name="api-with-examples-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="api-with-examples-config" raml="api-with-examples.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="api-with-examples-config" api="api-with-examples.json" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="api-with-examples-main">
         <http:listener config-ref="api-with-examples-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">

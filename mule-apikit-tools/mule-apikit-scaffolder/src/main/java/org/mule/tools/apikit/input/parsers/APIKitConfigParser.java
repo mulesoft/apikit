@@ -31,16 +31,20 @@ public class APIKitConfigParser implements MuleConfigFileParser {
     List<Element> elements = xp.evaluate(document);
     for (Element element : elements) {
       Attribute name = element.getAttribute(APIKitConfig.NAME_ATTRIBUTE);
+      Attribute api = element.getAttribute(APIKitConfig.API_ATTRIBUTE);
       Attribute raml = element.getAttribute(APIKitConfig.RAML_ATTRIBUTE);
       Attribute extensionEnabled = element.getAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE);
       Attribute outboundHeadersMapName = element.getAttribute(APIKitConfig.OUTBOUND_HEADERS_MAP_ATTRIBUTE);
       Attribute httpStatusVarName = element.getAttribute(APIKitConfig.HTTP_STATUS_VAR_ATTRIBUTE);
 
-      if (raml == null) {
-        throw new IllegalArgumentException(APIKitConfig.RAML_ATTRIBUTE + " attribute is required");
+      final APIKitConfig apiKitConfig = new APIKitConfig();
+      if (api != null) {
+        apiKitConfig.setApi(api.getValue());
+      } else if (raml != null) {
+        apiKitConfig.setRaml(raml.getValue());
+      } else {
+        throw new IllegalArgumentException(APIKitConfig.API_ATTRIBUTE + " attribute is required");
       }
-      APIKitConfig apiKitConfig = new APIKitConfig();
-      apiKitConfig.setRaml(raml.getValue());
       if (name != null) {
         apiKitConfig.setName(name.getValue());
       }

@@ -38,16 +38,16 @@ public class APIFactory {
 
   public APIFactory() {}
 
-  public API createAPIBindingInboundEndpoint(String ramlFileName, File xmlFile, String baseUri, String path,
+  public API createAPIBindingInboundEndpoint(String apiFileName, File xmlFile, String baseUri, String path,
                                              APIKitConfig config) {
-    return createAPIBinding(ramlFileName, xmlFile, baseUri, path, config, null);
+    return createAPIBinding(apiFileName, xmlFile, baseUri, path, config, null);
   }
 
-  public API createAPIBinding(String ramlFilePath, File xmlFile, String baseUri, String path, APIKitConfig config,
+  public API createAPIBinding(String apiFilePath, File xmlFile, String baseUri, String path, APIKitConfig config,
                               HttpListener4xConfig httpListenerConfig) {
 
-    Validate.notNull(ramlFilePath);
-    final String relativePath = getRelativePath(ramlFilePath);
+    Validate.notNull(apiFilePath);
+    final String relativePath = getRelativePath(apiFilePath);
     if (apis.containsKey(relativePath)) {
       API api = apis.get(relativePath);
       if (api.getXmlFile() == null && xmlFile != null) {

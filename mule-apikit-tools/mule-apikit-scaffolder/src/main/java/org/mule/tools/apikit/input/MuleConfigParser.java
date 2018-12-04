@@ -45,19 +45,19 @@ public class MuleConfigParser {
     this.log = log;
   }
 
-  public MuleConfigParser parse(Set<String> ramlFilePaths, Map<File, InputStream> streams) {
+  public MuleConfigParser parse(Set<String> apiFilePaths, Map<File, InputStream> streams) {
     Map<File, Document> configurations = createDocuments(streams);
 
     for (Entry<File, Document> fileStreamEntry : configurations.entrySet()) {
       Document document = fileStreamEntry.getValue();
       File file = fileStreamEntry.getKey();
-      parseConfigs(file, document, ramlFilePaths);
+      parseConfigs(file, document, apiFilePaths);
     }
 
     for (Entry<File, Document> fileStreamEntry : configurations.entrySet()) {
       Document document = fileStreamEntry.getValue();
       File file = fileStreamEntry.getKey();
-      parseApis(file, document, ramlFilePaths);
+      parseApis(file, document, apiFilePaths);
     }
 
     parseFlows(configurations.values());
@@ -82,14 +82,14 @@ public class MuleConfigParser {
     return result;
   }
 
-  protected void parseConfigs(File file, Document document, Set<String> ramlFilePaths) {
+  protected void parseConfigs(File file, Document document, Set<String> apiFilePaths) {
     apikitConfigs.putAll(new APIKitConfigParser().parse(document));
     httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
   }
 
-  protected void parseApis(File file, Document document, Set<String> ramlFilePaths) {
+  protected void parseApis(File file, Document document, Set<String> apiFilePaths) {
     includedApis
-        .putAll(new APIKitRoutersParser(apikitConfigs, httpListenerConfigs, ramlFilePaths, file, apiFactory).parse(document));
+        .putAll(new APIKitRoutersParser(apikitConfigs, httpListenerConfigs, apiFilePaths, file, apiFactory).parse(document));
   }
 
   protected void parseFlows(Collection<Document> documents) {

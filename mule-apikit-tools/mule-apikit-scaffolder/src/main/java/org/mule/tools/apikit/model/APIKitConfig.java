@@ -10,6 +10,7 @@ public class APIKitConfig {
 
   public static final String ELEMENT_NAME = "config";
   public static final String NAME_ATTRIBUTE = "name";
+  public static final String API_ATTRIBUTE = "api";
   public static final String RAML_ATTRIBUTE = "raml";
   public static final String EXTENSION_ENABLED_ATTRIBUTE = "extensionEnabled";
   public static final String DEFAULT_CONFIG_NAME = "config";
@@ -19,18 +20,19 @@ public class APIKitConfig {
   public static final String DEFAULT_HTTP_STATUS_NAME = "httpStatus";
 
   private String name;
+  private String api;
   private String raml;
   private Boolean extensionEnabled = null;
   private String outboundHeadersMapName = DEFAULT_OUTBOUND_HEADERS_MAP_NAME;
   private String httpStatusVarName = DEFAULT_HTTP_STATUS_NAME;
 
   public APIKitConfig(final String name,
-                      final String raml,
+                      final String api,
                       final Boolean extensionEnabled,
                       final String outboundHeadersMapName,
                       final String httpStatusVarName) {
     this.name = name;
-    this.raml = raml;
+    this.api = api;
     this.extensionEnabled = extensionEnabled;
     this.outboundHeadersMapName = outboundHeadersMapName;
     this.httpStatusVarName = httpStatusVarName;
@@ -40,6 +42,10 @@ public class APIKitConfig {
 
   public String getName() {
     return name;
+  }
+
+  public String getApi() {
+    return api;
   }
 
   public String getRaml() {
@@ -80,6 +86,10 @@ public class APIKitConfig {
 
   public String getHttpStatusVarName() {
     return httpStatusVarName;
+  }
+
+  public void setApi(String api) {
+    this.api = api;
   }
 
   public void setRaml(String raml) {

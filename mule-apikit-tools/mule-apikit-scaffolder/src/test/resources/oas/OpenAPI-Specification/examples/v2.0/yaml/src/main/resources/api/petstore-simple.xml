@@ -3,7 +3,7 @@
     <http:listener-config name="petstore-simple-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="petstore-simple-config" raml="petstore-simple.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="petstore-simple-config" api="petstore-simple.yaml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="petstore-simple-main">
         <http:listener config-ref="petstore-simple-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">

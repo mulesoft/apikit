@@ -57,7 +57,7 @@ public class MuleConfigParserTest {
     assertNotNull(apis);
     assertEquals(1, apis.size());
     API api = apis.iterator().next();
-    assertEquals("leagues.raml", api.getRamlFilePath());
+    assertEquals("leagues.raml", api.getApiFilePath());
     assertEquals("leagues", api.getId());
     assertNotNull(api.getHttpListenerConfig());
     assertEquals("/", api.getHttpListenerConfig().getBasePath());
@@ -297,7 +297,7 @@ public class MuleConfigParserTest {
     APIKitConfig leaguesConfig = configs.get("leagues-config");
     assertNotNull(leaguesConfig);
     assertEquals("leagues-config", leaguesConfig.getName());
-    assertEquals("leagues.raml", leaguesConfig.getRaml());
+    assertEquals("leagues.raml", leaguesConfig.getApi());
   }
   
   @Test
@@ -337,7 +337,7 @@ public class MuleConfigParserTest {
     APIKitConfig leaguesConfig = configs.get("leagues-config");
     assertNotNull(leaguesConfig);
     assertEquals("leagues-config", leaguesConfig.getName());
-    assertEquals("leagues.raml", leaguesConfig.getRaml());
+    assertEquals("leagues.raml", leaguesConfig.getApi());
   }
   */
   @Test

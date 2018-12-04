@@ -33,7 +33,10 @@ public class APIKitConfigScope implements Scope {
         config.setAttribute(APIKitConfig.NAME_ATTRIBUTE, this.config.getName());
       }
 
-      config.setAttribute(APIKitConfig.RAML_ATTRIBUTE, this.config.getRaml());
+      if (this.config.getApi() != null)
+        config.setAttribute(APIKitConfig.API_ATTRIBUTE, this.config.getApi());
+      if (this.config.getRaml() != null)
+        config.setAttribute(APIKitConfig.RAML_ATTRIBUTE, this.config.getRaml());
       if (this.config.isExtensionEnabled() != null) {
         config.setAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE, String.valueOf(this.config.isExtensionEnabled()));
       }
