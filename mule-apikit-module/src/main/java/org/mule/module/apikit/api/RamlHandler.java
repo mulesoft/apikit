@@ -44,7 +44,7 @@ public class RamlHandler {
   public static final String APPLICATION_RAML = "application/raml+yaml";
   private static final String RAML_QUERY_STRING = "raml";
 
-  private boolean keepRamlBaseUri;
+  private boolean keepApiBaseUri;
   private String apiServer;
   private IRaml api;
   private ParserWrapper parserWrapper;
@@ -60,13 +60,13 @@ public class RamlHandler {
   private MuleContext muleContext;
 
   //ramlLocation should be the root raml location, relative of the resources folder
-  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext) throws IOException {
-    this(ramlLocation, keepRamlBaseUri, muleContext, null);
+  public RamlHandler(String ramlLocation, boolean keepApiBaseUri, MuleContext muleContext) throws IOException {
+    this(ramlLocation, keepApiBaseUri, muleContext, null);
   }
 
-  public RamlHandler(String ramlLocation, boolean keepRamlBaseUri, MuleContext muleContext, ParserType parserType)
+  public RamlHandler(String ramlLocation, boolean keepApiBaseUri, MuleContext muleContext, ParserType parserType)
       throws IOException {
-    this.keepRamlBaseUri = keepRamlBaseUri;
+    this.keepApiBaseUri = keepApiBaseUri;
 
     String rootRamlLocation = findRootRaml(ramlLocation);
     if (rootRamlLocation == null) {
@@ -118,7 +118,7 @@ public class RamlHandler {
   }
 
   public String getRamlV1() {
-    if (keepRamlBaseUri) {
+    if (keepApiBaseUri) {
       return dumpRaml();
     } else {
       String baseUriReplacement = getBaseUriReplacement(apiServer);
@@ -135,7 +135,7 @@ public class RamlHandler {
     if (apiResourcesRelativePath.equals(resourceRelativePath)) {
       //root raml
       String rootRaml = dumpRaml();
-      if (keepRamlBaseUri) {
+      if (keepApiBaseUri) {
         return rootRaml;
       }
       String baseUriReplacement = getBaseUriReplacement(apiServer);
@@ -179,7 +179,7 @@ public class RamlHandler {
   public String getAMFModel() {
     if (parserWrapper instanceof ParserWrapperAmf) {
       ParserWrapperAmf parserWrapperAmf = cast(parserWrapper);
-      if (!keepRamlBaseUri) {
+      if (!keepApiBaseUri) {
         String baseUriReplacement = getBaseUriReplacement(apiServer);
         parserWrapperAmf.updateBaseUri(api, baseUriReplacement);
       }

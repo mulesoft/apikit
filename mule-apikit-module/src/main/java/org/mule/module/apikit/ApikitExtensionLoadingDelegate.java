@@ -88,6 +88,7 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
     parameterGroupDeclarer.withOptionalParameter("api").ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withRequiredParameter("outboundHeadersMapName").ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withRequiredParameter("httpStatusVarName").ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer.withOptionalParameter("keepApiBaseUri").defaultingTo(false).ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("keepRamlBaseUri").defaultingTo(false).ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("disableValidations").defaultingTo(false).ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("queryParamsStrictValidation").defaultingTo(false)

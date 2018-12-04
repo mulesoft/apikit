@@ -46,6 +46,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private String name;
   private String raml;
   private String api;
+  private boolean keepApiBaseUri;
   private boolean keepRamlBaseUri;
   private String outboundHeadersMapName;
   private String httpStatusVarName;
@@ -87,7 +88,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   public void initialise() throws InitialisationException {
     isExtensionEnabled = hasExtension();
     try {
-      ramlHandler = new RamlHandler(getApi(), keepRamlBaseUri, muleContext, getParser());
+      ramlHandler = new RamlHandler(getApi(), isKeepApiBaseUri(), muleContext, getParser());
 
       // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
       // we will keep the value defined during raml handler instantiation
@@ -165,12 +166,22 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     this.headersStrictValidation = headersStrictValidation;
   }
 
+  @Deprecated
   public boolean isKeepRamlBaseUri() {
     return keepRamlBaseUri;
   }
 
+  public boolean isKeepApiBaseUri() {
+    return keepApiBaseUri || isKeepRamlBaseUri();
+  }
+
+  @Deprecated
   public void setKeepRamlBaseUri(boolean keepRamlBaseUri) {
     this.keepRamlBaseUri = keepRamlBaseUri;
+  }
+
+  public void setKeepApiBaseUri(boolean keepApiBaseUri) {
+    this.keepApiBaseUri = keepApiBaseUri;
   }
 
   public FlowMappings getFlowMappings() {
