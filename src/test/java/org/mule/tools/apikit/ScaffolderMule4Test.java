@@ -392,6 +392,27 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   @Test
+  public void testGenerateWithRecursiveApi() throws Exception {
+    if (!isAmf())
+      return;
+
+    List<File> ramls = singletonList(createTmpFile("scaffolder/api-with-resource-type.raml"));
+
+    File muleXmlOut = createTmpMuleXmlOutFolder();
+
+    Scaffolder scaffolder = createScaffolder(ramls, emptyList(), muleXmlOut, null, null, DEFAULT_MULE_VERSION, EE);
+    scaffolder.run();
+
+    File muleXmlSimple = new File(muleXmlOut, "api-with-resource-type.xml");
+
+    assertTrue(muleXmlSimple.exists());
+    String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+    assertEquals(1, countOccurences(s, "<http:listener-config"));
+    assertEquals(2, countOccurences(s, "post:\\v4\\items:application\\json:api-with-resource-type-config"));
+    assertEquals(1, countOccurences(s, "<apikit:console"));
+  }
+
+  @Test
   public void testGenerateWithAMF() throws Exception {
     if (!isAmf())
       return;
