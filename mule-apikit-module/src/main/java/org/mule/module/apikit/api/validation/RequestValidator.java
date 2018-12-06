@@ -12,7 +12,7 @@ import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
-import org.mule.module.apikit.exception.MethodNotAllowedException;
+import org.mule.module.apikit.api.exception.MethodNotAllowedException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.module.apikit.validation.AttributesValidator;
