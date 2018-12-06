@@ -1,0 +1,63 @@
+#%RAML 1.0
+title: Example API for Automation
+
+types:
+  items:
+    type: |
+      { "$schema" : "http://json-schema.org/draft-03/schema",
+          "id" : "http://jsonschema.net",
+          "type" : "object",
+          "properties" : {
+            "items" : {
+              "id" : "http://jsonschema.net/items",
+              "type" : "array",
+              "items" : {
+                "id" : "http://jsonschema.net/items/0",
+                "properties" : {
+                  "code" : {
+                    "id" : "http://jsonschema.net/items/0/code",
+                    "required" : false,
+                    "type" : "string"
+                  },
+                  "color" : {
+                    "id" : "http://jsonschema.net/items/0/color",
+                    "required" : false,
+                    "type" : "string"
+                  },
+                  "description" : {
+                    "id" : "http://jsonschema.net/items/0/description",
+                    "required" : false,
+                    "type" : "string"
+                  },
+                  "id" : {
+                    "id" : "http://jsonschema.net/items/0/id",
+                    "required" : false,
+                    "type" : "number"
+                  },
+                  "size" : {
+                    "id" : "http://jsonschema.net/items/0/size",
+                    "required" : false,
+                    "type" : "string"
+                  }
+                },
+                "required" : false,
+                "type" : "object"
+              },
+              "required" : false
+            }
+          },
+        "required" : false,
+        "additionalProperties": false
+      }
+
+resourceTypes:
+  collection:
+    usage: This resourceType should be used for any collection of items
+    post?:
+      body: &itemsBody
+        application/json:
+          schema: <<schema>>
+
+/v4/items:
+  type: { collection: { schema: items } }
+  post:
