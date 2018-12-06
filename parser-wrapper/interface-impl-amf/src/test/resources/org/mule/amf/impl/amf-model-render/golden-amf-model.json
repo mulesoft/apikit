@@ -9,7 +9,7 @@
 ],
 "http://a.ml/vocabularies/document#encodes": [
 {
-"@id": "amf://id#19",
+"@id": "amf://id#21",
 "@type": [
 "http://schema.org/WebAPI",
 "http://a.ml/vocabularies/document#RootDomainElement",
@@ -37,7 +37,7 @@
 ],
 "http://a.ml/vocabularies/http#endpoint": [
 {
-"@id": "amf://id#20",
+"@id": "amf://id#22",
 "@type": [
 "http://a.ml/vocabularies/http#EndPoint",
 "http://a.ml/vocabularies/document#DomainElement"
@@ -49,7 +49,7 @@
 ],
 "http://www.w3.org/ns/hydra/core#supportedOperation": [
 {
-"@id": "amf://id#21",
+"@id": "amf://id#23",
 "@type": [
 "http://www.w3.org/ns/hydra/core#Operation",
 "http://a.ml/vocabularies/document#DomainElement"
@@ -66,7 +66,7 @@
 ],
 "http://www.w3.org/ns/hydra/core#returns": [
 {
-"@id": "amf://id#22",
+"@id": "amf://id#24",
 "@type": [
 "http://a.ml/vocabularies/http#Response",
 "http://a.ml/vocabularies/document#DomainElement"
@@ -88,7 +88,7 @@
 ],
 "http://a.ml/vocabularies/http#payload": [
 {
-"@id": "amf://id#23",
+"@id": "amf://id#25",
 "@type": [
 "http://a.ml/vocabularies/http#Payload",
 "http://a.ml/vocabularies/document#DomainElement"
@@ -453,13 +453,13 @@
 ],
 "http://a.ml/vocabularies/document#structuredValue": [
 {
-"@id": "amf://id#16",
+"@id": "amf://id#17",
 "@type": [
 "http://a.ml/vocabularies/data#Object"
 ],
 "http://a.ml/vocabularies/data#bar": [
 {
-"@id": "amf://id#17",
+"@id": "amf://id#18",
 "@type": [
 "http://a.ml/vocabularies/data#Scalar"
 ],
@@ -473,7 +473,7 @@
 ],
 "http://a.ml/vocabularies/data#foo": [
 {
-"@id": "amf://id#18",
+"@id": "amf://id#19",
 "@type": [
 "http://a.ml/vocabularies/data#Scalar"
 ],

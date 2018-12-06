@@ -19,6 +19,7 @@ import amf.client.render.Oas20Renderer;
 import amf.client.render.Raml08Renderer;
 import amf.client.render.Raml10Renderer;
 import amf.client.render.Renderer;
+import amf.client.resolve.Raml10Resolver;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
 import org.mule.amf.impl.loader.ExchangeDependencyResourceLoader;
@@ -53,6 +54,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.mule.amf.impl.DocumentParser.getParserForApi;
+import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
 
 public class ParserWrapperAmf implements ParserWrapper {
@@ -61,25 +63,26 @@ public class ParserWrapperAmf implements ParserWrapper {
 
   private final ApiRef apiRef;
   private final Parser parser;
-  private final Document document;
   private final WebApi webApi;
   private final ApiVendor apiVendor;
   private final List<String> references;
-  private String amfModel;
+
+  private Document consoleModel;
 
   private ParserWrapperAmf(final ApiRef apiRef, boolean validate) throws ExecutionException, InterruptedException {
     AMF.init().get();
     this.apiRef = apiRef;
+    parser = initParser(apiRef);
 
-    final Environment environment = buildEnvironment(apiRef);
-
-    final URI uri = getPathAsUri(apiRef);
-
-    parser = getParserForApi(apiRef, environment);
-    document = DocumentParser.parseFile(parser, uri, validate);
+    final Document document = buildDocument(validate);
     references = getReferences(document.references());
     webApi = DocumentParser.getWebApi(document);
     apiVendor = apiRef.getVendor();
+  }
+
+  private static Parser initParser(ApiRef apiRef) {
+    final Environment environment = buildEnvironment(apiRef);
+    return getParserForApi(apiRef, environment);
   }
 
   private List<String> getReferences(final List<BaseUnit> references) {
@@ -245,19 +248,17 @@ public class ParserWrapperAmf implements ParserWrapper {
     if (server != null) {
       server.withUrl(baseUri);
       server.variables().clear();
-      document.withEncodes(webApi);
+      consoleModel.withEncodes(webApi);
     }
   }
 
+  // This method should only be used by API Console
   public String getAmfModel() {
-    if (amfModel == null) {
-      try {
-        amfModel = new AmfGraphRenderer().generateString(document).get();
-      } catch (InterruptedException | ExecutionException e) {
-        return e.getMessage();
-      }
+    try {
+      return new AmfGraphRenderer().generateString(getConsoleModel()).get();
+    } catch (InterruptedException | ExecutionException e) {
+      return e.getMessage();
     }
-    return amfModel;
   }
 
   private String renderApi() {
@@ -276,10 +277,24 @@ public class ParserWrapperAmf implements ParserWrapper {
     }
 
     try {
-      return renderer.generateString(document).get();
+      return renderer.generateString(getConsoleModel()).get();
     } catch (final InterruptedException | ExecutionException e) {
       logger.error(format("Error render API '%s' to '%s'", apiRef.getLocation(), apiVendor.name()), e);
       return "";
     }
+  }
+
+  private Document getConsoleModel() {
+    if (consoleModel == null) {
+      Document document = buildDocument(false);
+      consoleModel = cast(new Raml10Resolver().resolve(document, "editing"));
+    }
+
+    return consoleModel;
+  }
+
+  private Document buildDocument(boolean validate) {
+    final URI uri = getPathAsUri(apiRef);
+    return DocumentParser.parseFile(parser, uri, validate);
   }
 }

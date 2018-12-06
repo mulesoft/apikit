@@ -112,17 +112,12 @@ public class DocumentParser {
     }
   }
 
-  private static WebApi getWebApi(final Parser parser, final Path path) throws ParserException {
-    return getWebApi(parseFile(parser, path.toUri().toString()));
-  }
-
   public static WebApi getWebApi(final Parser parser, final URI uri) throws ParserException {
     return getWebApi(parseFile(parser, uri));
   }
 
   public static WebApi getWebApi(final BaseUnit baseUnit) throws ParserException {
-    // API console needs pipeline editing
-    final Document document = cast(new Raml10Resolver().resolve(baseUnit, "editing"));
+    final Document document = cast(AMF.resolveRaml10(baseUnit));
     return cast(document.encodes());
   }
 

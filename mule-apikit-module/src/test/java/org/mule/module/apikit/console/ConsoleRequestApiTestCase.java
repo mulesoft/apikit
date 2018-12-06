@@ -148,6 +148,9 @@ public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
         .body(is("#%RAML 1.0\n" +
             "title: hola\n" +
             "/top:\n" +
+            "  type:\n" +
+            "    library1.foo:\n" +
+            "      foo: description\n" +
             "  get:\n" +
             "    description: get something\n" +
             "  (library1.bar): hi\n" +
