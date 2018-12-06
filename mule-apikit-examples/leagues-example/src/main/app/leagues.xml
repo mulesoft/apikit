@@ -23,7 +23,7 @@
             <set-payload value="{ &quot;message&quot;: &quot;Resource not found&quot; }" />
         </apikit:mapping>
         <apikit:mapping statusCode="405">
-            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException" />
+            <apikit:exception value="org.mule.module.apikit.api.exception.MethodNotAllowedException" />
             <set-property propertyName="Content-Type" value="application/json"/>
             <set-payload value="{ &quot;message&quot;: &quot;Method not allowed&quot; }" />
         </apikit:mapping>

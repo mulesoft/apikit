@@ -15,7 +15,7 @@
             <set-payload value="resource not found"/>
         </apikit:mapping>
         <apikit:mapping statusCode="405">
-            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
+            <apikit:exception value="org.mule.module.apikit.api.exception.MethodNotAllowedException"/>
             <set-payload value="method not allowed"/>
         </apikit:mapping>
         <apikit:mapping statusCode="415">
