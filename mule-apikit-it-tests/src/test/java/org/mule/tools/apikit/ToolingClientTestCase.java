@@ -34,7 +34,7 @@ public class ToolingClientTestCase
     {
         ToolingRuntimeClientBootstrap toolingRuntimeClientBootstrap = new ToolingRuntimeClientBootstrap("4.1.1", createMavenConfiguration());
         ExtensionModelService extensionModelService = toolingRuntimeClientBootstrap.newToolingRuntimeClientBuilder().build().extensionModelService();
-        ArtifactDescriptor artifactDescriptor = ArtifactDescriptor.newBuilder().withGroupId("org.mule.modules").withArtifactId("mule-apikit-module").withClassifier("mule-plugin").withVersion("1.1.1-SNAPSHOT").build();
+        ArtifactDescriptor artifactDescriptor = ArtifactDescriptor.newBuilder().withGroupId("org.mule.modules").withArtifactId("mule-apikit-module").withClassifier("mule-plugin").withVersion("1.2.0-RC-3").build();
         assertEquals("APIKit",extensionModelService.loadExtensionModel(artifactDescriptor).get().getName());
     }
 
