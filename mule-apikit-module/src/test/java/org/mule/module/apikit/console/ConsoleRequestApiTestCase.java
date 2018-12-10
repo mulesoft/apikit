@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit.console;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
@@ -17,6 +18,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 
 @ArtifactClassLoaderRunnerConfig
+@Ignore("APIMF-1316")
 public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
 
   @Rule
@@ -79,22 +81,82 @@ public class ConsoleRequestApiTestCase extends MuleArtifactFunctionalTestCase {
             "          \"200\": {\n" +
             "            \"description\": \"pet response\",\n" +
             "            \"x-amf-mediaType\": \"application/json\",\n" +
-            "            \"schema\": {},\n" +
+            "            \"schema\": {\n" +
+            "              \"type\": \"object\",\n" +
+            "              \"additionalProperties\": true,\n" +
+            "              \"required\": [\n" +
+            "                \"name\"\n" +
+            "              ],\n" +
+            "              \"properties\": {\n" +
+            "                \"name\": {\n" +
+            "                  \"type\": \"string\"\n" +
+            "                },\n" +
+            "                \"tag\": {\n" +
+            "                  \"type\": \"string\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            },\n" +
             "            \"x-amf-responsePayloads\": [\n" +
             "              {\n" +
             "                \"mediaType\": \"text/html\",\n" +
-            "                \"schema\": {}\n" +
+            "                \"schema\": {\n" +
+            "                  \"type\": \"object\",\n" +
+            "                  \"additionalProperties\": true,\n" +
+            "                  \"required\": [\n" +
+            "                    \"name\"\n" +
+            "                  ],\n" +
+            "                  \"properties\": {\n" +
+            "                    \"name\": {\n" +
+            "                      \"type\": \"string\"\n" +
+            "                    },\n" +
+            "                    \"tag\": {\n" +
+            "                      \"type\": \"string\"\n" +
+            "                    }\n" +
+            "                  }\n" +
+            "                }\n" +
             "              }\n" +
             "            ]\n" +
             "          },\n" +
             "          \"default\": {\n" +
             "            \"description\": \"error payload\",\n" +
             "            \"x-amf-mediaType\": \"application/json\",\n" +
-            "            \"schema\": {},\n" +
+            "            \"schema\": {\n" +
+            "              \"type\": \"object\",\n" +
+            "              \"additionalProperties\": true,\n" +
+            "              \"required\": [\n" +
+            "                \"code\",\n" +
+            "                \"message\"\n" +
+            "              ],\n" +
+            "              \"properties\": {\n" +
+            "                \"code\": {\n" +
+            "                  \"type\": \"integer\",\n" +
+            "                  \"format\": \"int32\"\n" +
+            "                },\n" +
+            "                \"message\": {\n" +
+            "                  \"type\": \"string\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            },\n" +
             "            \"x-amf-responsePayloads\": [\n" +
             "              {\n" +
             "                \"mediaType\": \"text/html\",\n" +
-            "                \"schema\": {}\n" +
+            "                \"schema\": {\n" +
+            "                  \"type\": \"object\",\n" +
+            "                  \"additionalProperties\": true,\n" +
+            "                  \"required\": [\n" +
+            "                    \"code\",\n" +
+            "                    \"message\"\n" +
+            "                  ],\n" +
+            "                  \"properties\": {\n" +
+            "                    \"code\": {\n" +
+            "                      \"type\": \"integer\",\n" +
+            "                      \"format\": \"int32\"\n" +
+            "                    },\n" +
+            "                    \"message\": {\n" +
+            "                      \"type\": \"string\"\n" +
+            "                    }\n" +
+            "                  }\n" +
+            "                }\n" +
             "              }\n" +
             "            ]\n" +
             "          }\n" +

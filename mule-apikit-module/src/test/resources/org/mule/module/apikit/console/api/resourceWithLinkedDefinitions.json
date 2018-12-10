@@ -30,7 +30,7 @@
    "default": {
     "description": "error payload",
     "schema": {
-     "$ref": "mule-config.json#/definitions/ErrorModel"
+     "$ref": "api.json#/definitions/ErrorModel"
     }
    }
   }

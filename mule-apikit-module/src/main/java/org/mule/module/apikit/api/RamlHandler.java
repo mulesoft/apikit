@@ -264,6 +264,9 @@ public class RamlHandler {
   public String getSuccessStatusCode(IAction action) {
 
     for (String status : action.getResponses().keySet()) {
+      if ("default".equalsIgnoreCase(status))
+        break;
+
       int code = Integer.parseInt(status);
       if (code >= 200 && code < 300) {
         return status;
