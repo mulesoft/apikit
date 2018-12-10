@@ -244,11 +244,11 @@ public class ParserWrapperAmf implements ParserWrapper {
 
   @Override
   public void updateBaseUri(IRaml ignored, String baseUri) {
-    final Server server = webApi.servers().size() > 0 ? webApi.servers().get(0) : null;
-    if (server != null) {
+    if (webApi.servers() != null && webApi.servers().size() > 0) {
+      final Server server = webApi.servers().get(0);
       server.withUrl(baseUri);
       server.variables().clear();
-      consoleModel.withEncodes(webApi);
+      getConsoleModel().withEncodes(webApi);
     }
   }
 
