@@ -25,7 +25,6 @@ import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
-import org.mule.runtime.api.component.location.Location;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
@@ -44,10 +43,9 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
+import static org.mule.module.apikit.api.FlowUtils.getSourceLocation;
 import static org.mule.runtime.core.api.event.CoreEvent.builder;
-import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
-import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
-import static org.mule.runtime.core.privileged.processor.MessageProcessors.processWithChildContext;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.*;
 import static reactor.core.publisher.Flux.from;
 import static reactor.core.publisher.Mono.error;
 
@@ -74,8 +72,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   @Override
   public void initialise() throws InitialisationException {
     final String name = getLocation().getRootContainerName();
-    final Optional<URI> url = locator.find(Location.builder().globalName(name).addSourcePart().build())
-        .map(MessageSourceUtils::getUriFromFlow);
+    final Optional<URI> url = getSourceLocation(locator, name);
 
     if (!url.isPresent()) {
       LOGGER
