@@ -16,8 +16,8 @@ import static org.mule.module.apikit.MessageSourceUtils.getUriFromFlow;
 
 public class FlowUtils {
 
-  public static final String FLOW_TAG_NAME = "flow";
-  public static final String MULE_NAMESPACE = "mule";
+  private static final String FLOW_TAG_NAME = "flow";
+  private static final String MULE_NAMESPACE = "mule";
 
   public static List<Flow> getFlowsList(ConfigurationComponentLocator locator) {
     return cast(locator.find(ComponentIdentifier.builder().name(FLOW_TAG_NAME).namespace(MULE_NAMESPACE).build()));
@@ -25,10 +25,6 @@ public class FlowUtils {
 
   public static Optional<Component> getSource(ConfigurationComponentLocator locator, String flowName) {
     return locator.find(Location.builder().globalName(flowName).addSourcePart().build());
-  }
-
-  public static Optional<URI> getSourceLocation(Component sourceComponent) {
-    return ofNullable(getUriFromFlow(sourceComponent));
   }
 
   public static Optional<URI> getSourceLocation(ConfigurationComponentLocator locator, String flowName) {
