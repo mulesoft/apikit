@@ -6,31 +6,29 @@
  */
 package org.mule.module.apikit;
 
+import org.mule.apikit.common.FlowName;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.RoutingTable;
-import org.mule.apikit.common.FlowName;
-import org.mule.module.apikit.exception.NotImplementedException;
-import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
+import org.mule.module.apikit.exception.NotImplementedException;
+import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
-import org.mule.runtime.api.component.Component;
-import org.mule.runtime.api.component.ComponentIdentifier;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.core.api.construct.Flow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
 import static org.mule.apikit.common.FlowName.URL_RESOURCE_SEPARATOR;
+import static org.mule.module.apikit.api.FlowUtils.getFlowsList;
 
 public class FlowFinder {
 
@@ -91,9 +89,7 @@ public class FlowFinder {
   }
 
   private List<Flow> getFlows() {
-    List<? extends Component> annotatedObjects =
-        locator.find(ComponentIdentifier.builder().name("flow").namespace("mule").build());
-    return (List<Flow>) annotatedObjects;
+    return getFlowsList(locator);
   }
 
   private void flattenResourceTree(Map<String, IResource> resources, String version) {
