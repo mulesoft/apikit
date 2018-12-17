@@ -22,6 +22,10 @@ public interface ValidationConfig {
 
   ExpressionManager getExpressionManager();
 
+  default boolean isDisableValidations() {
+    return false;
+  }
+
   default boolean isQueryParamsStrictValidation() {
     return false;
   }
