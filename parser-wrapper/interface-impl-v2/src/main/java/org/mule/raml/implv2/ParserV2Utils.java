@@ -149,7 +149,7 @@ public class ParserV2Utils {
         : rootPath + (pathRelativeToRoot.isEmpty() ? "" : File.separator + pathRelativeToRoot) + File.separator + includePath;
 
     // uses File class to normalize the resolved path acording with the OS (every slash in the path must be in the same direction)
-    return new File(resolvedPath).getPath();
+    return new File(resolvedPath).toURI().toString();
   }
 
   private static boolean isAbsolute(String includePath) {

@@ -7,7 +7,6 @@
 package org.mule.raml.implv2.v10;
 
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Test;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
@@ -17,6 +16,8 @@ import org.raml.v2.api.loader.ResourceLoader;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 public class InterfaceV10TestCase {
@@ -38,6 +39,7 @@ public class InterfaceV10TestCase {
     IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v10/references/api.raml");
 
     List<String> allReferences = raml.getAllReferences();
-    Assert.assertEquals(4, raml.getAllReferences().size());
+    allReferences.forEach(ref -> assertThat("Invalid URI", ref, startsWith("file:/")));
+    assertEquals(4, allReferences.size());
   }
 }

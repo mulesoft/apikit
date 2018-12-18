@@ -101,7 +101,7 @@ public class ParserV1Utils {
 
         final File includedFile = new File(includeAbsolutePath);
         if (includedFile.isFile() && includedFile.exists() && includedFile.canRead()) {
-          includedFiles.add(includedFile.getAbsolutePath());
+          includedFiles.add(includedFile.toURI().toString());
         }
       }
     } else if (rootNode.getNodeId() == NodeId.mapping) {
