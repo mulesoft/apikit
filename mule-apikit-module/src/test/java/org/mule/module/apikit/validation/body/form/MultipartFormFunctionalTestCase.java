@@ -145,6 +145,7 @@ public abstract class MultipartFormFunctionalTestCase extends MuleArtifactFuncti
   }
 
   @Test
+  @Ignore("APIKIT-1750")
   public void postTextFileResourceIntoMultiPartFormData() throws Exception {
     given().multiPart("document", "lorem.txt", this.getClass().getClassLoader()
         .getResourceAsStream("org/mule/module/apikit/validation/formParameters/lorem.txt"))
