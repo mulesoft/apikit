@@ -139,9 +139,8 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   @Test
-  @Ignore("APIKIT-1629")
   public void generateWithExamples() throws Exception {
-    String filepath = ScaffolderMule4Test.class.getClassLoader().getResource("scaffolder-with-examples/api.raml").getFile();
+    String filepath = ScaffolderMule4Test.class.getClassLoader().getResource("scaffolder-with-examples/src/main/resources/api/api.raml").getFile();
     File file = new File(filepath);
     File muleXmlOut = createTmpMuleXmlOutFolder();
     Scaffolder scaffolder = createScaffolder(singletonList(file), emptyList(), muleXmlOut, null, emptySet(), null, EE);
