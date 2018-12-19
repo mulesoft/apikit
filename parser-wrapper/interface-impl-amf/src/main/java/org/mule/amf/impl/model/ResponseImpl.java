@@ -54,4 +54,13 @@ public class ResponseImpl implements IResponse {
   public Object getInstance() {
     return null;
   }
+
+  @Override
+  public Map<String, String> getExamples() {
+    final Map<String, String> result = IResponse.super.getExamples();
+
+    response.examples().forEach(example -> result.put(example.mediaType().value(), example.value().value()));
+
+    return result;
+  }
 }
