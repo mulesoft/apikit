@@ -18,6 +18,7 @@ import static org.mule.raml.interfaces.model.IActionType.OPTIONS;
 import static org.mule.raml.interfaces.model.IActionType.POST;
 import static org.mule.raml.interfaces.model.IActionType.PUT;
 
+import com.google.common.collect.Maps;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResource;
@@ -26,6 +27,7 @@ import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.output.GenerationModel;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -75,9 +77,11 @@ public class GenerationModelTest {
     IAction action = mock(IAction.class);
     HashMap<String, IResponse> stringResponseHashMap = new HashMap<>();
     IResponse response = mock(IResponse.class);
+    final HashMap<String, String> examples = new HashMap<>();
+    examples.put("application/json", "{\n\"hello\": \">world<\"\n}");
+    when(response.getExamples()).thenReturn(examples);
     HashMap<String, IMimeType> stringMimeTypeHashMap = new HashMap<>();
     IMimeType mimeType = mock(IMimeType.class);
-    when(mimeType.getExample()).thenReturn("{\n\"hello\": \">world<\"\n}");
     stringMimeTypeHashMap.put("application/json", mimeType);
     when(response.getBody()).thenReturn(stringMimeTypeHashMap);
     stringResponseHashMap.put("200", response);
@@ -95,9 +99,11 @@ public class GenerationModelTest {
     IAction action = mock(IAction.class);
     HashMap<String, IResponse> stringResponseHashMap = new HashMap<>();
     IResponse response = mock(IResponse.class);
+    final HashMap<String, String> examples = new HashMap<>();
+    examples.put("application/xml", "<hello>world</hello>");
+    when(response.getExamples()).thenReturn(examples);
     HashMap<String, IMimeType> stringMimeTypeHashMap = new HashMap<>();
     IMimeType mimeType = mock(IMimeType.class);
-    when(mimeType.getExample()).thenReturn("<hello>world</hello>");
     stringMimeTypeHashMap.put("application/xml", mimeType);
     when(response.getBody()).thenReturn(stringMimeTypeHashMap);
     stringResponseHashMap.put("200", response);
@@ -115,9 +121,11 @@ public class GenerationModelTest {
     IAction action = mock(IAction.class);
     HashMap<String, IResponse> stringResponseHashMap = new HashMap<>();
     IResponse response = mock(IResponse.class);
+    final HashMap<String, String> examples = new HashMap<>();
+    examples.put("application/xml", "<hello>world</hello>");
+    when(response.getExamples()).thenReturn(examples);
     HashMap<String, IMimeType> stringMimeTypeHashMap = new HashMap<>();
     IMimeType mimeType = mock(IMimeType.class);
-    when(mimeType.getExample()).thenReturn("<hello>world</hello>");
     stringMimeTypeHashMap.put("application/xml", mimeType);
     when(response.getBody()).thenReturn(stringMimeTypeHashMap);
     stringResponseHashMap.put("403", response);

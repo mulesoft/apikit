@@ -11,7 +11,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.mule.apikit.common.FlowName;
 import org.mule.raml.interfaces.model.IAction;
-import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.tools.apikit.model.API;
@@ -19,12 +18,17 @@ import org.mule.tools.apikit.model.API;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.stream.Collectors.toMap;
 import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
 
 public class GenerationModel implements Comparable<GenerationModel> {
+
+  private static final String OAS_DEFAULT_STATUS_CODE = "default";
 
   private final String verb;
   private IAction action;
@@ -92,42 +96,78 @@ public class GenerationModel implements Comparable<GenerationModel> {
   public String getExampleWrapper() {
     Map<String, IResponse> responses = action.getResponses();
 
-    IResponse response = responses.get("200");
+    return getExampleWrapper(responses);
+  }
 
-    if (response == null || response.getBody() == null) {
-      for (IResponse response1 : responses.values()) {
-        if (response1.getBody() != null) {
-          Map<String, IMimeType> responseBody1 = response1.getBody();
-          IMimeType mimeType = responseBody1.get("application/json");
-          if (mimeType != null && mimeType.getExample() != null) {
-            return mimeType.getExample();
-          } else {
-            for (IMimeType type : responseBody1.values()) {
-              if (type.getExample() != null) {
-                return type.getExample();
-              }
-            }
-          }
-        }
+  private String getExampleWrapper(Map<String, IResponse> responses) {
+    // filter responses with status codes between 200 and 300 from all responses
+    final LinkedHashMap<String, IResponse> validResponses = responses.entrySet().stream()
+        //        .filter(entry -> isOkResponse(entry.getKey()))
+        .sorted(getStatusCodeComparator())
+        .collect(toMap((Map.Entry<String, IResponse> e) -> OAS_DEFAULT_STATUS_CODE.equalsIgnoreCase(e.getKey()) ? "200"
+            : e.getKey(),
+                       Map.Entry::getValue, (k, v) -> v,
+                       LinkedHashMap::new));
+
+    if (validResponses.isEmpty())
+      return null;
+
+    // look for an example for status code 200
+    final IResponse responseOk = validResponses.get("200");
+
+    String example = null;
+
+    if (responseOk != null)
+      example = getExampleFromResponse(responseOk);
+
+    // if there's no examples for status code 200, look for one for any status code
+    if (example == null) {
+      for (IResponse response : validResponses.values()) {
+        example = getExampleFromResponse(response);
+        if (example != null)
+          break;
       }
     }
 
-    if (response != null && response.getBody() != null) {
-      Map<String, IMimeType> body = response.getBody();
-      IMimeType mimeType = body.get("application/json");
-      if (mimeType != null && mimeType.getExample() != null) {
-        return mimeType.getExample();
-      }
+    return example;
+  }
 
-      for (IMimeType mimeType2 : response.getBody().values()) {
-        if (mimeType2 != null && mimeType2.getExample() != null) {
-          return mimeType2.getExample();
-        }
-      }
+  private static String getExampleFromResponse(IResponse response) {
+    final Map<String, String> examples = response.getExamples();
+    if (examples.isEmpty())
+      return null;
+    if (examples.containsKey("application/json")) {
+      return examples.get("application/json");
+    } else {
+      return examples.values().iterator().next();
     }
+  }
 
-    return null;
+  private static Comparator<Map.Entry<String, IResponse>> getStatusCodeComparator() {
+    return (c1, c2) -> {
+      final String c1Key = c1.getKey();
+      final String c2Key = c2.getKey();
 
+      if (OAS_DEFAULT_STATUS_CODE.equalsIgnoreCase(c1Key) && OAS_DEFAULT_STATUS_CODE.equalsIgnoreCase(c2Key))
+        return 0;
+
+      if (OAS_DEFAULT_STATUS_CODE.equalsIgnoreCase(c1Key))
+        return -1;
+
+      if (OAS_DEFAULT_STATUS_CODE.equalsIgnoreCase(c2Key))
+        return 1;
+
+      return c1Key.compareTo(c2Key);
+    };
+  }
+
+  private static boolean isOkResponse(final String code) {
+    try {
+      final Integer value = Integer.valueOf(code);
+      return value >= 200 && value < 300;
+    } catch (NumberFormatException ignore) {
+      return OAS_DEFAULT_STATUS_CODE.equalsIgnoreCase(code);
+    }
   }
 
   public String getName() {
