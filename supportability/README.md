@@ -27,9 +27,14 @@ See http://raml.org for more information about RAML.
 
 
 ## Code repositories
-* APIkit repositories: [link](https://github.com/search?q=org:mulesoft+apikit)
-* APIkit for SOAP Repositories: [link](https://github.com/search?q=org%3Amulesoft+soap)
-* OData Component Repositories: [link](https://github.com/search?q=org%3Amulesoft+odata)
+* APIkit repository: [link](https://github.com/mulesoft/apikit)
+* APIkit for SOAP Repositories: 
+  * [link](https://github.com/mulesoft/soapkit)
+  * [link](https://github.com/mulesoft/mule-tooling-soapkit)
+* OData Component Repositories: 
+  * [link](https://github.com/mulesoft/apikit-odata-service)
+  * [link](https://github.com/mulesoft/apikit-odata-service-test)
+  * [link](https://github.com/mulesoft/mule-tooling-odata)
 * Java RAML parser: [link](https://github.com/raml-org/raml-java-parser.git). Master branch is for RAML 1.0, 
 v1 branch is for RAML 0.8 but only for the community
 
@@ -48,6 +53,7 @@ v1 branch is for RAML 0.8 but only for the community
 
 ## Slack Channels
 * APIkit : [#apikit](https://mulesoft.slack.com/archives/apikit)
+* APIkit Support : [#apikit-support](https://mulesoft.slack.com/archives/apikit-support)
 * RAML : [#raml](https://mulesoft.slack.com/archives/raml)
 
 ### Jira Projects
