@@ -1,0 +1,20 @@
+#%RAML 1.0
+---
+title: test
+
+/resource/{param}:
+  uriParameters:
+    param: integer
+  post:
+    headers:
+      X-MaxRows: integer
+    queryParameters:
+      queryParam: integer
+    body:
+      application/json:
+        properties:
+          name: string
+    responses:
+      201:
+        body:
+          application/json: ~

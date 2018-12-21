@@ -141,9 +141,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
 
     IResource resource = config.getFlowFinder().getResource(uriPattern);
-    if (!config.isDisableValidations()) {
-      eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
-    }
+    eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
     String contentType = AttributesHelper.getMediaType(attributes);
     Flow flow = config.getFlowFinder().getFlow(resource, attributes.getMethod().toLowerCase(), contentType);
 
