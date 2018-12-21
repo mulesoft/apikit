@@ -39,7 +39,7 @@ public class RouterWithDisabledValidationsTestCase extends MuleArtifactFunctiona
   @Test
   public void simpleRouting() throws Exception {
     given().header("Accept", "*/*")
-            .body("something that won't be validated")
+        .body("something that won't be validated")
         .expect()
         .response().body(is("something that won't be validated"))
         .statusCode(201)
