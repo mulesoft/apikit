@@ -27,15 +27,15 @@ See http://raml.org for more information about RAML.
 
 
 ## Code repositories
-* APIkit repository: [link](https://github.com/mulesoft/apikit)
+* [APIkit repository](https://github.com/mulesoft/apikit)
 * APIkit for SOAP Repositories: 
-  * [link](https://github.com/mulesoft/soapkit)
-  * [link](https://github.com/mulesoft/mule-tooling-soapkit)
-* OData Component Repositories: 
-  * [link](https://github.com/mulesoft/apikit-odata-service)
-  * [link](https://github.com/mulesoft/apikit-odata-service-test)
-  * [link](https://github.com/mulesoft/mule-tooling-odata)
-* Java RAML parser: [link](https://github.com/raml-org/raml-java-parser.git). Master branch is for RAML 1.0, 
+  * [Runtime Extension](https://github.com/mulesoft/soapkit)
+  * [Studio Plugin](https://github.com/mulesoft/mule-tooling-soapkit)
+* APIkit for OData Component Repositories: 
+  * [Runtime Extension](https://github.com/mulesoft/apikit-odata-service)
+  * [Runtime Extension Tests](https://github.com/mulesoft/apikit-odata-service-test)
+  * [Studio Plugin](https://github.com/mulesoft/mule-tooling-odata)
+* [Java RAML parser](https://github.com/raml-org/raml-java-parser.git). Master branch is for RAML 1.0, 
 v1 branch is for RAML 0.8 but only for the community
 
 
