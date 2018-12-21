@@ -25,18 +25,28 @@ public class RequestValidator {
                                       ResolvedVariables resolvedVariables, Object payload, String charset)
       throws MuleRestException {
 
-    if (resource == null)
-      throw new MuleRuntimeException(createStaticMessage("Unexpected error. Resource cannot be null"));
+    final HttpRequestAttributes httpRequestAttributes;
+    final ValidBody validBody;
+    if (config.isDisableValidations()) {
+      httpRequestAttributes = attributes;
+      validBody = new ValidBody(payload);
+    } else {
+      if (resource == null)
+        throw new MuleRuntimeException(createStaticMessage("Unexpected error. Resource cannot be null"));
 
-    final String method = attributes.getMethod().toLowerCase();
-    if (resource.getAction(method) == null) {
-      final String version = cast(resolvedVariables.get("version"));
-      throw new MethodNotAllowedException(resource.getResolvedUri(version) + " : " + method);
+      final String method = attributes.getMethod().toLowerCase();
+      if (resource.getAction(method) == null) {
+        final String version = cast(resolvedVariables.get("version"));
+        throw new MethodNotAllowedException(resource.getResolvedUri(version) + " : " + method);
+      }
+
+      httpRequestAttributes = AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables, config);
+      validBody = BodyValidator.validate(resource.getAction(method), attributes, payload, config, charset);
     }
 
     return ValidRequest.builder()
-        .withAttributes(AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables, config))
-        .withBody(BodyValidator.validate(resource.getAction(method), attributes, payload, config, charset))
+        .withAttributes(httpRequestAttributes)
+        .withBody(validBody)
         .build();
 
   }
