@@ -11,5 +11,5 @@ public enum ApiVendor {
   RAML_08,
   RAML_10,
   OAS,
-  OAS_20;
+  OAS_20
 }

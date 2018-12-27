@@ -6,29 +6,17 @@
  */
 package org.mule.parser.service;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
-import org.mule.raml.interfaces.model.*;
 import org.mule.raml.interfaces.model.api.ApiRef;
 
-import static java.util.stream.Collectors.toMap;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.Matchers.*;
+import java.net.URISyntaxException;
+
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.mule.raml.interfaces.model.ApiVendor.OAS_20;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
+import static org.mule.raml.interfaces.model.ApiVendor.*;
 
 public class ParserServiceTestCase {
 
@@ -88,13 +76,6 @@ public class ParserServiceTestCase {
   }
 
   private static String resource(final String path) {
-    URI result = null;
-
-    try {
-      result = ParserServiceTestCase.class.getResource(path).toURI();
-    } catch (URISyntaxException e) {
-      Assert.fail(e.getMessage());
-    }
-    return result.toString();
+    return ResourcesUtils.resource(ParserServiceTestCase.class, path);
   }
 }

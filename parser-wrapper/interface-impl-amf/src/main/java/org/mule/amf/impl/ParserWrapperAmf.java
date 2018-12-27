@@ -6,6 +6,7 @@
  */
 package org.mule.amf.impl;
 
+import amf.ProfileName;
 import amf.client.AMF;
 import amf.client.environment.DefaultEnvironment;
 import amf.client.environment.Environment;
@@ -48,7 +49,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import static amf.ProfileNames.AMF;
+import static amf.ProfileNames.*;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
@@ -178,12 +179,7 @@ public class ParserWrapperAmf implements ParserWrapper {
   @Override
   public void validate() {
 
-    final ValidationReport validationReport;
-    try {
-      validationReport = parser.reportValidation(AMF()).get();
-    } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException("Unexpected error parsing API: " + e.getMessage(), e);
-    }
+    final ValidationReport validationReport = generateValidationReport();
 
     if (!validationReport.conforms()) {
       final String errorMessge = "Invalid API descriptor -- errors found: " +
@@ -197,12 +193,7 @@ public class ParserWrapperAmf implements ParserWrapper {
 
   @Override
   public IValidationReport validationReport() {
-    final ValidationReport validationReport;
-    try {
-      validationReport = parser.reportValidation(AMF()).get();
-    } catch (InterruptedException | ExecutionException e) {
-      throw new RuntimeException("Unexpected error parsing API: " + e.getMessage(), e);
-    }
+    final ValidationReport validationReport = generateValidationReport();
 
     List<IValidationResult> results;
     if (!validationReport.conforms())
@@ -212,6 +203,34 @@ public class ParserWrapperAmf implements ParserWrapper {
 
     return new DefaultValidationReport(results);
   }
+
+  private ValidationReport generateValidationReport() {
+    final ValidationReport validationReport;
+    try {
+      validationReport = parser.reportValidation(apiVendorToProfileName(apiVendor)).get();
+    } catch (InterruptedException | ExecutionException e) {
+      throw new RuntimeException("Unexpected error parsing API: " + e.getMessage(), e);
+    }
+    return validationReport;
+  }
+
+  private ProfileName apiVendorToProfileName(ApiVendor apiVendor) {
+    switch (apiVendor) {
+      case OAS:
+        return OAS();
+      case OAS_20:
+        return OAS20();
+      case RAML:
+        return RAML();
+      case RAML_08:
+        return RAML08();
+      case RAML_10:
+        return RAML10();
+      default:
+        return AMF();
+    }
+  }
+
 
   @Override
   public IRaml build() {
