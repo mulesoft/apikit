@@ -29,15 +29,16 @@ public interface IResponse {
 
   // We can implement if we need cache
   default Map<String, String> getExamples() {
-    final Map<String, IMimeType> map = getBody();
-
     final Map<String, String> result = new HashMap<>();
-    for (Map.Entry<String, IMimeType> entry : map.entrySet()) {
-      final IMimeType mimeType = entry.getValue();
-      final String contentType = mimeType.getType();
-      final String example = mimeType.getExample();
-      if (StringUtils.isNotEmpty(example))
-        result.put(contentType, example);
+    if (hasBody()) {
+      final Map<String, IMimeType> map = getBody();
+      for (Map.Entry<String, IMimeType> entry : map.entrySet()) {
+        final IMimeType mimeType = entry.getValue();
+        final String contentType = mimeType.getType();
+        final String example = mimeType.getExample();
+        if (StringUtils.isNotEmpty(example))
+          result.put(contentType, example);
+      }
     }
     return result;
   }
