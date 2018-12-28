@@ -21,26 +21,17 @@ import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
-import static java.util.Collections.EMPTY_MAP;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
-import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
@@ -109,7 +100,8 @@ public class ScaffolderWithExistingConfigApiSyncTest extends AbstractScaffolderT
     api = new File(muleXmlOut.getAbsolutePath() + "/api.xml");
     assertTrue(api.exists());
 
-    assertEquals(IOUtils.toString(new FileInputStream(api)), IOUtils.toString(new FileInputStream(apiBkp)));
+    String original = IOUtils.toString(new FileInputStream(apiBkp));
+    assertEquals(IOUtils.toString(new FileInputStream(api)), original.replace("1.0.0", "2.0.0"));
 
   }
 

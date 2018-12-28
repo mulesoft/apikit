@@ -112,8 +112,6 @@ public class MuleConfigParser {
   }
 
   public Set<API> getIncludedApis() {
-    Set<API> apis = new HashSet<API>();
-    apis.addAll(includedApis.values());
-    return apis;
+    return new HashSet<>(includedApis.values());
   }
 }

@@ -16,10 +16,12 @@ public class APIKitConfigScope implements Scope {
 
   private final Element mule;
   private final APIKitConfig config;
+  private Integer index;
 
-  public APIKitConfigScope(APIKitConfig config, Element mule) {
+  public APIKitConfigScope(APIKitConfig config, Element mule, Integer index) {
     this.mule = mule;
     this.config = config;
+    this.index = index;
   }
 
   @Override
@@ -46,7 +48,11 @@ public class APIKitConfigScope implements Scope {
       if (this.config.getHttpStatusVarName() != null) {
         config.setAttribute(APIKitConfig.HTTP_STATUS_VAR_ATTRIBUTE, this.config.getHttpStatusVarName());
       }
-      mule.addContent(config);
+
+      if (index != null)
+        mule.addContent(index, config);
+      else
+        mule.addContent(config);
     }
     return config;
   }

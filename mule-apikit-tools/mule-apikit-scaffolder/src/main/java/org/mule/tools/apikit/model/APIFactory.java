@@ -66,6 +66,9 @@ public class APIFactory {
     } else {
       api.setHttpListenerConfig(httpListenerConfig);
     }
+    if (config != null) {
+      config.setApi(apiFilePath);
+    }
     api.setConfig(config);
     apis.put(relativePath, api);
     return api;

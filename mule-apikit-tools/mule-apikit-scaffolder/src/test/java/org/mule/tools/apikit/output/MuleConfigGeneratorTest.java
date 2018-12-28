@@ -6,17 +6,15 @@
  */
 package org.mule.tools.apikit.output;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
-
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
@@ -32,15 +30,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static java.util.Collections.emptyList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
 public class MuleConfigGeneratorTest {
 
@@ -83,7 +80,7 @@ public class MuleConfigGeneratorTest {
 
     Log mock = mock(Log.class);
     MuleConfigGenerator muleConfigGenerator =
-        new MuleConfigGenerator(mock, new File(""), entries, new HashMap<String, HttpListener4xConfig>(), null,
+        new MuleConfigGenerator(mock, new File(""), emptyList(), entries, new HashMap<String, HttpListener4xConfig>(), null,
                                 DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
     muleConfigGenerator.generate();
 
@@ -174,7 +171,7 @@ public class MuleConfigGeneratorTest {
     when(api.getXmlFile(any(File.class))).thenReturn(file);
 
     MuleConfigGenerator muleConfigGenerator =
-        new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>(),
+        new MuleConfigGenerator(mock(Log.class), new File(""), emptyList(), new ArrayList<GenerationModel>(),
                                 new HashMap<String, HttpListener4xConfig>(), null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
 
     Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
@@ -224,7 +221,7 @@ public class MuleConfigGeneratorTest {
 
 
     MuleConfigGenerator muleConfigGenerator =
-        new MuleConfigGenerator(mock(Log.class), new File(""), new ArrayList<GenerationModel>(),
+        new MuleConfigGenerator(mock(Log.class), new File(""), emptyList(), new ArrayList<GenerationModel>(),
                                 new HashMap<String, HttpListener4xConfig>(), null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
 
     Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
