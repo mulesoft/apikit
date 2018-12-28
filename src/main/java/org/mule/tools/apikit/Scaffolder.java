@@ -33,6 +33,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
 import static org.mule.tools.apikit.model.RuntimeEdition.CE;
 
 public class Scaffolder {
@@ -111,7 +113,8 @@ public class Scaffolder {
     }
 
     muleConfigGenerator =
-        new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(),
+        new MuleConfigGenerator(log, muleXmlOutputDirectory, emptyList(), generationModels,
+                                muleDomainParser.getHttpListenerConfigs(),
                                 ramlsWithExtensionEnabled, minMuleVersion, runtimeEdition);
 
     muleArtifactJsonGenerator =
@@ -151,7 +154,8 @@ public class Scaffolder {
     }
 
     muleConfigGenerator =
-        new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(),
+        new MuleConfigGenerator(log, muleXmlOutputDirectory, newArrayList(muleConfigParser.getIncludedApis()),
+                                generationModels, muleDomainParser.getHttpListenerConfigs(),
                                 null, minMuleVersion, runtimeEdition);
 
     muleArtifactJsonGenerator =

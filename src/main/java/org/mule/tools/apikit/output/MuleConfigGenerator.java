@@ -7,6 +7,18 @@
 package org.mule.tools.apikit.output;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.jdom2.Content;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
@@ -28,19 +40,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-
-import org.apache.maven.plugin.logging.Log;
-import org.jdom2.Content;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.Namespace;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaders;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 
 import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
@@ -75,8 +74,9 @@ public class MuleConfigGenerator {
   private final Map<String, HttpListener4xConfig> domainHttpListenerConfigs;
   private final Set<File> ramlsWithExtensionEnabled;
   private final RuntimeEdition runtimeEdition;
+  private final List<API> apis;
 
-  public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<GenerationModel> flowEntries,
+  public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<API> apis, List<GenerationModel> flowEntries,
                              Map<String, HttpListener4xConfig> domainHttpListenerConfigs, Set<File> ramlsWithExtensionEnabled,
                              String minMuleVersion, RuntimeEdition runtimeEdition) {
     this.log = log;
@@ -89,10 +89,11 @@ public class MuleConfigGenerator {
     } else {
       this.ramlsWithExtensionEnabled = ramlsWithExtensionEnabled;
     }
+    this.apis = apis;
   }
 
   public void generate() {
-    Map<API, Document> docs = new HashMap<API, Document>();
+    Map<API, Document> docs = new HashMap<>();
 
     for (GenerationModel flowEntry : flowEntries) {
       Document doc;
@@ -109,6 +110,8 @@ public class MuleConfigGenerator {
       int index = getLastFlowIndex(doc) + 1;
       doc.getRootElement().addContent(index, new APIKitFlowScope(flowEntry, isMuleEE()).generate());
     }
+
+    updateApikitConfigs(docs);
 
     // Write everything to files
     for (Map.Entry<API, Document> ramlFileDescriptorDocumentEntry : docs.entrySet()) {
@@ -129,6 +132,23 @@ public class MuleConfigGenerator {
       }
     }
 
+  }
+
+  private void updateApikitConfigs(Map<API, Document> docs) {
+    for (API api : apis) {
+      try {
+        Document doc = getDocument(api);
+        XPathExpression muleExp = XPathFactory.instance().compile("//*[local-name()='mule']");
+        List<Element> mules = muleExp.evaluate(doc);
+        Element mule = mules.get(0);
+        int index = mule.indexOf(mule.getChild("config", APIKitTools.API_KIT_NAMESPACE.getNamespace()));
+        mule.removeContent(index);
+        new APIKitConfigScope(api.getConfig(), mule, index).generate();
+        docs.put(api, doc);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
   }
 
   private int getLastFlowIndex(Document doc) {
@@ -202,7 +222,7 @@ public class MuleConfigGenerator {
     //        {
     //            addGlobalExceptionStrategy(mule, api.getId());
     //        }
-    new APIKitConfigScope(api.getConfig(), mule).generate();
+    new APIKitConfigScope(api.getConfig(), mule, null).generate();
     //Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
     String configRef = api.getConfig() != null ? api.getConfig().getName() : null;
 

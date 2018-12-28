@@ -30,7 +30,7 @@ public class FlowScopeTest {
     document.setRootElement(mule);
     APIKitConfig config = new APIKitConfig();
     config.setApi("path/to/file.raml");
-    new APIKitConfigScope(config, mule).generate();
+    new APIKitConfigScope(config, mule, null).generate();
     API api = mock(API.class);
     HttpListener4xConfig listenerConfig =
         new HttpListener4xConfig("HTTP_Listener_Configuration", "localhost", "7777", "HTTP", "");
@@ -60,7 +60,7 @@ public class FlowScopeTest {
     APIKitConfig config = new APIKitConfig();
     config.setApi("path/to/file.raml");
     config.setExtensionEnabled(true);
-    new APIKitConfigScope(config, mule).generate();
+    new APIKitConfigScope(config, mule, null).generate();
     API api = mock(API.class);
     HttpListener4xConfig listenerConfig =
         new HttpListener4xConfig("HTTP_Listener_Configuration", "localhost", "7777", "HTTP", "");
