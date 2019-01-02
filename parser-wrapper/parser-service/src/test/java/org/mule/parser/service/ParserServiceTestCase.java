@@ -16,7 +16,9 @@ import java.net.URISyntaxException;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import static org.mule.raml.interfaces.model.ApiVendor.*;
+import static org.mule.raml.interfaces.model.ApiVendor.OAS_20;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 public class ParserServiceTestCase {
 

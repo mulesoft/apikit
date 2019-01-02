@@ -17,10 +17,14 @@ import org.mule.runtime.core.api.MuleContext;
 import java.io.IOException;
 import java.util.function.Supplier;
 
-import static junit.framework.TestCase.*;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mule.raml.interfaces.ParserType.*;
+import static org.mule.raml.interfaces.ParserType.AMF;
+import static org.mule.raml.interfaces.ParserType.AUTO;
+import static org.mule.raml.interfaces.ParserType.RAML;
 
 public class RamlHandlerTestCase {
 
