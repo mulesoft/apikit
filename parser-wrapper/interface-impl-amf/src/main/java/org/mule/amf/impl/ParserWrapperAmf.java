@@ -49,7 +49,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import static amf.ProfileNames.*;
+import static amf.ProfileNames.AMF;
+import static amf.ProfileNames.OAS;
+import static amf.ProfileNames.OAS20;
+import static amf.ProfileNames.RAML;
+import static amf.ProfileNames.RAML08;
+import static amf.ProfileNames.RAML10;
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
