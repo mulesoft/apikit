@@ -6,6 +6,9 @@
  */
 package org.mule.raml.interfaces.common;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class APISyncUtils {
 
   public static final String EXCHANGE_JSON = "exchange.json";
@@ -15,6 +18,8 @@ public class APISyncUtils {
   public static final String EXCHANGE_TYPE = "zip";
   public static final String EXCHANGE_MODULES = "exchange_modules";
   final static String EXCHANGE_ROOT_RAML_TAG = "\"main\":\"";
+  public static final String EXCHANGE_MODULE_REGEX = "exchange_modules/([^/]+)/([^/]+)/([^/]+)/(.*)";
+  private static final Pattern EXCHANGE_PATTERN = Pattern.compile(EXCHANGE_MODULE_REGEX);
 
 
   private APISyncUtils() {}
@@ -39,12 +44,16 @@ public class APISyncUtils {
 
   public static String toApiSyncResource(String s) {
     String apiSyncResource = null;
-    String[] resourceParts = s.split("/");
-    int length = resourceParts.length;
-    if (length > 4)
-      apiSyncResource = String.format(RESOURCE_FORMAT, resourceParts[length - 4], resourceParts[length - 3],
-                                      resourceParts[length - 2], RAML_FRAGMENT_CLASSIFIER,
-                                      EXCHANGE_TYPE, resourceParts[length - 1]);
+    Matcher exchangeMatcher = EXCHANGE_PATTERN.matcher(s);
+    if (exchangeMatcher.matches()) {
+      String groupId = exchangeMatcher.group(1);
+      String artifactId = exchangeMatcher.group(2);
+      String version = exchangeMatcher.group(3);
+      String filePath = exchangeMatcher.group(4);
+      apiSyncResource = String.format(RESOURCE_FORMAT, groupId, artifactId,
+                                      version, RAML_FRAGMENT_CLASSIFIER,
+                                      EXCHANGE_TYPE, filePath);
+    }
     return apiSyncResource;
   }
 
