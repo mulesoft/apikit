@@ -91,7 +91,7 @@ public class RAMLFilesParser {
           processedFiles);
     } else {
       parseStatus = ScaffolderReport.FAILED;
-      errorMessage = "None of the files were recognized as a valid root API file. See the Error Log for more details";
+      errorMessage = "None of the files was recognized as a valid root API file. See the Error Log for more details";
       this.log.error(errorMessage);
     }
   }
