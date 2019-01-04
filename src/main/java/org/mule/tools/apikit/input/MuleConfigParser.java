@@ -34,14 +34,12 @@ public class MuleConfigParser {
 
   private Set<ResourceActionMimeTypeTriplet> entries = new HashSet<>();
   private Map<String, API> includedApis = new HashMap<>();
-  private Map<String, HttpListener4xConfig> httpListenerConfigs = new HashMap<>();
   private Map<String, APIKitConfig> apikitConfigs = new HashMap<>();
   private final APIFactory apiFactory;
   private final Log log;
 
   public MuleConfigParser(Log log, APIFactory apiFactory) {
     this.apiFactory = apiFactory;
-    this.httpListenerConfigs.putAll(apiFactory.getDomainHttpListenerConfigs());
     this.log = log;
   }
 
@@ -84,12 +82,13 @@ public class MuleConfigParser {
 
   protected void parseConfigs(File file, Document document, Set<String> apiFilePaths) {
     apikitConfigs.putAll(new APIKitConfigParser().parse(document));
-    httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
+    apiFactory.getHttpListenerConfigs().putAll(new HttpListener4xConfigParser().parse(document));
   }
 
   protected void parseApis(File file, Document document, Set<String> apiFilePaths) {
     includedApis
-        .putAll(new APIKitRoutersParser(apikitConfigs, httpListenerConfigs, apiFilePaths, file, apiFactory).parse(document));
+        .putAll(new APIKitRoutersParser(apikitConfigs, apiFactory.getHttpListenerConfigs(), apiFilePaths, file, apiFactory)
+            .parse(document));
   }
 
   protected void parseFlows(Collection<Document> documents) {

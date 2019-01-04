@@ -22,20 +22,22 @@ public class HttpListenerConfigMule4Scope implements Scope {
   public HttpListenerConfigMule4Scope(API api, Element mule) {
     this.mule = mule;
 
-    if (api.getHttpListenerConfig() != null) {
-      httpListenerConfig = new Element(HttpListener4xConfig.ELEMENT_NAME, HTTP_NAMESPACE.getNamespace());
-      httpListenerConfig.setAttribute("name", api.getHttpListenerConfig().getName());
-      String basePath = api.getHttpListenerConfig().getBasePath();
+    final HttpListener4xConfig httpListenerConfig = api.getHttpListenerConfig();
+    if (httpListenerConfig != null) {
+      this.httpListenerConfig = new Element(HttpListener4xConfig.ELEMENT_NAME, HTTP_NAMESPACE.getNamespace());
+      this.httpListenerConfig.setAttribute("name", httpListenerConfig.getName());
+      String basePath = httpListenerConfig.getBasePath();
       if (basePath != null && basePath != "/" && basePath != "") {
-        httpListenerConfig.setAttribute("basePath", api.getHttpListenerConfig().getBasePath());
+        this.httpListenerConfig.setAttribute("basePath", httpListenerConfig.getBasePath());
       }
-      mule.addContent(httpListenerConfig);
+      mule.addContent(this.httpListenerConfig);
       Element connection = new Element("listener-connection", HTTP_NAMESPACE.getNamespace());
-      connection.setAttribute("host", api.getHttpListenerConfig().getHost());
-      connection.setAttribute("port", api.getHttpListenerConfig().getPort());
-      httpListenerConfig.addContent(connection);
+      connection.setAttribute("host", httpListenerConfig.getHost());
+      connection.setAttribute("port", httpListenerConfig.getPort());
+      this.httpListenerConfig.addContent(connection);
+      httpListenerConfig.setPeristed(true);
     } else
-      httpListenerConfig = null;
+      this.httpListenerConfig = null;
   }
 
   @Override

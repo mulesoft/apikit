@@ -9,7 +9,6 @@ package org.mule.tools.apikit;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.stubbing.Stubber;
 import org.mule.raml.implv2.ParserV2Utils;
@@ -17,6 +16,7 @@ import org.mule.tools.apikit.model.RuntimeEdition;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -456,6 +457,70 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertTrue(errors.stream().anyMatch(e -> e.contains("Unresolved reference 'SomeType?' from root context")));
     assertTrue(errors.stream().anyMatch(e -> e.contains("Unresolved reference 'SomeTypo' from root context")));
   }
+
+  @Test
+  public void testGenerateFromTwoApis() throws Exception {
+    final String testFolder = "scaffolder-from-two-apis/simple/";
+
+    testScaffoldTwoApis(testFolder, null);
+  }
+
+  @Test
+  public void testGenerateFromTwoApisWithDomain() throws Exception {
+    final String testFolder = "scaffolder-from-two-apis/with-domain/";
+
+    final File domainFile = createTmpFile(testFolder + "domains/mule-domain-config.xml");
+
+    testScaffoldTwoApis(testFolder, domainFile);
+  }
+
+  @Test
+  public void testGenerateFromTwoApisWithExistentConfig() throws Exception {
+    final String testFolder = "scaffolder-from-two-apis/with-existent-config/";
+
+    final String existentConfig = testFolder + "api.xml";
+
+    testScaffoldTwoApis(testFolder, singletonList(existentConfig), null);
+  }
+
+  private void testScaffoldTwoApis(String testFolder, File domainFile) throws IOException {
+    testScaffoldTwoApis(testFolder, emptyList(), domainFile);
+  }
+
+  private void testScaffoldTwoApis(String testFolder, List<String> existentConfigFileNames, File domainFile) throws IOException {
+    final String basePath = testFolder + "src/main/resources/api/";
+    final String api1 = basePath + "api1/api.raml";
+    final String api2 = basePath + "api2/api.raml";
+    File muleXmlOut = createTmpMuleXmlOutFolder();
+
+    final List<File> existentConfigs = existentConfigFileNames.stream().map(c -> {
+      try {
+        return createTmpFile(muleXmlOut, c);
+      } catch (IOException e) {
+        throw new RuntimeException("Unexpected Error creating temporal config");
+      }
+    }).collect(toList());
+
+    final List<File> ramls = new ArrayList<>();
+    ramls.add(createTmpFile(api1));
+    ramls.add(createTmpFile(api2));
+
+    Scaffolder scaffolder = createScaffolder(ramls, existentConfigs, muleXmlOut, domainFile, emptySet(), null, EE);
+    scaffolder.run();
+
+    final File xmlOut1 = new File(muleXmlOut, "api.xml");
+    assertTrue(xmlOut1.exists());
+    final File xmlOut2 = new File(muleXmlOut, "api-2.xml");
+    assertTrue(xmlOut2.exists());
+
+
+    assertEquals(IOUtils.toString(ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(testFolder + "api.xml")),
+                 IOUtils.toString(new FileInputStream(xmlOut1)));
+
+    assertEquals(IOUtils.toString(ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(testFolder + "api-2.xml")),
+                 IOUtils.toString(new FileInputStream(xmlOut2)));
+  }
+
 
   private void simpleGenerateForCE(final String apiPath) throws Exception {
     File muleXmlSimple = simpleGeneration(apiPath, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);

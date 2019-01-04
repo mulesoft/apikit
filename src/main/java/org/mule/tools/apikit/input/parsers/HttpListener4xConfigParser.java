@@ -56,8 +56,10 @@ public class HttpListener4xConfigParser implements MuleConfigFileParser {
           if (protocol == null) {
             protocol = API.DEFAULT_PROTOCOL;
           }
-          httpListenerConfigMap.put(name,
-                                    new HttpListener4xConfig(name, basePath, new HttpListenerConnection(host, port, protocol)));
+          final HttpListener4xConfig httpListenerConfig =
+              new HttpListener4xConfig(name, basePath, new HttpListenerConnection(host, port, protocol));
+          httpListenerConfig.setPeristed(true);
+          httpListenerConfigMap.put(name, httpListenerConfig);
         }
       }
     }

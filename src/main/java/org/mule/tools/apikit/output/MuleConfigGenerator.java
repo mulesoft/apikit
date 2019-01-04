@@ -21,7 +21,6 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
-import org.mule.tools.apikit.model.HttpListener4xConfig;
 import org.mule.tools.apikit.model.RuntimeEdition;
 import org.mule.tools.apikit.output.scopes.APIKitConfigScope;
 import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
@@ -71,18 +70,15 @@ public class MuleConfigGenerator {
   private final List<GenerationModel> flowEntries;
   private final Log log;
   private final File rootDirectory;
-  private final Map<String, HttpListener4xConfig> domainHttpListenerConfigs;
   private final Set<File> ramlsWithExtensionEnabled;
   private final RuntimeEdition runtimeEdition;
   private final List<API> apis;
 
   public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<API> apis, List<GenerationModel> flowEntries,
-                             Map<String, HttpListener4xConfig> domainHttpListenerConfigs, Set<File> ramlsWithExtensionEnabled,
-                             String minMuleVersion, RuntimeEdition runtimeEdition) {
+                             Set<File> ramlsWithExtensionEnabled, String minMuleVersion, RuntimeEdition runtimeEdition) {
     this.log = log;
     this.flowEntries = flowEntries;
     this.rootDirectory = muleConfigOutputDirectory;
-    this.domainHttpListenerConfigs = domainHttpListenerConfigs;
     this.runtimeEdition = runtimeEdition;
     if (ramlsWithExtensionEnabled == null) {
       this.ramlsWithExtensionEnabled = new TreeSet<>();
@@ -212,7 +208,7 @@ public class MuleConfigGenerator {
     List<Element> mules = muleExp.evaluate(doc);
     Element mule = mules.get(0);
     String listenerConfigRef = null;
-    if (!domainHttpListenerConfigs.containsKey(api.getHttpListenerConfig().getName())) {
+    if (!api.getHttpListenerConfig().isPeristed()) {
       new HttpListenerConfigMule4Scope(api, mule).generate();
     }
     listenerConfigRef = api.getHttpListenerConfig().getName();
