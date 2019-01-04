@@ -98,12 +98,22 @@ public class Scaffolder {
     }
 
     muleConfigGenerator =
-        new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels, muleDomainParser.getHttpListenerConfigs(),
+        new MuleConfigGenerator(log, muleXmlOutputDirectory, generationModels,
                                 ramlsWithExtensionEnabled, minMuleVersion, runtimeEdition);
 
     muleArtifactJsonGenerator =
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
   }
+
+  //  private Set<String> getFilePathSet(Set<File> fileSet) {
+  //    Set<String> fileNamesSet = new HashSet<>();
+  //
+  //    for (File file : fileSet) {
+  //      fileNamesSet.add(file.getAbsolutePath());
+  //    }
+  //
+  //    return fileNamesSet;
+  //  }
 
   private static InputStream getDomainStream(Log log, String domainPath) {
     InputStream domainStream = null;

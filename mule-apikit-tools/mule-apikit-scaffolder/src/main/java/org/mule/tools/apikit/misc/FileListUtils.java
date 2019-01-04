@@ -21,6 +21,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +61,7 @@ public class FileListUtils {
   }
 
   public Map<File, InputStream> toStreamFromFiles(List<File> files) {
-    Map<File, InputStream> fileStreams = new HashMap<File, InputStream>();
+    Map<File, InputStream> fileStreams = new LinkedHashMap<>();
 
     for (File file : files) {
       createFile(fileStreams, file);

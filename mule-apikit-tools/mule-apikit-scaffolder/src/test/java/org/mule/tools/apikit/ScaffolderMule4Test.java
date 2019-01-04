@@ -11,7 +11,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -38,6 +37,7 @@ import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
@@ -45,6 +45,8 @@ import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
 public class ScaffolderMule4Test {
+
+  private static final ClassLoader CLASS_LOADER = ScaffolderTest.class.getClassLoader();
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
@@ -174,7 +176,7 @@ public class ScaffolderMule4Test {
 
   @Test
   public void generateWithIncludes08() throws Exception {
-    String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-08/api.raml").getFile();
+    String filepath = CLASS_LOADER.getResource("scaffolder-include-08/api.raml").getFile();
     File file = new File(filepath);
     List<File> ramls = asList(file);
     List<File> xmls = asList();
@@ -205,7 +207,7 @@ public class ScaffolderMule4Test {
   @Test
   public void generateWithIncludes10() throws Exception {
     String filepath =
-        ScaffolderTest.class.getClassLoader().getResource("scaffolder-include-10/api.raml").getFile();
+        CLASS_LOADER.getResource("scaffolder-include-10/api.raml").getFile();
     File file = new File(filepath);
     List<File> ramls = asList(file);
     List<File> xmls = asList();
@@ -276,7 +278,7 @@ public class ScaffolderMule4Test {
   @Test
   public void generateWithExamples() throws Exception {
     String filepath =
-        ScaffolderTest.class.getClassLoader().getResource("scaffolder-with-examples/src/main/resources/api/api.raml").getFile();
+        CLASS_LOADER.getResource("scaffolder-with-examples/src/main/resources/api/api.raml").getFile();
     File file = new File(filepath);
     File muleXmlOut = folder.newFolder("mule-xml-out");
     Scaffolder scaffolder = createScaffolder(singletonList(file), emptyList(), muleXmlOut, null, emptySet(), null, EE);
@@ -286,7 +288,7 @@ public class ScaffolderMule4Test {
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertNotNull(s);
     final String expected =
-        IOUtils.toString(ScaffolderTest.class.getClassLoader().getResourceAsStream("scaffolder-with-examples/api.xml"));
+        IOUtils.toString(CLASS_LOADER.getResourceAsStream("scaffolder-with-examples/api.xml"));
     assertEquals(expected, s);
   }
 
@@ -784,22 +786,64 @@ public class ScaffolderMule4Test {
     assertEquals(1, countOccurences(s, "<apikit:console"));
   }
 
-  @Ignore
   @Test
   public void testGenerateFromTwoApis() throws Exception {
-    final String testFolder = "scaffolder-from-two-apis/";
+    final String testFolder = "scaffolder-from-two-apis/simple/";
+    folder.newFolder("scaffolder-from-two-apis");
+    folder.newFolder("scaffolder-from-two-apis/simple");
+
+    testScaffoldTwoApis(testFolder, null);
+  }
+
+  @Test
+  public void testGenerateFromTwoApisWithDomain() throws Exception {
+    final String testFolder = "scaffolder-from-two-apis/with-domain/";
+    folder.newFolder("scaffolder-from-two-apis");
+    folder.newFolder("scaffolder-from-two-apis/with-domain");
+    folder.newFolder("scaffolder-from-two-apis/with-domain/domains");
+
+    final File domainFile = createFile(testFolder + "domains/mule-domain-config.xml");
+
+    testScaffoldTwoApis(testFolder, domainFile);
+  }
+
+  @Test
+  public void testGenerateFromTwoApisWithExistentConfig() throws Exception {
+    final String testFolder = "scaffolder-from-two-apis/with-existent-config/";
+    folder.newFolder("scaffolder-from-two-apis");
+    folder.newFolder("scaffolder-from-two-apis/with-existent-config");
+
+    final File existentConfig = createFile(testFolder + "api.xml");
+
+    testScaffoldTwoApis(testFolder, singletonList(existentConfig), null);
+  }
+
+  private void testScaffoldTwoApis(String testFolder, File domainFile) throws IOException {
+    testScaffoldTwoApis(testFolder, emptyList(), domainFile);
+  }
+
+  private void testScaffoldTwoApis(String testFolder, List<File> existentConfigFiles, File domainFile) throws IOException {
     final String basePath = testFolder + "src/main/resources/api/";
     final String api1 =
-        ScaffolderTest.class.getClassLoader().getResource(basePath + "api1/api.raml").getFile();
+        CLASS_LOADER.getResource(basePath + "api1/api.raml").getFile();
     final String api2 =
-        ScaffolderTest.class.getClassLoader().getResource(basePath + "api2/api.raml").getFile();
+        CLASS_LOADER.getResource(basePath + "api2/api.raml").getFile();
+
     File muleXmlOut = folder.newFolder("mule-xml-out");
+    existentConfigFiles.forEach(f -> {
+      try {
+        final InputStream inputStream = CLASS_LOADER.getResourceAsStream(testFolder + f.getName());
+        createFile("mule-xml-out/" + f.getName(), inputStream);
+      } catch (IOException e) {
+        fail(e.getMessage());
+      }
+    });
 
     final List<File> ramls = new ArrayList<>();
     ramls.add(new File(api1));
     ramls.add(new File(api2));
 
-    Scaffolder scaffolder = createScaffolder(ramls, emptyList(), muleXmlOut, null, emptySet(), null, EE);
+    Scaffolder scaffolder = createScaffolder(ramls, existentConfigFiles, muleXmlOut, domainFile, emptySet(), null, EE);
     scaffolder.run();
 
     final File xmlOut1 = new File(muleXmlOut, "api.xml");
@@ -808,10 +852,10 @@ public class ScaffolderMule4Test {
     assertTrue(xmlOut2.exists());
 
 
-    assertEquals(IOUtils.toString(ScaffolderTest.class.getClassLoader().getResourceAsStream(testFolder + "api.xml")),
+    assertEquals(IOUtils.toString(CLASS_LOADER.getResourceAsStream(testFolder + "api.xml")),
                  IOUtils.toString(new FileInputStream(xmlOut1)));
 
-    assertEquals(IOUtils.toString(ScaffolderTest.class.getClassLoader().getResourceAsStream(testFolder + "api-2.xml")),
+    assertEquals(IOUtils.toString(CLASS_LOADER.getResourceAsStream(testFolder + "api-2.xml")),
                  IOUtils.toString(new FileInputStream(xmlOut2)));
   }
 
@@ -864,11 +908,14 @@ public class ScaffolderMule4Test {
   }
 
   private File createFile(String s) throws IOException {
+    InputStream resourceAsStream = CLASS_LOADER.getResourceAsStream(s);
+    return createFile(s, resourceAsStream);
+  }
+
+  private File createFile(String s, InputStream inputStream) throws IOException {
     File file = folder.newFile(s);
     file.createNewFile();
-    InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
-    IOUtils.copy(resourceAsStream,
-                 new FileOutputStream(file));
+    IOUtils.copy(inputStream, new FileOutputStream(file));
     return file;
   }
 

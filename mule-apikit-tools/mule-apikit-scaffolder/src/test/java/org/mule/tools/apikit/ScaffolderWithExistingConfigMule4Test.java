@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +46,7 @@ public class ScaffolderWithExistingConfigMule4Test {
   private FileListUtils fileListUtils = new FileListUtils();
 
   @Before
-  public void setUp() {
+  public void setUp() throws IOException {
     folder.newFolder("scaffolder");
     folder.newFolder("scaffolder-existing");
     folder.newFolder("scaffolder-existing-multiples");
