@@ -91,12 +91,6 @@ public class API {
     config.setName(id + "-" + APIKitConfig.DEFAULT_CONFIG_NAME);
   }
 
-  public void setDefaultHttpListenerConfig() {
-    String httpListenerConfigName =
-        id == null ? HttpListener4xConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListener4xConfig.DEFAULT_CONFIG_NAME;
-    httpListenerConfig = new HttpListener4xConfig(httpListenerConfigName);
-  }
-
   public String getBaseUri() {
     return baseUri;
   }

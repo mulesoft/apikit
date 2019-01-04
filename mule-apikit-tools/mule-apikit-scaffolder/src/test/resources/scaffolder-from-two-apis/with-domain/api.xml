@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
-    <http:listener-config name="api-2-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8081" />
-    </http:listener-config>
-    <apikit:config name="api-2-config" raml="api1/api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <flow name="api-2-main">
-        <http:listener config-ref="api-2-httpListenerConfig" path="/api/*">
+    <apikit:config name="api-config" api="api1/api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <flow name="api-main">
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
@@ -14,7 +11,7 @@
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="api-2-config" />
+        <apikit:router config-ref="api-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -96,8 +93,8 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="api-2-console">
-        <http:listener config-ref="api-2-httpListenerConfig" path="/console/*">
+    <flow name="api-console">
+        <http:listener config-ref="http-lc-0.0.0.0-8081" path="/console/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:response>
@@ -106,7 +103,7 @@ output application/json
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="api-2-config" />
+        <apikit:console config-ref="api-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -123,7 +120,7 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\resources:api-2-config">
-        <logger level="INFO" message="get:\resources:api-2-config" />
+    <flow name="get:\resources:api-config">
+        <logger level="INFO" message="get:\resources:api-config" />
     </flow>
 </mule>

@@ -8,7 +8,12 @@ package org.mule.tools.apikit.model;
 
 import org.mule.tools.apikit.misc.APIKitTools;
 
-import org.apache.commons.lang.StringUtils;
+import java.util.Objects;
+
+import static org.mule.tools.apikit.model.API.DEFAULT_BASE_PATH;
+import static org.mule.tools.apikit.model.API.DEFAULT_HOST;
+import static org.mule.tools.apikit.model.API.DEFAULT_PORT;
+import static org.mule.tools.apikit.model.API.DEFAULT_PROTOCOL;
 
 public class HttpListener4xConfig {
 
@@ -20,6 +25,7 @@ public class HttpListener4xConfig {
   private String name;
   private String basePath;
   private HttpListenerConnection connection;
+  private boolean isPeristed = false;
 
   public HttpListener4xConfig(final String name,
                               final String baseUri) {
@@ -32,10 +38,8 @@ public class HttpListener4xConfig {
   }
 
   public HttpListener4xConfig(final String name) {
-    this.name = name;
-    this.basePath = API.DEFAULT_BASE_PATH;
-    this.connection =
-        new HttpListenerConnection.Builder(API.DEFAULT_HOST, String.valueOf(API.DEFAULT_PORT), API.DEFAULT_PROTOCOL).build();
+    this(name, DEFAULT_BASE_PATH,
+         new HttpListenerConnection.Builder(DEFAULT_HOST, String.valueOf(DEFAULT_PORT), DEFAULT_PROTOCOL).build());
   }
 
   public HttpListener4xConfig(final String name,
@@ -43,9 +47,7 @@ public class HttpListener4xConfig {
                               final String port,
                               final String protocol,
                               final String basePath) {
-    this.name = name;
-    this.basePath = basePath;
-    this.connection = new HttpListenerConnection.Builder(host, port, protocol).build();
+    this(name, basePath, new HttpListenerConnection.Builder(host, port, protocol).build());
   }
 
   public HttpListener4xConfig(final String name,
@@ -82,5 +84,31 @@ public class HttpListener4xConfig {
 
   public void setBasePath(String basePath) {
     this.basePath = basePath;
+  }
+
+  public boolean isPeristed() {
+    return isPeristed;
+  }
+
+  public void setPeristed(boolean isGenerated) {
+    this.isPeristed = isGenerated;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o)
+      return true;
+    if (o == null || getClass() != o.getClass())
+      return false;
+    HttpListener4xConfig that = (HttpListener4xConfig) o;
+    return isPeristed == that.isPeristed &&
+        Objects.equals(name, that.name) &&
+        Objects.equals(basePath, that.basePath) &&
+        Objects.equals(connection, that.connection);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(name, basePath, connection, isPeristed);
   }
 }

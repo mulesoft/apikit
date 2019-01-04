@@ -80,7 +80,7 @@ public class MuleConfigGeneratorTest {
 
     Log mock = mock(Log.class);
     MuleConfigGenerator muleConfigGenerator =
-        new MuleConfigGenerator(mock, new File(""), emptyList(), entries, new HashMap<String, HttpListener4xConfig>(), null,
+        new MuleConfigGenerator(mock, new File(""), emptyList(), entries, null,
                                 DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
     muleConfigGenerator.generate();
 
@@ -172,7 +172,7 @@ public class MuleConfigGeneratorTest {
 
     MuleConfigGenerator muleConfigGenerator =
         new MuleConfigGenerator(mock(Log.class), new File(""), emptyList(), new ArrayList<GenerationModel>(),
-                                new HashMap<String, HttpListener4xConfig>(), null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+                                null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
 
     Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 
@@ -222,7 +222,7 @@ public class MuleConfigGeneratorTest {
 
     MuleConfigGenerator muleConfigGenerator =
         new MuleConfigGenerator(mock(Log.class), new File(""), emptyList(), new ArrayList<GenerationModel>(),
-                                new HashMap<String, HttpListener4xConfig>(), null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+                                null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
 
     Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 
