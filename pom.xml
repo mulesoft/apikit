@@ -18,6 +18,7 @@
 
     <properties>
         <!--mule community version-->
+
         <mule.version>3.9.3-SNAPSHOT</mule.version>
         <cors.module.version>2.1.4</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
