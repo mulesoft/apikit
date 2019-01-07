@@ -19,7 +19,7 @@
     <properties>
         <!--mule community version-->
         <mule.version>3.8.8-SNAPSHOT</mule.version>
-        <cors.module.version>2.1.4-SNAPSHOT</cors.module.version>
+        <cors.module.version>2.1.4</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
