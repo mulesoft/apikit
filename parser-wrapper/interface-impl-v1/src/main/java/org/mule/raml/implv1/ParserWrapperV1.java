@@ -26,6 +26,7 @@ import org.raml.model.Raml;
 import org.raml.model.Resource;
 import org.raml.parser.loader.CompositeResourceLoader;
 import org.raml.parser.loader.DefaultResourceLoader;
+import org.raml.parser.loader.FileResourceLoader;
 import org.raml.parser.loader.ResourceLoader;
 import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.visitor.RamlDocumentBuilder;
@@ -33,10 +34,13 @@ import org.raml.parser.visitor.RamlValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toList;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
 import static org.raml.parser.rule.ValidationResult.Level.ERROR;
 import static org.raml.parser.rule.ValidationResult.Level.WARN;
@@ -53,7 +57,7 @@ public class ParserWrapperV1 implements ParserWrapper {
   private Raml baseApi; //original api to clone
 
   public ParserWrapperV1(String ramlPath) {
-    this(ramlPath, DEFAULT_RESOURCE_LOADER, new ApiSyncResourceLoader(ramlPath));
+    this(ramlPath, getResourceLoaderForPath(ramlPath));
   }
 
   public ParserWrapperV1(String ramlPath, ResourceLoader... resourceLoader) {
@@ -63,6 +67,15 @@ public class ParserWrapperV1 implements ParserWrapper {
   private ParserWrapperV1(String ramlPath, ResourceLoader resourceLoader) {
     this.ramlPath = ramlPath;
     this.resourceLoader = resourceLoader;
+  }
+
+  public static ResourceLoader getResourceLoaderForPath(@Nonnull String ramlPath) {
+    if (isSyncProtocol(ramlPath))
+      return new ApiSyncResourceLoader(ramlPath);
+
+    final File ramlFile = new File(ramlPath);
+    final FileResourceLoader fileResourceLoader = new FileResourceLoader(ramlFile.getParentFile());
+    return new CompositeResourceLoader(DEFAULT_RESOURCE_LOADER, fileResourceLoader);
   }
 
   @Override
