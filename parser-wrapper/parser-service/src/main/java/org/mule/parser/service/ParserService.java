@@ -11,7 +11,9 @@ import org.mule.amf.impl.exceptions.ParserException;
 import org.mule.parser.service.logger.Logger;
 import org.mule.parser.service.logger.LoggerFactory;
 import org.mule.raml.implv1.ParserWrapperV1;
+import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.implv2.ParserWrapperV2;
+import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.loader.ResourceLoader;
@@ -19,6 +21,10 @@ import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
+import org.raml.v2.api.loader.CompositeResourceLoader;
+import org.raml.v2.api.loader.DefaultResourceLoader;
+import org.raml.v2.api.loader.FileResourceLoader;
+import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 
 import java.util.List;
 
@@ -150,12 +156,14 @@ public class ParserService {
   }
 
   private static ParserWrapperV1 createRamlParserWrapperV1(String path, ResourceLoader apiLoader) {
-    return apiLoader != null ? new ParserWrapperV1(path, ParserWrapperV1.DEFAULT_RESOURCE_LOADER, apiLoader::getResourceAsStream)
+    return apiLoader != null
+        ? new ParserWrapperV1(path, ParserWrapperV1.getResourceLoaderForPath(path), apiLoader::getResourceAsStream)
         : new ParserWrapperV1(path);
   }
 
   private static ParserWrapperV2 createRamlParserWrapperV2(String path, ResourceLoader apiLoader) {
-    return apiLoader != null ? new ParserWrapperV2(path, ParserWrapperV2.DEFAULT_RESOURCE_LOADER, apiLoader::getResourceAsStream)
+    return apiLoader != null
+        ? new ParserWrapperV2(path, ParserWrapperV2.getResourceLoaderForPath(path), apiLoader::getResourceAsStream)
         : new ParserWrapperV2(path);
   }
 }
