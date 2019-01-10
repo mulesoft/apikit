@@ -11,7 +11,7 @@
 
     <properties>
         <mule.maven.plugin.version>3.2.5</mule.maven.plugin.version>
-        <mule.http.connector.version>1.3.2</mule.http.connector.version>
+        <mule.http.connector.version>1.5.0-SNAPSHOT</mule.http.connector.version>
     </properties>
     <build>
         <plugins>
