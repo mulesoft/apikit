@@ -132,7 +132,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   private Publisher<CoreEvent> doRoute(CoreEvent event, Configuration config, CoreEvent.Builder eventBuilder,
                                        HttpRequestAttributes attributes)
       throws MuleRestException {
-    String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRequestPath());
+    String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRawRequestPath());
     path = path.isEmpty() ? "/" : path;
 
     //Get uriPattern, uriResolver, and the resolvedVariables

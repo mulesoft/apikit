@@ -74,19 +74,8 @@ public class URIResolver {
    *
    * @param uri The URI to resolve.
    */
-  public URIResolver(String uri, boolean encode) {
-    if (encode) {
-      uri = encode(uri);
-    }
-    this._uri = uri;
-  }
-
   public URIResolver(String uri) {
-    this(uri, true);
-  }
-
-  private String encode(String uri) {
-    return URICoder.encode(uri, '/');
+    this._uri = uri;
   }
 
   /**
@@ -208,7 +197,8 @@ public class URIResolver {
 
       // most common case: a string
       if (value instanceof String) {
-        Object o = r.resolve(value.toString());
+        final String decoded = URICoder.decode(value.toString());
+        Object o = r.resolve(decoded);
         result.put(entry.getKey().name(), o);
         if (o == null) {
           status = URIResolveResult.Status.UNRESOLVED;
