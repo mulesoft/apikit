@@ -271,7 +271,7 @@ public class ParserWrapperAmf implements ParserWrapper {
     if (webApi.servers() != null && webApi.servers().size() > 0) {
       final Server server = webApi.servers().get(0);
       server.withUrl(baseUri);
-      server.variables().clear();
+      server.withVariables(emptyList());
       getConsoleModel().withEncodes(webApi);
     }
   }
