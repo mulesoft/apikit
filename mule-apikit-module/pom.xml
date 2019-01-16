@@ -277,13 +277,6 @@
             <classifier>mule-plugin</classifier>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.mule.distributions</groupId>
-            <artifactId>mule-distro-tests</artifactId>
-            <version>${mule.mule.distro.tests.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>
