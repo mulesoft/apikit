@@ -25,4 +25,8 @@
         <set-payload value="headers: #[message.inboundProperties.'repeatable']"/>
     </flow>
 
+    <flow name="get:/default">
+        <set-payload value="parameters: #[message.inboundProperties.'http.query.params']"/>
+    </flow>
+
 </mule>
