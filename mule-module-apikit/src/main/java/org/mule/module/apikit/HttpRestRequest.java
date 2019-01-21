@@ -279,10 +279,16 @@ public class HttpRestRequest
         queryParamMap.put(key, value);
     }
 
-    private Map<String, String> createMutableParameterMap(Map<String, String> queryParamMap) {
+    private ParameterMap createMutableParameterMap(Map<String, String> queryParamMap) {
         ParameterMap result = new ParameterMap();
-        for (Map.Entry<String, String> entry : queryParamMap.entrySet()) {
-            result.put(entry.getKey(), entry.getValue());
+        for (String key : queryParamMap.keySet()) {
+            if (queryParamMap instanceof ParameterMap) {
+                for (String value : ((ParameterMap) queryParamMap).getAll(key)) {
+                    result.put(key, value);
+                }
+            } else {
+                result.put(key, queryParamMap.get(key));
+            }
         }
         return result;
     }
