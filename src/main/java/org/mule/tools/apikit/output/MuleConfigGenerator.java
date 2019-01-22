@@ -133,7 +133,9 @@ public class MuleConfigGenerator {
   private void updateApikitConfigs(Map<API, Document> docs) {
     for (API api : apis) {
       try {
-        Document doc = getDocument(api);
+        Document doc = docs.get(api);
+        if (doc == null)
+          doc = getDocument(api);
         XPathExpression muleExp = XPathFactory.instance().compile("//*[local-name()='mule']");
         List<Element> mules = muleExp.evaluate(doc);
         Element mule = mules.get(0);
