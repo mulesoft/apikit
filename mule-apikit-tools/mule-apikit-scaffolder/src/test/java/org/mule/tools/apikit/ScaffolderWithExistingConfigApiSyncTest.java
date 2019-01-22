@@ -16,7 +16,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.mule.raml.implv2.ParserV2Utils;
-import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 
 import java.io.File;
@@ -24,14 +23,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
@@ -43,7 +43,6 @@ public class ScaffolderWithExistingConfigApiSyncTest extends AbstractScaffolderT
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
-  private FileListUtils fileListUtils = new FileListUtils();
 
   @Before
   public void setUp() throws IOException {
@@ -54,56 +53,50 @@ public class ScaffolderWithExistingConfigApiSyncTest extends AbstractScaffolderT
 
   @Test
   public void reScaffold() throws Exception {
-    List<File> ramls = Arrays.asList(getFile("rescaffolding-apisync-version/api.raml"));
-    File muleXmlOut = folder.newFolder("mule-xml-out");
+    final List<File> ramls = singletonList(getFile("rescaffolding-apisync-version/v1/api.raml"));
+    File outputFolder = folder.newFolder("mule-xml-out");
 
-    assertFalse((new File(muleXmlOut.getAbsolutePath() + "/api.xml")).exists());
-    Scaffolder scaffolder = createScaffolder(ramls, null, muleXmlOut, null, false, null);
+    final File muleXmlOut = new File(outputFolder, "api.xml");
+
+    assertFalse(muleXmlOut.exists());
+    Scaffolder scaffolder = createScaffolder(ramls, null, outputFolder, null, false);
     scaffolder.run();
 
-    File api = new File(muleXmlOut.getAbsolutePath() + "/api.xml");
-    assertTrue(api.exists());
+    assertTrue(muleXmlOut.exists());
+    final URI expected = getClass().getResource("/rescaffolding-apisync-version/v1/api.xml").toURI();
+    assertEquals("First Scaffolding differs from expected", IOUtils.toString(expected), IOUtils.toString(muleXmlOut.toURI()));
 
-    File apiBkp = File.createTempFile("apikp", ".xml");
-    FileUtils.copyFile(api, apiBkp);
-
-    List<File> xmls = Arrays.asList(api);
-
-    scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, false, null);
+    List<File> xmls = singletonList(muleXmlOut);
+    scaffolder = createScaffolder(ramls, xmls, outputFolder, null, false);
     scaffolder.run();
 
-    api = new File(muleXmlOut.getAbsolutePath() + "/api.xml");
-    assertTrue(api.exists());
-
-    assertEquals(IOUtils.toString(new FileInputStream(api)), IOUtils.toString(new FileInputStream(apiBkp)));
-
+    assertTrue(muleXmlOut.exists());
+    assertEquals("Second Scaffolding differs from expected", IOUtils.toString(expected), IOUtils.toString(muleXmlOut.toURI()));
   }
 
   @Test
   public void reScaffoldDifferntVersions() throws Exception {
-    List<File> ramls = Arrays.asList(getFile("rescaffolding-apisync-version/v1/api.raml"));
-    File muleXmlOut = folder.newFolder("mule-xml-out");
+    final List<File> ramlsV1 = singletonList(getFile("rescaffolding-apisync-version/v1/api.raml"));
+    final File outputFolder = folder.newFolder("mule-xml-out");
 
-    assertFalse((new File(muleXmlOut.getAbsolutePath() + "/api.xml")).exists());
-    Scaffolder scaffolder = createScaffolder(ramls, null, muleXmlOut, null, false, null);
+    final File muleXmlOut = new File(outputFolder, "api.xml");
+    assertFalse(muleXmlOut.exists());
+
+    Scaffolder scaffolder = createScaffolder(ramlsV1, null, outputFolder, null, false);
     scaffolder.run();
 
-    File api = new File(muleXmlOut.getAbsolutePath() + "/api.xml");
-    assertTrue(api.exists());
+    assertTrue(muleXmlOut.exists());
+    final URI expectedV1 = getClass().getResource("/rescaffolding-apisync-version/v1/api.xml").toURI();
+    assertEquals("First Scaffolding differs from expected", IOUtils.toString(expectedV1), IOUtils.toString(muleXmlOut.toURI()));
 
-    File apiBkp = File.createTempFile("apikp", ".xml");
-    FileUtils.copyFile(api, apiBkp);
-
-    List<File> xmls = Arrays.asList(api);
-    ramls = Arrays.asList(getFile("rescaffolding-apisync-version/v2/api.raml"));
-    scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, false, null);
+    List<File> xmls = singletonList(muleXmlOut);
+    final List<File> ramlsV2 = singletonList(getFile("rescaffolding-apisync-version/v2/api.raml"));
+    scaffolder = createScaffolder(ramlsV2, xmls, outputFolder, null, false);
     scaffolder.run();
 
-    api = new File(muleXmlOut.getAbsolutePath() + "/api.xml");
-    assertTrue(api.exists());
-
-    String original = IOUtils.toString(new FileInputStream(apiBkp));
-    assertEquals(IOUtils.toString(new FileInputStream(api)), original.replace("1.0.0", "2.0.0"));
+    assertTrue(muleXmlOut.exists());
+    final URI expectedV2 = getClass().getResource("/rescaffolding-apisync-version/v2/api.xml").toURI();
+    assertEquals("Second Scaffolding differs from expected", IOUtils.toString(expectedV2), IOUtils.toString(muleXmlOut.toURI()));
 
   }
 
@@ -111,16 +104,15 @@ public class ScaffolderWithExistingConfigApiSyncTest extends AbstractScaffolderT
     if (s == null) {
       return null;
     }
-    File file = folder.newFile(s);
-    file.createNewFile();
-    InputStream resourceAsStream = ScaffolderWithExistingConfigApiSyncTest.class.getClassLoader().getResourceAsStream(s);
-    IOUtils.copy(resourceAsStream,
-                 new FileOutputStream(file));
+    final File file = folder.newFile(s);
+    final InputStream resourceAsStream = ScaffolderWithExistingConfigApiSyncTest.class.getClassLoader().getResourceAsStream(s);
+    assertNotNull(resourceAsStream);
+    IOUtils.copy(resourceAsStream, new FileOutputStream(file));
     return file;
   }
 
   private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile,
-                                      boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled)
+                                      boolean compatibilityMode)
       throws IOException {
     Log log = mock(Log.class);
     Map<String, InputStream> ramlMap = null;
