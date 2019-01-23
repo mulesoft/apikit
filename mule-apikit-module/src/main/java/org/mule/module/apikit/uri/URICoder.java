@@ -224,7 +224,11 @@ public class URICoder {
         if (i < s.length() - 2) {
           String hex = String.copyValueOf(new char[] {s.charAt(++i), s.charAt(++i)});
           char x = (char) Integer.parseInt(hex, 16);
-          sb.append(x);
+          if (x != '/') {
+            sb.append(x);
+          } else {
+            sb.append("%2F");
+          }
         }
         // TODO: handle error condition
       } else {
@@ -246,7 +250,11 @@ public class URICoder {
         if (i < s.length() - 2) {
           String hex = "" + s.charAt(++i) + s.charAt(++i);
           byte b = (byte) (Integer.parseInt(hex, 16));
-          bb.put(b);
+          if (b != '/') {
+            bb.put(b);
+          } else {
+            bb.put("%2F".getBytes());
+          }
         }
       } else {
         // TODO: could there be also non-ASCII characters that should have been encoded?

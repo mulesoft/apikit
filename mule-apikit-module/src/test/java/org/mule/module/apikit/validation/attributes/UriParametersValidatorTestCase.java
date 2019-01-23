@@ -28,17 +28,6 @@ public class UriParametersValidatorTestCase extends AbstractMultiParserFunctiona
   }
 
   @Test
-  public void answer200WhenSpecialCharactesAreSent() throws Exception {
-    given().urlEncodingEnabled(false)
-        .pathParam("src", "this%20is%20a%20test")
-        .expect()
-        .response()
-        .statusCode(200)
-        .body(is("this is a test"))
-        .when().get("api/escaped/{src}");
-  }
-
-  @Test
   public void answer200WhenInlineOptionalUriParameterIsValid() throws Exception {
     given().expect().response()
         .statusCode(200)

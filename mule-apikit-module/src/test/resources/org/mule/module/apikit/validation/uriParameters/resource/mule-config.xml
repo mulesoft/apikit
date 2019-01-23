@@ -41,10 +41,6 @@
         <set-payload value="#[payload]" />
     </flow>
 
-    <flow name="get:\escaped\(anyvalue)">
-        <set-payload value="#[attributes.uriParams.anyvalue]" />
-    </flow>
-
     <flow name="get:\list\(param)">
         <set-payload value="#[payload]" />
     </flow>
