@@ -155,10 +155,7 @@ public class RamlImplV1 implements IRaml {
   @Override
   public List<String> getAllReferences() {
     try {
-      String content = IOUtils.toString(resourceLoader.fetchResource(ramlPath));
-      String rootFilePath = ramlPath.substring(ramlPath.indexOf("/"), ramlPath.lastIndexOf("/"));
-
-      return ParserV1Utils.detectIncludes(rootFilePath, content);
+      return ParserV1Utils.detectIncludes(ramlPath, resourceLoader);
     } catch (IOException e) {
       logger.error(e.getMessage());
     }

@@ -40,6 +40,14 @@ public class InterfaceV10TestCase {
 
     List<String> allReferences = raml.getAllReferences();
     allReferences.forEach(ref -> assertThat("Invalid URI", ref, startsWith("file:/")));
-    assertEquals(4, allReferences.size());
+    assertEquals(6, allReferences.size());
+
+    assertThat(allReferences.stream().anyMatch(r -> r.endsWith("org/mule/raml/implv2/v10/references/address.raml")), is(true));
+    assertThat(allReferences.stream().anyMatch(r -> r.endsWith("org/mule/raml/implv2/v10/references/company-example.json")),
+               is(true));
+    assertThat(allReferences.stream().anyMatch(r -> r.endsWith("org/mule/raml/implv2/v10/references/partner.raml")), is(true));
+    assertThat(allReferences.stream().anyMatch(r -> r.endsWith("org/mule/raml/implv2/v10/references/data-type.raml")), is(true));
+    assertThat(allReferences.stream().anyMatch(r -> r.endsWith("org/mule/raml/implv2/v10/references/library.raml")), is(true));
+    assertThat(allReferences.stream().anyMatch(r -> r.endsWith("org/mule/raml/implv2/v10/references/company.raml")), is(true));
   }
 }

@@ -6,6 +6,7 @@
  */
 package org.mule.raml.implv2;
 
+import org.apache.commons.io.IOUtils;
 import org.mule.raml.implv2.parser.rule.ValidationResultImpl;
 import org.mule.raml.implv2.v08.model.RamlImpl08V2;
 import org.mule.raml.implv2.v10.model.RamlImpl10V2;
@@ -16,15 +17,22 @@ import org.raml.v2.api.RamlModelResult;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.model.common.ValidationResult;
 import org.raml.v2.api.model.v10.system.types.AnnotableSimpleType;
+import org.raml.v2.internal.impl.RamlBuilder;
 import org.raml.v2.internal.impl.commons.nodes.LibraryNodeProvider;
 import org.raml.v2.internal.impl.v10.nodes.LibraryLinkNode;
 import org.raml.yagi.framework.nodes.Node;
 import org.raml.yagi.framework.nodes.snakeyaml.SYIncludeNode;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 public class ParserV2Utils {
 
@@ -82,14 +90,27 @@ public class ParserV2Utils {
     return simpleType != null ? String.valueOf(simpleType.value()) : null;
   }
 
-  public static List<String> findIncludeNodes(final Node raml, String ramlPath) {
-    final List<String> includePaths = new ArrayList<>();
-    findIncludeNodes("", includePaths, Arrays.asList(raml), ramlPath);
-    return includePaths;
+  public static List<String> findIncludeNodes(String ramlPath, ResourceLoader resourceLoader) throws IOException {
+    final InputStream is = resourceLoader.fetchResource(ramlPath);
+
+    if (is == null)
+      return emptyList();
+
+    final String content = IOUtils.toString(is);
+    final Node raml = new RamlBuilder().build(content);
+    return findIncludeNodes(raml, ramlPath, resourceLoader);
   }
 
-  private static void findIncludeNodes(final String pathRelativeToRoot, final List<String> includePaths,
-                                       final List<Node> currents, String ramlPath) {
+  public static List<String> findIncludeNodes(final Node raml, String ramlPath, ResourceLoader resourceLoader)
+      throws IOException {
+    final Set<String> includePaths = new HashSet<>();
+    findIncludeNodes("", includePaths, singletonList(raml), ramlPath, resourceLoader);
+    return new ArrayList<>(includePaths);
+  }
+
+  private static void findIncludeNodes(final String pathRelativeToRoot, final Set<String> includePaths,
+                                       final List<Node> currents, String ramlPath, ResourceLoader resourceLoader)
+      throws IOException {
     final String rootPath = new File(ramlPath).getParent();
 
     for (final Node current : currents) {
@@ -105,14 +126,17 @@ public class ParserV2Utils {
         }
 
         if (includePath != null) {
-          includePaths.add(computeIncludePath(rootPath, pathRelativeToRoot, includePath));
-          pathRelativeToRootCurrent = calculateNextRootRelative(pathRelativeToRootCurrent, includePath);
+          final String absolutIncludePath = computeIncludePath(rootPath, pathRelativeToRoot, includePath);
+          includePaths.add(new File(absolutIncludePath).toURI().toString());
+          includePaths.addAll(findIncludeNodes(absolutIncludePath, resourceLoader));
+          pathRelativeToRootCurrent = calculateNextRootRelative(pathRelativeToRootCurrent,
+                                                                includePath);
         }
 
         possibleInclude = possibleInclude.getSource();
       }
 
-      findIncludeNodes(pathRelativeToRootCurrent, includePaths, getChildren(current), ramlPath);
+      findIncludeNodes(pathRelativeToRootCurrent, includePaths, getChildren(current), ramlPath, resourceLoader);
     }
   }
 
@@ -143,13 +167,12 @@ public class ParserV2Utils {
 
   private static String computeIncludePath(final String rootPath, final String pathRelativeToRoot, final String includePath) {
     // according to RAML 1.0 spec: https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md
-    String resolvedPath = isAbsolute(includePath) //
+
+    // uses File class to normalize the resolved path acording with the OS (every slash in the path must be in the same direction)
+    return isAbsolute(includePath) //
         ? rootPath + includePath
         // relative path: A path that neither begins with a single slash ("/") nor constitutes a URL, and is interpreted relative to the location of the included file.
         : rootPath + (pathRelativeToRoot.isEmpty() ? "" : File.separator + pathRelativeToRoot) + File.separator + includePath;
-
-    // uses File class to normalize the resolved path acording with the OS (every slash in the path must be in the same direction)
-    return new File(resolvedPath).toURI().toString();
   }
 
   private static boolean isAbsolute(String includePath) {
