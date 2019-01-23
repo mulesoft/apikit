@@ -45,7 +45,7 @@ public class Parameters10TestCase extends FunctionalTestCase
     {
         given().queryParam("status", "a", "b")
                 .expect().response().statusCode(200)
-                .body(is("parameters: ParameterMap{[status=[a, b]]}"))
+                .body(is("parameters: ParameterMap{[status=[a, b], default=[default value]]}"))
                 .when().get("/api/repeat");
     }
 
@@ -54,7 +54,7 @@ public class Parameters10TestCase extends FunctionalTestCase
     {
         given().queryParam("status", "*a", "b")
                 .expect().response().statusCode(200)
-                .body(is("parameters: ParameterMap{[status=[*a, b]]}"))
+                .body(is("parameters: ParameterMap{[status=[*a, b], default=[default value]]}"))
                 .when().get("/api/repeat");
     }
 
@@ -63,7 +63,7 @@ public class Parameters10TestCase extends FunctionalTestCase
     {
         given().queryParam("status", "123")
                 .expect().response().statusCode(200)
-                .body(is("parameters: ParameterMap{[status=[123]]}"))
+                .body(is("parameters: ParameterMap{[status=[123], default=[default value]]}"))
                 .when().get("/api/repeat");
     }
 
@@ -72,7 +72,7 @@ public class Parameters10TestCase extends FunctionalTestCase
     {
         given().queryParam("status", "123", "456")
                 .expect().response().statusCode(200)
-                .body(is("parameters: ParameterMap{[status=[123, 456]]}"))
+                .body(is("parameters: ParameterMap{[status=[123, 456], default=[default value]]}"))
                 .when().get("/api/repeat");
     }
 
@@ -94,4 +94,11 @@ public class Parameters10TestCase extends FunctionalTestCase
                 .when().get("/api/repeat");
     }
 
+    @Test
+    public void parameterMapAfterDefaultAdded() {
+        given().queryParam("status", "a", "b")
+                .expect().response().statusCode(200)
+                .body(is("parameters: ParameterMap{[status=[a, b], default=[default value]]}"))
+                .when().get("/api/repeat");
+    }
 }

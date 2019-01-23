@@ -273,10 +273,24 @@ public class HttpRestRequest
         if (queryParamMap instanceof ParameterMap)
         {
             //overwrite the query-param map with a mutable instance
-            queryParamMap = new HashMap<String, String>(queryParamMap);
+            queryParamMap = createMutableParameterMap(queryParamMap);
             requestEvent.getMessage().setProperty("http.query.params", queryParamMap, PropertyScope.INBOUND);
         }
         queryParamMap.put(key, value);
+    }
+
+    private ParameterMap createMutableParameterMap(Map<String, String> queryParamMap) {
+        ParameterMap result = new ParameterMap();
+        for (String key : queryParamMap.keySet()) {
+            if (queryParamMap instanceof ParameterMap) {
+                for (String value : ((ParameterMap) queryParamMap).getAll(key)) {
+                    result.put(key, value);
+                }
+            } else {
+                result.put(key, queryParamMap.get(key));
+            }
+        }
+        return result;
     }
 
 
