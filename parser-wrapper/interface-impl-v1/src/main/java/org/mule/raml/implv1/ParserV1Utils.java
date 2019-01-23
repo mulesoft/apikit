@@ -6,6 +6,7 @@
  */
 package org.mule.raml.implv1;
 
+import org.apache.commons.io.IOUtils;
 import org.mule.raml.implv1.parser.visitor.RamlDocumentBuilderImpl;
 import org.mule.raml.implv1.parser.visitor.RamlValidationServiceImpl;
 import org.mule.raml.interfaces.model.IRaml;
@@ -15,13 +16,22 @@ import org.mule.raml.interfaces.parser.visitor.IRamlValidationService;
 import org.raml.parser.loader.ResourceLoader;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.MarkedYAMLException;
-import org.yaml.snakeyaml.nodes.*;
+import org.yaml.snakeyaml.nodes.MappingNode;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.NodeId;
+import org.yaml.snakeyaml.nodes.NodeTuple;
+import org.yaml.snakeyaml.nodes.ScalarNode;
+import org.yaml.snakeyaml.nodes.SequenceNode;
+import org.yaml.snakeyaml.nodes.Tag;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ParserV1Utils {
 
@@ -77,21 +87,25 @@ public class ParserV1Utils {
     return ramlDocumentBuilder;
   }
 
-  public static List<String> detectIncludes(String rootFilePath, String fileContent) {
+  public static List<String> detectIncludes(String ramlPath, ResourceLoader resourceLoader) throws IOException {
     try {
-      final Node rootNode = YAML_PARSER.compose(new StringReader(fileContent));
+      final String content = IOUtils.toString(resourceLoader.fetchResource(ramlPath));
+      final String rootFilePath = ramlPath.substring(ramlPath.indexOf("/"), ramlPath.lastIndexOf("/"));
+
+      final Node rootNode = YAML_PARSER.compose(new StringReader(content));
       if (rootNode == null) {
         return Collections.emptyList();
       } else {
-        return includedFilesIn(rootFilePath, rootNode);
+        return new ArrayList<>(includedFilesIn(rootFilePath, rootNode, resourceLoader));
       }
     } catch (final MarkedYAMLException e) {
       return Collections.emptyList();
     }
   }
 
-  private static List<String> includedFilesIn(final String rootFilePath, final Node rootNode) {
-    final List<String> includedFiles = new ArrayList<>();
+  private static Set<String> includedFilesIn(final String rootFilePath, final Node rootNode, ResourceLoader resourceLoader)
+      throws IOException {
+    final Set<String> includedFiles = new HashSet<>();
     if (rootNode.getNodeId() == NodeId.scalar) {
       final ScalarNode includedNode = (ScalarNode) rootNode;
       final Tag nodeTag = includedNode.getTag();
@@ -102,6 +116,7 @@ public class ParserV1Utils {
         final File includedFile = new File(includeAbsolutePath);
         if (includedFile.isFile() && includedFile.exists() && includedFile.canRead()) {
           includedFiles.add(includedFile.toURI().toString());
+          includedFiles.addAll(detectIncludes(includeAbsolutePath, resourceLoader));
         }
       }
     } else if (rootNode.getNodeId() == NodeId.mapping) {
@@ -109,13 +124,13 @@ public class ParserV1Utils {
       final List<NodeTuple> children = mappingNode.getValue();
       for (final NodeTuple childNode : children) {
         final Node valueNode = childNode.getValueNode();
-        includedFiles.addAll(includedFilesIn(rootFilePath, valueNode));
+        includedFiles.addAll(includedFilesIn(rootFilePath, valueNode, resourceLoader));
       }
     } else if (rootNode.getNodeId() == NodeId.sequence) {
       final SequenceNode sequenceNode = (SequenceNode) rootNode;
       final List<Node> children = sequenceNode.getValue();
       for (final Node childNode : children) {
-        includedFiles.addAll(includedFilesIn(rootFilePath, childNode));
+        includedFiles.addAll(includedFilesIn(rootFilePath, childNode, resourceLoader));
       }
     }
     return includedFiles;

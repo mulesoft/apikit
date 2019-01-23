@@ -6,16 +6,15 @@
  */
 package org.mule.raml.implv2.v08;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.matchers.JUnitMatchers.containsString;
-
+import org.junit.Test;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
-
-import org.junit.Test;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class InterfaceV08TestCase {
 

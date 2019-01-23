@@ -12,6 +12,7 @@ import org.mule.raml.interfaces.model.IRaml;
 
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -25,6 +26,17 @@ public class InterfaceV08TestCase {
 
     List<String> allReferences = raml.getAllReferences();
     allReferences.forEach(ref -> assertThat("Invalid URI", ref, startsWith("file:/")));
-    assertEquals(8, allReferences.size());
+    assertEquals(9, allReferences.size());
+
+    assertThat(allReferences.stream().anyMatch(p -> p.endsWith("org/mule/raml/implv1/traits/versioned.raml")), is(true));
+    assertThat(allReferences.stream().anyMatch(p -> p.endsWith("org/mule/raml/implv1/resourceTypes/base.raml")), is(true));
+    assertThat(allReferences.stream().anyMatch(p -> p.endsWith("org/mule/raml/implv1/traits/collection.raml")), is(true));
+    assertThat(allReferences.stream()
+        .anyMatch(p -> p.endsWith("org/mule/raml/implv1/resourceTypes/../examples/generic_error.xml")), is(true));
+    assertThat(allReferences.stream().anyMatch(p -> p.endsWith("org/mule/raml/implv1/schemas/atom.xsd")), is(true));
+    assertThat(allReferences.stream().anyMatch(p -> p.endsWith("org/mule/raml/implv1/resourceTypes/emailed.raml")), is(true));
+    assertThat(allReferences.stream().anyMatch(p -> p.endsWith("org/mule/raml/implv1/securitySchemes/oauth_2_0.raml")), is(true));
+    assertThat(allReferences.stream().anyMatch(p -> p.endsWith("org/mule/raml/implv1/securitySchemes/oauth_1_0.raml")), is(true));
+    assertThat(allReferences.stream().anyMatch(p -> p.endsWith("org/mule/raml/implv1/traits/override-checked.raml")), is(true));
   }
 }

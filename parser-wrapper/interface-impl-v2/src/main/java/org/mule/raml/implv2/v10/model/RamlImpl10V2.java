@@ -152,9 +152,7 @@ public class RamlImpl10V2 implements IRaml {
   @Override
   public List<String> getAllReferences() {
     try {
-      String content = IOUtils.toString(resourceLoader.fetchResource(ramlPath));
-      Node raml = new RamlBuilder().build(content);
-      return findIncludeNodes(raml, ramlPath);
+      return findIncludeNodes(ramlPath, resourceLoader);
     } catch (IOException e) {
       e.printStackTrace();
     }
