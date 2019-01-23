@@ -288,14 +288,16 @@
       "properties": {
         "id": {
           "type": "integer",
-          "format": "int64",
-          "required": true
+          "format": "int64"
         },
         "name": {
-          "type": "string",
-          "required": true
+          "type": "string"
         }
       },
+      "required" : [
+        "id",
+        "name"
+      ],
       "xml": {
         "name": "Category"
       }
@@ -305,10 +307,12 @@
       "properties": {
         "id": {
           "type": "integer",
-          "format": "int64",
-          "required": true
+          "format": "int64"
         }
       },
+      "required" : [
+        "id"
+      ],
       "xml": {
         "name": "Tag"
       }
@@ -326,12 +330,10 @@
         },
         "name": {
           "type": "string",
-          "required": true,
           "example": "doggie"
         },
         "photoUrls": {
           "type": "array",
-          "required": true,
           "xml": {
             "wrapped": true
           },
@@ -362,6 +364,10 @@
           ]
         }
       },
+      "required" : [
+        "name",
+        "photoUrls"
+      ],
       "xml": {
         "name": "Pet"
       }
