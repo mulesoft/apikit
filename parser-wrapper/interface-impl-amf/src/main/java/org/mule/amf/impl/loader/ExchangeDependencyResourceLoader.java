@@ -11,6 +11,7 @@ import amf.client.resource.FileResourceLoader;
 import amf.client.resource.ResourceLoader;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,7 +38,7 @@ public class ExchangeDependencyResourceLoader implements ResourceLoader {
 
       final int dependencyIndex = path.lastIndexOf(matcher.group(0));
       final String resourceName = dependencyIndex <= 0 ? path : path.substring(dependencyIndex);
-      return resourceLoader.fetch(new File(workingDir, resourceName).getAbsolutePath());
+      return resourceLoader.fetch(Paths.get(workingDir.getPath(), resourceName).toUri().toString());
     }
     return fail();
   }
