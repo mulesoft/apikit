@@ -19,13 +19,13 @@ types:
         body: 
           application/json:
             type: AmericanFlight[]
-            example: !include exchange_modules/68ef9520-24e9-4cf2-b2f5-620025690913/training-american-flights-example/1.0.1/AmericanFlightsExample.raml
+            examples: !include exchange_modules/68ef9520-24e9-4cf2-b2f5-620025690913/training-american-flights-example/1.0.1/AmericanFlightsExample.raml
   post:
     displayName: Add a flight
     body: 
       application/json:
         type: AmericanFlight
-        example: !include examples/AmericanFlightNoIDExample.raml
+        examples: !include examples/AmericanFlightNoIDExample.raml
     responses: 
       201:
         body: 
@@ -45,7 +45,7 @@ types:
           body: 
             application/json:
               type: AmericanFlight
-              example: !include examples/AmericanFlightExample.raml
+              examples: !include examples/AmericanFlightExample.raml
     delete:
       displayName: Delete a flight
       responses:
@@ -59,7 +59,7 @@ types:
       body:
         application/json:
           type: AmericanFlight
-          example: !include examples/AmericanFlightExample.raml
+          examples: !include examples/AmericanFlightExample.raml
       responses:
         200:
           body:
