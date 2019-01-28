@@ -2,9 +2,21 @@
 
 title: Parameters API
 
+types:
+  boolean-array:
+    type: boolean[]
+    minItems: 3
+    maxItems: 4
+
 /repeat:
     get:
         queryParameters:
+            boolean-array:
+                type: boolean-array
+                required: false
+            union-boolean-array:
+                type: nil | boolean-array
+                required: false
             status:
                 type: string[]
                 minItems: 1

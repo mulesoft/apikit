@@ -87,10 +87,8 @@ public class ParameterImpl implements IParameter
     private void validateParam(TypeDeclaration type, String paramKey, Collection<?> paramValues, String parameterType) throws Exception
     {
         if (type instanceof ArrayTypeDeclaration) {
-
             validateArray((ArrayTypeDeclaration) type, paramKey, paramValues, parameterType);
         } else if (type instanceof UnionTypeDeclaration) {
-
             validateUnion((UnionTypeDeclaration) type, paramKey, paramValues, parameterType);
         } else if (!(type instanceof AnyTypeDeclaration)) {
             if (paramValues.size() > 1) {
@@ -109,17 +107,28 @@ public class ParameterImpl implements IParameter
 
     private void validateArray(ArrayTypeDeclaration type, String paramKeym, Collection<?> paramValues, String parameterType) throws Exception {
         Integer minItems = type.minItems();
-        if (minItems != null && minItems > paramValues.size()) throw new Exception("Expected min items for " + paramKeym);
+        int size = paramValues.size();
+        if (minItems != null && minItems > size) throw new Exception("Expected min items " + minItems + " for " + paramKeym + " and got " + size);
         Integer maxItems = type.maxItems();
-        if (maxItems != null && paramValues.size() > maxItems) throw new Exception("Expected max items for " + paramKeym);
+        if (maxItems != null && size > maxItems) throw new Exception("Expected max items " + maxItems + " for " + paramKeym + " and got " + size);
         for (Object paramValue : paramValues) {
             validateParam(type.items(), paramKeym, singletonList(paramValue), parameterType);
         }
     }
 
     private void validateUnion(UnionTypeDeclaration type, String paramKey, Collection<?> paramValues, String parameterType) throws Exception {
+        StringBuilder message = new StringBuilder();
+
         for (TypeDeclaration unionComponent : type.of())
-            validateParam(unionComponent, paramKey, paramValues, parameterType);
+            try {
+                unionComponent.type();
+                validateParam(unionComponent, paramKey, paramValues, parameterType);
+                return;
+            } catch (Exception e) {
+                message.append("- For ").append(paramKey).append(" one of the union component failed: ").append(e.getMessage()).append("\n");
+            }
+
+        throw new Exception(message.toString());
     }
 
     @Override
