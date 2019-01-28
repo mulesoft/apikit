@@ -50,6 +50,58 @@ public class Parameters10TestCase extends FunctionalTestCase
     }
 
     @Test
+    public void failMinItemsRepeatableQueryParam()
+    {
+        given().queryParam("boolean-array", "true", "false")
+                .expect().response().statusCode(500)
+                .body(is("Expected min items 3 for boolean-array and got 2 (org.mule.module.apikit.exception.InvalidQueryParameterException)."))
+                .when().get("/api/repeat");
+    }
+
+    @Test
+    public void failMaxItemsRepeatableQueryParam()
+    {
+        given().queryParam("boolean-array", "true", "false", "false", "true", "false")
+                .expect().response().statusCode(500)
+                .body(is("Expected max items 4 for boolean-array and got 5 (org.mule.module.apikit.exception.InvalidQueryParameterException)."))
+                .when().get("/api/repeat");
+    }
+
+    @Test
+    public void successRepeatableQueryParam()
+    {
+        given().queryParam("boolean-array", "true", "false", "false", "true")
+                .expect().response().statusCode(200)
+                .when().get("/api/repeat");
+    }
+
+    @Test
+    public void failMinItemsUnionRepeatableQueryParam()
+    {
+        given().queryParam("union-boolean-array", "true", "false")
+                .expect().response().statusCode(500)
+                .body(is("- For union-boolean-array one of the union component failed: Parameter union-boolean-array is not an array\n- For union-boolean-array one of the union component failed: Expected min items 3 for union-boolean-array and got 2\n (org.mule.module.apikit.exception.InvalidQueryParameterException)."))
+                .when().get("/api/repeat");
+    }
+
+    @Test
+    public void failMaxItemsUnionRepeatableQueryParam()
+    {
+        given().queryParam("union-boolean-array", "true", "false", "false", "true", "false")
+                .expect().response().statusCode(500)
+                .body(is("- For union-boolean-array one of the union component failed: Parameter union-boolean-array is not an array\n- For union-boolean-array one of the union component failed: Expected max items 4 for union-boolean-array and got 5\n (org.mule.module.apikit.exception.InvalidQueryParameterException)."))
+                .when().get("/api/repeat");
+    }
+
+    @Test
+    public void successRepeatableUnionQueryParam()
+    {
+        given().queryParam("union-boolean-array", "true", "false", "false", "true")
+                .expect().response().statusCode(200)
+                .when().get("/api/repeat");
+    }
+
+    @Test
     public void repeatableStringQueryParamWithAsterisk()
     {
         given().queryParam("status", "*a", "b")
@@ -89,7 +141,7 @@ public class Parameters10TestCase extends FunctionalTestCase
     @Test
     public void unionString()
     {
-        given().header("union-string", "100")
+        given().queryParam("union-string", "100")
                 .expect().response().statusCode(200)
                 .when().get("/api/repeat");
     }
