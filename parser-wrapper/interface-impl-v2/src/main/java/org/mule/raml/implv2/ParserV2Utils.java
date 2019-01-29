@@ -26,6 +26,7 @@ import org.raml.yagi.framework.nodes.snakeyaml.SYIncludeNode;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -111,7 +112,9 @@ public class ParserV2Utils {
   private static void findIncludeNodes(final String pathRelativeToRoot, final Set<String> includePaths,
                                        final List<Node> currents, String ramlPath, ResourceLoader resourceLoader)
       throws IOException {
-    final String rootPath = new File(ramlPath).getParent();
+    File file = getFileFromPath(ramlPath);
+
+    final String rootPath = file.getParent();
 
     for (final Node current : currents) {
       // search for include in sources of the current node
@@ -138,6 +141,20 @@ public class ParserV2Utils {
 
       findIncludeNodes(pathRelativeToRootCurrent, includePaths, getChildren(current), ramlPath, resourceLoader);
     }
+  }
+
+  //A comment here should we check for file existence and if it doesn't throw an exception?
+  private static File getFileFromPath(String ramlPath) {
+    File resultFile = new File(ramlPath);
+    try {
+      URI uriForFile = URI.create(ramlPath);
+      if (uriForFile.isAbsolute() && uriForFile.getScheme().equalsIgnoreCase("file")) {
+        resultFile = new File(uriForFile);
+      }
+    } catch (IllegalArgumentException notUriException) {
+      //Ignoring uri creation and return file created from raml path.
+    }
+    return resultFile;
   }
 
   private static String calculateNextRootRelative(String pathRelativeToRootCurrent, String includePath) {
