@@ -125,14 +125,12 @@ public abstract class MultipartFormFunctionalTestCase extends AbstractMultiParse
   }
 
   @Test
-  @Ignore
   public void postTextFileResourceIntoMultiPartFormData() throws Exception {
     given().multiPart("document", "lorem.txt", this.getClass().getClassLoader()
-        .getResourceAsStream("org/mule/module/apikit/validation/formParameters/lorem.txt"))
+        .getResourceAsStream("org/mule/module/apikit/validation/formParameters/lorem.txt"), "text/plain")
         .expect()
         .response()
         .statusCode(200)
-        .contentType("text/plain")
         .body(startsWith("Lorem ipsum dolor sit amet"))
         .when().post("/api/uploadFile");
   }
