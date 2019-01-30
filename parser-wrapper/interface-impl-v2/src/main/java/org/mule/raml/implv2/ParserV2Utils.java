@@ -23,9 +23,9 @@ import org.raml.v2.internal.impl.v10.nodes.LibraryLinkNode;
 import org.raml.yagi.framework.nodes.Node;
 import org.raml.yagi.framework.nodes.snakeyaml.SYIncludeNode;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -90,28 +90,28 @@ public class ParserV2Utils {
     return simpleType != null ? String.valueOf(simpleType.value()) : null;
   }
 
-  public static List<String> findIncludeNodes(String ramlPath, ResourceLoader resourceLoader) throws IOException {
-    final InputStream is = resourceLoader.fetchResource(ramlPath);
+  public static List<String> findIncludeNodes(URI ramlUri, ResourceLoader resourceLoader) throws IOException {
+    final InputStream is = resourceLoader.fetchResource(ramlUri.toString());
 
     if (is == null)
       return emptyList();
 
     final String content = IOUtils.toString(is);
     final Node raml = new RamlBuilder().build(content);
-    return findIncludeNodes(raml, ramlPath, resourceLoader);
+    return findIncludeNodes(raml, ramlUri, resourceLoader);
   }
 
-  public static List<String> findIncludeNodes(final Node raml, String ramlPath, ResourceLoader resourceLoader)
+  public static List<String> findIncludeNodes(final Node raml, URI ramlUri, ResourceLoader resourceLoader)
       throws IOException {
     final Set<String> includePaths = new HashSet<>();
-    findIncludeNodes("", includePaths, singletonList(raml), ramlPath, resourceLoader);
+    findIncludeNodes("", includePaths, singletonList(raml), ramlUri, resourceLoader);
     return new ArrayList<>(includePaths);
   }
 
   private static void findIncludeNodes(final String pathRelativeToRoot, final Set<String> includePaths,
-                                       final List<Node> currents, String ramlPath, ResourceLoader resourceLoader)
+                                       final List<Node> currents, URI ramlURI, ResourceLoader resourceLoader)
       throws IOException {
-    final String rootPath = new File(ramlPath).getParent();
+    final String rootPath = getParent(ramlURI);
 
     for (final Node current : currents) {
       // search for include in sources of the current node
@@ -127,8 +127,9 @@ public class ParserV2Utils {
 
         if (includePath != null) {
           final String absolutIncludePath = computeIncludePath(rootPath, pathRelativeToRoot, includePath);
-          includePaths.add(new File(absolutIncludePath).toURI().toString());
-          includePaths.addAll(findIncludeNodes(absolutIncludePath, resourceLoader));
+          final URI includedFileAsUri = URI.create(absolutIncludePath);
+          includePaths.add(includedFileAsUri.toString());
+          includePaths.addAll(findIncludeNodes(includedFileAsUri, resourceLoader));
           pathRelativeToRootCurrent = calculateNextRootRelative(pathRelativeToRootCurrent,
                                                                 includePath);
         }
@@ -136,12 +137,18 @@ public class ParserV2Utils {
         possibleInclude = possibleInclude.getSource();
       }
 
-      findIncludeNodes(pathRelativeToRootCurrent, includePaths, getChildren(current), ramlPath, resourceLoader);
+      findIncludeNodes(pathRelativeToRootCurrent, includePaths, getChildren(current), ramlURI, resourceLoader);
     }
   }
 
+  private static String getParent(URI uri) {
+    final URI parentUri = uri.getPath().endsWith("/") ? uri.resolve("..") : uri.resolve(".");
+    final String parentUriAsString = parentUri.toString();
+    return parentUriAsString.endsWith("/") ? parentUriAsString.substring(0, parentUriAsString.length() - 1) : parentUriAsString;
+  }
+
   private static String calculateNextRootRelative(String pathRelativeToRootCurrent, String includePath) {
-    String newRelativeSubPath = new File(includePath).getParent();
+    String newRelativeSubPath = getParent(URI.create(includePath));
     newRelativeSubPath = newRelativeSubPath == null ? "" : newRelativeSubPath;
     return pathRelativeToRootCurrent + newRelativeSubPath;
   }
@@ -172,7 +179,7 @@ public class ParserV2Utils {
     return isAbsolute(includePath) //
         ? rootPath + includePath
         // relative path: A path that neither begins with a single slash ("/") nor constitutes a URL, and is interpreted relative to the location of the included file.
-        : rootPath + (pathRelativeToRoot.isEmpty() ? "" : File.separator + pathRelativeToRoot) + File.separator + includePath;
+        : rootPath + (pathRelativeToRoot.isEmpty() ? "" : "/" + pathRelativeToRoot) + "/" + includePath;
   }
 
   private static boolean isAbsolute(String includePath) {

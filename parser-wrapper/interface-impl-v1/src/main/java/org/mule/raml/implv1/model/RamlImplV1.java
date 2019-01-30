@@ -23,7 +23,9 @@ import org.raml.parser.loader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.*;
 
 import static java.util.Collections.emptyList;
@@ -155,12 +157,18 @@ public class RamlImplV1 implements IRaml {
   @Override
   public List<String> getAllReferences() {
     try {
-      return ParserV1Utils.detectIncludes(ramlPath, resourceLoader);
+      return ParserV1Utils.detectIncludes(getPathAsUri(ramlPath), resourceLoader);
     } catch (IOException e) {
       logger.error(e.getMessage());
     }
     return emptyList();
   }
+
+  private URI getPathAsUri(String path) {
+    final String normalizedPath = path.replace(File.separator, "/");
+    return URI.create(normalizedPath);
+  }
+
 
   public void injectTrait(String name) {
     Map<String, ITemplate> traitDef = new HashMap<String, ITemplate>();
