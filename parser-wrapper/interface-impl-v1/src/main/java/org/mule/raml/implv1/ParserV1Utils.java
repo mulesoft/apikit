@@ -24,9 +24,9 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -87,10 +87,11 @@ public class ParserV1Utils {
     return ramlDocumentBuilder;
   }
 
-  public static List<String> detectIncludes(String ramlPath, ResourceLoader resourceLoader) throws IOException {
+  public static List<String> detectIncludes(URI ramlUri, ResourceLoader resourceLoader) throws IOException {
     try {
-      final String content = IOUtils.toString(resourceLoader.fetchResource(ramlPath));
-      final String rootFilePath = ramlPath.substring(ramlPath.indexOf("/"), ramlPath.lastIndexOf("/"));
+      final String ramlUriAsString = ramlUri.toString();
+      final String content = IOUtils.toString(resourceLoader.fetchResource(ramlUriAsString));
+      final String rootFilePath = ramlUriAsString.substring(0, ramlUriAsString.lastIndexOf("/"));
 
       final Node rootNode = YAML_PARSER.compose(new StringReader(content));
       if (rootNode == null) {
@@ -103,7 +104,7 @@ public class ParserV1Utils {
     }
   }
 
-  private static Set<String> includedFilesIn(final String rootFilePath, final Node rootNode, ResourceLoader resourceLoader)
+  private static Set<String> includedFilesIn(final String rootFileUri, final Node rootNode, ResourceLoader resourceLoader)
       throws IOException {
     final Set<String> includedFiles = new HashSet<>();
     if (rootNode.getNodeId() == NodeId.scalar) {
@@ -111,12 +112,12 @@ public class ParserV1Utils {
       final Tag nodeTag = includedNode.getTag();
       if (nodeTag != null && nodeTag.toString().equals(INCLUDE_KEYWORD)) {
         final String includedNodeValue = includedNode.getValue();
-        final String includeAbsolutePath = rootFilePath + File.separator + includedNodeValue;
+        final String includeUriAsString = rootFileUri + "/" + includedNodeValue;
 
-        final File includedFile = new File(includeAbsolutePath);
-        if (includedFile.isFile() && includedFile.exists() && includedFile.canRead()) {
-          includedFiles.add(includedFile.toURI().toString());
-          includedFiles.addAll(detectIncludes(includeAbsolutePath, resourceLoader));
+        final URI includeUri = URI.create(includeUriAsString);
+        if (resourceLoader.fetchResource(includeUriAsString) != null) {
+          includedFiles.add(includeUriAsString);
+          includedFiles.addAll(detectIncludes(includeUri, resourceLoader));
         }
       }
     } else if (rootNode.getNodeId() == NodeId.mapping) {
@@ -124,13 +125,13 @@ public class ParserV1Utils {
       final List<NodeTuple> children = mappingNode.getValue();
       for (final NodeTuple childNode : children) {
         final Node valueNode = childNode.getValueNode();
-        includedFiles.addAll(includedFilesIn(rootFilePath, valueNode, resourceLoader));
+        includedFiles.addAll(includedFilesIn(rootFileUri, valueNode, resourceLoader));
       }
     } else if (rootNode.getNodeId() == NodeId.sequence) {
       final SequenceNode sequenceNode = (SequenceNode) rootNode;
       final List<Node> children = sequenceNode.getValue();
       for (final Node childNode : children) {
-        includedFiles.addAll(includedFilesIn(rootFilePath, childNode, resourceLoader));
+        includedFiles.addAll(includedFilesIn(rootFileUri, childNode, resourceLoader));
       }
     }
     return includedFiles;

@@ -6,37 +6,31 @@
  */
 package org.mule.raml.implv2.v10.model;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static org.mule.raml.implv2.ParserV2Utils.findIncludeNodes;
-import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
-
-import org.apache.commons.io.IOUtils;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
 import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import org.raml.v2.api.loader.FileResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 import org.raml.v2.api.model.v10.api.Api;
 import org.raml.v2.api.model.v10.datamodel.AnyTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ExternalTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.resources.Resource;
-import org.raml.v2.internal.impl.RamlBuilder;
-import org.raml.v2.internal.impl.v10.Raml10Builder;
-import org.raml.yagi.framework.nodes.Node;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static org.mule.raml.implv2.ParserV2Utils.findIncludeNodes;
+import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
 
 public class RamlImpl10V2 implements IRaml {
 
@@ -152,11 +146,16 @@ public class RamlImpl10V2 implements IRaml {
   @Override
   public List<String> getAllReferences() {
     try {
-      return findIncludeNodes(ramlPath, resourceLoader);
+      return findIncludeNodes(getPathAsUri(ramlPath), resourceLoader);
     } catch (IOException e) {
       e.printStackTrace();
     }
     return emptyList();
+  }
+
+  private URI getPathAsUri(String path) {
+    final String normalizedPath = path.replace(File.separator, "/");
+    return URI.create(normalizedPath);
   }
 
   @Override
