@@ -24,7 +24,6 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
