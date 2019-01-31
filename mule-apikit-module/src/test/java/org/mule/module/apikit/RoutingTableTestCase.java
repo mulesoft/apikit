@@ -41,7 +41,6 @@ public class RoutingTableTestCase {
 
 
     Assert.assertThat(routingTable.keySet(), hasItems(new URIPattern("/single-resource"),
-                                                      new URIPattern("/api"),
                                                       new URIPattern("/api/sub-resource"),
                                                       new URIPattern("/api/sub-resource-types")));
   }
