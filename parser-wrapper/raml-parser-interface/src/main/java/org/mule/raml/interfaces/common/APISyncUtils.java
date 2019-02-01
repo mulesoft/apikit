@@ -33,7 +33,7 @@ public class APISyncUtils {
   }
 
   public static boolean isExchangeModules(final String path) {
-    return path.startsWith(EXCHANGE_MODULES) || path.startsWith("/" + EXCHANGE_MODULES);
+    return EXCHANGE_PATTERN.matcher(path).find();
   }
 
   public static String getMainApi(String exchangeJson) {
@@ -45,7 +45,7 @@ public class APISyncUtils {
   public static String toApiSyncResource(String s) {
     String apiSyncResource = null;
     Matcher exchangeMatcher = EXCHANGE_PATTERN.matcher(s);
-    if (exchangeMatcher.matches()) {
+    if (exchangeMatcher.find()) {
       String groupId = exchangeMatcher.group(1);
       String artifactId = exchangeMatcher.group(2);
       String version = exchangeMatcher.group(3);
