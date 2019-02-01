@@ -10,30 +10,30 @@ import org.raml.v2.api.loader.ClassPathResourceLoader;
 import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.FileResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
+import org.raml.v2.api.loader.UrlResourceLoader;
 
 import javax.annotation.Nullable;
-import java.io.File;
 import java.io.InputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.net.URI;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.mule.raml.implv2.utils.ExchangeDependencyUtils.getEchangePath;
 
 public class ExchangeDependencyResourceLoader implements ResourceLoader {
 
   private static final String BASE_PATH = "api";
-  private final File workingDir;
+  private final URI basePath;
   private final ResourceLoader resourceLoader;
-
-  private static final Pattern DEPENDENCY_PATH_PATTERN = Pattern.compile("^exchange_modules/|/exchange_modules/");
 
   public ExchangeDependencyResourceLoader() {
     this(BASE_PATH);
   }
 
   public ExchangeDependencyResourceLoader(String path) {
-    this.workingDir = new File(path);
-    resourceLoader = new CompositeResourceLoader(new FileResourceLoader(path), new ClassPathResourceLoader(path));
+    basePath = getParent(URI.create(path.replace("\\", "/")));
+    resourceLoader =
+        new CompositeResourceLoader(new FileResourceLoader(path), new ClassPathResourceLoader(basePath.toString()),
+                                    new UrlResourceLoader());
   }
 
   @Nullable
@@ -43,16 +43,12 @@ public class ExchangeDependencyResourceLoader implements ResourceLoader {
       return null;
     }
 
-    final String resourceName;
+    final String resourceName = getEchangePath(path);
 
-    final Matcher matcher = DEPENDENCY_PATH_PATTERN.matcher(path);
-    if (matcher.find()) {
-      final int dependencyIndex = path.lastIndexOf(matcher.group(0));
-      resourceName = dependencyIndex <= 0 ? path : path.substring(dependencyIndex);
-    } else {
-      resourceName = path;
-    }
+    return resourceLoader.fetchResource(basePath.resolve(resourceName).toString());
+  }
 
-    return resourceLoader.fetchResource(new File(workingDir, resourceName).getPath());
+  private URI getParent(URI uri) {
+    return uri.toString().endsWith("/") ? uri.resolve("..") : uri.resolve(".");
   }
 }
