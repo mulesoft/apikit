@@ -6,34 +6,21 @@
  */
 package org.mule.raml.implv2.loader;
 
-import org.raml.v2.api.loader.ClassPathResourceLoader;
-import org.raml.v2.api.loader.CompositeResourceLoader;
-import org.raml.v2.api.loader.FileResourceLoader;
+import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
-import org.raml.v2.api.loader.UrlResourceLoader;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
-import java.net.URI;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.mule.raml.implv2.utils.ExchangeDependencyUtils.getEchangePath;
+import static org.mule.raml.implv2.utils.ExchangeDependencyUtils.getExchangeModulePath;
 
 public class ExchangeDependencyResourceLoader implements ResourceLoader {
 
-  private static final String BASE_PATH = "api";
-  private final URI basePath;
   private final ResourceLoader resourceLoader;
 
   public ExchangeDependencyResourceLoader() {
-    this(BASE_PATH);
-  }
-
-  public ExchangeDependencyResourceLoader(String path) {
-    basePath = getParent(URI.create(path.replace("\\", "/")));
-    resourceLoader =
-        new CompositeResourceLoader(new FileResourceLoader(path), new ClassPathResourceLoader(basePath.toString()),
-                                    new UrlResourceLoader());
+    resourceLoader = new DefaultResourceLoader();
   }
 
   @Nullable
@@ -43,12 +30,6 @@ public class ExchangeDependencyResourceLoader implements ResourceLoader {
       return null;
     }
 
-    final String resourceName = getEchangePath(path);
-
-    return resourceLoader.fetchResource(basePath.resolve(resourceName).toString());
-  }
-
-  private URI getParent(URI uri) {
-    return uri.toString().endsWith("/") ? uri.resolve("..") : uri.resolve(".");
+    return resourceLoader.fetchResource(getExchangeModulePath(path));
   }
 }

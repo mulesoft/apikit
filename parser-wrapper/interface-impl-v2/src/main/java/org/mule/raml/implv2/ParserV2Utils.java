@@ -33,9 +33,7 @@ import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static org.mule.raml.implv2.utils.ExchangeDependencyUtils.getEchangePath;
-import static org.mule.raml.implv2.utils.ExchangeDependencyUtils.getRootProjectPath;
-import static org.mule.raml.implv2.utils.ExchangeDependencyUtils.isExchangeModuleReference;
+import static org.mule.raml.implv2.utils.ExchangeDependencyUtils.getExchangeModulePath;
 
 public class ParserV2Utils {
 
@@ -151,7 +149,7 @@ public class ParserV2Utils {
   }
 
   private static String fixExchangeModulePath(String path) {
-    return isExchangeModuleReference(path) ? getRootProjectPath(path) + "/" + getEchangePath(path) : path;
+    return getExchangeModulePath(path);
   }
 
   private static String calculateNextRootRelative(String pathRelativeToRootCurrent, String includePath) {

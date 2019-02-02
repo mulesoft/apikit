@@ -79,7 +79,7 @@ public class InterfaceV10TestCase {
   public void referencesWithExchangeModule() {
     final String ramlPath = "org/mule/raml/implv2/v10/exchange/api.raml";
     final CompositeResourceLoader resourceLoader =
-        new CompositeResourceLoader(DEFAULT_RESOURCE_LOADER, new ExchangeDependencyResourceLoader(ramlPath));
+        new CompositeResourceLoader(DEFAULT_RESOURCE_LOADER, new ExchangeDependencyResourceLoader());
     List<String> allReferences = new ParserWrapperV2(ramlPath).build().getAllReferences();
     assertEquals(3, allReferences.size());
 

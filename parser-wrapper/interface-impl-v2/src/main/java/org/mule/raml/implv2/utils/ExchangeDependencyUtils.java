@@ -15,27 +15,22 @@ public class ExchangeDependencyUtils {
 
   private ExchangeDependencyUtils() {}
 
-  public static String getEchangePath(String path) {
-    final String resourceName;
-
+  public static String getExchangeModulePath(String path) {
     final Matcher matcher = DEPENDENCY_PATH_PATTERN.matcher(path);
     if (matcher.find()) {
-      final int dependencyIndex = path.lastIndexOf(matcher.group(0));
-      resourceName = dependencyIndex <= 0 ? path : path.substring(dependencyIndex);
+      final String matching = matcher.group(0);
+      final int dependencyIndex = path.lastIndexOf(matching);
+
+      if (dependencyIndex <= 0)
+        return path;
+      else {
+        final String rootPath = path.substring(0, path.indexOf(matching));
+        final String exchangeModulePath = path.substring(dependencyIndex);
+        return rootPath + "/" + exchangeModulePath;
+      }
     } else {
-      resourceName = path;
+      return path;
     }
-    return resourceName;
-  }
-
-  public static String getRootProjectPath(String path) {
-    final Matcher matcher = DEPENDENCY_PATH_PATTERN.matcher(path);
-
-    if (matcher.find()) {
-      return path.substring(0, matcher.start());
-    }
-
-    return path;
   }
 
   public static boolean isExchangeModuleReference(String path) {
