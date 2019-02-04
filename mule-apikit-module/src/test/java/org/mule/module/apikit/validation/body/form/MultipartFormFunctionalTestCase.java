@@ -144,6 +144,7 @@ public abstract class MultipartFormFunctionalTestCase extends MuleArtifactFuncti
         .when().post("/api/multipart");
   }
 
+  @Ignore
   @Test
   public void postTextFileResourceIntoMultiPartFormData() throws Exception {
     given().multiPart("document", "lorem.txt", this.getClass().getClassLoader()
