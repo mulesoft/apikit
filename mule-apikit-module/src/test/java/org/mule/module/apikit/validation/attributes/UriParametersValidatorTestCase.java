@@ -100,8 +100,8 @@ public class UriParametersValidatorTestCase extends AbstractMultiParserFunctiona
   }
 
   @Test
-  public void answer200WhenDateUriParameterIsValid() {
-    given().urlEncodingEnabled(false).expect().response()
+  public void answer200WhenDateUriParameterIsValid() throws Exception {
+    given().expect().response()
         .statusCode(200)
         .when().get("api/dateParam/2016-02-28T16:41:41.090Z");
   }

@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.sun.jmx.mbeanserver.Util.cast;
 import static org.apache.commons.io.FilenameUtils.getExtension;
 
 public class DocumentParser {
@@ -115,8 +114,8 @@ public class DocumentParser {
   }
 
   public static WebApi getWebApi(final BaseUnit baseUnit) throws ParserException {
-    final Document document = cast(AMF.resolveRaml10(baseUnit));
-    return cast(document.encodes());
+    final Document document = (Document) AMF.resolveRaml10(baseUnit);
+    return (WebApi) document.encodes();
   }
 
   public static ValidationReport getParsingReport(final Parser parser, final ProfileName profile) throws ParserException {

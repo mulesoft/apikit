@@ -31,38 +31,39 @@ public class ConsoleRamlApiTestCase extends MuleArtifactFunctionalTestCase {
     given().port(serverPort.getNumber())
         .expect()
         .statusCode(200)
-        .body(is("#%RAML 1.0\n" +
-            "title: Simple API\n" +
-            "baseUri: http://www.google.com\n" +
-            "types:\n" +
-            "  Person:\n" +
-            "    type: object\n" +
-            "    additionalProperties: true\n" +
-            "    properties:\n" +
-            "      name:\n" +
-            "        type: string\n" +
-            "        required: true\n" +
-            "/resources:\n" +
-            "  get:\n" +
-            "    responses:\n" +
-            "      \"200\":\n" +
-            "        body:\n" +
-            "          application/json:\n" +
-            "            type: any\n" +
-            "          text/xml:\n" +
-            "            type: any\n" +
-            "/types-test:\n" +
-            "  post:\n" +
-            "    body:\n" +
-            "      application/json:\n" +
-            "        type: object\n" +
-            "        additionalProperties: true\n" +
-            "        properties:\n" +
-            "          name:\n" +
-            "            type: string\n" +
-            "            required: true\n" +
-            "    responses:\n" +
-            "      \"200\": {}\n"))
+        .body(is(
+                 "#%RAML 1.0\n" +
+                     "title: Simple API\n" +
+                     "baseUri: http://www.google.com\n" +
+                     "types:\n" +
+                     "  Person:\n" +
+                     "    type: object\n" +
+                     "    additionalProperties: true\n" +
+                     "    properties:\n" +
+                     "      name:\n" +
+                     "        type: string\n" +
+                     "        required: true\n" +
+                     "/resources:\n" +
+                     "  get:\n" +
+                     "    responses:\n" +
+                     "      200:\n" +
+                     "        body:\n" +
+                     "          application/json:\n" +
+                     "            type: any\n" +
+                     "          text/xml:\n" +
+                     "            type: any\n" +
+                     "/types-test:\n" +
+                     "  post:\n" +
+                     "    body:\n" +
+                     "      application/json:\n" +
+                     "        type: object\n" +
+                     "        additionalProperties: true\n" +
+                     "        properties:\n" +
+                     "          name:\n" +
+                     "            type: string\n" +
+                     "            required: true\n" +
+                     "    responses:\n" +
+                     "      200: {}\n"))
         .when().get("/console/api?api");
   }
 

@@ -16,8 +16,6 @@
         <licensePath>../../LICENSE_HEADER.txt</licensePath>
         <formatterConfigPath>../../formatter.xml</formatterConfigPath>
         <sonar.skip>true</sonar.skip>
-
-        <hamcrestVersion>1.3</hamcrestVersion>
     </properties>
 
     <dependencies>

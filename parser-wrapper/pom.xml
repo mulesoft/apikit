@@ -25,5 +25,6 @@
         <formatterConfigPath>../formatter.xml</formatterConfigPath>
 
         <sonar.jacoco.reportPaths>../target/jacoco.exec</sonar.jacoco.reportPaths>
+        <hamcrestVersion>1.3</hamcrestVersion>
     </properties>
 </project>
