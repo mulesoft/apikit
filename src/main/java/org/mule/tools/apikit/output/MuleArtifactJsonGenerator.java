@@ -45,8 +45,8 @@ public class MuleArtifactJsonGenerator {
   }
 
   String generateArtifact() {
-    try {
-      final String json = IOUtils.toString(new FileInputStream(new File(rootDirectory, MULE_ARTIFACT_FILENAME)));
+    try (FileInputStream input = new FileInputStream(new File(rootDirectory, MULE_ARTIFACT_FILENAME))) {
+      final String json = IOUtils.toString(input);
       JSONObject muleArtifact = new JSONObject(json);
 
       if (muleArtifact.keySet().contains(MIN_MULE_VERSION))

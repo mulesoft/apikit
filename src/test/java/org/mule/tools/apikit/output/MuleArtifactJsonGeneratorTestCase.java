@@ -50,9 +50,11 @@ public class MuleArtifactJsonGeneratorTestCase {
 
     final String json = configGenerator.generateArtifact();
 
-    final String expectedJson = IOUtils.toString(new FileInputStream(new File(BASE_DIR, testName + "/" + expected)));
+    try (FileInputStream input = new FileInputStream(new File(BASE_DIR, testName + "/" + expected))) {
+      final String expectedJson = IOUtils.toString(input);
 
-    assertEquals(expectedJson, json);
+      assertEquals(expectedJson, json);
+    }
   }
 
 }
