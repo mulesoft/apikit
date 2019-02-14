@@ -16,8 +16,6 @@ import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.transform.ApikitResponseTransformer;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Configuration extends AbstractConfiguration
 {
@@ -267,14 +268,8 @@ public class Configuration extends AbstractConfiguration
                 }
             }
         }
-        if (flowConfigPointsToCurrentConfig(type)) {
-            logger.warn(String.format("Flow named \"%s\" does not match any RAML descriptor resource", key));
-        }
+        logger.warn(String.format("Flow named \"%s\" does not match any RAML descriptor resource", key));
         return null;
-    }
-
-    private boolean flowConfigPointsToCurrentConfig(String type) {
-        return type != null && type.equals(getName());
     }
 
     @Override
