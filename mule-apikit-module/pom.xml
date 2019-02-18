@@ -245,6 +245,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.mule.weave</groupId>
+            <artifactId>core-modules</artifactId>
+            <version>${mule.service.weave.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.mule.services</groupId>
             <artifactId>mule-service-weave</artifactId>
             <classifier>mule-service</classifier>
