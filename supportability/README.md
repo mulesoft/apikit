@@ -19,11 +19,11 @@ automatically generate backend implementation flows for it, and then run and tes
 See http://raml.org for more information about RAML.
 
 ## Documentation link
-* **APIkit Overview:** [link](https://mule4-docs.mulesoft.com/apikit/)
+* **APIkit Overview:** [link](https://docs.mulesoft.com/apikit/4.x/overview-4)
 * **What's new in APIkit:** [link](https://mule4-docs.mulesoft.com/apikit/apikit-whats-new)
-* **Release Notes:** [link](https://mule4-docs.mulesoft.com/release-notes/apikit-4.0-release-notes)
-* **APIkit XML Reference:** [link](https://mule4-docs.mulesoft.com/apikit/apikit-reference#apikit-dependency-information-beta)
-* **APIkit Error Handling Reference:** [link](https://mule4-docs.mulesoft.com/apikit/apikit-basic-anatomy)
+* **Release Notes:** [link](https://docs.mulesoft.com/release-notes/apikit/apikit-release-notes)
+* **APIkit XML Reference:** [link](https://docs.mulesoft.com/apikit/4.x/apikit-4-xml-reference)
+* **APIkit Error Handling Reference:** [link](https://docs.mulesoft.com/apikit/4.x/apikit-error-handling-reference)
 
 
 ## Code repositories
@@ -41,13 +41,11 @@ v1 branch is for RAML 0.8 but only for the community
 
 ## Team
 * **PM:** Badi Azad: [badi.azad@mulesoft.com](mailto:badi.azad@mulesoft.com)
-* **Engineering Manager:** Raúl Tardá: [raul.tarda@mulesoft.com](mailto:raul.tarda@mulesoft.com)
+* **Engineering Manager:** Pablo Angelani: [pablo.angelani@mulesoft.com](mailto:pablo.angelani@mulesoft.com)
 * **QA:** Nicolas Grossi: [nicolas.grossi@mulesoft.com](mailto:nicolas.grossi@mulesoft.com)
 * **Developers:**  
-  * Alejandro Amura: [alejandro.amura@mulesoft.com](mailto:alejandro.amura@mulesoft.com)
+  * Juan Desimoni: [juan.desimoni@mulesoft.com](mailto:juan.desimoni@mulesoft.com)
   * Santiago Fuentes: [santiago.fuentes@mulesoft.com](mailto:santiago.fuentes@mulesoft.com)
-  * Diego Macias: [diego.macias@mulesoft.com](mailto:diego.macias@mulesoft.com)  
-  * Diego Larralde: [diego.larralde@mulesoft.com](mailto:diego.larralde@mulesoft.com)
 
 * **Team mailing account:** [apikit@mulesoft.com](mailto:apikit@mulesoft.com)
 
