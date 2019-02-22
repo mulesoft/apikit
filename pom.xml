@@ -19,16 +19,15 @@
         <!-- REVISE VERSIONS USED IN RELEASE -->
 
         <!-- MULE -->
-        <mule.version>4.1.5</mule.version>
-        <mule.core.version>4.1.5</mule.core.version>
-        <mule.api.version>1.1.5</mule.api.version>
+        <mule.version>4.1.6-SNAPSHOT</mule.version>
+        <mule.core.version>4.1.6-SNAPSHOT</mule.core.version>
+        <mule.api.version>1.1.6-SNAPSHOT</mule.api.version>
         <mule.http.connector.version>1.5.0</mule.http.connector.version>
 
-        <mule.service.weave.version>2.1.8</mule.service.weave.version>
+        <mule.service.weave.version>2.1.9-SNAPSHOT</mule.service.weave.version>
         <mule.plugin.maven.plugin.version>1.1.6</mule.plugin.maven.plugin.version>
         <mule.http.service.version>1.1.5</mule.http.service.version>
-        <mule.extensions.api.version>1.1.6</mule.extensions.api.version>
-        <mule.service.scheduler.version>1.1.7</mule.service.scheduler.version>
+        <mule.service.scheduler.version>1.1.8-SNAPSHOT</mule.service.scheduler.version>
         <project.reactor.version>3.2.0.M1</project.reactor.version>
 
         <!-- PARSERS -->
