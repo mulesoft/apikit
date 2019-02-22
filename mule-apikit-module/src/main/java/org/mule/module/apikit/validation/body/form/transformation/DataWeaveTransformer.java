@@ -66,7 +66,23 @@ public class DataWeaveTransformer {
 
     final MediaType mediaType = payload.getDataType().getMediaType();
     if (mediaType.matches(MULTIPART_FORMDATA)) {
-      script = "output application/java --- {(payload.parts pluck { '$$': $.content })}";
+      script = "%dw 2.0\n" +
+          "import try from dw::Runtime\n" +
+          "output application/java  \n" +
+          "---\n" +
+          "{\n" +
+          "  (payload.parts pluck (value, key) -> do {\n" +
+          "      var defaultWrite = try(() -> write(value.content, value.content.^mimeType) as String)\n" +
+          "      ---\n" +
+          "      {\n" +
+          "        '$key': \n" +
+          "          if (defaultWrite.success)\n" +
+          "            defaultWrite.result\n" +
+          "          else\n" +
+          "             write(value.content, \"application/octet-stream\") as String\n" +
+          "      }\n" +
+          "    })\n" +
+          "}";
     } else {
       script = "output application/java --- payload";
     }

@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.runtime.core.api.util.IOUtils;
 
+import java.io.InputStream;
 import java.util.Arrays;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -126,8 +127,8 @@ public abstract class MultipartFormFunctionalTestCase extends AbstractMultiParse
 
   @Test
   public void postTextFileResourceIntoMultiPartFormData() throws Exception {
-    given().multiPart("document", "lorem.txt", this.getClass().getClassLoader()
-        .getResourceAsStream("org/mule/module/apikit/validation/formParameters/lorem.txt"), "text/plain")
+    given().multiPart("document", "lorem.txt", getResourceAsStream("org/mule/module/apikit/validation/formParameters/lorem.txt"),
+                      "text/plain")
         .expect()
         .response()
         .statusCode(200)
@@ -135,16 +136,28 @@ public abstract class MultipartFormFunctionalTestCase extends AbstractMultiParse
         .when().post("/api/uploadFile");
   }
 
+  @Test
+  public void postJsonFileResourceIntoMultiPartFormData() throws Exception {
+    final String jsonFilePath = "org/mule/module/apikit/validation/formParameters/example.json";
+
+    final String jsonAsString = IOUtils.toString(getResourceAsStream(jsonFilePath));
+
+    given().multiPart("document", "example.json", getResourceAsStream(jsonFilePath), "application/json")
+        .expect()
+        .response()
+        .statusCode(200)
+        .body(is(jsonAsString))
+        .when().post("/api/uploadFile");
+  }
 
   @Test
   @Ignore // TODO investigate how to return encoded images using data weave
   public void postImageResourceIntoMultiPartFormData() throws Exception {
-    byte[] imageInByteArray = IOUtils.toByteArray(this.getClass().getClassLoader()
-        .getResourceAsStream("org/mule/module/apikit/validation/formParameters/bbva.jpg"));
+    byte[] imageInByteArray =
+        IOUtils.toByteArray(getResourceAsStream("org/mule/module/apikit/validation/formParameters/bbva.jpg"));
     String result = Arrays.toString(imageInByteArray);
 
-    given().multiPart("image", "bbva.jpg", this.getClass().getClassLoader()
-        .getResourceAsStream("org/mule/module/apikit/validation/formParameters/bbva.jpg"))
+    given().multiPart("image", "bbva.jpg", getResourceAsStream("org/mule/module/apikit/validation/formParameters/bbva.jpg"))
         .expect()
         .response()
         .statusCode(200)
@@ -167,5 +180,9 @@ public abstract class MultipartFormFunctionalTestCase extends AbstractMultiParse
             "  \"second\": \"segundo\"\n" +
             "}"))
         .when().post("/api/multipart");
+  }
+
+  private InputStream getResourceAsStream(String resource) {
+    return this.getClass().getClassLoader().getResourceAsStream(resource);
   }
 }

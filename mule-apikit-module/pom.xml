@@ -245,25 +245,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.mule.weave</groupId>
-            <artifactId>core-modules</artifactId>
-            <version>${mule.service.weave.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.services</groupId>
-            <artifactId>mule-service-weave</artifactId>
-            <classifier>mule-service</classifier>
-            <version>${mule.service.weave.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.mule.syaml</groupId>
-                    <artifactId>syaml_2.12</artifactId>
-                </exclusion>
-            </exclusions>
-            <!--used to get the muleContext in the tests-->
-        </dependency>
-        <dependency>
             <groupId>org.mule.tests</groupId>
             <artifactId>mule-tests-runner</artifactId>
             <version>${mule.test.runner.version}</version>
