@@ -109,7 +109,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   private Publisher<CoreEvent> processWithExtension(CoreEvent event) {
     try {
       if (configuration.isExtensionEnabled())
-        return configuration.getExtension().process(event, this, this.configuration.getApi());
+        return configuration.getExtension().process(event, this);
       else
         return processEvent(event);
     } catch (MuleRestException e) {

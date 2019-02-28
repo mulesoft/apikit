@@ -23,6 +23,7 @@ import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoa
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
+import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
@@ -72,6 +73,8 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private RamlHandler ramlHandler;
   private FlowFinder flowFinder;
 
+  RouterService routerService;
+
   @Inject //TODO delete this after getting resources from resource folder and the flows
   private MuleContext muleContext;
 
@@ -90,6 +93,8 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     try {
       ramlHandler = new RamlHandler(getApi(), isKeepApiBaseUri(), muleContext, getParser());
 
+      if (isExtensionEnabled)
+        initExtension(getRamlHandler().getApi().getUri());
       // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
       // we will keep the value defined during raml handler instantiation
       parserType = ramlHandler.getParserType();
@@ -327,11 +332,14 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   }
 
   public RouterService getExtension() {
+    return this.routerService;
+
+  }
+
+  private void initExtension(String ramlPath) throws MuleException {
     final Iterator<RouterService> iterator = getRouterServiceIterator();
     if (iterator.hasNext())
-      return iterator.next();
-
-    throw new ApikitRuntimeException("Couldn't load extension");
+      this.routerService = iterator.next().initialise(ramlPath);
   }
 
   private Iterator<RouterService> getRouterServiceIterator() {

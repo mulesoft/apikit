@@ -19,10 +19,16 @@ public interface RouterService {
    * Handles the request and returns a valid MuleEvent
    *
    * @param event		the requester event
-   * @param router 		reference to the apikit router
-   * @param ramlPath 	path to the raml
-   * @return 			a competable future with the response event
+   * @param router 	reference to the apikit router
+   * @return 			  a completable future with the response event
    */
-  Publisher<CoreEvent> process(CoreEvent event, AbstractRouter router, String ramlPath) throws MuleException;
+  Publisher<CoreEvent> process(CoreEvent event, AbstractRouter router) throws MuleException;
 
+  /**
+   * Initialise the extension
+   *
+   * @param ramlPath 	path to the raml.
+   * @return 			    a initialized with the given raml RouterService
+   */
+  RouterService initialise(String ramlPath) throws MuleException;
 }
