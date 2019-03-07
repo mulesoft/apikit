@@ -4,10 +4,13 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.raml.interfaces;
+package org.mule.tools.apikit.model;
 
-public enum ParserType {
-  AMF,
-  AUTO,
-  RAML
+/**
+ * Represents scaffolding result status
+ */
+public enum Status {
+  FAILED,
+  SUCCESS,
+  SUCCESS_WITH_ERRORS
 }

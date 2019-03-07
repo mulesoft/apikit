@@ -13,6 +13,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 import org.mockito.stubbing.Stubber;
+
+import org.mule.parser.service.ComponentScaffoldingError;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.output.GenerationModel;
@@ -26,10 +28,13 @@ import java.util.Map;
 import java.util.Set;
 
 import static junit.framework.Assert.assertNotNull;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mule.tools.apikit.model.Status.FAILED;
 
 public class RAMLFilesParserTest {
 
@@ -148,10 +153,24 @@ public class RAMLFilesParserTest {
     assertEquals("8081", triplet2.getApi().getHttpListenerConfig().getPort());
     assertEquals("/", triplet2.getApi().getHttpListenerConfig().getBasePath());
     assertEquals("petstore-httpListenerConfig", triplet2.getApi().getHttpListenerConfig().getName());
-
-
   }
 
+  @Test
+  public void invalidRAML() {
+    final URL resourceUrl = RAMLFilesParserTest.class.getClassLoader().getResource("parser/failing-api.raml");
+    final Map<File, InputStream> streams = urlToMapStream(resourceUrl);
+    RAMLFilesParser ramlFilesParser = RAMLFilesParser.create(mockLog(), streams, new APIFactory());
+    ramlFilesParser.getParsingErrors();
+
+    assertThat(ramlFilesParser.getParseStatus(), is(FAILED));
+    assertThat(ramlFilesParser.getParsingErrors().size(), is(2));
+    ComponentScaffoldingError amfError = ramlFilesParser.getParsingErrors().get(0);
+    ComponentScaffoldingError ramlError = ramlFilesParser.getParsingErrors().get(1);
+
+    assertEquals(true, amfError.cause().contains("Validation failed using parser type : AMF, in file :"));
+    assertEquals(true, ramlError.cause().contains("Validation failed using fallback parser type : RAML, in file :"));
+
+  }
 
   private static Map<File, InputStream> urlToMapStream(final URL url) {
     InputStream resourceAsStream;

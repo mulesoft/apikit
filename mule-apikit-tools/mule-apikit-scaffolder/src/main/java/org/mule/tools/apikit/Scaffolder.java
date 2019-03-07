@@ -8,6 +8,9 @@ package org.mule.tools.apikit;
 
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
+
+import org.mule.parser.service.ScaffoldingErrorType;
+import org.mule.parser.service.SimpleScaffoldingError;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.MuleDomainParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
@@ -36,6 +39,7 @@ import java.util.TreeSet;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.emptyList;
 import static org.mule.tools.apikit.model.RuntimeEdition.CE;
+import static org.mule.tools.apikit.model.Status.*;
 
 public class Scaffolder {
 
@@ -44,7 +48,7 @@ public class Scaffolder {
 
   private final MuleConfigGenerator muleConfigGenerator;
   private final MuleArtifactJsonGenerator muleArtifactJsonGenerator;
-  private final ScaffolderReport scaffolderReport;
+  private final ScaffolderReport.Builder scaffolderReportBuilder;
 
 
 
@@ -97,12 +101,9 @@ public class Scaffolder {
     RAMLFilesParser filesParser = RAMLFilesParser.create(log, apis, apiFactory);
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(filesParser, muleConfigParser);
 
-    scaffolderReport = new ScaffolderReport();
-    scaffolderReport.setVendorId(filesParser.getVendorId());
-    scaffolderReport.setVersion(filesParser.getRamlVersion());
-    scaffolderReport.setStatus(filesParser.getParseStatus());
-
-
+    scaffolderReportBuilder =
+        new ScaffolderReport.Builder().withStatus(filesParser.getParseStatus()).withVersion(filesParser.getRamlVersion())
+            .withVendorId(filesParser.getVendorId()).withScaffoldingErrors(filesParser.getParsingErrors());
 
     if (runtimeEdition == null) {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
@@ -139,10 +140,9 @@ public class Scaffolder {
     RAMLFilesParser filesParser = RAMLFilesParser.create(log, apis, apiFactory, scaffolderResourceLoader);
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(filesParser, muleConfigParser);
 
-    scaffolderReport = new ScaffolderReport();
-    scaffolderReport.setVendorId(filesParser.getVendorId());
-    scaffolderReport.setVersion(filesParser.getRamlVersion());
-    scaffolderReport.setStatus(filesParser.getParseStatus());
+    scaffolderReportBuilder =
+        new ScaffolderReport.Builder().withStatus(filesParser.getParseStatus()).withVersion(filesParser.getRamlVersion())
+            .withVendorId(filesParser.getVendorId()).withScaffoldingErrors(filesParser.getParsingErrors());
 
     if (runtimeEdition == null) {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
@@ -192,7 +192,7 @@ public class Scaffolder {
   }
 
   public ScaffolderReport getScaffolderReport() {
-    return scaffolderReport;
+    return scaffolderReportBuilder.build();
   }
 
   //TODO This is only a hack to get project base directory. Project Base Dir should be informed by api parameter
@@ -211,10 +211,11 @@ public class Scaffolder {
       muleConfigGenerator.generate();
       muleArtifactJsonGenerator.generate();
     } catch (Exception e) {
-      scaffolderReport.setStatus(ScaffolderReport.FAILED);
+      scaffolderReportBuilder.withStatus(FAILED);
+    } finally {
+      scaffolderReportBuilder
+          .withScaffoldingErrors(muleConfigGenerator.getErrors());
+      scaffolderReportBuilder.withScaffoldingErrors(muleArtifactJsonGenerator.getErrors());
     }
-
   }
-
-
 }

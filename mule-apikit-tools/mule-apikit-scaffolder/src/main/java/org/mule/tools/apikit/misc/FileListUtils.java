@@ -6,6 +6,8 @@
  */
 package org.mule.tools.apikit.misc;
 
+import static java.lang.String.format;
+
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.File;
@@ -13,19 +15,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.emptyList;
 
 public class FileListUtils {
 
@@ -40,7 +32,7 @@ public class FileListUtils {
   }
 
   public Map<File, InputStream> toStreamsOrFail(List<String> absolutePaths) throws IOException {
-    Map<File, InputStream> streams = toFiles(absolutePaths);
+    Map<File, InputStream> streams = toFiles(absolutePaths, element -> new File(element));
 
     // If none of the absolutePaths could be processed throw an exception and abort execution
     if ((streams == null || streams.size() == 0) && absolutePaths.size() > 0) {
@@ -50,58 +42,26 @@ public class FileListUtils {
     return streams;
   }
 
-  public Map<File, InputStream> toFiles(List<String> absolutePaths) {
-    Map<File, InputStream> fileStreams = new HashMap<File, InputStream>();
-
-    for (String absolutePath : absolutePaths) {
-      createFile(fileStreams, new File(absolutePath));
-    }
-
-    return fileStreams;
-  }
-
-  public Map<File, InputStream> toStreamFromFiles(List<File> files) {
+  public <T> Map<File, InputStream> toFiles(List<T> elements, TransformToFile<T> elementToFile) {
     Map<File, InputStream> fileStreams = new LinkedHashMap<>();
-
-    for (File file : files) {
-      createFile(fileStreams, file);
-    }
-
-    return fileStreams;
-  }
-
-  void createFile(Map<File, InputStream> fileStreams, File file) {
-    try {
-      File absoluteFile = file.getAbsoluteFile();
-      fileStreams.put(absoluteFile, new FileInputStream(absoluteFile));
-    } catch (FileNotFoundException e) {
-      if (log != null) {
-        log.error("Error opening file [" + file + "]", e);
-      } else {
-        throw new RuntimeException(e);
+    for (T element : elements) {
+      File file = elementToFile.transform(element);
+      try {
+        fileStreams.put(file, new FileInputStream(file));
+      } catch (FileNotFoundException e) {
+        if (log == null) {
+          throw new RuntimeException(e);
+        }
+        log.error(format("Error opening file [ %s ]", file), e);
       }
     }
+    return fileStreams;
   }
 
-  public static List<Path> listFiles(String baseDir, String dir) {
-    final List<Path> files = new ArrayList<>();
+  @FunctionalInterface
+  public interface TransformToFile<T> {
 
-    final Path path = Paths.get(baseDir, dir);
-    try {
-      Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-          if (!attrs.isDirectory())
-            files.add(file);
-          return FileVisitResult.CONTINUE;
-        }
-      });
-
-      return files;
-
-    } catch (IOException e) {
-      return emptyList();
-    }
+    File transform(T element);
   }
 }
+

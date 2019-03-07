@@ -7,7 +7,10 @@
 package org.mule.tools.apikit.input;
 
 import org.apache.maven.plugin.logging.Log;
+
+import org.mule.parser.service.ComponentScaffoldingError;
 import org.mule.parser.service.ParserService;
+import org.mule.parser.service.SimpleScaffoldingError;
 import org.mule.parser.service.logger.Logger;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.IAction;
@@ -19,8 +22,8 @@ import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
+import org.mule.tools.apikit.model.Status;
 import org.mule.tools.apikit.output.GenerationModel;
 
 import java.io.File;
@@ -32,40 +35,31 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
+import static org.mule.tools.apikit.model.Status.FAILED;
+import static org.mule.tools.apikit.model.Status.SUCCESS;
+import static org.mule.tools.apikit.model.Status.SUCCESS_WITH_ERRORS;
 
 public class RAMLFilesParser {
 
   private Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = new HashMap<>();
+
   private final APIFactory apiFactory;
-  private final Log log;
+
+  private final Log LOGGER;
 
   private String ramlVersion;
-  private String parseStatus = ScaffolderReport.SUCCESS;
-  private String errorMessage;
-
-  public String getErrorMessage() {
-    return errorMessage;
-  }
-
-  public String getVendorId() {
-    return vendorId;
-  }
-
-  public String getRamlVersion() {
-    return ramlVersion;
-  }
-
-  public String getParseStatus() {
-    return parseStatus;
-  }
 
   private static String vendorId = "RAML";
 
   public static final String MULE_APIKIT_PARSER = "mule.apikit.parser";
 
+  private final Status parseStatus;
 
-  private RAMLFilesParser(Log log, List<ApiRef> specs, APIFactory apiFactory, ScaffolderResourceLoader scaffolderResourceLoader) {
-    this.log = log;
+  private final List<ComponentScaffoldingError> parsingErrors = new ArrayList<>();
+
+  private RAMLFilesParser(Log log, List<ApiRef> specs, APIFactory apiFactory,
+                          ScaffolderResourceLoader scaffolderResourceLoader) {
+    this.LOGGER = log;
     this.apiFactory = apiFactory;
     List<ApiRef> processedFiles = new ArrayList<>();
     for (ApiRef spec : specs) {
@@ -84,19 +78,19 @@ public class RAMLFilesParser {
         log.info("Could not parse [" + spec.getLocation() + "] as root RAML file." + reason);
         log.debug(e);
       }
-
     }
     if (processedFiles.size() > 0) {
-      this.log.info("The following RAML files were parsed correctly: " +
+      LOGGER.info("The following RAML files were parsed correctly: " +
           processedFiles);
+      parseStatus = parsingErrors.size() == 0 ? SUCCESS : SUCCESS_WITH_ERRORS;
     } else {
-      parseStatus = ScaffolderReport.FAILED;
-      errorMessage = "None of the files was recognized as a valid root API file. See the Error Log for more details";
-      this.log.error(errorMessage);
+      LOGGER.error("None of the files was recognized as a valid root API file. See the Error Log for more details");
+      parseStatus = FAILED;
     }
   }
 
-  public static RAMLFilesParser create(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
+  public static RAMLFilesParser create(Log log, Map<File, InputStream> fileStreams,
+                                       APIFactory apiFactory) {
     final List<ApiRef> specs = fileStreams.entrySet().stream()
         .map(e -> ApiRef.create(e.getKey().getAbsolutePath()))
         .collect(toList());
@@ -113,6 +107,21 @@ public class RAMLFilesParser {
     return new RAMLFilesParser(log, specs, apiFactory, scaffolderResourceLoader);
   }
 
+  public Status getParseStatus() {
+    return parseStatus;
+  }
+
+  public String getVendorId() {
+    return vendorId;
+  }
+
+  public String getRamlVersion() {
+    return ramlVersion;
+  }
+
+  public List<ComponentScaffoldingError> getParsingErrors() {
+    return parsingErrors;
+  }
 
   private void collectResources(String filePath, Map<String, IResource> resourceMap, String baseUri, String version) {
     for (IResource resource : resourceMap.values()) {
@@ -163,29 +172,22 @@ public class RAMLFilesParser {
   }
 
   private ParserWrapper getParserWrapper(ApiRef apiRef, ScaffolderResourceLoader scaffolderResourceLoader) {
-    if (scaffolderResourceLoader == null) {
-      apiRef = ApiRef.create(apiRef.getLocation());
-    } else {
-      apiRef = ApiRef.create(apiRef.getLocation(), scaffolderResourceLoader);
+    final ParserService parserService = new ParserService(LoggerWrapper.getLogger(LOGGER));
+    try {
+      final ParserWrapper parser = parserService.getParser(ApiRef.create(apiRef.getLocation(), scaffolderResourceLoader));
+      LOGGER.info(format("Using %s to load APIs", parser.getParserType().name()));
+      return parser;
+    } finally {
+      parsingErrors.addAll(parserService.getParsingErrors());
     }
-
-    final ParserService parserService = new ParserService(LoggerWrapper.getLogger(log));
-    final ParserWrapper parser = parserService.getParser(apiRef);
-    log.info(buildParserInfoMessage(parser.getParserType().name()));
-    return parser;
-  }
-
-
-  private String buildParserInfoMessage(String parser) {
-    return format("Using %s to load APIs", parser);
   }
 
   private static class LoggerWrapper implements Logger {
 
-    private final Log logger;
+    private final Log LOGGER;
 
     private LoggerWrapper(Log logger) {
-      this.logger = logger;
+      this.LOGGER = logger;
     }
 
     static LoggerWrapper getLogger(Log logger) {
@@ -194,42 +196,42 @@ public class RAMLFilesParser {
 
     @Override
     public void debug(String msg) {
-      logger.debug(msg);
+      LOGGER.debug(msg);
     }
 
     @Override
     public void debug(String msg, Throwable error) {
-      logger.debug(msg, error);
+      LOGGER.debug(msg, error);
     }
 
     @Override
     public void info(String msg) {
-      logger.info(msg);
+      LOGGER.info(msg);
     }
 
     @Override
     public void info(String msg, Throwable error) {
-      logger.info(msg, error);
+      LOGGER.info(msg, error);
     }
 
     @Override
     public void warn(String msg) {
-      logger.warn(msg);
+      LOGGER.warn(msg);
     }
 
     @Override
     public void warn(String msg, Throwable error) {
-      logger.warn(msg, error);
+      LOGGER.warn(msg, error);
     }
 
     @Override
     public void error(String msg) {
-      logger.error(msg);
+      LOGGER.error(msg);
     }
 
     @Override
     public void error(String msg, Throwable error) {
-      logger.error(msg, error);
+      LOGGER.error(msg, error);
     }
   }
 }
