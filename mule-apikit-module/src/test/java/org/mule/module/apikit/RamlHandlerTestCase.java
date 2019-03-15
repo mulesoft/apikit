@@ -56,6 +56,16 @@ public class RamlHandlerTestCase {
   }
 
   @Test
+  public void addLocalHostAsServerWhenIsNotDefined() throws IOException {
+    String ramlLocation = "org/mule/module/apikit/raml-handler/simple10.raml";
+    boolean keepRamlBaseUri = false;
+    RamlHandler handler = createRamlHandler(ramlLocation, keepRamlBaseUri);
+    handler.setApiServer("localhost:8081/");
+    String rootRaml = handler.getAMFModel();
+    assertTrue(rootRaml.contains("localhost:8081/"));
+  }
+
+  @Test
   public void getRamlV2KeepRamlBaseUriTrue() throws IOException {
     String ramlLocation = "org/mule/module/apikit/raml-handler/simple10-with-example.raml";
     boolean keepRamlBaseUri = true;
@@ -67,6 +77,8 @@ public class RamlHandlerTestCase {
     assertTrue(!rootRaml.contains(apiServer));
     assertTrue(rootRaml.contains("baseUri: http://localhost/myapi"));
   }
+
+
 
   @Test
   public void getRamlV2KeepRamlBaseUriFalse() throws IOException {
