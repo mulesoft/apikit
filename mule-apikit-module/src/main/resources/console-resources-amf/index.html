@@ -170,6 +170,18 @@ Version: branch 2.0.0-preview commit b873cc5362c7160ce462bc238e9660184848dc33
         Demo._loadFile(file);
     };
     Demo._loadFile = function() {
+        var selectSummary = function() {
+            e = new CustomEvent("api-navigation-selection-changed", {
+                bubbles: !0,
+                composed: !0,
+                detail: {
+                    selected: "summary",
+                    type: "summary",
+                    endpointId: undefined
+                }
+            });
+            window.dispatchEvent(e);
+        };
         var xhr = new XMLHttpRequest();
         xhr.addEventListener('load', (e) => {
             let data;
@@ -180,8 +192,9 @@ Version: branch 2.0.0-preview commit b873cc5362c7160ce462bc238e9660184848dc33
             return;
         }
         document.getElementById('aware').raml = data;
-    });
+        });
         xhr.addEventListener('error', () => window.alert('Unable to load AMF model'));
+        xhr.addEventListener('load', selectSummary);
         xhr.open('GET', 'AMF_MODEL_LOCATION');
         xhr.send();
     };
