@@ -442,7 +442,7 @@ public class HttpRestRequest
                 logger.debug(String.format("comparing request media type %s with expected %s\n",
                                            requestMimeTypeName, mimeTypeName));
             }
-            if (mimeTypeName.equals(requestMimeTypeName))
+            if (mimeTypeName.equalsIgnoreCase(requestMimeTypeName))
             {
                 found = true;
                 if (!config.isDisableValidations())
