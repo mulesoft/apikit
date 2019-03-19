@@ -453,8 +453,7 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     File muleXmlSimple = simpleGeneration("parser/failing-api.raml", null, DEFAULT_MULE_VERSION, EE);
     assertFalse(muleXmlSimple.exists());
 
-    assertEquals(3, errors.size());
-    assertTrue(errors.stream().anyMatch(e -> e.contains("Unresolved reference 'SomeType?' from root context")));
+    assertEquals(2, errors.size());
     assertTrue(errors.stream().anyMatch(e -> e.contains("Unresolved reference 'SomeTypo' from root context")));
   }
 
