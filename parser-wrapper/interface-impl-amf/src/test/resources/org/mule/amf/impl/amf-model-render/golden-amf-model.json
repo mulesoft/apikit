@@ -295,7 +295,7 @@
 ],
 "http://www.w3.org/ns/shacl#raw": [
 {
-"@value": "      foo: \"hello\"\n      bar: 42\n\n"
+"@value": "\n      foo: \"hello\"\n      bar: 42\n\n"
 }
 ]
 }
@@ -489,7 +489,7 @@
 ],
 "http://www.w3.org/ns/shacl#raw": [
 {
-"@value": "      foo: \"bye\"\n      bar: false\n"
+"@value": "\n      foo: \"bye\"\n      bar: false\n"
 }
 ]
 }
