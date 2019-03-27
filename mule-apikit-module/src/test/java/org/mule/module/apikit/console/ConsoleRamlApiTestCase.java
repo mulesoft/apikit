@@ -45,7 +45,7 @@ public class ConsoleRamlApiTestCase extends MuleArtifactFunctionalTestCase {
             "/resources:\n" +
             "  get:\n" +
             "    responses:\n" +
-            "      200:\n" +
+            "      \"200\":\n" +
             "        body:\n" +
             "          application/json:\n" +
             "            type: any\n" +
@@ -62,7 +62,7 @@ public class ConsoleRamlApiTestCase extends MuleArtifactFunctionalTestCase {
             "            type: string\n" +
             "            required: true\n" +
             "    responses:\n" +
-            "      200: {}\n"))
+            "      \"200\": {}\n"))
         .when().get("/console/api?api");
   }
 
