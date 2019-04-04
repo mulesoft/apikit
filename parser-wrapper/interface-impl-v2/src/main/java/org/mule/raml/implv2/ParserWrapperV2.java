@@ -66,15 +66,12 @@ public class ParserWrapperV2 implements ParserWrapper {
       return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFolder),
                                          DEFAULT_RESOURCE_LOADER,
                                          new FileResourceLoader(ramlFolder.getAbsolutePath()),
-                                         new ExchangeDependencyResourceLoader(ramlFolder.getAbsolutePath()));
-    } else {
-      if (isSyncProtocol(ramlPath)) {
-        return new ApiSyncResourceLoader(ramlPath);
-      } else {
-        return DEFAULT_RESOURCE_LOADER;
-      }
-
+                                         new ExchangeDependencyResourceLoader());
+    } else if (isSyncProtocol(ramlPath)) {
+      return new ApiSyncResourceLoader(ramlPath);
     }
+
+    return new CompositeResourceLoader(DEFAULT_RESOURCE_LOADER, new ExchangeDependencyResourceLoader());
   }
 
   private static File fetchRamlFile(String ramlPath) {

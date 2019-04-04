@@ -9,7 +9,10 @@ package org.mule.raml.implv2.v10;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.raml.implv2.ParserWrapperV2;
+import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.model.IRaml;
+import org.raml.v2.api.loader.CompositeResourceLoader;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
 
@@ -70,6 +73,25 @@ public class InterfaceV10TestCase {
         .anyMatch(r -> endWithAndExists(r, "org/mule/raml/implv2/v10/references/library.raml", resourceLoader)), is(true));
     assertThat(allReferences.stream()
         .anyMatch(r -> endWithAndExists(r, "org/mule/raml/implv2/v10/references/company.raml", resourceLoader)), is(true));
+  }
+
+  @Test
+  public void referencesWithExchangeModule() {
+    final String ramlPath = "org/mule/raml/implv2/v10/exchange/api.raml";
+    final CompositeResourceLoader resourceLoader =
+        new CompositeResourceLoader(DEFAULT_RESOURCE_LOADER, new ExchangeDependencyResourceLoader());
+    List<String> allReferences = new ParserWrapperV2(ramlPath).build().getAllReferences();
+    assertEquals(3, allReferences.size());
+
+    assertThat(allReferences.stream()
+        .anyMatch(r -> endWithAndExists(r, "org/mule/raml/implv2/v10/exchange/exchange_modules/library1.raml", resourceLoader)),
+               is(true));
+    assertThat(allReferences.stream()
+        .anyMatch(r -> endWithAndExists(r, "org/mule/raml/implv2/v10/exchange/exchange_modules/library2.raml", resourceLoader)),
+               is(true));
+    assertThat(allReferences.stream()
+        .anyMatch(r -> endWithAndExists(r, "org/mule/raml/implv2/v10/exchange/exchange_modules/library3.raml", resourceLoader)),
+               is(true));
   }
 
   private boolean endWithAndExists(String reference, String goldenFile, ResourceLoader resourceLoader) {
