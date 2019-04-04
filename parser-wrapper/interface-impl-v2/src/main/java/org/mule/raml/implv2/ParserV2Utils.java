@@ -33,6 +33,7 @@ import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.mule.raml.implv2.utils.ExchangeDependencyUtils.getExchangeModulePath;
 
 public class ParserV2Utils {
 
@@ -127,7 +128,7 @@ public class ParserV2Utils {
 
         if (includePath != null) {
           final String absolutIncludePath = computeIncludePath(rootPath, pathRelativeToRoot, includePath);
-          final URI includedFileAsUri = URI.create(absolutIncludePath);
+          final URI includedFileAsUri = URI.create(absolutIncludePath).normalize();
           includePaths.add(includedFileAsUri.toString());
           includePaths.addAll(findIncludeNodes(includedFileAsUri, resourceLoader));
           pathRelativeToRootCurrent = calculateNextRootRelative(pathRelativeToRootCurrent,
@@ -145,6 +146,10 @@ public class ParserV2Utils {
     final URI parentUri = uri.getPath().endsWith("/") ? uri.resolve("..") : uri.resolve(".");
     final String parentUriAsString = parentUri.toString();
     return parentUriAsString.endsWith("/") ? parentUriAsString.substring(0, parentUriAsString.length() - 1) : parentUriAsString;
+  }
+
+  private static String fixExchangeModulePath(String path) {
+    return getExchangeModulePath(path);
   }
 
   private static String calculateNextRootRelative(String pathRelativeToRootCurrent, String includePath) {
@@ -176,10 +181,11 @@ public class ParserV2Utils {
     // according to RAML 1.0 spec: https://github.com/raml-org/raml-spec/blob/master/versions/raml-10/raml-10.md
 
     // uses File class to normalize the resolved path acording with the OS (every slash in the path must be in the same direction)
-    return isAbsolute(includePath) //
+    final String absolutePath = isAbsolute(includePath) //
         ? rootPath + includePath
         // relative path: A path that neither begins with a single slash ("/") nor constitutes a URL, and is interpreted relative to the location of the included file.
         : rootPath + (pathRelativeToRoot.isEmpty() ? "" : "/" + pathRelativeToRoot) + "/" + includePath;
+    return fixExchangeModulePath(absolutePath);
   }
 
   private static boolean isAbsolute(String includePath) {
