@@ -38,7 +38,8 @@ public class CompositeErrorTestCase {
     List<SimpleScaffoldingError> children =
         Arrays.asList(new SimpleScaffoldingError("cause1"), new SimpleScaffoldingError("cause2"),
                       new SimpleScaffoldingError("cause3"));
-    CompositeScaffoldingError compositeError = new CompositeScaffoldingError("description", ScaffoldingErrorType.AMF, children);
+    CompositeScaffoldingError compositeError =
+        new CompositeScaffoldingError("description", ScaffoldingErrorType.AMF, children);
     assertThat(compositeError.cause(), is("description:\ncause1\ncause2\ncause3"));
     assertThat(compositeError.errorType(), is(ScaffoldingErrorType.AMF));
   }
@@ -49,6 +50,7 @@ public class CompositeErrorTestCase {
     assertThat(new SimpleScaffoldingError("cause").errorType(), Matchers.is(ScaffoldingErrorType.GENERATION));
     assertThat(new SimpleScaffoldingError("cause", ScaffoldingErrorType.RAML).errorType(),
                Matchers.is(ScaffoldingErrorType.RAML));
-    assertThat(new SimpleScaffoldingError("cause", ScaffoldingErrorType.AMF).errorType(), Matchers.is(ScaffoldingErrorType.AMF));
+    assertThat(new SimpleScaffoldingError("cause", ScaffoldingErrorType.AMF).errorType(),
+               Matchers.is(ScaffoldingErrorType.AMF));
   }
 }

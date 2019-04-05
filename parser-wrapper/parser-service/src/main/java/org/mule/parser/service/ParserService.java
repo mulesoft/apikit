@@ -26,7 +26,6 @@ import java.util.List;
 import static java.lang.String.*;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
-import static org.mule.parser.service.ScaffoldingErrorType.*;
 import static org.mule.raml.interfaces.ParserType.AMF;
 import static org.mule.raml.interfaces.ParserType.AUTO;
 import static org.mule.raml.interfaces.ParserType.RAML;
@@ -113,7 +112,8 @@ public class ParserService {
       CompositeScaffoldingError exceptionError =
           new CompositeScaffoldingError(format("Exception parsing errors in file : %s", apiRef.getLocation()),
                                         parserType.equals(RAML) ? ScaffoldingErrorType.RAML : ScaffoldingErrorType.AMF,
-                                        errors.stream().map(er -> new SimpleScaffoldingError(er.getMessage())).collect(toList()));
+                                        errors.stream().map(er -> new SimpleScaffoldingError(er.getMessage()))
+                                            .collect(toList()));
       parsingErrors.add(exceptionError);
       return applyFallback(apiRef, parserType, errors);
     }

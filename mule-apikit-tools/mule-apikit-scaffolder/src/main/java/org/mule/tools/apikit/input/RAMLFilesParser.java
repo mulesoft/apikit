@@ -6,11 +6,12 @@
  */
 package org.mule.tools.apikit.input;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
 
 import org.mule.parser.service.ComponentScaffoldingError;
 import org.mule.parser.service.ParserService;
-import org.mule.parser.service.SimpleScaffoldingError;
 import org.mule.parser.service.logger.Logger;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.IAction;
@@ -56,6 +57,8 @@ public class RAMLFilesParser {
   private final Status parseStatus;
 
   private final List<ComponentScaffoldingError> parsingErrors = new ArrayList<>();
+
+  private final Set<API> apis = new HashSet<>();
 
   private RAMLFilesParser(Log log, List<ApiRef> specs, APIFactory apiFactory,
                           ScaffolderResourceLoader scaffolderResourceLoader) {
@@ -123,13 +126,16 @@ public class RAMLFilesParser {
     return parsingErrors;
   }
 
+  public Set<API> getApis() {
+    return apis;
+  }
+
   private void collectResources(String filePath, Map<String, IResource> resourceMap, String baseUri, String version) {
+    API api = apiFactory.createAPIBinding(filePath, null, baseUri, APIKitTools.getPathFromUri(baseUri, false), null,
+                                          null);
+    apis.add(api);
     for (IResource resource : resourceMap.values()) {
       for (IAction action : resource.getActions().values()) {
-
-
-        API api = apiFactory.createAPIBinding(filePath, null, baseUri, APIKitTools.getPathFromUri(baseUri, false), null,
-                                              null);
 
         Map<String, IMimeType> mimeTypes = action.getBody();
         boolean addGenericAction = false;

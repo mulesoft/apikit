@@ -47,7 +47,8 @@ public class MuleArtifactJsonGenerator {
     } catch (Exception e) {
       log.error("Error generating descriptor mule-artifact.json", e);
       errors
-          .add(new SimpleScaffoldingError(String.format("Error generating descriptor mule-artifact.json : %s", e.getMessage())));
+          .add(new SimpleScaffoldingError(String.format("Error generating descriptor mule-artifact.json : %s",
+                                                        e.getMessage())));
     }
   }
 

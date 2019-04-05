@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.junit.Rule;
@@ -60,6 +61,17 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     final String ramlFolder = "src/test/resources/scaffolder/";
 
     testSimple(ramlFolder, rootRaml);
+  }
+
+  @Test
+  public void testRAMLWithoutResources() throws Exception {
+    File api = generateApi("src/test/resources/api-sync/empty-api", "without-resources", SUCCESS.toString());
+
+    assertTrue(api.exists());
+    assertEquals("Files are different", FileUtils
+        .readFileToString(new File(getClass().getClassLoader().getResource("api-sync/empty-api/expected-result.xml").getFile()))
+        .replaceAll("\\s+", ""),
+                 FileUtils.readFileToString(api).replaceAll("\\s+", ""));
   }
 
   @Test

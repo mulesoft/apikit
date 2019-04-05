@@ -9,8 +9,6 @@ package org.mule.tools.apikit;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 
-import org.mule.parser.service.ScaffoldingErrorType;
-import org.mule.parser.service.SimpleScaffoldingError;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.MuleDomainParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
@@ -37,7 +35,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.emptyList;
 import static org.mule.tools.apikit.model.RuntimeEdition.CE;
 import static org.mule.tools.apikit.model.Status.*;
 
@@ -50,7 +47,7 @@ public class Scaffolder {
   private final MuleArtifactJsonGenerator muleArtifactJsonGenerator;
   private final ScaffolderReport.Builder scaffolderReportBuilder;
 
-
+  private final boolean updateConfigs;
 
   public static Scaffolder createScaffolder(Log log, File muleXmlOutputDirectory, List<String> specFiles,
                                             List<String> muleXmlFiles)
@@ -102,8 +99,12 @@ public class Scaffolder {
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(filesParser, muleConfigParser);
 
     scaffolderReportBuilder =
-        new ScaffolderReport.Builder().withStatus(filesParser.getParseStatus()).withVersion(filesParser.getRamlVersion())
-            .withVendorId(filesParser.getVendorId()).withScaffoldingErrors(filesParser.getParsingErrors());
+        new ScaffolderReport.Builder().withStatus(filesParser.getParseStatus())
+            .withVersion(filesParser.getRamlVersion())
+            .withVendorId(filesParser.getVendorId())
+            .withScaffoldingErrors(filesParser.getParsingErrors());
+
+    updateConfigs = false;
 
     if (runtimeEdition == null) {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
@@ -114,8 +115,8 @@ public class Scaffolder {
     }
 
     muleConfigGenerator =
-        new MuleConfigGenerator(log, muleXmlOutputDirectory, emptyList(), generationModels,
-                                ramlsWithExtensionEnabled, minMuleVersion, runtimeEdition);
+        new MuleConfigGenerator(log, muleXmlOutputDirectory, newArrayList(filesParser.getApis()), generationModels,
+                                ramlsWithExtensionEnabled, runtimeEdition);
 
     muleArtifactJsonGenerator =
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
@@ -144,6 +145,8 @@ public class Scaffolder {
         new ScaffolderReport.Builder().withStatus(filesParser.getParseStatus()).withVersion(filesParser.getRamlVersion())
             .withVendorId(filesParser.getVendorId()).withScaffoldingErrors(filesParser.getParsingErrors());
 
+    updateConfigs = true;
+
     if (runtimeEdition == null) {
       runtimeEdition = DEFAULT_RUNTIME_EDITION;
     }
@@ -153,8 +156,8 @@ public class Scaffolder {
     }
 
     muleConfigGenerator =
-        new MuleConfigGenerator(log, muleXmlOutputDirectory, newArrayList(muleConfigParser.getIncludedApis()),
-                                generationModels, null, minMuleVersion, runtimeEdition);
+        new MuleConfigGenerator(log, muleXmlOutputDirectory, newArrayList(filesParser.getApis()),
+                                generationModels, null, runtimeEdition);
 
     muleArtifactJsonGenerator =
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
@@ -208,7 +211,7 @@ public class Scaffolder {
 
   public void run() {
     try {
-      muleConfigGenerator.generate();
+      muleConfigGenerator.generate(updateConfigs);
       muleArtifactJsonGenerator.generate();
     } catch (Exception e) {
       scaffolderReportBuilder.withStatus(FAILED);

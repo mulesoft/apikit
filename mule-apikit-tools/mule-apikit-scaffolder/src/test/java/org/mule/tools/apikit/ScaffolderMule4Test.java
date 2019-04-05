@@ -7,6 +7,10 @@ package org.mule.tools.apikit;
  * LICENSE.txt file.
  */
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
@@ -912,6 +916,21 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     createScaffolder(ramls, emptyList(), muleXmlOut, domainFile, null, muleVersion, runtimeEdition).run();
 
     return new File(muleXmlOut, fileNameWhithOutExtension(apiPath) + ".xml");
+  }
+
+  @Test
+  public void scaffoldEmptyAPI() throws Exception {
+    File muleXmlOut = createTmpMuleXmlOutFolder();
+    createScaffolder(singletonList(createTmpFile("scaffolder/without-resources.raml")), emptyList(),
+                     muleXmlOut, null, null, DEFAULT_MULE_VERSION, EE).run();
+
+    File api = new File(muleXmlOut, "without-resources.xml");
+
+    assertEquals("Files are different", FileUtils
+        .readFileToString(new File(getClass().getClassLoader().getResource("scaffolder/expected-result-without-resources.xml")
+            .getFile()))
+        .replaceAll("api=(.*)raml\"", "api=\"\"").replaceAll("\\s+", ""),
+                 FileUtils.readFileToString(api).replaceAll("api=(.*)raml\"", "api=\"\"").replaceAll("\\s+", ""));
   }
 
   private File simpleGenerationWithExtensionEnabled(final String apiPath, final String apiWithExtensionEnabledPath,
