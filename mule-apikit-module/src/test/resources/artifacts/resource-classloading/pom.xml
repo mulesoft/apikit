@@ -26,7 +26,7 @@
         <dependency>
             <groupId>org.mule.modules</groupId>
             <artifactId>mule-apikit-module</artifactId>
-            <version>1.2.4-SNAPSHOT</version>
+            <version>1.3.0-SNAPSHOT</version>
             <classifier>mule-plugin</classifier>
         </dependency>
 
