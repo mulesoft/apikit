@@ -21,17 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>org.mule.raml</groupId>
-            <artifactId>raml-parser-interface-impl-v1</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.raml</groupId>
-            <artifactId>raml-parser-interface-impl-v2</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.raml</groupId>
-            <artifactId>raml-parser-interface-impl-amf</artifactId>
+            <artifactId>parser-service</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

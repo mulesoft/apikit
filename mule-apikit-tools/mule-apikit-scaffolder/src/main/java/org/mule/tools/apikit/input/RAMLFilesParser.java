@@ -104,7 +104,7 @@ public class RAMLFilesParser {
   public static RAMLFilesParser create(Log log, Map<String, InputStream> apis, APIFactory apiFactory,
                                        ScaffolderResourceLoader scaffolderResourceLoader) {
     final List<ApiRef> specs = apis.entrySet().stream()
-        .map(e -> ApiRef.create(e.getKey()))
+        .map(e -> ApiRef.create(e.getKey(), scaffolderResourceLoader))
         .collect(toList());
 
     return new RAMLFilesParser(log, specs, apiFactory, scaffolderResourceLoader);
