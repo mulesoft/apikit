@@ -6,9 +6,7 @@
  */
 package org.mule.parser.service;
 
-/**
- * Represents an error occurred when parsing Scaffolder input files
- */
+/** Represents an error occurred when parsing Scaffolder input files */
 public interface ComponentScaffoldingError {
 
   /**

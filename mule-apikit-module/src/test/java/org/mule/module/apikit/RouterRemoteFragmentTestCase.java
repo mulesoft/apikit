@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
 
 public class RouterRemoteFragmentTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,12 +20,15 @@ public class RouterRemoteFragmentTestCase extends AbstractMultiParserFunctionalT
 
   @Test
   public void simpleRouting() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .queryParam("code", "ABC-123")
         .queryParam("size", "medium")
         .expect()
-        .response().body(is("hello"))
+        .response()
+        .body(is("hello"))
         .statusCode(200)
-        .when().get("/api/test");
+        .when()
+        .get("/api/test");
   }
 }

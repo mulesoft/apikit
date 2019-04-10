@@ -8,11 +8,9 @@ package org.mule.tools.apikit.output.scopes;
 
 import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
 
+import org.jdom2.Element;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
-
-import org.jdom2.Element;
-
 
 public class HttpListenerConfigMule4Scope implements Scope {
 
@@ -24,7 +22,8 @@ public class HttpListenerConfigMule4Scope implements Scope {
 
     final HttpListener4xConfig httpListenerConfig = api.getHttpListenerConfig();
     if (httpListenerConfig != null) {
-      this.httpListenerConfig = new Element(HttpListener4xConfig.ELEMENT_NAME, HTTP_NAMESPACE.getNamespace());
+      this.httpListenerConfig =
+          new Element(HttpListener4xConfig.ELEMENT_NAME, HTTP_NAMESPACE.getNamespace());
       this.httpListenerConfig.setAttribute("name", httpListenerConfig.getName());
       String basePath = httpListenerConfig.getBasePath();
       if (basePath != null && basePath != "/" && basePath != "") {
@@ -44,6 +43,5 @@ public class HttpListenerConfigMule4Scope implements Scope {
   @Override
   public Element generate() {
     return httpListenerConfig;
-
   }
 }

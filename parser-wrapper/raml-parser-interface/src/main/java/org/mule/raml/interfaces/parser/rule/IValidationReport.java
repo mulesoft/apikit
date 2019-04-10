@@ -6,12 +6,11 @@
  */
 package org.mule.raml.interfaces.parser.rule;
 
-import java.util.List;
-
 import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
 
-public interface IValidationReport {
+import java.util.List;
 
+public interface IValidationReport {
 
   default boolean conforms() {
     return getResults().stream().noneMatch(r -> r.getSeverity().equals(ERROR));

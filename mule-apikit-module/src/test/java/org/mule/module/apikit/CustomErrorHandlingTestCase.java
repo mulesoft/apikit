@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
 
 public class CustomErrorHandlingTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,20 +20,25 @@ public class CustomErrorHandlingTestCase extends AbstractMultiParserFunctionalTe
 
   @Test
   public void testCustomErrorHandling() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
-        .response().body(is("{message: 'Bad request'}"))
+        .response()
+        .body(is("{message: 'Bad request'}"))
         .statusCode(400)
-        .when().get("/api/resource");
+        .when()
+        .get("/api/resource");
   }
 
   @Test
   public void testVariablesPropagationOnErrorHandling() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
-        .response().body(is("{message: 'Not Found'}"))
+        .response()
+        .body(is("{message: 'Not Found'}"))
         .statusCode(404)
-        .when().get("/api/error");
+        .when()
+        .get("/api/error");
   }
-
 }

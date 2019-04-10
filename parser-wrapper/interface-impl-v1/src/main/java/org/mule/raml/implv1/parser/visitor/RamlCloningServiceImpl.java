@@ -17,7 +17,8 @@ public class RamlCloningServiceImpl implements IRamlCloningService {
 
   public IRaml deepCloneRaml(IRaml source) {
     Raml sourceInstance = (Raml) source.getInstance();
-    Raml targetInstance = (Raml) SerializationUtils.deserialize(SerializationUtils.serialize(sourceInstance));
+    Raml targetInstance =
+        (Raml) SerializationUtils.deserialize(SerializationUtils.serialize(sourceInstance));
     targetInstance.setCompiledSchemas(sourceInstance.getCompiledSchemas());
     return new RamlImplV1(targetInstance);
   }
@@ -30,5 +31,4 @@ public class RamlCloningServiceImpl implements IRamlCloningService {
       throw new RuntimeException(e);
     }
   }
-
 }

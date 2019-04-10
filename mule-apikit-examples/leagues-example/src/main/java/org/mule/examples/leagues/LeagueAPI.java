@@ -6,6 +6,9 @@
  */
 package org.mule.examples.leagues;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import org.mule.examples.leagues.exceptions.ConflictException;
 import org.mule.examples.leagues.model.League;
 import org.mule.examples.leagues.request.Score;
@@ -19,10 +22,6 @@ import org.mule.examples.leagues.response.Teams;
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotFoundException;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 public class LeagueAPI {
 
   private League league;
@@ -31,7 +30,6 @@ public class LeagueAPI {
     league = new League();
     league.initialize();
   }
-
 
   public void deleteTeam(String teamId) throws MuleRestException {
     if (!league.hasTeam(teamId)) {
@@ -59,7 +57,8 @@ public class LeagueAPI {
 
   public Match getMatch(String homeTeamId, String awayTeamId) throws MuleRestException {
     if (!league.hasMatch(homeTeamId, awayTeamId)) {
-      throw new NotFoundException("There is no match between team " + homeTeamId + " and team " + awayTeamId);
+      throw new NotFoundException(
+                                  "There is no match between team " + homeTeamId + " and team " + awayTeamId);
     }
 
     org.mule.examples.leagues.model.Match match = league.getMatch(homeTeamId, awayTeamId);
@@ -146,9 +145,11 @@ public class LeagueAPI {
     return team.getId();
   }
 
-  public void updateScore(String homeTeamId, String awayTeamId, Score score) throws MuleRestException {
+  public void updateScore(String homeTeamId, String awayTeamId, Score score)
+      throws MuleRestException {
     if (!league.hasMatch(homeTeamId, awayTeamId)) {
-      throw new NotFoundException("There is no match between team " + homeTeamId + " and team " + awayTeamId);
+      throw new NotFoundException(
+                                  "There is no match between team " + homeTeamId + " and team " + awayTeamId);
     }
 
     org.mule.examples.leagues.model.Match match = league.getMatch(homeTeamId, awayTeamId);
@@ -156,8 +157,12 @@ public class LeagueAPI {
       match.setHomeTeamScore(score.getHomeTeamScore());
       match.setAwayTeamScore(score.getAwayTeamScore());
     } else {
-      throw new ConflictException("The match between team " + homeTeamId + " and team " + awayTeamId
-          + " has not been played yet");
+      throw new ConflictException(
+                                  "The match between team "
+                                      + homeTeamId
+                                      + " and team "
+                                      + awayTeamId
+                                      + " has not been played yet");
     }
   }
 
@@ -179,5 +184,4 @@ public class LeagueAPI {
       team.setStadium(updateTeam.getStadium());
     }
   }
-
 }

@@ -6,6 +6,11 @@
  */
 package org.mule.module.apikit;
 
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,12 +18,6 @@ import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.RoutingTable;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.runtime.core.api.MuleContext;
-
-import java.io.IOException;
-
-import static org.hamcrest.CoreMatchers.hasItems;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class RoutingTableTestCase {
 
@@ -28,8 +27,10 @@ public class RoutingTableTestCase {
   @BeforeClass
   public static void beforeAll() throws IOException {
     muleContext = mock(MuleContext.class);
-    when(muleContext.getExecutionClassLoader()).thenReturn(Thread.currentThread().getContextClassLoader());
-    ramlHandler = new RamlHandler("org/mule/module/apikit/routing-table-sample.raml", true, muleContext);
+    when(muleContext.getExecutionClassLoader())
+        .thenReturn(Thread.currentThread().getContextClassLoader());
+    ramlHandler =
+        new RamlHandler("org/mule/module/apikit/routing-table-sample.raml", true, muleContext);
   }
 
   public RoutingTableTestCase() {}
@@ -39,11 +40,13 @@ public class RoutingTableTestCase {
 
     RoutingTable routingTable = new RoutingTable(ramlHandler.getApi());
 
-
-    Assert.assertThat(routingTable.keySet(), hasItems(new URIPattern("/single-resource"),
-                                                      new URIPattern("/api"),
-                                                      new URIPattern("/api/sub-resource"),
-                                                      new URIPattern("/api/sub-resource-types")));
+    Assert.assertThat(
+                      routingTable.keySet(),
+                      hasItems(
+                               new URIPattern("/single-resource"),
+                               new URIPattern("/api"),
+                               new URIPattern("/api/sub-resource"),
+                               new URIPattern("/api/sub-resource-types")));
   }
 
   @Test

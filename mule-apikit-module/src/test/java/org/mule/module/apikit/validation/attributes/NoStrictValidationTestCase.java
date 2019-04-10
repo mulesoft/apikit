@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import static io.restassured.RestAssured.given;
+
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import static io.restassured.RestAssured.given;
 
 public class NoStrictValidationTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,18 +20,16 @@ public class NoStrictValidationTestCase extends AbstractMultiParserFunctionalTes
 
   @Test
   public void successWhenSendingNonDefinedQueryParam() throws Exception {
-    given().queryParam("noDefinedParam", "value")
+    given()
+        .queryParam("noDefinedParam", "value")
         .expect()
         .statusCode(200)
-        .when().get("api/resource");
+        .when()
+        .get("api/resource");
   }
 
   @Test
   public void successWhenSendingNonDefinedHeader() throws Exception {
-    given().header("noDefinedHeader", "value")
-        .expect()
-        .statusCode(200)
-        .when().get("api/resource");
+    given().header("noDefinedHeader", "value").expect().statusCode(200).when().get("api/resource");
   }
-
 }

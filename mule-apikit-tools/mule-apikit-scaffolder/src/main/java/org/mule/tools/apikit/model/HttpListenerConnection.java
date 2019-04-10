@@ -6,11 +6,9 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.mule.tools.apikit.misc.APIKitTools;
-
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Objects;
+import org.apache.commons.lang.StringUtils;
+import org.mule.tools.apikit.misc.APIKitTools;
 
 public class HttpListenerConnection {
 
@@ -28,7 +26,6 @@ public class HttpListenerConnection {
     private String host;
     private String port;
     private String protocol;
-
 
     public Builder(final String host, final String port, final String protocol) {
       if (StringUtils.isEmpty(host)) {
@@ -68,9 +65,7 @@ public class HttpListenerConnection {
     }
   }
 
-  public HttpListenerConnection(final String host,
-                                final String port,
-                                final String protocol) {
+  public HttpListenerConnection(final String host, final String port, final String protocol) {
     this.host = host;
     this.port = port;
     this.protocol = protocol;
@@ -95,9 +90,9 @@ public class HttpListenerConnection {
     if (o == null || getClass() != o.getClass())
       return false;
     HttpListenerConnection that = (HttpListenerConnection) o;
-    return Objects.equals(host, that.host) &&
-        Objects.equals(port, that.port) &&
-        Objects.equals(protocol, that.protocol);
+    return Objects.equals(host, that.host)
+        && Objects.equals(port, that.port)
+        && Objects.equals(protocol, that.protocol);
   }
 
   @Override

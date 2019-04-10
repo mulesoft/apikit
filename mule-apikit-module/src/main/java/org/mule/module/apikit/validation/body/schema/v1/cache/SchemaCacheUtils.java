@@ -6,17 +6,14 @@
  */
 package org.mule.module.apikit.validation.body.schema.v1.cache;
 
+import com.github.fge.jackson.JsonLoader;
+import java.io.IOException;
+import javax.annotation.Nullable;
+import javax.xml.validation.Schema;
 import org.mule.module.apikit.api.exception.ApikitRuntimeException;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IRaml;
-
-import com.github.fge.jackson.JsonLoader;
-
-import java.io.IOException;
-
-import javax.annotation.Nullable;
-import javax.xml.validation.Schema;
 
 public class SchemaCacheUtils {
 
@@ -29,9 +26,7 @@ public class SchemaCacheUtils {
     return key.toString();
   }
 
-  /**
-   * Returns the compiled representation of an XML schema.
-   */
+  /** Returns the compiled representation of an XML schema. */
   public static Schema resolveXmlSchema(String schemaCacheKey, IRaml api) {
     IMimeType mimeType = getMimeType(schemaCacheKey, api);
 
@@ -42,7 +37,7 @@ public class SchemaCacheUtils {
 
     String schema = mimeType.getSchema();
 
-    //check global schemas
+    // check global schemas
     if (api.getConsolidatedSchemas().containsKey(schema)) {
       compiledSchema = api.getCompiledSchemas().get(schema);
       if (compiledSchema != null && compiledSchema instanceof Schema) {
@@ -59,8 +54,8 @@ public class SchemaCacheUtils {
   }
 
   /**
-   * may return either a string representing the path to the schema
-   * or a JsonNode for inline schema definitions
+   * may return either a string representing the path to the schema or a JsonNode for inline schema
+   * definitions
    */
   @Nullable
   public static Object resolveJsonSchema(String schemaCacheKey, IRaml api) {
@@ -69,7 +64,7 @@ public class SchemaCacheUtils {
     String schemaOrGlobalReference = mimeType.getSchema();
 
     try {
-      //check global schemas
+      // check global schemas
       if (api.getConsolidatedSchemas().containsKey(schemaOrGlobalReference)) {
         path = (String) api.getCompiledSchemas().get(schemaOrGlobalReference);
         if (path != null) {
@@ -88,8 +83,8 @@ public class SchemaCacheUtils {
       return null;
 
     } catch (IOException e) {
-      throw new ApikitRuntimeException("Json Schema could not be resolved for key: " + schemaCacheKey, e);
+      throw new ApikitRuntimeException(
+                                       "Json Schema could not be resolved for key: " + schemaCacheKey, e);
     }
   }
-
 }

@@ -7,16 +7,15 @@
 package org.mule.module.apikit.validation.attributes;
 
 import com.google.common.collect.Maps;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.mule.module.apikit.api.exception.InvalidQueryStringException;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IQueryString;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 public class QueryStringValidator {
 
@@ -66,7 +65,11 @@ public class QueryStringValidator {
     }
 
     for (Entry<String, IParameter> entry : facetsWithDefault.entrySet())
-      result.append(entry.getKey()).append(": ").append(entry.getValue().getDefaultValue()).append("\n");
+      result
+          .append(entry.getKey())
+          .append(": ")
+          .append(entry.getValue().getDefaultValue())
+          .append("\n");
 
     if (result.length() > 0)
       return result.toString();

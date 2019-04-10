@@ -7,5 +7,6 @@
 package org.mule.module.apikit.validation.body.schema.v1;
 
 public enum SchemaType {
-  JSONSchema, XMLSchema
+  JSONSchema,
+  XMLSchema
 }

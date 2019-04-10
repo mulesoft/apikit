@@ -6,6 +6,15 @@
  */
 package org.mule.tools.apikit.input;
 
+import static java.util.Map.Entry;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
@@ -17,18 +26,7 @@ import org.mule.tools.apikit.input.parsers.HttpListener4xConfigParser;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
-import org.mule.tools.apikit.model.HttpListener4xConfig;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Map.Entry;
 
 public class MuleConfigParser {
 
@@ -73,7 +71,11 @@ public class MuleConfigParser {
         stream.close();
         result.put(fileStreamEntry.getKey(), document);
       } catch (Exception e) {
-        log.error("Error parsing Mule xml config file: [" + fileStreamEntry.getKey() + "]. Reason: " + e.getMessage());
+        log.error(
+                  "Error parsing Mule xml config file: ["
+                      + fileStreamEntry.getKey()
+                      + "]. Reason: "
+                      + e.getMessage());
         log.debug(e);
       }
     }
@@ -86,9 +88,11 @@ public class MuleConfigParser {
   }
 
   protected void parseApis(File file, Document document, Set<String> apiFilePaths) {
-    includedApis
-        .putAll(new APIKitRoutersParser(apikitConfigs, apiFactory.getHttpListenerConfigs(), apiFilePaths, file, apiFactory)
-            .parse(document));
+    includedApis.putAll(
+                        new APIKitRoutersParser(
+                                                apikitConfigs, apiFactory.getHttpListenerConfigs(), apiFilePaths, file,
+                                                apiFactory)
+                                                    .parse(document));
   }
 
   protected void parseFlows(Collection<Document> documents) {

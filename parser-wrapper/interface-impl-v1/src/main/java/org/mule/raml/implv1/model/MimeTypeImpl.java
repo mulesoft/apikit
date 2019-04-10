@@ -6,17 +6,16 @@
  */
 package org.mule.raml.implv1.model;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.raml.model.MimeType;
 import org.raml.model.parameter.FormParameter;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 public class MimeTypeImpl implements IMimeType {
 

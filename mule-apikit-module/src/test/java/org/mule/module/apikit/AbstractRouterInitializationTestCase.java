@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit;
 
+import static java.util.Arrays.asList;
+
 import io.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.runners.Parameterized;
@@ -16,9 +18,6 @@ import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 import org.mule.test.runner.RunnerDelegateTo;
 
-import static java.util.Arrays.asList;
-
-
 @RunnerDelegateTo(Parameterized.class)
 @ArtifactClassLoaderRunnerConfig
 public abstract class AbstractRouterInitializationTestCase extends MuleArtifactFunctionalTestCase {
@@ -28,10 +27,7 @@ public abstract class AbstractRouterInitializationTestCase extends MuleArtifactF
 
   @Parameters(name = "{0}")
   public static Iterable<Object> data() {
-    return asList(new Object[] {
-        "amf-only.xml",
-        "raml-parser-only.xml"
-    });
+    return asList(new Object[] {"amf-only.xml", "raml-parser-only.xml"});
   }
 
   @Rule

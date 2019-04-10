@@ -11,13 +11,11 @@ import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ExecutionException;
-
 import org.springframework.core.io.AbstractFileResolvingResource;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
@@ -31,26 +29,26 @@ public class JsonSchemaResource extends AbstractFileResolvingResource {
   private static LoadingCache<Class<?>, byte[]> schemaCache;
 
   static {
-    schemaCache = CacheBuilder.newBuilder()
-        .maximumSize(1000)
-        .build(
-               new CacheLoader<Class<?>, byte[]>() {
+    schemaCache =
+        CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .build(
+                   new CacheLoader<Class<?>, byte[]>() {
 
-                 private ObjectMapper objectMapper;
+                     private ObjectMapper objectMapper;
 
-                 public byte[] load(Class<?> clazz) throws IOException {
-                   if (objectMapper == null) {
-                     objectMapper = new ObjectMapper().disableDefaultTyping();
-                   }
+                     public byte[] load(Class<?> clazz) throws IOException {
+                       if (objectMapper == null) {
+                         objectMapper = new ObjectMapper().disableDefaultTyping();
+                       }
 
-                   JsonSchema jsonSchema = this.objectMapper.generateJsonSchema(clazz);
-                   ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                   this.objectMapper.writeValue(baos, jsonSchema);
+                       JsonSchema jsonSchema = this.objectMapper.generateJsonSchema(clazz);
+                       ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                       this.objectMapper.writeValue(baos, jsonSchema);
 
-                   return baos.toByteArray();
-                 }
-               });
-
+                       return baos.toByteArray();
+                     }
+                   });
   }
 
   public JsonSchemaResource(String className, ClassLoader classLoader) {

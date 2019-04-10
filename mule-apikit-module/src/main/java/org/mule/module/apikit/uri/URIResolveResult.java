@@ -10,10 +10,8 @@ package org.mule.module.apikit.uri;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.api.uri.URIPattern;
-
 
 /**
  * Holds the results of a URI resolver.
@@ -23,45 +21,33 @@ import org.mule.module.apikit.api.uri.URIPattern;
  */
 public class URIResolveResult implements ResolvedVariables {
 
-  /**
-   * The possible status of a resolve result.
-   */
+  /** The possible status of a resolve result. */
   public enum Status {
-    UNRESOLVED, RESOLVED, ERROR
+    UNRESOLVED,
+    RESOLVED,
+    ERROR
   }
 
-  /**
-   * The status of this result.
-   */
+  /** The status of this result. */
   private Status _status = Status.UNRESOLVED;
 
-  /**
-   * Maps variable names to their corresponding resolved objects.
-   */
+  /** Maps variable names to their corresponding resolved objects. */
   private final Map<String, Object> values = new HashMap<String, Object>();
 
-  /**
-   * The URI Pattern that was used to produce this result.
-   */
+  /** The URI Pattern that was used to produce this result. */
   private final URIPattern _pattern;
 
-  /**
-   * Constructs an instance of this class with fields initialised to null.
-   */
+  /** Constructs an instance of this class with fields initialised to null. */
   public URIResolveResult(URIPattern pattern) {
     this._pattern = pattern;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Set<String> names() {
     return this.values.keySet();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Object get(String name) {
     return this.values.get(name);
   }
@@ -90,7 +76,7 @@ public class URIResolveResult implements ResolvedVariables {
    * Puts the object corresponding to the specified variable name in the results.
    *
    * @param name The name of the variable.
-   * @param o    The corresponding object.
+   * @param o The corresponding object.
    */
   public void put(String name, Object o) {
     this.values.put(name, o);
@@ -104,5 +90,4 @@ public class URIResolveResult implements ResolvedVariables {
   public void setStatus(Status status) {
     this._status = status;
   }
-
 }

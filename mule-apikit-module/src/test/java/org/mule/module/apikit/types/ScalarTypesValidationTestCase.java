@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.types;
 
-import org.junit.Test;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.core.Is.is;
+
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 public class ScalarTypesValidationTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -95,9 +95,8 @@ public class ScalarTypesValidationTestCase extends AbstractMultiParserFunctional
   }
 
   private void shouldReturnOkFor(String param, Object value) {
-    final String response = "{\n" +
-        "  \"" + param + "\": \"" + String.valueOf(value) + "\"\n" +
-        "}";
+    final String response =
+        "{\n" + "  \"" + param + "\": \"" + String.valueOf(value) + "\"\n" + "}";
 
     shouldReturnFor(param, value, 200, response);
   }
@@ -105,8 +104,11 @@ public class ScalarTypesValidationTestCase extends AbstractMultiParserFunctional
   private void shouldReturnFor(String param, Object value, int statusCode, String response) {
     given()
         .queryParam(param, value)
-        .expect().response().statusCode(statusCode)
+        .expect()
+        .response()
+        .statusCode(statusCode)
         .body(is(response))
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 }

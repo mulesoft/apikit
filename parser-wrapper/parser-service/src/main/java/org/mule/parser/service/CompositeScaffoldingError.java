@@ -8,16 +8,15 @@ package org.mule.parser.service;
 
 import java.util.List;
 
-/**
- * Represents a parsing error, with description and a list of children errors
- */
+/** Represents a parsing error, with description and a list of children errors */
 public class CompositeScaffoldingError implements ComponentScaffoldingError {
 
   private final String description;
   private final ScaffoldingErrorType errorType;
   private final List<SimpleScaffoldingError> errors;
 
-  public CompositeScaffoldingError(String description, ScaffoldingErrorType errorType, List<SimpleScaffoldingError> errors) {
+  public CompositeScaffoldingError(
+                                   String description, ScaffoldingErrorType errorType, List<SimpleScaffoldingError> errors) {
     this.description = description;
     this.errorType = errorType;
     this.errors = errors;
@@ -27,10 +26,11 @@ public class CompositeScaffoldingError implements ComponentScaffoldingError {
   public String cause() {
     StringBuilder builder = new StringBuilder(description);
     builder.append(":");
-    errors.forEach(error -> {
-      builder.append("\n");
-      builder.append(error.cause());
-    });
+    errors.forEach(
+                   error -> {
+                     builder.append("\n");
+                     builder.append(error.cause());
+                   });
     return builder.toString();
   }
 

@@ -8,7 +8,6 @@ package org.mule.module.apikit.helpers;
 
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.MediaType;
-import org.mule.runtime.api.metadata.TypedValue;
 
 public class MessageHelper {
 

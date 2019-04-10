@@ -6,11 +6,11 @@
  */
 package org.mule.tools.apikit;
 
-import org.junit.Test;
-import org.mule.tools.apikit.misc.ExampleUtils;
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+
+import org.junit.Test;
+import org.mule.tools.apikit.misc.ExampleUtils;
 
 public class ExampleUtilsTest {
 
@@ -60,7 +60,6 @@ public class ExampleUtilsTest {
     assertThat(ExampleUtils.isValidJSON("false"), is(true));
   }
 
-
   @Test
   public void objectIsNotAValidJSON() {
     assertThat(ExampleUtils.isValidJSON("{ \"game\" : \"League Of Legends\" "), is(false));
@@ -93,19 +92,23 @@ public class ExampleUtilsTest {
 
   @Test
   public void getSimpleYamlArrayAsJSON() {
-    assertThat(ExampleUtils.getExampleAsJSONIfNeeded("- One\n- Two\n- Three"), is("[\"One\",\"Two\",\"Three\"]"));
+    assertThat(
+               ExampleUtils.getExampleAsJSONIfNeeded("- One\n- Two\n- Three"),
+               is("[\"One\",\"Two\",\"Three\"]"));
   }
 
   @Test
   public void getNestedYamlArrayAsJSON() {
-    assertThat(ExampleUtils.getExampleAsJSONIfNeeded(
-                                                     "              books:\n" +
-                                                         "                - title: In Cold Blood\n" +
-                                                         "                  author: Truman Capote\n" +
-                                                         "                  year: 1966\n" +
-                                                         "                - title: El Salvaje\n" +
-                                                         "                  author: Guillermo Arriaga\n" +
-                                                         "                  year: 2016"),
-               is("{\"books\":[{\"title\":\"In Cold Blood\",\"author\":\"Truman Capote\",\"year\":1966},{\"title\":\"El Salvaje\",\"author\":\"Guillermo Arriaga\",\"year\":2016}]}"));
+    assertThat(
+               ExampleUtils.getExampleAsJSONIfNeeded(
+                                                     "              books:\n"
+                                                         + "                - title: In Cold Blood\n"
+                                                         + "                  author: Truman Capote\n"
+                                                         + "                  year: 1966\n"
+                                                         + "                - title: El Salvaje\n"
+                                                         + "                  author: Guillermo Arriaga\n"
+                                                         + "                  year: 2016"),
+               is(
+                  "{\"books\":[{\"title\":\"In Cold Blood\",\"author\":\"Truman Capote\",\"year\":1966},{\"title\":\"El Salvaje\",\"author\":\"Guillermo Arriaga\",\"year\":2016}]}"));
   }
 }

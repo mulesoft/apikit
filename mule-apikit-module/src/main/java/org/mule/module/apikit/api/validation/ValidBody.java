@@ -47,5 +47,4 @@ public class ValidBody {
       this.formParameters = formParameters;
     }
   }
-
 }

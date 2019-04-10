@@ -6,14 +6,12 @@
  */
 package org.mule.module.apikit.api;
 
+import java.net.URL;
 import org.apache.commons.lang3.StringUtils;
 
-import java.net.URL;
-
-
-//import org.mule.runtime.api.message.Message;
-//import org.mule.runtime.core.api.InternalEvent;
-//import org.mule.runtime.core.util.StringUtils;
+// import org.mule.runtime.api.message.Message;
+// import org.mule.runtime.core.api.InternalEvent;
+// import org.mule.runtime.core.util.StringUtils;
 
 public class UrlUtils {
 
@@ -24,22 +22,23 @@ public class UrlUtils {
   private static final String HTTP = "http://";
   private static final String HTTPS = "https://";
 
-
   private UrlUtils() {}
 
-  //public static String getBaseSchemeHostPort(Event event) {
-  //  String host = ((HttpRequestAttributes) event.getMessage().getAttributes()).getHeaders().get("host");
+  // public static String getBaseSchemeHostPort(Event event) {
+  //  String host = ((HttpRequestAttributes)
+  // event.getMessage().getAttributes()).getHeaders().get("host");
   //  String chHost = System.getProperty("fullDomain");
   //  if (chHost != null) {
   //    host = chHost;
   //  }
   //  return getScheme(event.getMessage()) + "://" + host;
-  //}
+  // }
   //
-  //public static String getScheme(Message message) {
+  // public static String getScheme(Message message) {
   //  String scheme = ((HttpRequestAttributes) message.getAttributes()).getScheme();
   //  if (scheme == null) {
-  //    String endpoint = ((HttpRequestAttributes) message.getAttributes()).getRequestUri(); //TODO CHECK IF THIS IS THE CORRECT PROPERTY//.getInboundProperty("http.context.uri");
+  //    String endpoint = ((HttpRequestAttributes) message.getAttributes()).getRequestUri(); //TODO
+  // CHECK IF THIS IS THE CORRECT PROPERTY//.getInboundProperty("http.context.uri");
   //    if (endpoint == null) {
   //      throw new ApikitRuntimeException("Cannot figure out the request scheme");
   //    }
@@ -52,9 +51,9 @@ public class UrlUtils {
   //    }
   //  }
   //  return scheme;
-  //}
+  // }
 
-  //public static String getBaseSchemeHostPort(String baseUri) {
+  // public static String getBaseSchemeHostPort(String baseUri) {
   //  URL url;
   //  try {
   //    url = new URL(baseUri);
@@ -62,9 +61,9 @@ public class UrlUtils {
   //    return "http://localhost";
   //  }
   //  return url.getProtocol() + "://" + url.getAuthority();
-  //}
+  // }
 
-  //public static String getResourceRelativePath(Message message) {
+  // public static String getResourceRelativePath(Message message) {
   //  String path = ((HttpRequestAttributes) message.getAttributes()).getRequestPath();
   //  //String basePath = getBasePath(message);
   //  //path = path.substring(basePath.length());
@@ -72,7 +71,7 @@ public class UrlUtils {
   //    path = "/" + path;
   //  }
   //  return path;
-  //}
+  // }
 
   private static int getEndOfBasePathIndex(String baseAndApiPath, String requestPath) {
     int amountOfSlashesInBasePath = 0;
@@ -83,7 +82,8 @@ public class UrlUtils {
     }
     int amountOfSlashesInRequestPath = 0;
     int character = 0;
-    for (; character < requestPath.length() && amountOfSlashesInRequestPath < amountOfSlashesInBasePath; character++) {
+    for (; character < requestPath.length()
+        && amountOfSlashesInRequestPath < amountOfSlashesInBasePath; character++) {
       if (Character.compare(requestPath.charAt(character), '/') == 0) {
         amountOfSlashesInRequestPath++;
       }
@@ -136,20 +136,19 @@ public class UrlUtils {
     return result;
   }
 
-
   public static String getBasePath(String baseAndApiPath, String requestPath) {
     int character = getEndOfBasePathIndex(baseAndApiPath, requestPath);
     return requestPath.substring(0, character);
   }
   //
-  //public static String getQueryString(Message message) {
+  // public static String getQueryString(Message message) {
   //  String queryString = ((HttpRequestAttributes) message.getAttributes()).getQueryString();
   //  return queryString == null ? "" : queryString;
-  //}
+  // }
 
-  //public static String rewriteBaseUri(String raml, String baseSchemeHostPort) {
+  // public static String rewriteBaseUri(String raml, String baseSchemeHostPort) {
   //  return replaceBaseUri(raml, "https?://[^/]*", baseSchemeHostPort);
-  //}
+  // }
 
   public static String replaceBaseUri(String raml, String newBaseUri) {
     if (newBaseUri != null) {
@@ -201,9 +200,11 @@ public class UrlUtils {
 
   /**
    * Creates URL where the server must redirect the client
+   *
    * @return The redirect URL
    */
-  public static String getRedirectLocation(String scheme, String remoteAddress, String requestPath, String queryString) {
+  public static String getRedirectLocation(
+                                           String scheme, String remoteAddress, String requestPath, String queryString) {
     String redirectLocation = scheme + "://" + remoteAddress + requestPath + "/";
 
     if (StringUtils.isNotEmpty(queryString)) {
@@ -246,6 +247,4 @@ public class UrlUtils {
     }
     return baseUriReplacement;
   }
-
-
 }

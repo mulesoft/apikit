@@ -6,15 +6,15 @@
  */
 package org.mule.module.apikit;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+
 import io.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 @ArtifactClassLoaderRunnerConfig
 public class RouterOasTestCase extends MuleArtifactFunctionalTestCase {
@@ -40,10 +40,13 @@ public class RouterOasTestCase extends MuleArtifactFunctionalTestCase {
 
   @Test
   public void simpleRouting() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
-        .response().body(is("hello"))
+        .response()
+        .body(is("hello"))
         .statusCode(200)
-        .when().get("/api/pets");
+        .when()
+        .get("/api/pets");
   }
 }

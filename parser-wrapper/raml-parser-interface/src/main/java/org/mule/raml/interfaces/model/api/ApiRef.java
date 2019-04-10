@@ -6,25 +6,26 @@
  */
 package org.mule.raml.interfaces.model.api;
 
-import org.mule.raml.interfaces.common.APISyncUtils;
-import org.mule.raml.interfaces.loader.ResourceLoader;
-import org.mule.raml.interfaces.model.ApiVendor;
-
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Optional;
-
 import static org.mule.raml.interfaces.common.ApiVendorUtils.deduceApiVendor;
 import static org.mule.raml.interfaces.common.ApiVendorUtils.getRamlVendor;
 import static org.mule.raml.interfaces.model.ApiVendor.OAS_20;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Optional;
+import org.mule.raml.interfaces.common.APISyncUtils;
+import org.mule.raml.interfaces.loader.ResourceLoader;
+import org.mule.raml.interfaces.model.ApiVendor;
+
 public interface ApiRef {
 
   static ApiRef create(final String location, final ResourceLoader resourceLoader) {
     if (APISyncUtils.isSyncProtocol(location))
-      return resourceLoader != null ? new ApiSyncApiRef(location, resourceLoader) : new ApiSyncApiRef(location);
+      return resourceLoader != null
+          ? new ApiSyncApiRef(location, resourceLoader)
+          : new ApiSyncApiRef(location);
 
     try {
       final URI uri = new URI(location);

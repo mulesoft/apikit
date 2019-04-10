@@ -24,13 +24,14 @@ public class ApikitRegistry {
     if (apiSourceMap != null) {
       config.getRamlHandler().setApiServer(apiSourceMap.get(config.getName()));
 
-
       for (String apiSourceMapItem : apiSourceMap.keySet()) {
         if (configMap.get(apiSourceMapItem) != null) {
-          configMap.get(apiSourceMapItem).getRamlHandler().setApiServer(apiSourceMap.get(apiSourceMapItem));
+          configMap
+              .get(apiSourceMapItem)
+              .getRamlHandler()
+              .setApiServer(apiSourceMap.get(apiSourceMapItem));
         }
       }
-
     }
   }
 
@@ -44,14 +45,15 @@ public class ApikitRegistry {
     }
     apiSourceMap.put(configName, apiSource);
 
-
     if (configMap != null) {
       for (String apiSourceMapItem : apiSourceMap.keySet()) {
         if (configMap.get(apiSourceMapItem) != null) {
-          configMap.get(apiSourceMapItem).getRamlHandler().setApiServer(apiSourceMap.get(apiSourceMapItem));
+          configMap
+              .get(apiSourceMapItem)
+              .getRamlHandler()
+              .setApiServer(apiSourceMap.get(apiSourceMapItem));
         }
       }
     }
   }
-
 }

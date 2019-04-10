@@ -6,18 +6,17 @@
  */
 package org.mule.amf.impl.parser.rule;
 
-import amf.client.validate.ValidationResult;
-import amf.core.parser.Position;
-import org.mule.raml.interfaces.parser.rule.IValidationResult;
-import org.mule.raml.interfaces.parser.rule.Severity;
-
-import java.net.URLDecoder;
-import java.util.List;
-
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
 import static org.mule.raml.interfaces.parser.rule.Severity.ERROR;
+
+import amf.client.validate.ValidationResult;
+import amf.core.parser.Position;
+import java.net.URLDecoder;
+import java.util.List;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
+import org.mule.raml.interfaces.parser.rule.Severity;
 
 public class ValidationResultImpl implements IValidationResult {
 
@@ -33,7 +32,9 @@ public class ValidationResultImpl implements IValidationResult {
   }
 
   public String getMessage() {
-    return buildErrorMessage(validationResult.message(), validationResult.location().orElse(""),
+    return buildErrorMessage(
+                             validationResult.message(),
+                             validationResult.location().orElse(""),
                              validationResult.position().start());
   }
 
@@ -61,7 +62,8 @@ public class ValidationResultImpl implements IValidationResult {
   }
 
   private static String buildErrorMessage(String message, String location, Position startPosition) {
-    return format(ERROR_FORMAT, message, URLDecoder.decode(location), getPositionMessage(startPosition));
+    return format(
+                  ERROR_FORMAT, message, URLDecoder.decode(location), getPositionMessage(startPosition));
   }
 
   private static String getPositionMessage(Position startPosition) {

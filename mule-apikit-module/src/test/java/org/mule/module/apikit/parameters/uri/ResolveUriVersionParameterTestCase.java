@@ -6,14 +6,14 @@
  */
 package org.mule.module.apikit.parameters.uri;
 
+import static io.restassured.RestAssured.given;
+
 import io.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import static io.restassured.RestAssured.given;
 
 @ArtifactClassLoaderRunnerConfig
 public class ResolveUriVersionParameterTestCase extends MuleArtifactFunctionalTestCase {
@@ -39,17 +39,11 @@ public class ResolveUriVersionParameterTestCase extends MuleArtifactFunctionalTe
 
   @Test
   public void failWhenInvokingEndpointWithoutVersion() {
-    given()
-        .expect()
-        .statusCode(404)
-        .when().get("api/resource/invalid-version");
+    given().expect().statusCode(404).when().get("api/resource/invalid-version");
   }
 
   @Test
   public void successWhenInvokingEndpointWithVersion() {
-    given()
-        .expect()
-        .statusCode(200)
-        .when().get("api/resource/v1");
+    given().expect().statusCode(200).when().get("api/resource/v1");
   }
 }

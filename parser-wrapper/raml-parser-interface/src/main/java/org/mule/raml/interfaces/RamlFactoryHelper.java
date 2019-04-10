@@ -6,13 +6,12 @@
  */
 package org.mule.raml.interfaces;
 
+import java.util.Iterator;
+import java.util.ServiceLoader;
 import org.mule.raml.interfaces.emitter.IRamlEmitter;
 import org.mule.raml.interfaces.parser.visitor.IRamlCloningService;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
 import org.mule.raml.interfaces.parser.visitor.IRamlValidationService;
-
-import java.util.Iterator;
-import java.util.ServiceLoader;
 
 public class RamlFactoryHelper {
 
@@ -39,12 +38,12 @@ public class RamlFactoryHelper {
     return loadFactory().createRamlDocumentBuilder();
   }
 
-  public static IRamlValidationService createRamlValidationService(IRamlDocumentBuilder ramlDocumentBuilder) {
+  public static IRamlValidationService createRamlValidationService(
+                                                                   IRamlDocumentBuilder ramlDocumentBuilder) {
     return loadFactory().createRamlValidationService(ramlDocumentBuilder);
   }
 
   public static IRamlCloningService createRamlCloningService() {
     return loadFactory().createRamlCloningService();
   }
-
 }

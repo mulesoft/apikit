@@ -6,11 +6,10 @@
  */
 package org.mule.raml.interfaces.model;
 
-import org.mule.raml.interfaces.model.parameter.IParameter;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 
 public interface IRaml extends Serializable {
 
@@ -18,7 +17,7 @@ public interface IRaml extends Serializable {
 
   Map<String, String> getConsolidatedSchemas();
 
-  Map<String, Object> getCompiledSchemas();// TODO THIS MUST BE REMOVED
+  Map<String, Object> getCompiledSchemas(); // TODO THIS MUST BE REMOVED
 
   String getBaseUri();
 
@@ -26,10 +25,10 @@ public interface IRaml extends Serializable {
 
   String getVersion();
 
-  //void setBaseUri(String baseUri);
+  // void setBaseUri(String baseUri);
   Map<String, IParameter> getBaseUriParameters();
 
-  //void setCompiledSchemas(Map<String, Object> compiledSchemas);
+  // void setCompiledSchemas(Map<String, Object> compiledSchemas);
   List<Map<String, ISecurityScheme>> getSecuritySchemes();
 
   List<Map<String, ITemplate>> getTraits();

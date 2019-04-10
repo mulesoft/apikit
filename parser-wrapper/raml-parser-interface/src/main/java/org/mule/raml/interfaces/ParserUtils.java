@@ -16,9 +16,9 @@ public class ParserUtils {
       return path;
     }
     if (version == null) {
-      throw new IllegalStateException("RAML does not contain version information and is required by resource: " + path);
+      throw new IllegalStateException(
+                                      "RAML does not contain version information and is required by resource: " + path);
     }
     return path.replaceAll("\\{version}", version);
   }
-
 }

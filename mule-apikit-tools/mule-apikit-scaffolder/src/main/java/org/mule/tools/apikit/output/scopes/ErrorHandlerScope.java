@@ -10,11 +10,9 @@ import static org.mule.tools.apikit.output.MuleConfigGenerator.EE_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
 
-import org.jdom2.CDATA;
-
 import java.util.Arrays;
 import java.util.List;
-
+import org.jdom2.CDATA;
 import org.jdom2.Element;
 
 public class ErrorHandlerScope implements Scope {
@@ -22,26 +20,21 @@ public class ErrorHandlerScope implements Scope {
   private Element errorHandler;
 
   public static ErrorHandlerScope createForConsoleFlow(boolean isMuleEE) {
-    List<StatusCodeMapping> statusCodeMappings = Arrays.asList(
-                                                               new StatusCodeMapping(404, "APIKIT:NOT_FOUND",
-                                                                                     "Resource not found"));
+    List<StatusCodeMapping> statusCodeMappings =
+        Arrays.asList(new StatusCodeMapping(404, "APIKIT:NOT_FOUND", "Resource not found"));
 
     return new ErrorHandlerScope(statusCodeMappings, isMuleEE);
   }
 
   public static ErrorHandlerScope createForMainFlow(boolean isMuleEE) {
-    List<StatusCodeMapping> statusCodeMappings = Arrays.asList(
-                                                               new StatusCodeMapping(400, "APIKIT:BAD_REQUEST", "Bad request"),
-                                                               new StatusCodeMapping(404, "APIKIT:NOT_FOUND",
-                                                                                     "Resource not found"),
-                                                               new StatusCodeMapping(405, "APIKIT:METHOD_NOT_ALLOWED",
-                                                                                     "Method not allowed"),
-                                                               new StatusCodeMapping(406, "APIKIT:NOT_ACCEPTABLE",
-                                                                                     "Not acceptable"),
-                                                               new StatusCodeMapping(415, "APIKIT:UNSUPPORTED_MEDIA_TYPE",
-                                                                                     "Unsupported media type"),
-                                                               new StatusCodeMapping(501, "APIKIT:NOT_IMPLEMENTED",
-                                                                                     "Not Implemented"));
+    List<StatusCodeMapping> statusCodeMappings =
+        Arrays.asList(
+                      new StatusCodeMapping(400, "APIKIT:BAD_REQUEST", "Bad request"),
+                      new StatusCodeMapping(404, "APIKIT:NOT_FOUND", "Resource not found"),
+                      new StatusCodeMapping(405, "APIKIT:METHOD_NOT_ALLOWED", "Method not allowed"),
+                      new StatusCodeMapping(406, "APIKIT:NOT_ACCEPTABLE", "Not acceptable"),
+                      new StatusCodeMapping(415, "APIKIT:UNSUPPORTED_MEDIA_TYPE", "Unsupported media type"),
+                      new StatusCodeMapping(501, "APIKIT:NOT_IMPLEMENTED", "Not Implemented"));
 
     return new ErrorHandlerScope(statusCodeMappings, isMuleEE);
   }
@@ -50,7 +43,8 @@ public class ErrorHandlerScope implements Scope {
     createErrorHandlerElement(statusCodeMappings, isMuleEE);
   }
 
-  private void createErrorHandlerElement(List<StatusCodeMapping> statusCodeMappings, boolean isMuleEE) {
+  private void createErrorHandlerElement(
+                                         List<StatusCodeMapping> statusCodeMappings, boolean isMuleEE) {
     errorHandler = new Element("error-handler", XMLNS_NAMESPACE.getNamespace());
 
     for (StatusCodeMapping statusCodeMapping : statusCodeMappings) {
@@ -67,7 +61,8 @@ public class ErrorHandlerScope implements Scope {
     }
   }
 
-  private void generateErrorHandlingForCE(StatusCodeMapping statusCodeMapping, Element errorMapping) {
+  private void generateErrorHandlingForCE(
+                                          StatusCodeMapping statusCodeMapping, Element errorMapping) {
     // Content-type
     Element contentTypeHeader = new Element("set-variable", XMLNS_NAMESPACE.getNamespace());
     contentTypeHeader.setAttribute("variableName", "outboundHeaders");
@@ -86,11 +81,14 @@ public class ErrorHandlerScope implements Scope {
     errorMapping.addContent(statusCodeVariable);
   }
 
-  private void generateErrorHandlingForEE(StatusCodeMapping statusCodeMapping, Element errorMapping) {
+  private void generateErrorHandlingForEE(
+                                          StatusCodeMapping statusCodeMapping, Element errorMapping) {
     // Transform Element
     Element transform = new Element("transform", EE_NAMESPACE.getNamespace());
     transform.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
-    transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(),
+    transform.setAttribute(
+                           "schemaLocation",
+                           EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(),
                            XSI_NAMESPACE.getNamespace());
 
     // Payload
@@ -120,10 +118,7 @@ public class ErrorHandlerScope implements Scope {
   }
 
   private String getTransformText(String message) {
-    return "%dw 2.0\n" +
-        "output application/json\n" +
-        "---\n" +
-        "{message: \"" + message + "\"}\n";
+    return "%dw 2.0\n" + "output application/json\n" + "---\n" + "{message: \"" + message + "\"}\n";
   }
 
   public static class StatusCodeMapping {

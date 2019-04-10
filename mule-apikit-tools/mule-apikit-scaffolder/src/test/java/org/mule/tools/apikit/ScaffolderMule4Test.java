@@ -7,26 +7,6 @@ package org.mule.tools.apikit;
  * LICENSE.txt file.
  */
 
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.junit.Test;
-import org.mockito.stubbing.Stubber;
-import org.mule.raml.implv2.ParserV2Utils;
-import org.mule.tools.apikit.model.RuntimeEdition;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
@@ -43,8 +23,23 @@ import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
-public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.Test;
+import org.mockito.stubbing.Stubber;
+import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.tools.apikit.model.RuntimeEdition;
 
+public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
   @Test
   public void testSimpleGenerateV08() throws Exception {
@@ -73,7 +68,11 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
   @Test
   public void generateWithIncludes08() throws Exception {
-    String filepath = ScaffolderMule4Test.class.getClassLoader().getResource("scaffolder-include-08/api.raml").getFile();
+    String filepath =
+        ScaffolderMule4Test.class
+            .getClassLoader()
+            .getResource("scaffolder-include-08/api.raml")
+            .getFile();
     File file = new File(filepath);
     List<File> ramls = singletonList(file);
     File muleXmlOut = createTmpMuleXmlOutFolder();
@@ -83,8 +82,10 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertNotNull(s);
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(7, countOccurences(s, "<ee:variables>"));
@@ -101,7 +102,11 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
   @Test
   public void generateWithIncludes10() throws Exception {
-    String filepath = ScaffolderMule4Test.class.getClassLoader().getResource("scaffolder-include-10/api.raml").getFile();
+    String filepath =
+        ScaffolderMule4Test.class
+            .getClassLoader()
+            .getResource("scaffolder-include-10/api.raml")
+            .getFile();
     File file = new File(filepath);
     List<File> ramls = singletonList(file);
     File muleXmlOut = createTmpMuleXmlOutFolder();
@@ -111,8 +116,10 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertNotNull(s);
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(7, countOccurences(s, "<ee:variables>"));
@@ -145,18 +152,25 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
   @Test
   public void generateWithExamples() throws Exception {
-    String filepath = ScaffolderMule4Test.class.getClassLoader()
-        .getResource("scaffolder-with-examples/src/main/resources/api/api.raml").getFile();
+    String filepath =
+        ScaffolderMule4Test.class
+            .getClassLoader()
+            .getResource("scaffolder-with-examples/src/main/resources/api/api.raml")
+            .getFile();
     File file = new File(filepath);
     File muleXmlOut = createTmpMuleXmlOutFolder();
-    Scaffolder scaffolder = createScaffolder(singletonList(file), emptyList(), muleXmlOut, null, emptySet(), null, EE);
+    Scaffolder scaffolder =
+        createScaffolder(singletonList(file), emptyList(), muleXmlOut, null, emptySet(), null, EE);
     scaffolder.run();
     File xmlOut = new File(muleXmlOut, "api.xml");
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertNotNull(s);
     final String expected =
-        IOUtils.toString(ScaffolderMule4Test.class.getClassLoader().getResourceAsStream("scaffolder-with-examples/api.xml"));
+        IOUtils.toString(
+                         ScaffolderMule4Test.class
+                             .getClassLoader()
+                             .getResourceAsStream("scaffolder-with-examples/api.xml"));
     assertEquals(expected, s);
   }
 
@@ -204,7 +218,6 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     simpleGenerateWithCustomDomainWithMultipleLC();
   }
 
-
   @Test
   public void testSimpleGenerateWithEmptyDomainWithOldParser() throws Exception {
     simpleGenerateWithEmptyDomain();
@@ -233,9 +246,12 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
 
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -311,53 +327,74 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     File muleXmlSimple = simpleGeneration("scaffolder/example-v10.raml", null);
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-    assertEquals(1, countOccurences(s, "{\n" +
-        "  name: \"Bobby\",\n" +
-        "  food: \"Ice Cream\"\n" +
-        "}"));
-    assertEquals(1, countOccurences(s, "{\n" +
-        "  Person: {\n" +
-        "    name: \"Underwood\",\n" +
-        "    address: \"Juana Manso 999\",\n" +
-        "    country: \"Argentina\"\n" +
-        "  }\n" +
-        "}"));
-    assertEquals(1, countOccurences(s, "{\n" +
-        "  title: \"In Cold Blood\",\n" +
-        "  author: \"Truman Capote\",\n" +
-        "  year: 1966\n" +
-        "}"));
+    assertEquals(
+                 1, countOccurences(s, "{\n" + "  name: \"Bobby\",\n" + "  food: \"Ice Cream\"\n" + "}"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s,
+                                 "{\n"
+                                     + "  Person: {\n"
+                                     + "    name: \"Underwood\",\n"
+                                     + "    address: \"Juana Manso 999\",\n"
+                                     + "    country: \"Argentina\"\n"
+                                     + "  }\n"
+                                     + "}"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s,
+                                 "{\n"
+                                     + "  title: \"In Cold Blood\",\n"
+                                     + "  author: \"Truman Capote\",\n"
+                                     + "  year: 1966\n"
+                                     + "}"));
   }
 
   @Test
   public void testExampleGenerateForCE() throws Exception {
     final String apiPath = "scaffolder/example-v10.raml";
-    File muleXmlSimple = simpleGeneration(apiPath, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+    File muleXmlSimple =
+        simpleGeneration(apiPath, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
     assertTrue(muleXmlSimple.exists());
     String name = fileNameWhithOutExtension(apiPath);
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
 
-    assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message=\"get:\\pet:" + name + "-config\" />"));
-    assertEquals(0, countOccurences(s, "{\n" +
-        "  name: \"Bobby\",\n" +
-        "  food: \"Ice Cream\"\n" +
-        "}"));
+    assertEquals(
+                 1,
+                 countOccurences(s, "<logger level=\"INFO\" message=\"get:\\pet:" + name + "-config\" />"));
+    assertEquals(
+                 0, countOccurences(s, "{\n" + "  name: \"Bobby\",\n" + "  food: \"Ice Cream\"\n" + "}"));
 
-    assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message=\"get:\\person:" + name + "-config\" />"));
-    assertEquals(0, countOccurences(s, "{\n" +
-        "  Person: {\n" +
-        "    name: \"Underwood\",\n" +
-        "    address: \"Juana Manso 999\",\n" +
-        "    country: \"Argentina\"\n" +
-        "  }\n" +
-        "}"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "<logger level=\"INFO\" message=\"get:\\person:" + name + "-config\" />"));
+    assertEquals(
+                 0,
+                 countOccurences(
+                                 s,
+                                 "{\n"
+                                     + "  Person: {\n"
+                                     + "    name: \"Underwood\",\n"
+                                     + "    address: \"Juana Manso 999\",\n"
+                                     + "    country: \"Argentina\"\n"
+                                     + "  }\n"
+                                     + "}"));
 
-    assertEquals(1, countOccurences(s, "<logger level=\"INFO\" message=\"get:\\books:" + name + "-config\" />"));
-    assertEquals(0, countOccurences(s, "{\n" +
-        "  title: \"In Cold Blood\",\n" +
-        "  author: \"Truman Capote\",\n" +
-        "  year: 1966\n" +
-        "}"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "<logger level=\"INFO\" message=\"get:\\books:" + name + "-config\" />"));
+    assertEquals(
+                 0,
+                 countOccurences(
+                                 s,
+                                 "{\n"
+                                     + "  title: \"In Cold Blood\",\n"
+                                     + "  author: \"Truman Capote\",\n"
+                                     + "  year: 1966\n"
+                                     + "}"));
   }
 
   @Test
@@ -374,15 +411,19 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   @Test
   public void testGenerateWithExchangeModules() throws Exception {
 
-    final File tmpLibraryFolder = createTmpFile("scaffolder-exchange/exchange_modules/library1.raml").getParentFile();
+    final File tmpLibraryFolder =
+        createTmpFile("scaffolder-exchange/exchange_modules/library1.raml").getParentFile();
     createTmpFile(tmpLibraryFolder, "scaffolder-exchange/exchange_modules/library2.raml");
     createTmpFile(tmpLibraryFolder, "scaffolder-exchange/exchange_modules/library3.raml");
 
-    List<File> ramls = singletonList(createTmpFile(tmpLibraryFolder.getParentFile(), "scaffolder-exchange/api.raml"));
+    List<File> ramls =
+        singletonList(
+                      createTmpFile(tmpLibraryFolder.getParentFile(), "scaffolder-exchange/api.raml"));
 
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
-    Scaffolder scaffolder = createScaffolder(ramls, emptyList(), muleXmlOut, null, null, DEFAULT_MULE_VERSION, EE);
+    Scaffolder scaffolder =
+        createScaffolder(ramls, emptyList(), muleXmlOut, null, null, DEFAULT_MULE_VERSION, EE);
     scaffolder.run();
 
     File muleXmlSimple = new File(muleXmlOut, "api.xml");
@@ -405,7 +446,8 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
-    Scaffolder scaffolder = createScaffolder(ramls, emptyList(), muleXmlOut, null, null, DEFAULT_MULE_VERSION, EE);
+    Scaffolder scaffolder =
+        createScaffolder(ramls, emptyList(), muleXmlOut, null, null, DEFAULT_MULE_VERSION, EE);
     scaffolder.run();
 
     File muleXmlSimple = new File(muleXmlOut, "api-with-resource-type.xml");
@@ -413,7 +455,8 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
-    assertEquals(2, countOccurences(s, "post:\\v4\\items:application\\json:api-with-resource-type-config"));
+    assertEquals(
+                 2, countOccurences(s, "post:\\v4\\items:application\\json:api-with-resource-type-config"));
     assertEquals(1, countOccurences(s, "<apikit:console"));
   }
 
@@ -433,7 +476,8 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   public void testGenerateWithRAML() throws Exception {
     if (isAmf())
       return;
-    File muleXmlSimple = simpleGeneration("parser/raml-parser-only.raml", null, DEFAULT_MULE_VERSION, EE);
+    File muleXmlSimple =
+        simpleGeneration("parser/raml-parser-only.raml", null, DEFAULT_MULE_VERSION, EE);
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
@@ -447,18 +491,23 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
     // create a logger that accumulates the errors instead of printing them out to standard output
     logger = mock(Log.class);
-    final Stubber errorAccumulatorStubber = doAnswer(invocation -> {
-      Object[] args = invocation.getArguments();
-      errors.add(args[0].toString());
-      return null;
-    });
+    final Stubber errorAccumulatorStubber =
+        doAnswer(
+                 invocation -> {
+                   Object[] args = invocation.getArguments();
+                   errors.add(args[0].toString());
+                   return null;
+                 });
     errorAccumulatorStubber.when(logger).error(anyString());
 
-    File muleXmlSimple = simpleGeneration("parser/failing-api.raml", null, DEFAULT_MULE_VERSION, EE);
+    File muleXmlSimple =
+        simpleGeneration("parser/failing-api.raml", null, DEFAULT_MULE_VERSION, EE);
     assertFalse(muleXmlSimple.exists());
 
     assertEquals(2, errors.size());
-    assertTrue(errors.stream().anyMatch(e -> e.contains("Unresolved reference 'SomeTypo' from root context")));
+    assertTrue(
+               errors.stream()
+                   .anyMatch(e -> e.contains("Unresolved reference 'SomeTypo' from root context")));
   }
 
   @Test
@@ -490,25 +539,32 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     testScaffoldTwoApis(testFolder, emptyList(), domainFile);
   }
 
-  private void testScaffoldTwoApis(String testFolder, List<String> existentConfigFileNames, File domainFile) throws IOException {
+  private void testScaffoldTwoApis(
+                                   String testFolder, List<String> existentConfigFileNames, File domainFile)
+      throws IOException {
     final String basePath = testFolder + "src/main/resources/api/";
     final String api1 = basePath + "api1/api.raml";
     final String api2 = basePath + "api2/api.raml";
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
-    final List<File> existentConfigs = existentConfigFileNames.stream().map(c -> {
-      try {
-        return createTmpFile(muleXmlOut, c);
-      } catch (IOException e) {
-        throw new RuntimeException("Unexpected Error creating temporal config");
-      }
-    }).collect(toList());
+    final List<File> existentConfigs =
+        existentConfigFileNames.stream()
+            .map(
+                 c -> {
+                   try {
+                     return createTmpFile(muleXmlOut, c);
+                   } catch (IOException e) {
+                     throw new RuntimeException("Unexpected Error creating temporal config");
+                   }
+                 })
+            .collect(toList());
 
     final List<File> ramls = new ArrayList<>();
     ramls.add(createTmpFile(api1));
     ramls.add(createTmpFile(api2));
 
-    Scaffolder scaffolder = createScaffolder(ramls, existentConfigs, muleXmlOut, domainFile, emptySet(), null, EE);
+    Scaffolder scaffolder =
+        createScaffolder(ramls, existentConfigs, muleXmlOut, domainFile, emptySet(), null, EE);
     scaffolder.run();
 
     final File xmlOut1 = new File(muleXmlOut, "api.xml");
@@ -516,17 +572,22 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     final File xmlOut2 = new File(muleXmlOut, "api-2.xml");
     assertTrue(xmlOut2.exists());
 
-
-    assertEquals(IOUtils.toString(ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(testFolder + "api.xml")),
+    assertEquals(
+                 IOUtils.toString(
+                                  ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(testFolder + "api.xml")),
                  IOUtils.toString(new FileInputStream(xmlOut1)));
 
-    assertEquals(IOUtils.toString(ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(testFolder + "api-2.xml")),
+    assertEquals(
+                 IOUtils.toString(
+                                  ScaffolderMule4Test.class
+                                      .getClassLoader()
+                                      .getResourceAsStream(testFolder + "api-2.xml")),
                  IOUtils.toString(new FileInputStream(xmlOut2)));
   }
 
-
   private void simpleGenerateForCE(final String apiPath) throws Exception {
-    File muleXmlSimple = simpleGeneration(apiPath, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+    File muleXmlSimple =
+        simpleGeneration(apiPath, null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
     assertTrue(muleXmlSimple.exists());
     final String name = fileNameWhithOutExtension(apiPath);
     final String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
@@ -534,19 +595,27 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"8081\""));
     assertEquals(2, countOccurences(s, "http:listener "));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(4, countOccurences(s, "#[vars.outboundHeaders default {}]"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(0, countOccurences(s, "<ee:"));
-    assertEquals(7,
-                 countOccurences(s,
+    assertEquals(
+                 7,
+                 countOccurences(
+                                 s,
                                  "<set-variable variableName=\"outboundHeaders\" value=\"#[{'Content-Type':'application/json'}]\" />"));
     assertEquals(7, countOccurences(s, "<set-variable variableName=\"httpStatus\""));
-    assertEquals(2,
-                 countOccurences(s, "<set-variable value=\"#[attributes.uriParams.name]\" variableName=\"name\" />"));
-    assertEquals(1,
-                 countOccurences(s, "<set-variable value=\"#[attributes.uriParams.owner]\" variableName=\"owner\""));
+    assertEquals(
+                 2,
+                 countOccurences(
+                                 s, "<set-variable value=\"#[attributes.uriParams.name]\" variableName=\"name\" />"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "<set-variable value=\"#[attributes.uriParams.owner]\" variableName=\"owner\""));
     assertEquals(7, countOccurences(s, "<set-payload"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -558,11 +627,15 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
     assertEquals(0, countOccurences(s, "#[null]"));
-    assertEquals(0,
-                 countOccurences(s,
+    assertEquals(
+                 0,
+                 countOccurences(
+                                 s,
                                  "expression-component>mel:flowVars['variables.outboundHeaders default {}'].put('Content-Type', 'application/json')</expression-component>"));
-    assertEquals(0,
-                 countOccurences(s,
+    assertEquals(
+                 0,
+                 countOccurences(
+                                 s,
                                  "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
     assertEquals(0, countOccurences(s, "exception-strategy"));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -577,15 +650,25 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"8081\""));
     assertEquals(2, countOccurences(s, "http:listener "));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(4, countOccurences(s, "#[vars.outboundHeaders default {}]"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(9, countOccurences(s, "<ee:variables>"));
     assertEquals(10, countOccurences(s, "<ee:set-variable"));
-    assertEquals(2, countOccurences(s, "<ee:set-variable variableName=\"name\">attributes.uriParams.name</ee:set-variable>"));
-    assertEquals(1, countOccurences(s, "<ee:set-variable variableName=\"owner\">attributes.uriParams.owner</ee:set-variable>"));
+    assertEquals(
+                 2,
+                 countOccurences(
+                                 s,
+                                 "<ee:set-variable variableName=\"name\">attributes.uriParams.name</ee:set-variable>"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s,
+                                 "<ee:set-variable variableName=\"owner\">attributes.uriParams.owner</ee:set-variable>"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -596,23 +679,31 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
     assertEquals(0, countOccurences(s, "#[null]"));
-    assertEquals(0,
-                 countOccurences(s,
+    assertEquals(
+                 0,
+                 countOccurences(
+                                 s,
                                  "expression-component>mel:flowVars['variables.outboundHeaders default {}'].put('Content-Type', 'application/json')</expression-component>"));
-    assertEquals(0,
-                 countOccurences(s,
+    assertEquals(
+                 0,
+                 countOccurences(
+                                 s,
                                  "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
     assertEquals(0, countOccurences(s, "exception-strategy"));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
   private void simpleGenerateWithExtension() throws Exception {
-    File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("scaffolder/simple.raml", "scaffolder/simple.raml", null);
+    File muleXmlFolderOut =
+        simpleGenerationWithExtensionEnabled(
+                                             "scaffolder/simple.raml", "scaffolder/simple.raml", null);
     File xmlOut = new File(muleXmlFolderOut, "simple.xml");
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(9, countOccurences(s, "<ee:variables>"));
@@ -631,12 +722,15 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   private void simpleGenerateWithExtensionInNull() throws Exception {
-    File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("scaffolder/simple.raml", null, null);
+    File muleXmlFolderOut =
+        simpleGenerationWithExtensionEnabled("scaffolder/simple.raml", null, null);
     File xmlOut = new File(muleXmlFolderOut, "simple.xml");
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(9, countOccurences(s, "<ee:variables>"));
@@ -655,13 +749,18 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   private void simpleGenerateWithListenerAndExtension() throws Exception {
-    File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("scaffolder/simple.raml", "scaffolder/simple.raml", null);
+    File muleXmlFolderOut =
+        simpleGenerationWithExtensionEnabled(
+                                             "scaffolder/simple.raml", "scaffolder/simple.raml", null);
     File xmlOut = new File(muleXmlFolderOut, "simple.xml");
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(9, countOccurences(s, "<ee:variables>"));
@@ -681,15 +780,19 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   private void simpleGenerateWithCustomDomain() throws Exception {
-    File muleXmlSimple = simpleGeneration("scaffolder/simple.raml", "custom-domain-4/mule-domain-config.xml");
+    File muleXmlSimple =
+        simpleGeneration("scaffolder/simple.raml", "custom-domain-4/mule-domain-config.xml");
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(2, countOccurences(s, "<http:listener "));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "<http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s, "<http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -707,14 +810,20 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   private void simpleGenerateWithCustomDomainAndExtension() throws Exception {
-    File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("scaffolder/simple.raml", "scaffolder/simple.raml",
-                                                                 "custom-domain-4/mule-domain-config.xml");
+    File muleXmlFolderOut =
+        simpleGenerationWithExtensionEnabled(
+                                             "scaffolder/simple.raml",
+                                             "scaffolder/simple.raml",
+                                             "custom-domain-4/mule-domain-config.xml");
     File xmlOut = new File(muleXmlFolderOut, "simple.xml");
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -734,12 +843,17 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   private void simpleGenerateWithCustomDomainWithMultipleLC() throws Exception {
-    File muleXmlSimple = simpleGeneration("scaffolder/simple.raml", "custom-domain-multiple-lc-4/mule-domain-config.xml");
+    File muleXmlSimple =
+        simpleGeneration(
+                         "scaffolder/simple.raml", "custom-domain-multiple-lc-4/mule-domain-config.xml");
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -759,12 +873,16 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   }
 
   private void simpleGenerateWithEmptyDomain() throws Exception {
-    File muleXmlSimple = simpleGeneration("scaffolder/simple.raml", "empty-domain/mule-domain-config.xml");
+    File muleXmlSimple =
+        simpleGeneration("scaffolder/simple.raml", "empty-domain/mule-domain-config.xml");
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -782,14 +900,16 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
-
   private void nestedGenerate() throws Exception {
     File muleXmlSimple = simpleGeneration("scaffolder/nested.raml", null);
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -806,58 +926,68 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
-
   private void noNameGenerate() throws Exception {
     File muleXmlSimple = simpleGeneration("scaffolder/no-name.raml", null);
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(7, countOccurences(s, "<ee:variables>"));
     assertEquals(7, countOccurences(s, "<ee:set-variable"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(1, countOccurences(s, "http:listener-config name=\"no-name-httpListenerConfig\">"));
-    assertEquals(1, countOccurences(s, "http:listener config-ref=\"no-name-httpListenerConfig\" path=\"/api/*\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-config name=\"no-name-httpListenerConfig\">"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "http:listener config-ref=\"no-name-httpListenerConfig\" path=\"/api/*\""));
   }
 
   private void exampleGenerate() throws Exception {
     File muleXmlSimple = simpleGeneration("scaffolder/example.raml", null);
     assertTrue(muleXmlSimple.exists());
     String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(9, countOccurences(s, "<ee:message>"));
     assertEquals(7, countOccurences(s, "<ee:variables>"));
     assertEquals(7, countOccurences(s, "<ee:set-variable"));
     assertEquals(9, countOccurences(s, "<ee:set-payload>"));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(8, countOccurences(s, "application/json"));
-    assertEquals(1, countOccurences(s,
-                                    "{\n" +
-                                        "  name: \"Bobby\",\n" +
-                                        "  food: \"Ice Cream\"\n" +
-                                        "}"));
-    assertEquals(1, countOccurences(s, "{\n" +
-        "  Person: {\n" +
-        "    name: \"Underwood\",\n" +
-        "    address: \"Juana Manso 999\",\n" +
-        "    country: \"Argentina\"\n" +
-        "  }\n" +
-        "}"));
+    assertEquals(
+                 1, countOccurences(s, "{\n" + "  name: \"Bobby\",\n" + "  food: \"Ice Cream\"\n" + "}"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s,
+                                 "{\n"
+                                     + "  Person: {\n"
+                                     + "    name: \"Underwood\",\n"
+                                     + "    address: \"Juana Manso 999\",\n"
+                                     + "    country: \"Argentina\"\n"
+                                     + "  }\n"
+                                     + "}"));
   }
-
 
   private void doubleRootRaml() throws Exception {
 
     final File tmpApiFile = createTmpFile("double-root-raml/simple.raml");
-    List<File> ramls = Arrays.asList(tmpApiFile,
-                                     createTmpFile(tmpApiFile.getParentFile(), "double-root-raml/two.raml"));
+    List<File> ramls =
+        Arrays.asList(
+                      tmpApiFile, createTmpFile(tmpApiFile.getParentFile(), "double-root-raml/two.raml"));
 
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
@@ -873,9 +1003,12 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
     assertEquals(2, countOccurences(s, "<logger level=\"INFO\" message="));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(7, countOccurences(s, "<ee:variables>"));
@@ -889,22 +1022,28 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(2, countOccurences(s2, "post:\\car:two-config"));
     assertEquals(0, countOccurences(s2, "interpretRequestErrors=\"true\""));
     assertEquals(4, countOccurences(s2, "<logger level=\"INFO\" message="));
-    assertEquals(2, countOccurences(s2, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s2, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
-    assertEquals(4, countOccurences(s2, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(
+                 2, countOccurences(s2, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2,
+                 countOccurences(s2, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 4, countOccurences(s2, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
     assertEquals(7, countOccurences(s2, "<on-error-propagate"));
     assertEquals(7, countOccurences(s2, "<ee:message>"));
     assertEquals(7, countOccurences(s2, "<ee:variables>"));
     assertEquals(7, countOccurences(s2, "<ee:set-variable"));
     assertEquals(7, countOccurences(s2, "<ee:set-payload>"));
-
   }
 
   private File simpleGeneration(final String apiPath, final String domainPath) throws Exception {
     return simpleGeneration(apiPath, domainPath, DEFAULT_MULE_VERSION, EE);
   }
 
-  private File simpleGeneration(final String apiPath, final String domainPath, final String muleVersion,
+  private File simpleGeneration(
+                                final String apiPath,
+                                final String domainPath,
+                                final String muleVersion,
                                 final RuntimeEdition runtimeEdition)
       throws Exception {
     List<File> ramls = singletonList(createTmpFile(apiPath));
@@ -912,7 +1051,8 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
-    createScaffolder(ramls, emptyList(), muleXmlOut, domainFile, null, muleVersion, runtimeEdition).run();
+    createScaffolder(ramls, emptyList(), muleXmlOut, domainFile, null, muleVersion, runtimeEdition)
+        .run();
 
     return new File(muleXmlOut, fileNameWhithOutExtension(apiPath) + ".xml");
   }
@@ -920,19 +1060,35 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   @Test
   public void scaffoldEmptyAPI() throws Exception {
     File muleXmlOut = createTmpMuleXmlOutFolder();
-    createScaffolder(singletonList(createTmpFile("scaffolder/without-resources.raml")), emptyList(),
-                     muleXmlOut, null, null, DEFAULT_MULE_VERSION, EE).run();
+    createScaffolder(
+                     singletonList(createTmpFile("scaffolder/without-resources.raml")),
+                     emptyList(),
+                     muleXmlOut,
+                     null,
+                     null,
+                     DEFAULT_MULE_VERSION,
+                     EE)
+                         .run();
 
     File api = new File(muleXmlOut, "without-resources.xml");
 
-    assertEquals("Files are different", FileUtils
-        .readFileToString(new File(getClass().getClassLoader().getResource("scaffolder/expected-result-without-resources.xml")
-            .getFile()))
-        .replaceAll("api=(.*)raml\"", "api=\"\"").replaceAll("\\s+", ""),
-                 FileUtils.readFileToString(api).replaceAll("api=(.*)raml\"", "api=\"\"").replaceAll("\\s+", ""));
+    assertEquals(
+                 "Files are different",
+                 FileUtils.readFileToString(
+                                            new File(
+                                                     getClass()
+                                                         .getClassLoader()
+                                                         .getResource("scaffolder/expected-result-without-resources.xml")
+                                                         .getFile()))
+                     .replaceAll("api=(.*)raml\"", "api=\"\"")
+                     .replaceAll("\\s+", ""),
+                 FileUtils.readFileToString(api)
+                     .replaceAll("api=(.*)raml\"", "api=\"\"")
+                     .replaceAll("\\s+", ""));
   }
 
-  private File simpleGenerationWithExtensionEnabled(final String apiPath, final String apiWithExtensionEnabledPath,
+  private File simpleGenerationWithExtensionEnabled(
+                                                    final String apiPath, final String apiWithExtensionEnabledPath,
                                                     final String domainPath)
       throws Exception {
     final File apiTmpFile = createTmpFile(apiPath);
@@ -950,10 +1106,10 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
-    Scaffolder scaffolder = createScaffolder(ramls, emptyList(), muleXmlOut, domainFile, ramlWithExtensionEnabled);
+    Scaffolder scaffolder =
+        createScaffolder(ramls, emptyList(), muleXmlOut, domainFile, ramlWithExtensionEnabled);
     scaffolder.run();
 
     return muleXmlOut;
   }
-
 }

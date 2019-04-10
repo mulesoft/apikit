@@ -6,6 +6,12 @@
  */
 package org.mule.amf.impl;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -23,12 +29,6 @@ import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.api.ApiRef;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
-
 @RunWith(Parameterized.class)
 public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
 
@@ -40,7 +40,6 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
   public static Collection<Object[]> getData() throws IOException, URISyntaxException {
     final URI baseFolder = CompatibilityTestCase.class.getResource("").toURI(); // 08-resources
     return getData(baseFolder);
-
   }
 
   @Test
@@ -51,7 +50,7 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
   }
 
   @Test
-  public void dump() {//throws Exception {
+  public void dump() { // throws Exception {
     final String amfDump = amfWrapper.dump(amf, "http://apikit-test");
     final String ramlDump = ramlWrapper.dump(raml, "http://apikit-test");
 
@@ -74,13 +73,15 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
       e.printStackTrace();
     }
 
-    // Parse java dumped file  
-    final ParserWrapper dumpedRamlWrapper = createJavaParserWrapper(ramlDumpPath.toUri().toString(), isRaml08);
+    // Parse java dumped file
+    final ParserWrapper dumpedRamlWrapper =
+        createJavaParserWrapper(ramlDumpPath.toUri().toString(), isRaml08);
     final IRaml dumpedRaml = dumpedRamlWrapper.build();
     assertNotNull(dumpedRaml);
 
     try {
-      final ParserWrapper dumpedAmfWrapper = ParserWrapperAmf.create(ApiRef.create(amfDumpPath.toUri()), true);
+      final ParserWrapper dumpedAmfWrapper =
+          ParserWrapperAmf.create(ApiRef.create(amfDumpPath.toUri()), true);
       final IRaml dumpedAmf = dumpedAmfWrapper.build();
       assertNotNull(dumpedAmf);
       assertEqual(dumpedAmf, dumpedRaml);
@@ -93,5 +94,4 @@ public class CompatibilityTestCase extends AbstractCompatibilityTestCase {
   public void raml() {
     assertEqual(amf, raml);
   }
-
 }

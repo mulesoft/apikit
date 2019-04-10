@@ -6,6 +6,15 @@
  */
 package org.mule.tools.apikit;
 
+import static org.mockito.Mockito.mock;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.HashSet;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -16,17 +25,6 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.sonatype.plexus.build.incremental.DefaultBuildContext;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.HashSet;
-import java.util.List;
-
-import static org.mockito.Mockito.mock;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
-
 
 @RunWith(JUnit4.class)
 public class CreateMojoTest extends AbstractMojoTestCase {
@@ -53,7 +51,6 @@ public class CreateMojoTest extends AbstractMojoTestCase {
   public void setUp() throws Exception {
     mojo = new CreateMojo();
 
-
     project = folder.newFolder("my-project");
     src = new File(project, "src");
     main = new File(src, "main");
@@ -61,7 +58,6 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     resources = new File(main, "resources");
     api = new File(resources, "api");
     lala = new File(api, "lala");
-
 
     api.mkdirs();
     app.mkdirs();
@@ -84,14 +80,19 @@ public class CreateMojoTest extends AbstractMojoTestCase {
   @Test
   public void testGetIncludedFiles() throws Exception {
     List<String> files =
-        mojo.getIncludedFiles(project, new String[] {"src/main/resources/api/**/*.raml", "src/main/resources/api/**/*.yml"},
+        mojo.getIncludedFiles(
+                              project,
+                              new String[] {"src/main/resources/api/**/*.raml", "src/main/resources/api/**/*.yml"},
                               new String[] {});
     HashSet<String> set = new HashSet<String>(files);
 
-    assertTrue(set.contains(new File(project, "src/main/resources/api/hello.raml").getAbsolutePath()));
+    assertTrue(
+               set.contains(new File(project, "src/main/resources/api/hello.raml").getAbsolutePath()));
     assertTrue(set.contains(new File(project, "src/main/resources/api/bye.yml").getAbsolutePath()));
-    assertTrue(set.contains(new File(project, "src/main/resources/api/lala/wow.raml").getAbsolutePath()));
-    assertFalse(set.contains(new File(project, "src/main/resources/dont-read.raml").getAbsolutePath()));
+    assertTrue(
+               set.contains(new File(project, "src/main/resources/api/lala/wow.raml").getAbsolutePath()));
+    assertFalse(
+                set.contains(new File(project, "src/main/resources/dont-read.raml").getAbsolutePath()));
     assertEquals(3, files.size());
   }
 
@@ -103,7 +104,8 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     setVariableValueToObject(mojo, "minMuleVersion", DEFAULT_MULE_VERSION);
     setVariableValueToObject(mojo, "runtimeEdition", DEFAULT_RUNTIME_EDITION.name());
 
-    IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
+    IOUtils.copy(
+                 this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
                  new FileOutputStream(apiFile));
 
     mojo.execute();
@@ -123,7 +125,6 @@ public class CreateMojoTest extends AbstractMojoTestCase {
 
     assertTrue(muleConfigContent.length() > 0);
     assertTrue(muleConfigContent.contains("listener"));
-
   }
 
   @Test
@@ -138,9 +139,13 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     setVariableValueToObject(mojo, "runtimeEdition", DEFAULT_RUNTIME_EDITION.name());
 
     domainFile.createNewFile();
-    IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("custom-domain/mule-domain-config.xml"),
+    IOUtils.copy(
+                 this.getClass()
+                     .getClassLoader()
+                     .getResourceAsStream("custom-domain/mule-domain-config.xml"),
                  new FileOutputStream(domainFile));
-    IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
+    IOUtils.copy(
+                 this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
                  new FileOutputStream(apiFile));
 
     mojo.execute();
@@ -160,7 +165,6 @@ public class CreateMojoTest extends AbstractMojoTestCase {
 
     assertTrue(muleConfigContent.length() > 0);
     assertTrue(muleConfigContent.contains("listener"));
-
   }
 
   @Test
@@ -173,7 +177,8 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     setVariableValueToObject(mojo, "domainDirectory", domainProject);
     setVariableValueToObject(mojo, "minMuleVersion", DEFAULT_MULE_VERSION);
     setVariableValueToObject(mojo, "runtimeEdition", DEFAULT_RUNTIME_EDITION.name());
-    IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
+    IOUtils.copy(
+                 this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
                  new FileOutputStream(apiFile));
 
     mojo.execute();
@@ -193,7 +198,6 @@ public class CreateMojoTest extends AbstractMojoTestCase {
 
     assertTrue(muleConfigContent.length() > 0);
     assertTrue(muleConfigContent.contains("listener"));
-
   }
 
   @Test
@@ -205,7 +209,8 @@ public class CreateMojoTest extends AbstractMojoTestCase {
     setVariableValueToObject(mojo, "domainDirectory", domainProject);
     setVariableValueToObject(mojo, "minMuleVersion", DEFAULT_MULE_VERSION);
     setVariableValueToObject(mojo, "runtimeEdition", DEFAULT_RUNTIME_EDITION.name());
-    IOUtils.copy(this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
+    IOUtils.copy(
+                 this.getClass().getClassLoader().getResourceAsStream("create-mojo/simple.raml"),
                  new FileOutputStream(apiFile));
     mojo.execute();
 
@@ -224,6 +229,5 @@ public class CreateMojoTest extends AbstractMojoTestCase {
 
     assertTrue(muleConfigContent.length() > 0);
     assertTrue(muleConfigContent.contains("listener"));
-
   }
 }

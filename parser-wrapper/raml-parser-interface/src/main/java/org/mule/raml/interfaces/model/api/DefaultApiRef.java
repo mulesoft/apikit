@@ -6,14 +6,12 @@
  */
 package org.mule.raml.interfaces.model.api;
 
-
-import org.apache.commons.io.FilenameUtils;
-import org.mule.raml.interfaces.loader.ResourceLoader;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Optional;
+import org.apache.commons.io.FilenameUtils;
+import org.mule.raml.interfaces.loader.ResourceLoader;
 
 class DefaultApiRef implements ApiRef {
 

@@ -6,6 +6,13 @@
  */
 package org.mule.tools.apikit;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mule.tools.apikit.Helper.countOccurences;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
@@ -18,21 +25,17 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.mule.raml.implv2.ParserV2Utils;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mule.tools.apikit.Helper.countOccurences;
-
 public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTestCase {
 
   @Test
   public void testAlreadyExistsMultipleConfigurationsFirstFlowsXml() throws Exception {
     final File tmpFile = createTmpFile("scaffolder-existing-multiples/api.raml");
     List<File> ramls = singletonList(tmpFile);
-    File resourcesFlows = createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-multiples/resources-flows.xml");
-    File noResourcesFlows = createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-multiples/no-resources-flows.xml");
+    File resourcesFlows =
+        createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-multiples/resources-flows.xml");
+    File noResourcesFlows =
+        createTmpFile(
+                      tmpFile.getParentFile(), "scaffolder-existing-multiples/no-resources-flows.xml");
 
     List<File> xmls = Arrays.asList(resourcesFlows, noResourcesFlows);
     File muleXmlOut = createTmpMuleXmlOutFolder();
@@ -51,8 +54,11 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
   public void testAlreadyExistsMultipleConfigurationsFirstNoFlowsXml() throws Exception {
     final File tmpFile = createTmpFile("scaffolder-existing-multiples/api.raml");
     List<File> ramls = singletonList(tmpFile);
-    File resourcesFlows = createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-multiples/resources-flows.xml");
-    File noResourcesFlows = createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-multiples/no-resources-flows.xml");
+    File resourcesFlows =
+        createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-multiples/resources-flows.xml");
+    File noResourcesFlows =
+        createTmpFile(
+                      tmpFile.getParentFile(), "scaffolder-existing-multiples/no-resources-flows.xml");
 
     List<File> xmls = Arrays.asList(noResourcesFlows, resourcesFlows);
     File muleXmlOut = createTmpMuleXmlOutFolder();
@@ -81,7 +87,10 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
   private void testAlreadyExistsWithExtensionDisabled() throws Exception {
     final File tmpFile = createTmpFile("scaffolder-existing-extension/simple.raml");
     List<File> ramls = singletonList(tmpFile);
-    File xmlFile = createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-extension/simple-extension-disabled-4.xml");
+    File xmlFile =
+        createTmpFile(
+                      tmpFile.getParentFile(),
+                      "scaffolder-existing-extension/simple-extension-disabled-4.xml");
     List<File> xmls = singletonList(xmlFile);
     File muleXmlOut = folder.newFolder("mule-xml-out");
 
@@ -91,9 +100,14 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
 
     assertTrue(xmlFile.exists());
     String s = IOUtils.toString(new FileInputStream(xmlFile));
-    assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
-    assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
-    assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
     assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
     assertEquals(1, countOccurences(s, "get:\\pet"));
     assertEquals(2, countOccurences(s, "post:\\pet"));
@@ -116,7 +130,10 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
   private void testAlreadyExistsWithExtensionEnabled() throws Exception {
     final File tmpFile = createTmpFile("scaffolder-existing-extension/simple.raml");
     List<File> ramls = singletonList(tmpFile);
-    File xmlFile = createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-extension/simple-extension-enabled-4.xml");
+    File xmlFile =
+        createTmpFile(
+                      tmpFile.getParentFile(),
+                      "scaffolder-existing-extension/simple-extension-enabled-4.xml");
     List<File> xmls = singletonList(xmlFile);
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
@@ -126,9 +143,14 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
 
     assertTrue(xmlFile.exists());
     String s = IOUtils.toString(new FileInputStream(xmlFile));
-    assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\">"));
-    assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
-    assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\">"));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
     assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
     assertEquals(1, countOccurences(s, "get:\\pet"));
     assertEquals(2, countOccurences(s, "post:\\pet"));
@@ -152,7 +174,10 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
   private void testAlreadyExistsWithExtensionNotPresent() throws Exception {
     final File tmpFile = createTmpFile("scaffolder-existing-extension/simple.raml");
     List<File> ramls = singletonList(tmpFile);
-    File xmlFile = createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-extension/simple-extension-not-present-4.xml");
+    File xmlFile =
+        createTmpFile(
+                      tmpFile.getParentFile(),
+                      "scaffolder-existing-extension/simple-extension-not-present-4.xml");
     List<File> xmls = singletonList(xmlFile);
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
@@ -162,9 +187,14 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
 
     assertTrue(xmlFile.exists());
     String s = IOUtils.toString(new FileInputStream(xmlFile));
-    assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
-    assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
-    assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"${serverPort}\""));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
     assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
     assertEquals(1, countOccurences(s, "get:\\pet"));
     assertEquals(2, countOccurences(s, "post:\\pet"));
@@ -196,8 +226,12 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
 
     assertTrue(xmlFile.exists());
     String s = IOUtils.toString(new FileInputStream(xmlFile));
-    assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
-    assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
     assertEquals(0, countOccurences(s, "inbound-endpoint"));
     assertEquals(1, countOccurences(s, "get:\\pet"));
     assertEquals(2, countOccurences(s, "post:\\pet"));
@@ -222,7 +256,8 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
   private void testAlreadyExistsGenerateWithCustomDomain() throws Exception {
     final File tmpFile = createTmpFile("scaffolder-existing-custom-lc/simple.raml");
     List<File> ramls = singletonList(tmpFile);
-    File xmlFile = createTmpFile(tmpFile.getParentFile(), ("scaffolder-existing-custom-lc/simple-4.xml"));
+    File xmlFile =
+        createTmpFile(tmpFile.getParentFile(), ("scaffolder-existing-custom-lc/simple-4.xml"));
     File domainFile = createTmpFile("custom-domain-4/mule-domain-config.xml");
 
     List<File> xmls = singletonList(xmlFile);
@@ -234,7 +269,8 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
     assertEquals(0, countOccurences(s, "<http:listener-config"));
     assertEquals(0, countOccurences(s, "http:listener-connection"));
 
-    assertEquals(1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
     assertEquals(0, countOccurences(s, "inbound-endpoint"));
     assertEquals(1, countOccurences(s, "get:\\pet"));
     assertEquals(1, countOccurences(s, "get:\\\""));
@@ -256,11 +292,14 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
   }
 
   private void testAlreadyExistsGenerateWithCustomAndNormalLC() throws Exception {
-    final File tmpFile = createTmpFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.raml");
+    final File tmpFile =
+        createTmpFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.raml");
     List<File> ramls = singletonList(tmpFile);
 
     File xmlFile =
-        createTmpFile(tmpFile.getParentFile(), "scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc-4.xml");
+        createTmpFile(
+                      tmpFile.getParentFile(),
+                      "scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc-4.xml");
     List<File> xmls = singletonList(xmlFile);
     File muleXmlOut = createTmpMuleXmlOutFolder();
     File domainFile = createTmpFile("custom-domain-4/mule-domain-config.xml");
@@ -271,11 +310,13 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
     assertTrue(xmlFile.exists());
     String s = IOUtils.toString(new FileInputStream(xmlFile));
     assertEquals(1, countOccurences(s, "<http:listener-config"));
-    assertEquals(1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener config-ref=\"http-lc-0.0.0.0-8081\" path=\"/api/*\""));
     assertEquals(0, countOccurences(s, "inbound-endpoint"));
     assertEquals(2, countOccurences(s, "get:\\leagues\\(leagueId)"));
     assertEquals(2, countOccurences(s, "post:\\leagues\\(leagueId)"));
-    assertEquals(1, countOccurences(s, "<http:listener config-ref=\"HTTP_Listener_Configuration\""));
+    assertEquals(
+                 1, countOccurences(s, "<http:listener config-ref=\"HTTP_Listener_Configuration\""));
     assertEquals(1, countOccurences(s, "<http:listener config-ref=\"http-lc-0.0.0.0-8081\""));
     assertEquals(0, countOccurences(s, "extensionEnabled"));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
@@ -296,7 +337,9 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
   private void testAlreadyExistingMuleConfigWithApikitRouter() throws Exception {
     final File tmpFile = createTmpFile("scaffolder-existing/simple.raml");
     List<File> ramls = singletonList(tmpFile);
-    File xmlFile = createTmpFile(tmpFile.getParentFile(), "scaffolder-existing/mule-config-no-api-flows-4.xml");
+    File xmlFile =
+        createTmpFile(
+                      tmpFile.getParentFile(), "scaffolder-existing/mule-config-no-api-flows-4.xml");
     List<File> xmls = singletonList(xmlFile);
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
@@ -305,8 +348,12 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
 
     assertTrue(xmlFile.exists());
     String s = IOUtils.toString(new FileInputStream(xmlFile));
-    assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\">"));
-    assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\">"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
     assertEquals(1, countOccurences(s, "<apikit:router config-ref=\"apikit-config\" />"));
     assertEquals(0, countOccurences(s, "inbound-endpoint"));
     assertEquals(2, countOccurences(s, "get:\\pet"));
@@ -334,7 +381,8 @@ public class ScaffolderWithExistingConfigMule4Test extends AbstractScaffolderTes
     final File tmpFile = createTmpFile("scaffolder/multipleMimeTypes.raml");
     List<File> ramls = singletonList(tmpFile);
     File muleXmlOut = createTmpMuleXmlOutFolder(tmpFile.getParentFile());
-    List<File> xmls = singletonList(createTmpFile(tmpFile.getParentFile(), "scaffolder/multipleMimeTypes-4.xml"));
+    List<File> xmls =
+        singletonList(createTmpFile(tmpFile.getParentFile(), "scaffolder/multipleMimeTypes-4.xml"));
 
     createScaffolder(ramls, xmls, muleXmlOut, null, null).run();
 

@@ -6,19 +6,17 @@
  */
 package org.mule.tools.apikit.input;
 
-import org.mule.tools.apikit.input.parsers.HttpListener4xConfigParser;
-import org.mule.tools.apikit.model.HttpListener4xConfig;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaders;
+import org.mule.tools.apikit.input.parsers.HttpListener4xConfigParser;
+import org.mule.tools.apikit.model.HttpListener4xConfig;
 
 public class MuleDomainParser {
 
@@ -45,5 +43,4 @@ public class MuleDomainParser {
   public Map<String, HttpListener4xConfig> getHttpListenerConfigs() {
     return httpListenerConfigs;
   }
-
 }

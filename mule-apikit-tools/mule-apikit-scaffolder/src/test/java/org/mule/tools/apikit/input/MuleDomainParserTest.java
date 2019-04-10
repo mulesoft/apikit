@@ -10,26 +10,26 @@ import static junit.framework.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
-import org.mule.tools.apikit.model.HttpListener4xConfig;
-
 import java.io.InputStream;
 import java.util.Map;
-
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mule.tools.apikit.model.HttpListener4xConfig;
 
 public class MuleDomainParserTest {
 
   @Test
   public void testCustomDomain() {
     final InputStream resourceAsStream =
-        MuleConfigParser.class.getClassLoader().getResourceAsStream(
-                                                                    "custom-domain-4/mule-domain-config.xml");
+        MuleConfigParser.class
+            .getClassLoader()
+            .getResourceAsStream("custom-domain-4/mule-domain-config.xml");
     Log log = mock(Log.class);
 
     MuleDomainParser muleDomainParser = new MuleDomainParser(log, resourceAsStream);
-    Map<String, HttpListener4xConfig> httpListenerConfigs = muleDomainParser.getHttpListenerConfigs();
+    Map<String, HttpListener4xConfig> httpListenerConfigs =
+        muleDomainParser.getHttpListenerConfigs();
     assertNotNull(httpListenerConfigs);
     assertEquals(1, httpListenerConfigs.size());
     String expectedKey = "http-lc-0.0.0.0-8081";
@@ -44,12 +44,14 @@ public class MuleDomainParserTest {
   @Test
   public void testMultipleLCInDomain() {
     final InputStream resourceAsStream =
-        MuleConfigParser.class.getClassLoader().getResourceAsStream(
-                                                                    "custom-domain-multiple-lc-4/mule-domain-config.xml");
+        MuleConfigParser.class
+            .getClassLoader()
+            .getResourceAsStream("custom-domain-multiple-lc-4/mule-domain-config.xml");
     Log log = mock(Log.class);
 
     MuleDomainParser muleDomainParser = new MuleDomainParser(log, resourceAsStream);
-    Map<String, HttpListener4xConfig> httpListenerConfigs = muleDomainParser.getHttpListenerConfigs();
+    Map<String, HttpListener4xConfig> httpListenerConfigs =
+        muleDomainParser.getHttpListenerConfigs();
     assertNotNull(httpListenerConfigs);
     assertEquals(5, httpListenerConfigs.size());
 
@@ -77,7 +79,6 @@ public class MuleDomainParserTest {
     Assert.assertEquals("8080", value3.getPort());
     Assert.assertEquals("/", value3.getBasePath());
 
-
     String expectedKey4 = "https-lc-0.0.0.0-8082";
     HttpListener4xConfig value4 = httpListenerConfigs.get(expectedKey4);
     Assert.assertNotNull(value4);
@@ -87,16 +88,17 @@ public class MuleDomainParserTest {
     Assert.assertEquals("/", value4.getBasePath());
   }
 
-
   @Test
   public void testEmptyDomain() {
     final InputStream resourceAsStream =
-        MuleConfigParser.class.getClassLoader().getResourceAsStream(
-                                                                    "empty-domain/mule-domain-config.xml");
+        MuleConfigParser.class
+            .getClassLoader()
+            .getResourceAsStream("empty-domain/mule-domain-config.xml");
     Log log = mock(Log.class);
 
     MuleDomainParser muleDomainParser = new MuleDomainParser(log, resourceAsStream);
-    Map<String, HttpListener4xConfig> httpListenerConfigs = muleDomainParser.getHttpListenerConfigs();
+    Map<String, HttpListener4xConfig> httpListenerConfigs =
+        muleDomainParser.getHttpListenerConfigs();
     assertNotNull(httpListenerConfigs);
     assertEquals(0, httpListenerConfigs.size());
   }

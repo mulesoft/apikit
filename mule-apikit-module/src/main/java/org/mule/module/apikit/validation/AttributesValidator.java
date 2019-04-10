@@ -21,8 +21,11 @@ import org.mule.runtime.api.util.MultiMap;
 
 public class AttributesValidator {
 
-  public static HttpRequestAttributes validateAndAddDefaults(HttpRequestAttributes attributes, IResource resource,
-                                                             ResolvedVariables resolvedVariables, ValidationConfig config)
+  public static HttpRequestAttributes validateAndAddDefaults(
+                                                             HttpRequestAttributes attributes,
+                                                             IResource resource,
+                                                             ResolvedVariables resolvedVariables,
+                                                             ValidationConfig config)
       throws MuleRestException {
 
     MultiMap<String, String> headers;
@@ -33,7 +36,8 @@ public class AttributesValidator {
     final IAction action = resource.getAction(attributes.getMethod().toLowerCase());
 
     // uriparams
-    UriParametersValidator uriParametersValidator = new UriParametersValidator(action, resolvedVariables);
+    UriParametersValidator uriParametersValidator =
+        new UriParametersValidator(action, resolvedVariables);
     uriParams = uriParametersValidator.validateAndAddDefaults(attributes.getUriParams());
 
     // queryStrings
@@ -41,21 +45,21 @@ public class AttributesValidator {
     queryStringValidator.validate(attributes.getQueryParams());
 
     // queryparams
-    QueryParameterValidator queryParamValidator =
-        new QueryParameterValidator(action);
-    queryParamValidator.validateAndAddDefaults(attributes.getQueryParams(), attributes.getQueryString(),
+    QueryParameterValidator queryParamValidator = new QueryParameterValidator(action);
+    queryParamValidator.validateAndAddDefaults(
+                                               attributes.getQueryParams(),
+                                               attributes.getQueryString(),
                                                config.isQueryParamsStrictValidation());
     queryParams = queryParamValidator.getQueryParams();
     queryString = queryParamValidator.getQueryString();
 
     // headers
     HeadersValidator headersValidator = new HeadersValidator();
-    headersValidator.validateAndAddDefaults(attributes.getHeaders(), action,
-                                            config.isHeadersStrictValidation());
+    headersValidator.validateAndAddDefaults(
+                                            attributes.getHeaders(), action, config.isHeadersStrictValidation());
     headers = headersValidator.getNewHeaders();
 
     // regenerate attributes
     return AttributesHelper.replaceParams(attributes, headers, queryParams, queryString, uriParams);
   }
-
 }

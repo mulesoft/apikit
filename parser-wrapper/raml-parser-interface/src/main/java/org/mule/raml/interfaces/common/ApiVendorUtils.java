@@ -6,19 +6,15 @@
  */
 package org.mule.raml.interfaces.common;
 
-import org.mule.raml.interfaces.model.ApiVendor;
+import static org.mule.raml.interfaces.model.ApiVendor.OAS_20;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Optional;
-
-import static org.mule.raml.interfaces.model.ApiVendor.OAS;
-import static org.mule.raml.interfaces.model.ApiVendor.OAS_20;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
+import org.mule.raml.interfaces.model.ApiVendor;
 
 public class ApiVendorUtils {
 
@@ -80,5 +76,4 @@ public class ApiVendorUtils {
     }
     return "";
   }
-
 }

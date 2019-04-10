@@ -6,23 +6,23 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import org.jdom2.Element;
-import org.mule.tools.apikit.output.NamespaceWithLocation;
-
-import java.util.Arrays;
-import java.util.List;
-
 import static org.mule.tools.apikit.misc.APIKitTools.API_KIT_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.EE_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
 
+import java.util.Arrays;
+import java.util.List;
+import org.jdom2.Element;
+import org.mule.tools.apikit.output.NamespaceWithLocation;
+
 public class MuleScope implements Scope {
 
   private final Element mule;
 
-  private void addLocationEntry(StringBuilder stringBuilder, NamespaceWithLocation namespaceWithLocation) {
+  private void addLocationEntry(
+                                StringBuilder stringBuilder, NamespaceWithLocation namespaceWithLocation) {
     stringBuilder
         .append(namespaceWithLocation.getNamespace().getURI())
         .append(" ")
@@ -50,9 +50,7 @@ public class MuleScope implements Scope {
       mule.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
       addLocationEntry(stringBuilder, EE_NAMESPACE);
     }
-    mule.setAttribute("schemaLocation", stringBuilder.toString(),
-                      XSI_NAMESPACE.getNamespace());
-
+    mule.setAttribute("schemaLocation", stringBuilder.toString(), XSI_NAMESPACE.getNamespace());
   }
 
   @Override

@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
+import static io.restassured.RestAssured.given;
+
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import static io.restassured.RestAssured.given;
 
 public class Raml08JsonSchemaRefTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,13 +20,12 @@ public class Raml08JsonSchemaRefTestCase extends AbstractMultiParserFunctionalTe
 
   @Test
   public void JsonSchemaRef() {
-    given().body("{\n" +
-        "\"response\":\n" +
-        "{ \"age\": 15 }\n" +
-        "}")
+    given()
+        .body("{\n" + "\"response\":\n" + "{ \"age\": 15 }\n" + "}")
         .contentType("application/json")
         .expect()
-        .statusCode(400)//.body(is("bad request"))
-        .when().put("/api/jsonschema");
+        .statusCode(400) // .body(is("bad request"))
+        .when()
+        .put("/api/jsonschema");
   }
 }

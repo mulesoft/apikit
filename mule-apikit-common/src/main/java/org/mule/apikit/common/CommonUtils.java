@@ -14,5 +14,4 @@ public class CommonUtils {
   public static <A, B> A cast(B b) {
     return (A) b;
   }
-
 }

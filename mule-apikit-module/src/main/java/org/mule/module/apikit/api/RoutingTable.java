@@ -9,7 +9,6 @@ package org.mule.module.apikit.api;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
@@ -36,7 +35,6 @@ public class RoutingTable {
       if (resource.getResources() != null) {
         buildRoutingTable(resource.getResources(), version);
       }
-
     }
   }
 

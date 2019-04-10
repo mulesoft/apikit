@@ -23,9 +23,11 @@ public class SchemaResourceLoader extends DefaultResourceLoader {
   public Resource getResource(String location) {
     Assert.notNull(location, "Location must not be null");
     if (location.startsWith(JSON_SCHEMA_PREFIX)) {
-      return new JsonSchemaResource(location.substring(JSON_SCHEMA_PREFIX.length()), getClassLoader());
+      return new JsonSchemaResource(
+                                    location.substring(JSON_SCHEMA_PREFIX.length()), getClassLoader());
     } else if (location.startsWith(XML_SCHEMA_PREFIX)) {
-      return new XmlSchemaResource(location.substring(XML_SCHEMA_PREFIX.length()), getClassLoader());
+      return new XmlSchemaResource(
+                                   location.substring(XML_SCHEMA_PREFIX.length()), getClassLoader());
     } else {
       return super.getResource(location);
     }

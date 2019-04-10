@@ -6,14 +6,13 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.mule.tools.apikit.misc.APIKitTools;
-
-import java.util.Objects;
-
 import static org.mule.tools.apikit.model.API.DEFAULT_BASE_PATH;
 import static org.mule.tools.apikit.model.API.DEFAULT_HOST;
 import static org.mule.tools.apikit.model.API.DEFAULT_PORT;
 import static org.mule.tools.apikit.model.API.DEFAULT_PROTOCOL;
+
+import java.util.Objects;
+import org.mule.tools.apikit.misc.APIKitTools;
 
 public class HttpListener4xConfig {
 
@@ -27,8 +26,7 @@ public class HttpListener4xConfig {
   private HttpListenerConnection connection;
   private boolean isPeristed = false;
 
-  public HttpListener4xConfig(final String name,
-                              final String baseUri) {
+  public HttpListener4xConfig(final String name, final String baseUri) {
     this.name = name;
     String host = APIKitTools.getHostFromUri(baseUri);
     String port = APIKitTools.getPortFromUri(baseUri);
@@ -38,11 +36,16 @@ public class HttpListener4xConfig {
   }
 
   public HttpListener4xConfig(final String name) {
-    this(name, DEFAULT_BASE_PATH,
-         new HttpListenerConnection.Builder(DEFAULT_HOST, String.valueOf(DEFAULT_PORT), DEFAULT_PROTOCOL).build());
+    this(
+         name,
+         DEFAULT_BASE_PATH,
+         new HttpListenerConnection.Builder(
+                                            DEFAULT_HOST, String.valueOf(DEFAULT_PORT), DEFAULT_PROTOCOL)
+                                                .build());
   }
 
-  public HttpListener4xConfig(final String name,
+  public HttpListener4xConfig(
+                              final String name,
                               final String host,
                               final String port,
                               final String protocol,
@@ -50,7 +53,8 @@ public class HttpListener4xConfig {
     this(name, basePath, new HttpListenerConnection.Builder(host, port, protocol).build());
   }
 
-  public HttpListener4xConfig(final String name,
+  public HttpListener4xConfig(
+                              final String name,
                               final String basePath,
                               final HttpListenerConnection httpListenerConnection) {
     this.name = name;
@@ -101,10 +105,10 @@ public class HttpListener4xConfig {
     if (o == null || getClass() != o.getClass())
       return false;
     HttpListener4xConfig that = (HttpListener4xConfig) o;
-    return isPeristed == that.isPeristed &&
-        Objects.equals(name, that.name) &&
-        Objects.equals(basePath, that.basePath) &&
-        Objects.equals(connection, that.connection);
+    return isPeristed == that.isPeristed
+        && Objects.equals(name, that.name)
+        && Objects.equals(basePath, that.basePath)
+        && Objects.equals(connection, that.connection);
   }
 
   @Override

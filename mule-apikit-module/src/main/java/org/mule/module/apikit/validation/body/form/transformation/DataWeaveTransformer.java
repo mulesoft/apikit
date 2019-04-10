@@ -6,6 +6,10 @@
  */
 package org.mule.module.apikit.validation.body.form.transformation;
 
+import static org.mule.apikit.common.CommonUtils.cast;
+import static org.mule.runtime.api.metadata.MediaType.create;
+
+import java.util.List;
 import org.mule.module.apikit.api.exception.InvalidFormParameterException;
 import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.runtime.api.el.BindingContext;
@@ -14,14 +18,8 @@ import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.util.MultiMap;
 import org.mule.runtime.core.api.el.ExpressionManager;
-
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.mule.apikit.common.CommonUtils.cast;
-import static org.mule.runtime.api.metadata.MediaType.create;
 
 public class DataWeaveTransformer {
 
@@ -29,11 +27,12 @@ public class DataWeaveTransformer {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DataWeaveTransformer.class);
 
-  private final DataType multiMapDataType = DataType.builder()
-      .mapType(MultiMap.class)
-      .keyType(String.class)
-      .valueType(String.class)
-      .build();
+  private final DataType multiMapDataType =
+      DataType.builder()
+          .mapType(MultiMap.class)
+          .keyType(String.class)
+          .valueType(String.class)
+          .build();
 
   private ExpressionManager expressionManager;
 
@@ -54,40 +53,46 @@ public class DataWeaveTransformer {
         result = expressionManager.evaluate(script, bindingContextBuilder.build());
       }
     } catch (Exception e) {
-      LOGGER.error("Invalid form parameter exception. Payload transformation could not be performed. Reason: " + e.getMessage());
-      throw new InvalidFormParameterException("Invalid form parameter exception. Payload transformation could not be performed. Reason: "
-          + e.getMessage());
+      LOGGER.error(
+                   "Invalid form parameter exception. Payload transformation could not be performed. Reason: "
+                       + e.getMessage());
+      throw new InvalidFormParameterException(
+                                              "Invalid form parameter exception. Payload transformation could not be performed. Reason: "
+                                                  + e.getMessage());
     }
     return result;
   }
 
-  public MultiMap<String, String> getMultiMapFromPayload(TypedValue payload) throws InvalidFormParameterException {
+  public MultiMap<String, String> getMultiMapFromPayload(TypedValue payload)
+      throws InvalidFormParameterException {
     final String script;
 
     final MediaType mediaType = payload.getDataType().getMediaType();
     if (mediaType.matches(MULTIPART_FORMDATA)) {
-      script = "%dw 2.0\n" +
-          "import try from dw::Runtime\n" +
-          "output application/java  \n" +
-          "---\n" +
-          "{\n" +
-          "  (payload.parts pluck (value, key) -> do {\n" +
-          "      var defaultWrite = try(() -> write(value.content, value.content.^mimeType) as String)\n" +
-          "      ---\n" +
-          "      {\n" +
-          "        '$key': \n" +
-          "          if (defaultWrite.success)\n" +
-          "            defaultWrite.result\n" +
-          "          else\n" +
-          "             write(value.content, \"application/octet-stream\") as String\n" +
-          "      }\n" +
-          "    })\n" +
-          "}";
+      script =
+          "%dw 2.0\n"
+              + "import try from dw::Runtime\n"
+              + "output application/java  \n"
+              + "---\n"
+              + "{\n"
+              + "  (payload.parts pluck (value, key) -> do {\n"
+              + "      var defaultWrite = try(() -> write(value.content, value.content.^mimeType) as String)\n"
+              + "      ---\n"
+              + "      {\n"
+              + "        '$key': \n"
+              + "          if (defaultWrite.success)\n"
+              + "            defaultWrite.result\n"
+              + "          else\n"
+              + "             write(value.content, \"application/octet-stream\") as String\n"
+              + "      }\n"
+              + "    })\n"
+              + "}";
     } else {
       script = "output application/java --- payload";
     }
 
-    final MultiMap<String, String> result = cast(runDataWeaveScript(script, multiMapDataType, payload).getValue());
+    final MultiMap<String, String> result =
+        cast(runDataWeaveScript(script, multiMapDataType, payload).getValue());
 
     // Rewind input stream, if possible.
     // This rewind is needed to be able to consume the stream several times
@@ -98,9 +103,11 @@ public class DataWeaveTransformer {
     return result;
   }
 
-  public TypedValue getXFormUrlEncodedStream(MultiMap<String, String> mapToTransform, DataType responseDataType)
+  public TypedValue getXFormUrlEncodedStream(
+                                             MultiMap<String, String> mapToTransform, DataType responseDataType)
       throws InvalidFormParameterException {
-    TypedValue<MultiMap<String, String>> modifiedPayload = new TypedValue<>(mapToTransform, multiMapDataType);
+    TypedValue<MultiMap<String, String>> modifiedPayload =
+        new TypedValue<>(mapToTransform, multiMapDataType);
     String script = "output application/x-www-form-urlencoded --- payload";
     return runDataWeaveScript(script, responseDataType, modifiedPayload);
   }

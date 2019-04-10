@@ -15,7 +15,6 @@ public class ResourceActionMimeTypeTriplet {
   private final String verb;
   private final String mimeType;
 
-
   public ResourceActionMimeTypeTriplet(API api, String uri, String verb) {
     this(api, uri, verb, null);
   }
@@ -54,11 +53,17 @@ public class ResourceActionMimeTypeTriplet {
 
   @Override
   public String toString() {
-    return "ResourceActionMimeTypeTriplet{" +
-        "uri='" + uri + '\'' +
-        ", verb='" + verb + '\'' +
-        ", mimeType='" + mimeType + '\'' +
-        '}';
+    return "ResourceActionMimeTypeTriplet{"
+        + "uri='"
+        + uri
+        + '\''
+        + ", verb='"
+        + verb
+        + '\''
+        + ", mimeType='"
+        + mimeType
+        + '\''
+        + '}';
   }
 
   @Override

@@ -8,10 +8,6 @@ package org.mule.module.apikit.validation.body.schema.v1.cache;
 
 import static org.mule.module.apikit.validation.body.schema.v1.cache.SchemaCacheUtils.resolveJsonSchema;
 
-import org.mule.module.apikit.api.exception.ApikitRuntimeException;
-import org.mule.module.apikit.uri.URICoder;
-import org.mule.raml.interfaces.model.IRaml;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.SchemaVersion;
 import com.github.fge.jsonschema.cfg.ValidationConfiguration;
@@ -20,12 +16,14 @@ import com.github.fge.jsonschema.core.load.configuration.LoadingConfiguration;
 import com.github.fge.jsonschema.main.JsonSchema;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
 import com.google.common.cache.CacheLoader;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
+import org.mule.module.apikit.api.exception.ApikitRuntimeException;
+import org.mule.module.apikit.uri.URICoder;
+import org.mule.raml.interfaces.model.IRaml;
 
 public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema> {
 
@@ -125,7 +123,9 @@ public class JsonSchemaCacheLoader extends CacheLoader<String, JsonSchema> {
   private JsonSchemaFactory getSchemaFactory() {
     ValidationConfiguration validationCfg =
         ValidationConfiguration.newBuilder().setDefaultVersion(SchemaVersion.DRAFTV3).freeze();
-    return JsonSchemaFactory.newBuilder().setLoadingConfiguration(LoadingConfiguration.byDefault())
-        .setValidationConfiguration(validationCfg).freeze();
+    return JsonSchemaFactory.newBuilder()
+        .setLoadingConfiguration(LoadingConfiguration.byDefault())
+        .setValidationConfiguration(validationCfg)
+        .freeze();
   }
 }

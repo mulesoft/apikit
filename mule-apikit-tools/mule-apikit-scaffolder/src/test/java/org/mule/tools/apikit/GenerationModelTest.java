@@ -6,7 +6,6 @@
  */
 package org.mule.tools.apikit;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -18,18 +17,14 @@ import static org.mule.raml.interfaces.model.IActionType.OPTIONS;
 import static org.mule.raml.interfaces.model.IActionType.POST;
 import static org.mule.raml.interfaces.model.IActionType.PUT;
 
-import com.google.common.collect.Maps;
+import java.util.HashMap;
+import org.junit.Test;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.output.GenerationModel;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Test;
 
 public class GenerationModelTest {
 
@@ -53,23 +48,28 @@ public class GenerationModelTest {
 
     IAction action = mock(IAction.class);
     when(action.getType()).thenReturn(GET);
-    assertEquals("retrieve", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
+    assertEquals(
+                 "retrieve", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
 
     action = mock(IAction.class);
     when(action.getType()).thenReturn(PUT);
-    assertEquals("create", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
+    assertEquals(
+                 "create", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
 
     action = mock(IAction.class);
     when(action.getType()).thenReturn(POST);
-    assertEquals("update", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
+    assertEquals(
+                 "update", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
 
     action = mock(IAction.class);
     when(action.getType()).thenReturn(DELETE);
-    assertEquals("delete", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
+    assertEquals(
+                 "delete", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
 
     action = mock(IAction.class);
     when(action.getType()).thenReturn(OPTIONS);
-    assertEquals("options", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
+    assertEquals(
+                 "options", new GenerationModel(api, VERSION, resource, action).getStringFromActionType());
   }
 
   @Test
@@ -90,7 +90,8 @@ public class GenerationModelTest {
     IResource resource = mock(IResource.class);
     when(resource.getResolvedUri(anyString())).thenReturn("/api/pet");
     API api = mock(API.class);
-    assertEquals("{\n\"hello\": \">world<\"\n}",
+    assertEquals(
+                 "{\n\"hello\": \">world<\"\n}",
                  new GenerationModel(api, VERSION, resource, action).getExampleWrapper());
   }
 
@@ -112,7 +113,8 @@ public class GenerationModelTest {
     IResource resource = mock(IResource.class);
     when(resource.getResolvedUri(anyString())).thenReturn("/api/pet");
     API api = mock(API.class);
-    assertEquals("<hello>world</hello>",
+    assertEquals(
+                 "<hello>world</hello>",
                  new GenerationModel(api, VERSION, resource, action).getExampleWrapper());
   }
 
@@ -134,7 +136,8 @@ public class GenerationModelTest {
     IResource resource = mock(IResource.class);
     when(resource.getResolvedUri(anyString())).thenReturn("/api/pet");
     API api = mock(API.class);
-    assertEquals("<hello>world</hello>",
+    assertEquals(
+                 "<hello>world</hello>",
                  new GenerationModel(api, VERSION, resource, action).getExampleWrapper());
   }
 
@@ -177,7 +180,8 @@ public class GenerationModelTest {
     when(resource.getResolvedUri(anyString())).thenReturn("/api/pet");
     API api = mock(API.class);
     GenerationModel model1 = new GenerationModel(api, VERSION, resource, action, "text/xml");
-    GenerationModel model2 = new GenerationModel(api, VERSION, resource, action, "application/json");
+    GenerationModel model2 =
+        new GenerationModel(api, VERSION, resource, action, "application/json");
     assertTrue(model1.compareTo(model2) != 0);
     assertEquals("updatePetTextXml", model1.getName());
     assertEquals("updatePetApplicationJson", model2.getName());

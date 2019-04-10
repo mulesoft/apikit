@@ -6,6 +6,14 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
+import static org.mule.apikit.common.FlowName.URL_RESOURCE_SEPARATOR;
+import static org.mule.module.apikit.api.FlowUtils.getFlowsList;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.mule.apikit.common.FlowName;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.RoutingTable;
@@ -20,15 +28,6 @@ import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
 import org.mule.runtime.core.api.construct.Flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
-import static org.mule.apikit.common.FlowName.URL_RESOURCE_SEPARATOR;
-import static org.mule.module.apikit.api.FlowUtils.getFlowsList;
 
 public class FlowFinder {
 
@@ -45,7 +44,10 @@ public class FlowFinder {
   private List<FlowMapping> flowMappings;
   private ConfigurationComponentLocator locator;
 
-  public FlowFinder(RamlHandler ramlHandler, String configName, ConfigurationComponentLocator locator,
+  public FlowFinder(
+                    RamlHandler ramlHandler,
+                    String configName,
+                    ConfigurationComponentLocator locator,
                     List<FlowMapping> flowMappings) {
     this.ramlHandler = ramlHandler;
     this.configName = configName;
@@ -64,7 +66,7 @@ public class FlowFinder {
 
       List<Flow> flows = getFlows();
 
-      //init flows by convention
+      // init flows by convention
       for (Flow flow : flows) {
         String key = getRestFlowKey(flow.getName());
         if (key != null) {
@@ -72,7 +74,7 @@ public class FlowFinder {
         }
       }
 
-      ////init flow mappings
+      //// init flow mappings
       for (FlowMapping mapping : flowMappings) {
         for (Flow flow : flows) {
           if (flow.getName().equals(mapping.getFlowRef())) {
@@ -107,7 +109,7 @@ public class FlowFinder {
 
   /**
    * validates if name is a valid router flow name according to the following pattern:
-   *  method:\resource[:content-type][:config-name]
+   * method:\resource[:content-type][:config-name]
    *
    * @param name to be validated
    * @return the name with the config-name stripped or null if it is not a router flow
@@ -123,9 +125,9 @@ public class FlowFinder {
     final String method = coords[0];
     final String resource = coords[1];
 
-    if (coords.length > 4 ||
-        !Arrays.asList(validMethods).contains(method) ||
-        !resource.startsWith(URL_RESOURCE_SEPARATOR)) {
+    if (coords.length > 4
+        || !Arrays.asList(validMethods).contains(method)
+        || !resource.startsWith(URL_RESOURCE_SEPARATOR)) {
       return null;
     }
 
@@ -168,7 +170,8 @@ public class FlowFinder {
       }
     }
 
-    logger.warn(String.format("Flow named \"%s\" does not match any RAML descriptor resource", key));
+    logger.warn(
+                String.format("Flow named \"%s\" does not match any RAML descriptor resource", key));
     return null;
   }
 
@@ -184,13 +187,16 @@ public class FlowFinder {
         if (action.hasBody()) {
           for (String contentType : action.getBody().keySet()) {
             if (restFlowMap.get(key + ":" + contentType) == null) {
-              logger.warn(String.format("Action-Resource-ContentType triplet has no implementation -> %s:%s:%s ",
+              logger.warn(
+                          String.format(
+                                        "Action-Resource-ContentType triplet has no implementation -> %s:%s:%s ",
                                         method, fullResource, contentType));
             }
           }
         } else {
-          logger.warn(String.format("Action-Resource pair has no implementation -> %s:%s ",
-                                    method, fullResource));
+          logger.warn(
+                      String.format(
+                                    "Action-Resource pair has no implementation -> %s:%s ", method, fullResource));
         }
       }
     }
@@ -207,11 +213,10 @@ public class FlowFinder {
     if (routingTable == null) {
       routingTable = new RoutingTable(ramlHandler.getApi());
     }
-
   }
 
-
-  public Flow getFlow(IResource resource, String method, String contentType) throws UnsupportedMediaTypeException {
+  public Flow getFlow(IResource resource, String method, String contentType)
+      throws UnsupportedMediaTypeException {
     String baseKey = method + ":" + resource.getResolvedUri(ramlHandler.getApi().getVersion());
     Map<String, Flow> rawRestFlowMap = getRawRestFlowMap();
     Flow flow = rawRestFlowMap.get(baseKey + ":" + contentType);

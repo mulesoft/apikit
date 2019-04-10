@@ -6,25 +6,24 @@
  */
 package org.mule.module.apikit.validation.body.schema.v1;
 
+import static com.github.fge.jsonschema.core.report.LogLevel.ERROR;
+import static com.github.fge.jsonschema.core.report.LogLevel.WARNING;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.LogLevel;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchema;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Iterator;
 import org.apache.commons.lang.StringUtils;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.module.apikit.validation.body.schema.v1.io.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Iterator;
-
-import static com.github.fge.jsonschema.core.report.LogLevel.ERROR;
-import static com.github.fge.jsonschema.core.report.LogLevel.WARNING;
 
 public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy {
 
@@ -53,7 +52,6 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy {
         throw new BadRequestException(e);
       }
 
-
       Iterator<ProcessingMessage> iterator = report.iterator();
       final StringBuilder messageBuilder = new StringBuilder();
 
@@ -62,8 +60,8 @@ public class RestJsonSchemaValidator implements IRestSchemaValidatorStrategy {
         LogLevel logLevel = next.getLogLevel();
         String logMessage = next.toString();
 
-        boolean failOnWarning = Boolean.valueOf(
-                                                System.getProperty(JSON_SCHEMA_FAIL_ON_WARNING_KEY, "false"));
+        boolean failOnWarning =
+            Boolean.valueOf(System.getProperty(JSON_SCHEMA_FAIL_ON_WARNING_KEY, "false"));
 
         if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning)) {
           messageBuilder.append(logMessage).append("\n");

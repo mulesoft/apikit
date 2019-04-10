@@ -6,6 +6,13 @@
  */
 package org.mule.raml.implv1.model;
 
+import static java.util.Collections.emptyMap;
+import static org.mule.raml.implv1.model.ResourceImpl.loadResolvedUriParameters;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
@@ -23,14 +30,6 @@ import org.raml.model.SecurityReference;
 import org.raml.model.parameter.Header;
 import org.raml.model.parameter.QueryParameter;
 import org.raml.model.parameter.UriParameter;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyMap;
-import static org.mule.raml.implv1.model.ResourceImpl.loadResolvedUriParameters;
 
 public class ActionImpl implements IAction {
 
@@ -51,7 +50,6 @@ public class ActionImpl implements IAction {
       return null;
     }
     return new ResourceImpl(resource);
-
   }
 
   public Map<String, IMimeType> getBody() {
@@ -114,7 +112,6 @@ public class ActionImpl implements IAction {
     }
     return map;
   }
-
 
   @Override
   public IQueryString queryString() {
@@ -186,5 +183,4 @@ public class ActionImpl implements IAction {
   public void addIs(String s) {
     action.getIs().add(s);
   }
-
 }

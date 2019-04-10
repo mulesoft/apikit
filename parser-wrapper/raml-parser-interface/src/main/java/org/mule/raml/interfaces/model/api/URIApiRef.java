@@ -6,14 +6,13 @@
  */
 package org.mule.raml.interfaces.model.api;
 
-import org.apache.commons.io.FilenameUtils;
-import org.mule.raml.interfaces.loader.ResourceLoader;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Optional;
+import org.apache.commons.io.FilenameUtils;
+import org.mule.raml.interfaces.loader.ResourceLoader;
 
 class URIApiRef implements ApiRef {
 

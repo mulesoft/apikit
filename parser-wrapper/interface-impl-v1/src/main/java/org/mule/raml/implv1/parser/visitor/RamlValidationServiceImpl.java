@@ -8,7 +8,6 @@ package org.mule.raml.implv1.parser.visitor;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.mule.raml.implv1.parser.rule.ValidationResultImpl;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.visitor.IRamlDocumentBuilder;
@@ -33,7 +32,8 @@ public class RamlValidationServiceImpl implements IRamlValidationService {
 
   public IRamlValidationService validate(String resourceContent, String resource) {
     ResourceLoader resourceLoader = ramlDocumentBuilderImpl.getResourceLoader();
-    List<ValidationResult> results = RamlValidationService.createDefault(resourceLoader).validate(resourceContent, resource);
+    List<ValidationResult> results =
+        RamlValidationService.createDefault(resourceLoader).validate(resourceContent, resource);
     errors = new ArrayList<IValidationResult>();
     for (ValidationResult validationResult : ValidationResult.getLevel(ValidationResult.Level.ERROR, results)) {
       errors.add(new ValidationResultImpl(validationResult));

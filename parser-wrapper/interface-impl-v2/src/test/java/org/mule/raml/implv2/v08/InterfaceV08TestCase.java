@@ -6,15 +6,15 @@
  */
 package org.mule.raml.implv2.v08;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import org.junit.Test;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.interfaces.model.IRaml;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
-
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 
 public class InterfaceV08TestCase {
 
@@ -24,6 +24,8 @@ public class InterfaceV08TestCase {
     IRaml raml = ParserV2Utils.build(resourceLoader, "org/mule/raml/implv2/v08/full-0.8.raml");
     assertThat(raml.getVersion(), is("1.0"));
     assertThat(raml.getSchemas().get(0).size(), is(2));
-    assertThat(raml.getSchemas().get(0).get("UserJson"), containsString("\"firstname\":  { \"type\": \"string\" }"));
+    assertThat(
+               raml.getSchemas().get(0).get("UserJson"),
+               containsString("\"firstname\":  { \"type\": \"string\" }"));
   }
 }

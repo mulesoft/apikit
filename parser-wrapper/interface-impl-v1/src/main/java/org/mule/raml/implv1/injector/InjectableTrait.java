@@ -7,7 +7,6 @@
 package org.mule.raml.implv1.injector;
 
 import java.util.Map;
-
 import org.raml.model.Action;
 import org.raml.model.Response;
 
@@ -58,8 +57,11 @@ public class InjectableTrait extends InjectableRamlFeature {
     }
     for (Map.Entry<String, Response> response : source.getResponses().entrySet()) {
       if (target.getResponses().containsKey(response.getKey())) {
-        putAllSkipExisting(target.getResponses().get(response.getKey()).getBody(), response.getValue().getBody());
-        putAllSkipExisting(target.getResponses().get(response.getKey()).getHeaders(), response.getValue().getHeaders());
+        putAllSkipExisting(
+                           target.getResponses().get(response.getKey()).getBody(), response.getValue().getBody());
+        putAllSkipExisting(
+                           target.getResponses().get(response.getKey()).getHeaders(),
+                           response.getValue().getHeaders());
       } else {
         target.getResponses().put(response.getKey(), response.getValue());
       }
@@ -67,7 +69,7 @@ public class InjectableTrait extends InjectableRamlFeature {
   }
 
   private Action resolveParams(Action target) {
-    //TODO replace implicit parameters
+    // TODO replace implicit parameters
     return cache;
   }
 
@@ -80,5 +82,4 @@ public class InjectableTrait extends InjectableRamlFeature {
       }
     }
   }
-
 }

@@ -6,12 +6,12 @@
  */
 package org.mule.parser.service;
 
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.api.ApiRef;
-
-import static org.junit.Assert.assertTrue;
 
 public class ValidationReportTestCase {
 
@@ -19,7 +19,8 @@ public class ValidationReportTestCase {
   public void oasValidationReport() {
     final String api = resource("/validation-level-result.json");
 
-    final ParserWrapper wrapper = new ParserService().getParser(ApiRef.create(api), ParserType.AUTO);
+    final ParserWrapper wrapper =
+        new ParserService().getParser(ApiRef.create(api), ParserType.AUTO);
     assertTrue(wrapper.validationReport().conforms());
   }
 

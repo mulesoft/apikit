@@ -8,9 +8,8 @@ package org.mule.tools.apikit.output.scopes;
 
 import static org.mule.tools.apikit.output.MuleConfigGenerator.HTTP_NAMESPACE;
 
-import org.mule.tools.apikit.model.APIKitConfig;
-
 import org.jdom2.Element;
+import org.mule.tools.apikit.model.APIKitConfig;
 
 public class MainFlowsUtils {
 
@@ -24,7 +23,8 @@ public class MainFlowsUtils {
       "#[vars." + APIKitConfig.DEFAULT_OUTBOUND_HEADERS_MAP_NAME + " default {}]";
   public static final String DEFAULT_ERROR_BODY_CONTENT = "#[payload]";
 
-  public static void generateListenerSource(String httpListenerConfigRef, String path, Element main) {
+  public static void generateListenerSource(
+                                            String httpListenerConfigRef, String path, Element main) {
     Element httpListener = new Element("listener", HTTP_NAMESPACE.getNamespace());
     httpListener.setAttribute("config-ref", httpListenerConfigRef);
     httpListener.setAttribute("path", path);
@@ -51,5 +51,4 @@ public class MainFlowsUtils {
 
     main.addContent(httpListener);
   }
-
 }

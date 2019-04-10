@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.validation.streaming;
 
-import org.junit.Test;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 public class NonRepeatableStreams08TestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -21,28 +21,26 @@ public class NonRepeatableStreams08TestCase extends AbstractMultiParserFunctiona
 
   @Test
   public void multipartRequest() {
-    given().header("Content-Type", "multipart/form-data")
+    given()
+        .header("Content-Type", "multipart/form-data")
         .multiPart("code", "R2D2")
         .expect()
         .response()
-        .body(is("{\n" +
-            "  \"code\": \"R2D2\",\n" +
-            "  \"color\": \"black\"\n" +
-            "}"))
-        .when().delete("/api/multipart");
+        .body(is("{\n" + "  \"code\": \"R2D2\",\n" + "  \"color\": \"black\"\n" + "}"))
+        .when()
+        .delete("/api/multipart");
   }
 
   @Test
   public void urlencodedRequest() {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("Id", 12345)
         .expect()
         .response()
         .body(is("Id=12345&Size=medium"))
         .statusCode(200)
-        .when().put("/api/urlencoded");
+        .when()
+        .put("/api/urlencoded");
   }
-
-
-
 }

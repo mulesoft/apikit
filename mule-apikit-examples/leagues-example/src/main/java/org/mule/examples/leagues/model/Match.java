@@ -113,7 +113,9 @@ public class Match {
     if (awayTeam != null ? !awayTeam.equals(match.awayTeam) : match.awayTeam != null) {
       return false;
     }
-    if (awayTeamScore != null ? !awayTeamScore.equals(match.awayTeamScore) : match.awayTeamScore != null) {
+    if (awayTeamScore != null
+        ? !awayTeamScore.equals(match.awayTeamScore)
+        : match.awayTeamScore != null) {
       return false;
     }
     if (date != null ? !date.equals(match.date) : match.date != null) {
@@ -122,7 +124,9 @@ public class Match {
     if (homeTeam != null ? !homeTeam.equals(match.homeTeam) : match.homeTeam != null) {
       return false;
     }
-    if (homeTeamScore != null ? !homeTeamScore.equals(match.homeTeamScore) : match.homeTeamScore != null) {
+    if (homeTeamScore != null
+        ? !homeTeamScore.equals(match.homeTeamScore)
+        : match.homeTeamScore != null) {
       return false;
     }
 

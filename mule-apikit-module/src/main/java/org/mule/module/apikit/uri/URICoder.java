@@ -17,42 +17,40 @@ import java.util.Set;
 
 /**
  * An encoder/decoder for use by URI templates.
- * <p/>
- * Only unreserved characters according to RFC 3986 do not need to be encoded within a variable:
- * <p/>
+ *
+ * <p>Only unreserved characters according to RFC 3986 do not need to be encoded within a variable:
+ *
+ * <p>
+ *
  * <pre>
  * unreserved = ALPHA / DIGIT / '-' / '.' / '_' / '&tilde;';
  * </pre>
- * <p/>
- * <p/>
- * This encoder/decoder should be designed so that URI which contain only unreserved characters are
- * processed faster.
+ *
+ * <p>
+ *
+ * <p>This encoder/decoder should be designed so that URI which contain only unreserved characters
+ * are processed faster.
  *
  * @author Christophe Lauret
  * @version 11 June 2009
  * @see <a href="http://tools.ietf.org/html/rfc3986">RFC 3986 - Uniform Resource Identifier (URI):
- * Generic Syntax<a/>
+ *     Generic Syntax<a/>
  * @see <a href="http://tools.ietf.org/html/rfc3986#appendix-A">RFC 3986 - Uniform Resource
- * Identifier (URI): Generic Syntax - Appendix A. Collected ABNF for URI</a>
+ *     Identifier (URI): Generic Syntax - Appendix A. Collected ABNF for URI</a>
  * @see <a href="http://www.unicode.org/unicode/reports/tr15/tr15-23.html#Specification">UAX #15:
- * Unicode Normalization</a>
+ *     Unicode Normalization</a>
  */
 public class URICoder {
 
-  /**
-   * The UTF8 character set for reuse - Always defined.
-   */
-  private final static Charset UTF8 = Charset.forName("UTF-8");
+  /** The UTF8 character set for reuse - Always defined. */
+  private static final Charset UTF8 = Charset.forName("UTF-8");
 
-  /**
-   * The hexadecimal digits for use by the encoder.
-   */
-  private final static char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
-      'B', 'C', 'D', 'E', 'F'};
+  /** The hexadecimal digits for use by the encoder. */
+  private static final char[] HEX_DIGITS = {
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+  };
 
-  /**
-   * Prevents creation of instances.
-   */
+  /** Prevents creation of instances. */
   private URICoder() {}
 
   // Encoder
@@ -60,9 +58,10 @@ public class URICoder {
 
   /**
    * Encodes the string as valid URI fragment.
-   * <p/>
-   * <p/>
-   * This encoder will encode all but unreserved characters using the escape sequence.
+   *
+   * <p>
+   *
+   * <p>This encoder will encode all but unreserved characters using the escape sequence.
    *
    * @param s The string to encode.
    * @return The corresponding encoded string.
@@ -74,11 +73,12 @@ public class URICoder {
 
   /**
    * Encodes the string as valid URI fragment.
-   * <p/>
-   * <p/>
-   * This encoder will percent-encode all but <em>unreserved</em> characters.
    *
-   * @param s     The string to encode.
+   * <p>
+   *
+   * <p>This encoder will percent-encode all but <em>unreserved</em> characters.
+   *
+   * @param s The string to encode.
    * @param chars An ASCII set of characters that should not be encoded if found in the string.
    * @return The corresponding encoded string.
    */
@@ -97,9 +97,10 @@ public class URICoder {
 
   /**
    * Encodes the string as valid URI fragment.
-   * <p/>
-   * <p/>
-   * This encoder will percent-encode all but <em>illegal</em> characters.
+   *
+   * <p>
+   *
+   * <p>This encoder will percent-encode all but <em>illegal</em> characters.
    *
    * @param s The string to encode.
    * @return The corresponding encoded string.
@@ -116,7 +117,7 @@ public class URICoder {
   /**
    * Encodes a string containing only ASCII characters.
    *
-   * @param s     The string the encode (assuming ASCII characters only)
+   * @param s The string the encode (assuming ASCII characters only)
    * @param chars A set of characters that does not require encoding if found in the string.
    */
   private static String encode_ASCII(String s, Set<Character> chars) {
@@ -151,7 +152,7 @@ public class URICoder {
   /**
    * Encodes a string containing non ASCII characters using an UTF-8 encoder.
    *
-   * @param s     The string the encode (assuming ASCII characters only)
+   * @param s The string the encode (assuming ASCII characters only)
    * @param chars A set of characters that does not require encoding if found in the string.
    */
   private static String encode_UTF8(String s, Set<Character> chars) {
@@ -213,9 +214,7 @@ public class URICoder {
     return ascii ? decode_ASCII(s) : decode_UTF8(s);
   }
 
-  /**
-   * Decodes a string containing only ASCII characters.
-   */
+  /** Decodes a string containing only ASCII characters. */
   private static String decode_ASCII(String s) {
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < s.length(); i++) {
@@ -234,9 +233,7 @@ public class URICoder {
     return sb.toString();
   }
 
-  /**
-   * Decodes a string containing non ASCII characters using an UTF-8 decoder.
-   */
+  /** Decodes a string containing non ASCII characters using an UTF-8 decoder. */
   private static String decode_UTF8(String s) {
     // URI decode
     ByteBuffer bb = ByteBuffer.allocate(s.length());
@@ -262,7 +259,7 @@ public class URICoder {
    * Appends the escape sequence for the given byte to the specified string buffer.
    *
    * @param sb The string buffer.
-   * @param b  The byte to escape.
+   * @param b The byte to escape.
    */
   private static void appendEscape(StringBuffer sb, byte b) {
     sb.append('%');
@@ -274,7 +271,7 @@ public class URICoder {
    * Appends the escape sequence for the given byte to the specified string buffer.
    *
    * @param sb The string buffer.
-   * @param c  The byte to escape.
+   * @param c The byte to escape.
    */
   private static void appendEscape(StringBuffer sb, char c) {
     sb.append('%');
@@ -324,9 +321,7 @@ public class URICoder {
     return true;
   }
 
-  /**
-   * Indicates whether the string contains non-ASCII characters.
-   */
+  /** Indicates whether the string contains non-ASCII characters. */
   private static boolean isASCII(String s) {
     for (int i = 0; i < s.length(); i++) {
       if (s.charAt(i) >= 0x80) {
@@ -336,9 +331,7 @@ public class URICoder {
     return true;
   }
 
-  /**
-   * Indicates whether the encoded string contains non-ASCII characters.
-   */
+  /** Indicates whether the encoded string contains non-ASCII characters. */
   private static boolean isEncodedASCII(String s) {
     for (int i = 0; i < s.length(); i++) {
       if (s.charAt(i) == '%' && i < s.length() - 1 && s.charAt(i + 1) > '7') {
@@ -347,5 +340,4 @@ public class URICoder {
     }
     return true;
   }
-
 }

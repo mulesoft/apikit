@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
+import static io.restassured.RestAssured.given;
+
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import static io.restassured.RestAssured.given;
 
 public class XmlSchemaRefTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -21,25 +21,33 @@ public class XmlSchemaRefTestCase extends AbstractMultiParserFunctionalTestCase 
   @Test
   public void validSchema() throws Exception {
     given()
-        .body("<message xmlns=\"http://www.example.org/simple\" item=\"hola\"/>").contentType("application/xml")
-        .expect().statusCode(200)
-        .when().put("/api/name");
+        .body("<message xmlns=\"http://www.example.org/simple\" item=\"hola\"/>")
+        .contentType("application/xml")
+        .expect()
+        .statusCode(200)
+        .when()
+        .put("/api/name");
   }
 
   @Test
   public void invalidSchema() throws Exception {
     given()
-        .body("{\"name\":\"gbs\"}").contentType("application/xml")
-        .expect().statusCode(400)
-        .when().put("/api/name");
+        .body("{\"name\":\"gbs\"}")
+        .contentType("application/xml")
+        .expect()
+        .statusCode(400)
+        .when()
+        .put("/api/name");
   }
 
   @Test
   public void validGlobalSchema() throws Exception {
     given()
-        .body("<message xmlns=\"http://www.example.org/simple\" item=\"hola\"/>").contentType("application/xml")
-        .expect().statusCode(200)
-        .when().put("/api/last");
+        .body("<message xmlns=\"http://www.example.org/simple\" item=\"hola\"/>")
+        .contentType("application/xml")
+        .expect()
+        .statusCode(200)
+        .when()
+        .put("/api/last");
   }
-
 }

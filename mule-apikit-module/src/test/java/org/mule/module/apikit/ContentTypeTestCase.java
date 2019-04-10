@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
 
 public abstract class ContentTypeTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,38 +20,48 @@ public abstract class ContentTypeTestCase extends AbstractMultiParserFunctionalT
 
   @Test
   public void getOnAcceptAnythingAndNullPayload() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
-        .response().body(is(""))
+        .response()
+        .body(is(""))
         .statusCode(200)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void getOnUsingInvalidAcceptHeader() throws Exception {
-    given().header("accept", "invalid/invalid")
+    given()
+        .header("accept", "invalid/invalid")
         .expect()
         .response()
         .statusCode(406)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void getOnUsingSingleInvalidAcceptHeader() throws Exception {
-    given().header("Accept", "invalid")
+    given()
+        .header("Accept", "invalid")
         .expect()
         .response()
         .statusCode(406)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void getOnAcceptNotSpecified() throws Exception {
-    given().header("Accept", "*")
+    given()
+        .header("Accept", "*")
         .expect()
-        .response().body(is(""))
+        .response()
+        .body(is(""))
         .statusCode(200)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
@@ -60,10 +70,12 @@ public abstract class ContentTypeTestCase extends AbstractMultiParserFunctionalT
         .header("Accept", "")
         .header("ctype", "json")
         .expect()
-        .response().contentType(is("application/json"))
+        .response()
+        .contentType(is("application/json"))
         .body(is("never mind"))
         .statusCode(200)
-        .when().get("/api/multitype");
+        .when()
+        .get("/api/multitype");
   }
 
   @Test
@@ -72,10 +84,12 @@ public abstract class ContentTypeTestCase extends AbstractMultiParserFunctionalT
         .header("Accept", "")
         .header("ctype", "xml")
         .expect()
-        .response().contentType(is("application/xml"))
+        .response()
+        .contentType(is("application/xml"))
         .body(is("never mind"))
         .statusCode(200)
-        .when().get("/api/multitype");
+        .when()
+        .get("/api/multitype");
   }
 
   @Test
@@ -84,10 +98,12 @@ public abstract class ContentTypeTestCase extends AbstractMultiParserFunctionalT
         .header("Accept", "")
         .header("ctype", "default")
         .expect()
-        .response().contentType(is("text/html"))
+        .response()
+        .contentType(is("text/html"))
         .body(is("never mind"))
         .statusCode(200)
-        .when().get("/api/multitype");
+        .when()
+        .get("/api/multitype");
   }
 
   @Test
@@ -96,17 +112,21 @@ public abstract class ContentTypeTestCase extends AbstractMultiParserFunctionalT
         .header("Accept", "*/*")
         .header("ctype", "zip")
         .expect()
-        .response().contentType(is("application/zip"))
+        .response()
+        .contentType(is("application/zip"))
         .body(is(""))
         .statusCode(200)
-        .when().get("/api/multistatus");
+        .when()
+        .get("/api/multistatus");
 
     given()
         .header("Accept", "*/*")
         .expect()
-        .response().contentType(is("application/json"))
+        .response()
+        .contentType(is("application/json"))
         .body(is("{ \"message\": \"Data request accepted.\" }"))
         .statusCode(202)
-        .when().get("/api/multistatus");
+        .when()
+        .get("/api/multistatus");
   }
 }

@@ -6,6 +6,15 @@
  */
 package org.mule.raml.implv2;
 
+import static java.util.Optional.ofNullable;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.List;
 import org.mule.raml.implv2.loader.ApiSyncResourceLoader;
 import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserType;
@@ -25,16 +34,6 @@ import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 import org.raml.v2.internal.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-
-import static java.util.Optional.ofNullable;
-import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
-import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 public class ParserWrapperV2 implements ParserWrapper {
 
@@ -63,7 +62,8 @@ public class ParserWrapperV2 implements ParserWrapper {
 
     if (ramlFile != null && ramlFile.getParent() != null) {
       final File ramlFolder = ramlFile.getParentFile();
-      return new CompositeResourceLoader(new RootRamlFileResourceLoader(ramlFolder),
+      return new CompositeResourceLoader(
+                                         new RootRamlFileResourceLoader(ramlFolder),
                                          DEFAULT_RESOURCE_LOADER,
                                          new FileResourceLoader(ramlFolder.getAbsolutePath()),
                                          new ExchangeDependencyResourceLoader());
@@ -71,7 +71,8 @@ public class ParserWrapperV2 implements ParserWrapper {
       return new ApiSyncResourceLoader(ramlPath);
     }
 
-    return new CompositeResourceLoader(DEFAULT_RESOURCE_LOADER, new ExchangeDependencyResourceLoader());
+    return new CompositeResourceLoader(
+                                       DEFAULT_RESOURCE_LOADER, new ExchangeDependencyResourceLoader());
   }
 
   private static File fetchRamlFile(String ramlPath) {
@@ -121,7 +122,8 @@ public class ParserWrapperV2 implements ParserWrapper {
   }
 
   @Override
-  public String dump(String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort) {
+  public String dump(
+                     String ramlContent, IRaml api, String oldSchemeHostPort, String newSchemeHostPort) {
     return RamlUtils.replaceBaseUri(ramlContent, newSchemeHostPort);
   }
 

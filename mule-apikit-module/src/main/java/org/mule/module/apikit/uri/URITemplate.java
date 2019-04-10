@@ -12,43 +12,36 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 /**
  * A URI Template for constructing URIs following the same structure.
- * <p/>
- * Instances of this class implement the URI templates as defined by the URI Template (Draft 3) by
- * Joe Gregorio.
- * <p/>
- * A URI Template follows the URI syntax and can be expanded given a set of variable values.
+ *
+ * <p>Instances of this class implement the URI templates as defined by the URI Template (Draft 3)
+ * by Joe Gregorio.
+ *
+ * <p>A URI Template follows the URI syntax and can be expanded given a set of variable values.
  *
  * @author Christophe Lauret
  * @version 5 November 2009
  * @see <a
- *      href="http://bitworking.org/projects/URI-Templates/spec/draft-gregorio-uritemplate-03.html">URI
- *      Template (draft 3)</a>
+ *     href="http://bitworking.org/projects/URI-Templates/spec/draft-gregorio-uritemplate-03.html">URI
+ *     Template (draft 3)</a>
  */
 public class URITemplate implements Expandable {
 
-  /**
-   * The regular expression pattern to identify template expansions within the template.
-   */
-  private final static Pattern EXPANSION_PATTERN = Pattern.compile("\\{[^}]*}");
+  /** The regular expression pattern to identify template expansions within the template. */
+  private static final Pattern EXPANSION_PATTERN = Pattern.compile("\\{[^}]*}");
 
-  /**
-   * The string representation of the URL template.
-   */
+  /** The string representation of the URL template. */
   private final String _template;
 
-  /**
-   * The list of tokens corresponding to this URL template.
-   */
+  /** The list of tokens corresponding to this URL template. */
   private final List<Token> _tokens;
 
   /**
    * Creates a new URI Template instance.
    *
    * @param template A String following the URI template syntax.
-   * @throws NullPointerException       If the specified template is <code>null</code>.
+   * @throws NullPointerException If the specified template is <code>null</code>.
    * @throws URITemplateSyntaxException If the string provided does not follow the proper syntax.
    */
   public URITemplate(String template) throws IllegalArgumentException {
@@ -63,12 +56,14 @@ public class URITemplate implements Expandable {
 
   /**
    * Creates a new URI Template instance using the specified token factory.
-   * <p/>
+   *
+   * <p>
+   *
    * <p>If the specified factory is <code>null</code>, the default is used.
    *
    * @param template A String following the URI template syntax.
-   * @param factory  A token factory in order to choose the URI template syntax to use.
-   * @throws NullPointerException       If the specified template is <code>null</code>.
+   * @param factory A token factory in order to choose the URI template syntax to use.
+   * @throws NullPointerException If the specified template is <code>null</code>.
    * @throws URITemplateSyntaxException If the string provided does not follow the proper syntax.
    */
   public URITemplate(String template, TokenFactory factory) throws IllegalArgumentException {
@@ -94,14 +89,16 @@ public class URITemplate implements Expandable {
 
   /**
    * Method provided for convenience.
-   * <p/>
-   * It returns the same as:
-   * <p/>
+   *
+   * <p>It returns the same as:
+   *
+   * <p>
+   *
    * <pre>
    * return new URITemplate(template).expand(variables);
    * </pre>
    *
-   * @param template   The URI template.
+   * @param template The URI template.
    * @param parameters The parameter values to use for substitution.
    * @return The corresponding expanded URI.
    */
@@ -127,7 +124,8 @@ public class URITemplate implements Expandable {
    * @return The corresponding list of URL tokens.
    * @throws URITemplateSyntaxException If the string cannot be parsed.
    */
-  public static List<Token> digest(String template, TokenFactory factory) throws URITemplateSyntaxException {
+  public static List<Token> digest(String template, TokenFactory factory)
+      throws URITemplateSyntaxException {
     List<Token> tokens = new ArrayList<Token>();
     Matcher m = EXPANSION_PATTERN.matcher(template);
     int start = 0;
@@ -159,9 +157,11 @@ public class URITemplate implements Expandable {
 
   /**
    * Returns the underlying list of tokens.
-   * <p/>
-   * <p/>
-   * Note: this method exposes the underlying structure of this class and should remain protected.
+   *
+   * <p>
+   *
+   * <p>Note: this method exposes the underlying structure of this class and should remain
+   * protected.
    *
    * @return The underlying list of tokens.
    */

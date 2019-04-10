@@ -6,21 +6,17 @@
  */
 package org.mule.module.apikit.helpers;
 
-
+import java.nio.charset.Charset;
+import java.util.Optional;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.runtime.api.message.Message;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.core.api.event.CoreEvent;
 
-import java.nio.charset.Charset;
-import java.util.Optional;
-
 public class EventHelper {
 
-  private EventHelper() {
-
-  }
+  private EventHelper() {}
 
   public static Charset getEncoding(CoreEvent event) {
     return getEncoding(event.getMessage());
@@ -32,10 +28,12 @@ public class EventHelper {
 
   public static <T> Charset getEncoding(TypedValue<T> payload) {
     Optional<Charset> payloadEncoding = payload.getDataType().getMediaType().getCharset();
-    return payloadEncoding.orElse(Charset.defaultCharset());// TODO Should we get default charset from mule?
+    return payloadEncoding.orElse(
+                                  Charset.defaultCharset()); // TODO Should we get default charset from mule?
   }
 
-  public static CoreEvent.Builder regenerateEvent(Message message, CoreEvent.Builder builder, ValidRequest validRequest) {
+  public static CoreEvent.Builder regenerateEvent(
+                                                  Message message, CoreEvent.Builder builder, ValidRequest validRequest) {
     Message.Builder messageBuilder = Message.builder(message);
     messageBuilder.value(validRequest.getBody().getPayload());
     messageBuilder.attributesValue(validRequest.getAttributes());
@@ -46,5 +44,4 @@ public class EventHelper {
   public static HttpRequestAttributes getHttpRequestAttributes(CoreEvent event) {
     return ((HttpRequestAttributes) event.getMessage().getAttributes().getValue());
   }
-
 }

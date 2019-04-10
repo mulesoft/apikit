@@ -7,10 +7,8 @@
 package org.mule.examples.leagues.response;
 
 import java.util.Date;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
@@ -23,9 +21,11 @@ public class Match {
   private String homeTeam;
   private String awayTeam;
 
-  @JsonSerialize(using = org.mule.examples.leagues.serializer.JsonDateSerializer.class,
+  @JsonSerialize(
+      using = org.mule.examples.leagues.serializer.JsonDateSerializer.class,
       include = JsonSerialize.Inclusion.NON_NULL)
   private Date date;
+
   private Integer homeTeamScore;
   private Integer awayTeamScore;
 
@@ -74,5 +74,4 @@ public class Match {
   public void setAwayTeamScore(Integer awayTeamScore) {
     this.awayTeamScore = awayTeamScore;
   }
-
 }

@@ -6,15 +6,14 @@
  */
 package org.mule.raml.interfaces.model.api;
 
+import static java.lang.String.format;
+
+import java.io.InputStream;
+import java.util.Optional;
 import org.mule.raml.interfaces.common.APISyncUtils;
 import org.mule.raml.interfaces.loader.ApiSyncResourceLoader;
 import org.mule.raml.interfaces.loader.ClassPathResourceLoader;
 import org.mule.raml.interfaces.loader.ResourceLoader;
-
-import java.io.InputStream;
-import java.util.Optional;
-
-import static java.lang.String.format;
 
 class ApiSyncApiRef implements ApiRef {
 

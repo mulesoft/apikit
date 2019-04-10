@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit.parameters;
 
+import static io.restassured.RestAssured.given;
+
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import static io.restassured.RestAssured.given;
 
 public class QueryParametersTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,15 +20,23 @@ public class QueryParametersTestCase extends AbstractMultiParserFunctionalTestCa
 
   @Test
   public void stringArrayQueryParamWithAsterisk() {
-    given().queryParam("string", "*a", "b")
-        .expect().response().statusCode(200)
-        .when().get("/api/resource");
+    given()
+        .queryParam("string", "*a", "b")
+        .expect()
+        .response()
+        .statusCode(200)
+        .when()
+        .get("/api/resource");
   }
 
   @Test
   public void stringArrayQueryParamNumber() {
-    given().queryParam("string", "12", "12")
-        .expect().response().statusCode(200)
-        .when().get("/api/resource");
+    given()
+        .queryParam("string", "12", "12")
+        .expect()
+        .response()
+        .statusCode(200)
+        .when()
+        .get("/api/resource");
   }
 }

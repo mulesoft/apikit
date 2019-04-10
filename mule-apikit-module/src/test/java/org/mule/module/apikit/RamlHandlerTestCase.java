@@ -6,17 +6,6 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mule.module.apikit.api.RamlHandler;
-import org.mule.parser.service.ParserServiceException;
-import org.mule.raml.interfaces.ParserType;
-import org.mule.raml.interfaces.model.ApiVendor;
-import org.mule.runtime.core.api.MuleContext;
-
-import java.io.IOException;
-import java.util.function.Supplier;
-
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
@@ -26,6 +15,16 @@ import static org.mule.raml.interfaces.ParserType.AMF;
 import static org.mule.raml.interfaces.ParserType.AUTO;
 import static org.mule.raml.interfaces.ParserType.RAML;
 
+import java.io.IOException;
+import java.util.function.Supplier;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mule.module.apikit.api.RamlHandler;
+import org.mule.parser.service.ParserServiceException;
+import org.mule.raml.interfaces.ParserType;
+import org.mule.raml.interfaces.model.ApiVendor;
+import org.mule.runtime.core.api.MuleContext;
+
 public class RamlHandlerTestCase {
 
   private static MuleContext muleContext;
@@ -33,7 +32,8 @@ public class RamlHandlerTestCase {
   @BeforeClass
   public static void beforeAll() {
     muleContext = mock(MuleContext.class);
-    when(muleContext.getExecutionClassLoader()).thenReturn(Thread.currentThread().getContextClassLoader());
+    when(muleContext.getExecutionClassLoader())
+        .thenReturn(Thread.currentThread().getContextClassLoader());
   }
 
   @Test
@@ -78,11 +78,10 @@ public class RamlHandlerTestCase {
     assertTrue(rootRaml.contains("baseUri: http://localhost/myapi"));
   }
 
-
-
   @Test
   public void getRamlV2KeepRamlBaseUriFalse() throws IOException {
-    String ramlLocation = "org/mule/module/apikit/raml-handler/simple10-with-example.raml";//this.getClass().getResource("../../../../org/mule/module/apikit/simple-raml/simple10-with-example.raml").toString();
+    String ramlLocation =
+        "org/mule/module/apikit/raml-handler/simple10-with-example.raml"; // this.getClass().getResource("../../../../org/mule/module/apikit/simple-raml/simple10-with-example.raml").toString();
     String apiServer = "http://pepe.com";
     RamlHandler handler = createRamlHandler(ramlLocation, false);
     handler.setApiServer(apiServer);
@@ -103,7 +102,10 @@ public class RamlHandlerTestCase {
     String apiServer = "unused";
     RamlHandler handler = createRamlHandler(ramlLocation);
     handler.setApiServer(apiServer);
-    assertTrue(handler.getRamlV2("org/mule/module/apikit/raml-handler/example.json/?raml").contains("{\"name\":\"jane\"}"));
+    assertTrue(
+               handler
+                   .getRamlV2("org/mule/module/apikit/raml-handler/example.json/?raml")
+                   .contains("{\"name\":\"jane\"}"));
   }
 
   @Test
@@ -112,14 +114,21 @@ public class RamlHandlerTestCase {
 
     final boolean keepRamlBaseUri = true;
 
-    handler = createRamlHandler("org/mule/module/apikit/raml-handler/amf-only.raml", keepRamlBaseUri, AUTO);
+    handler =
+        createRamlHandler(
+                          "org/mule/module/apikit/raml-handler/amf-only.raml", keepRamlBaseUri, AUTO);
     assertEquals(AMF, handler.getParserType());
 
-    handler = createRamlHandler("org/mule/module/apikit/raml-handler/raml-parser-only.raml", keepRamlBaseUri, AUTO);
+    handler =
+        createRamlHandler(
+                          "org/mule/module/apikit/raml-handler/raml-parser-only.raml", keepRamlBaseUri, AUTO);
     assertEquals(RAML, handler.getParserType());
 
-    assertException(RuntimeException.class, "Invalid API descriptor -- errors found: 2",
-                    () -> createRamlHandler("org/mule/module/apikit/raml-handler/failing-api.raml", keepRamlBaseUri, AUTO));
+    assertException(
+                    RuntimeException.class,
+                    "Invalid API descriptor -- errors found: 2",
+                    () -> createRamlHandler(
+                                            "org/mule/module/apikit/raml-handler/failing-api.raml", keepRamlBaseUri, AUTO));
   }
 
   @Test
@@ -128,13 +137,21 @@ public class RamlHandlerTestCase {
 
     final boolean keepRamlBaseUri = true;
 
-    handler = createRamlHandler("org/mule/module/apikit/raml-handler/amf-only.raml", keepRamlBaseUri, AMF);
+    handler =
+        createRamlHandler(
+                          "org/mule/module/apikit/raml-handler/amf-only.raml", keepRamlBaseUri, AMF);
     assertEquals(AMF, handler.getParserType());
 
-    assertException(ParserServiceException.class, "Invalid API descriptor -- errors found: 1",
-                    () -> createRamlHandler("org/mule/module/apikit/raml-handler/raml-parser-only.raml", keepRamlBaseUri, AMF));
-    assertException(ParserServiceException.class, "Invalid API descriptor -- errors found: 2",
-                    () -> createRamlHandler("org/mule/module/apikit/raml-handler/failing-api.raml", keepRamlBaseUri, AMF));
+    assertException(
+                    ParserServiceException.class,
+                    "Invalid API descriptor -- errors found: 1",
+                    () -> createRamlHandler(
+                                            "org/mule/module/apikit/raml-handler/raml-parser-only.raml", keepRamlBaseUri, AMF));
+    assertException(
+                    ParserServiceException.class,
+                    "Invalid API descriptor -- errors found: 2",
+                    () -> createRamlHandler(
+                                            "org/mule/module/apikit/raml-handler/failing-api.raml", keepRamlBaseUri, AMF));
   }
 
   @Test
@@ -143,16 +160,25 @@ public class RamlHandlerTestCase {
 
     final boolean keepRamlBaseUri = true;
 
-    handler = createRamlHandler("org/mule/module/apikit/raml-handler/raml-parser-only.raml", keepRamlBaseUri, RAML);
+    handler =
+        createRamlHandler(
+                          "org/mule/module/apikit/raml-handler/raml-parser-only.raml", keepRamlBaseUri, RAML);
     assertEquals(RAML, handler.getParserType());
 
-    assertException(RuntimeException.class, "Invalid API descriptor -- errors found: 1",
-                    () -> createRamlHandler("org/mule/module/apikit/raml-handler/amf-only.raml", keepRamlBaseUri, RAML));
-    assertException(RuntimeException.class, "Invalid API descriptor -- errors found: 1\n\nInvalid reference 'SomeTypo'",
-                    () -> createRamlHandler("org/mule/module/apikit/raml-handler/failing-api.raml", keepRamlBaseUri, RAML));
+    assertException(
+                    RuntimeException.class,
+                    "Invalid API descriptor -- errors found: 1",
+                    () -> createRamlHandler(
+                                            "org/mule/module/apikit/raml-handler/amf-only.raml", keepRamlBaseUri, RAML));
+    assertException(
+                    RuntimeException.class,
+                    "Invalid API descriptor -- errors found: 1\n\nInvalid reference 'SomeTypo'",
+                    () -> createRamlHandler(
+                                            "org/mule/module/apikit/raml-handler/failing-api.raml", keepRamlBaseUri, RAML));
   }
 
-  private <A extends Exception, B> void assertException(Class<A> clazz, String message, Supplier<B> supplier) {
+  private <A extends Exception, B> void assertException(
+                                                        Class<A> clazz, String message, Supplier<B> supplier) {
     try {
       supplier.get();
       fail(clazz.getName() + " was expected");
@@ -170,7 +196,8 @@ public class RamlHandlerTestCase {
     return createRamlHandler(ramlPath, keepRamlBaseUri, AUTO);
   }
 
-  private RamlHandler createRamlHandler(String ramlPath, boolean keepRamlBaseUri, ParserType parser) {
+  private RamlHandler createRamlHandler(
+                                        String ramlPath, boolean keepRamlBaseUri, ParserType parser) {
     try {
       return new RamlHandler(ramlPath, keepRamlBaseUri, muleContext, parser);
     } catch (IOException e) {

@@ -6,15 +6,15 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+
 import io.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 @ArtifactClassLoaderRunnerConfig
 public class UriParametersInMethodsTestCase extends MuleArtifactFunctionalTestCase {
@@ -40,31 +40,27 @@ public class UriParametersInMethodsTestCase extends MuleArtifactFunctionalTestCa
 
   @Test
   public void testValidStringValueForStringParameter() {
-    given().expect().response()
-        .statusCode(200)
-        .when().get("api/test/someId");
+    given().expect().response().statusCode(200).when().get("api/test/someId");
   }
 
   @Test
   public void testValidIntegerValueForStringParameter() {
-    given().expect().response()
-        .statusCode(200)
-        .when().get("api/test/24");
+    given().expect().response().statusCode(200).when().get("api/test/24");
   }
 
   @Test
   public void testValidIntegerValueForIntegerParameter() {
-    given().expect().response()
-        .statusCode(200)
-        .when().delete("api/test/24");
+    given().expect().response().statusCode(200).when().delete("api/test/24");
   }
 
   @Test
   public void testInvalidValueForIntegerParameter() {
-    given().expect().response()
+    given()
+        .expect()
+        .response()
         .statusCode(400)
         .body(is("{message: 'Bad Request'}"))
-        .when().delete("api/test/someId");
+        .when()
+        .delete("api/test/someId");
   }
-
 }

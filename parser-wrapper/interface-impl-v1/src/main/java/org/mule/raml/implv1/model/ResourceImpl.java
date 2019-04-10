@@ -6,6 +6,12 @@
  */
 package org.mule.raml.implv1.model;
 
+import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
@@ -15,13 +21,6 @@ import org.raml.model.Action;
 import org.raml.model.ActionType;
 import org.raml.model.Resource;
 import org.raml.model.parameter.UriParameter;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
 public class ResourceImpl implements IResource {
 
@@ -37,7 +36,6 @@ public class ResourceImpl implements IResource {
       return null;
     }
     return new ActionImpl(action);
-
   }
 
   @Override

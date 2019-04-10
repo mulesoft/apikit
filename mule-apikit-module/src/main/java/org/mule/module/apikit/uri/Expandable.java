@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.uri;
 
-
 /**
  * A class implementing this interface can be expanded.
  *
@@ -22,5 +21,4 @@ public interface Expandable {
    * @return The expanded URI fragment
    */
   String expand(Parameters parameters);
-
 }

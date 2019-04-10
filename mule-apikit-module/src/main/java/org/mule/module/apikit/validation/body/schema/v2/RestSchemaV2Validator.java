@@ -6,14 +6,13 @@
  */
 package org.mule.module.apikit.validation.body.schema.v2;
 
+import java.util.List;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 public class RestSchemaV2Validator implements IRestSchemaValidatorStrategy {
 

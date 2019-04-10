@@ -18,14 +18,10 @@ import java.util.Map;
  */
 public class VariableResolverMap<V> implements VariableResolver {
 
-  /**
-   * The list of values.
-   */
+  /** The list of values. */
   private Map<String, ? extends V> _map;
 
-  /**
-   * Creates a new variable resolver.
-   */
+  /** Creates a new variable resolver. */
   public VariableResolverMap() {
     this._map = new Hashtable<String, V>();
   }
@@ -39,9 +35,7 @@ public class VariableResolverMap<V> implements VariableResolver {
     this._map = map;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean exists(String value) {
     if (value == null) {
       return false;
@@ -49,11 +43,8 @@ public class VariableResolverMap<V> implements VariableResolver {
     return this._map.containsKey(value);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public V resolve(String value) {
     return this._map.get(value);
   }
-
 }

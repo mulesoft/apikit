@@ -8,12 +8,11 @@ package org.mule.tools.apikit.misc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import org.mule.weave.v2.runtime.DataWeaveResult;
 import org.mule.weave.v2.runtime.DataWeaveScriptingEngine;
 import org.mule.weave.v2.runtime.ScriptingBindings;
 import org.yaml.snakeyaml.Yaml;
-
-import java.io.IOException;
 
 public class ExampleUtils {
 
@@ -46,15 +45,12 @@ public class ExampleUtils {
 
     final String weaveResult = asDataWeave(example, transformContentType);
 
-    return "%dw 2.0\n" +
-        "output " + transformContentType + "\n" +
-        "---\n" + weaveResult + "\n";
+    return "%dw 2.0\n" + "output " + transformContentType + "\n" + "---\n" + weaveResult + "\n";
   }
 
   private static String asDataWeave(String payload, String mimeType) {
     String script = "output application/dw --- payload";
-    ScriptingBindings bindings = new ScriptingBindings()
-        .addBinding("payload", payload, mimeType);
+    ScriptingBindings bindings = new ScriptingBindings().addBinding("payload", payload, mimeType);
     DataWeaveResult result = DataWeaveScriptingEngine.write(script, bindings);
     return result.getContentAsString();
   }

@@ -7,6 +7,10 @@
 
 package org.mule.tools.apikit.output.scopes;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.jdom2.Document;
@@ -16,10 +20,6 @@ import org.mule.tools.apikit.Helper;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
-
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ConsoleScopeTest {
 
@@ -41,12 +41,11 @@ public class ConsoleScopeTest {
     when(api.getConfig()).thenReturn(config);
     when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
     new HttpListenerConfigMule4Scope(api, mule).generate();
-    new FlowScope(mule, "ExceptionStrategyNameHere", api, null, "HTTP_Listener_Configuration").generate();
+    new FlowScope(mule, "ExceptionStrategyNameHere", api, null, "HTTP_Listener_Configuration")
+        .generate();
     new ConsoleFlowScope(
-                         mule,
-                         api,
-                         api.getConfig().getName(),
-                         api.getHttpListenerConfig().getName(), true).generate();
+                         mule, api, api.getConfig().getName(), api.getHttpListenerConfig().getName(), true)
+                             .generate();
 
     String s = Helper.nonSpaceOutput(mule);
 

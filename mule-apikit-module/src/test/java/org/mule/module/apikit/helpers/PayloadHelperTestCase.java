@@ -9,15 +9,13 @@ package org.mule.module.apikit.helpers;
 import static org.junit.Assert.assertEquals;
 import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsString;
 
-import org.mule.module.apikit.api.exception.BadRequestException;
-import org.mule.module.apikit.input.stream.RewindableInputStream;
-import org.mule.runtime.api.exception.TypedException;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
 import org.junit.Test;
+import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.module.apikit.input.stream.RewindableInputStream;
+import org.mule.runtime.api.exception.TypedException;
 
 public class PayloadHelperTestCase {
 
@@ -30,36 +28,44 @@ public class PayloadHelperTestCase {
 
   @Test
   public void validStringPayload() throws TypedException, BadRequestException {
-    String payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
+    String payload =
+        "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
 
     assertEquals(payload, getPayloadAsString(payload, "UTF-8"));
   }
 
   @Test
   public void validInputStreamPayload() throws TypedException, BadRequestException {
-    String payloadString = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
+    String payloadString =
+        "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
 
-    InputStream payloadStream = new ByteArrayInputStream(payloadString.getBytes(StandardCharsets.UTF_8));
+    InputStream payloadStream =
+        new ByteArrayInputStream(payloadString.getBytes(StandardCharsets.UTF_8));
     assertEquals(payloadString, getPayloadAsString(payloadStream, "UTF-8"));
   }
 
   @Test
   public void validRewindableInputStreamPayload() throws TypedException, BadRequestException {
-    String payloadString = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
+    String payloadString =
+        "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>";
 
-    final InputStream payloadStream = new ByteArrayInputStream(payloadString.getBytes(StandardCharsets.UTF_8));
+    final InputStream payloadStream =
+        new ByteArrayInputStream(payloadString.getBytes(StandardCharsets.UTF_8));
     final RewindableInputStream rewindable = new RewindableInputStream(payloadStream);
 
     assertEquals(payloadString, getPayloadAsString(rewindable, "UTF-8"));
-    //re-reading payload to check if it was consumed
+    // re-reading payload to check if it was consumed
     assertEquals(payloadString, getPayloadAsString(rewindable, "UTF-8"));
   }
 
   @Test
   public void validBytesPayload() throws TypedException, BadRequestException {
-    byte[] payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>".getBytes();
+    byte[] payload =
+        "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>"
+            .getBytes();
 
-    assertEquals("<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>",
+    assertEquals(
+                 "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><invalid>hello</invalid></league>",
                  getPayloadAsString(payload, "UTF-8"));
   }
 
@@ -67,13 +73,13 @@ public class PayloadHelperTestCase {
   public void nullPayload() throws TypedException, BadRequestException {
 
     getPayloadAsString(null, "UTF-8");
-
   }
 
   @Test
   public void validStreamPayloadWithBOM() throws TypedException, BadRequestException {
     final String utf8BOM = "\uFEFF";
-    final String payload = "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><greeting>hello</greeting></league>";
+    final String payload =
+        "<league xmlns=\"http://mulesoft.com/schemas/soccer\"><greeting>hello</greeting></league>";
 
     assertEquals(payload, getPayloadAsString(utf8BOM + payload, "UTF-8"));
   }

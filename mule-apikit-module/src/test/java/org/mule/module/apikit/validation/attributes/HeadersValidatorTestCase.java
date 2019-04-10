@@ -6,24 +6,22 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mule.module.apikit.api.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.raml.implv1.model.ActionImpl;
+import org.mule.runtime.api.exception.TypedException;
 import org.mule.runtime.api.util.MultiMap;
 import org.raml.model.Action;
 import org.raml.model.ParamType;
 import org.raml.model.parameter.Header;
-import org.mule.runtime.api.exception.TypedException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class HeadersValidatorTestCase {
 
@@ -31,7 +29,8 @@ public class HeadersValidatorTestCase {
   public ExpectedException expectedException = ExpectedException.none();
 
   @Test(expected = InvalidHeaderException.class)
-  public void invalidHeader() throws TypedException, InvalidHeaderException, NotAcceptableException {
+  public void invalidHeader()
+      throws TypedException, InvalidHeaderException, NotAcceptableException {
     Map<String, Header> expectedHeaders = new HashMap<>();
     Header header1 = new Header();
     header1.setType(ParamType.STRING);
@@ -48,7 +47,6 @@ public class HeadersValidatorTestCase {
     values2.add("yeah");
     header2.setEnumeration(values2);
     expectedHeaders.put("mule-{?}", header2);
-
 
     Action action = new Action();
     action.setHeaders(expectedHeaders);
@@ -80,7 +78,6 @@ public class HeadersValidatorTestCase {
     values2.add("yeah");
     header2.setEnumeration(values2);
     expectedHeaders.put("mule-{?}", header2);
-
 
     Action action = new Action();
     action.setHeaders(expectedHeaders);

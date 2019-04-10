@@ -12,7 +12,9 @@ import java.io.OutputStream;
 
 public class StreamUtils {
 
-  protected static Integer bufferSize = 4096;//System.getProperty("mule.streaming.bufferSize") == null? Integer.parseInt(System.getProperty("mule.streaming.bufferSize")): 4096;
+  protected static Integer bufferSize =
+      4096; // System.getProperty("mule.streaming.bufferSize") == null?
+                                                  // Integer.parseInt(System.getProperty("mule.streaming.bufferSize")): 4096;
 
   public static long copyLarge(InputStream input, OutputStream output) throws IOException {
     byte[] buffer = new byte[bufferSize];

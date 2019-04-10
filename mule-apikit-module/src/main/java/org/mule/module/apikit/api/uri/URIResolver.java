@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
-
 import org.mule.module.apikit.uri.Token;
 import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.uri.URIResolveResult;
@@ -22,11 +21,11 @@ import org.mule.module.apikit.uri.Variable;
 import org.mule.module.apikit.uri.VariableBinder;
 import org.mule.module.apikit.uri.VariableResolver;
 
-
 /**
  * A URI pattern resolver identifies the URI pattern and variables values given a specific URI.
- * <p/>
- * This class is typically used as follows:
+ *
+ * <p>This class is typically used as follows:
+ *
  * <pre>
  *   // Create a resolver instance
  *   URIResolver resolver = new URIResolver("http://www.acme.com/test/home");
@@ -58,15 +57,13 @@ public class URIResolver {
     FIRST_MATCH,
 
     /**
-     * Indicates that the best matching pattern should be returned when finding a match in a list
-     * of patterns. The best matching patterns is determined by the longest common string.
+     * Indicates that the best matching pattern should be returned when finding a match in a list of
+     * patterns. The best matching patterns is determined by the longest common string.
      */
     BEST_MATCH
   }
 
-  /**
-   * The URI to resolve.
-   */
+  /** The URI to resolve. */
   private String _uri;
 
   /**
@@ -101,7 +98,7 @@ public class URIResolver {
    * Returns the first URI pattern in the list which matches the underlying URI.
    *
    * @param patterns The URI patterns available.
-   * @param rule     The rule used to select the matching patterns in case of multiple matches.
+   * @param rule The rule used to select the matching patterns in case of multiple matches.
    * @return The first URI pattern that matches or <code>null</code>.
    */
   public URIPattern find(Set<URIPattern> patterns, MatchRule rule) {
@@ -116,8 +113,8 @@ public class URIResolver {
 
   /**
    * Returns all the URI patterns in the list which match the underlying URI.
-   * <p/>
-   * This methods returns an empty list if there are no matching patterns.
+   *
+   * <p>This methods returns an empty list if there are no matching patterns.
    *
    * @param patterns The URI patterns available.
    * @return A collection of matching URI patterns.
@@ -149,7 +146,7 @@ public class URIResolver {
    * Resolves the given URI pattern using the specified variable binder.
    *
    * @param pattern The pattern to resolve.
-   * @param binder  The variable binder.
+   * @param binder The variable binder.
    * @return The URI pattern that best matches the given URI.
    */
   public URIResolveResult resolve(URIPattern pattern, VariableBinder binder) {
@@ -180,11 +177,11 @@ public class URIResolver {
   /**
    * Lookup the variable values using the variable resolvers specified in the bindings from the
    * values mapped to the variables.
-   * <p/>
-   * Set the status of the result accordingly.
+   *
+   * <p>Set the status of the result accordingly.
    *
    * @param result Where the results go.
-   * @param map    Values mapped to the variables.
+   * @param map Values mapped to the variables.
    * @param binder The resolvers to use for each variable.
    */
   private void lookup(URIResolveResult result, Map<Variable, Object> map, VariableBinder binder) {
@@ -255,5 +252,4 @@ public class URIResolver {
     }
     return best;
   }
-
 }

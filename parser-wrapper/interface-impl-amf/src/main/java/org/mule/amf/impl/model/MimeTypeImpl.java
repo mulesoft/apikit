@@ -6,6 +6,12 @@
  */
 package org.mule.amf.impl.model;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
+
 import amf.client.model.domain.AnyShape;
 import amf.client.model.domain.Example;
 import amf.client.model.domain.NodeShape;
@@ -15,23 +21,16 @@ import amf.client.model.domain.Shape;
 import amf.client.model.domain.UnionShape;
 import amf.client.validate.PayloadValidator;
 import amf.client.validate.ValidationReport;
-import org.mule.amf.impl.parser.rule.ValidationResultImpl;
-import org.mule.raml.interfaces.model.IMimeType;
-import org.mule.raml.interfaces.model.parameter.IParameter;
-import org.mule.raml.interfaces.parser.rule.IValidationResult;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
+import org.mule.amf.impl.parser.rule.ValidationResultImpl;
+import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 
 public class MimeTypeImpl implements IMimeType {
 
@@ -66,7 +65,8 @@ public class MimeTypeImpl implements IMimeType {
   public Map<String, List<IParameter>> getFormParameters() {
     final String mediaType = payload.mediaType().value();
 
-    if (mediaType.startsWith("multipart/") || mediaType.equals("application/x-www-form-urlencoded")) {
+    if (mediaType.startsWith("multipart/")
+        || mediaType.equals("application/x-www-form-urlencoded")) {
       if (shape.getClass() == AnyShape.class)
         return emptyMap();
 
@@ -78,7 +78,8 @@ public class MimeTypeImpl implements IMimeType {
       final Map<String, List<IParameter>> parameters = new LinkedHashMap<>();
 
       for (PropertyShape propertyShape : nodeShape.properties()) {
-        parameters.put(propertyShape.name().value(), singletonList(new ParameterImpl(propertyShape)));
+        parameters.put(
+                       propertyShape.name().value(), singletonList(new ParameterImpl(propertyShape)));
       }
 
       return parameters;
@@ -121,7 +122,8 @@ public class MimeTypeImpl implements IMimeType {
         return example.value().value();
     }
 
-    return anyShape.examples().stream().filter(example -> example.value().value() != null)
+    return anyShape.examples().stream()
+        .filter(example -> example.value().value() != null)
         .map(example -> example.value().value())
         .findFirst()
         .orElse(null);

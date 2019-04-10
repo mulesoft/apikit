@@ -6,10 +6,9 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.runtime.extension.api.annotation.param.Parameter;
-
 import java.util.ArrayList;
 import java.util.List;
+import org.mule.runtime.extension.api.annotation.param.Parameter;
 
 public class FlowMappings {
 

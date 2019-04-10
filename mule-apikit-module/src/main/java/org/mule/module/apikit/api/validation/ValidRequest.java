@@ -30,7 +30,7 @@ public class ValidRequest {
     return new ValidRequestBuilder();
   }
 
-  static public class ValidRequestBuilder {
+  public static class ValidRequestBuilder {
 
     HttpRequestAttributes attributes;
     ValidBody body;

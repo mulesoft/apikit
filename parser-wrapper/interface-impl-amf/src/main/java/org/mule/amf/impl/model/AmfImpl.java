@@ -6,10 +6,13 @@
  */
 package org.mule.amf.impl.model;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toMap;
+
 import amf.client.model.domain.EndPoint;
 import amf.client.model.domain.Server;
 import amf.client.model.domain.WebApi;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -22,10 +25,6 @@ import org.mule.raml.interfaces.model.ISecurityScheme;
 import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import scala.Option;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toMap;
 
 public class AmfImpl implements IRaml {
 
@@ -46,14 +45,17 @@ public class AmfImpl implements IRaml {
     return resources;
   }
 
-  private void addToMap(final Map<String, Map<String, IResource>> resources, final EndPoint endPoint) {
+  private void addToMap(
+                        final Map<String, Map<String, IResource>> resources, final EndPoint endPoint) {
     final String parentKey = parentKey(endPoint);
 
-    final Map<String, IResource> parentMap = resources.computeIfAbsent(parentKey, k -> new LinkedHashMap<>());
+    final Map<String, IResource> parentMap =
+        resources.computeIfAbsent(parentKey, k -> new LinkedHashMap<>());
     final String childKey = endPoint.relativePath();
     parentMap.put(childKey, new ResourceImpl(this, endPoint));
 
-    //System.out.println("AmfImpl.addToMap ["+ parentKey + "] entry -> key: " + childKey + " -> " + endPoint.path().value());
+    // System.out.println("AmfImpl.addToMap ["+ parentKey + "] entry -> key: " + childKey + " -> " +
+    // endPoint.path().value());
   }
 
   private static String parentKey(final EndPoint endPoint) {
@@ -86,7 +88,6 @@ public class AmfImpl implements IRaml {
     return webApi.servers().stream().findFirst();
   }
 
-
   @Override
   public Map<String, IResource> getResources() {
     return resources.containsKey("") ? resources.get("") : emptyMap();
@@ -104,8 +105,10 @@ public class AmfImpl implements IRaml {
 
   @Override
   public Map<String, IParameter> getBaseUriParameters() {
-    return getServer().<Map<String, IParameter>>map(server -> server.variables().stream()
-        .collect(toMap(p -> p.name().value(), ParameterImpl::new)))
+    return getServer()
+        .<Map<String, IParameter>>map(
+                                      server -> server.variables().stream()
+                                          .collect(toMap(p -> p.name().value(), ParameterImpl::new)))
         .orElseGet(Collections::emptyMap);
   }
 
@@ -136,9 +139,7 @@ public class AmfImpl implements IRaml {
   }
 
   @Override
-  public void cleanBaseUriParameters() {
-
-  }
+  public void cleanBaseUriParameters() {}
 
   @Override
   public List<String> getAllReferences() {
@@ -146,12 +147,8 @@ public class AmfImpl implements IRaml {
   }
 
   @Override
-  public void injectTrait(String name) {
-
-  }
+  public void injectTrait(String name) {}
 
   @Override
-  public void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme) {
-
-  }
+  public void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme) {}
 }

@@ -6,20 +6,19 @@
  */
 package org.mule.module.apikit.helpers;
 
-import com.google.common.base.Strings;
-import org.mule.extension.http.api.HttpRequestAttributes;
-import org.mule.extension.http.api.HttpRequestAttributesBuilder;
-import org.mule.module.apikit.HeaderName;
-import org.mule.runtime.api.util.MultiMap;
+import static java.util.Collections.emptyList;
+import static org.mule.module.apikit.HeaderName.CONTENT_TYPE;
 
+import com.google.common.base.Strings;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Collections.emptyList;
-import static org.mule.module.apikit.HeaderName.CONTENT_TYPE;
+import org.mule.extension.http.api.HttpRequestAttributes;
+import org.mule.extension.http.api.HttpRequestAttributesBuilder;
+import org.mule.module.apikit.HeaderName;
+import org.mule.runtime.api.util.MultiMap;
 
 public class AttributesHelper {
 
@@ -29,7 +28,8 @@ public class AttributesHelper {
     // Prevents instantiation :)
   }
 
-  public static MultiMap<String, String> addParam(MultiMap<String, String> oldParams, String key, String value) {
+  public static MultiMap<String, String> addParam(
+                                                  MultiMap<String, String> oldParams, String key, String value) {
     MultiMap<String, String> mapParam = new MultiMap<>();
     LinkedList<String> valueList = new LinkedList<>();
     valueList.add(value);
@@ -42,7 +42,8 @@ public class AttributesHelper {
     return mapParam;
   }
 
-  public static String addQueryString(String oldQueryString, int queryStringSize, String key, String value) {
+  public static String addQueryString(
+                                      String oldQueryString, int queryStringSize, String key, String value) {
     String newParam = queryStringSize != 0 ? "&" : "";
     try {
       newParam += URLEncoder.encode(key, "UTF-8");
@@ -51,13 +52,16 @@ public class AttributesHelper {
         newParam += "=" + URLEncoder.encode(value, "UTF-8");
       }
     } catch (UnsupportedEncodingException e) {
-      //UTF-8 will never be unsupported
+      // UTF-8 will never be unsupported
     }
     return oldQueryString + newParam;
   }
 
-  public static HttpRequestAttributes replaceParams(HttpRequestAttributes attributes, MultiMap<String, String> headers,
-                                                    MultiMap<String, String> queryParams, String queryString,
+  public static HttpRequestAttributes replaceParams(
+                                                    HttpRequestAttributes attributes,
+                                                    MultiMap<String, String> headers,
+                                                    MultiMap<String, String> queryParams,
+                                                    String queryString,
                                                     MultiMap<String, String> uriParams) {
     return new HttpRequestAttributesBuilder(attributes)
         .headers(headers)
@@ -88,7 +92,8 @@ public class AttributesHelper {
   public static List<String> getParamsIgnoreCase(MultiMap<String, String> parameters, String name) {
     return parameters.keySet().stream()
         .filter(header -> header.equalsIgnoreCase(name))
-        .findFirst().map(parameters::getAll)
+        .findFirst()
+        .map(parameters::getAll)
         .orElse(emptyList());
   }
 
@@ -104,5 +109,4 @@ public class AttributesHelper {
     }
     return acceptableResponseMediaTypes;
   }
-
 }

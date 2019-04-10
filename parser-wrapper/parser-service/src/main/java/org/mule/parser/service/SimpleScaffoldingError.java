@@ -8,9 +8,7 @@ package org.mule.parser.service;
 
 import static org.mule.parser.service.ScaffoldingErrorType.GENERATION;
 
-/**
- * Represents a simple parsing error with cause message
- */
+/** Represents a simple parsing error with cause message */
 public class SimpleScaffoldingError implements ComponentScaffoldingError {
 
   private final String cause;

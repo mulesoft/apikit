@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
-import org.junit.Test;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 public class UrlEncodedV1FunctionalTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -21,25 +21,29 @@ public class UrlEncodedV1FunctionalTestCase extends AbstractMultiParserFunctiona
 
   @Test
   public void simpleUrlencodedRequest() throws Exception {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("first", "primo")
         .expect()
         .response()
         .body(is("first=primo"))
         .statusCode(201)
-        .when().post("/api/url-encoded-simple");
+        .when()
+        .post("/api/url-encoded-simple");
   }
 
   @Test
   public void setDefaultFormParameterForUrlencodedRequest() throws Exception {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("second", "segundo")
         .formParam("third", "true")
         .expect()
         .response()
         .body(is("second=segundo&third=true&first=primo"))
         .statusCode(201)
-        .when().post("/api/url-encoded-with-default");
+        .when()
+        .post("/api/url-encoded-with-default");
   }
 
   @Test
@@ -52,7 +56,8 @@ public class UrlEncodedV1FunctionalTestCase extends AbstractMultiParserFunctiona
       body = "{message: 'Bad Request'}";
     }
 
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("second", "segundo")
         .formParam("second", "segundo2")
         .formParam("third", "true")
@@ -60,7 +65,7 @@ public class UrlEncodedV1FunctionalTestCase extends AbstractMultiParserFunctiona
         .response()
         .body(is(body))
         .statusCode(status)
-        .when().post("/api/url-encoded-duplicated-key");
+        .when()
+        .post("/api/url-encoded-duplicated-key");
   }
-
 }

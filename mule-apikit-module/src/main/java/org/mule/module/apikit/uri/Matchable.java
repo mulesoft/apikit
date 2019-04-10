@@ -11,8 +11,8 @@ import java.util.regex.Pattern;
 
 /**
  * A class implementing this interface can be matched.
- * <p/>
- * This interface can be used to indicate whether a class can be used for pattern matching.
+ *
+ * <p>This interface can be used to indicate whether a class can be used for pattern matching.
  *
  * @author Christophe Lauret
  * @version 4 February 2009
@@ -33,5 +33,4 @@ public interface Matchable {
    * @return The regular expression pattern corresponding to this object.
    */
   Pattern pattern();
-
 }

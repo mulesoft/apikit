@@ -6,10 +6,9 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
+import java.io.IOException;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import java.io.IOException;
 
 public class EncodingTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -72,17 +71,18 @@ public class EncodingTestCase extends AbstractMultiParserFunctionalTestCase {
     postXmlWindows1252(api, true);
   }
 
-  //TODO FIX TEST
+  // TODO FIX TEST
   private void postXmlWindows1252(String api, boolean sendCharset) throws Exception {
-    //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/schema/payload-windows1252.xml");
-    //byte[] body = IOUtils.toByteArray(inputStream);
-    //String responseBody = IOUtils.toString(body, "windows-1252");
-    //String contentType = "application/xml";
-    //if (sendCharset)
-    //{
+    // InputStream inputStream =
+    // this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/schema/payload-windows1252.xml");
+    // byte[] body = IOUtils.toByteArray(inputStream);
+    // String responseBody = IOUtils.toString(body, "windows-1252");
+    // String contentType = "application/xml";
+    // if (sendCharset)
+    // {
     //    contentType += ";charset=windows-1252";
-    //}
-    //given().body(body)
+    // }
+    // given().body(body)
     //        .header("Content-Type", contentType)
     //        .header("Accept", "application/xml")
     //        .expect().log().everything().statusCode(200)
@@ -140,26 +140,25 @@ public class EncodingTestCase extends AbstractMultiParserFunctionalTestCase {
     postJsonUtf16be("/api08byte", false);
   }
 
-
   private void postJsonUtf16be(String api) throws IOException {
     postJsonUtf16be(api, true);
   }
 
   private void postJsonUtf16be(String api, boolean sendCharset) throws IOException {
-    //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/unicode/diacritics-utf16be.json");
-    //byte[] body = IOUtils.toByteArray(inputStream);
-    //String contentType = "application/json";
-    //if (sendCharset)
-    //{
+    // InputStream inputStream =
+    // this.getClass().getClassLoader().getResourceAsStream("org/mule/module/apikit/unicode/diacritics-utf16be.json");
+    // byte[] body = IOUtils.toByteArray(inputStream);
+    // String contentType = "application/json";
+    // if (sendCharset)
+    // {
     //    contentType += ";charset=UTF-16";
-    //}
-    //String responseBody = IOUtils.toString(body, "UTF-16");
-    //given().body(body)
+    // }
+    // String responseBody = IOUtils.toString(body, "UTF-16");
+    // given().body(body)
     //        .header("Content-Type", contentType)
     //        .expect()
     //        .statusCode(200)
     //        .body(is(responseBody))
     //        .when().post(api + "/testJson");
   }
-
 }

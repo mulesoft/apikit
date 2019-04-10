@@ -11,20 +11,22 @@ import org.mule.runtime.extension.api.annotation.Alias;
 import org.mule.runtime.extension.api.annotation.param.Optional;
 import org.mule.runtime.extension.api.annotation.param.Parameter;
 
-
 public class FlowMapping {
 
   @Parameter
   private String resource;
   @Parameter
   private String action;
+
   @Parameter
   @Optional
   @Alias("content-type")
   private String contentType;
+
   @Parameter
   @Alias("flow-ref")
   private String flowRef;
+
   private Flow flow;
 
   public String getResource() {

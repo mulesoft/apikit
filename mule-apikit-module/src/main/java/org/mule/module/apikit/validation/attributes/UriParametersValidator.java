@@ -6,14 +6,13 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import java.util.Map;
 import org.mule.module.apikit.api.exception.InvalidUriParameterException;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.mule.runtime.api.util.MultiMap;
-
-import java.util.Map;
 
 public class UriParametersValidator {
 
@@ -33,8 +32,10 @@ public class UriParametersValidator {
       String value = (String) resolvedVariables.get(entry.getKey());
       IParameter uriParameter = entry.getValue();
       if (!uriParameter.validate(value)) {
-        String msg = String.format("Invalid value '%s' for uri parameter %s. %s",
-                                   value, entry.getKey(), uriParameter.message(value));
+        String msg =
+            String.format(
+                          "Invalid value '%s' for uri parameter %s. %s",
+                          value, entry.getKey(), uriParameter.message(value));
 
         throw new InvalidUriParameterException(msg);
       }
@@ -46,5 +47,4 @@ public class UriParametersValidator {
     }
     return this.uriParams;
   }
-
 }

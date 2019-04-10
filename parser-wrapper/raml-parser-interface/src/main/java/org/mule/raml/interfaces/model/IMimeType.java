@@ -6,11 +6,10 @@
  */
 package org.mule.raml.interfaces.model;
 
-import org.mule.raml.interfaces.model.parameter.IParameter;
-import org.mule.raml.interfaces.parser.rule.IValidationResult;
-
 import java.util.List;
 import java.util.Map;
+import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 
 public interface IMimeType {
 
@@ -20,9 +19,7 @@ public interface IMimeType {
 
   Map<String, List<IParameter>> getFormParameters();
 
-  /**
-   * @return the mime type name (e.g: application/json)
-   */
+  /** @return the mime type name (e.g: application/json) */
   String getType();
 
   String getExample();

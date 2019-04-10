@@ -6,11 +6,18 @@
  */
 package org.mule.amf.impl.model;
 
+import static java.util.Collections.emptyMap;
+import static java.util.stream.Collectors.toMap;
+
 import amf.client.model.domain.AnyShape;
 import amf.client.model.domain.Operation;
 import amf.client.model.domain.Request;
 import amf.client.model.domain.Response;
 import amf.client.model.domain.Shape;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IMimeType;
@@ -19,14 +26,6 @@ import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.Collections.emptyMap;
-import static java.util.stream.Collectors.toMap;
 
 public class ActionImpl implements IAction {
 
@@ -111,9 +110,12 @@ public class ActionImpl implements IAction {
       return emptyMap();
 
     final Map<String, IParameter> result = new HashMap<>();
-    request.queryParameters().forEach(parameter -> {
-      result.put(parameter.name().value(), new ParameterImpl(parameter));
-    });
+    request
+        .queryParameters()
+        .forEach(
+                 parameter -> {
+                   result.put(parameter.name().value(), new ParameterImpl(parameter));
+                 });
     return result;
   }
 
@@ -131,11 +133,13 @@ public class ActionImpl implements IAction {
     return resolvedUriParameters;
   }
 
-  private static Map<String, IParameter> loadResolvedUriParameters(final IResource resource, Operation operation) {
+  private static Map<String, IParameter> loadResolvedUriParameters(
+                                                                   final IResource resource, Operation operation) {
     final Map<String, IParameter> operationUriParams;
     if (operation.request() != null) {
-      operationUriParams = operation.request().uriParameters().stream()
-          .collect(toMap(p -> p.name().value(), ParameterImpl::new));
+      operationUriParams =
+          operation.request().uriParameters().stream()
+              .collect(toMap(p -> p.name().value(), ParameterImpl::new));
     } else {
       operationUriParams = new HashMap<>();
     }
@@ -160,9 +164,12 @@ public class ActionImpl implements IAction {
       return emptyMap();
 
     final Map<String, IParameter> result = new HashMap<>();
-    request.headers().forEach(parameter -> {
-      result.put(parameter.name().value(), new ParameterImpl(parameter));
-    });
+    request
+        .headers()
+        .forEach(
+                 parameter -> {
+                   result.put(parameter.name().value(), new ParameterImpl(parameter));
+                 });
     return result;
   }
 

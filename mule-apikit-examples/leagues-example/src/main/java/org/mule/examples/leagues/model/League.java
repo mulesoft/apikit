@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -37,8 +36,11 @@ public class League {
   public void initialize() {
     JSONParser jsonParser = new JSONParser();
     try {
-      JSONObject jsonObject = (JSONObject) jsonParser
-          .parse(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("teams.json")));
+      JSONObject jsonObject =
+          (JSONObject) jsonParser.parse(
+                                        new InputStreamReader(
+                                                              this.getClass().getClassLoader()
+                                                                  .getResourceAsStream("teams.json")));
       JSONArray teams = (JSONArray) jsonObject.get("teams");
       Iterator<JSONObject> iterator = teams.iterator();
       while (iterator.hasNext()) {
@@ -72,7 +74,8 @@ public class League {
             match.updateResult();
             firstRoundGames++;
           } else {
-            match.setDate((secondRoundGames % 2 == 0) ? secondRoundFirstDate : secondRoundSecondDate);
+            match.setDate(
+                          (secondRoundGames % 2 == 0) ? secondRoundFirstDate : secondRoundSecondDate);
             secondRoundGames++;
           }
 
@@ -173,26 +176,28 @@ public class League {
 
   public List<Team> orderTeamsByPosition() {
     List<Team> teams = getTeams();
-    Collections.sort(teams, new Comparator<Team>() {
+    Collections.sort(
+                     teams,
+                     new Comparator<Team>() {
 
-      @Override
-      public int compare(Team team, Team team2) {
-        int byPoints = Integer.valueOf(team2.getPoints()).compareTo(team.getPoints());
-        if (byPoints != 0) {
-          return byPoints;
-        }
+                       @Override
+                       public int compare(Team team, Team team2) {
+                         int byPoints = Integer.valueOf(team2.getPoints()).compareTo(team.getPoints());
+                         if (byPoints != 0) {
+                           return byPoints;
+                         }
 
-        int byGoalDifference = Integer.valueOf(team2.getGoalsInFavor() - team2.getGoalsAgainst())
-            .compareTo(team.getGoalsInFavor() - team.getGoalsAgainst());
+                         int byGoalDifference =
+                             Integer.valueOf(team2.getGoalsInFavor() - team2.getGoalsAgainst())
+                                 .compareTo(team.getGoalsInFavor() - team.getGoalsAgainst());
 
-        if (byGoalDifference != 0) {
-          return byGoalDifference;
-        }
+                         if (byGoalDifference != 0) {
+                           return byGoalDifference;
+                         }
 
-        return Integer.valueOf(team2.getGoalsInFavor()).compareTo(team.getGoalsInFavor());
-      }
-    });
+                         return Integer.valueOf(team2.getGoalsInFavor()).compareTo(team.getGoalsInFavor());
+                       }
+                     });
     return teams;
   }
-
 }

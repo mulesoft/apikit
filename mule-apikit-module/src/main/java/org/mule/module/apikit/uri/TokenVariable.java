@@ -12,8 +12,11 @@ import java.util.regex.Pattern;
 
 /**
  * A URI token wrapping a variable.
- * <p/>
+ *
+ * <p>
+ *
  * <p>Variables follow the following expression:
+ *
  * <pre>
  * var         = varname [ &quot;=&quot; vardefault ]
  * varname     = (ALPHA / DIGIT)*(ALPHA / DIGIT / &quot;.&quot; / &quot;_&quot; / &quot;-&quot; )
@@ -25,18 +28,16 @@ import java.util.regex.Pattern;
  */
 public class TokenVariable extends TokenBase implements Token, Matchable {
 
-  /**
-   * The variable for this token.
-   */
+  /** The variable for this token. */
   private Variable _var;
 
   /**
    * Creates a new variable token.
    *
    * @param exp The expression to create a new.
-   * @throws NullPointerException       If the specified expression is <code>null</code>.
+   * @throws NullPointerException If the specified expression is <code>null</code>.
    * @throws URITemplateSyntaxException If the specified expression could not be parsed as a
-   *                                    variable.
+   *     variable.
    */
   public TokenVariable(String exp) throws NullPointerException, URITemplateSyntaxException {
     this(Variable.parse(exp));
@@ -62,33 +63,24 @@ public class TokenVariable extends TokenBase implements Token, Matchable {
     return _var;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public String expand(Parameters variables) {
     return URICoder.encode(this._var.value(variables));
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean match(String value) {
     return Variable.isValidValue(value);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Pattern pattern() {
     return Variable.VALID_VALUE;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean resolve(String expanded, Map<Variable, Object> values) {
     values.put(this._var, URICoder.decode(expanded));
     return true;
   }
-
 }

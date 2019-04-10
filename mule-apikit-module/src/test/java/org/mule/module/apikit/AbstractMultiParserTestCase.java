@@ -6,18 +6,15 @@
  */
 package org.mule.module.apikit;
 
+import static java.util.Arrays.asList;
+import static org.mule.module.apikit.api.RamlHandler.MULE_APIKIT_PARSER_AMF;
+
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import static java.util.Arrays.asList;
-import static org.mule.module.apikit.api.RamlHandler.MULE_APIKIT_PARSER_AMF;
-
-/**
- * Use this class when Test are not FunctionTests
- */
+/** Use this class when Test are not FunctionTests */
 @RunWith(Parameterized.class)
 public abstract class AbstractMultiParserTestCase {
 
@@ -29,10 +26,7 @@ public abstract class AbstractMultiParserTestCase {
 
   @Parameterized.Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
-    return asList(new Object[][] {
-        {AMF_PARSER},
-        {JAVA_PARSER}
-    });
+    return asList(new Object[][] {{AMF_PARSER}, {JAVA_PARSER}});
   }
 
   @Before

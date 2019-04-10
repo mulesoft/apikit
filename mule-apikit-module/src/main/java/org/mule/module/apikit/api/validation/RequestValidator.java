@@ -6,13 +6,20 @@
  */
 package org.mule.module.apikit.api.validation;
 
+import static org.mule.apikit.common.CommonUtils.cast;
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
+import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsByteArray;
+import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
+
+import java.io.IOException;
+import java.io.InputStream;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.CharsetUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.module.apikit.api.exception.MethodNotAllowedException;
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
-import org.mule.module.apikit.api.exception.MethodNotAllowedException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.module.apikit.validation.AttributesValidator;
@@ -24,28 +31,28 @@ import org.mule.runtime.api.util.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.mule.apikit.common.CommonUtils.cast;
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsByteArray;
-import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
-
 public class RequestValidator {
 
   private static Logger LOGGER = LoggerFactory.getLogger(RequestValidator.class);
 
-  public static ValidRequest validate(ValidationConfig config, IResource resource, HttpRequestAttributes attributes,
-                                      ResolvedVariables resolvedVariables, Object payload)
+  public static ValidRequest validate(
+                                      ValidationConfig config,
+                                      IResource resource,
+                                      HttpRequestAttributes attributes,
+                                      ResolvedVariables resolvedVariables,
+                                      Object payload)
       throws MuleRestException {
 
     return validate(config, resource, attributes, resolvedVariables, payload, null);
-
   }
 
-  public static ValidRequest validate(ValidationConfig config, IResource resource, HttpRequestAttributes attributes,
-                                      ResolvedVariables resolvedVariables, Object payload, String charset)
+  public static ValidRequest validate(
+                                      ValidationConfig config,
+                                      IResource resource,
+                                      HttpRequestAttributes attributes,
+                                      ResolvedVariables resolvedVariables,
+                                      Object payload,
+                                      String charset)
       throws MuleRestException {
 
     final HttpRequestAttributes httpRequestAttributes;
@@ -55,7 +62,8 @@ public class RequestValidator {
       validBody = new ValidBody(payload);
     } else {
       if (resource == null)
-        throw new MuleRuntimeException(createStaticMessage("Unexpected error. Resource cannot be null"));
+        throw new MuleRuntimeException(
+                                       createStaticMessage("Unexpected error. Resource cannot be null"));
 
       payload = makePayloadRepeatable(payload);
 
@@ -74,15 +82,14 @@ public class RequestValidator {
         throw new MethodNotAllowedException(resource.getResolvedUri(version) + " : " + method);
       }
 
-      httpRequestAttributes = AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables, config);
-      validBody = BodyValidator.validate(resource.getAction(method), attributes, payload, config, charset);
+      httpRequestAttributes =
+          AttributesValidator.validateAndAddDefaults(
+                                                     attributes, resource, resolvedVariables, config);
+      validBody =
+          BodyValidator.validate(resource.getAction(method), attributes, payload, config, charset);
     }
 
-    return ValidRequest.builder()
-        .withAttributes(httpRequestAttributes)
-        .withBody(validBody)
-        .build();
-
+    return ValidRequest.builder().withAttributes(httpRequestAttributes).withBody(validBody).build();
   }
 
   private static Object makePayloadRepeatable(Object payload) {
@@ -90,7 +97,8 @@ public class RequestValidator {
       final TypedValue typedValue = (TypedValue) payload;
       final Object payloadValue = typedValue.getValue();
       if (payloadValue instanceof InputStream) {
-        final RewindableInputStream rewindable = new RewindableInputStream((InputStream) payloadValue);
+        final RewindableInputStream rewindable =
+            new RewindableInputStream((InputStream) payloadValue);
         return new TypedValue<>(rewindable, typedValue.getDataType());
       }
     } else if (payload instanceof InputStream && !(payload instanceof RewindableInputStream)) {
@@ -100,7 +108,8 @@ public class RequestValidator {
     return payload;
   }
 
-  private static String getCharset(MultiMap<String, String> headers, Object payload) throws IOException {
+  private static String getCharset(MultiMap<String, String> headers, Object payload)
+      throws IOException {
     String charset = getHeaderCharset(headers);
 
     if (charset == null) {

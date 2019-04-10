@@ -10,6 +10,12 @@ import com.github.fge.jsonschema.main.JsonSchema;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.ServiceLoader;
+import java.util.concurrent.ExecutionException;
+import javax.inject.Inject;
+import javax.xml.validation.Schema;
 import org.apache.commons.lang.StringUtils;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.config.ConsoleConfig;
@@ -30,13 +36,6 @@ import org.mule.runtime.core.api.el.ExpressionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.xml.validation.Schema;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.ServiceLoader;
-import java.util.concurrent.ExecutionException;
-
 public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
 
   private boolean disableValidations;
@@ -54,9 +53,8 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   private boolean isExtensionEnabled = false;
 
-
-  private final static String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeaders";
-  private final static String DEFAULT_HTTP_STATUS_VAR_NAME = "httpStatus";
+  private static final String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeaders";
+  private static final String DEFAULT_HTTP_STATUS_VAR_NAME = "httpStatus";
 
   protected LoadingCache<String, URIResolver> uriResolverCache;
   protected LoadingCache<String, URIPattern> uriPatternCache;
@@ -66,13 +64,12 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   private static final int URI_CACHE_SIZE = 1000;
 
-
   protected static final Logger logger = LoggerFactory.getLogger(Configuration.class);
 
   private RamlHandler ramlHandler;
   private FlowFinder flowFinder;
 
-  @Inject //TODO delete this after getting resources from resource folder and the flows
+  @Inject // TODO delete this after getting resources from resource folder and the flows
   private MuleContext muleContext;
 
   @Inject
@@ -90,7 +87,8 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     try {
       ramlHandler = new RamlHandler(getApi(), isKeepApiBaseUri(), muleContext, getParser());
 
-      // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
+      // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML.
+      // In that case,
       // we will keep the value defined during raml handler instantiation
       parserType = ramlHandler.getParserType();
     } catch (final Exception e) {
@@ -102,12 +100,12 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     ApikitErrorTypes.initialise(muleContext);
   }
 
-  @Deprecated //TODO USE NEW API
+  @Deprecated // TODO USE NEW API
   public String getApiServer() {
     return "http://localhost:8081";
   }
 
-  //config properties
+  // config properties
   public String getName() {
     return name;
   }
@@ -216,42 +214,43 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   private void buildResourcePatternCaches() {
     logger.info("Building resource URI cache...");
-    uriResolverCache = CacheBuilder.newBuilder()
-        .maximumSize(URI_CACHE_SIZE)
-        .build(
-               new CacheLoader<String, URIResolver>() {
+    uriResolverCache =
+        CacheBuilder.newBuilder()
+            .maximumSize(URI_CACHE_SIZE)
+            .build(
+                   new CacheLoader<String, URIResolver>() {
 
-                 @Override
-                 public URIResolver load(String path) throws IOException {
-                   return new URIResolver(path);
-                 }
-               });
+                     @Override
+                     public URIResolver load(String path) throws IOException {
+                       return new URIResolver(path);
+                     }
+                   });
 
-    uriPatternCache = CacheBuilder.newBuilder()
-        .maximumSize(URI_CACHE_SIZE)
-        .build(
-               new CacheLoader<String, URIPattern>() {
+    uriPatternCache =
+        CacheBuilder.newBuilder()
+            .maximumSize(URI_CACHE_SIZE)
+            .build(
+                   new CacheLoader<String, URIPattern>() {
 
-                 @Override
-                 public URIPattern load(String path) throws Exception {
-                   URIResolver resolver = uriResolverCache.get(path);
-                   URIPattern match = flowFinder.findBestMatch(resolver);
+                     @Override
+                     public URIPattern load(String path) throws Exception {
+                       URIResolver resolver = uriResolverCache.get(path);
+                       URIPattern match = flowFinder.findBestMatch(resolver);
 
-                   if (match == null) {
-                     logger.warn("No matching patterns for URI " + path);
-                     throw new IllegalStateException("No matching patterns for URI " + path);
-                   }
-                   return match;
-                 }
-               });
+                       if (match == null) {
+                         logger.warn("No matching patterns for URI " + path);
+                         throw new IllegalStateException("No matching patterns for URI " + path);
+                       }
+                       return match;
+                     }
+                   });
   }
 
   public FlowFinder getFlowFinder() {
     return flowFinder;
   }
 
-
-  //uri caches
+  // uri caches
   public LoadingCache<String, URIPattern> getUriPatternCache() {
     return uriPatternCache;
   }
@@ -260,21 +259,23 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     return uriResolverCache;
   }
 
-  //schema caches
+  // schema caches
   public LoadingCache<String, JsonSchema> getJsonSchemaCache() {
     if (jsonSchemaCache == null) {
-      jsonSchemaCache = CacheBuilder.newBuilder()
-          .maximumSize(1000)
-          .build(new JsonSchemaCacheLoader(ramlHandler.getApi()));
+      jsonSchemaCache =
+          CacheBuilder.newBuilder()
+              .maximumSize(1000)
+              .build(new JsonSchemaCacheLoader(ramlHandler.getApi()));
     }
     return jsonSchemaCache;
   }
 
   public LoadingCache<String, Schema> getXmlSchemaCache() {
     if (xmlSchemaCache == null) {
-      LoadingCache<String, Schema> transformerCache = CacheBuilder.newBuilder()
-          .maximumSize(1000)
-          .build(new XmlSchemaCacheLoader(ramlHandler.getApi()));
+      LoadingCache<String, Schema> transformerCache =
+          CacheBuilder.newBuilder()
+              .maximumSize(1000)
+              .build(new XmlSchemaCacheLoader(ramlHandler.getApi()));
 
       xmlSchemaCache = transformerCache;
     }
@@ -282,7 +283,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   }
 
   public void setRamlHandler(RamlHandler ramlHandler) {
-    this.ramlHandler = ramlHandler; //TODO REPLACE WITH REFLECTION
+    this.ramlHandler = ramlHandler; // TODO REPLACE WITH REFLECTION
   }
 
   @Override
@@ -342,7 +343,6 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
     return routerServices.iterator();
   }
-
 
   public boolean isExtensionEnabled() {
     return isExtensionEnabled;

@@ -6,12 +6,12 @@
  */
 package org.mule.module.apikit.validation.body.form;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 public class UrlEncodedV2FunctionalTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -22,42 +22,49 @@ public class UrlEncodedV2FunctionalTestCase extends AbstractMultiParserFunctiona
 
   @Test
   public void simpleUrlencodedRequest() throws Exception {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("first", "primo")
         .expect()
         .response()
         .body(is("first=primo"))
         .statusCode(201)
-        .when().post("/api/url-encoded-simple");
+        .when()
+        .post("/api/url-encoded-simple");
   }
 
   @Test
   public void simpleInvalidUrlencodedRequest() throws Exception {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("first", "primo")
         .expect()
         .response()
         .body(is("{message: 'Bad Request'}"))
         .statusCode(400)
-        .when().post("/api/url-encoded-simple-integer");
+        .when()
+        .post("/api/url-encoded-simple-integer");
   }
 
   @Test
   @Ignore // TODO Support adding default parameters
   public void setDefaultFormParameterForUrlencodedRequest() throws Exception {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("second", "segundo")
         .formParam("third", "true")
         .expect()
         .response()
         .body(is("first=primo"))
         .statusCode(201)
-        .when().post("/api/url-encoded-with-default");
+        .when()
+        .post("/api/url-encoded-with-default");
   }
 
   @Test
   public void getKeyWithMultipleValuesUrlencodedRequest() throws Exception {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("first", "hello")
         .formParam("second", "segundo")
         .formParam("third", "true")
@@ -65,12 +72,14 @@ public class UrlEncodedV2FunctionalTestCase extends AbstractMultiParserFunctiona
         .response()
         .body(is("first=hello&second=segundo&third=true"))
         .statusCode(201)
-        .when().post("/api/url-encoded-duplicated-key");
+        .when()
+        .post("/api/url-encoded-duplicated-key");
   }
 
   @Test
   public void getKeyWithDuplicatedValuesUrlencodedRequest() throws Exception {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("first", "hello")
         .formParam("second", "segundo")
         .formParam("second", "segundo2")
@@ -79,12 +88,14 @@ public class UrlEncodedV2FunctionalTestCase extends AbstractMultiParserFunctiona
         .response()
         .body(is("{message: 'Bad Request'}"))
         .statusCode(400)
-        .when().post("/api/url-encoded-duplicated-key");
+        .when()
+        .post("/api/url-encoded-duplicated-key");
   }
 
   @Test
   public void getKeyWithArraysUrlencodedRequest() throws Exception {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("first", "1234")
         .formParam("first", "5678")
         .formParam("second", "1234")
@@ -94,7 +105,7 @@ public class UrlEncodedV2FunctionalTestCase extends AbstractMultiParserFunctiona
         .response()
         .body(is("first=1234&first=5678&second=1234&second=5678&third=1234"))
         .statusCode(201)
-        .when().post("/api/url-encoded-with-arrays");
+        .when()
+        .post("/api/url-encoded-with-arrays");
   }
-
 }

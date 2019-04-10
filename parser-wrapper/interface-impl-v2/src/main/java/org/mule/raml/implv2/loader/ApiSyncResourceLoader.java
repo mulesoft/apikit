@@ -6,15 +6,14 @@
  */
 package org.mule.raml.implv2.loader;
 
+import static org.mule.raml.interfaces.common.APISyncUtils.isExchangeModules;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
+
+import java.io.InputStream;
+import javax.annotation.Nullable;
 import org.mule.raml.interfaces.common.APISyncUtils;
 import org.raml.v2.api.loader.DefaultResourceLoader;
 import org.raml.v2.api.loader.ResourceLoader;
-
-import javax.annotation.Nullable;
-import java.io.InputStream;
-
-import static org.mule.raml.interfaces.common.APISyncUtils.isExchangeModules;
-import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
 
 public class ApiSyncResourceLoader implements ResourceLoader {
 
@@ -34,7 +33,6 @@ public class ApiSyncResourceLoader implements ResourceLoader {
   private String getRootRamlResource(String rootRamlResource) {
     return rootRamlResource.substring(0, rootRamlResource.lastIndexOf(":") + 1);
   }
-
 
   @Nullable
   @Override

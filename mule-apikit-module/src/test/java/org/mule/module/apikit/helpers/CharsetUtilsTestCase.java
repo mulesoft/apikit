@@ -14,7 +14,9 @@ public class CharsetUtilsTestCase {
 
   @Test
   public void headerCharset() {
-    String charset = CharsetUtils.getCharset("application/json; charset=windows-1252; skipnullon=\"everywhere\"");
+    String charset =
+        CharsetUtils.getCharset(
+                                "application/json; charset=windows-1252; skipnullon=\"everywhere\"");
     Assert.assertEquals(charset, "windows-1252");
   }
 }

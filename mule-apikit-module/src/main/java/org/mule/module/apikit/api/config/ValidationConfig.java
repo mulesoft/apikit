@@ -6,11 +6,10 @@
  */
 package org.mule.module.apikit.api.config;
 
+import java.util.concurrent.ExecutionException;
+import javax.xml.validation.Schema;
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 import org.mule.runtime.core.api.el.ExpressionManager;
-
-import javax.xml.validation.Schema;
-import java.util.concurrent.ExecutionException;
 
 public interface ValidationConfig {
 

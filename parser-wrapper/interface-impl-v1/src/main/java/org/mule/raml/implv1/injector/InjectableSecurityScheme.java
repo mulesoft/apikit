@@ -15,9 +15,9 @@ public class InjectableSecurityScheme extends InjectableRamlFeature {
   private SecurityScheme cache;
   private static final String KEY = "scheme";
 
-  private static final String TEMPLATE = "#%RAML 0.8\ntitle: t\nsecuritySchemes:\n - " + KEY + ":\n";
+  private static final String TEMPLATE =
+      "#%RAML 0.8\ntitle: t\nsecuritySchemes:\n - " + KEY + ":\n";
   private static final String INDENTATION = "    ";
-
 
   public InjectableSecurityScheme(String name, String securitySchemeYaml) {
     super(name, securitySchemeYaml);
@@ -47,5 +47,4 @@ public class InjectableSecurityScheme extends InjectableRamlFeature {
   protected String getIndentation() {
     return INDENTATION;
   }
-
 }

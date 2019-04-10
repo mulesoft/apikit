@@ -6,6 +6,13 @@
  */
 package org.mule.tools.apikit;
 
+import static java.util.Collections.EMPTY_MAP;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,13 +36,6 @@ import org.mockito.stubbing.Stubber;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.RuntimeEdition;
-
-import static java.util.Collections.EMPTY_MAP;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
 public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTestCase {
 
@@ -70,11 +70,11 @@ public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTest
 
     final File tmpFile = new File(tmpFolder, fileName);
     tmpFile.createNewFile();
-    InputStream resourceAsStream = ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(resource);
+    InputStream resourceAsStream =
+        ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(resource);
     IOUtils.copy(resourceAsStream, new FileOutputStream(tmpFile));
     return tmpFile;
   }
-
 
   protected final Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
     if (ramls == null) {
@@ -101,19 +101,31 @@ public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTest
     return createScaffolder(ramls, xmls, muleXmlOut, null, null);
   }
 
-  protected Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile)
+  protected Scaffolder createScaffolder(
+                                        List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile)
       throws FileNotFoundException {
     return createScaffolder(ramls, xmls, muleXmlOut, domainFile, null);
   }
 
-  protected Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile,
+  protected Scaffolder createScaffolder(
+                                        List<File> ramls,
+                                        List<File> xmls,
+                                        File muleXmlOut,
+                                        File domainFile,
                                         Set<File> ramlsWithExtensionEnabled)
       throws FileNotFoundException {
-    return createScaffolder(ramls, xmls, muleXmlOut, domainFile, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION, EE);
+    return createScaffolder(
+                            ramls, xmls, muleXmlOut, domainFile, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION, EE);
   }
 
-  protected Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile,
-                                        Set<File> ramlsWithExtensionEnabled, String muleVersion, RuntimeEdition runtimeEdition)
+  protected Scaffolder createScaffolder(
+                                        List<File> ramls,
+                                        List<File> xmls,
+                                        File muleXmlOut,
+                                        File domainFile,
+                                        Set<File> ramlsWithExtensionEnabled,
+                                        String muleVersion,
+                                        RuntimeEdition runtimeEdition)
       throws FileNotFoundException {
 
     Map<File, InputStream> ramlMap = null;
@@ -125,7 +137,14 @@ public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTest
     if (domainFile != null) {
       domainStream = new FileInputStream(domainFile);
     }
-    return new Scaffolder(getLogger(), muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion,
+    return new Scaffolder(
+                          getLogger(),
+                          muleXmlOut,
+                          ramlMap,
+                          xmlMap,
+                          domainStream,
+                          ramlsWithExtensionEnabled,
+                          muleVersion,
                           runtimeEdition);
   }
 
@@ -141,10 +160,11 @@ public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTest
   }
 
   private static Stubber getStubber(final String prefix) {
-    return doAnswer(invocation -> {
-      Object[] args = invocation.getArguments();
-      System.out.println(prefix + args[0].toString());
-      return null;
-    });
+    return doAnswer(
+                    invocation -> {
+                      Object[] args = invocation.getArguments();
+                      System.out.println(prefix + args[0].toString());
+                      return null;
+                    });
   }
 }

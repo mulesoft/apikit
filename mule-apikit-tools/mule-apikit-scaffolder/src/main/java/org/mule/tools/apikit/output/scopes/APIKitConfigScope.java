@@ -6,11 +6,10 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
-import org.mule.tools.apikit.misc.APIKitTools;
-import org.mule.tools.apikit.model.APIKitConfig;
-
 import org.apache.commons.lang.StringUtils;
 import org.jdom2.Element;
+import org.mule.tools.apikit.misc.APIKitTools;
+import org.mule.tools.apikit.model.APIKitConfig;
 
 public class APIKitConfigScope implements Scope {
 
@@ -28,8 +27,7 @@ public class APIKitConfigScope implements Scope {
   public Element generate() {
     Element config = null;
     if (this.config != null) {
-      config = new Element(APIKitConfig.ELEMENT_NAME,
-                           APIKitTools.API_KIT_NAMESPACE.getNamespace());
+      config = new Element(APIKitConfig.ELEMENT_NAME, APIKitTools.API_KIT_NAMESPACE.getNamespace());
 
       if (!StringUtils.isEmpty(this.config.getName())) {
         config.setAttribute(APIKitConfig.NAME_ATTRIBUTE, this.config.getName());
@@ -40,13 +38,17 @@ public class APIKitConfigScope implements Scope {
       if (this.config.getRaml() != null)
         config.setAttribute(APIKitConfig.RAML_ATTRIBUTE, this.config.getRaml());
       if (this.config.isExtensionEnabled() != null) {
-        config.setAttribute(APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE, String.valueOf(this.config.isExtensionEnabled()));
+        config.setAttribute(
+                            APIKitConfig.EXTENSION_ENABLED_ATTRIBUTE,
+                            String.valueOf(this.config.isExtensionEnabled()));
       }
       if (this.config.getOutboundHeadersMapName() != null) {
-        config.setAttribute(APIKitConfig.OUTBOUND_HEADERS_MAP_ATTRIBUTE, this.config.getOutboundHeadersMapName());
+        config.setAttribute(
+                            APIKitConfig.OUTBOUND_HEADERS_MAP_ATTRIBUTE, this.config.getOutboundHeadersMapName());
       }
       if (this.config.getHttpStatusVarName() != null) {
-        config.setAttribute(APIKitConfig.HTTP_STATUS_VAR_ATTRIBUTE, this.config.getHttpStatusVarName());
+        config.setAttribute(
+                            APIKitConfig.HTTP_STATUS_VAR_ATTRIBUTE, this.config.getHttpStatusVarName());
       }
 
       if (index != null)

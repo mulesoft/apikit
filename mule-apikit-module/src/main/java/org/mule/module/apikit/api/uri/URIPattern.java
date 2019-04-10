@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import org.mule.module.apikit.uri.Matchable;
 import org.mule.module.apikit.uri.Token;
 import org.mule.module.apikit.uri.TokenLiteral;
@@ -20,33 +19,31 @@ import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.uri.URITemplate;
 import org.mule.module.apikit.uri.URITemplateSyntaxException;
 
-
 /**
  * A URI Pattern for matching URI following the same regular structure.
- * <p/>
- * <p/>
- * Instances of this class implement the PageSeeder URL pattern as defined by the "PageSeeder URI
+ *
+ * <p>
+ *
+ * <p>Instances of this class implement the PageSeeder URL pattern as defined by the "PageSeeder URI
  * Templates" document.
- * <p/>
- * <p/>
- * A PageSeeder URI Pattern follows the URI syntax defined for URI templates but must only contain
- * matchable tokens.
+ *
+ * <p>
+ *
+ * <p>A PageSeeder URI Pattern follows the URI syntax defined for URI templates but must only
+ * contain matchable tokens.
  *
  * @author Christophe Lauret
  * @version 27 October 2009
  */
 public class URIPattern extends URITemplate implements Matchable {
 
-  private static final Set<Character> ESCAPE_CHARS = new HashSet<Character>(Arrays.asList('/', '{', '}'));
+  private static final Set<Character> ESCAPE_CHARS =
+      new HashSet<Character>(Arrays.asList('/', '{', '}'));
 
-  /**
-   * The regular expression pattern for matching URIs to this URI Pattern.
-   */
+  /** The regular expression pattern for matching URIs to this URI Pattern. */
   private Pattern _pattern;
 
-  /**
-   * The score for this pattern, the length of the literal text.
-   */
+  /** The score for this pattern, the length of the literal text. */
   private int _score = -1;
 
   /**
@@ -88,9 +85,10 @@ public class URIPattern extends URITemplate implements Matchable {
 
   /**
    * Indicates whether the given URI template can be used to construct a new URI Pattern instance.
-   * <p/>
-   * <p/>
-   * A template is matchable only if all its components are matchable tokens, that is the token
+   *
+   * <p>
+   *
+   * <p>A template is matchable only if all its components are matchable tokens, that is the token
    * implements the {@link Matchable} interface.
    *
    * @param template The template to test.
@@ -139,8 +137,8 @@ public class URIPattern extends URITemplate implements Matchable {
 
   /**
    * Returns the score for this URI pattern.
-   * <p/>
-   * The score corresponds to the length of literal content.
+   *
+   * <p>The score corresponds to the length of literal content.
    *
    * @return the score for this URI pattern.
    */
@@ -155,8 +153,8 @@ public class URIPattern extends URITemplate implements Matchable {
 
   /**
    * Compute the Regular Expression pattern for this URI Pattern.
-   * <p/>
-   * Important note: the regular expression contain the same number of capturing groups as the
+   *
+   * <p>Important note: the regular expression contain the same number of capturing groups as the
    * number of token to facilitate the resolve process.
    *
    * @return The regex Pattern instance corresponding to this URI pattern.
@@ -175,8 +173,8 @@ public class URIPattern extends URITemplate implements Matchable {
 
   /**
    * Compute the score from the specified tokens.
-   * <p/>
-   * The score is the sum of the length of each literal token.
+   *
+   * <p>The score is the sum of the length of each literal token.
    *
    * @return The score from the specified tokens.
    */
@@ -189,5 +187,4 @@ public class URIPattern extends URITemplate implements Matchable {
     }
     return score;
   }
-
 }

@@ -10,7 +10,6 @@ import static org.mule.module.apikit.api.UrlUtils.getRedirectLocation;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.mule.extension.http.api.HttpHeaders;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.runtime.api.metadata.MediaType;
@@ -25,7 +24,6 @@ public class EventWrapper {
   private String httpStatus;
   private String outboundHeadersMapName;
   private String httpStatusVarName;
-
 
   public EventWrapper(CoreEvent input, String outboundHeadersMapName, String httpStatusVarName) {
     inputEvent = input;
@@ -45,7 +43,6 @@ public class EventWrapper {
     return outputBuilder.build();
   }
 
-
   public EventWrapper doClientRedirect() {
     httpStatus = String.valueOf(HttpConstants.HttpStatus.MOVED_PERMANENTLY.getStatusCode());
 
@@ -59,8 +56,6 @@ public class EventWrapper {
     outboundHeaders.put(HttpHeaders.Names.LOCATION, redirectLocation);
     return this;
   }
-
-
 
   public EventWrapper setPayload(Object payload, MediaType mediaType) {
     outputBuilder.message(MessageHelper.setPayload(inputEvent.getMessage(), payload, mediaType));

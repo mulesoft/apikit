@@ -13,8 +13,9 @@ import java.util.List;
 
 /**
  * A variable resolver using a list to resolve values.
- * <p/>
- * For example, to constrain a variable value to a specific list:
+ *
+ * <p>For example, to constrain a variable value to a specific list:
+ *
  * <pre>
  *  // Create a new variable resolver on a list of values
  *  VariableResolver vr = new VariableResolverList(new String[]{"foo", "bar"});
@@ -30,14 +31,10 @@ import java.util.List;
  */
 public class VariableResolverList implements VariableResolver {
 
-  /**
-   * The list of values.
-   */
+  /** The list of values. */
   private List<String> _values;
 
-  /**
-   * Creates a new variable resolver.
-   */
+  /** Creates a new variable resolver. */
   public VariableResolverList() {
     this._values = new ArrayList<String>();
   }
@@ -61,16 +58,12 @@ public class VariableResolverList implements VariableResolver {
     this._values = Arrays.asList(values);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean exists(String value) {
     return this._values.contains(value);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Object resolve(String value) {
     return exists(value) ? value : null;
   }

@@ -40,5 +40,4 @@ public abstract class InjectableRamlFeature {
   protected abstract String getBoilerPlateAfter();
 
   protected abstract String getIndentation();
-
 }

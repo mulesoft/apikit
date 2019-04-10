@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.validation.streaming;
 
-import org.junit.Test;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 public class NonRepeatableStreamsTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -21,58 +21,65 @@ public class NonRepeatableStreamsTestCase extends AbstractMultiParserFunctionalT
 
   @Test
   public void simpleUrlencodedRequest() {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("first", "primo")
         .expect()
         .response()
         .body(is("first=primo"))
         .statusCode(201)
-        .when().post("/api/url-encoded-simple");
+        .when()
+        .post("/api/url-encoded-simple");
   }
 
   @Test
   public void simpleMultipartRequest() {
-    given().multiPart("first", "primero")
+    given()
+        .multiPart("first", "primero")
         .multiPart("second", "segundo")
         .multiPart("third", "true")
         .expect()
         .response()
-        .body(is("{\n" +
-            "  \"first\": \"primero\",\n" +
-            "  \"second\": \"segundo\",\n" +
-            "  \"third\": \"true\"\n" +
-            "}"))
+        .body(
+              is(
+                 "{\n"
+                     + "  \"first\": \"primero\",\n"
+                     + "  \"second\": \"segundo\",\n"
+                     + "  \"third\": \"true\"\n"
+                     + "}"))
         .statusCode(201)
-        .when().post("/api/multipart");
+        .when()
+        .post("/api/multipart");
   }
 
   @Test
   public void simpleMultipartRequesWithDefaults() {
-    given().multiPart("first", "primero")
+    given()
+        .multiPart("first", "primero")
         .expect()
         .response()
-        .body(is("{\n" +
-            "  \"first\": \"primero\",\n" +
-            "  \"second\": \"segundo\",\n" +
-            "  \"third\": \"true\"\n" +
-            "}"))
+        .body(
+              is(
+                 "{\n"
+                     + "  \"first\": \"primero\",\n"
+                     + "  \"second\": \"segundo\",\n"
+                     + "  \"third\": \"true\"\n"
+                     + "}"))
         .statusCode(201)
-        .when().post("/api/multipart");
+        .when()
+        .post("/api/multipart");
   }
 
   @Test
   public void simplePostRequest() {
-    given().header("Content-Type", "application/json")
-        .body("{" +
-            "\"firstName\": \"Joe\"," +
-            "\"lastName\": \"Doe\"," +
-            "\"age\": 20" +
-            "}")
+    given()
+        .header("Content-Type", "application/json")
+        .body("{" + "\"firstName\": \"Joe\"," + "\"lastName\": \"Doe\"," + "\"age\": 20" + "}")
         .expect()
         .response()
         .body(is("Joe Doe"))
         .statusCode(201)
-        .when().post("/api/simple-post");
+        .when()
+        .post("/api/simple-post");
   }
-
 }

@@ -6,6 +6,16 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Sets.newHashSet;
+import static org.raml.v2.internal.impl.v10.type.TypeId.ARRAY;
+import static org.raml.v2.internal.impl.v10.type.TypeId.OBJECT;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.mule.raml.interfaces.model.IQueryString;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.common.ValidationResult;
@@ -13,17 +23,6 @@ import org.raml.v2.api.model.v10.datamodel.ArrayTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.internal.impl.v10.type.TypeId;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.collect.Collections2.transform;
-import static com.google.common.collect.Sets.newHashSet;
-import static org.raml.v2.internal.impl.v10.type.TypeId.ARRAY;
-import static org.raml.v2.internal.impl.v10.type.TypeId.OBJECT;
 
 public class QueryStringImpl implements IQueryString {
 

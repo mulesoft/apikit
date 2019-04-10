@@ -11,14 +11,15 @@ import java.util.regex.Pattern;
 
 /**
  * A variable in a URL pattern or template.
- * <p/>
- * The variables can be typed by prefixing the variable name. Types are not required, if no type is
- * specified, the variable is considered untyped.
- * <p/>
- * Note: there is no predefined list of types as the handling of types is out of scope. The syntax
- * simply allows variables to be associated with a type.
- * <p/>
- * Examples of variables:
+ *
+ * <p>The variables can be typed by prefixing the variable name. Types are not required, if no type
+ * is specified, the variable is considered untyped.
+ *
+ * <p>Note: there is no predefined list of types as the handling of types is out of scope. The
+ * syntax simply allows variables to be associated with a type.
+ *
+ * <p>Examples of variables:
+ *
  * <pre>
  *   foo         - An untyped variable named 'foo'
  *   bar         - An untyped variable named 'bar'
@@ -26,18 +27,21 @@ import java.util.regex.Pattern;
  *   ping:foo=1  - A variable named 'foo' typed 'ping' which default value is '1'
  *   foo=pong    - An untyped variable named 'foo' which default value is 'pong'
  * </pre>
- * <p/>
- * Variables only appear in the context of the a template expansion.
- * <p/>
- * Expansion rule (4.4.1):
- * <p/>
+ *
+ * <p>Variables only appear in the context of the a template expansion.
+ *
+ * <p>Expansion rule (4.4.1):
+ *
+ * <p>
+ *
  * <pre>
  * &quot;In a variable ('var') expansion, if the variable is defined then substitute the value of
  * the variable, otherwise substitute the default value.
  * If no default value is given then substitute with the empty string.&quot;
  * </pre>
- * <p/>
- * Syntax for variables:
+ *
+ * <p>Syntax for variables:
+ *
  * <pre>
  * var         = [ vartype &quot;:&quot; ]  varname [ &quot;=&quot; vardefault ]
  * vars        = var [ *(&quot;,&quot; var) ]
@@ -49,26 +53,20 @@ import java.util.regex.Pattern;
  * @author Christophe Lauret
  * @version 11 June 2009
  * @see <a
- *      href="http://bitworking.org/projects/URI-Templates/spec/draft-gregorio-uritemplate-03.html">URI
- *      Template (Internet Draft 3)</a>
+ *     href="http://bitworking.org/projects/URI-Templates/spec/draft-gregorio-uritemplate-03.html">URI
+ *     Template (Internet Draft 3)</a>
  * @see <a href="http://tools.ietf.org/html/rfc3986">RFC 3986 - Uniform Resource Identifier (URI):
- *      Generic Syntax<a/>
+ *     Generic Syntax<a/>
  */
 public class Variable {
 
-  /**
-   * Used for reserved variable names.
-   */
+  /** Used for reserved variable names. */
   public enum Reserved {
 
-    /**
-     * The wildcard represented by the 'asterisk'
-     */
+    /** The wildcard represented by the 'asterisk' */
     WILDCARD("*");
 
-    /**
-     * The symbol for this reserved.
-     */
+    /** The symbol for this reserved. */
     private String _symbol;
 
     /**
@@ -80,44 +78,36 @@ public class Variable {
       this._symbol = symbol;
     }
 
-    /**
-     * @return the symbol used for this reserved variable name.
-     */
+    /** @return the symbol used for this reserved variable name. */
     String symbol() {
       return this._symbol;
     }
-  }
-
-  ;
+  };
 
   /**
-   * Indicate that the variable's value should be processed as a list ("@") or an associative array ("%").
-   * <p/>
-   * This variable type is an instruction for the template processor.
-   * It is not an indication of language or implementation type.
+   * Indicate that the variable's value should be processed as a list ("@") or an associative array
+   * ("%").
+   *
+   * <p>This variable type is an instruction for the template processor. It is not an indication of
+   * language or implementation type.
    */
   public enum Form {
 
-    /**
-     * Indicate that this variable can be expanded as a simple string (default).
-     */
+    /** Indicate that this variable can be expanded as a simple string (default). */
     STRING,
 
-    /**
-     * Indicate that this variable can be expanded as a list of strings.
-     */
+    /** Indicate that this variable can be expanded as a list of strings. */
     LIST,
 
-    /**
-     * Indicates that this variable can be expanded as an associated array.
-     */
+    /** Indicates that this variable can be expanded as an associated array. */
     MAP;
 
     /**
      * Returns the type of this variable from the specified expression.
-     * <p/>
-     * <p/>
-     * This method does not return <code>null</code>
+     *
+     * <p>
+     *
+     * <p>This method does not return <code>null</code>
      *
      * @param exp The expression.
      * @return The type of this expression.
@@ -135,32 +125,25 @@ public class Variable {
       }
       return STRING;
     }
-
   }
 
   /**
-   * Indicate that the variable's value should be processed as a list ("@") or an associative array ("%").
-   * <p/>
-   * This variable type is an instruction for the template processor.
-   * It is not an indication of language or implementation type.
+   * Indicate that the variable's value should be processed as a list ("@") or an associative array
+   * ("%").
+   *
+   * <p>This variable type is an instruction for the template processor. It is not an indication of
+   * language or implementation type.
    */
   public enum Modifier {
 
-    /**
-     * Indicate that this variable can be expanded as a simple string (default).
-     */
+    /** Indicate that this variable can be expanded as a simple string (default). */
     SUBSTRING,
 
-    /**
-     * Indicate that this variable can be expanded as a list of strings.
-     */
+    /** Indicate that this variable can be expanded as a list of strings. */
     REMAINDER;
-
   }
 
-  /**
-   * The pattern for a valid variable name.
-   */
+  /** The pattern for a valid variable name. */
   private static final Pattern VALID_NAME = Pattern.compile("[a-zA-Z0-9][\\w.-]*");
 
   /**
@@ -170,39 +153,32 @@ public class Variable {
    */
   protected static final Pattern VALID_VALUE = Pattern.compile("[\\w.~%-]+");
 
-  /**
-   * The default value is an empty string.
-   */
+  /** The default value is an empty string. */
   private static final String DEFAULT_VALUE = "";
 
-  /**
-   * The type of this variable.
-   */
+  /** The type of this variable. */
   private Form _form = Form.STRING;
 
   /**
    * The implementation type of this variable (eg. string, integer, etc... can be user-defined).
-   * <p/>
-   * <p/>
-   * Use <code>null</code> for untyped.
+   *
+   * <p>
+   *
+   * <p>Use <code>null</code> for untyped.
    */
   private VariableType _type;
 
-  /**
-   * The name of this variable.
-   */
+  /** The name of this variable. */
   private String _name;
 
-  /**
-   * The default value for this variable.
-   */
+  /** The default value for this variable. */
   private String _default;
 
   /**
    * Creates a new untyped reserved variable.
    *
    * @param reserved The name of the variable.
-   * @throws NullPointerException     If the specified name is <code>null</code>.
+   * @throws NullPointerException If the specified name is <code>null</code>.
    * @throws IllegalArgumentException If the specified name is an empty string.
    */
   public Variable(Reserved reserved) throws NullPointerException, IllegalArgumentException {
@@ -216,7 +192,7 @@ public class Variable {
    * Creates a new untyped variable.
    *
    * @param name The name of the variable.
-   * @throws NullPointerException     If the specified name is <code>null</code>.
+   * @throws NullPointerException If the specified name is <code>null</code>.
    * @throws IllegalArgumentException If the specified name is an empty string.
    */
   public Variable(String name) throws NullPointerException, IllegalArgumentException {
@@ -227,8 +203,8 @@ public class Variable {
    * Creates a new untyped variable.
    *
    * @param name The name of the variable.
-   * @param def  The default value for the variable.
-   * @throws NullPointerException     If the specified name is <code>null</code>.
+   * @param def The default value for the variable.
+   * @throws NullPointerException If the specified name is <code>null</code>.
    * @throws IllegalArgumentException If the specified name is an empty string.
    */
   public Variable(String name, String def) throws NullPointerException, IllegalArgumentException {
@@ -239,13 +215,13 @@ public class Variable {
    * Creates a new variable.
    *
    * @param name The name of the variable.
-   * @param def  The default value for the variable.
+   * @param def The default value for the variable.
    * @param type The type of the variable.
-   * @throws NullPointerException     If the specified name is <code>null</code>.
+   * @throws NullPointerException If the specified name is <code>null</code>.
    * @throws IllegalArgumentException If the specified name is an empty string.
    */
-  public Variable(String name, String def, VariableType type) throws NullPointerException,
-      IllegalArgumentException {
+  public Variable(String name, String def, VariableType type)
+      throws NullPointerException, IllegalArgumentException {
     if (name == null) {
       throw new NullPointerException("A variable must have a name, but was null");
     }
@@ -262,13 +238,13 @@ public class Variable {
    * Creates a new variable.
    *
    * @param name The name of the variable.
-   * @param def  The default value for the variable.
+   * @param def The default value for the variable.
    * @param type The type of the variable.
-   * @throws NullPointerException     If the specified name is <code>null</code>.
+   * @throws NullPointerException If the specified name is <code>null</code>.
    * @throws IllegalArgumentException If the specified name is an empty string.
    */
-  public Variable(String name, String def, VariableType type, Form form) throws NullPointerException,
-      IllegalArgumentException {
+  public Variable(String name, String def, VariableType type, Form form)
+      throws NullPointerException, IllegalArgumentException {
     if (name == null) {
       throw new NullPointerException("A variable must have a name, but was null");
     }
@@ -283,9 +259,10 @@ public class Variable {
 
   /**
    * Returns the form of this variable.
-   * <p/>
-   * <p/>
-   * This method will never return <code>null</code>.
+   *
+   * <p>
+   *
+   * <p>This method will never return <code>null</code>.
    *
    * @return The form of this variable.
    */
@@ -295,9 +272,10 @@ public class Variable {
 
   /**
    * Returns the name of this variable.
-   * <p/>
-   * <p/>
-   * This method never return <code>null</code>.
+   *
+   * <p>
+   *
+   * <p>This method never return <code>null</code>.
    *
    * @return The name of this variable.
    */
@@ -307,8 +285,8 @@ public class Variable {
 
   /**
    * Returns the default value for this variable.
-   * <p/>
-   * This method never return <code>null</code>.
+   *
+   * <p>This method never return <code>null</code>.
    *
    * @return The default value for this variable.
    */
@@ -318,9 +296,10 @@ public class Variable {
 
   /**
    * Returns the implementation type of this variable.
-   * <p/>
-   * <p/>
-   * This method will return <code>null</code> if the variable is untyped.
+   *
+   * <p>
+   *
+   * <p>This method will return <code>null</code> if the variable is untyped.
    *
    * @return The type of this variable.
    */
@@ -330,8 +309,8 @@ public class Variable {
 
   /**
    * Returns the expanded value of this variable.
-   * <p/>
-   * If no value is specified for this variable, the default value is returned instead.
+   *
+   * <p>If no value is specified for this variable, the default value is returned instead.
    *
    * @param parameters The parameters.
    * @return The value.
@@ -353,8 +332,8 @@ public class Variable {
 
   /**
    * Returns the expanded value of this variable.
-   * <p/>
-   * If no values are specified for this variable, the default value is returned instead.
+   *
+   * <p>If no values are specified for this variable, the default value is returned instead.
    *
    * @param parameters The parameters.
    * @return The values.
@@ -374,9 +353,7 @@ public class Variable {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean equals(Object o) {
     if (o == this) {
@@ -390,17 +367,13 @@ public class Variable {
     return _name.equals(v._name) && _default.equals(v._default);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return this._name.hashCode() + 7 * this._default.hashCode();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     if (this._default.length() > 0) {
@@ -496,9 +469,10 @@ public class Variable {
   /**
    * Returns the name of this variable as a regular expression pattern string for use in a regular
    * expression.
-   * <p/>
-   * <p/>
-   * Implementation note: this method replaces any character that could be interpreted as a regex
+   *
+   * <p>
+   *
+   * <p>Implementation note: this method replaces any character that could be interpreted as a regex
    * meta-character, it is more efficient than using quotation (\Q...\E) for the whole string.
    *
    * @return The regex pattern corresponding to this name.
@@ -506,5 +480,4 @@ public class Variable {
   protected String namePatternString() {
     return this._name.indexOf('.') < 0 ? this._name : this.name().replaceAll("\\.", "\\\\.");
   }
-
 }

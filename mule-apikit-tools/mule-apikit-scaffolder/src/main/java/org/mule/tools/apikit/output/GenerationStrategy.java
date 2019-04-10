@@ -6,18 +6,16 @@
  */
 package org.mule.tools.apikit.output;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import org.apache.maven.plugin.logging.Log;
 import org.mule.tools.apikit.input.APIDiff;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import org.apache.maven.plugin.logging.Log;
 
 public class GenerationStrategy {
 
@@ -27,8 +25,8 @@ public class GenerationStrategy {
     this.log = log;
   }
 
-  public List<GenerationModel> generate(RAMLFilesParser RAMLFilesParser,
-                                        MuleConfigParser muleConfigParser) {
+  public List<GenerationModel> generate(
+                                        RAMLFilesParser RAMLFilesParser, MuleConfigParser muleConfigParser) {
     Set<API> apisInMuleConfigs = muleConfigParser.getIncludedApis();
     Set<ResourceActionMimeTypeTriplet> ramlEntries = RAMLFilesParser.getEntries().keySet();
     Set<ResourceActionMimeTypeTriplet> muleFlowEntries = muleConfigParser.getEntries();
@@ -50,12 +48,16 @@ public class GenerationStrategy {
         for (API api : apisInMuleConfigs) {
           xmlFilesWithoutRaml = xmlFilesWithoutRaml + " " + api.getXmlFile().getAbsolutePath();
         }
-        log.warn("The following apikit:flows do not match any RAML API binding: " + xmlFilesWithoutRaml);
+        log.warn(
+                 "The following apikit:flows do not match any RAML API binding: " + xmlFilesWithoutRaml);
 
         generationModels.addAll(RAMLFilesParser.getEntries().values());
       } else {
-        Set<ResourceActionMimeTypeTriplet> diffTriplets = new APIDiff(ramlEntries, muleFlowEntries).getEntries();
-        log.info("Adding new apikit:flows to existing files for the following operations: " + diffTriplets);
+        Set<ResourceActionMimeTypeTriplet> diffTriplets =
+            new APIDiff(ramlEntries, muleFlowEntries).getEntries();
+        log.info(
+                 "Adding new apikit:flows to existing files for the following operations: "
+                     + diffTriplets);
 
         for (ResourceActionMimeTypeTriplet entry : diffTriplets) {
           if (RAMLFilesParser.getEntries().containsKey(entry)) {

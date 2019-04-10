@@ -6,14 +6,12 @@
  */
 package org.mule.examples.leagues.response;
 
-//import org.mule.api.annotations.Transformer;
+// import org.mule.api.annotations.Transformer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -32,7 +30,7 @@ public class Fixture {
     this.fixture = fixture;
   }
 
-  //@Transformer(resultMimeType = "application/json")
+  // @Transformer(resultMimeType = "application/json")
   public String toJson(Fixture fixture) throws IOException {
     ObjectMapper mapper = new ObjectMapper();
     mapper.disableDefaultTyping();
@@ -51,5 +49,4 @@ public class Fixture {
 
     return new String(boas.toByteArray());
   }
-
 }

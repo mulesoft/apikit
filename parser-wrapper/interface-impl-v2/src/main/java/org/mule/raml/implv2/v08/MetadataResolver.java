@@ -6,12 +6,11 @@
  */
 package org.mule.raml.implv2.v08;
 
+import java.util.Optional;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
 import org.raml.v2.api.model.v08.parameters.Parameter;
-
-import java.util.Optional;
 
 public class MetadataResolver {
 
@@ -25,6 +24,6 @@ public class MetadataResolver {
     return STRING_METADATA_TYPE;
   }
 
-  private static final MetadataType STRING_METADATA_TYPE = BaseTypeBuilder.create(MetadataFormat.JAVA).stringType().build();
-
+  private static final MetadataType STRING_METADATA_TYPE =
+      BaseTypeBuilder.create(MetadataFormat.JAVA).stringType().build();
 }

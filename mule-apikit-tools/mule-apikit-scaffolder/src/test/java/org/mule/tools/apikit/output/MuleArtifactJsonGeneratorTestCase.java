@@ -6,6 +6,13 @@
  */
 package org.mule.tools.apikit.output;
 
+import static org.junit.Assert.assertEquals;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.Collection;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
@@ -13,21 +20,14 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.mockito.Mockito;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Arrays;
-import java.util.Collection;
-
-import static org.junit.Assert.assertEquals;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-
 @RunWith(Parameterized.class)
 public class MuleArtifactJsonGeneratorTestCase {
 
   private String testName;
   private String expected;
 
-  private static final String BASE_DIR = "src/test/resources/org/mule/tools/apikit/output/mule-artifact";
+  private static final String BASE_DIR =
+      "src/test/resources/org/mule/tools/apikit/output/mule-artifact";
 
   public MuleArtifactJsonGeneratorTestCase(String testName, String expected) {
     this.testName = testName;
@@ -36,10 +36,12 @@ public class MuleArtifactJsonGeneratorTestCase {
 
   @Parameterized.Parameters
   public static Collection testCases() {
-    return Arrays.asList(new Object[][] {
-        {"new-artifact-json", "expected.json"},
-        {"existent-artifact-json", "expected.json"},
-        {"empty-artifact-json", "expected.json"}});
+    return Arrays.asList(
+                         new Object[][] {
+                             {"new-artifact-json", "expected.json"},
+                             {"existent-artifact-json", "expected.json"},
+                             {"empty-artifact-json", "expected.json"}
+                         });
   }
 
   @Test
@@ -50,11 +52,11 @@ public class MuleArtifactJsonGeneratorTestCase {
 
     final String json = configGenerator.generateArtifact();
 
-    try (FileInputStream input = new FileInputStream(new File(BASE_DIR, testName + "/" + expected))) {
+    try (FileInputStream input =
+        new FileInputStream(new File(BASE_DIR, testName + "/" + expected))) {
       final String expectedJson = IOUtils.toString(input);
 
       assertEquals(expectedJson, json);
     }
   }
-
 }

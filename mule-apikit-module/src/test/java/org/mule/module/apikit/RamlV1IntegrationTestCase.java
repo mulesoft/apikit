@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
+
+import org.junit.Test;
 
 public class RamlV1IntegrationTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -21,18 +21,24 @@ public class RamlV1IntegrationTestCase extends AbstractMultiParserFunctionalTest
 
   @Test
   public void getRamlV1() throws Exception {
-    given().header("Accept", "application/raml+yaml")
+    given()
+        .header("Accept", "application/raml+yaml")
         .expect()
-        .response().body(containsString("RAML 0.8"))
+        .response()
+        .body(containsString("RAML 0.8"))
         .statusCode(200)
-        .when().get("/console/");
+        .when()
+        .get("/console/");
   }
 
   @Test
   public void notGetRamlV1WithoutUsingHeader() throws Exception {
-    given().expect()
-        .response().body(not(containsString("RAML 0.8")))
+    given()
+        .expect()
+        .response()
+        .body(not(containsString("RAML 0.8")))
         .statusCode(200)
-        .when().get("/console/");
+        .when()
+        .get("/console/");
   }
 }

@@ -6,26 +6,30 @@
  */
 package org.mule.module.apikit.spi;
 
-import org.mule.tools.apikit.model.RuntimeEdition;
-
 import java.io.File;
 import java.util.List;
+import org.mule.tools.apikit.model.RuntimeEdition;
 
-/**
- * Extension (SPI) for the APIKit Maven Module
- */
+/** Extension (SPI) for the APIKit Maven Module */
 public interface ScaffolderService {
 
   /**
-   * Modifies or creates the Mule config files which are contained in the appDir directory
-   * by running the scaffolder on the ramlFiles passed as parameter.
+   * Modifies or creates the Mule config files which are contained in the appDir directory by
+   * running the scaffolder on the ramlFiles passed as parameter.
    *
    * @param ramlFiles the ramlFiles to which the scaffolder will be run on
-   * @param appDir    the directory which contained the generated Mule config files
+   * @param appDir the directory which contained the generated Mule config files
    * @param domainDir the directory which contained the domain used by the mule config files
-   * @param muleVersion used to know which type of endpoint (InboundEndpoint or Listener) that the scaffolder should create in case the xml is not provided. If this param is null, listeners will be used.
-   * @param runtimeEdition used to know which runtime edition is running, "CE" or "EE". If this param is null, "CE" will be used.
+   * @param muleVersion used to know which type of endpoint (InboundEndpoint or Listener) that the
+   *     scaffolder should create in case the xml is not provided. If this param is null, listeners
+   *     will be used.
+   * @param runtimeEdition used to know which runtime edition is running, "CE" or "EE". If this
+   *     param is null, "CE" will be used.
    */
-  void executeScaffolder(List<File> ramlFiles, File appDir, File domainDir, String muleVersion, RuntimeEdition runtimeEdition);
-
+  void executeScaffolder(
+                         List<File> ramlFiles,
+                         File appDir,
+                         File domainDir,
+                         String muleVersion,
+                         RuntimeEdition runtimeEdition);
 }

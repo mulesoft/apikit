@@ -6,6 +6,12 @@
  */
 package org.mule.raml.implv2.v08.model;
 
+import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
@@ -13,13 +19,6 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.v08.methods.Method;
 import org.raml.v2.api.model.v08.parameters.Parameter;
 import org.raml.v2.api.model.v08.resources.Resource;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
 public class ResourceImpl implements IResource {
 

@@ -6,17 +6,15 @@
  */
 package org.mule.tools.apikit;
 
+import static java.util.Arrays.asList;
+import static org.mule.tools.apikit.input.RAMLFilesParser.MULE_APIKIT_PARSER;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import static java.util.Arrays.asList;
-import static org.mule.tools.apikit.input.RAMLFilesParser.MULE_APIKIT_PARSER;
-
-/**
- * Use this class when Test are not FunctionTests
- */
+/** Use this class when Test are not FunctionTests */
 @RunWith(Parameterized.class)
 public abstract class AbstractMultiParserTestCase {
 
@@ -28,10 +26,7 @@ public abstract class AbstractMultiParserTestCase {
 
   @Parameterized.Parameters(name = "{0}")
   public static Iterable<Object[]> data() {
-    return asList(new Object[][] {
-        {AMF},
-        {RAML}
-    });
+    return asList(new Object[][] {{AMF}, {RAML}});
   }
 
   public boolean isAmf() {

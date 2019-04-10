@@ -8,16 +8,14 @@ package org.mule.tools.apikit;
 
 import static org.mockito.Mockito.when;
 
-import org.mule.module.apikit.spi.ScaffolderService;
-import org.mule.tools.apikit.misc.APIKitTools;
-import org.mule.tools.apikit.model.API;
-
 import java.lang.reflect.Field;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mule.module.apikit.spi.ScaffolderService;
+import org.mule.tools.apikit.misc.APIKitTools;
+import org.mule.tools.apikit.model.API;
 
 public class APIKitToolsTest {
 
@@ -40,7 +38,6 @@ public class APIKitToolsTest {
     Assert.assertEquals("${port}", APIKitTools.getPortFromUri(uri));
     Assert.assertEquals("/path/path2/*", APIKitTools.getPathFromUri(uri, true));
     Assert.assertEquals("/path/path2/", APIKitTools.getPathFromUri(uri, false));
-
   }
 
   @Test

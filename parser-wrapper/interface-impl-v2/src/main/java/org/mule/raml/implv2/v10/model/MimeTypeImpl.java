@@ -6,6 +6,15 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static org.mule.raml.implv2.v10.model.RamlImpl10V2.getTypeAsString;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.mule.raml.implv2.parser.rule.ValidationResultImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.parameter.IParameter;
@@ -14,16 +23,6 @@ import org.raml.v2.api.model.v10.datamodel.ExampleSpec;
 import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.UnionTypeDeclaration;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
-import static java.util.stream.Collectors.toList;
-import static org.mule.raml.implv2.v10.model.RamlImpl10V2.getTypeAsString;
 
 public class MimeTypeImpl implements IMimeType {
 
@@ -73,7 +72,8 @@ public class MimeTypeImpl implements IMimeType {
 
     List<ExampleSpec> examples = typeDeclaration.examples();
     if (examples != null && !examples.isEmpty()) {
-      final List<ExampleSpec> nonNullExamples = examples.stream().filter(e -> e.value() != null).collect(toList());
+      final List<ExampleSpec> nonNullExamples =
+          examples.stream().filter(e -> e.value() != null).collect(toList());
       if (!nonNullExamples.isEmpty())
         return examples.get(0);
     }
@@ -100,7 +100,9 @@ public class MimeTypeImpl implements IMimeType {
     final int propertiesCount = typeDeclaration.properties().size();
 
     return parentTypes.stream()
-        .anyMatch(t -> t instanceof ObjectTypeDeclaration && ((ObjectTypeDeclaration) t).properties().size() < propertiesCount);
+        .anyMatch(
+                  t -> t instanceof ObjectTypeDeclaration
+                      && ((ObjectTypeDeclaration) t).properties().size() < propertiesCount);
   }
 
   @Override

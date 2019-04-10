@@ -6,12 +6,12 @@
  */
 package org.mule.raml.implv1.parser.rule;
 
+import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
+
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
 import org.raml.parser.rule.ValidationResult;
 import org.raml.parser.rule.ValidationResult.Level;
-
-import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class ValidationResultImpl implements IValidationResult {
 

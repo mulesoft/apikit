@@ -6,7 +6,18 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import static com.google.common.base.Joiner.on;
+import static com.google.common.collect.Sets.difference;
+import static com.google.common.collect.Sets.union;
+import static java.lang.String.format;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toSet;
+
 import com.google.common.net.MediaType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.mule.module.apikit.HeaderName;
 import org.mule.module.apikit.api.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.NotAcceptableException;
@@ -19,21 +30,7 @@ import org.mule.runtime.api.util.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static com.google.common.base.Joiner.on;
-import static com.google.common.collect.Sets.difference;
-import static com.google.common.collect.Sets.union;
-import static java.lang.String.format;
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toSet;
-
-
 public class HeadersValidator {
-
 
   private static final Logger logger = LoggerFactory.getLogger(HeadersValidator.class);
 
@@ -41,14 +38,16 @@ public class HeadersValidator {
 
   public HeadersValidator() {}
 
-  public void validateAndAddDefaults(MultiMap<String, String> incomingHeaders, IAction action, boolean headersStrictValidation)
+  public void validateAndAddDefaults(
+                                     MultiMap<String, String> incomingHeaders, IAction action, boolean headersStrictValidation)
       throws InvalidHeaderException, NotAcceptableException {
     this.headers = incomingHeaders;
     analyseRequestHeaders(action, headersStrictValidation);
     analyseAcceptHeader(incomingHeaders, action);
   }
 
-  private void analyseRequestHeaders(IAction action, boolean headersStrictValidation) throws InvalidHeaderException {
+  private void analyseRequestHeaders(IAction action, boolean headersStrictValidation)
+      throws InvalidHeaderException {
     if (headersStrictValidation)
       validateHeadersStrictly(action);
 
@@ -76,29 +75,31 @@ public class HeadersValidator {
   }
 
   private void validateHeadersStrictly(IAction action) throws InvalidHeaderException {
-    //checks that headers are defined in the RAML
-    final Set<String> ramlHeaders = action.getHeaders().keySet().stream()
-        .map(String::toLowerCase)
-        .collect(toSet());
+    // checks that headers are defined in the RAML
+    final Set<String> ramlHeaders =
+        action.getHeaders().keySet().stream().map(String::toLowerCase).collect(toSet());
 
-    final Set<String> templateHeaders = ramlHeaders.stream()
-        .filter(header -> header.contains("{?}"))
-        .map(header -> header.replace("{?}", ".*"))
-        .collect(toSet());
+    final Set<String> templateHeaders =
+        ramlHeaders.stream()
+            .filter(header -> header.contains("{?}"))
+            .map(header -> header.replace("{?}", ".*"))
+            .collect(toSet());
 
-    final Set<String> unmatchedHeaders = headers.keySet().stream()
-        .filter(header -> templateHeaders.stream().noneMatch(header::matches))
-        .collect(toSet());
+    final Set<String> unmatchedHeaders =
+        headers.keySet().stream()
+            .filter(header -> templateHeaders.stream().noneMatch(header::matches))
+            .collect(toSet());
 
-    final Set<String> standardHeaders = stream(HeaderName.values())
-        .map(header -> header.getName().toLowerCase())
-        .collect(toSet());
+    final Set<String> standardHeaders =
+        stream(HeaderName.values()).map(header -> header.getName().toLowerCase()).collect(toSet());
 
-    final Set<String> undefinedHeaders = difference(unmatchedHeaders, union(ramlHeaders, standardHeaders));
+    final Set<String> undefinedHeaders =
+        difference(unmatchedHeaders, union(ramlHeaders, standardHeaders));
 
     if (!undefinedHeaders.isEmpty()) {
-      throw new InvalidHeaderException(on(", ").join(undefinedHeaders)
-          + " headers are not defined in RAML and strict headers validation property is true.");
+      throw new InvalidHeaderException(
+                                       on(", ").join(undefinedHeaders)
+                                           + " headers are not defined in RAML and strict headers validation property is true.");
     }
   }
 
@@ -119,7 +120,8 @@ public class HeadersValidator {
     }
   }
 
-  private void validateType(String name, List<String> values, IParameter type) throws InvalidHeaderException {
+  private void validateType(String name, List<String> values, IParameter type)
+      throws InvalidHeaderException {
     final StringBuilder yamlValue = new StringBuilder();
     for (String value : values)
       yamlValue.append("- ").append(value).append("\n");
@@ -127,26 +129,31 @@ public class HeadersValidator {
     validateType(name, yamlValue.toString(), type);
   }
 
-  private void validateType(String name, String value, IParameter type) throws InvalidHeaderException {
+  private void validateType(String name, String value, IParameter type)
+      throws InvalidHeaderException {
     if (!type.validate(value)) {
-      throw new InvalidHeaderException(format("Invalid value '%s' for header %s. %s", value, name, type.message(value)));
+      throw new InvalidHeaderException(
+                                       format("Invalid value '%s' for header %s. %s", value, name, type.message(value)));
     }
   }
 
-  private void analyseAcceptHeader(MultiMap<String, String> incomingHeaders, IAction action) throws NotAcceptableException {
+  private void analyseAcceptHeader(MultiMap<String, String> incomingHeaders, IAction action)
+      throws NotAcceptableException {
     List<String> mimeTypes = getResponseMimeTypes(action);
     if (action == null || action.getResponses() == null || mimeTypes.isEmpty()) {
-      //no response media-types defined, return no body
+      // no response media-types defined, return no body
       return;
     }
-    MediaType bestMatch = MimeTypeParser.bestMatch(mimeTypes, AttributesHelper.getAcceptedResponseMediaTypes(incomingHeaders));
+    MediaType bestMatch =
+        MimeTypeParser.bestMatch(
+                                 mimeTypes, AttributesHelper.getAcceptedResponseMediaTypes(incomingHeaders));
     if (bestMatch == null) {
       throw new NotAcceptableException();
     }
     logger.debug("=== negotiated response content-type: " + bestMatch.toString());
     for (String representation : mimeTypes) {
       if (representation.equals(bestMatch.withoutParameters().toString())) {
-        //there is a valid representation
+        // there is a valid representation
         return;
       }
     }
@@ -179,7 +186,7 @@ public class HeadersValidator {
         return code;
       }
     }
-    //default success status
+    // default success status
     return 200;
   }
 

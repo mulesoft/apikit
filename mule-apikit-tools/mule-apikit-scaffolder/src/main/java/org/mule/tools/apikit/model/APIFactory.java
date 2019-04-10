@@ -6,18 +6,6 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.Validate;
-import org.codehaus.plexus.util.FileUtils;
-import org.mule.raml.interfaces.common.APISyncUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import static java.io.File.separator;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -25,6 +13,17 @@ import static org.mule.tools.apikit.model.API.DEFAULT_BASE_PATH;
 import static org.mule.tools.apikit.model.API.DEFAULT_HOST;
 import static org.mule.tools.apikit.model.API.DEFAULT_PROTOCOL;
 import static org.mule.tools.apikit.model.APIKitConfig.DEFAULT_CONFIG_NAME;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.codehaus.plexus.util.FileUtils;
+import org.mule.raml.interfaces.common.APISyncUtils;
 
 public class APIFactory {
 
@@ -40,12 +39,17 @@ public class APIFactory {
 
   public APIFactory() {}
 
-  public API createAPIBindingInboundEndpoint(String apiFileName, File xmlFile, String baseUri, String path,
-                                             APIKitConfig config) {
+  public API createAPIBindingInboundEndpoint(
+                                             String apiFileName, File xmlFile, String baseUri, String path, APIKitConfig config) {
     return createAPIBinding(apiFileName, xmlFile, baseUri, path, config, null);
   }
 
-  public API createAPIBinding(String apiFilePath, File xmlFile, String baseUri, String path, APIKitConfig config,
+  public API createAPIBinding(
+                              String apiFilePath,
+                              File xmlFile,
+                              String baseUri,
+                              String path,
+                              APIKitConfig config,
                               HttpListener4xConfig httpListenerConfig) {
 
     Validate.notNull(apiFilePath);
@@ -83,14 +87,18 @@ public class APIFactory {
     final String nextPort = getNextPort(httpListenerConfigs);
     final HttpListenerConnection listenerConnection = buildDefaultHttpListenerConnection(nextPort);
     String httpListenerConfigName =
-        id == null ? HttpListener4xConfig.DEFAULT_CONFIG_NAME : id + "-" + HttpListener4xConfig.DEFAULT_CONFIG_NAME;
+        id == null
+            ? HttpListener4xConfig.DEFAULT_CONFIG_NAME
+            : id + "-" + HttpListener4xConfig.DEFAULT_CONFIG_NAME;
     return new HttpListener4xConfig(httpListenerConfigName, DEFAULT_BASE_PATH, listenerConnection);
   }
 
   private static String getNextPort(Map<String, HttpListener4xConfig> httpListenerConfigs) {
-    final List<Map.Entry<String, HttpListener4xConfig>> numericPortListeners = getNumericPortListenersAsList(httpListenerConfigs);
+    final List<Map.Entry<String, HttpListener4xConfig>> numericPortListeners =
+        getNumericPortListenersAsList(httpListenerConfigs);
     if (numericPortListeners.size() > 0) {
-      final String greaterPort = numericPortListeners.get(numericPortListeners.size() - 1).getValue().getPort();
+      final String greaterPort =
+          numericPortListeners.get(numericPortListeners.size() - 1).getValue().getPort();
       return String.valueOf(Integer.parseInt(greaterPort) + 1);
     }
 
@@ -115,20 +123,25 @@ public class APIFactory {
 
     final List<String> apiIds = apis.values().stream().map(API::getId).collect(toList());
 
-    final List<String> configNames = apis.values().stream()
-        .filter(a -> a.getConfig() != null)
-        .map(a -> a.getConfig().getName()).collect(toList());
+    final List<String> configNames =
+        apis.values().stream()
+            .filter(a -> a.getConfig() != null)
+            .map(a -> a.getConfig().getName())
+            .collect(toList());
 
-    final List<String> httpConfigNames = apis.values().stream()
-        .filter(a -> a.getHttpListenerConfig() != null)
-        .map(a -> a.getHttpListenerConfig().getName()).collect(toList());
+    final List<String> httpConfigNames =
+        apis.values().stream()
+            .filter(a -> a.getHttpListenerConfig() != null)
+            .map(a -> a.getHttpListenerConfig().getName())
+            .collect(toList());
 
     int count = 0;
     String id;
     do {
       count++;
       id = (count > 1 ? apiId + "-" + count : apiId);
-    } while (apiIds.contains(id) || configNames.contains(id + "-" + DEFAULT_CONFIG_NAME)
+    } while (apiIds.contains(id)
+        || configNames.contains(id + "-" + DEFAULT_CONFIG_NAME)
         || httpConfigNames.contains(id + "-" + HttpListener4xConfig.DEFAULT_CONFIG_NAME));
 
     return id;
@@ -147,18 +160,20 @@ public class APIFactory {
     return httpListenerConfigs;
   }
 
-  private HttpListener4xConfig getAvailableLCForPath(String path, Map<String, HttpListener4xConfig> httpListenerConfigs) {
+  private HttpListener4xConfig getAvailableLCForPath(
+                                                     String path, Map<String, HttpListener4xConfig> httpListenerConfigs) {
     if (httpListenerConfigs.size() <= 0)
       return null;
 
-    final List<HttpListener4xConfig> usedListeners = apis.entrySet().stream()
-        .filter(e -> {
-          final String apiPath = e.getValue().getPath();
-          return path.equals(apiPath) || (path + "/*").equals(apiPath);
-        })
-        .map(e -> e.getValue().getHttpListenerConfig())
-        .collect(toList());
-
+    final List<HttpListener4xConfig> usedListeners =
+        apis.entrySet().stream()
+            .filter(
+                    e -> {
+                      final String apiPath = e.getValue().getPath();
+                      return path.equals(apiPath) || (path + "/*").equals(apiPath);
+                    })
+            .map(e -> e.getValue().getHttpListenerConfig())
+            .collect(toList());
 
     final List<Map.Entry<String, HttpListener4xConfig>> availableListeners = new ArrayList<>();
     availableListeners.addAll(getNumericPortListenersAsList(httpListenerConfigs));
@@ -171,26 +186,30 @@ public class APIFactory {
         .orElse(null);
   }
 
-  private static Map<String, HttpListener4xConfig> getNumericPortListeners(Map<String, HttpListener4xConfig> httpListenerConfigs) {
+  private static Map<String, HttpListener4xConfig> getNumericPortListeners(
+                                                                           Map<String, HttpListener4xConfig> httpListenerConfigs) {
     return httpListenerConfigs.entrySet().stream()
         .filter(entry -> StringUtils.isNumeric(entry.getValue().getPort()))
         .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private static List<Map.Entry<String, HttpListener4xConfig>> getNumericPortListenersAsList(Map<String, HttpListener4xConfig> httpListenerConfigs) {
+  private static List<Map.Entry<String, HttpListener4xConfig>> getNumericPortListenersAsList(
+                                                                                             Map<String, HttpListener4xConfig> httpListenerConfigs) {
     final List<Map.Entry<String, HttpListener4xConfig>> numericPortsList =
         new ArrayList<>(getNumericPortListeners(httpListenerConfigs).entrySet());
 
-    numericPortsList.sort((o1, o2) -> {
-      Integer i1 = Integer.parseInt(o1.getValue().getPort());
-      Integer i2 = Integer.parseInt(o2.getValue().getPort());
-      return i1.compareTo(i2);
-    });
+    numericPortsList.sort(
+                          (o1, o2) -> {
+                            Integer i1 = Integer.parseInt(o1.getValue().getPort());
+                            Integer i2 = Integer.parseInt(o2.getValue().getPort());
+                            return i1.compareTo(i2);
+                          });
 
     return numericPortsList;
   }
 
-  private static Map<String, HttpListener4xConfig> getNonNumericPortListeners(Map<String, HttpListener4xConfig> httpListenerConfigs) {
+  private static Map<String, HttpListener4xConfig> getNonNumericPortListeners(
+                                                                              Map<String, HttpListener4xConfig> httpListenerConfigs) {
     return httpListenerConfigs.entrySet().stream()
         .filter(entry -> !StringUtils.isNumeric(entry.getValue().getPort()))
         .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));

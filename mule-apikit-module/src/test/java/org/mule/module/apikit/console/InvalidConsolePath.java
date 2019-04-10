@@ -7,13 +7,13 @@
 
 package org.mule.module.apikit.console;
 
+import static io.restassured.RestAssured.given;
+
 import io.restassured.RestAssured;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
-
-import static io.restassured.RestAssured.given;
 
 public class InvalidConsolePath extends AbstractMultiParserFunctionalTestCase {
 
@@ -21,6 +21,7 @@ public class InvalidConsolePath extends AbstractMultiParserFunctionalTestCase {
   public DynamicPort secondServerPort = new DynamicPort("secondServerPort");
   @Rule
   public DynamicPort inboundEndpointConsole = new DynamicPort("inboundEndpointConsole");
+
   @Rule
   public DynamicPort secondInboundEndpointConsole = new DynamicPort("secondInboundEndpointConsole");
 
@@ -32,13 +33,8 @@ public class InvalidConsolePath extends AbstractMultiParserFunctionalTestCase {
   @Test
   public void getConsoleWithInvalidPath() throws Exception {
     RestAssured.port = serverPort.getNumber();
-    given().expect()
-        .statusCode(500)
-        .when().get("/console/");
+    given().expect().statusCode(500).when().get("/console/");
 
-    given().expect()
-        .statusCode(500)
-        .when().get("/console");
-
+    given().expect().statusCode(500).when().get("/console");
   }
 }

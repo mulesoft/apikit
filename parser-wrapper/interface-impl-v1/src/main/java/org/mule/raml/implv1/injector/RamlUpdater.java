@@ -6,16 +6,15 @@
  */
 package org.mule.raml.implv1.injector;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import org.mule.raml.interfaces.injector.IRamlUpdater;
 import org.raml.model.Action;
 import org.raml.model.Raml;
 import org.raml.model.SecurityScheme;
 import org.raml.model.Template;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public class RamlUpdater implements IRamlUpdater {
 
@@ -48,7 +47,7 @@ public class RamlUpdater implements IRamlUpdater {
   }
 
   public void resetAndUpdate() {
-    //TODO update api using config
+    // TODO update api using config
     //    config.updateApi(new RamlImplV1(raml));
   }
 
@@ -98,11 +97,13 @@ public class RamlUpdater implements IRamlUpdater {
 
   public RamlUpdater injectSecuritySchemes(String name, String securitySchemeYaml) {
     if (currentSecuritySchemes.contains(name)) {
-      throw new SecuritySchemeAlreadyDefinedException("Duplicate Security Scheme definition: " + name);
+      throw new SecuritySchemeAlreadyDefinedException(
+                                                      "Duplicate Security Scheme definition: " + name);
     }
     currentSecuritySchemes.add(name);
     Map<String, SecurityScheme> securitySchemeDef = new HashMap<String, SecurityScheme>();
-    InjectableSecurityScheme injectableSecurityScheme = new InjectableSecurityScheme(name, securitySchemeYaml);
+    InjectableSecurityScheme injectableSecurityScheme =
+        new InjectableSecurityScheme(name, securitySchemeYaml);
     securitySchemeDef.put(name, injectableSecurityScheme.getSecurityScheme());
     raml.getSecuritySchemes().add(securitySchemeDef);
     this.injectedSecuritySchemes.put(name, injectableSecurityScheme);
@@ -120,5 +121,4 @@ public class RamlUpdater implements IRamlUpdater {
     }
     return this;
   }
-
 }

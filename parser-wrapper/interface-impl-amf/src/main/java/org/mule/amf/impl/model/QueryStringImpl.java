@@ -6,6 +6,10 @@
  */
 package org.mule.amf.impl.model;
 
+import static java.util.Arrays.asList;
+import static org.mule.amf.impl.model.MediaType.APPLICATION_YAML;
+import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
+
 import amf.client.model.domain.AnyShape;
 import amf.client.model.domain.ArrayShape;
 import amf.client.model.domain.NodeShape;
@@ -14,10 +18,6 @@ import amf.client.model.domain.PropertyShape;
 import amf.client.model.domain.Shape;
 import amf.client.validate.PayloadValidator;
 import amf.client.validate.ValidationReport;
-import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
-import org.mule.raml.interfaces.model.IQueryString;
-import org.mule.raml.interfaces.model.parameter.IParameter;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -25,10 +25,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
-import static org.mule.amf.impl.model.MediaType.APPLICATION_YAML;
-import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
+import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
+import org.mule.raml.interfaces.model.IQueryString;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 
 public class QueryStringImpl implements IQueryString {
 
@@ -58,7 +57,6 @@ public class QueryStringImpl implements IQueryString {
       return (AnyShape) shape;
     throw new UnsupportedSchemaException();
   }
-
 
   @Override
   public String getDefaultValue() {

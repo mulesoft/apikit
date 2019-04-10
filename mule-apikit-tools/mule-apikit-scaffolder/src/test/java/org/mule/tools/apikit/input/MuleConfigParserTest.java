@@ -6,16 +6,9 @@
  */
 package org.mule.tools.apikit.input;
 
-import org.apache.maven.plugin.logging.Log;
-import org.jdom2.Document;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaders;
-import org.junit.Test;
-import org.mule.tools.apikit.model.API;
-import org.mule.tools.apikit.model.APIFactory;
-import org.mule.tools.apikit.model.HttpListener4xConfig;
-import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,18 +20,25 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
+import org.apache.maven.plugin.logging.Log;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
+import org.junit.Test;
+import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.APIFactory;
+import org.mule.tools.apikit.model.HttpListener4xConfig;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 public class MuleConfigParserTest {
 
   @Test
   public void testCreation() {
     final InputStream resourceAsStream =
-        MuleConfigParser.class.getClassLoader().getResourceAsStream(
-                                                                    "testGetEntries/leagues-flow-config.xml");
+        MuleConfigParser.class
+            .getClassLoader()
+            .getResourceAsStream("testGetEntries/leagues-flow-config.xml");
     Log log = mock(Log.class);
 
     HashSet<String> ramlFileNames = new HashSet<>();
@@ -48,7 +48,8 @@ public class MuleConfigParserTest {
     streams.put(new File(""), resourceAsStream);
     Map<String, HttpListener4xConfig> domainHttpListenerConfigs = new HashMap<>();
     MuleConfigParser muleConfigParser =
-        new MuleConfigParser(log, new APIFactory(domainHttpListenerConfigs)).parse(ramlFileNames, streams);
+        new MuleConfigParser(log, new APIFactory(domainHttpListenerConfigs))
+            .parse(ramlFileNames, streams);
     Set<ResourceActionMimeTypeTriplet> set = muleConfigParser.getEntries();
     assertNotNull(set);
     assertEquals(6, set.size());
@@ -70,11 +71,13 @@ public class MuleConfigParserTest {
   @Test
   public void testParseMultipleXmls() throws JDOMException, IOException {
     final InputStream xmlWithFlows =
-        MuleConfigParser.class.getClassLoader().getResourceAsStream(
-                                                                    "testGetEntries/leagues-flow-config.xml");
+        MuleConfigParser.class
+            .getClassLoader()
+            .getResourceAsStream("testGetEntries/leagues-flow-config.xml");
     final InputStream xmlWithoutFlows =
-        MuleConfigParser.class.getClassLoader().getResourceAsStream(
-                                                                    "testGetEntries/leagues-without-flows.xml");
+        MuleConfigParser.class
+            .getClassLoader()
+            .getResourceAsStream("testGetEntries/leagues-without-flows.xml");
 
     Document documentWithFlows = getDocument(xmlWithFlows);
     Document documentWithoutFlows = getDocument(xmlWithoutFlows);
@@ -351,7 +354,6 @@ public class MuleConfigParserTest {
     streams.put(new File(api.getFile()), api.openStream());
     streams.put(new File(config.getFile()), config.openStream());
 
-
     Log log = mock(Log.class);
 
     HashSet<String> ramlPaths = new HashSet<>();
@@ -377,13 +379,10 @@ public class MuleConfigParserTest {
     assertEquals(1, muleConfigParser.getApikitConfigs().size());
   }
 
-
   private Document getDocument(InputStream xmlWithFlows) throws JDOMException, IOException {
     SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
     Document document = saxBuilder.build(xmlWithFlows);
     xmlWithFlows.close();
     return document;
   }
-
-
 }

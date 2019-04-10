@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
+
+import org.junit.Test;
 
 public class RamlV2IntegrationTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,19 +20,25 @@ public class RamlV2IntegrationTestCase extends AbstractMultiParserFunctionalTest
 
   @Test
   public void getRootRamlV2() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
-        .response().body(containsString("RAML 1.0"))
+        .response()
+        .body(containsString("RAML 1.0"))
         .statusCode(200)
-        .when().get("/console/org/mule/module/apikit/raml-handler/?raml");
+        .when()
+        .get("/console/org/mule/module/apikit/raml-handler/?raml");
   }
 
   @Test
   public void getExampleV2() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
-        .response().body(containsString("jane"))
+        .response()
+        .body(containsString("jane"))
         .statusCode(200)
-        .when().get("/console/org/mule/module/apikit/raml-handler/example.json/?raml");
+        .when()
+        .get("/console/org/mule/module/apikit/raml-handler/example.json/?raml");
   }
 }

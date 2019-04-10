@@ -6,6 +6,8 @@
  */
 package org.mule.raml.implv1;
 
+import java.util.List;
+import java.util.Optional;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.builder.BooleanTypeBuilder;
 import org.mule.metadata.api.builder.NumberTypeBuilder;
@@ -15,17 +17,12 @@ import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
 import org.raml.model.parameter.AbstractParam;
 
-import java.util.List;
-import java.util.Optional;
-
 public class MetadataResolver {
-
 
   private MetadataResolver() {}
 
   public static Optional<MetadataType> resolve(AbstractParam param) {
     final BaseTypeBuilder rootBuilder = BaseTypeBuilder.create(MetadataFormat.JAVA);
-
 
     final TypeBuilder builder;
 
@@ -48,7 +45,8 @@ public class MetadataResolver {
         builder = handle(rootBuilder.stringType(), param);
     }
 
-    final MetadataType metadataType = param.isRepeat() ? rootBuilder.arrayType().of(builder.build()).build() : builder.build();
+    final MetadataType metadataType =
+        param.isRepeat() ? rootBuilder.arrayType().of(builder.build()).build() : builder.build();
     return Optional.of(metadataType);
   }
 
@@ -94,6 +92,6 @@ public class MetadataResolver {
     return STRING_METADATA_TYPE;
   }
 
-  private static final MetadataType STRING_METADATA_TYPE = BaseTypeBuilder.create(MetadataFormat.JAVA).stringType().build();
-
+  private static final MetadataType STRING_METADATA_TYPE =
+      BaseTypeBuilder.create(MetadataFormat.JAVA).stringType().build();
 }

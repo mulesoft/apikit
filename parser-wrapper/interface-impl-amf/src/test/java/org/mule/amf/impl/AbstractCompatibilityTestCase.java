@@ -6,6 +6,9 @@
  */
 package org.mule.amf.impl;
 
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -26,9 +29,6 @@ import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.api.ApiRef;
 
-import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertNotNull;
-
 abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
 
   protected IRaml amf;
@@ -40,7 +40,8 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
 
   protected File input;
 
-  private static final PathMatcher API_MATCHER = FileSystems.getDefault().getPathMatcher("glob:api.raml");
+  private static final PathMatcher API_MATCHER =
+      FileSystems.getDefault().getPathMatcher("glob:api.raml");
 
   AbstractCompatibilityTestCase(final File input, final String name) {
     this.input = input;
@@ -76,7 +77,8 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
   private static List<File> scan(final URI resources) throws IOException {
 
     return Files.walk(Paths.get(resources))
-        // .peek(path -> System.out.println("Path:" + path + " isApi:" + API_MATCHER.matches(path.getFileName())))
+        // .peek(path -> System.out.println("Path:" + path + " isApi:" +
+        // API_MATCHER.matches(path.getFileName())))
         .filter(path -> Files.isRegularFile(path) && API_MATCHER.matches(path.getFileName()))
         .map(Path::toFile)
         .collect(toList());
@@ -97,9 +99,9 @@ abstract class AbstractCompatibilityTestCase extends AbstractTestCase {
 
   static ParserWrapper createJavaParserWrapper(final String apiPath, final boolean isRaml08) {
 
-    final ParserWrapper ramlWrapper = isRaml08 ? new ParserWrapperV1(apiPath) : new ParserWrapperV2(apiPath);
+    final ParserWrapper ramlWrapper =
+        isRaml08 ? new ParserWrapperV1(apiPath) : new ParserWrapperV2(apiPath);
     ramlWrapper.validate();
     return ramlWrapper;
   }
-
 }

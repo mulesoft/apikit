@@ -10,16 +10,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-/**
- * Represents a way of getting resources from the application
- */
+/** Represents a way of getting resources from the application */
 public interface ResourceLoader {
 
   /**
    * Gets the root RAML File
    *
-   * @param relativePath Location of the root RAML file relative to the /mule/resources/api folder or a resource:: in case
-   *                     when the API is defined as a dependency (API sync)
+   * @param relativePath Location of the root RAML file relative to the /mule/resources/api folder
+   *     or a resource:: in case when the API is defined as a dependency (API sync)
    * @return {@link URI} to the RAML resource
    */
   URI getResource(String relativePath);
@@ -32,5 +30,4 @@ public interface ResourceLoader {
       return null;
     }
   }
-
 }

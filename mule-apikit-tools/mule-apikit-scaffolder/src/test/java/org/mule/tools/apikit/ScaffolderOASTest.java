@@ -6,6 +6,19 @@
  */
 package org.mule.tools.apikit;
 
+import static java.lang.String.format;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_JSON;
+import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_YAML;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,19 +50,6 @@ import org.mule.amf.impl.DocumentParser;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.RuntimeEdition;
 
-import static java.lang.String.format;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_JSON;
-import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_YAML;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.model.RuntimeEdition.EE;
-
 @RunWith(Parameterized.class)
 public class ScaffolderOASTest {
 
@@ -59,7 +59,8 @@ public class ScaffolderOASTest {
   private Log logger;
   private FileListUtils fileListUtils = new FileListUtils();
 
-  private static final PathMatcher API_MATCHER = FileSystems.getDefault().getPathMatcher("glob:*.{json,yaml, yml}");
+  private static final PathMatcher API_MATCHER =
+      FileSystems.getDefault().getPathMatcher("glob:*.{json,yaml, yml}");
 
   public ScaffolderOASTest(final String folderName, final Path api) {
 
@@ -104,14 +105,16 @@ public class ScaffolderOASTest {
     final List<Object[]> parameters = new ArrayList<>();
     final Path basePath = Paths.get(ScaffolderOASTest.class.getResource("/oas").toURI());
 
-    scan(basePath).forEach(path -> {
-      try {
-        final Path folderName = basePath.relativize(path);
-        parameters.add(new Object[] {folderName.toString(), path});
-      } catch (Exception e) {
-        throw new RuntimeException(e);
-      }
-    });
+    scan(basePath)
+        .forEach(
+                 path -> {
+                   try {
+                     final Path folderName = basePath.relativize(path);
+                     parameters.add(new Object[] {folderName.toString(), path});
+                   } catch (Exception e) {
+                     throw new RuntimeException(e);
+                   }
+                 });
 
     return parameters;
   }
@@ -134,7 +137,9 @@ public class ScaffolderOASTest {
   private static boolean isOas(final Path path) {
     final Path fileName = path.getFileName();
     final boolean isOas =
-        Files.isRegularFile(path) && API_MATCHER.matches(fileName) && !"mule-artifact.json".equals(fileName.toString());
+        Files.isRegularFile(path)
+            && API_MATCHER.matches(fileName)
+            && !"mule-artifact.json".equals(fileName.toString());
 
     if (!isOas)
       return false;
@@ -147,7 +152,15 @@ public class ScaffolderOASTest {
 
     final Path outputFolder = createOutputFolder(api);
 
-    createScaffolder(singletonList(api.toFile()), emptyList(), outputFolder.toFile(), null, null, DEFAULT_MULE_VERSION, EE).run();
+    createScaffolder(
+                     singletonList(api.toFile()),
+                     emptyList(),
+                     outputFolder.toFile(),
+                     null,
+                     null,
+                     DEFAULT_MULE_VERSION,
+                     EE)
+                         .run();
 
     return muleApp(outputFolder, fileNameWithOutExtension(api));
   }
@@ -160,10 +173,12 @@ public class ScaffolderOASTest {
     // Initialize mule ap & mule-artifact
     final String muleApp = fileNameWithOutExtension(api) + ".xml";
     Files.createFile(Paths.get(outputFolder.toString(), muleApp));
-    final Path artifact = Files.createFile(Paths.get(outputFolder.toString(), "mule-artifact.json"));
+    final Path artifact =
+        Files.createFile(Paths.get(outputFolder.toString(), "mule-artifact.json"));
 
-    //artifact.toFile().createNewFile(); 
-    InputStream resourceAsStream = ScaffolderOASTest.class.getClassLoader().getResourceAsStream("mule-artifact.json");
+    // artifact.toFile().createNewFile();
+    InputStream resourceAsStream =
+        ScaffolderOASTest.class.getClassLoader().getResourceAsStream("mule-artifact.json");
     IOUtils.copy(resourceAsStream, new FileOutputStream(artifact.toFile()));
 
     return outputFolder;
@@ -180,9 +195,11 @@ public class ScaffolderOASTest {
     return Paths.get(apiFolder.toString(), apiName);
   }
 
-  private static Path createGoldenFile(final Path goldenFile, final String content) throws IOException {
+  private static Path createGoldenFile(final Path goldenFile, final String content)
+      throws IOException {
 
-    final String srcPath = goldenFile.toFile().getPath().replace("target/test-classes", "src/test/resources");
+    final String srcPath =
+        goldenFile.toFile().getPath().replace("target/test-classes", "src/test/resources");
     final Path goldenPath = Paths.get(srcPath);
     System.out.println("*** Create Golden " + goldenPath);
 
@@ -201,12 +218,19 @@ public class ScaffolderOASTest {
     }
   }
 
-  /************************************************************************************************
-  // Similar to AbstractScaffolderTestCase but single Parser
-   ************************************************************************************************/
-
-  private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile,
-                                      Set<File> ramlsWithExtensionEnabled, String muleVersion, RuntimeEdition runtimeEdition)
+  /**
+   * **********************************************************************************************
+   * // Similar to AbstractScaffolderTestCase but single Parser
+   * **********************************************************************************************
+   */
+  private Scaffolder createScaffolder(
+                                      List<File> ramls,
+                                      List<File> xmls,
+                                      File muleXmlOut,
+                                      File domainFile,
+                                      Set<File> ramlsWithExtensionEnabled,
+                                      String muleVersion,
+                                      RuntimeEdition runtimeEdition)
       throws FileNotFoundException {
 
     Map<File, InputStream> ramlMap = null;
@@ -218,7 +242,14 @@ public class ScaffolderOASTest {
     if (domainFile != null) {
       domainStream = new FileInputStream(domainFile);
     }
-    return new Scaffolder(getLogger(), muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion,
+    return new Scaffolder(
+                          getLogger(),
+                          muleXmlOut,
+                          ramlMap,
+                          xmlMap,
+                          domainStream,
+                          ramlsWithExtensionEnabled,
+                          muleVersion,
                           runtimeEdition);
   }
 
@@ -238,10 +269,11 @@ public class ScaffolderOASTest {
   }
 
   private static Stubber getStubber(final String prefix) {
-    return doAnswer(invocation -> {
-      Object[] args = invocation.getArguments();
-      System.out.println(prefix + args[0].toString());
-      return null;
-    });
+    return doAnswer(
+                    invocation -> {
+                      Object[] args = invocation.getArguments();
+                      System.out.println(prefix + args[0].toString());
+                      return null;
+                    });
   }
 }

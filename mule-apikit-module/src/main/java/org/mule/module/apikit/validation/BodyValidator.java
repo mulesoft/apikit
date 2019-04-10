@@ -6,6 +6,11 @@
  */
 package org.mule.module.apikit.validation;
 
+import static java.lang.String.format;
+import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsString;
+
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
@@ -13,11 +18,10 @@ import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 import org.mule.module.apikit.api.validation.ValidBody;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.helpers.AttributesHelper;
-import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.module.apikit.validation.body.form.FormParametersValidator;
 import org.mule.module.apikit.validation.body.form.MultipartFormValidator;
-import org.mule.module.apikit.validation.body.form.UrlencodedFormV2Validator;
 import org.mule.module.apikit.validation.body.form.UrlencodedFormV1Validator;
+import org.mule.module.apikit.validation.body.form.UrlencodedFormV2Validator;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.module.apikit.validation.body.schema.v1.RestJsonSchemaValidator;
 import org.mule.module.apikit.validation.body.schema.v1.RestXmlSchemaValidator;
@@ -26,24 +30,19 @@ import org.mule.module.apikit.validation.body.schema.v2.RestSchemaV2Validator;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.runtime.api.metadata.TypedValue;
-
-import java.io.InputStream;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.lang.String.format;
-import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsString;
-
 public class BodyValidator {
 
-  protected final static Logger logger = LoggerFactory.getLogger(BodyValidator.class);
+  protected static final Logger logger = LoggerFactory.getLogger(BodyValidator.class);
 
-
-  public static ValidBody validate(IAction action, HttpRequestAttributes attributes, Object payload,
-                                   ValidationConfig config, String charset)
+  public static ValidBody validate(
+                                   IAction action,
+                                   HttpRequestAttributes attributes,
+                                   Object payload,
+                                   ValidationConfig config,
+                                   String charset)
       throws BadRequestException, UnsupportedMediaTypeException {
 
     ValidBody validBody = new ValidBody(payload);
@@ -55,15 +54,19 @@ public class BodyValidator {
 
     final String requestMimeTypeName = AttributesHelper.getMediaType(attributes);
 
-    final Entry<String, IMimeType> foundMimeType = action.getBody().entrySet().stream()
-        .peek(entry -> {
-          if (logger.isDebugEnabled())
-            logger.debug(format("comparing request media type %s with expected %s\n", requestMimeTypeName, entry.getKey()));
-        })
-        .filter(entry -> entry.getKey().equals(requestMimeTypeName))
-        .findFirst()
-        .orElseThrow(UnsupportedMediaTypeException::new);
-
+    final Entry<String, IMimeType> foundMimeType =
+        action.getBody().entrySet().stream()
+            .peek(
+                  entry -> {
+                    if (logger.isDebugEnabled())
+                      logger.debug(
+                                   format(
+                                          "comparing request media type %s with expected %s\n",
+                                          requestMimeTypeName, entry.getKey()));
+                  })
+            .filter(entry -> entry.getKey().equals(requestMimeTypeName))
+            .findFirst()
+            .orElseThrow(UnsupportedMediaTypeException::new);
 
     final IMimeType mimeType = foundMimeType.getValue();
 
@@ -75,15 +78,18 @@ public class BodyValidator {
         || requestMimeTypeName.contains("application/x-www-form-urlencoded"))) {
 
       validBody = validateAsMultiPart(config, mimeType, requestMimeTypeName, payload);
-
     }
 
     return validBody;
   }
 
-  private static ValidBody validateAsString(ValidationConfig config, IMimeType mimeType, IAction action,
+  private static ValidBody validateAsString(
+                                            ValidationConfig config,
+                                            IMimeType mimeType,
+                                            IAction action,
                                             String requestMimeTypeName,
-                                            Object payload, String charset)
+                                            Object payload,
+                                            String charset)
       throws BadRequestException {
 
     IRestSchemaValidatorStrategy validator = null;
@@ -115,7 +121,8 @@ public class BodyValidator {
     return validBody;
   }
 
-  private static ValidBody validateAsMultiPart(ValidationConfig config, IMimeType mimeType, String requestMimeTypeName,
+  private static ValidBody validateAsMultiPart(
+                                               ValidationConfig config, IMimeType mimeType, String requestMimeTypeName,
                                                Object payload)
       throws BadRequestException {
 
@@ -129,17 +136,23 @@ public class BodyValidator {
       if (requestMimeTypeName.contains("multipart/form-data")) {
 
         formParametersValidator =
-            new FormParametersValidator(new MultipartFormValidator(mimeType.getFormParameters(), config.getExpressionManager()));
+            new FormParametersValidator(
+                                        new MultipartFormValidator(
+                                                                   mimeType.getFormParameters(), config.getExpressionManager()));
         validBody.setFormParameters(formParametersValidator.validate(payloadAsTypedValue));
 
       } else if (requestMimeTypeName.contains("application/x-www-form-urlencoded")) {
         if (config.isParserV2()) {
           formParametersValidator =
-              new FormParametersValidator(new UrlencodedFormV2Validator(mimeType, config.getExpressionManager()));
+              new FormParametersValidator(
+                                          new UrlencodedFormV2Validator(mimeType, config.getExpressionManager()));
 
         } else {
-          formParametersValidator = new FormParametersValidator(new UrlencodedFormV1Validator(mimeType.getFormParameters(),
-                                                                                              config.getExpressionManager()));
+          formParametersValidator =
+              new FormParametersValidator(
+                                          new UrlencodedFormV1Validator(
+                                                                        mimeType.getFormParameters(),
+                                                                        config.getExpressionManager()));
         }
 
         validBody.setFormParameters(formParametersValidator.validate(payloadAsTypedValue));
@@ -148,5 +161,4 @@ public class BodyValidator {
 
     return validBody;
   }
-
 }

@@ -17,10 +17,10 @@ public class APISyncUtils {
   public static final String RAML_FRAGMENT_CLASSIFIER = "raml-fragment";
   public static final String EXCHANGE_TYPE = "zip";
   public static final String EXCHANGE_MODULES = "exchange_modules";
-  final static String EXCHANGE_ROOT_RAML_TAG = "\"main\":\"";
-  public static final String EXCHANGE_MODULE_REGEX = "exchange_modules/([^/]+)/([^/]+)/([^/]+)/(.*)";
+  static final String EXCHANGE_ROOT_RAML_TAG = "\"main\":\"";
+  public static final String EXCHANGE_MODULE_REGEX =
+      "exchange_modules/([^/]+)/([^/]+)/([^/]+)/(.*)";
   private static final Pattern EXCHANGE_PATTERN = Pattern.compile(EXCHANGE_MODULE_REGEX);
-
 
   private APISyncUtils() {}
 
@@ -37,7 +37,9 @@ public class APISyncUtils {
   }
 
   public static String getMainApi(String exchangeJson) {
-    exchangeJson = exchangeJson.substring(exchangeJson.indexOf(EXCHANGE_ROOT_RAML_TAG) + EXCHANGE_ROOT_RAML_TAG.length());
+    exchangeJson =
+        exchangeJson.substring(
+                               exchangeJson.indexOf(EXCHANGE_ROOT_RAML_TAG) + EXCHANGE_ROOT_RAML_TAG.length());
     exchangeJson = exchangeJson.substring(0, exchangeJson.indexOf("\""));
     return exchangeJson;
   }
@@ -50,14 +52,21 @@ public class APISyncUtils {
       String artifactId = exchangeMatcher.group(2);
       String version = exchangeMatcher.group(3);
       String filePath = exchangeMatcher.group(4);
-      apiSyncResource = String.format(RESOURCE_FORMAT, groupId, artifactId,
-                                      version, RAML_FRAGMENT_CLASSIFIER,
-                                      EXCHANGE_TYPE, filePath);
+      apiSyncResource =
+          String.format(
+                        RESOURCE_FORMAT,
+                        groupId,
+                        artifactId,
+                        version,
+                        RAML_FRAGMENT_CLASSIFIER,
+                        EXCHANGE_TYPE,
+                        filePath);
     }
     return apiSyncResource;
   }
 
-  public static boolean compareResourcesLocation(String resourceA, String resourceB, Boolean checkVersion) {
+  public static boolean compareResourcesLocation(
+                                                 String resourceA, String resourceB, Boolean checkVersion) {
     APISyncResource apiSyncResourceA = null;
     APISyncResource apiSyncResourceB = null;
     try {
@@ -78,7 +87,6 @@ public class APISyncUtils {
     private String classifier;
     private String packager;
     private String file;
-
 
     APISyncResource(String resource) throws APISyncResourceException {
       if (!APISyncUtils.isSyncProtocol(resource))
@@ -106,7 +114,6 @@ public class APISyncUtils {
           && packager.equals(resource.packager)
           && file.equals(resource.file);
     }
-
   }
 
   private static class APISyncResourceException extends Exception {
@@ -114,6 +121,5 @@ public class APISyncUtils {
     public APISyncResourceException(String message) {
       super(message);
     }
-
   }
 }

@@ -6,6 +6,10 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.metadata.api.model.MetadataFormat.JAVA;
+import static org.mule.raml.interfaces.ParserType.AUTO;
+import static org.mule.runtime.api.meta.Category.COMMUNITY;
+
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.metadata.api.ClassTypeLoader;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
@@ -23,10 +27,6 @@ import org.mule.runtime.extension.api.declaration.type.ExtensionsTypeLoaderFacto
 import org.mule.runtime.extension.api.loader.ExtensionLoadingContext;
 import org.mule.runtime.extension.api.loader.ExtensionLoadingDelegate;
 
-import static org.mule.metadata.api.model.MetadataFormat.JAVA;
-import static org.mule.raml.interfaces.ParserType.AUTO;
-import static org.mule.runtime.api.meta.Category.COMMUNITY;
-
 public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate {
 
   public static final String EXTENSION_NAME = "APIKit";
@@ -42,30 +42,47 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
   protected final BaseTypeBuilder typeBuilder = BaseTypeBuilder.create(JAVA);
 
   @Override
-  public void accept(ExtensionDeclarer extensionDeclarer, ExtensionLoadingContext extensionLoadingContext) {
+  public void accept(
+                     ExtensionDeclarer extensionDeclarer, ExtensionLoadingContext extensionLoadingContext) {
     ErrorModel muleAnyErrorType = ErrorModelBuilder.newError("ANY", "MULE").build();
-    ErrorModel apikitAnyErrorType = ErrorModelBuilder.newError("ANY", "APIKIT").withParent(muleAnyErrorType).build();
-    ErrorModel badRequestErrorModel = ErrorModelBuilder.newError("BAD_REQUEST", "APIKIT").withParent(apikitAnyErrorType).build();
+    ErrorModel apikitAnyErrorType =
+        ErrorModelBuilder.newError("ANY", "APIKIT").withParent(muleAnyErrorType).build();
+    ErrorModel badRequestErrorModel =
+        ErrorModelBuilder.newError("BAD_REQUEST", "APIKIT").withParent(apikitAnyErrorType).build();
     ErrorModel notAcceptableErrorModel =
-        ErrorModelBuilder.newError("NOT_ACCEPTABLE", "APIKIT").withParent(apikitAnyErrorType).build();
+        ErrorModelBuilder.newError("NOT_ACCEPTABLE", "APIKIT")
+            .withParent(apikitAnyErrorType)
+            .build();
     ErrorModel unsupportedMediaTypeErrorModel =
-        ErrorModelBuilder.newError("UNSUPPORTED_MEDIA_TYPE", "APIKIT").withParent(apikitAnyErrorType).build();
+        ErrorModelBuilder.newError("UNSUPPORTED_MEDIA_TYPE", "APIKIT")
+            .withParent(apikitAnyErrorType)
+            .build();
     ErrorModel methodNotAllowedErrorModel =
-        ErrorModelBuilder.newError("METHOD_NOT_ALLOWED", "APIKIT").withParent(apikitAnyErrorType).build();
-    ErrorModel notFoundErrorModel = ErrorModelBuilder.newError("NOT_FOUND", "APIKIT").withParent(apikitAnyErrorType).build();
+        ErrorModelBuilder.newError("METHOD_NOT_ALLOWED", "APIKIT")
+            .withParent(apikitAnyErrorType)
+            .build();
+    ErrorModel notFoundErrorModel =
+        ErrorModelBuilder.newError("NOT_FOUND", "APIKIT").withParent(apikitAnyErrorType).build();
     ErrorModel notImplementedErrorModel =
-        ErrorModelBuilder.newError("NOT_IMPLEMENTED", "APIKIT").withParent(apikitAnyErrorType).build();
+        ErrorModelBuilder.newError("NOT_IMPLEMENTED", "APIKIT")
+            .withParent(apikitAnyErrorType)
+            .build();
 
-    XmlDslModel xmlDslModel = XmlDslModel.builder()
-        .setPrefix(PREFIX_NAME)
-        .setXsdFileName(XSD_FILE_NAME)
-        .setSchemaVersion(VERSION)
-        .setSchemaLocation(String.format("%s/%s/%s", UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, SCHEMA_VERSION, XSD_FILE_NAME))
-        .setNamespace(UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION)
-        .build();
+    XmlDslModel xmlDslModel =
+        XmlDslModel.builder()
+            .setPrefix(PREFIX_NAME)
+            .setXsdFileName(XSD_FILE_NAME)
+            .setSchemaVersion(VERSION)
+            .setSchemaLocation(
+                               String.format(
+                                             "%s/%s/%s",
+                                             UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION, SCHEMA_VERSION, XSD_FILE_NAME))
+            .setNamespace(UNESCAPED_LOCATION_PREFIX + SCHEMA_LOCATION)
+            .build();
     ClassTypeLoader typeLoader = ExtensionsTypeLoaderFactory.getDefault().createTypeLoader();
 
-    extensionDeclarer.named(EXTENSION_NAME)
+    extensionDeclarer
+        .named(EXTENSION_NAME)
         .describedAs(EXTENSION_DESCRIPTION)
         .fromVendor(VENDOR)
         .onVersion(VERSION)
@@ -78,42 +95,64 @@ public class ApikitExtensionLoadingDelegate implements ExtensionLoadingDelegate 
         .withErrorModel(methodNotAllowedErrorModel)
         .withErrorModel(notFoundErrorModel)
         .withErrorModel(notImplementedErrorModel);
-    extensionDeclarer.withImportedType(new ImportedTypeModel((ObjectType) typeLoader.load(HttpRequestAttributes.class)));
+    extensionDeclarer.withImportedType(
+                                       new ImportedTypeModel((ObjectType) typeLoader.load(HttpRequestAttributes.class)));
 
-    //config
-    ConfigurationDeclarer apikitConfig = extensionDeclarer.withConfig("config")
-        .describedAs(PREFIX_NAME);
+    // config
+    ConfigurationDeclarer apikitConfig =
+        extensionDeclarer.withConfig("config").describedAs(PREFIX_NAME);
     ParameterGroupDeclarer parameterGroupDeclarer = apikitConfig.onDefaultParameterGroup();
     parameterGroupDeclarer.withOptionalParameter("raml").ofType(typeLoader.load(String.class));
     parameterGroupDeclarer.withOptionalParameter("api").ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withRequiredParameter("outboundHeadersMapName").ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withRequiredParameter("httpStatusVarName").ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withOptionalParameter("keepApiBaseUri").defaultingTo(false).ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withOptionalParameter("keepRamlBaseUri").defaultingTo(false).ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withOptionalParameter("disableValidations").defaultingTo(false).ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withOptionalParameter("queryParamsStrictValidation").defaultingTo(false)
+    parameterGroupDeclarer
+        .withRequiredParameter("outboundHeadersMapName")
         .ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withOptionalParameter("headersStrictValidation").defaultingTo(false)
+    parameterGroupDeclarer
+        .withRequiredParameter("httpStatusVarName")
         .ofType(typeLoader.load(String.class));
-    parameterGroupDeclarer.withOptionalParameter("parser").defaultingTo(AUTO).ofType(typeLoader.load(ParserType.class));
-    parameterGroupDeclarer.withOptionalParameter("flowMappings")
+    parameterGroupDeclarer
+        .withOptionalParameter("keepApiBaseUri")
+        .defaultingTo(false)
+        .ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer
+        .withOptionalParameter("keepRamlBaseUri")
+        .defaultingTo(false)
+        .ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer
+        .withOptionalParameter("disableValidations")
+        .defaultingTo(false)
+        .ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer
+        .withOptionalParameter("queryParamsStrictValidation")
+        .defaultingTo(false)
+        .ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer
+        .withOptionalParameter("headersStrictValidation")
+        .defaultingTo(false)
+        .ofType(typeLoader.load(String.class));
+    parameterGroupDeclarer
+        .withOptionalParameter("parser")
+        .defaultingTo(AUTO)
+        .ofType(typeLoader.load(ParserType.class));
+    parameterGroupDeclarer
+        .withOptionalParameter("flowMappings")
         .ofType(typeBuilder.arrayType().of(typeLoader.load(FlowMapping.class)).build());
 
-    //router
+    // router
     OperationDeclarer routerDeclarer = apikitConfig.withOperation("router");
     routerDeclarer.withOutputAttributes().ofType(typeLoader.load(HttpRequestAttributes.class));
     routerDeclarer.withOutput().ofType(typeLoader.load(Object.class));
-    routerDeclarer.withErrorModel(badRequestErrorModel)
+    routerDeclarer
+        .withErrorModel(badRequestErrorModel)
         .withErrorModel(notAcceptableErrorModel)
         .withErrorModel(unsupportedMediaTypeErrorModel)
         .withErrorModel(methodNotAllowedErrorModel)
         .withErrorModel(notFoundErrorModel);
 
-    //console
+    // console
     OperationDeclarer consoleDeclarer = apikitConfig.withOperation("console");
     consoleDeclarer.withOutputAttributes().ofType(typeLoader.load(HttpRequestAttributes.class));
     consoleDeclarer.withOutput().ofType(typeLoader.load(Object.class));
     consoleDeclarer.withErrorModel(notFoundErrorModel);
-
   }
 }

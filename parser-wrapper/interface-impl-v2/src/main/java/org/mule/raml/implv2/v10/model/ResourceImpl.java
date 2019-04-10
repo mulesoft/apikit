@@ -6,6 +6,13 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
+import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
@@ -13,14 +20,6 @@ import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.methods.Method;
 import org.raml.v2.api.model.v10.resources.Resource;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
-import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
 public class ResourceImpl implements IResource {
 
@@ -46,7 +45,6 @@ public class ResourceImpl implements IResource {
   public String getResolvedUri(String version) {
     return resolveVersion(getUri(), version);
   }
-
 
   @Override
   public String getParentUri() {

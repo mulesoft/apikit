@@ -6,7 +6,19 @@
  */
 package org.mule.tools.apikit.output;
 
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Content;
@@ -33,41 +45,24 @@ import org.mule.tools.apikit.output.scopes.FlowScope;
 import org.mule.tools.apikit.output.scopes.HttpListenerConfigMule4Scope;
 import org.mule.tools.apikit.output.scopes.MuleScope;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import static org.mule.tools.apikit.model.RuntimeEdition.EE;
-
 public class MuleConfigGenerator {
 
-  public static final NamespaceWithLocation XMLNS_NAMESPACE = new NamespaceWithLocation(
-                                                                                        Namespace
-                                                                                            .getNamespace("http://www.mulesoft.org/schema/mule/core"),
-                                                                                        "http://www.mulesoft.org/schema/mule/core/current/mule.xsd");
-  public static final NamespaceWithLocation XSI_NAMESPACE = new NamespaceWithLocation(
-                                                                                      Namespace
-                                                                                          .getNamespace("xsi",
-                                                                                                        "http://www.w3.org/2001/XMLSchema-instance"),
-                                                                                      null);
-  public static final NamespaceWithLocation HTTP_NAMESPACE = new NamespaceWithLocation(
-                                                                                       Namespace
-                                                                                           .getNamespace("http",
-                                                                                                         "http://www.mulesoft.org/schema/mule/http"),
-                                                                                       "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
+  public static final NamespaceWithLocation XMLNS_NAMESPACE =
+      new NamespaceWithLocation(
+                                Namespace.getNamespace("http://www.mulesoft.org/schema/mule/core"),
+                                "http://www.mulesoft.org/schema/mule/core/current/mule.xsd");
+  public static final NamespaceWithLocation XSI_NAMESPACE =
+      new NamespaceWithLocation(
+                                Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance"), null);
+  public static final NamespaceWithLocation HTTP_NAMESPACE =
+      new NamespaceWithLocation(
+                                Namespace.getNamespace("http", "http://www.mulesoft.org/schema/mule/http"),
+                                "http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd");
 
-  public static final NamespaceWithLocation EE_NAMESPACE = new NamespaceWithLocation(
-                                                                                     Namespace
-                                                                                         .getNamespace("ee",
-                                                                                                       "http://www.mulesoft.org/schema/mule/ee/core"),
-                                                                                     "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd");
+  public static final NamespaceWithLocation EE_NAMESPACE =
+      new NamespaceWithLocation(
+                                Namespace.getNamespace("ee", "http://www.mulesoft.org/schema/mule/ee/core"),
+                                "http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd");
 
   private static final String INDENTATION = "    ";
 
@@ -79,8 +74,13 @@ public class MuleConfigGenerator {
   private final List<API> apis;
   private final List<ComponentScaffoldingError> errors = new LinkedList<>();
 
-  public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<API> apis, List<GenerationModel> flowEntries,
-                             Set<File> ramlsWithExtensionEnabled, RuntimeEdition runtimeEdition) {
+  public MuleConfigGenerator(
+                             Log log,
+                             File muleConfigOutputDirectory,
+                             List<API> apis,
+                             List<GenerationModel> flowEntries,
+                             Set<File> ramlsWithExtensionEnabled,
+                             RuntimeEdition runtimeEdition) {
     this.log = log;
     this.flowEntries = flowEntries;
     this.rootDirectory = muleConfigOutputDirectory;
@@ -101,27 +101,30 @@ public class MuleConfigGenerator {
 
     Map<API, Document> docs = new HashMap<>();
     if (flowEntries.isEmpty()) {
-      apis.forEach(api -> {
-        try {
-          Document doc = getDocument(api);
-          if (api.getConfig() == null || api.getHttpListenerConfig() == null) {
-            if (api.getConfig() == null) {
-              api.setDefaultAPIKitConfig();
-            }
-            if (ramlsWithExtensionEnabledContains(api.getApiFilePath())) {
-              api.getConfig().setExtensionEnabled(true);
-            }
-            generateAPIKitAndListenerConfig(api, doc);
-          }
-          docs.put(api, doc);
-        } catch (Exception e) {
-          log.error("Error generating xml for file: [" + api.getApiFilePath() + "]", e);
-          errors
-              .add(new SimpleScaffoldingError(String.format("Error generating xml for file: [ %s ] : %s", api.getApiFilePath(),
-                                                            e.getMessage()),
-                                              ScaffoldingErrorType.GENERATION));
-        }
-      });
+      apis.forEach(
+                   api -> {
+                     try {
+                       Document doc = getDocument(api);
+                       if (api.getConfig() == null || api.getHttpListenerConfig() == null) {
+                         if (api.getConfig() == null) {
+                           api.setDefaultAPIKitConfig();
+                         }
+                         if (ramlsWithExtensionEnabledContains(api.getApiFilePath())) {
+                           api.getConfig().setExtensionEnabled(true);
+                         }
+                         generateAPIKitAndListenerConfig(api, doc);
+                       }
+                       docs.put(api, doc);
+                     } catch (Exception e) {
+                       log.error("Error generating xml for file: [" + api.getApiFilePath() + "]", e);
+                       errors.add(
+                                  new SimpleScaffoldingError(
+                                                             String.format(
+                                                                           "Error generating xml for file: [ %s ] : %s",
+                                                                           api.getApiFilePath(), e.getMessage()),
+                                                             ScaffoldingErrorType.GENERATION));
+                     }
+                   });
     } else {
       for (GenerationModel flowEntry : flowEntries) {
         Document doc;
@@ -134,10 +137,11 @@ public class MuleConfigGenerator {
               .addContent(index, new APIKitFlowScope(flowEntry, isMuleEE()).generate());
         } catch (Exception e) {
           log.error("Error generating xml for file: [" + api.getApiFilePath() + "]", e);
-          errors.add(new SimpleScaffoldingError(
-                                                String.format("Error generating xml for file: [ %s ] : %s",
-                                                              api.getApiFilePath(),
-                                                              e.getMessage()),
+          errors.add(
+                     new SimpleScaffoldingError(
+                                                String.format(
+                                                              "Error generating xml for file: [ %s ] : %s",
+                                                              api.getApiFilePath(), e.getMessage()),
                                                 ScaffoldingErrorType.GENERATION));
         }
       }
@@ -162,11 +166,12 @@ public class MuleConfigGenerator {
         log.info("Updating file: [" + xmlFile + "]");
       } catch (IOException e) {
         log.error("Error writing to file: [" + xmlFile + "]", e);
-        errors.add(new SimpleScaffoldingError(String.format("Error writing to file: [ %s ] : %s", xmlFile, e.getMessage()),
+        errors.add(
+                   new SimpleScaffoldingError(
+                                              String.format("Error writing to file: [ %s ] : %s", xmlFile, e.getMessage()),
                                               ScaffoldingErrorType.GENERATION));
       }
     }
-
   }
 
   private void updateApikitConfigs(Map<API, Document> docs) {
@@ -179,7 +184,8 @@ public class MuleConfigGenerator {
         XPathExpression muleExp = XPathFactory.instance().compile("//*[local-name()='mule']");
         List<Element> mules = muleExp.evaluate(doc);
         Element mule = mules.get(0);
-        int index = mule.indexOf(mule.getChild("config", APIKitTools.API_KIT_NAMESPACE.getNamespace()));
+        int index =
+            mule.indexOf(mule.getChild("config", APIKitTools.API_KIT_NAMESPACE.getNamespace()));
         mule.removeContent(index);
         new APIKitConfigScope(api.getConfig(), mule, index).generate();
         docs.put(api, doc);
@@ -200,8 +206,7 @@ public class MuleConfigGenerator {
     return lastFlowIndex;
   }
 
-  Document getOrCreateDocument(Map<API, Document> docs, API api)
-      throws IOException, JDOMException {
+  Document getOrCreateDocument(Map<API, Document> docs, API api) throws IOException, JDOMException {
     Document doc;
     if (docs.containsKey(api)) {
       doc = docs.get(api);
@@ -223,7 +228,8 @@ public class MuleConfigGenerator {
 
   private boolean ramlsWithExtensionEnabledContains(String ramlFileName) {
     for (File ramlWithExtensionEnabled : ramlsWithExtensionEnabled) {
-      if (FilenameUtils.getName(ramlWithExtensionEnabled.getAbsolutePath()).equals(FilenameUtils.getName(ramlFileName)))
+      if (FilenameUtils.getName(ramlWithExtensionEnabled.getAbsolutePath())
+          .equals(FilenameUtils.getName(ramlFileName)))
         return true;
     }
 
@@ -255,34 +261,31 @@ public class MuleConfigGenerator {
     }
     listenerConfigRef = api.getHttpListenerConfig().getName();
     api.setPath(APIKitTools.addAsteriskToPath(api.getPath()));
-    //TODO GLOBAL EXCEPTION STRATEGY REFERENCE
+    // TODO GLOBAL EXCEPTION STRATEGY REFERENCE
     //        if (!api.useListenerMule3() && !api.useInboundEndpoint())
     //        {
     //            addGlobalExceptionStrategy(mule, api.getId());
     //        }
     new APIKitConfigScope(api.getConfig(), mule, null).generate();
-    //Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
+    // Element exceptionStrategy = new ExceptionStrategyScope(api.getId()).generate();
     String configRef = api.getConfig() != null ? api.getConfig().getName() : null;
 
-    String exceptionStrategyRef = null;//exceptionStrategy.getAttribute("name").getValue()
-    new FlowScope(mule, exceptionStrategyRef,
-                  api, configRef, listenerConfigRef, isMuleEE()).generate();
+    String exceptionStrategyRef = null; // exceptionStrategy.getAttribute("name").getValue()
+    new FlowScope(mule, exceptionStrategyRef, api, configRef, listenerConfigRef, isMuleEE())
+        .generate();
 
     new ConsoleFlowScope(mule, api, configRef, listenerConfigRef, isMuleEE()).generate();
 
-    //mule.addContent(exceptionStrategy);
+    // mule.addContent(exceptionStrategy);
   }
 
   private void addGlobalExceptionStrategy(Element mule, String apiId) {
-    Element globalExceptionStrategy = new Element("error-handler",
-                                                  XMLNS_NAMESPACE.getNamespace());
+    Element globalExceptionStrategy = new Element("error-handler", XMLNS_NAMESPACE.getNamespace());
     globalExceptionStrategy.setAttribute("name", apiId + "-" + "apiKitGlobalExceptionMapping");
     mule.addContent(globalExceptionStrategy);
-
   }
 
   private boolean isMuleEE() {
     return runtimeEdition == EE;
   }
-
 }

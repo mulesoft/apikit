@@ -8,7 +8,6 @@ package org.mule.tools.apikit.input;
 
 import java.util.Collection;
 import java.util.regex.Matcher;
-
 import org.mule.apikit.common.FlowName;
 import org.mule.raml.interfaces.common.RamlUtils;
 
@@ -20,7 +19,8 @@ public class APIKitFlow {
   private final String configRef;
   private final String mimeType;
 
-  public APIKitFlow(final String action, final String resource, final String mimeType, String configRef) {
+  public APIKitFlow(
+                    final String action, final String resource, final String mimeType, String configRef) {
     this.action = action;
     this.resource = resource;
     this.mimeType = mimeType;

@@ -13,22 +13,20 @@ public class RewindableInputStream extends InputStream implements Rewindable {
 
   private Block head;
   /**
-   * If curBlockAvail > 0, then there are curBlockAvail bytes available to be
-   * returned starting at curBlockPos in curBlock.buf.
+   * If curBlockAvail > 0, then there are curBlockAvail bytes available to be returned starting at
+   * curBlockPos in curBlock.buf.
    */
   private int curBlockAvail;
+
   private Block curBlock;
   private int curBlockPos;
   private Block lastBlock;
-  /**
-   * true unless willNotRewind has been called
-   */
+  /** true unless willNotRewind has been called */
   private boolean saving = true;
+
   private final InputStream in;
   private boolean pretendClosed = false;
-  /**
-   * true if we have got an EOF from the underlying InputStream
-   */
+  /** true if we have got an EOF from the underlying InputStream */
   private boolean eof;
 
   static class Block {
@@ -211,5 +209,4 @@ public class RewindableInputStream extends InputStream implements Rewindable {
     }
     return n + in.available();
   }
-
 }

@@ -14,8 +14,6 @@ import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
-import org.mule.tools.apikit.misc.FileListUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -25,13 +23,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mule.tools.apikit.misc.FileListUtils;
 
 public class ConsoleFlowTest {
 
@@ -56,8 +54,12 @@ public class ConsoleFlowTest {
 
     assertTrue(xmlFile.exists());
     String s = IOUtils.toString(new FileInputStream(xmlFile));
-    assertEquals(1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
-    assertEquals(1, countOccurences(s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
+    assertEquals(
+                 1, countOccurences(s, "http:listener-config name=\"HTTP_Listener_Configuration\""));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s, "http:listener config-ref=\"HTTP_Listener_Configuration\" path=\"/api/*\""));
     assertEquals(0, countOccurences(s, "http:inbound-endpoint"));
     assertEquals(1, countOccurences(s, "get:\\pet:simpleV10-config"));
     assertEquals(2, countOccurences(s, "post:\\pet:simpleV10-config"));
@@ -75,14 +77,19 @@ public class ConsoleFlowTest {
     }
     File file = folder.newFile(s);
     file.createNewFile();
-    InputStream resourceAsStream = ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(s);
-    IOUtils.copy(resourceAsStream,
-                 new FileOutputStream(file));
+    InputStream resourceAsStream =
+        ScaffolderMule4Test.class.getClassLoader().getResourceAsStream(s);
+    IOUtils.copy(resourceAsStream, new FileOutputStream(file));
     return file;
   }
 
-  private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut, File domainFile,
-                                      boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled)
+  private Scaffolder createScaffolder(
+                                      List<File> ramls,
+                                      List<File> xmls,
+                                      File muleXmlOut,
+                                      File domainFile,
+                                      boolean compatibilityMode,
+                                      Set<File> ramlsWithExtensionEnabled)
       throws FileNotFoundException {
     Log log = mock(Log.class);
     Map<File, InputStream> ramlMap = null;
@@ -95,7 +102,14 @@ public class ConsoleFlowTest {
       domainStream = new FileInputStream(domainFile);
     }
 
-    return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION,
+    return new Scaffolder(
+                          log,
+                          muleXmlOut,
+                          ramlMap,
+                          xmlMap,
+                          domainStream,
+                          ramlsWithExtensionEnabled,
+                          DEFAULT_MULE_VERSION,
                           DEFAULT_RUNTIME_EDITION);
   }
 

@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
 
 public class RouterTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,125 +20,160 @@ public class RouterTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Test
   public void simpleRouting() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
-        .response().body(is("hello"))
+        .response()
+        .body(is("hello"))
         .statusCode(200)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void routingWithTypes() throws Exception {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .body("{\"name\": \"Fede\"}")
         .expect()
-        .response().body(is("hello"))
+        .response()
+        .body(is("hello"))
         .statusCode(200)
-        .when().post("/api/types-test");
+        .when()
+        .post("/api/types-test");
   }
 
   @Test
   public void routingReusingPayload() throws Exception {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .body("{\"name\": \"Fede\"}")
         .expect()
-        .response().body(is("{\"name\": \"Fede\"}"))
+        .response()
+        .body(is("{\"name\": \"Fede\"}"))
         .statusCode(200)
-        .when().post("/api/reusing-payload");
+        .when()
+        .post("/api/reusing-payload");
   }
 
   @Test
   public void validSingleAcceptHeader() throws Exception {
-    given().header("Accept", "application/json")
+    given()
+        .header("Accept", "application/json")
         .expect()
-        .response().body(is("hello"))
+        .response()
+        .body(is("hello"))
         .statusCode(200)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void validMultipleAcceptHeader() throws Exception {
-    given().header("Accept", "application/json, text/plain")
+    given()
+        .header("Accept", "application/json, text/plain")
         .expect()
-        .response().body(is("hello"))
+        .response()
+        .body(is("hello"))
         .statusCode(200)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void validMultipleAcceptHeader2() throws Exception {
-    given().header("Accept", "text/plain, application/json")
+    given()
+        .header("Accept", "text/plain, application/json")
         .expect()
-        .response().body(is("hello"))
+        .response()
+        .body(is("hello"))
         .statusCode(200)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void invalidSingleAcceptHeader() throws Exception {
-    given().header("Accept", "application/pepe")
+    given()
+        .header("Accept", "application/pepe")
         .expect()
-        .response().body(is("{message: 'Not acceptable'}"))
+        .response()
+        .body(is("{message: 'Not acceptable'}"))
         .statusCode(406)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void invalidMultipleAcceptHeader() throws Exception {
-    given().header("Accept", "application/pepe, text/plain")
+    given()
+        .header("Accept", "application/pepe, text/plain")
         .expect()
-        .response().body(is("{message: 'Not acceptable'}"))
+        .response()
+        .body(is("{message: 'Not acceptable'}"))
         .statusCode(406)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void unsupportedMediaType() throws Exception {
-    given().header("Content-Type", "application/xml")
+    given()
+        .header("Content-Type", "application/xml")
         .body("<name>Fede</name>")
         .expect()
-        .response().body(is("{message: 'Unsupported media type'}"))
+        .response()
+        .body(is("{message: 'Unsupported media type'}"))
         .statusCode(415)
-        .when().post("/api/types-test");
+        .when()
+        .post("/api/types-test");
   }
 
   @Test
   public void methodNotAllowed() throws Exception {
-    given().expect()
+    given()
+        .expect()
         .response()
         .body(is("{message: 'Method Not Allowed'}"))
         .statusCode(405)
-        .when().post("/api/resources");
+        .when()
+        .post("/api/resources");
   }
 
   @Test
   public void answerWith404WhenHittingInexistentResource() {
-    given().expect()
+    given()
+        .expect()
         .response()
         .body(is("{message: 'Resource Not Found'}"))
         .statusCode(404)
-        .when().get("/api/nothing");
+        .when()
+        .get("/api/nothing");
   }
 
   @Test
   public void notImplemented() throws Exception {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .body("{\"name\": \"Fede\"}")
         .expect()
-        .response().body(is("{message: 'Not implemented'}"))
+        .response()
+        .body(is("{message: 'Not implemented'}"))
         .statusCode(501)
-        .when().put("/api/types-test");
+        .when()
+        .put("/api/types-test");
   }
 
   @Test
   public void answerWith500WhenSubFlowThrowsAnError() throws Exception {
-    given().header("Content-Type", "application/x-www-form-urlencoded")
+    given()
+        .header("Content-Type", "application/x-www-form-urlencoded")
         .formParam("first", "primo")
         .expect()
         .response()
         .body(is("first=primo"))
         .statusCode(500)
-        .when().post("/api/error");
+        .when()
+        .post("/api/error");
   }
-
 }

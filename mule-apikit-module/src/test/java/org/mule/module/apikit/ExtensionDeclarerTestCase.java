@@ -10,6 +10,7 @@ import static java.util.Collections.emptySet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Test;
 import org.mule.runtime.api.dsl.DslResolvingContext;
 import org.mule.runtime.api.meta.model.ExtensionModel;
 import org.mule.runtime.api.meta.model.declaration.fluent.ExtensionDeclarer;
@@ -18,18 +19,19 @@ import org.mule.runtime.extension.api.persistence.ExtensionModelJsonSerializer;
 import org.mule.runtime.extension.internal.loader.DefaultExtensionLoadingContext;
 import org.mule.runtime.extension.internal.loader.ExtensionModelFactory;
 
-import org.junit.Test;
-
 public class ExtensionDeclarerTestCase {
 
   @Test
   public void getApikitExtensionDeclarer() {
-    ApikitExtensionLoadingDelegate apikitExtensionLoadingDelegate = new ApikitExtensionLoadingDelegate();
+    ApikitExtensionLoadingDelegate apikitExtensionLoadingDelegate =
+        new ApikitExtensionLoadingDelegate();
     ExtensionDeclarer extensionDeclarer = new ExtensionDeclarer();
     apikitExtensionLoadingDelegate.accept(extensionDeclarer, null);
     ExtensionModelJsonSerializer serializer = new ExtensionModelJsonSerializer(true);
     ExtensionLoadingContext ctx =
-        new DefaultExtensionLoadingContext(extensionDeclarer, Thread.currentThread().getContextClassLoader(),
+        new DefaultExtensionLoadingContext(
+                                           extensionDeclarer,
+                                           Thread.currentThread().getContextClassLoader(),
                                            DslResolvingContext.getDefault(emptySet()));
     ExtensionModel extensionModel = new ExtensionModelFactory().create(ctx);
     String jsonContent = serializer.serialize(extensionModel);

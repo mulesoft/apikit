@@ -6,6 +6,8 @@
  */
 package org.mule.amf.impl;
 
+import static org.apache.commons.io.FilenameUtils.getExtension;
+
 import amf.ProfileName;
 import amf.ProfileNames;
 import amf.client.AMF;
@@ -23,13 +25,6 @@ import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
 import amf.plugins.features.validation.AMFValidatorPlugin;
 import amf.plugins.xml.XmlValidationPlugin;
-import org.apache.commons.io.IOUtils;
-import org.mule.amf.impl.exceptions.ParserException;
-import org.mule.raml.interfaces.model.ApiVendor;
-import org.mule.raml.interfaces.model.api.ApiRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,8 +33,12 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-
-import static org.apache.commons.io.FilenameUtils.getExtension;
+import org.apache.commons.io.IOUtils;
+import org.mule.amf.impl.exceptions.ParserException;
+import org.mule.raml.interfaces.model.ApiVendor;
+import org.mule.raml.interfaces.model.api.ApiRef;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DocumentParser {
 
@@ -51,7 +50,8 @@ public class DocumentParser {
     try {
       return (U) f.get();
     } catch (InterruptedException | ExecutionException e) {
-      throw new ParserException("An error happened while parsing the api. Message: " + e.getMessage(), e);
+      throw new ParserException(
+                                "An error happened while parsing the api. Message: " + e.getMessage(), e);
     }
   }
 
@@ -59,16 +59,19 @@ public class DocumentParser {
     return parseFile(parser, uri, false);
   }
 
-  public static Document parseFile(final Parser parser, final URI uri, final boolean validate) throws ParserException {
+  public static Document parseFile(final Parser parser, final URI uri, final boolean validate)
+      throws ParserException {
     return parseFile(parser, uriToPath(uri), validate);
   }
 
-  public static Document parseFile(final Parser parser, final String apiPath, final boolean validate)
+  public static Document parseFile(
+                                   final Parser parser, final String apiPath, final boolean validate)
       throws ParserException {
     final Document document = parseFile(parser, apiPath);
 
     if (validate) {
-      final ProfileName profile = parser instanceof Oas20Parser ? ProfileNames.OAS() : ProfileNames.RAML();
+      final ProfileName profile =
+          parser instanceof Oas20Parser ? ProfileNames.OAS() : ProfileNames.RAML();
       final ValidationReport parsingReport = DocumentParser.getParsingReport(parser, profile);
       if (!parsingReport.conforms()) {
         final List<ValidationResult> results = parsingReport.results();
@@ -118,7 +121,8 @@ public class DocumentParser {
     return (WebApi) document.encodes();
   }
 
-  public static ValidationReport getParsingReport(final Parser parser, final ProfileName profile) throws ParserException {
+  public static ValidationReport getParsingReport(final Parser parser, final ProfileName profile)
+      throws ParserException {
     return handleFuture(parser.reportValidation(profile));
   }
 

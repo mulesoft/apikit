@@ -6,6 +6,12 @@
  */
 package org.mule.amf.impl.model;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toMap;
+import static org.mule.amf.impl.model.MediaType.APPLICATION_YAML;
+import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
+import static org.mule.amf.impl.model.ScalarType.ScalarTypes.STRING_ID;
+
 import amf.client.model.domain.AnyShape;
 import amf.client.model.domain.ArrayShape;
 import amf.client.model.domain.DataNode;
@@ -18,10 +24,6 @@ import amf.client.model.domain.Shape;
 import amf.client.validate.PayloadValidator;
 import amf.client.validate.ValidationReport;
 import amf.client.validate.ValidationResult;
-import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
-import org.mule.metadata.api.model.MetadataType;
-import org.mule.raml.interfaces.model.parameter.IParameter;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -29,12 +31,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toMap;
-import static org.mule.amf.impl.model.ScalarType.ScalarTypes.STRING_ID;
-import static org.mule.amf.impl.model.MediaType.APPLICATION_YAML;
-import static org.mule.amf.impl.model.MediaType.getMimeTypeForValue;
+import org.mule.amf.impl.exceptions.UnsupportedSchemaException;
+import org.mule.metadata.api.model.MetadataType;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 
 class ParameterImpl implements IParameter {
 
@@ -153,7 +152,8 @@ class ParameterImpl implements IParameter {
 
   @Override
   public String getExample() {
-    return schema.examples().stream().filter(example -> example.name().value() == null)
+    return schema.examples().stream()
+        .filter(example -> example.name().value() == null)
         .map(example -> example.value().value())
         .findFirst()
         .orElse(null);
@@ -161,7 +161,8 @@ class ParameterImpl implements IParameter {
 
   @Override
   public Map<String, String> getExamples() {
-    return schema.examples().stream().filter(example -> example.name().value() != null)
+    return schema.examples().stream()
+        .filter(example -> example.name().value() != null)
         .collect(toMap(e -> e.name().value(), e -> e.value().value()));
   }
 

@@ -7,5 +7,13 @@
 package org.mule.raml.interfaces.model;
 
 public enum IActionType {
-  GET, POST, PUT, DELETE, HEAD, PATCH, OPTIONS, TRACE, CONNECT
+  GET,
+  POST,
+  PUT,
+  DELETE,
+  HEAD,
+  PATCH,
+  OPTIONS,
+  TRACE,
+  CONNECT
 }

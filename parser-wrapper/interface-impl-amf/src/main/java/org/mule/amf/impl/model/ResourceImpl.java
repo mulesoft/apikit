@@ -6,18 +6,17 @@
  */
 package org.mule.amf.impl.model;
 
+import static java.util.stream.Collectors.toMap;
+import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
+
 import amf.client.model.domain.EndPoint;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IActionType;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.util.stream.Collectors.toMap;
-import static org.mule.raml.interfaces.ParserUtils.resolveVersion;
 
 public class ResourceImpl implements IResource {
 
@@ -66,8 +65,10 @@ public class ResourceImpl implements IResource {
 
   private Map<IActionType, IAction> loadActions(final EndPoint endPoint) {
     final Map<IActionType, IAction> map = new LinkedHashMap<>();
-    endPoint.operations()
-        .forEach(operation -> map.put(getActionKey(operation.method().value()), new ActionImpl(this, operation)));
+    endPoint
+        .operations()
+        .forEach(
+                 operation -> map.put(getActionKey(operation.method().value()), new ActionImpl(this, operation)));
     return map;
   }
 
@@ -97,7 +98,9 @@ public class ResourceImpl implements IResource {
 
   private static Map<String, IParameter> loadResolvedUriParameters(final EndPoint resource) {
     return resource.parameters().stream()
-        .filter(p -> !"version".equals(p.name().value())) // version is an special uri param so it is ignored
+        .filter(
+                p -> !"version"
+                    .equals(p.name().value())) // version is an special uri param so it is ignored
         .collect(toMap(p -> p.name().value(), ParameterImpl::new));
   }
 
@@ -120,5 +123,4 @@ public class ResourceImpl implements IResource {
   public String toString() {
     return getUri();
   }
-
 }

@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
 
 public class OperationsWithoutSourceTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,12 +20,13 @@ public class OperationsWithoutSourceTestCase extends AbstractMultiParserFunction
 
   @Test
   public void operationsWithoutSource() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
-        .response().body(is("hello"))
+        .response()
+        .body(is("hello"))
         .statusCode(200)
-        .when().get("/simple");
+        .when()
+        .get("/simple");
   }
-
-
 }

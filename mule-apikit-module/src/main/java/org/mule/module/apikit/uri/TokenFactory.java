@@ -12,7 +12,9 @@ import java.util.Map;
 
 /**
  * A factory for URI tokens.
- * <p/>
+ *
+ * <p>
+ *
  * <p>Tokens can be instantiated from an expression which is specific to each token.
  *
  * @author Christophe Lauret
@@ -32,9 +34,7 @@ public class TokenFactory {
    */
   public enum Syntax {
 
-    /**
-     * Use the syntax defined in Draft 3 of the URI templates.
-     */
+    /** Use the syntax defined in Draft 3 of the URI templates. */
     DRAFT3 {
 
       @Override
@@ -47,12 +47,11 @@ public class TokenFactory {
           return new TokenVariable(Variable.parse(exp));
         }
       }
-
     },
 
     /**
-     * Use a syntax currently used in PageSeeder and based on what was suggested
-     * by Roy T Fielding on the W3C URI listing in October 2008.
+     * Use a syntax currently used in PageSeeder and based on what was suggested by Roy T Fielding
+     * on the W3C URI listing in October 2008.
      */
     PAGESEEDER {
 
@@ -66,12 +65,9 @@ public class TokenFactory {
           return new TokenVariable(Variable.parse(exp));
         }
       }
-
     },
 
-    /**
-     * Use a syntax based on the draft as of 29 October 2009.
-     */
+    /** Use a syntax based on the draft as of 29 October 2009. */
     DRAFTX {
 
       @Override
@@ -87,7 +83,6 @@ public class TokenFactory {
           return new TokenVariable(Variable.parse(exp));
         }
       }
-
     };
 
     /**
@@ -98,12 +93,9 @@ public class TokenFactory {
      * @throws URITemplateSyntaxException If the expression could not be parsed as a valid token.
      */
     protected abstract Token newExpansion(String exp);
-
   }
 
-  /**
-   * Factories for reuse.
-   */
+  /** Factories for reuse. */
   private static final Map<Syntax, TokenFactory> FACTORIES = new Hashtable<Syntax, TokenFactory>();
 
   static {
@@ -112,9 +104,7 @@ public class TokenFactory {
     }
   }
 
-  /**
-   * The URI template syntax to use for generating tokens.
-   */
+  /** The URI template syntax to use for generating tokens. */
   private Syntax _syntax;
 
   /**
@@ -170,13 +160,16 @@ public class TokenFactory {
 
   /**
    * Creates a new 'wildcard' token for legacy purposes.
-   * <p/>
+   *
+   * <p>
+   *
    * <p>This is used for conventional URI patterns which have been implemented using "*".
    *
    * @return A new 'wildcard' token.
    */
   private static final Token newWildcard() {
-    return new TokenOperatorPS(TokenOperatorPS.Operator.URI_INSERT, new Variable(Variable.Reserved.WILDCARD));
+    return new TokenOperatorPS(
+                               TokenOperatorPS.Operator.URI_INSERT, new Variable(Variable.Reserved.WILDCARD));
   }
 
   /**
@@ -196,5 +189,4 @@ public class TokenFactory {
   public static TokenFactory getInstance(Syntax syntax) {
     return new TokenFactory(syntax);
   }
-
 }

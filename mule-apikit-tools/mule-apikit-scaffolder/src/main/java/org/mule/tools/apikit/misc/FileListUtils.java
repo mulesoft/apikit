@@ -8,8 +8,6 @@ package org.mule.tools.apikit.misc;
 
 import static java.lang.String.format;
 
-import org.apache.maven.plugin.logging.Log;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +16,7 @@ import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.apache.maven.plugin.logging.Log;
 
 public class FileListUtils {
 
@@ -64,4 +63,3 @@ public class FileListUtils {
     File transform(T element);
   }
 }
-

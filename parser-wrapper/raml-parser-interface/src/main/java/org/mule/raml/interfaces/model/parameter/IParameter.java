@@ -6,9 +6,8 @@
  */
 package org.mule.raml.interfaces.model.parameter;
 
-import org.mule.metadata.api.model.MetadataType;
-
 import java.util.Map;
+import org.mule.metadata.api.model.MetadataType;
 
 public interface IParameter {
 

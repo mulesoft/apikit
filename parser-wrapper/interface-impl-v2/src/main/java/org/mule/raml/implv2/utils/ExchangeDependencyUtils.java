@@ -11,7 +11,8 @@ import java.util.regex.Pattern;
 
 public class ExchangeDependencyUtils {
 
-  private static final Pattern DEPENDENCY_PATH_PATTERN = Pattern.compile("^exchange_modules/|/exchange_modules/");
+  private static final Pattern DEPENDENCY_PATH_PATTERN =
+      Pattern.compile("^exchange_modules/|/exchange_modules/");
 
   private ExchangeDependencyUtils() {}
 

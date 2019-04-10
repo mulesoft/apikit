@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit.spacesInPath;
 
+import static io.restassured.RestAssured.given;
+
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import static io.restassured.RestAssured.given;
 
 public class SpacesInPathTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -23,8 +23,9 @@ public class SpacesInPathTestCase extends AbstractMultiParserFunctionalTestCase 
     given()
         .body("{\"response\": {\"name\": \"eleo\",\"age\": 15}}")
         .contentType("application/json")
-        .expect().statusCode(200)
-        .when().put("/api/schema");
+        .expect()
+        .statusCode(200)
+        .when()
+        .put("/api/schema");
   }
-
 }

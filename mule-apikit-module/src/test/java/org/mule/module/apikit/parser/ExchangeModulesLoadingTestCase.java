@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.parser;
 
-import org.junit.Test;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
+
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 public class ExchangeModulesLoadingTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -21,41 +21,48 @@ public class ExchangeModulesLoadingTestCase extends AbstractMultiParserFunctiona
 
   @Test
   public void getResource1() throws Exception {
-    given().header("Accept", "application/json")
+    given()
+        .header("Accept", "application/json")
         .expect()
-        .response().body(containsString("{\n" +
-            "  \"name\" : \"a Name\",\n" +
-            "  \"length\" : 2999\n" +
-            "}"))
-        .header("Content-Type", "application/json").statusCode(200)
-        .when().get("/api/resource1");
+        .response()
+        .body(containsString("{\n" + "  \"name\" : \"a Name\",\n" + "  \"length\" : 2999\n" + "}"))
+        .header("Content-Type", "application/json")
+        .statusCode(200)
+        .when()
+        .get("/api/resource1");
   }
 
   @Test
   public void getResource2() throws Exception {
-    given().header("Accept", "application/json")
+    given()
+        .header("Accept", "application/json")
         .expect()
-        .response().body(containsString("{\n" +
-            "  \"id\": \"an id\",\n" +
-            "  \"field1\": {\n" +
-            "    \"id\" : \"an id\",\n" +
-            "    \"name\" : \"a Name\"\n" +
-            "  }\n" +
-            "}"))
-        .header("Content-type", "application/json").statusCode(200)
-        .when().get("/api/resource2");
+        .response()
+        .body(
+              containsString(
+                             "{\n"
+                                 + "  \"id\": \"an id\",\n"
+                                 + "  \"field1\": {\n"
+                                 + "    \"id\" : \"an id\",\n"
+                                 + "    \"name\" : \"a Name\"\n"
+                                 + "  }\n"
+                                 + "}"))
+        .header("Content-type", "application/json")
+        .statusCode(200)
+        .when()
+        .get("/api/resource2");
   }
 
   @Test
   public void getResource3() throws Exception {
-    given().header("Accept", "application/json")
+    given()
+        .header("Accept", "application/json")
         .expect()
-        .response().body(containsString("{\n" +
-            "  \"id\" : \"an id\",\n" +
-            "  \"name\" : \"a Name\"\n" +
-            "}"))
-        .header("Content-type", "application/json").statusCode(200)
-        .when().get("/api/resource3");
+        .response()
+        .body(containsString("{\n" + "  \"id\" : \"an id\",\n" + "  \"name\" : \"a Name\"\n" + "}"))
+        .header("Content-type", "application/json")
+        .statusCode(200)
+        .when()
+        .get("/api/resource3");
   }
-
 }

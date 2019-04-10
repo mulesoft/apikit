@@ -6,9 +6,9 @@
  */
 package org.mule.raml.implv1.emitter;
 
-import org.raml.emitter.RamlEmitter;
 import org.mule.raml.interfaces.emitter.IRamlEmitter;
 import org.mule.raml.interfaces.model.IRaml;
+import org.raml.emitter.RamlEmitter;
 import org.raml.model.Raml;
 
 public class RamlEmitterImpl implements IRamlEmitter {

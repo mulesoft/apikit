@@ -6,14 +6,13 @@
  */
 package org.mule.tools.apikit;
 
-import org.apache.commons.io.FileUtils;
-import org.mule.raml.interfaces.common.APISyncUtils;
-import org.mule.tools.apikit.model.ScaffolderResourceLoader;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import org.apache.commons.io.FileUtils;
+import org.mule.raml.interfaces.common.APISyncUtils;
+import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 
 public class TestScaffolderResourceLoader implements ScaffolderResourceLoader {
 

@@ -6,6 +6,19 @@
  */
 package org.mule.raml.implv2.v10.model;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static org.mule.raml.implv2.ParserV2Utils.findIncludeNodes;
+import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.ISecurityScheme;
@@ -17,20 +30,6 @@ import org.raml.v2.api.model.v10.datamodel.AnyTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.ExternalTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.resources.Resource;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
-import static org.mule.raml.implv2.ParserV2Utils.findIncludeNodes;
-import static org.mule.raml.implv2.ParserV2Utils.nullSafe;
 
 public class RamlImpl10V2 implements IRaml {
 
@@ -90,7 +89,7 @@ public class RamlImpl10V2 implements IRaml {
     if (typeDeclaration instanceof AnyTypeDeclaration) {
       return null;
     }
-    //return non-null value in order to detect that a schema was defined
+    // return non-null value in order to detect that a schema was defined
     return typeDeclaration.toJsonSchema();
   }
 
@@ -113,7 +112,8 @@ public class RamlImpl10V2 implements IRaml {
   public Map<String, IParameter> getBaseUriParameters() {
     final Map<String, IParameter> baseUriParameters = new LinkedHashMap<>();
 
-    api.baseUriParameters().forEach(type -> baseUriParameters.put(type.name(), new ParameterImpl(type)));
+    api.baseUriParameters()
+        .forEach(type -> baseUriParameters.put(type.name(), new ParameterImpl(type)));
 
     return baseUriParameters;
   }

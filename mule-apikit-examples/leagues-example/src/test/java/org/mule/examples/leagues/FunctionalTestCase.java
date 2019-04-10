@@ -4,27 +4,28 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-//package org.mule.examples.leagues;
+// package org.mule.examples.leagues;
 //
-//import static com.jayway.restassured.RestAssured.given;
-//import static org.hamcrest.Matchers.hasSize;
-//import static org.hamcrest.Matchers.is;
+// import static com.jayway.restassured.RestAssured.given;
+// import static org.hamcrest.Matchers.hasSize;
+// import static org.hamcrest.Matchers.is;
 //
-//import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
-//import org.mule.tck.junit4.rule.DynamicPort;
-//import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
+// import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
+// import org.mule.tck.junit4.rule.DynamicPort;
+// import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
 //
-//import com.jayway.restassured.RestAssured;
+// import com.jayway.restassured.RestAssured;
 //
-//import org.junit.Before;
-//import org.junit.ClassRule;
-//import org.junit.Ignore;
-//import org.junit.Test;
+// import org.junit.Before;
+// import org.junit.ClassRule;
+// import org.junit.Ignore;
+// import org.junit.Test;
 //
-//@ArtifactClassLoaderRunnerConfig(plugins = {"org.mule.modules:mule-module-sockets", "org.mule.modules:mule-module-http-ext"},
+// @ArtifactClassLoaderRunnerConfig(plugins = {"org.mule.modules:mule-module-sockets",
+// "org.mule.modules:mule-module-http-ext"},
 //        providedInclusions = "org.mule.modules:mule-module-sockets")
-//public class FunctionalTestCase extends MuleArtifactFunctionalTestCase
-//{
+// public class FunctionalTestCase extends MuleArtifactFunctionalTestCase
+// {
 //
 //    private static final String BARCELONA_ID = "BAR";
 //    private static final String BARCELONA_NAME = "Barcelona";
@@ -90,7 +91,8 @@
 //    @Ignore
 //    public void newTeam() throws Exception
 //    {
-//        given().log().all().body("{\"name\": \"Elche\",\"id\": \"ELC\",\"homeCity\": \"Elche\",\"stadium\": \"Martinez Valero\"}")
+//        given().log().all().body("{\"name\": \"Elche\",\"id\": \"ELC\",\"homeCity\":
+// \"Elche\",\"stadium\": \"Martinez Valero\"}")
 //                .contentType("application/json")
 //                .expect().statusCode(201)
 //                .header("Content-Length", "0")
@@ -123,4 +125,4 @@
 //                get("/fixture");
 //    }
 //
-//}
+// }

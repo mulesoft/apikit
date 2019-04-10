@@ -6,6 +6,17 @@
  */
 package org.mule.parser.service;
 
+import static java.lang.String.*;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static org.mule.raml.interfaces.ParserType.AMF;
+import static org.mule.raml.interfaces.ParserType.AUTO;
+import static org.mule.raml.interfaces.ParserType.RAML;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
+import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.mule.amf.impl.ParserWrapperAmf;
 import org.mule.amf.impl.exceptions.ParserException;
 import org.mule.parser.service.logger.Logger;
@@ -19,18 +30,6 @@ import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static java.lang.String.*;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static org.mule.raml.interfaces.ParserType.AMF;
-import static org.mule.raml.interfaces.ParserType.AUTO;
-import static org.mule.raml.interfaces.ParserType.RAML;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
-import static org.mule.raml.interfaces.parser.rule.Severity.WARNING;
 
 public class ParserService {
 
@@ -57,7 +56,6 @@ public class ParserService {
   public ParserWrapper getParser(final ApiRef apiRef) {
     return getParser(apiRef, AUTO);
   }
-
 
   public ParserWrapper getParser(final ApiRef apiRef, ParserType parserType) {
     final ParserType overridden = getOverriddenParserType();
@@ -94,13 +92,18 @@ public class ParserService {
         return parserWrapper;
       } else {
         ScaffoldingErrorType scaffoldingErrorType =
-            parserWrapper.getParserType().equals(RAML) ? ScaffoldingErrorType.RAML : ScaffoldingErrorType.AMF;
+            parserWrapper.getParserType().equals(RAML)
+                ? ScaffoldingErrorType.RAML
+                : ScaffoldingErrorType.AMF;
         final List<IValidationResult> errorsFound = validationReport.getResults();
         CompositeScaffoldingError validationError =
-            new CompositeScaffoldingError(format("Validation failed using parser type : %s, in file : %s",
+            new CompositeScaffoldingError(
+                                          format(
+                                                 "Validation failed using parser type : %s, in file : %s",
                                                  parserWrapper.getParserType(), apiRef.getLocation()),
                                           scaffoldingErrorType,
-                                          errorsFound.stream().map(e -> new SimpleScaffoldingError(e.getMessage()))
+                                          errorsFound.stream()
+                                              .map(e -> new SimpleScaffoldingError(e.getMessage()))
                                               .collect(toList()));
         parsingErrors.add(validationError);
         return applyFallback(apiRef, parserType, errorsFound);
@@ -110,9 +113,11 @@ public class ParserService {
     } catch (Exception e) {
       final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
       CompositeScaffoldingError exceptionError =
-          new CompositeScaffoldingError(format("Exception parsing errors in file : %s", apiRef.getLocation()),
+          new CompositeScaffoldingError(
+                                        format("Exception parsing errors in file : %s", apiRef.getLocation()),
                                         parserType.equals(RAML) ? ScaffoldingErrorType.RAML : ScaffoldingErrorType.AMF,
-                                        errors.stream().map(er -> new SimpleScaffoldingError(er.getMessage()))
+                                        errors.stream()
+                                            .map(er -> new SimpleScaffoldingError(er.getMessage()))
                                             .collect(toList()));
       parsingErrors.add(exceptionError);
       return applyFallback(apiRef, parserType, errors);
@@ -120,7 +125,8 @@ public class ParserService {
   }
 
   // Only fallback if is RAML
-  private ParserWrapper applyFallback(ApiRef apiRef, ParserType parserType, List<IValidationResult> errorsFound)
+  private ParserWrapper applyFallback(
+                                      ApiRef apiRef, ParserType parserType, List<IValidationResult> errorsFound)
       throws ParserServiceException {
     if (parserType == AUTO) {
       final ParserWrapper fallbackParser = createRamlParserWrapper(apiRef);
@@ -129,10 +135,14 @@ public class ParserService {
         return fallbackParser;
       } else {
         CompositeScaffoldingError fallbackError =
-            new CompositeScaffoldingError(format("Validation failed using fallback parser type : %s, in file : %s",
+            new CompositeScaffoldingError(
+                                          format(
+                                                 "Validation failed using fallback parser type : %s, in file : %s",
                                                  fallbackParser.getParserType(), apiRef.getLocation()),
-                                          ScaffoldingErrorType.RAML, fallbackParser.validationReport().getResults().stream()
-                                              .map(e -> new SimpleScaffoldingError(e.getMessage())).collect(toList()));
+                                          ScaffoldingErrorType.RAML,
+                                          fallbackParser.validationReport().getResults().stream()
+                                              .map(e -> new SimpleScaffoldingError(e.getMessage()))
+                                              .collect(toList()));
         parsingErrors.add(fallbackError);
       }
     }
@@ -182,13 +192,15 @@ public class ParserService {
 
   private static ParserWrapperV1 createRamlParserWrapperV1(String path, ResourceLoader apiLoader) {
     return apiLoader != null
-        ? new ParserWrapperV1(path, ParserWrapperV1.getResourceLoaderForPath(path), apiLoader::getResourceAsStream)
+        ? new ParserWrapperV1(
+                              path, ParserWrapperV1.getResourceLoaderForPath(path), apiLoader::getResourceAsStream)
         : new ParserWrapperV1(path);
   }
 
   private static ParserWrapperV2 createRamlParserWrapperV2(String path, ResourceLoader apiLoader) {
     return apiLoader != null
-        ? new ParserWrapperV2(path, ParserWrapperV2.getResourceLoaderForPath(path), apiLoader::getResourceAsStream)
+        ? new ParserWrapperV2(
+                              path, ParserWrapperV2.getResourceLoaderForPath(path), apiLoader::getResourceAsStream)
         : new ParserWrapperV2(path);
   }
 }

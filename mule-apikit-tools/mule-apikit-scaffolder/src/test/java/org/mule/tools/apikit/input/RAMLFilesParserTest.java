@@ -6,27 +6,6 @@
  */
 package org.mule.tools.apikit.input;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.Predicate;
-import org.apache.maven.plugin.logging.Log;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.mockito.stubbing.Answer;
-import org.mockito.stubbing.Stubber;
-
-import org.mule.parser.service.ComponentScaffoldingError;
-import org.mule.tools.apikit.model.APIFactory;
-import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-import org.mule.tools.apikit.output.GenerationModel;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import static junit.framework.Assert.assertNotNull;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -35,6 +14,25 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.model.Status.FAILED;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.mockito.stubbing.Answer;
+import org.mockito.stubbing.Stubber;
+import org.mule.parser.service.ComponentScaffoldingError;
+import org.mule.tools.apikit.model.APIFactory;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
+import org.mule.tools.apikit.output.GenerationModel;
 
 public class RAMLFilesParserTest {
 
@@ -54,32 +52,42 @@ public class RAMLFilesParserTest {
     assertNotNull(entries);
     assertEquals(5, entries.size());
     Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
-    ResourceActionMimeTypeTriplet triplet = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
+    ResourceActionMimeTypeTriplet triplet =
+        (ResourceActionMimeTypeTriplet) CollectionUtils.find(
+                                                             ramlEntries,
+                                                             new Predicate() {
 
-      @Override
-      public boolean evaluate(Object property) {
-        ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
-        return "/api/".equals(triplet.getUri()) && "GET".equals(triplet.getVerb()) && "/api".equals(triplet.getApi().getPath());
-      }
-    });
+                                                               @Override
+                                                               public boolean evaluate(Object property) {
+                                                                 ResourceActionMimeTypeTriplet triplet =
+                                                                     ((ResourceActionMimeTypeTriplet) property);
+                                                                 return "/api/".equals(triplet.getUri())
+                                                                     && "GET".equals(triplet.getVerb())
+                                                                     && "/api".equals(triplet.getApi().getPath());
+                                                               }
+                                                             });
     assertEquals("0.0.0.0", triplet.getApi().getHttpListenerConfig().getHost());
     assertEquals("8081", triplet.getApi().getHttpListenerConfig().getPort());
     assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
     assertEquals("simple-httpListenerConfig", triplet.getApi().getHttpListenerConfig().getName());
-    ResourceActionMimeTypeTriplet triplet2 = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
+    ResourceActionMimeTypeTriplet triplet2 =
+        (ResourceActionMimeTypeTriplet) CollectionUtils.find(
+                                                             ramlEntries,
+                                                             new Predicate() {
 
-      @Override
-      public boolean evaluate(Object property) {
-        ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
-        return "/api/pet".equals(triplet.getUri()) && "GET".equals(triplet.getVerb())
-            && "/api".equals(triplet.getApi().getPath());
-      }
-    });
+                                                               @Override
+                                                               public boolean evaluate(Object property) {
+                                                                 ResourceActionMimeTypeTriplet triplet =
+                                                                     ((ResourceActionMimeTypeTriplet) property);
+                                                                 return "/api/pet".equals(triplet.getUri())
+                                                                     && "GET".equals(triplet.getVerb())
+                                                                     && "/api".equals(triplet.getApi().getPath());
+                                                               }
+                                                             });
     assertEquals("0.0.0.0", triplet2.getApi().getHttpListenerConfig().getHost());
     assertEquals("8081", triplet2.getApi().getHttpListenerConfig().getPort());
     assertEquals("/", triplet2.getApi().getHttpListenerConfig().getBasePath());
     assertEquals("simple-httpListenerConfig", triplet2.getApi().getHttpListenerConfig().getName());
-
   }
 
   @Test
@@ -108,13 +116,14 @@ public class RAMLFilesParserTest {
     assertEquals(1, entries.size());
   }
 
-
   @Test
   public void oasCreation() {
 
     final URL url =
-        RAMLFilesParserTest.class.getClassLoader()
-            .getResource("oas/OpenAPI-Specification/examples/v2.0/json/src/main/resources/api/petstore.json");
+        RAMLFilesParserTest.class
+            .getClassLoader()
+            .getResource(
+                         "oas/OpenAPI-Specification/examples/v2.0/json/src/main/resources/api/petstore.json");
 
     System.out.println("RAMLFilesParserTest.oasCreation " + url);
 
@@ -127,37 +136,49 @@ public class RAMLFilesParserTest {
     assertNotNull(entries);
     assertEquals(3, entries.size());
     Set<ResourceActionMimeTypeTriplet> ramlEntries = entries.keySet();
-    ResourceActionMimeTypeTriplet triplet = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
+    ResourceActionMimeTypeTriplet triplet =
+        (ResourceActionMimeTypeTriplet) CollectionUtils.find(
+                                                             ramlEntries,
+                                                             new Predicate() {
 
-      @Override
-      public boolean evaluate(Object property) {
-        ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
-        return "/api/pets".equals(triplet.getUri()) && "GET".equals(triplet.getVerb())
-            && "/api".equals(triplet.getApi().getPath());
-      }
-    });
+                                                               @Override
+                                                               public boolean evaluate(Object property) {
+                                                                 ResourceActionMimeTypeTriplet triplet =
+                                                                     ((ResourceActionMimeTypeTriplet) property);
+                                                                 return "/api/pets".equals(triplet.getUri())
+                                                                     && "GET".equals(triplet.getVerb())
+                                                                     && "/api".equals(triplet.getApi().getPath());
+                                                               }
+                                                             });
     assertEquals("0.0.0.0", triplet.getApi().getHttpListenerConfig().getHost());
     assertEquals("8081", triplet.getApi().getHttpListenerConfig().getPort());
     assertEquals("/", triplet.getApi().getHttpListenerConfig().getBasePath());
     assertEquals("petstore-httpListenerConfig", triplet.getApi().getHttpListenerConfig().getName());
-    ResourceActionMimeTypeTriplet triplet2 = (ResourceActionMimeTypeTriplet) CollectionUtils.find(ramlEntries, new Predicate() {
+    ResourceActionMimeTypeTriplet triplet2 =
+        (ResourceActionMimeTypeTriplet) CollectionUtils.find(
+                                                             ramlEntries,
+                                                             new Predicate() {
 
-      @Override
-      public boolean evaluate(Object property) {
-        ResourceActionMimeTypeTriplet triplet = ((ResourceActionMimeTypeTriplet) property);
-        return "/api/pets".equals(triplet.getUri()) && "GET".equals(triplet.getVerb())
-            && "/api".equals(triplet.getApi().getPath());
-      }
-    });
+                                                               @Override
+                                                               public boolean evaluate(Object property) {
+                                                                 ResourceActionMimeTypeTriplet triplet =
+                                                                     ((ResourceActionMimeTypeTriplet) property);
+                                                                 return "/api/pets".equals(triplet.getUri())
+                                                                     && "GET".equals(triplet.getVerb())
+                                                                     && "/api".equals(triplet.getApi().getPath());
+                                                               }
+                                                             });
     assertEquals("0.0.0.0", triplet2.getApi().getHttpListenerConfig().getHost());
     assertEquals("8081", triplet2.getApi().getHttpListenerConfig().getPort());
     assertEquals("/", triplet2.getApi().getHttpListenerConfig().getBasePath());
-    assertEquals("petstore-httpListenerConfig", triplet2.getApi().getHttpListenerConfig().getName());
+    assertEquals(
+                 "petstore-httpListenerConfig", triplet2.getApi().getHttpListenerConfig().getName());
   }
 
   @Test
   public void invalidRAML() {
-    final URL resourceUrl = RAMLFilesParserTest.class.getClassLoader().getResource("parser/failing-api.raml");
+    final URL resourceUrl =
+        RAMLFilesParserTest.class.getClassLoader().getResource("parser/failing-api.raml");
     final Map<File, InputStream> streams = urlToMapStream(resourceUrl);
     RAMLFilesParser ramlFilesParser = RAMLFilesParser.create(mockLog(), streams, new APIFactory());
     ramlFilesParser.getParsingErrors();
@@ -167,9 +188,13 @@ public class RAMLFilesParserTest {
     ComponentScaffoldingError amfError = ramlFilesParser.getParsingErrors().get(0);
     ComponentScaffoldingError ramlError = ramlFilesParser.getParsingErrors().get(1);
 
-    assertEquals(true, amfError.cause().contains("Validation failed using parser type : AMF, in file :"));
-    assertEquals(true, ramlError.cause().contains("Validation failed using fallback parser type : RAML, in file :"));
-
+    assertEquals(
+                 true, amfError.cause().contains("Validation failed using parser type : AMF, in file :"));
+    assertEquals(
+                 true,
+                 ramlError
+                     .cause()
+                     .contains("Validation failed using fallback parser type : RAML, in file :"));
   }
 
   private static Map<File, InputStream> urlToMapStream(final URL url) {
@@ -186,13 +211,13 @@ public class RAMLFilesParserTest {
     return map;
   }
 
-
   private Stubber getStubber(String prefix) {
-    return doAnswer((Answer<Void>) invocation -> {
-      Object[] args = invocation.getArguments();
-      System.out.println(prefix + args[0].toString());
-      return null;
-    });
+    return doAnswer(
+                    (Answer<Void>) invocation -> {
+                      Object[] args = invocation.getArguments();
+                      System.out.println(prefix + args[0].toString());
+                      return null;
+                    });
   }
 
   private Log mockLog() {

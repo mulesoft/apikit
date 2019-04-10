@@ -6,10 +6,9 @@
  */
 package org.mule.tools.apikit.input;
 
-import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-
 import java.util.HashSet;
 import java.util.Set;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 public class APIDiff {
 
@@ -17,7 +16,9 @@ public class APIDiff {
   private final Set<ResourceActionMimeTypeTriplet> muleFlowEntries;
   private final Set<ResourceActionMimeTypeTriplet> difference;
 
-  public APIDiff(Set<ResourceActionMimeTypeTriplet> ramlEntries, Set<ResourceActionMimeTypeTriplet> muleFlowEntries) {
+  public APIDiff(
+                 Set<ResourceActionMimeTypeTriplet> ramlEntries,
+                 Set<ResourceActionMimeTypeTriplet> muleFlowEntries) {
     this.ramlEntries = ramlEntries;
     this.muleFlowEntries = muleFlowEntries;
     this.difference = computeDifference(this.ramlEntries, this.muleFlowEntries);
@@ -27,11 +28,12 @@ public class APIDiff {
     return difference;
   }
 
-  private Set<ResourceActionMimeTypeTriplet> computeDifference(Set<ResourceActionMimeTypeTriplet> ramlEntries,
+  private Set<ResourceActionMimeTypeTriplet> computeDifference(
+                                                               Set<ResourceActionMimeTypeTriplet> ramlEntries,
                                                                Set<ResourceActionMimeTypeTriplet> flowEntries) {
-    Set<ResourceActionMimeTypeTriplet> differenceToAdd = new HashSet<ResourceActionMimeTypeTriplet>(ramlEntries);
+    Set<ResourceActionMimeTypeTriplet> differenceToAdd =
+        new HashSet<ResourceActionMimeTypeTriplet>(ramlEntries);
     differenceToAdd.removeAll(flowEntries);
     return differenceToAdd;
   }
-
 }

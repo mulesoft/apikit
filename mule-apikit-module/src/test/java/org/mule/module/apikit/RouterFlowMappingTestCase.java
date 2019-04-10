@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
 
 public class RouterFlowMappingTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -18,13 +18,15 @@ public class RouterFlowMappingTestCase extends AbstractMultiParserFunctionalTest
     return "org/mule/module/apikit/simple-routing/simple-flow-mapping.xml";
   }
 
-
   @Test
   public void simpleRouting() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
-        .response().body(is("hello"))
+        .response()
+        .body(is("hello"))
         .statusCode(200)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 }

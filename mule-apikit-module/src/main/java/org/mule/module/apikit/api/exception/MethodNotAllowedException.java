@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.api.exception;
 
-import org.mule.module.apikit.api.exception.MuleRestException;
 
 public class MethodNotAllowedException extends MuleRestException {
 

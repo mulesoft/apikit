@@ -6,6 +6,11 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -15,12 +20,6 @@ import org.mule.runtime.api.util.MultiMap;
 import org.raml.model.Action;
 import org.raml.model.ParamType;
 import org.raml.model.parameter.QueryParameter;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
 
 public class QueryParametersValidatorTestCase {
 
@@ -78,7 +77,6 @@ public class QueryParametersValidatorTestCase {
     queryParam2.setDefaultValue("test");
     expectedQueryParams.put("second", queryParam2);
 
-
     Action action = new Action();
     action.setQueryParameters(expectedQueryParams);
     ActionImpl actionImpl = new ActionImpl(action);
@@ -105,7 +103,6 @@ public class QueryParametersValidatorTestCase {
     queryParam2.setType(ParamType.STRING);
     queryParam2.setDefaultValue("test with spaces");
     expectedQueryParams.put("second", queryParam2);
-
 
     Action action = new Action();
     action.setQueryParameters(expectedQueryParams);
@@ -165,6 +162,8 @@ public class QueryParametersValidatorTestCase {
     validator.validateAndAddDefaults(incomingQueryParams, "second=b", true);
   }
 
-  private static final String NON_ARRAY_QUERY_PARAM_FAIL_MESSAGE = "Query parameter first is not repeatable";
-  private static final String STRICT_VALIDATION_FAIL_MESSAGE = "second parameters are not defined in RAML.";
+  private static final String NON_ARRAY_QUERY_PARAM_FAIL_MESSAGE =
+      "Query parameter first is not repeatable";
+  private static final String STRICT_VALIDATION_FAIL_MESSAGE =
+      "second parameters are not defined in RAML.";
 }

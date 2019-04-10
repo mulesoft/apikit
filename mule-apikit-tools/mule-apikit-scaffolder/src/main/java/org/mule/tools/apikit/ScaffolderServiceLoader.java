@@ -6,10 +6,9 @@
  */
 package org.mule.tools.apikit;
 
-import org.mule.module.apikit.spi.ScaffolderService;
-
 import java.util.Iterator;
 import java.util.ServiceLoader;
+import org.mule.module.apikit.spi.ScaffolderService;
 
 public class ScaffolderServiceLoader {
 

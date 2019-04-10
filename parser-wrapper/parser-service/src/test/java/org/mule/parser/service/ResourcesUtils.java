@@ -6,10 +6,9 @@
  */
 package org.mule.parser.service;
 
-import org.junit.Assert;
-
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.junit.Assert;
 
 public class ResourcesUtils {
 

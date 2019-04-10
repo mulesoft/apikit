@@ -6,17 +6,16 @@
  */
 package org.mule.tools.apikit.output.scopes;
 
+import static org.mule.tools.apikit.output.MuleConfigGenerator.EE_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
+import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.jdom2.CDATA;
 import org.jdom2.Element;
 import org.mule.tools.apikit.misc.ExampleUtils;
 import org.mule.tools.apikit.output.GenerationModel;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mule.tools.apikit.output.MuleConfigGenerator.EE_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
-import static org.mule.tools.apikit.output.MuleConfigGenerator.XSI_NAMESPACE;
 
 public class APIKitFlowScope implements Scope {
 
@@ -65,7 +64,9 @@ public class APIKitFlowScope implements Scope {
     setPayload.addContent(cdataSection);
     message.setContent(setPayload);
     transform.addNamespaceDeclaration(EE_NAMESPACE.getNamespace());
-    transform.setAttribute("schemaLocation", EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(),
+    transform.setAttribute(
+                           "schemaLocation",
+                           EE_NAMESPACE.getNamespace().getURI() + " " + EE_NAMESPACE.getLocation(),
                            XSI_NAMESPACE.getNamespace());
     transform.addContent(message);
     return transform;

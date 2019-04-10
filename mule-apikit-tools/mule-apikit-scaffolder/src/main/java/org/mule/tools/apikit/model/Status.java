@@ -6,9 +6,7 @@
  */
 package org.mule.tools.apikit.model;
 
-/**
- * Represents scaffolding result status
- */
+/** Represents scaffolding result status */
 public enum Status {
   FAILED,
   SUCCESS,

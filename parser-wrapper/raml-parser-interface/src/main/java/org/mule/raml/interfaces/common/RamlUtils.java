@@ -52,5 +52,4 @@ public class RamlUtils {
     }
     return StringUtils.join(split, "\n");
   }
-
 }

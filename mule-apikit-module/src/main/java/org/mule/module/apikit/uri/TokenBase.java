@@ -10,10 +10,11 @@ package org.mule.module.apikit.uri;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * An abstract token for use as a base for other tokens.
- * <p/>
+ *
+ * <p>
+ *
  * <p>This class is a base implementation of the {@link Token} interface.
  *
  * @author Christophe Lauret
@@ -21,9 +22,7 @@ import java.util.List;
  */
 abstract class TokenBase implements Token {
 
-  /**
-   * The expression for this token.
-   */
+  /** The expression for this token. */
   private final String _exp;
 
   /**
@@ -41,24 +40,22 @@ abstract class TokenBase implements Token {
 
   /**
    * {@inheritDoc}
-   * <p/>
-   * By default a token is resolvable if it can be matched.
+   *
+   * <p>By default a token is resolvable if it can be matched.
    */
   public boolean isResolvable() {
     return this instanceof Matchable;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public String expression() {
     return this._exp;
   }
 
   /**
    * Two tokens are equals if and only if their string expression is equal.
-   * <p/>
-   * {@inheritDoc}
+   *
+   * <p>{@inheritDoc}
    */
   @Override
   public boolean equals(Object o) {
@@ -72,17 +69,13 @@ abstract class TokenBase implements Token {
     return (this._exp == t._exp || (_exp != null && _exp.equals(t._exp)));
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public int hashCode() {
     return 31 * this._exp.hashCode() + this._exp.hashCode();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public String toString() {
     return this._exp;
@@ -92,13 +85,13 @@ abstract class TokenBase implements Token {
 
   /**
    * Removes the curly brackets from the specified expression.
-   * <p/>
-   * If the expression is already stripped, this method returns the same string.
+   *
+   * <p>If the expression is already stripped, this method returns the same string.
    *
    * @param exp The expression to 'strip'.
    * @return The raw expression (without the curly brackets).
    */
-  protected final static String strip(String exp) {
+  protected static final String strip(String exp) {
     if (exp.length() < 2) {
       return exp;
     }
@@ -124,5 +117,4 @@ abstract class TokenBase implements Token {
     }
     return vars;
   }
-
 }

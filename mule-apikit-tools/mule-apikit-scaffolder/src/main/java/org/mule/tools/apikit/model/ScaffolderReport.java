@@ -6,18 +6,16 @@
  */
 package org.mule.tools.apikit.model;
 
-import org.mule.parser.service.ComponentScaffoldingError;
-import org.mule.parser.service.ScaffoldingErrorType;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.mule.parser.service.ComponentScaffoldingError;
+import org.mule.parser.service.ScaffoldingErrorType;
 
 /**
- *  Collects information while scaffolding an API
+ * Collects information while scaffolding an API
  *
- *  The purpose is to notify scaffolding result
- *
+ * <p>The purpose is to notify scaffolding result
  */
 public class ScaffolderReport {
 
@@ -29,7 +27,8 @@ public class ScaffolderReport {
 
   private final List<ComponentScaffoldingError> scaffoldingErrors;
 
-  private ScaffolderReport(String vendorId, String version, Status status, List<ComponentScaffoldingError> errors) {
+  private ScaffolderReport(
+                           String vendorId, String version, Status status, List<ComponentScaffoldingError> errors) {
     this.vendorId = vendorId;
     this.version = version;
     this.status = status;
@@ -53,7 +52,9 @@ public class ScaffolderReport {
   }
 
   public List<ComponentScaffoldingError> getScaffoldingErrorsByType(ScaffoldingErrorType type) {
-    return scaffoldingErrors.stream().filter(e -> type.equals(e.errorType())).collect(Collectors.toList());
+    return scaffoldingErrors.stream()
+        .filter(e -> type.equals(e.errorType()))
+        .collect(Collectors.toList());
   }
 
   public static class Builder {

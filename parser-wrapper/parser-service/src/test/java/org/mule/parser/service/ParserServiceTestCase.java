@@ -6,22 +6,20 @@
  */
 package org.mule.parser.service;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
-import org.mule.raml.interfaces.ParserType;
-import org.mule.raml.interfaces.ParserWrapper;
-import org.mule.raml.interfaces.model.api.ApiRef;
-
-import java.net.URISyntaxException;
-
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.mule.raml.interfaces.model.ApiVendor.OAS_20;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
 import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
+
+import java.net.URISyntaxException;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.mule.raml.interfaces.ParserType;
+import org.mule.raml.interfaces.ParserWrapper;
+import org.mule.raml.interfaces.model.api.ApiRef;
 
 public class ParserServiceTestCase {
 
@@ -46,7 +44,8 @@ public class ParserServiceTestCase {
 
     final String api = resource("/api-10.raml");
 
-    final ParserWrapper wrapper = new ParserService().getParser(ApiRef.create(api), ParserType.RAML);
+    final ParserWrapper wrapper =
+        new ParserService().getParser(ApiRef.create(api), ParserType.RAML);
     assertNotNull(wrapper);
     assertThat(wrapper.getParserType(), is(ParserType.RAML));
     assertThat(wrapper.getApiVendor(), is(RAML_10));
@@ -88,11 +87,17 @@ public class ParserServiceTestCase {
   @Test
   public void fallbackParser() {
     ParserService parserService = new ParserService();
-    ParserWrapper wrapper = parserService.getParser(ApiRef.create(resource("/api-with-fallback-parser.raml")));
+    ParserWrapper wrapper =
+        parserService.getParser(ApiRef.create(resource("/api-with-fallback-parser.raml")));
 
     assertNotNull(wrapper);
     assertThat(parserService.getParsingErrors().size(), is(1));
-    assertThat(parserService.getParsingErrors().get(0).cause().contains("Validation failed using parser type : AMF, in file :"),
+    assertThat(
+               parserService
+                   .getParsingErrors()
+                   .get(0)
+                   .cause()
+                   .contains("Validation failed using parser type : AMF, in file :"),
                is(true));
   }
 
@@ -104,12 +109,20 @@ public class ParserServiceTestCase {
       parserService.getParser(ApiRef.create(resource("/with-invalid-errors.raml")));
     } finally {
       assertThat(parserService.getParsingErrors().size(), is(2));
-      assertThat(parserService.getParsingErrors().get(0).cause().contains("Validation failed using parser type : AMF, in file :"),
+      assertThat(
+                 parserService
+                     .getParsingErrors()
+                     .get(0)
+                     .cause()
+                     .contains("Validation failed using parser type : AMF, in file :"),
                  is(true));
-      assertThat(parserService.getParsingErrors().get(1).cause()
-          .contains("Validation failed using fallback parser type : RAML, in file :"),
+      assertThat(
+                 parserService
+                     .getParsingErrors()
+                     .get(1)
+                     .cause()
+                     .contains("Validation failed using fallback parser type : RAML, in file :"),
                  is(true));
-
     }
   }
 

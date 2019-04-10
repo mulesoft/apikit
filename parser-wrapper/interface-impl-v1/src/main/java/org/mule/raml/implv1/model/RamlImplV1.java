@@ -6,7 +6,13 @@
  */
 package org.mule.raml.implv1.model;
 
-import org.apache.commons.io.IOUtils;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.util.*;
 import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
 import org.mule.raml.interfaces.model.IRaml;
@@ -22,14 +28,6 @@ import org.raml.model.parameter.UriParameter;
 import org.raml.parser.loader.ResourceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.util.*;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.emptyMap;
 
 public class RamlImplV1 implements IRaml {
 
@@ -103,10 +101,10 @@ public class RamlImplV1 implements IRaml {
     return map;
   }
 
-  //public void setCompiledSchemas(Map<String, Object> map)
-  //{
+  // public void setCompiledSchemas(Map<String, Object> map)
+  // {
   //    raml.setCompiledSchemas(map);
-  //}
+  // }
 
   public List<Map<String, ISecurityScheme>> getSecuritySchemes() {
     if (raml.getSecuritySchemes() == null) {
@@ -169,13 +167,12 @@ public class RamlImplV1 implements IRaml {
     return URI.create(normalizedPath);
   }
 
-
   public void injectTrait(String name) {
     Map<String, ITemplate> traitDef = new HashMap<String, ITemplate>();
     Template template = new Template();
     template.setDisplayName(name);
-    //ITemplate iTemplate = new TemplateImpl(template);
-    //traitDef.put(name, iTemplate);
+    // ITemplate iTemplate = new TemplateImpl(template);
+    // traitDef.put(name, iTemplate);
     Map<String, Template> map = new HashMap<String, Template>();
     for (Map.Entry<String, ITemplate> entry : traitDef.entrySet()) {
       map.put(entry.getKey(), template);

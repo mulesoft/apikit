@@ -6,18 +6,16 @@
  */
 package org.mule.module.apikit.helpers;
 
+import static org.mule.module.apikit.CharsetUtils.trimBom;
+
+import java.io.IOException;
+import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.runtime.api.streaming.bytes.CursorStreamProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.mule.module.apikit.CharsetUtils.trimBom;
-
 
 public class PayloadHelper {
 
@@ -54,5 +52,4 @@ public class PayloadHelper {
     else
       throw new IOException("Don't know how to parse payload");
   }
-
 }

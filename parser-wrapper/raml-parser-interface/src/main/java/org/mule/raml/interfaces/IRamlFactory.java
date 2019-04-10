@@ -20,5 +20,4 @@ public interface IRamlFactory {
   IRamlValidationService createRamlValidationService(IRamlDocumentBuilder ramlDocumentBuilder);
 
   IRamlCloningService createRamlCloningService();
-
 }

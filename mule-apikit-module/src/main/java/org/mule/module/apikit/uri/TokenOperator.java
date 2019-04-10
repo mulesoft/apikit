@@ -9,7 +9,6 @@ package org.mule.module.apikit.uri;
 
 import java.util.List;
 
-
 /**
  * Defines tokens which use an operator to handle one or more variables.
  *
@@ -24,5 +23,4 @@ public interface TokenOperator extends Token {
    * @return the list of variables.
    */
   List<Variable> variables();
-
 }

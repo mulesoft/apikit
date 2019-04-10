@@ -6,17 +6,15 @@
  */
 package org.mule.raml.implv2.v08.model;
 
-import org.mule.raml.interfaces.model.IMimeType;
-import org.mule.raml.interfaces.model.IResponse;
-import org.mule.raml.interfaces.model.parameter.IParameter;
+import static java.util.Optional.ofNullable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-
+import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IResponse;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.v08.bodies.BodyLike;
 import org.raml.v2.api.model.v08.bodies.Response;
-
-import static java.util.Optional.ofNullable;
 
 public class ResponseImpl implements IResponse {
 
@@ -54,7 +52,8 @@ public class ResponseImpl implements IResponse {
     final Map<String, IParameter> result = new LinkedHashMap<>();
 
     ofNullable(response.headers())
-        .ifPresent(headers -> headers.forEach(header -> result.put(header.name(), new ParameterImpl(header))));
+        .ifPresent(
+                   headers -> headers.forEach(header -> result.put(header.name(), new ParameterImpl(header))));
 
     return result;
   }

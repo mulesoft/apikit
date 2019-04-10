@@ -35,9 +35,9 @@ public interface Parameters {
 
   /**
    * Indicates whether the parameters for the given name has a value.
-   * <p/>
-   * A parameter has a value if: - it is defined in the parameter list - its array of value has at
-   * least one value that is not an empty string
+   *
+   * <p>A parameter has a value if: - it is defined in the parameter list - its array of value has
+   * at least one value that is not an empty string
    *
    * @param name The name of the parameter.
    * @return <code>true</code> if it has a value; <code>false</code> otherwise.
@@ -46,16 +46,18 @@ public interface Parameters {
 
   /**
    * Indicates whether the parameters for the given name has a value.
-   * <p/>
+   *
+   * <p>
+   *
    * <p>A parameter has a value if:
+   *
    * <ul>
-   * <li>It is defined in the parameter list</li>
-   * <li>Its array of value has at least one value that is not an empty string</li>
+   *   <li>It is defined in the parameter list
+   *   <li>Its array of value has at least one value that is not an empty string
    * </ul>
    *
    * @param name The name of the parameter.
-   * @return <code>true</code> if it has a value;
-   *         <code>false</code> otherwise.
+   * @return <code>true</code> if it has a value; <code>false</code> otherwise.
    */
   boolean hasValue(String name);
 
@@ -69,7 +71,7 @@ public interface Parameters {
   /**
    * Set a parameter with only one value.
    *
-   * @param name  The name of the parameter.
+   * @param name The name of the parameter.
    * @param value The value.
    */
   void set(String name, String value);
@@ -77,9 +79,8 @@ public interface Parameters {
   /**
    * Set a parameter with only multiple values.
    *
-   * @param name   The name of the parameter.
+   * @param name The name of the parameter.
    * @param values The values.
    */
   void set(String name, String[] values);
-
 }

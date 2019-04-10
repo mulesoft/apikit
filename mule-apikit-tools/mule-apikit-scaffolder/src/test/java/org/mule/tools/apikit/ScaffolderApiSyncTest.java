@@ -6,16 +6,12 @@
  */
 package org.mule.tools.apikit;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.model.Dependency;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
-import org.mule.tools.apikit.model.ScaffolderReport;
-import org.mule.tools.apikit.model.ScaffolderResourceLoader;
-import org.mule.tools.apikit.model.Status;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mule.tools.apikit.Helper.countOccurences;
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+import static org.mule.tools.apikit.model.Status.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,22 +22,28 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mule.tools.apikit.Helper.countOccurences;
-import static org.mule.tools.apikit.model.RuntimeEdition.EE;
-import static org.mule.tools.apikit.model.Status.*;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.model.Dependency;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
+import org.mule.tools.apikit.model.ScaffolderReport;
+import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 
 public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
-  private final static String MULE_4_VERSION = "4.0.0";
-  private final static ScaffolderResourceLoader scaffolderResourceLoaderMock = Mockito.mock(ScaffolderResourceLoader.class);
+  private static final String MULE_4_VERSION = "4.0.0";
+  private static final ScaffolderResourceLoader scaffolderResourceLoaderMock =
+      Mockito.mock(ScaffolderResourceLoader.class);
 
-  private final Dependency dependency = createDependency("com.mycompany", "raml-api", "1.0.0", "raml", "zip");
-  private final static String ROOT_RAML_RESOURCE_URL = "resource::com.mycompany:raml-api:1.0.0:raml:zip:";
-  private final static String DEPENDENCIES_RESOURCE_URL = "resource::com.mycompany:raml-library:1.1.0:raml-fragment:zip:";
+  private final Dependency dependency =
+      createDependency("com.mycompany", "raml-api", "1.0.0", "raml", "zip");
+  private static final String ROOT_RAML_RESOURCE_URL =
+      "resource::com.mycompany:raml-api:1.0.0:raml:zip:";
+  private static final String DEPENDENCIES_RESOURCE_URL =
+      "resource::com.mycompany:raml-library:1.1.0:raml-fragment:zip:";
 
   @Rule
   public TemporaryFolder folder = new TemporaryFolder();
@@ -54,7 +56,6 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     testSimple(ramlFolder, rootRaml);
   }
 
-
   @Test
   public void testSimpleGenerationV10() throws Exception {
     final String rootRaml = "simpleV10";
@@ -65,12 +66,20 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
   @Test
   public void testRAMLWithoutResources() throws Exception {
-    File api = generateApi("src/test/resources/api-sync/empty-api", "without-resources", SUCCESS.toString());
+    File api =
+        generateApi(
+                    "src/test/resources/api-sync/empty-api", "without-resources", SUCCESS.toString());
 
     assertTrue(api.exists());
-    assertEquals("Files are different", FileUtils
-        .readFileToString(new File(getClass().getClassLoader().getResource("api-sync/empty-api/expected-result.xml").getFile()))
-        .replaceAll("\\s+", ""),
+    assertEquals(
+                 "Files are different",
+                 FileUtils.readFileToString(
+                                            new File(
+                                                     getClass()
+                                                         .getClassLoader()
+                                                         .getResource("api-sync/empty-api/expected-result.xml")
+                                                         .getFile()))
+                     .replaceAll("\\s+", ""),
                  FileUtils.readFileToString(api).replaceAll("\\s+", ""));
   }
 
@@ -80,13 +89,16 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     final String rootRaml = "api";
     final String ramlFolder = "src/test/resources/api-sync/scaffolder-include-10/";
 
-    File xmlOut = generateScaffolder(ramlFolder, rootRaml, Collections.singletonList("included.raml"));
+    File xmlOut =
+        generateScaffolder(ramlFolder, rootRaml, Collections.singletonList("included.raml"));
 
     assertTrue(xmlOut.exists());
     String s = IOUtils.toString(new FileInputStream(xmlOut));
     assertNotNull(s);
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(7, countOccurences(s, "<ee:variables>"));
@@ -109,7 +121,6 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     generateScaffolder(ramlFolder, rootRaml, null, ramlFolder, null, FAILED.toString());
   }
 
-
   @Test
   public void libraryReferenceToRoot() throws Exception {
     final String rootRaml = "test-api";
@@ -118,10 +129,15 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     final List<String> libraryFiles = Arrays.asList("library.raml", "reused-fragment.raml");
 
     File xmlOut =
-        generateScaffolder(ramlFolder, rootRaml, libraryFiles, libraryFolder, Collections.singletonList("library.raml"), null);
+        generateScaffolder(
+                           ramlFolder,
+                           rootRaml,
+                           libraryFiles,
+                           libraryFolder,
+                           Collections.singletonList("library.raml"),
+                           null);
 
     assertTrue(xmlOut.exists());
-
   }
 
   private void testSimple(String ramlFolder, String rootRaml) throws Exception {
@@ -135,17 +151,22 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     assertSimple(s, rootRaml);
   }
 
-  private File generateScaffolder(String ramlFolder, String rootRaml)
-      throws Exception {
+  private File generateScaffolder(String ramlFolder, String rootRaml) throws Exception {
     return generateScaffolder(ramlFolder, rootRaml, null);
   }
 
-  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles) throws Exception {
+  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles)
+      throws Exception {
     return generateScaffolder(ramlFolder, rootRaml, referencedFiles, ramlFolder, null, null);
   }
 
-  private File generateScaffolder(String ramlFolder, String rootRaml, List<String> referencedFiles, String referencedFilesFolder,
-                                  List<String> rootRamlFiles, String expectedStatus)
+  private File generateScaffolder(
+                                  String ramlFolder,
+                                  String rootRaml,
+                                  List<String> referencedFiles,
+                                  String referencedFilesFolder,
+                                  List<String> rootRamlFiles,
+                                  String expectedStatus)
       throws Exception {
     final String exchangeJsonResourceURL = ROOT_RAML_RESOURCE_URL + "exchange.json";
     final String rootRamlResourceURL = ROOT_RAML_RESOURCE_URL + rootRaml + ".raml";
@@ -158,7 +179,8 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
     if (rootRamlFiles != null) {
       for (String rootRamlFile : rootRamlFiles) {
-        mockScaffolderResourceLoader(DEPENDENCIES_RESOURCE_URL + rootRamlFile, ramlFolder, rootRamlFile);
+        mockScaffolderResourceLoader(
+                                     DEPENDENCIES_RESOURCE_URL + rootRamlFile, ramlFolder, rootRamlFile);
       }
     }
 
@@ -170,19 +192,29 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
     File muleXmlOut = folder.newFolder("mule-xml-out");
 
-    ScaffolderReport scaffolderReport = new ScaffolderAPI().run(Collections.singletonList(dependency),
-                                                                scaffolderResourceLoaderMock, muleXmlOut, null, MULE_4_VERSION,
-                                                                EE);
+    ScaffolderReport scaffolderReport =
+        new ScaffolderAPI()
+            .run(
+                 Collections.singletonList(dependency),
+                 scaffolderResourceLoaderMock,
+                 muleXmlOut,
+                 null,
+                 MULE_4_VERSION,
+                 EE);
 
     assertEquals(expectedStatus, scaffolderReport.getStatus());
     return new File(muleXmlOut, rootRaml + ".xml");
   }
 
-  private void mockScaffolderResourceLoader(String resourceURL, String folder, String file) throws Exception {
-    Mockito.doReturn(getToBeReturned(folder, file)).when(scaffolderResourceLoaderMock)
+  private void mockScaffolderResourceLoader(String resourceURL, String folder, String file)
+      throws Exception {
+    Mockito.doReturn(getToBeReturned(folder, file))
+        .when(scaffolderResourceLoaderMock)
         .getResource(resourceURL);
-    Mockito.doReturn(getInputStream(folder + file)).doReturn(getInputStream(folder + file))
-        .doReturn(getInputStream(folder + file)).when(scaffolderResourceLoaderMock)
+    Mockito.doReturn(getInputStream(folder + file))
+        .doReturn(getInputStream(folder + file))
+        .doReturn(getInputStream(folder + file))
+        .when(scaffolderResourceLoaderMock)
         .getResourceAsStream(resourceURL);
   }
 
@@ -195,15 +227,25 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     assertEquals(1, countOccurences(s, "http:listener-connection host=\"0.0.0.0\" port=\"8081\""));
     assertEquals(2, countOccurences(s, "http:listener "));
     assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
-    assertEquals(2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
-    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(
+                 2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
     assertEquals(4, countOccurences(s, "#[vars.outboundHeaders default {}]"));
     assertEquals(7, countOccurences(s, "<on-error-propagate"));
     assertEquals(7, countOccurences(s, "<ee:message>"));
     assertEquals(9, countOccurences(s, "<ee:variables>"));
     assertEquals(10, countOccurences(s, "<ee:set-variable"));
-    assertEquals(2, countOccurences(s, "<ee:set-variable variableName=\"name\">attributes.uriParams.name</ee:set-variable>"));
-    assertEquals(1, countOccurences(s, "<ee:set-variable variableName=\"owner\">attributes.uriParams.owner</ee:set-variable>"));
+    assertEquals(
+                 2,
+                 countOccurences(
+                                 s,
+                                 "<ee:set-variable variableName=\"name\">attributes.uriParams.name</ee:set-variable>"));
+    assertEquals(
+                 1,
+                 countOccurences(
+                                 s,
+                                 "<ee:set-variable variableName=\"owner\">attributes.uriParams.owner</ee:set-variable>"));
     assertEquals(7, countOccurences(s, "<ee:set-payload>"));
     assertEquals(4, countOccurences(s, "http:body"));
     assertEquals(2, countOccurences(s, "#[payload]"));
@@ -215,11 +257,15 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
     assertEquals(0, countOccurences(s, "#[NullPayload.getInstance()]"));
     assertEquals(0, countOccurences(s, "#[null]"));
-    assertEquals(0,
-                 countOccurences(s,
+    assertEquals(
+                 0,
+                 countOccurences(
+                                 s,
                                  "expression-component>mel:flowVars['variables.outboundHeaders default {}'].put('Content-Type', 'application/json')</expression-component>"));
-    assertEquals(0,
-                 countOccurences(s,
+    assertEquals(
+                 0,
+                 countOccurences(
+                                 s,
                                  "set-variable variableName=\"variables.outboundHeaders default {}\" value=\"#[mel:new java.util.HashMap()]\" />"));
     assertEquals(0, countOccurences(s, "exception-strategy"));
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
@@ -229,7 +275,8 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     return new FileInputStream(resourcePath);
   }
 
-  private static Dependency createDependency(String groupId, String artifactId, String version, String classifier, String type) {
+  private static Dependency createDependency(
+                                             String groupId, String artifactId, String version, String classifier, String type) {
     Dependency dependency = new Dependency();
 
     dependency.setGroupId(groupId);
@@ -240,7 +287,6 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
     return dependency;
   }
-
 
   @Test
   public void testRaml08Fallback() throws Exception {
@@ -257,10 +303,15 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
     File muleXmlOut = folder.newFolder("mule-xml-out");
 
-    ScaffolderReport scaffolderReport = new ScaffolderAPI().run(Collections.singletonList(dependency),
-                                                                new TestScaffolderResourceLoader(ramlFolder), muleXmlOut, null,
-                                                                MULE_4_VERSION,
-                                                                EE);
+    ScaffolderReport scaffolderReport =
+        new ScaffolderAPI()
+            .run(
+                 Collections.singletonList(dependency),
+                 new TestScaffolderResourceLoader(ramlFolder),
+                 muleXmlOut,
+                 null,
+                 MULE_4_VERSION,
+                 EE);
 
     assertEquals(expectedStatus, scaffolderReport.getStatus());
     return new File(muleXmlOut, rootRaml + ".xml");

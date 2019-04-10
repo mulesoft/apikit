@@ -7,11 +7,9 @@
 package org.mule.raml.interfaces.model;
 
 import java.util.HashMap;
-
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import java.util.Map;
 
 public interface IResponse {
 

@@ -6,9 +6,8 @@
  */
 package org.mule.raml.interfaces.parser.visitor;
 
-import org.mule.raml.interfaces.parser.rule.IValidationResult;
-
 import java.util.List;
+import org.mule.raml.interfaces.parser.rule.IValidationResult;
 
 public interface IRamlValidationService {
 

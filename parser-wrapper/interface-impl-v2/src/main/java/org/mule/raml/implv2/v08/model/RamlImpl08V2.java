@@ -6,11 +6,7 @@
  */
 package org.mule.raml.implv2.v08.model;
 
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.raml.interfaces.model.IResource;
-import org.mule.raml.interfaces.model.ISecurityScheme;
-import org.mule.raml.interfaces.model.ITemplate;
-import org.mule.raml.interfaces.model.parameter.IParameter;
+import static java.util.Collections.emptyMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,12 +14,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.IResource;
+import org.mule.raml.interfaces.model.ISecurityScheme;
+import org.mule.raml.interfaces.model.ITemplate;
+import org.mule.raml.interfaces.model.parameter.IParameter;
 import org.raml.v2.api.model.v08.api.Api;
 import org.raml.v2.api.model.v08.api.GlobalSchema;
 import org.raml.v2.api.model.v08.resources.Resource;
-
-import static java.util.Collections.emptyMap;
 
 public class RamlImpl08V2 implements IRaml {
 
@@ -76,7 +74,8 @@ public class RamlImpl08V2 implements IRaml {
   public Map<String, IParameter> getBaseUriParameters() {
     final Map<String, IParameter> baseUriParameters = new LinkedHashMap<>();
 
-    api.baseUriParameters().forEach(type -> baseUriParameters.put(type.name(), new ParameterImpl(type)));
+    api.baseUriParameters()
+        .forEach(type -> baseUriParameters.put(type.name(), new ParameterImpl(type)));
 
     return baseUriParameters;
   }

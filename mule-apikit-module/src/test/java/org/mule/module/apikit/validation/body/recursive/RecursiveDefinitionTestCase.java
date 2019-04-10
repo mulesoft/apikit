@@ -6,64 +6,63 @@
  */
 package org.mule.module.apikit.validation.body.recursive;
 
-import org.junit.Test;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 public class RecursiveDefinitionTestCase extends AbstractMultiParserFunctionalTestCase {
 
   private static final String INVALID_1 =
-      "{\n" +
-          "  \"value1\": \"root\",\n" +
-          "  \"left\": {\n" +
-          "    \"value\": \"child1\"\n" +
-          "  },\n" +
-          "  \"right\": {\n" +
-          "    \"value\": \"child2\"\n" +
-          "  }\n" +
-          "}";
+      "{\n"
+          + "  \"value1\": \"root\",\n"
+          + "  \"left\": {\n"
+          + "    \"value\": \"child1\"\n"
+          + "  },\n"
+          + "  \"right\": {\n"
+          + "    \"value\": \"child2\"\n"
+          + "  }\n"
+          + "}";
 
   private static final String INVALID_2 =
-      "{\n" +
-          "  \"value\": \"root\",\n" +
-          "  \"left\": {\n" +
-          "    \"value\": \"child1\"\n" +
-          "  },\n" +
-          "  \"right\": {\n" +
-          "    \"value2\": \"child2\"\n" +
-          "  }\n" +
-          "}";
-
+      "{\n"
+          + "  \"value\": \"root\",\n"
+          + "  \"left\": {\n"
+          + "    \"value\": \"child1\"\n"
+          + "  },\n"
+          + "  \"right\": {\n"
+          + "    \"value2\": \"child2\"\n"
+          + "  }\n"
+          + "}";
 
   private static final String VALID_1 =
-      "{\n" +
-          "  \"value\": \"root\",\n" +
-          "  \"left\": {\n" +
-          "    \"value\": \"child1\"\n" +
-          "  },\n" +
-          "  \"right\": {\n" +
-          "    \"value\": \"child2\"\n" +
-          "  }\n" +
-          "}";
+      "{\n"
+          + "  \"value\": \"root\",\n"
+          + "  \"left\": {\n"
+          + "    \"value\": \"child1\"\n"
+          + "  },\n"
+          + "  \"right\": {\n"
+          + "    \"value\": \"child2\"\n"
+          + "  }\n"
+          + "}";
 
   private static final String VALID_2 =
-      "{\n" +
-          "  \"value\": \"root\",\n" +
-          "  \"left\": {\n" +
-          "    \"value\": \"child1\"\n" +
-          "  },\n" +
-          "  \"right\": {\n" +
-          "    \"value\": \"child2\",\n" +
-          "    \"left\": {\n" +
-          "      \"value\": \"child21\"\n" +
-          "    },\n" +
-          "    \"right\": {\n" +
-          "      \"value\": \"child22\"\n" +
-          "    }\n" +
-          "  }\n" +
-          "}";
+      "{\n"
+          + "  \"value\": \"root\",\n"
+          + "  \"left\": {\n"
+          + "    \"value\": \"child1\"\n"
+          + "  },\n"
+          + "  \"right\": {\n"
+          + "    \"value\": \"child2\",\n"
+          + "    \"left\": {\n"
+          + "      \"value\": \"child21\"\n"
+          + "    },\n"
+          + "    \"right\": {\n"
+          + "      \"value\": \"child22\"\n"
+          + "    }\n"
+          + "  }\n"
+          + "}";
 
   @Override
   protected String getConfigFile() {
@@ -72,48 +71,54 @@ public class RecursiveDefinitionTestCase extends AbstractMultiParserFunctionalTe
 
   @Test
   public void validPost1() {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .body(VALID_1)
         .expect()
         .response()
         .body(is(VALID_1))
         .statusCode(200)
-        .when().post("/api/dummy");
+        .when()
+        .post("/api/dummy");
   }
 
   @Test
   public void validPost2() {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .body(VALID_2)
         .expect()
         .response()
         .body(is(VALID_2))
         .statusCode(200)
-        .when().post("/api/dummy");
+        .when()
+        .post("/api/dummy");
   }
 
   @Test
   public void invalidPost1() {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .body(INVALID_1)
         .expect()
         .response()
         .body(is("{message: 'Bad Request'}"))
         .statusCode(400)
-        .when().post("/api/dummy");
-
-
+        .when()
+        .post("/api/dummy");
   }
 
   @Test
   public void invalidPost2() {
 
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .body(INVALID_2)
         .expect()
         .response()
         .body(is("{message: 'Bad Request'}"))
         .statusCode(400)
-        .when().post("/api/dummy");
+        .when()
+        .post("/api/dummy");
   }
 }

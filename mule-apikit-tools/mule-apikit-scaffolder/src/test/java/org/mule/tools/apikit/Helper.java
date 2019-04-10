@@ -12,7 +12,6 @@ import static org.junit.Assert.assertFalse;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
@@ -43,7 +42,6 @@ public class Helper {
 
     assertEquals(1, apis.size());
   }
-
 
   public static String nonSpaceOutput(Element element) {
     XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());

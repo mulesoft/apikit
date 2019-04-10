@@ -9,7 +9,6 @@ package org.mule.amf.impl.loader;
 import amf.client.remote.Content;
 import amf.client.resource.FileResourceLoader;
 import amf.client.resource.ResourceLoader;
-
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.concurrent.CompletableFuture;
@@ -21,7 +20,8 @@ public class ExchangeDependencyResourceLoader implements ResourceLoader {
   private File workingDir = null;
   private final FileResourceLoader resourceLoader = new FileResourceLoader();
 
-  private static final Pattern DEPENDENCY_PATH_PATTERN = Pattern.compile("^exchange_modules/|/exchange_modules/");
+  private static final Pattern DEPENDENCY_PATH_PATTERN =
+      Pattern.compile("^exchange_modules/|/exchange_modules/");
 
   public ExchangeDependencyResourceLoader(String rootDir) {
     String basePath = rootDir != null ? rootDir : ".";
@@ -44,8 +44,9 @@ public class ExchangeDependencyResourceLoader implements ResourceLoader {
   }
 
   private CompletableFuture<Content> fail() {
-    return CompletableFuture.supplyAsync(() -> {
-      throw new RuntimeException("Failed to apply.");
-    });
+    return CompletableFuture.supplyAsync(
+                                         () -> {
+                                           throw new RuntimeException("Failed to apply.");
+                                         });
   }
 }

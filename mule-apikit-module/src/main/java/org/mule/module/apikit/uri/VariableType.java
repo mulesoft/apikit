@@ -11,32 +11,28 @@ import java.util.regex.Pattern;
 
 /**
  * Defines a variable type.
- * <p/>
- * The variable type may be used for any purpose. It is just a mechanism to qualify variables further
- * than merely by name.
- * <p/>
- * Systems may choose to use a variable type to indicate a particular behaviour for the variable or
- * to enforce a particular type of value.
+ *
+ * <p>The variable type may be used for any purpose. It is just a mechanism to qualify variables
+ * further than merely by name.
+ *
+ * <p>Systems may choose to use a variable type to indicate a particular behaviour for the variable
+ * or to enforce a particular type of value.
  *
  * @author Christophe Lauret
  * @version 11 June 2009
  */
 public class VariableType {
 
-  /**
-   * The pattern for a valid variable name.
-   */
+  /** The pattern for a valid variable name. */
   private static final Pattern VALID_NAME = Pattern.compile("[a-zA-Z0-9][\\w.-]*");
 
-  /**
-   * The name of this variable type.
-   */
+  /** The name of this variable type. */
   private String _name;
 
   /**
    * Create a new variable type.
    *
-   * @throws NullPointerException     If the specified name is <code>null</code>.
+   * @throws NullPointerException If the specified name is <code>null</code>.
    * @throws IllegalArgumentException If the specified name is an empty string.
    */
   public VariableType(String name) {
@@ -93,5 +89,4 @@ public class VariableType {
     }
     return VALID_NAME.matcher(name).matches();
   }
-
 }

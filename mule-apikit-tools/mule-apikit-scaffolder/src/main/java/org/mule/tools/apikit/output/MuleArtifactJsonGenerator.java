@@ -6,18 +6,17 @@
  */
 package org.mule.tools.apikit.output;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.mule.parser.service.ComponentScaffoldingError;
 import org.mule.parser.service.SimpleScaffoldingError;
 
@@ -46,18 +45,22 @@ public class MuleArtifactJsonGenerator {
       save(generateArtifact());
     } catch (Exception e) {
       log.error("Error generating descriptor mule-artifact.json", e);
-      errors
-          .add(new SimpleScaffoldingError(String.format("Error generating descriptor mule-artifact.json : %s",
-                                                        e.getMessage())));
+      errors.add(
+                 new SimpleScaffoldingError(
+                                            String.format(
+                                                          "Error generating descriptor mule-artifact.json : %s",
+                                                          e.getMessage())));
     }
   }
 
   private void save(String artifactJson) throws IOException {
-    Files.write(Paths.get(rootDirectory.getPath(), MULE_ARTIFACT_FILENAME), artifactJson.getBytes());
+    Files.write(
+                Paths.get(rootDirectory.getPath(), MULE_ARTIFACT_FILENAME), artifactJson.getBytes());
   }
 
   String generateArtifact() {
-    try (FileInputStream input = new FileInputStream(new File(rootDirectory, MULE_ARTIFACT_FILENAME))) {
+    try (FileInputStream input =
+        new FileInputStream(new File(rootDirectory, MULE_ARTIFACT_FILENAME))) {
       final String json = IOUtils.toString(input);
       JSONObject muleArtifact = new JSONObject(json);
 

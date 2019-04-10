@@ -6,16 +6,14 @@
  */
 package org.mule.raml.implv2.v08.model;
 
-import org.mule.metadata.api.model.MetadataType;
-import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import org.raml.v2.api.model.v08.parameters.Parameter;
+import static org.mule.raml.implv2.v08.MetadataResolver.resolve;
+import static org.mule.raml.implv2.v08.MetadataResolver.stringType;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.mule.raml.implv2.v08.MetadataResolver.resolve;
-import static org.mule.raml.implv2.v08.MetadataResolver.stringType;
+import org.mule.metadata.api.model.MetadataType;
+import org.mule.raml.interfaces.model.parameter.IParameter;
+import org.raml.v2.api.model.v08.parameters.Parameter;
 
 public class ParameterImpl implements IParameter {
 
@@ -104,5 +102,4 @@ public class ParameterImpl implements IParameter {
   public String surroundWithQuotesIfNeeded(String value) {
     return value;
   }
-
 }

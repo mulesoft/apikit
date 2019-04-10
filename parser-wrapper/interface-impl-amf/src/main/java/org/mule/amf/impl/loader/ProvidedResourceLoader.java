@@ -7,12 +7,11 @@
 package org.mule.amf.impl.loader;
 
 import amf.client.remote.Content;
-import org.apache.commons.io.IOUtils;
-import org.mule.raml.interfaces.loader.ResourceLoader;
-
 import java.io.IOException;
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
+import org.apache.commons.io.IOUtils;
+import org.mule.raml.interfaces.loader.ResourceLoader;
 
 public class ProvidedResourceLoader implements amf.client.resource.ResourceLoader {
 
@@ -39,18 +38,21 @@ public class ProvidedResourceLoader implements amf.client.resource.ResourceLoade
         final Content content = new Content(resourceAsString, resource.toString());
         future.complete(content);
       } catch (IOException e) {
-        future.completeExceptionally(new RuntimeException("Failed to fetch resource '" + resourceName + "'"));
+        future.completeExceptionally(
+                                     new RuntimeException("Failed to fetch resource '" + resourceName + "'"));
       }
     } else {
-      future.completeExceptionally(new Exception("Failed to fetch resource '" + resourceName + "'"));
+      future.completeExceptionally(
+                                   new Exception("Failed to fetch resource '" + resourceName + "'"));
     }
 
     return future;
   }
 
   private CompletableFuture<Content> fail() {
-    return CompletableFuture.supplyAsync(() -> {
-      throw new RuntimeException("Failed to apply.");
-    });
+    return CompletableFuture.supplyAsync(
+                                         () -> {
+                                           throw new RuntimeException("Failed to apply.");
+                                         });
   }
 }

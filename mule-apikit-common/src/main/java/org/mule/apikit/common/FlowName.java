@@ -7,13 +7,12 @@
 package org.mule.apikit.common;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.lang.StringUtils;
 
 public class FlowName {
 
@@ -22,13 +21,15 @@ public class FlowName {
   public static final String FLOW_NAME_SEPARATOR = ":";
   public static final String URL_RESOURCE_SEPARATOR = "/";
 
-  private static final ImmutableMap<String, String> specialCharacters = ImmutableMap.<String, String>builder()
-      .put(URL_RESOURCE_SEPARATOR, "\\")
-      .put("{", "(")
-      .put("}", ")")
-      .build();
+  private static final ImmutableMap<String, String> specialCharacters =
+      ImmutableMap.<String, String>builder()
+          .put(URL_RESOURCE_SEPARATOR, "\\")
+          .put("{", "(")
+          .put("}", ")")
+          .build();
 
-  private static final String APIKIT_FLOW_NAME_FORMAT = "^([^:]+):(" + URL_RESOURCE_SEPARATOR + "[^:]*)(:([^:]+))?(:(.*))?$";
+  private static final String APIKIT_FLOW_NAME_FORMAT =
+      "^([^:]+):(" + URL_RESOURCE_SEPARATOR + "[^:]*)(:([^:]+))?(:(.*))?$";
 
   private static final Pattern PATTERN = Pattern.compile(APIKIT_FLOW_NAME_FORMAT);
 
@@ -40,7 +41,8 @@ public class FlowName {
     final Matcher flowNameMatcher = PATTERN.matcher(flowName);
 
     if (!flowNameMatcher.find()) {
-      throw new IllegalArgumentException("Invalid apikit flow name, expected format is: action:resource[:config]");
+      throw new IllegalArgumentException(
+                                         "Invalid apikit flow name, expected format is: action:resource[:config]");
     }
 
     return flowNameMatcher;
@@ -82,7 +84,8 @@ public class FlowName {
     return getMimeType(getMatcher(flowName), existingConfigs);
   }
 
-  public static Optional<String> getMimeType(Matcher flowNameMatcher, Collection<String> existingConfigs) {
+  public static Optional<String> getMimeType(
+                                             Matcher flowNameMatcher, Collection<String> existingConfigs) {
     if (flowNameMatcher.group(4) != null) {
       if (flowNameMatcher.group(6) == null) {
         if (existingConfigs == null || !existingConfigs.contains(flowNameMatcher.group(4))) {
@@ -100,7 +103,8 @@ public class FlowName {
     return getConfig(getMatcher(flowName), existingConfigs);
   }
 
-  public static Optional<String> getConfig(Matcher flowNameMatcher, Collection<String> existingConfigs) {
+  public static Optional<String> getConfig(
+                                           Matcher flowNameMatcher, Collection<String> existingConfigs) {
     if (flowNameMatcher.group(4) != null) {
       if (flowNameMatcher.group(6) == null) {
         if (existingConfigs != null && existingConfigs.contains(flowNameMatcher.group(4))) {
@@ -113,5 +117,4 @@ public class FlowName {
 
     return Optional.empty();
   }
-
 }

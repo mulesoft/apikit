@@ -6,6 +6,14 @@
  */
 package org.mule.raml.implv1;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.mule.raml.implv1.parser.visitor.RamlDocumentBuilderImpl;
 import org.mule.raml.implv1.parser.visitor.RamlValidationServiceImpl;
@@ -24,25 +32,18 @@ import org.yaml.snakeyaml.nodes.ScalarNode;
 import org.yaml.snakeyaml.nodes.SequenceNode;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 public class ParserV1Utils {
 
   private static final Yaml YAML_PARSER = new Yaml();
   private static final String INCLUDE_KEYWORD = "!include";
 
-  public static List<String> validate(ResourceLoader resourceLoader, String rootFileName, String resourceContent) {
+  public static List<String> validate(
+                                      ResourceLoader resourceLoader, String rootFileName, String resourceContent) {
     return validate(null, resourceLoader, rootFileName, resourceContent);
   }
 
-  public static List<String> validate(String resourceFolder, String rootFileName, String resourceContent) {
+  public static List<String> validate(
+                                      String resourceFolder, String rootFileName, String resourceContent) {
     return validate(resourceFolder, null, rootFileName, resourceContent);
   }
 
@@ -54,9 +55,13 @@ public class ParserV1Utils {
     return build(content, null, resourceLoader, rootFileName);
   }
 
-  private static List<String> validate(String resourceFolder, ResourceLoader resourceLoader, String rootFileName,
+  private static List<String> validate(
+                                       String resourceFolder,
+                                       ResourceLoader resourceLoader,
+                                       String rootFileName,
                                        String resourceContent) {
-    IRamlDocumentBuilder ramlDocumentBuilder = getIRamlDocumentBuilder(resourceFolder, resourceLoader);
+    IRamlDocumentBuilder ramlDocumentBuilder =
+        getIRamlDocumentBuilder(resourceFolder, resourceLoader);
 
     List<String> errorsList = new ArrayList<>();
     IRamlValidationService validationService = new RamlValidationServiceImpl(ramlDocumentBuilder);
@@ -67,13 +72,16 @@ public class ParserV1Utils {
     return errorsList;
   }
 
-  public static IRaml build(String content, String resourceFolder, ResourceLoader resourceLoader, String rootFileName) {
-    IRamlDocumentBuilder ramlDocumentBuilder = getIRamlDocumentBuilder(resourceFolder, resourceLoader);
+  public static IRaml build(
+                            String content, String resourceFolder, ResourceLoader resourceLoader, String rootFileName) {
+    IRamlDocumentBuilder ramlDocumentBuilder =
+        getIRamlDocumentBuilder(resourceFolder, resourceLoader);
 
     return ramlDocumentBuilder.build(content, rootFileName);
   }
 
-  private static IRamlDocumentBuilder getIRamlDocumentBuilder(String resourceFolder, ResourceLoader resourceLoader) {
+  private static IRamlDocumentBuilder getIRamlDocumentBuilder(
+                                                              String resourceFolder, ResourceLoader resourceLoader) {
     IRamlDocumentBuilder ramlDocumentBuilder;
     if (resourceLoader == null) {
       ramlDocumentBuilder = new RamlDocumentBuilderImpl();
@@ -87,7 +95,8 @@ public class ParserV1Utils {
     return ramlDocumentBuilder;
   }
 
-  public static List<String> detectIncludes(URI ramlUri, ResourceLoader resourceLoader) throws IOException {
+  public static List<String> detectIncludes(URI ramlUri, ResourceLoader resourceLoader)
+      throws IOException {
     try {
       final String ramlUriAsString = ramlUri.toString();
       final String content = IOUtils.toString(resourceLoader.fetchResource(ramlUriAsString));
@@ -104,7 +113,8 @@ public class ParserV1Utils {
     }
   }
 
-  private static Set<String> includedFilesIn(final String rootFileUri, final Node rootNode, ResourceLoader resourceLoader)
+  private static Set<String> includedFilesIn(
+                                             final String rootFileUri, final Node rootNode, ResourceLoader resourceLoader)
       throws IOException {
     final Set<String> includedFiles = new HashSet<>();
     if (rootNode.getNodeId() == NodeId.scalar) {

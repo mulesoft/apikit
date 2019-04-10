@@ -21,5 +21,4 @@ public class ClassPathResourceLoader implements ResourceLoader {
       return null;
     }
   }
-
 }

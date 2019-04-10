@@ -11,12 +11,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * A token using the operators defined in draft 3 of the URI templates specifications.
- * <p/>
- * Characters (4.2):
- * <p/>
+ *
+ * <p>Characters (4.2):
+ *
+ * <p>
+ *
  * <pre>
  * op          = 1*ALPHA
  * arg         = *(reserved / unreserved / pct-encoded)
@@ -30,24 +31,24 @@ import java.util.Map;
  * @author Christophe Lauret
  * @version 9 February 2009
  * @see <a
- *      href="http://bitworking.org/projects/URI-Templates/spec/draft-gregorio-uritemplate-03.html">URI
- *      Template (draft 3)</a>
+ *     href="http://bitworking.org/projects/URI-Templates/spec/draft-gregorio-uritemplate-03.html">URI
+ *     Template (draft 3)</a>
  */
 public class TokenOperatorD3 extends TokenBase implements TokenOperator {
 
-  /**
-   * The list of operators currently supported.
-   */
+  /** The list of operators currently supported. */
   public enum Operator {
 
     /**
      * 4.4.2 The 'opt' operator.
-     * <p/>
-     * If each variable is undefined or an empty list then substitute the empty string, otherwise
+     *
+     * <p>If each variable is undefined or an empty list then substitute the empty string, otherwise
      * substitute the value of 'arg'.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      * foo := &quot;fred&quot;
      *
@@ -69,12 +70,14 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
 
     /**
      * 4.4.3 The 'neg' operator.
-     * <p/>
-     * If each variable is undefined or an empty list then substitute the value of arg, otherwise
+     *
+     * <p>If each variable is undefined or an empty list then substitute the value of arg, otherwise
      * substitute the empty string.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      *  foo := &quot;fred&quot;
      *
@@ -96,15 +99,17 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
 
     /**
      * 4.4.4 The 'prefix' operator.
-     * <p/>
-     * The prefix operator MUST only have one variable in its expansion. More than one variable is
-     * an error condition. If the variable is undefined or an empty list then substitute the empty
-     * string. If the variable is a defined non-list then substitute the value of arg preceeded by
-     * the value of the variable. If the variable is a defined list then substitute the
+     *
+     * <p>The prefix operator MUST only have one variable in its expansion. More than one variable
+     * is an error condition. If the variable is undefined or an empty list then substitute the
+     * empty string. If the variable is a defined non-list then substitute the value of arg
+     * preceeded by the value of the variable. If the variable is a defined list then substitute the
      * concatenation of every list value preceeded by the arg.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      *  foo := &quot;fred&quot;
      *  bar := [&quot;fee&quot;, &quot;fi&quot;, &quot;fo&quot;, &quot;fum&quot;]
@@ -133,15 +138,17 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
 
     /**
      * 4.4.5 The 'suffix' operator.
-     * <p/>
-     * The prefix operator MUST only have one variable in its expansion. More than one variable is
-     * an error condition. If the variable is undefined or an empty list then substitute the empty
-     * string. If the variable is a defined non-list then substitute the value of arg followed by
-     * the value of the variable. If the variable is a defined list then substitute the
+     *
+     * <p>The prefix operator MUST only have one variable in its expansion. More than one variable
+     * is an error condition. If the variable is undefined or an empty list then substitute the
+     * empty string. If the variable is a defined non-list then substitute the value of arg followed
+     * by the value of the variable. If the variable is a defined list then substitute the
      * concatenation of every list value followed by the arg.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      *  foo := &quot;fred&quot;
      *  bar := [&quot;fee&quot;, &quot;fi&quot;, &quot;fo&quot;, &quot;fum&quot;]
@@ -170,15 +177,17 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
 
     /**
      * 4.4.6 The 'join' operator.
-     * <p/>
-     * Supplying a list variable to the join operator is an error. For each variable that is defined
-     * and non-empty create a keyvalue string that is the concatenation of the variable name, "=",
-     * and the variable value. Concatenate more than one keyvalue string with intervening values of
-     * arg to create the substitution value. The order of variables MUST be preserved during
-     * substitution.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Supplying a list variable to the join operator is an error. For each variable that is
+     * defined and non-empty create a keyvalue string that is the concatenation of the variable
+     * name, "=", and the variable value. Concatenate more than one keyvalue string with intervening
+     * values of arg to create the substitution value. The order of variables MUST be preserved
+     * during substitution.
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      *  foo := &quot;fred&quot;
      *  bar := &quot;barney&quot;
@@ -214,14 +223,16 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
 
     /**
      * 4.4.7 The 'list' operator.
-     * <p/>
-     * The list operator MUST have only one variable in its expansion and that variable must be
-     * a list. More than one variable is an error. If the list is non-empty then substitute the
+     *
+     * <p>The list operator MUST have only one variable in its expansion and that variable must be a
+     * list. More than one variable is an error. If the list is non-empty then substitute the
      * concatenation of all the list members with intervening values of arg. If the list is empty or
      * the variable is undefined them substitute the empty string.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      *  foo := [&quot;fred&quot;, &quot;barney&quot;, &quot;wilma&quot;]
      *  bar := [&quot;a&quot;, &quot;&quot;, &quot;c&quot;]
@@ -254,37 +265,30 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
     };
 
     /**
-     * Applies the expansion rules defined for the operator given the specified argument, variable and
-     * parameters.
+     * Applies the expansion rules defined for the operator given the specified argument, variable
+     * and parameters.
      *
-     * @param arg    The argument for the operator.
-     * @param vars   The variables for the operator.
+     * @param arg The argument for the operator.
+     * @param vars The variables for the operator.
      * @param params The parameters to use.
      */
     abstract String expand(String arg, List<Variable> vars, Parameters params);
-
   }
 
-  /**
-   * The operator.
-   */
+  /** The operator. */
   private Operator _operator;
 
-  /**
-   * The argument for this token.
-   */
+  /** The argument for this token. */
   private String _arg;
 
-  /**
-   * The variables for this token.
-   */
+  /** The variables for this token. */
   private List<Variable> _vars;
 
   /**
    * Creates a new operator token.
    *
-   * @param op   The operator to use.
-   * @param arg  The argument for this operator.
+   * @param op The operator to use.
+   * @param arg The argument for this operator.
    * @param vars The variables for this operator.
    * @throws NullPointerException If any of the argument is <code>null</code>.
    */
@@ -326,9 +330,7 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
     return this._arg;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public List<Variable> variables() {
     return this._vars;
   }
@@ -348,9 +350,7 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
     return null;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean resolve(String expanded, Map<Variable, Object> values) {
     // TODO
     return false;
@@ -360,8 +360,8 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
 
   /**
    * Parses the specified string and returns the corresponding token.
-   * <p/>
-   * This method accepts both the raw expression or the expression wrapped in curly brackets.
+   *
+   * <p>This method accepts both the raw expression or the expression wrapped in curly brackets.
    *
    * @param exp The expression to parse.
    * @return The corresponding token.
@@ -391,8 +391,8 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
   /**
    * Generate the expression corresponding to the specified operator, argument and variables.
    *
-   * @param op   The operator.
-   * @param arg  the argument.
+   * @param op The operator.
+   * @param arg the argument.
    * @param vars The variables.
    */
   private static String toExpression(Operator op, String arg, List<Variable> vars) {
@@ -408,5 +408,4 @@ public class TokenOperatorD3 extends TokenBase implements TokenOperator {
     exp.append('}');
     return exp.toString();
   }
-
 }

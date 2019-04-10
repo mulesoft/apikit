@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
 
 public class ProcessorsAfterRouterTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,21 +20,27 @@ public class ProcessorsAfterRouterTestCase extends AbstractMultiParserFunctional
 
   @Test
   public void simpleRoutingAndSettingPayloadAfterwards() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .expect()
         .header("firstHeader", "value1")
         .header("secondHeader", "value2")
-        .response().body(is("goodbye"))
+        .response()
+        .body(is("goodbye"))
         .statusCode(200)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 
   @Test
   public void invalidSingleAcceptHeader() throws Exception {
-    given().header("Accept", "application/pepe")
+    given()
+        .header("Accept", "application/pepe")
         .expect()
-        .response().body(is("{message: 'Not acceptable'}"))
+        .response()
+        .body(is("{message: 'Not acceptable'}"))
         .statusCode(406)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 }

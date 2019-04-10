@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit.validation.body.empty;
 
+import static io.restassured.RestAssured.given;
+
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import static io.restassured.RestAssured.given;
 
 public class EmptyBodyRaml08TestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,63 +20,71 @@ public class EmptyBodyRaml08TestCase extends AbstractMultiParserFunctionalTestCa
 
   @Test
   public void successWhenMethodInPutRequestIsEmpty() throws Exception {
-    given().expect()
-        .statusCode(200)
-        .when().put("/api/method-without-body");
+    given().expect().statusCode(200).when().put("/api/method-without-body");
   }
 
   @Test
   public void successWhenMethodInPostRequestIsEmpty() throws Exception {
-    given().expect()
-        .statusCode(200)
-        .when().post("/api/method-without-body");
+    given().expect().statusCode(200).when().post("/api/method-without-body");
   }
 
   @Test
   public void successWhenBodyWithoutContentTypeInPostRequestIsEmpty() throws Exception {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .expect()
         .statusCode(200)
-        .when().post("/api/method-and-body-without-content-type");
+        .when()
+        .post("/api/method-and-body-without-content-type");
   }
 
   @Test
   public void successWhenBodyWithoutContentTypeInPutRequestIsEmpty() throws Exception {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .expect()
         .statusCode(200)
-        .when().put("/api/method-and-body-without-content-type");
+        .when()
+        .put("/api/method-and-body-without-content-type");
   }
 
   @Test
   public void successWhenBodyWithoutSchemaInPostIsEmpty() throws Exception {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .expect()
         .statusCode(200)
-        .when().post("/api/body-with-empty-content-type");
+        .when()
+        .post("/api/body-with-empty-content-type");
   }
 
   @Test
   public void successWhenBodyWithoutSchemaInPutIsEmpty() throws Exception {
-    given().header("Content-Type", "application/json")
+    given()
+        .header("Content-Type", "application/json")
         .expect()
         .statusCode(200)
-        .when().put("/api/body-with-empty-content-type");
+        .when()
+        .put("/api/body-with-empty-content-type");
   }
 
   @Test
   public void invalidMediaTypeWhenBodyWithoutSchemaInPostIsEmpty() throws Exception {
-    given().header("Content-Type", "application/xml")
+    given()
+        .header("Content-Type", "application/xml")
         .expect()
         .statusCode(415)
-        .when().post("/api/body-with-empty-content-type");
+        .when()
+        .post("/api/body-with-empty-content-type");
   }
 
   @Test
   public void invalidMediaTypeWhenBodyWithoutSchemaInPutIsEmpty() throws Exception {
-    given().header("Content-Type", "application/xml")
+    given()
+        .header("Content-Type", "application/xml")
         .expect()
         .statusCode(415)
-        .when().put("/api/body-with-empty-content-type");
+        .when()
+        .put("/api/body-with-empty-content-type");
   }
 }

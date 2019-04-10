@@ -6,6 +6,10 @@
  */
 package org.mule.tools.apikit;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.lang.Validate;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -17,80 +21,57 @@ import org.codehaus.plexus.util.Scanner;
 import org.mule.tools.apikit.model.RuntimeEdition;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-/**
- * Goal for apikit:create
- */
+/** Goal for apikit:create */
 @Mojo(name = "create")
-public class CreateMojo
-    extends AbstractMojo {
+public class CreateMojo extends AbstractMojo {
 
   @Component
   private BuildContext buildContext;
 
-  /**
-   * Pattern of where to find the spec .raml, .yaml or .yml files.
-   */
+  /** Pattern of where to find the spec .raml, .yaml or .yml files. */
   @Parameter
   private String[] specIncludes =
-      new String[] {"src/main/resources/api/**/*.yaml", "src/main/resources/api/**/*.yml", "src/main/resources/api/**/*.raml",
-          "src/main/resources/api/**/*.json"};
+      new String[] {
+          "src/main/resources/api/**/*.yaml",
+          "src/main/resources/api/**/*.yml",
+          "src/main/resources/api/**/*.raml",
+          "src/main/resources/api/**/*.json"
+      };
 
-  /**
-   * Pattern of what to exclude searching for .yaml files.
-   */
+  /** Pattern of what to exclude searching for .yaml files. */
   @Parameter
   private String[] specExcludes = new String[] {};
 
-  /**
-   * Spec source directory to use as root of specInclude and specExclude patterns.
-   */
+  /** Spec source directory to use as root of specInclude and specExclude patterns. */
   @Parameter(defaultValue = "${basedir}")
   private File specDirectory;
 
-  /**
-   * Pattern of where to find the Mule XMLs.
-   */
+  /** Pattern of where to find the Mule XMLs. */
   @Parameter
-  private String[] muleXmlIncludes = new String[] {"src/main/mule/**/*.xml", "src/main/resources/**/*.xml"};
+  private String[] muleXmlIncludes =
+      new String[] {"src/main/mule/**/*.xml", "src/main/resources/**/*.xml"};
 
-  /**
-   * Pattern of what to exclude searching for Mule XML files.
-   */
+  /** Pattern of what to exclude searching for Mule XML files. */
   @Parameter
   private String[] muleXmlExcludes = new String[] {};
 
-  /**
-   * Spec source directory to use as root of muleInclude and muleExclude patterns.
-   */
+  /** Spec source directory to use as root of muleInclude and muleExclude patterns. */
   @Parameter(defaultValue = "${basedir}")
   private File muleXmlDirectory;
 
-  /**
-   * Where to output the generated mule config files.
-   */
+  /** Where to output the generated mule config files. */
   @Parameter(defaultValue = "${basedir}/src/main/mule")
   private File muleXmlOutputDirectory;
 
-  /**
-   * Spec source directory to use as root of muleDomain.
-   */
+  /** Spec source directory to use as root of muleDomain. */
   @Parameter(property = "domainDirectory")
   private File domainDirectory;
 
-  /**
-   * Mule version that is being used.
-   */
+  /** Mule version that is being used. */
   @Parameter(property = "minMuleVersion")
   private String minMuleVersion;
 
-  /**
-   * Mule runtime edition that is being used.
-   */
+  /** Mule runtime edition that is being used. */
   @Parameter(property = "runtimeEdition", defaultValue = "CE")
   private String runtimeEdition;
 
@@ -112,15 +93,15 @@ public class CreateMojo
     return Arrays.asList(result);
   }
 
-  public void execute()
-      throws MojoExecutionException {
+  public void execute() throws MojoExecutionException {
     Validate.notNull(muleXmlDirectory, "Error: muleXmlDirectory parameter cannot be null");
     Validate.notNull(specDirectory, "Error: specDirectory parameter cannot be null");
 
     log = getLog();
 
     List<String> specFiles = getIncludedFiles(specDirectory, specIncludes, specExcludes);
-    List<String> muleXmlFiles = getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
+    List<String> muleXmlFiles =
+        getIncludedFiles(muleXmlDirectory, muleXmlIncludes, muleXmlExcludes);
     String domainFile = processDomain();
     if (minMuleVersion != null) {
       log.info("Mule version provided: " + minMuleVersion);
@@ -130,8 +111,15 @@ public class CreateMojo
 
     try {
       final RuntimeEdition muleRuntimeEdition = RuntimeEdition.valueOf(this.runtimeEdition);
-      Scaffolder scaffolder = Scaffolder.createScaffolder(log, muleXmlOutputDirectory, specFiles, muleXmlFiles, domainFile,
-                                                          minMuleVersion, muleRuntimeEdition);
+      Scaffolder scaffolder =
+          Scaffolder.createScaffolder(
+                                      log,
+                                      muleXmlOutputDirectory,
+                                      specFiles,
+                                      muleXmlFiles,
+                                      domainFile,
+                                      minMuleVersion,
+                                      muleRuntimeEdition);
       scaffolder.run();
     } catch (IOException e) {
       throw new MojoExecutionException(e.getMessage());
@@ -142,15 +130,21 @@ public class CreateMojo
     String domainFile = null;
 
     if (domainDirectory != null) {
-      List<String> domainFiles = getIncludedFiles(domainDirectory, new String[] {"*.xml"}, new String[] {});
+      List<String> domainFiles =
+          getIncludedFiles(domainDirectory, new String[] {"*.xml"}, new String[] {});
       if (domainFiles.size() > 0) {
         domainFile = domainFiles.get(0);
         if (domainFiles.size() > 1) {
-          log.info("There is more than one domain file inside of the domain folder. The domain: " + domainFile
-              + " will be used.");
+          log.info(
+                   "There is more than one domain file inside of the domain folder. The domain: "
+                       + domainFile
+                       + " will be used.");
         }
       } else {
-        log.error("The specified domain directory [" + domainDirectory + "] does not contain any xml file.");
+        log.error(
+                  "The specified domain directory ["
+                      + domainDirectory
+                      + "] does not contain any xml file.");
       }
     } else {
       log.info("No domain was provided. To send it, use -DdomainDirectory.");

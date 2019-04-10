@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
+import static io.restassured.RestAssured.given;
+
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import static io.restassured.RestAssured.given;
 
 public class SchemaCachingTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -21,14 +21,19 @@ public class SchemaCachingTestCase extends AbstractMultiParserFunctionalTestCase
   @Test
   public void putOnBoth() throws Exception {
     given()
-        .body("{\"name\":\"gbs\"}").contentType("application/json")
-        .expect().statusCode(204)//204
-        .when().put("/cam/currentuser");
+        .body("{\"name\":\"gbs\"}")
+        .contentType("application/json")
+        .expect()
+        .statusCode(204) // 204
+        .when()
+        .put("/cam/currentuser");
 
     given()
-        .body("{\"id\":\"gbs\"}").contentType("application/json")
-        .expect().statusCode(204)//204
-        .when().put("/peaks/currentuser");
+        .body("{\"id\":\"gbs\"}")
+        .contentType("application/json")
+        .expect()
+        .statusCode(204) // 204
+        .when()
+        .put("/peaks/currentuser");
   }
-
 }

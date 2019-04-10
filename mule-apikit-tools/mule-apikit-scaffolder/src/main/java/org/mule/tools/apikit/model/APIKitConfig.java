@@ -26,7 +26,8 @@ public class APIKitConfig {
   private String outboundHeadersMapName = DEFAULT_OUTBOUND_HEADERS_MAP_NAME;
   private String httpStatusVarName = DEFAULT_HTTP_STATUS_NAME;
 
-  public APIKitConfig(final String name,
+  public APIKitConfig(
+                      final String name,
                       final String api,
                       final Boolean extensionEnabled,
                       final String outboundHeadersMapName,
@@ -51,7 +52,6 @@ public class APIKitConfig {
   public String getRaml() {
     return raml;
   }
-
 
   public Boolean isExtensionEnabled() {
     return extensionEnabled;

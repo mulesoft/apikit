@@ -6,6 +6,20 @@
  */
 package org.mule.tools.apikit.output;
 
+import static java.util.Collections.emptyList;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.*;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.custommonkey.xmlunit.Diff;
@@ -22,22 +36,6 @@ import org.mule.tools.apikit.Helper;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
 import org.mule.tools.apikit.output.scopes.APIKitFlowScope;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
-import static java.util.Collections.emptyList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
 public class MuleConfigGeneratorTest {
 
@@ -67,21 +65,27 @@ public class MuleConfigGeneratorTest {
     when(raml.getName()).thenReturn("hello.raml");
     File file = folder.newFile("hello.xml");
     HttpListener4xConfig listenerConfig =
-        new HttpListener4xConfig(HttpListener4xConfig.DEFAULT_CONFIG_NAME, "localhost", "8080", "HTTP", API.DEFAULT_BASE_PATH);
+        new HttpListener4xConfig(
+                                 HttpListener4xConfig.DEFAULT_CONFIG_NAME,
+                                 "localhost",
+                                 "8080",
+                                 "HTTP",
+                                 API.DEFAULT_BASE_PATH);
     when(api.getId()).thenReturn("hello");
     when(api.getApiFilePath()).thenReturn("hello.raml");
     when(api.getXmlFile(any(File.class))).thenReturn(file);
     when(api.getPath()).thenReturn("/api/*");
     when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
 
-    entries.addAll(Arrays.asList(new GenerationModel(api, VERSION, resource, action),
+    entries.addAll(
+                   Arrays.asList(
+                                 new GenerationModel(api, VERSION, resource, action),
                                  new GenerationModel(api, VERSION, resource, postAction)));
-
 
     Log mock = mock(Log.class);
     MuleConfigGenerator muleConfigGenerator =
-        new MuleConfigGenerator(mock, new File(""), emptyList(), entries, null,
-                                DEFAULT_RUNTIME_EDITION);
+        new MuleConfigGenerator(
+                                mock, new File(""), emptyList(), entries, null, DEFAULT_RUNTIME_EDITION);
     muleConfigGenerator.generate(true);
 
     assertTrue(file.exists());
@@ -106,9 +110,10 @@ public class MuleConfigGeneratorTest {
 
     String s = Helper.nonSpaceOutput(doc);
 
-    Diff diff = XMLUnit.compareXML(
-                                   "<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:\\pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:message><ee:set-payload><![CDATA[%dw 2.0 output application/json --- { name: \"John\", kind: \"dog\" }]]></ee:set-payload></ee:message></ee:transform></flow>",
-                                   s);
+    Diff diff =
+        XMLUnit.compareXML(
+                           "<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:\\pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:message><ee:set-payload><![CDATA[%dw 2.0 output application/json --- { name: \"John\", kind: \"dog\" }]]></ee:set-payload></ee:message></ee:transform></flow>",
+                           s);
 
     assertTrue(diff.toString(), diff.similar());
   }
@@ -118,7 +123,8 @@ public class MuleConfigGeneratorTest {
     GenerationModel flowEntry = mock(GenerationModel.class);
     when(flowEntry.getFlowName()).thenReturn("get:\\pet");
     when(flowEntry.getContentType()).thenReturn("application/xml");
-    when(flowEntry.getExampleWrapper()).thenReturn("<Pet> <name>John</name> <lastname>Doe</lastname> </Pet>");
+    when(flowEntry.getExampleWrapper())
+        .thenReturn("<Pet> <name>John</name> <lastname>Doe</lastname> </Pet>");
 
     Document doc = new Document();
     Element mule = new Element("mule");
@@ -127,9 +133,10 @@ public class MuleConfigGeneratorTest {
 
     String s = Helper.nonSpaceOutput(doc);
 
-    Diff diff = XMLUnit.compareXML(
-                                   "<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:\\pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:message><ee:set-payload><![CDATA[%dw 2.0 output application/xml --- { Pet: { name: \"John\", lastname: \"Doe\" } }]]></ee:set-payload></ee:message></ee:transform></flow>",
-                                   s);
+    Diff diff =
+        XMLUnit.compareXML(
+                           "<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:\\pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:message><ee:set-payload><![CDATA[%dw 2.0 output application/xml --- { Pet: { name: \"John\", lastname: \"Doe\" } }]]></ee:set-payload></ee:message></ee:transform></flow>",
+                           s);
 
     assertTrue(diff.toString(), diff.similar());
   }
@@ -148,9 +155,10 @@ public class MuleConfigGeneratorTest {
 
     String s = Helper.nonSpaceOutput(doc);
 
-    Diff diff = XMLUnit.compareXML(
-                                   "<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:\\pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:message><ee:set-payload><![CDATA[%dw 2.0 output application/json --- { name: \"John\", kind: \"dog\" }]]></ee:set-payload></ee:message></ee:transform></flow>",
-                                   s);
+    Diff diff =
+        XMLUnit.compareXML(
+                           "<flow xmlns=\"http://www.mulesoft.org/schema/mule/core\" name=\"get:\\pet\"><ee:transform xmlns:ee=\"http://www.mulesoft.org/schema/mule/ee/core\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd\"><ee:message><ee:set-payload><![CDATA[%dw 2.0 output application/json --- { name: \"John\", kind: \"dog\" }]]></ee:set-payload></ee:message></ee:transform></flow>",
+                           s);
 
     assertTrue(diff.toString(), diff.similar());
   }
@@ -159,7 +167,8 @@ public class MuleConfigGeneratorTest {
   public void blankDocumentWithoutLCInDomain() throws Exception {
 
     HttpListener4xConfig listenerConfig =
-        new HttpListener4xConfig(HttpListener4xConfig.DEFAULT_CONFIG_NAME, "localhost", "8080", "HTTP", "");
+        new HttpListener4xConfig(
+                                 HttpListener4xConfig.DEFAULT_CONFIG_NAME, "localhost", "8080", "HTTP", "");
     API api = mock(API.class);
     when(api.getPath()).thenReturn("/api/*");
     when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
@@ -171,8 +180,13 @@ public class MuleConfigGeneratorTest {
     when(api.getXmlFile(any(File.class))).thenReturn(file);
 
     MuleConfigGenerator muleConfigGenerator =
-        new MuleConfigGenerator(mock(Log.class), new File(""), emptyList(), new ArrayList<GenerationModel>(),
-                                null, DEFAULT_RUNTIME_EDITION);
+        new MuleConfigGenerator(
+                                mock(Log.class),
+                                new File(""),
+                                emptyList(),
+                                new ArrayList<GenerationModel>(),
+                                null,
+                                DEFAULT_RUNTIME_EDITION);
 
     Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 
@@ -185,7 +199,8 @@ public class MuleConfigGeneratorTest {
 
     assertEquals("flow", mainFlow.getName());
     assertEquals("hello-main", mainFlow.getAttribute("name").getValue());
-    assertEquals("httpListenerConfig", mainFlow.getChildren().get(0).getAttribute("config-ref").getValue());
+    assertEquals(
+                 "httpListenerConfig", mainFlow.getChildren().get(0).getAttribute("config-ref").getValue());
     assertEquals("/api/*", mainFlow.getChildren().get(0).getAttribute("path").getValue());
 
     Element apikitConfig = mainFlow.getChildren().get(1);
@@ -194,13 +209,16 @@ public class MuleConfigGeneratorTest {
     Element consoleFlow = rootElement.getChildren().get(2);
     assertEquals("flow", consoleFlow.getName());
     assertEquals("hello-console", consoleFlow.getAttribute("name").getValue());
-    assertEquals("httpListenerConfig", consoleFlow.getChildren().get(0).getAttribute("config-ref").getValue());
+    assertEquals(
+                 "httpListenerConfig",
+                 consoleFlow.getChildren().get(0).getAttribute("config-ref").getValue());
     assertEquals("/console/*", consoleFlow.getChildren().get(0).getAttribute("path").getValue());
     assertEquals("console", consoleFlow.getChildren().get(1).getName());
 
-    //Element globalExceptionStrategy = rootElement.getChildren().get(3);
-    //assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
-    //assertEquals("hello-apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
+    // Element globalExceptionStrategy = rootElement.getChildren().get(3);
+    // assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
+    // assertEquals("hello-apiKitGlobalExceptionMapping",
+    // globalExceptionStrategy.getAttribute("name").getValue());
 
   }
 
@@ -208,7 +226,8 @@ public class MuleConfigGeneratorTest {
   public void blankDocumentWithLCInDomain() throws Exception {
 
     HttpListener4xConfig listenerConfig =
-        new HttpListener4xConfig(HttpListener4xConfig.DEFAULT_CONFIG_NAME, "localhost", "8080", "HTTP", "");
+        new HttpListener4xConfig(
+                                 HttpListener4xConfig.DEFAULT_CONFIG_NAME, "localhost", "8080", "HTTP", "");
     API api = mock(API.class);
     when(api.getPath()).thenReturn("/api/*");
     when(api.getHttpListenerConfig()).thenReturn(listenerConfig);
@@ -219,10 +238,14 @@ public class MuleConfigGeneratorTest {
     File file = folder.newFile("hello.xml");
     when(api.getXmlFile(any(File.class))).thenReturn(file);
 
-
     MuleConfigGenerator muleConfigGenerator =
-        new MuleConfigGenerator(mock(Log.class), new File(""), emptyList(), new ArrayList<GenerationModel>(),
-                                null, DEFAULT_RUNTIME_EDITION);
+        new MuleConfigGenerator(
+                                mock(Log.class),
+                                new File(""),
+                                emptyList(),
+                                new ArrayList<GenerationModel>(),
+                                null,
+                                DEFAULT_RUNTIME_EDITION);
 
     Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 
@@ -235,7 +258,8 @@ public class MuleConfigGeneratorTest {
 
     assertEquals("flow", mainFlow.getName());
     assertEquals("hello-main", mainFlow.getAttribute("name").getValue());
-    assertEquals("httpListenerConfig", mainFlow.getChildren().get(0).getAttribute("config-ref").getValue());
+    assertEquals(
+                 "httpListenerConfig", mainFlow.getChildren().get(0).getAttribute("config-ref").getValue());
     assertEquals("/api/*", mainFlow.getChildren().get(0).getAttribute("path").getValue());
 
     Element apikitConfig = mainFlow.getChildren().get(1);
@@ -244,13 +268,16 @@ public class MuleConfigGeneratorTest {
     Element consoleFlow = rootElement.getChildren().get(2);
     assertEquals("flow", consoleFlow.getName());
     assertEquals("hello-console", consoleFlow.getAttribute("name").getValue());
-    assertEquals("httpListenerConfig", consoleFlow.getChildren().get(0).getAttribute("config-ref").getValue());
+    assertEquals(
+                 "httpListenerConfig",
+                 consoleFlow.getChildren().get(0).getAttribute("config-ref").getValue());
     assertEquals("/console/*", consoleFlow.getChildren().get(0).getAttribute("path").getValue());
     assertEquals("console", consoleFlow.getChildren().get(1).getName());
 
-    //Element globalExceptionStrategy = rootElement.getChildren().get(3);
-    //assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
-    //assertEquals("hello-apiKitGlobalExceptionMapping", globalExceptionStrategy.getAttribute("name").getValue());
+    // Element globalExceptionStrategy = rootElement.getChildren().get(3);
+    // assertEquals("mapping-exception-strategy", globalExceptionStrategy.getName());
+    // assertEquals("hello-apiKitGlobalExceptionMapping",
+    // globalExceptionStrategy.getAttribute("name").getValue());
 
   }
 }

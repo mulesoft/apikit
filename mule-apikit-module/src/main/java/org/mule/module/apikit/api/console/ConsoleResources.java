@@ -6,19 +6,18 @@
  */
 package org.mule.module.apikit.api.console;
 
-import org.apache.commons.io.IOUtils;
-import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.api.config.ConsoleConfig;
-import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.raml.interfaces.model.ApiVendor;
+import static org.mule.module.apikit.api.UrlUtils.getCompletePathFromBasePathAndPath;
+import static org.mule.raml.interfaces.ParserType.AMF;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import static org.mule.module.apikit.api.UrlUtils.getCompletePathFromBasePathAndPath;
-import static org.mule.raml.interfaces.ParserType.AMF;
+import org.apache.commons.io.IOUtils;
+import org.mule.module.apikit.ApikitErrorTypes;
+import org.mule.module.apikit.api.config.ConsoleConfig;
+import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.raml.interfaces.model.ApiVendor;
 
 public class ConsoleResources {
 
@@ -36,9 +35,15 @@ public class ConsoleResources {
   private String method;
   private String aceptHeader;
 
-  public ConsoleResources(ConsoleConfig config, String listenerPath, String requestPath, String queryString, String method,
+  public ConsoleResources(
+                          ConsoleConfig config,
+                          String listenerPath,
+                          String requestPath,
+                          String queryString,
+                          String method,
                           String aceptHeader) {
-    CONSOLE_RESOURCES_BASE = AMF == config.getParser() ? "/console-resources-amf" : "/console-resources";
+    CONSOLE_RESOURCES_BASE =
+        AMF == config.getParser() ? "/console-resources-amf" : "/console-resources";
 
     this.config = config;
     this.listenerPath = listenerPath;
@@ -93,8 +98,6 @@ public class ConsoleResources {
       IOUtils.closeQuietly(inputStream);
       IOUtils.closeQuietly(byteArrayOutputStream);
     }
-
-
   }
 
   private InputStream updateIndexWithRamlLocation(InputStream inputStream) throws IOException {
@@ -105,12 +108,13 @@ public class ConsoleResources {
       ramlLocation = config.getRamlHandler().getRootRamlLocationForV1();
     }
 
-
     String indexHtml = IOUtils.toString(inputStream);
     IOUtils.closeQuietly(inputStream);
 
     // for amf console index
-    indexHtml = indexHtml.replaceFirst(HTTP_LISTENER_BASE_PATH, getCompletePathFromBasePathAndPath("", listenerPath));
+    indexHtml =
+        indexHtml.replaceFirst(
+                               HTTP_LISTENER_BASE_PATH, getCompletePathFromBasePathAndPath("", listenerPath));
     indexHtml = indexHtml.replaceFirst(AMF_MODEL_LOCATION, listenerPath + "/?amf");
 
     indexHtml = indexHtml.replaceFirst(RAML_LOCATION_PLACEHOLDER_KEY, ramlLocation);
@@ -120,8 +124,8 @@ public class ConsoleResources {
   }
 
   /**
-   * Validates if the path specified in the listener is a valid one. In order to this to be valid, path MUST end with "/*".
-   * Example: path="/whatever/your/path/is/*"
+   * Validates if the path specified in the listener is a valid one. In order to this to be valid,
+   * path MUST end with "/*". Example: path="/whatever/your/path/is/*"
    *
    * @param listenerPath Path specified in the listener element of the console
    */
@@ -136,11 +140,16 @@ public class ConsoleResources {
       return config.getRamlHandler().dumpRaml();
     }
 
-    if (config.getRamlHandler().isRequestingRamlV1ForConsole(listenerPath, requestPath, queryString, method, aceptHeader)) {
+    if (config
+        .getRamlHandler()
+        .isRequestingRamlV1ForConsole(
+                                      listenerPath, requestPath, queryString, method, aceptHeader)) {
       return config.getRamlHandler().getRamlV1();
     }
 
-    if (config.getRamlHandler().isRequestingRamlV2(listenerPath, requestPath, queryString, method)) {
+    if (config
+        .getRamlHandler()
+        .isRequestingRamlV2(listenerPath, requestPath, queryString, method)) {
       return config.getRamlHandler().getRamlV2(resourceRelativePath);
     }
 

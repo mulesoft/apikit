@@ -6,17 +6,6 @@
  */
 package org.mule.amf.impl;
 
-import org.mule.raml.interfaces.model.IAction;
-import org.mule.raml.interfaces.model.IActionType;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.raml.interfaces.model.IResource;
-import org.mule.raml.interfaces.model.api.ApiRef;
-import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
@@ -24,9 +13,20 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IActionType;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.IResource;
+import org.mule.raml.interfaces.model.api.ApiRef;
+import org.mule.raml.interfaces.model.parameter.IParameter;
+
 abstract class AbstractTestCase {
 
-  private static final String MISSING_RESOURCE = "Resource '%s' missing in AMF Resources for uri '%s'";
+  private static final String MISSING_RESOURCE =
+      "Resource '%s' missing in AMF Resources for uri '%s'";
   private static final String MISSING_ACTION = "Action '%s' missing";
   private static final String MISSING_PARAMETER = "Parameter '%s' missing";
 
@@ -37,16 +37,16 @@ abstract class AbstractTestCase {
 
     assertParametersEqual(actual.getBaseUriParameters(), expected.getBaseUriParameters());
 
-    //dump("Resources 08",  ramlResources);
-    //dump("Resources AMF",  amfResources);
+    // dump("Resources 08",  ramlResources);
+    // dump("Resources AMF",  amfResources);
     assertResourcesEqual(actual.getResources(), expected.getResources());
 
     // assertEqual(actual.getAllReferences(), expected.getAllReferences());
 
     // TODO"
-    //schemas()
+    // schemas()
 
-    //"Different behaviour in Java Parser 08 & 10"
+    // "Different behaviour in Java Parser 08 & 10"
     // cleanBaseUriParameters()
     // consolidatedSchemas()
     // instance()
@@ -59,16 +59,22 @@ abstract class AbstractTestCase {
     assertThat(actual.size(), is(expected.size()));
   }
 
-  static void assertResourcesEqual(final Map<String, IResource> actual, final Map<String, IResource> expected) {
+  static void assertResourcesEqual(
+                                   final Map<String, IResource> actual, final Map<String, IResource> expected) {
 
     final String actualKeys = mkString(actual.keySet());
     final String expectedKeys = mkString(expected.keySet());
-    assertThat("expected: '" + expectedKeys + "' but was '" + actualKeys + "", actual.size(), is(expected.size()));
+    assertThat(
+               "expected: '" + expectedKeys + "' but was '" + actualKeys + "",
+               actual.size(),
+               is(expected.size()));
 
-    actual.forEach((k, resource) -> {
-      assertThat(format(MISSING_RESOURCE, k, resource.getUri()), expected.containsKey(k), is(true));
-      assertEqual(resource, expected.get(k));
-    });
+    actual.forEach(
+                   (k, resource) -> {
+                     assertThat(
+                                format(MISSING_RESOURCE, k, resource.getUri()), expected.containsKey(k), is(true));
+                     assertEqual(resource, expected.get(k));
+                   });
   }
 
   static String mkString(final Set<String> set) {
@@ -81,30 +87,35 @@ abstract class AbstractTestCase {
     assertThat(actual.getParentUri(), is(equalTo(expected.getParentUri())));
     assertThat(actual.getResolvedUri("v10"), is(equalTo(expected.getResolvedUri("v10"))));
     // Different behaviour in Java Parser 08 & 10
-    //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
+    // assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
     assertActionsEqual(actual.getActions(), expected.getActions());
-    actual.getActions().keySet().forEach(action -> {
-      final String actualAction = actual.getAction(action.name()).getType().name();
-      final String expectedAction = expected.getAction(action.name()).getType().name();
-      assertThat(actualAction, is(equalTo(expectedAction)));
-
-    });
+    actual
+        .getActions()
+        .keySet()
+        .forEach(
+                 action -> {
+                   final String actualAction = actual.getAction(action.name()).getType().name();
+                   final String expectedAction = expected.getAction(action.name()).getType().name();
+                   assertThat(actualAction, is(equalTo(expectedAction)));
+                 });
     assertResourcesEqual(actual.getResources(), expected.getResources());
 
     // Different behaviour in Java Parser 08 & 10
     // Map<String, List<IParameter>> getBaseUriParameters();
-    // void setParentUri(String parentUri); 
+    // void setParentUri(String parentUri);
     // void cleanBaseUriParameters();
   }
 
-  static void assertActionsEqual(final Map<IActionType, IAction> actual, final Map<IActionType, IAction> expected) {
+  static void assertActionsEqual(
+                                 final Map<IActionType, IAction> actual, final Map<IActionType, IAction> expected) {
 
     assertThat(actual.size(), is(expected.size()));
 
-    actual.forEach((k, v) -> {
-      assertThat(format(MISSING_ACTION, k), expected.containsKey(k), is(true));
-      assertEqual(v, expected.get(k));
-    });
+    actual.forEach(
+                   (k, v) -> {
+                     assertThat(format(MISSING_ACTION, k), expected.containsKey(k), is(true));
+                     assertEqual(v, expected.get(k));
+                   });
   }
 
   static void assertEqual(final IAction actual, final IAction expected) {
@@ -113,25 +124,30 @@ abstract class AbstractTestCase {
     assertParametersEqual(actual.getHeaders(), expected.getHeaders());
     assertParametersEqual(actual.getResolvedUriParameters(), expected.getResolvedUriParameters());
     // TODO MORE cases
-    //actual.getBody();
-    //actual.getResource();        
+    // actual.getBody();
+    // actual.getResource();
   }
 
-  static void assertParametersEqual(final Map<String, IParameter> actual, final Map<String, IParameter> expected) {
+  static void assertParametersEqual(
+                                    final Map<String, IParameter> actual, final Map<String, IParameter> expected) {
 
     final String actualKeys = mkString(actual.keySet());
     final String expectedKeys = mkString(expected.keySet());
-    assertThat("expected: '" + expectedKeys + "' but was '" + actualKeys + "", actual.size(), is(expected.size()));
+    assertThat(
+               "expected: '" + expectedKeys + "' but was '" + actualKeys + "",
+               actual.size(),
+               is(expected.size()));
 
-    actual.forEach((k, v) -> {
-      assertThat(format(MISSING_PARAMETER, k), expected.containsKey(k), is(true));
-      assertEqual(v, expected.get(k));
-    });
+    actual.forEach(
+                   (k, v) -> {
+                     assertThat(format(MISSING_PARAMETER, k), expected.containsKey(k), is(true));
+                     assertEqual(v, expected.get(k));
+                   });
   }
 
   static void assertEqual(final IParameter actual, final IParameter expected) {
     // Different behaviour in Java Parser 08 & 10
-    //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
+    // assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
 
     assertThat(actual.getDefaultValue(), is(equalTo(expected.getDefaultValue())));
     assertThat(actual.isRepeat(), is(expected.isRepeat()));
@@ -139,7 +155,7 @@ abstract class AbstractTestCase {
     //  boolean validate(String value);
     //  String message(String value);
     // Different behaviour in Java Parser 08 & 10
-    //assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
+    // assertThat(actual.getDisplayName(), is(equalTo(expected.getDisplayName())));
     assertThat(actual.getDescription(), is(equalTo(expected.getDescription())));
     assertThat(actual.getExample(), is(equalTo(expected.getExample())));
     assertExamplesEqual(actual.getExamples(), expected.getExamples());
@@ -150,7 +166,8 @@ abstract class AbstractTestCase {
 
   }
 
-  static void assertExamplesEqual(final Map<String, String> actual, final Map<String, String> expected) {
+  static void assertExamplesEqual(
+                                  final Map<String, String> actual, final Map<String, String> expected) {
     assertThat(actual.size(), is(expected.size()));
   }
 
@@ -168,8 +185,10 @@ abstract class AbstractTestCase {
     for (Map.Entry<String, IResource> entry : resources.entrySet()) {
 
       final IResource value = entry.getValue();
-      final Set<String> actions = value.getActions().keySet().stream().map(Enum::name).collect(toSet());
-      final String resource = "[" + entry.getKey() + "] -> " + value.getUri() + " " + mkString(actions);
+      final Set<String> actions =
+          value.getActions().keySet().stream().map(Enum::name).collect(toSet());
+      final String resource =
+          "[" + entry.getKey() + "] -> " + value.getUri() + " " + mkString(actions);
       out += indent + resource + "\n";
       if (value.getResources().isEmpty())
         continue;

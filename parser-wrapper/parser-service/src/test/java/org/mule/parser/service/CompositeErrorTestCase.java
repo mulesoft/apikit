@@ -11,7 +11,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Arrays;
 import java.util.List;
-
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
@@ -25,7 +24,9 @@ public class CompositeErrorTestCase {
     assertThat(compositeErrorChild.cause(), is("description:\ncause1"));
 
     List<SimpleScaffoldingError> children =
-        Arrays.asList(new SimpleScaffoldingError("cause1"), new SimpleScaffoldingError("cause2"),
+        Arrays.asList(
+                      new SimpleScaffoldingError("cause1"),
+                      new SimpleScaffoldingError("cause2"),
                       new SimpleScaffoldingError("cause3"));
     CompositeScaffoldingError compositeParsingErrorChildren =
         new CompositeScaffoldingError("description", ScaffoldingErrorType.GENERATION, children);
@@ -36,7 +37,9 @@ public class CompositeErrorTestCase {
   @Test
   public void compositeErrorWithChildrenAndParsingErrorType() {
     List<SimpleScaffoldingError> children =
-        Arrays.asList(new SimpleScaffoldingError("cause1"), new SimpleScaffoldingError("cause2"),
+        Arrays.asList(
+                      new SimpleScaffoldingError("cause1"),
+                      new SimpleScaffoldingError("cause2"),
                       new SimpleScaffoldingError("cause3"));
     CompositeScaffoldingError compositeError =
         new CompositeScaffoldingError("description", ScaffoldingErrorType.AMF, children);
@@ -47,10 +50,14 @@ public class CompositeErrorTestCase {
   @Test
   public void simpleTest() {
     assertThat(new SimpleScaffoldingError("cause").cause(), Matchers.is("cause"));
-    assertThat(new SimpleScaffoldingError("cause").errorType(), Matchers.is(ScaffoldingErrorType.GENERATION));
-    assertThat(new SimpleScaffoldingError("cause", ScaffoldingErrorType.RAML).errorType(),
+    assertThat(
+               new SimpleScaffoldingError("cause").errorType(),
+               Matchers.is(ScaffoldingErrorType.GENERATION));
+    assertThat(
+               new SimpleScaffoldingError("cause", ScaffoldingErrorType.RAML).errorType(),
                Matchers.is(ScaffoldingErrorType.RAML));
-    assertThat(new SimpleScaffoldingError("cause", ScaffoldingErrorType.AMF).errorType(),
+    assertThat(
+               new SimpleScaffoldingError("cause", ScaffoldingErrorType.AMF).errorType(),
                Matchers.is(ScaffoldingErrorType.AMF));
   }
 }

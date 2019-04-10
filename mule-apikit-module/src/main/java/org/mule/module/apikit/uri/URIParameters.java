@@ -12,26 +12,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-
 /**
  * A class to hold a collection of parameters for use during the expansion process.
- * <p/>
- * It provides more convenient functions than the underlying map and handles the rules for parameter
- * values.
+ *
+ * <p>It provides more convenient functions than the underlying map and handles the rules for
+ * parameter values.
  *
  * @author Christophe Lauret
  * @version 5 November 2009
  */
 public class URIParameters implements Parameters {
 
-  /**
-   * Maps the parameter names to the values.
-   */
+  /** Maps the parameter names to the values. */
   private Map<String, String[]> _parameters;
 
-  /**
-   * Creates a new instance.
-   */
+  /** Creates a new instance. */
   public URIParameters() {
     this._parameters = new HashMap<String, String[]>();
   }
@@ -45,9 +40,7 @@ public class URIParameters implements Parameters {
     this._parameters = new HashMap<String, String[]>(parameters);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void set(String name, String value) {
     if (value == null) {
       return;
@@ -55,9 +48,7 @@ public class URIParameters implements Parameters {
     this._parameters.put(name, new String[] {value});
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public void set(String name, String[] values) {
     if (values == null) {
       return;
@@ -65,16 +56,12 @@ public class URIParameters implements Parameters {
     this._parameters.put(name, values);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Set<String> names() {
     return Collections.unmodifiableSet(this._parameters.keySet());
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public String getValue(String name) {
     String[] vals = this._parameters.get(name);
     if (vals == null || vals.length == 0) {
@@ -84,26 +71,19 @@ public class URIParameters implements Parameters {
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public String[] getValues(String name) {
     return this._parameters.get(name);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean exists(String name) {
     return this._parameters.containsKey(name);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean hasValue(String name) {
     String[] values = this._parameters.get(name);
     return values != null && values.length > 0 && values[0].length() > 0;
   }
-
 }

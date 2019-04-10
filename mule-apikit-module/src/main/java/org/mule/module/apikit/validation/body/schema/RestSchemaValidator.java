@@ -19,5 +19,4 @@ public class RestSchemaValidator {
   public void validate(String payload) throws BadRequestException {
     this.strategy.validate(payload);
   }
-
 }

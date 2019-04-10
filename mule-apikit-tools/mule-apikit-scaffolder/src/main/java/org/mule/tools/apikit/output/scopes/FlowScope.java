@@ -8,22 +8,30 @@ package org.mule.tools.apikit.output.scopes;
 
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 
+import org.apache.commons.lang.StringUtils;
+import org.jdom2.Element;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 
-import org.apache.commons.lang.StringUtils;
-import org.jdom2.Element;
-
 public class FlowScope implements Scope {
-
 
   private final Element main;
 
-  public FlowScope(Element mule, String exceptionStrategyRef, API api, String configRef, String httpListenerConfigRef) {
+  public FlowScope(
+                   Element mule,
+                   String exceptionStrategyRef,
+                   API api,
+                   String configRef,
+                   String httpListenerConfigRef) {
     this(mule, exceptionStrategyRef, api, configRef, httpListenerConfigRef, true);
   }
 
-  public FlowScope(Element mule, String exceptionStrategyRef, API api, String configRef, String httpListenerConfigRef,
+  public FlowScope(
+                   Element mule,
+                   String exceptionStrategyRef,
+                   API api,
+                   String configRef,
+                   String httpListenerConfigRef,
                    boolean isMuleEE) {
 
     main = new Element("flow", XMLNS_NAMESPACE.getNamespace());

@@ -6,6 +6,8 @@
  */
 package org.mule.module.apikit;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.is;
 
 import io.restassured.RestAssured;
 import org.junit.Rule;
@@ -13,9 +15,6 @@ import org.junit.Test;
 import org.mule.functional.junit4.MuleArtifactFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
 import org.mule.test.runner.ArtifactClassLoaderRunnerConfig;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 @ArtifactClassLoaderRunnerConfig
 public class RouterWithDisabledValidationsTestCase extends MuleArtifactFunctionalTestCase {
@@ -41,11 +40,14 @@ public class RouterWithDisabledValidationsTestCase extends MuleArtifactFunctiona
 
   @Test
   public void simpleRouting() throws Exception {
-    given().header("Accept", "*/*")
+    given()
+        .header("Accept", "*/*")
         .body("something that won't be validated")
         .expect()
-        .response().body(is("something that won't be validated"))
+        .response()
+        .body(is("something that won't be validated"))
         .statusCode(201)
-        .when().post("/api/resource/invalid");
+        .when()
+        .post("/api/resource/invalid");
   }
 }

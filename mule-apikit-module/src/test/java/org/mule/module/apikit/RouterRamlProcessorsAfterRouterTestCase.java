@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
 
 public class RouterRamlProcessorsAfterRouterTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,11 +20,14 @@ public class RouterRamlProcessorsAfterRouterTestCase extends AbstractMultiParser
 
   @Test
   public void simpleRouting() throws Exception {
-    given().expect()
-        .response().body(is("goodbye")) //payload is crushed by the processor located after Router
+    given()
+        .expect()
+        .response()
+        .body(is("goodbye")) // payload is crushed by the processor located after Router
         .header("firstHeader", "value1")
         .header("secondHeader", "value2")
         .statusCode(200)
-        .when().get("/api/resources");
+        .when()
+        .get("/api/resources");
   }
 }

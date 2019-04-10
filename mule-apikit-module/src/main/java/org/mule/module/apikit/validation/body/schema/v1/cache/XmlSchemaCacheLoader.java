@@ -6,14 +6,10 @@
  */
 package org.mule.module.apikit.validation.body.schema.v1.cache;
 
-import org.mule.raml.interfaces.model.IRaml;
-
 import com.google.common.cache.CacheLoader;
-
 import java.io.IOException;
-
 import javax.xml.validation.Schema;
-
+import org.mule.raml.interfaces.model.IRaml;
 import org.xml.sax.SAXException;
 
 public class XmlSchemaCacheLoader extends CacheLoader<String, Schema> {
@@ -28,5 +24,4 @@ public class XmlSchemaCacheLoader extends CacheLoader<String, Schema> {
   public Schema load(String schemaLocation) throws IOException, SAXException {
     return SchemaCacheUtils.resolveXmlSchema(schemaLocation, api);
   }
-
 }

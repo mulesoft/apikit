@@ -31,5 +31,4 @@ public interface ResolvedVariables {
    * @return The object corresponding to the specified variable; may be <code>null</code>.
    */
   public Object get(String name);
-
 }

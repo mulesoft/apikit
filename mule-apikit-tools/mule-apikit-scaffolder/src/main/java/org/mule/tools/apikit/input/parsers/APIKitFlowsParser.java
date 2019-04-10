@@ -8,23 +8,21 @@ package org.mule.tools.apikit.input.parsers;
 
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 
-import org.mule.tools.apikit.input.APIKitFlow;
-import org.mule.tools.apikit.misc.APIKitTools;
-import org.mule.tools.apikit.model.API;
-import org.mule.apikit.common.FlowName;
-import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.filter.Filters;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import org.mule.apikit.common.FlowName;
+import org.mule.tools.apikit.input.APIKitFlow;
+import org.mule.tools.apikit.misc.APIKitTools;
+import org.mule.tools.apikit.model.API;
+import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 public class APIKitFlowsParser implements MuleConfigFileParser {
 
@@ -39,8 +37,9 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
   @Override
   public Set<ResourceActionMimeTypeTriplet> parse(Document document) {
     Set<ResourceActionMimeTypeTriplet> entries = new HashSet<>();
-    XPathExpression<Element> xp = XPathFactory.instance().compile("//*/*[local-name()='flow']",
-                                                                  Filters.element(XMLNS_NAMESPACE.getNamespace()));
+    XPathExpression<Element> xp =
+        XPathFactory.instance()
+            .compile("//*/*[local-name()='flow']", Filters.element(XMLNS_NAMESPACE.getNamespace()));
     List<Element> elements = xp.evaluate(document);
     for (Element element : elements) {
       String name = FlowName.decode(element.getAttributeValue("name"));
@@ -48,7 +47,10 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
       try {
         flow = APIKitFlow.buildFromName(name, includedApis.keySet());
       } catch (IllegalArgumentException iae) {
-        log.info("Flow named '" + name + "' is not an APIKit Flow because it does not follow APIKit naming convention.");
+        log.info(
+                 "Flow named '"
+                     + name
+                     + "' is not an APIKit Flow because it does not follow APIKit naming convention.");
         continue;
       }
 
@@ -64,10 +66,13 @@ public class APIKitFlowsParser implements MuleConfigFileParser {
           throw new IllegalStateException("Api path is invalid");
         }
 
-        String completePath = APIKitTools
-            .getCompletePathFromBasePathAndPath(api.getHttpListenerConfig().getBasePath(), api.getPath());
+        String completePath =
+            APIKitTools.getCompletePathFromBasePathAndPath(
+                                                           api.getHttpListenerConfig().getBasePath(), api.getPath());
 
-        entries.add(new ResourceActionMimeTypeTriplet(api, completePath + resource, flow.getAction(), flow.getMimeType()));
+        entries.add(
+                    new ResourceActionMimeTypeTriplet(
+                                                      api, completePath + resource, flow.getAction(), flow.getMimeType()));
       } else {
         throw new IllegalStateException("No APIKit entries found in Mule config");
       }

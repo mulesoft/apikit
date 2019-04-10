@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit.validation.attributes;
 
+import static io.restassured.RestAssured.given;
+
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
-import static io.restassured.RestAssured.given;
 
 public class StrictValidationTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,33 +20,21 @@ public class StrictValidationTestCase extends AbstractMultiParserFunctionalTestC
 
   @Test
   public void failWhenSendingNonDefinedQueryParam() throws Exception {
-    given().queryParam("param2", "value")
-        .expect()
-        .statusCode(400)
-        .when().get("api/resource");
+    given().queryParam("param2", "value").expect().statusCode(400).when().get("api/resource");
   }
 
   @Test
   public void successWhenSendingDefinedQueryParam() throws Exception {
-    given().queryParam("param1", "value")
-        .expect()
-        .statusCode(200)
-        .when().get("api/resource");
+    given().queryParam("param1", "value").expect().statusCode(200).when().get("api/resource");
   }
 
   @Test
   public void failWhenSendingNonDefinedHeader() throws Exception {
-    given().header("header2", "value")
-        .expect()
-        .statusCode(400)
-        .when().get("api/resource");
+    given().header("header2", "value").expect().statusCode(400).when().get("api/resource");
   }
 
   @Test
   public void successWhenSendingDefinedHeader() throws Exception {
-    given().header("header1", "value")
-        .expect()
-        .statusCode(200)
-        .when().get("api/resource");
+    given().header("header1", "value").expect().statusCode(200).when().get("api/resource");
   }
 }

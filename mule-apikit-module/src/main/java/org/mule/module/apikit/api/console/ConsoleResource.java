@@ -39,7 +39,7 @@ public class ConsoleResource implements Resource {
 
   /**
    * Gets Media-Type according to the type of the file we have to send back
-   * 
+   *
    * @return The MediaType corresponding to the path
    */
   public MediaType getMediaType() {

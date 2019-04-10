@@ -6,6 +6,17 @@
  */
 package org.mule.tools.apikit.input.parsers;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.filter.Filters;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.mule.raml.interfaces.common.APISyncUtils;
 import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
@@ -13,19 +24,6 @@ import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.jdom2.Attribute;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 
 public class APIKitRoutersParser implements MuleConfigFileParser {
 
@@ -35,7 +33,8 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
   private final File file;
   private final APIFactory apiFactory;
 
-  public APIKitRoutersParser(final Map<String, APIKitConfig> apikitConfigs,
+  public APIKitRoutersParser(
+                             final Map<String, APIKitConfig> apikitConfigs,
                              final Map<String, HttpListener4xConfig> httpListenerConfigs,
                              final Set<String> apiFilePaths,
                              final File file,
@@ -51,8 +50,11 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
   public Map<String, API> parse(Document document) {
     Map<String, API> includedApis = new HashMap<>();
 
-    XPathExpression<Element> xp = XPathFactory.instance().compile("//*/*[local-name()='router']",
-                                                                  Filters.element(APIKitTools.API_KIT_NAMESPACE.getNamespace()));
+    XPathExpression<Element> xp =
+        XPathFactory.instance()
+            .compile(
+                     "//*/*[local-name()='router']",
+                     Filters.element(APIKitTools.API_KIT_NAMESPACE.getNamespace()));
     List<Element> elements = xp.evaluate(document);
     for (Element element : elements) {
       APIKitConfig config = getApikitConfig(element);
@@ -61,15 +63,16 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
         String apiPath = config.getApi() == null ? config.getRaml() : config.getApi();
         if (compareApisLocation(apiPath, apiFilePath)) {
           Element source = findListenerOrInboundEndpoint(element.getParentElement().getChildren());
-          String configId = config.getName() != null ? config.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
+          String configId =
+              config.getName() != null ? config.getName() : APIKitFlow.UNNAMED_CONFIG_NAME;
 
           if ("listener".equals(source.getName())) {
             includedApis.put(configId, handleListenerSource(source, apiFilePath, config));
           } else if ("inbound-endpoint".equals(source.getName())) {
             includedApis.put(configId, handleInboundEndpointSource(source, apiFilePath, config));
           } else {
-            throw new IllegalStateException("The first element of the main flow must be an " +
-                "inbound-endpoint or listener");
+            throw new IllegalStateException(
+                                            "The first element of the main flow must be an " + "inbound-endpoint or listener");
           }
         }
       }
@@ -99,7 +102,7 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
   public API handleListenerSource(Element source, String apiFilePath, APIKitConfig config) {
     HttpListener4xConfig httpListenerConfig = getHTTPListenerConfig(source);
     String path = getPathFromInbound(source);
-    //TODO PARSE HTTPSTATUSVARNAME AND OUTBOUNDHEADERSMAPNAME
+    // TODO PARSE HTTPSTATUSVARNAME AND OUTBOUNDHEADERSMAPNAME
     return apiFactory.createAPIBinding(apiFilePath, file, null, path, config, httpListenerConfig);
   }
 
@@ -112,8 +115,8 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
       baseUri = source.getAttributeValue("address");
 
       if (baseUri == null) {
-        throw new IllegalStateException("Neither 'path' nor 'address' attribute was used. " +
-            "Cannot retrieve base URI.");
+        throw new IllegalStateException(
+                                        "Neither 'path' nor 'address' attribute was used. " + "Cannot retrieve base URI.");
       }
 
       path = APIKitTools.getPathFromUri(baseUri, false);
@@ -135,7 +138,9 @@ public class APIKitRoutersParser implements MuleConfigFileParser {
   private HttpListener4xConfig getHTTPListenerConfig(Element inbound) {
     Attribute httpListenerConfigRef = inbound.getAttribute("config-ref");
     String httpListenerConfigId =
-        httpListenerConfigRef != null ? httpListenerConfigRef.getValue() : HttpListener4xConfig.DEFAULT_CONFIG_NAME;
+        httpListenerConfigRef != null
+            ? httpListenerConfigRef.getValue()
+            : HttpListener4xConfig.DEFAULT_CONFIG_NAME;
 
     HttpListener4xConfig httpListenerConfig = httpListenerConfigs.get(httpListenerConfigId);
     if (httpListenerConfig == null) {

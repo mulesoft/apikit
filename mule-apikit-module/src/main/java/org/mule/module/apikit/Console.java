@@ -6,6 +6,13 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.module.apikit.api.FlowUtils.getSourceLocation;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.net.URI;
+import java.util.Optional;
+import javax.inject.Inject;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.console.ConsoleResources;
@@ -25,14 +32,6 @@ import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.api.util.StringMessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.io.FileWriter;
-import java.net.URI;
-import java.util.Optional;
-
-import static org.mule.module.apikit.api.FlowUtils.getSourceLocation;
 
 public class Console extends AbstractComponent implements Processor, Initialisable {
 
@@ -74,7 +73,8 @@ public class Console extends AbstractComponent implements Processor, Initialisab
   public CoreEvent process(CoreEvent event) throws MuleException {
     final Configuration config = getConfiguration();
 
-    EventWrapper eventWrapper = new EventWrapper(event, config.getOutboundHeadersMapName(), config.getHttpStatusVarName());
+    EventWrapper eventWrapper =
+        new EventWrapper(event, config.getOutboundHeadersMapName(), config.getHttpStatusVarName());
 
     HttpRequestAttributes attributes = EventHelper.getHttpRequestAttributes(event);
     String listenerPath = attributes.getListenerPath();
@@ -84,8 +84,7 @@ public class Console extends AbstractComponent implements Processor, Initialisab
     String method = attributes.getMethod();
 
     ConsoleResources consoleResources =
-        new ConsoleResources(config, listenerPath,
-                             requestPath, queryString, method, acceptHeader);
+        new ConsoleResources(config, listenerPath, requestPath, queryString, method, acceptHeader);
 
     // Listener path MUST end with /*
     consoleResources.isValidPath(attributes.getListenerPath());

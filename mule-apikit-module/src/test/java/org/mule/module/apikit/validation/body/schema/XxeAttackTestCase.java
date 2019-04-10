@@ -6,16 +6,16 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+
 import io.restassured.response.Response;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
-
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertThat;
 
 public class XxeAttackTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -29,24 +29,36 @@ public class XxeAttackTestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Test
   public void xxeAttack() throws Exception {
-    Response post = given().log().all()
-        .body("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE foo [<!ENTITY xxead812 SYSTEM \"src/test/resources/org/mule/module/apikit/validation/body/schema/twin-cam.yaml\"> ]><a>&xxead812;</a>")
-        .contentType("application/xml")
-        .expect().statusCode(400)
-        .when().post("/api/test");
+    Response post =
+        given()
+            .log()
+            .all()
+            .body(
+                  "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE foo [<!ENTITY xxead812 SYSTEM \"src/test/resources/org/mule/module/apikit/validation/body/schema/twin-cam.yaml\"> ]><a>&xxead812;</a>")
+            .contentType("application/xml")
+            .expect()
+            .statusCode(400)
+            .when()
+            .post("/api/test");
     String response = post.getBody().asString();
     assertThat(response, not(containsString("League Schema")));
   }
 
   @Test
-  //TODO This test needs to be checked manually. The test will throw  a 400 as DOCTYPE is disabled, but also it shouldn't display the log located in the second flow.
+  // TODO This test needs to be checked manually. The test will throw  a 400 as DOCTYPE is disabled,
+  // but also it shouldn't display the log located in the second flow.
   public void xxeAttack2() throws Exception {
-    given().log().all()
-        .body("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE xxeattack PUBLIC \"foo\" \"http://localhost:"
-            + serverPort2.getValue() + "/\"><a>1</a>")
+    given()
+        .log()
+        .all()
+        .body(
+              "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE xxeattack PUBLIC \"foo\" \"http://localhost:"
+                  + serverPort2.getValue()
+                  + "/\"><a>1</a>")
         .contentType("application/xml")
-        .expect().statusCode(400)
-        .when().post("/api/test");
-
+        .expect()
+        .statusCode(400)
+        .when()
+        .post("/api/test");
   }
 }

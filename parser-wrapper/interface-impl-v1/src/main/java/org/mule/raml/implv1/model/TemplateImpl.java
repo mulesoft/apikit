@@ -24,5 +24,4 @@ public class TemplateImpl implements ITemplate {
   public String getDisplayName() {
     return template.getDisplayName();
   }
-
 }

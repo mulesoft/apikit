@@ -12,11 +12,13 @@ public class API {
 
   public static final String DEFAULT_HOST = "0.0.0.0";
   public static final int DEFAULT_PORT = 8081;
-  public static final String DEFAULT_BASE_URI = "http://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/api";
+  public static final String DEFAULT_BASE_URI =
+      "http://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/api";
   public static final String DEFAULT_BASE_PATH = "/";
   public static final String DEFAULT_PROTOCOL = "HTTP";
   public static final String DEFAULT_CONSOLE_PATH = "/console/*";
-  public static final String DEFAULT_CONSOLE_PATH_INBOUND = "http://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/console";
+  public static final String DEFAULT_CONSOLE_PATH_INBOUND =
+      "http://" + DEFAULT_HOST + ":" + DEFAULT_PORT + "/console";
 
   private APIKitConfig config;
   private HttpListener4xConfig httpListenerConfig;
@@ -35,8 +37,13 @@ public class API {
     this.id = id;
   }
 
-
-  public API(String id, String apiFileName, File xmlFile, String baseUri, String path, APIKitConfig config) {
+  public API(
+             String id,
+             String apiFileName,
+             File xmlFile,
+             String baseUri,
+             String path,
+             APIKitConfig config) {
     this(id, apiFileName, xmlFile, baseUri, path);
     this.config = config;
   }
@@ -122,5 +129,4 @@ public class API {
   public String getId() {
     return id;
   }
-
 }

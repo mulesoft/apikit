@@ -16,7 +16,9 @@ import java.util.regex.Pattern;
 
 /**
  * A token based on the operators defined in the latest draft.
- * <p/>
+ *
+ * <p>
+ *
  * <pre>
  *  instruction   = &quot;{&quot; [ operator ] variable-list &quot;}&quot;
  *  operator      = &quot;/&quot; / &quot;+&quot; / &quot;;&quot; / &quot;?&quot; / op-reserve
@@ -32,38 +34,42 @@ import java.util.regex.Pattern;
  *
  * @author Christophe Lauret
  * @version 5 November 2009
- * @see <a href="http://code.google.com/p/uri-templates/source/browse/trunk/spec/draft-gregorio-uritemplate.xml">URI
- *      Template Library draft specifications at Google Code</a>
+ * @see <a
+ *     href="http://code.google.com/p/uri-templates/source/browse/trunk/spec/draft-gregorio-uritemplate.xml">URI
+ *     Template Library draft specifications at Google Code</a>
  */
 public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchable {
 
   /**
    * The pattern for the URI defined pchar:
-   * <p/>
+   *
+   * <p>
+   *
    * <pre>
    * pchar = unreserved / pct-encoded / sub-delims / ":" / "@"
    * pct-encoded = "%" HEXDIG HEXDIG
    * unreserved = ALPHA / DIGIT / "-" / "." / "_" / "~"
    * sub-delims = "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "="
    * </pre>
-   * <p/>
-   * To avoid side-effects with the resolvers non-capturing groups are used.
+   *
+   * <p>To avoid side-effects with the resolvers non-capturing groups are used.
    *
    * @see <a href="http://www.ietf.org/rfc/rfc3986.txt">Uniform Resource Identifier (URI): Generic
-   *      Syntax</a>
+   *     Syntax</a>
    */
-  protected static final Pattern PCHAR = Pattern.compile("(?:[\\w-_.~!$&'()*+,;=:@]|(?:%[0-9A-F]{2}))");
+  protected static final Pattern PCHAR =
+      Pattern.compile("(?:[\\w-_.~!$&'()*+,;=:@]|(?:%[0-9A-F]{2}))");
 
-  /**
-   * The list of operators currently supported.
-   */
+  /** The list of operators currently supported. */
   public enum Operator {
 
     /**
      * The '?' operator for query parameters.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      *  undef = null;
      *  empty = &quot;&quot;;
@@ -120,7 +126,6 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
               }
               first = false;
             }
-
           }
         }
         return expansion.toString();
@@ -159,9 +164,11 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
 
     /**
      * The ';' operator for path parameters.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      *  undef = null;
      *  empty = &quot;&quot;;
@@ -251,9 +258,11 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
 
     /**
      * The '/' operator for path segments.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      *  list  = [ &quot;val1&quot;, &quot;val2&quot;, &quot;val3&quot; ];
      *  x     = &quot;1024&quot;;
@@ -289,7 +298,8 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
       @Override
       boolean resolve(List<Variable> vars, String value, Map<Variable, Object> values) {
         if (vars.size() != 1) {
-          throw new UnsupportedOperationException("Operator + cannot be resolved with multiple variables.");
+          throw new UnsupportedOperationException(
+                                                  "Operator + cannot be resolved with multiple variables.");
         }
         values.put(vars.get(0), URICoder.decode(value));
         return true;
@@ -303,9 +313,11 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
 
     /**
      * The '+' operator for URI inserts.
-     * <p/>
-     * Example:
-     * <p/>
+     *
+     * <p>Example:
+     *
+     * <p>
+     *
      * <pre>
      * empty = &quot;&quot;
      * path  = &quot;/foo/bar&quot;
@@ -344,7 +356,8 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
       boolean resolve(List<Variable> vars, String value, Map<Variable, Object> values) {
         // TODO: should we return false instead??
         if (vars.size() != 1) {
-          throw new UnsupportedOperationException("Operator + cannot be resolved with multiple variables.");
+          throw new UnsupportedOperationException(
+                                                  "Operator + cannot be resolved with multiple variables.");
         }
         values.put(vars.get(0), URICoder.decode(value));
         return true;
@@ -361,9 +374,7 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
       }
     },
 
-    /**
-     * The substitution operator is only used to aggregate variables.
-     */
+    /** The substitution operator is only used to aggregate variables. */
     SUBSTITUTION(' ') {
 
       @Override
@@ -392,7 +403,8 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
         // TODO: should we return false instead??
         // TODO: could we somewhat support a comma separated list of values?
         if (vars.size() != 1) {
-          throw new UnsupportedOperationException("Operator cannot be resolved with multiple variables.");
+          throw new UnsupportedOperationException(
+                                                  "Operator cannot be resolved with multiple variables.");
         }
         values.put(vars.get(0), URICoder.decode(value));
         return true;
@@ -409,9 +421,7 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
       }
     };
 
-    /**
-     * The character used to represent this operator.
-     */
+    /** The character used to represent this operator. */
     private final char _c;
 
     /**
@@ -443,7 +453,7 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
      * Apply the expansion rules defined for the operator given the specified argument, variable and
      * parameters.
      *
-     * @param vars   The variables for the operator.
+     * @param vars The variables for the operator.
      * @param params The parameters to use.
      */
     abstract String expand(List<Variable> vars, Parameters params);
@@ -451,36 +461,27 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
     /**
      * Returns the pattern for this operator given the specified list of variables.
      *
-     * @param vars   The variables for the operator.
+     * @param vars The variables for the operator.
      */
     abstract Pattern pattern(List<Variable> vars);
 
-    /**
-     * Returns the map of the string to values given  the specified data.
-     */
+    /** Returns the map of the string to values given the specified data. */
     abstract boolean resolve(List<Variable> vars, String value, Map<Variable, Object> values);
-
   }
 
-  /**
-   * The operator.
-   */
+  /** The operator. */
   private Operator _operator;
 
-  /**
-   * The variables for this token.
-   */
+  /** The variables for this token. */
   private List<Variable> _vars;
 
-  /**
-   * The pattern for this token.
-   */
+  /** The pattern for this token. */
   private Pattern _pattern;
 
   /**
    * Creates a new operator token for one variable only.
    *
-   * @param op  The operator to use.
+   * @param op The operator to use.
    * @param var The variable for this operator.
    * @throws NullPointerException If any of the argument is <code>null</code>.
    */
@@ -498,7 +499,7 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
   /**
    * Creates a new operator token.
    *
-   * @param op   The operator to use.
+   * @param op The operator to use.
    * @param vars The variables for this operator.
    * @throws NullPointerException If any of the argument is <code>null</code>.
    */
@@ -540,17 +541,13 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
     return this._vars;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   @Override
   public boolean isResolvable() {
     return this._operator.isResolvable(this._vars);
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean resolve(String expanded, Map<Variable, Object> values) {
     if (this.isResolvable()) {
       this._operator.resolve(this._vars, expanded, values);
@@ -560,16 +557,12 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public boolean match(String part) {
     return this._pattern.matcher(part).matches();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   public Pattern pattern() {
     return this._pattern;
   }
@@ -592,8 +585,8 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
 
   /**
    * Parses the specified string and returns the corresponding token.
-   * <p/>
-   * This method accepts both the raw expression or the expression wrapped in curly brackets.
+   *
+   * <p>This method accepts both the raw expression or the expression wrapped in curly brackets.
    *
    * @param exp The expression to parse.
    * @return The corresponding token.
@@ -609,16 +602,18 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
     if (operator == null) {
       throw new URITemplateSyntaxException(String.valueOf(c), "This operator is not supported");
     }
-    List<Variable> variables = toVariables(operator == Operator.SUBSTITUTION ? sexp : sexp.substring(1));
+    List<Variable> variables =
+        toVariables(operator == Operator.SUBSTITUTION ? sexp : sexp.substring(1));
     return new TokenOperatorDX(operator, variables);
   }
 
-  // private helpers --------------------------------------------------------------------------------
+  // private helpers
+  // --------------------------------------------------------------------------------
 
   /**
    * Generate the expression corresponding to the specified operator and variable.
    *
-   * @param op  The operator.
+   * @param op The operator.
    * @param var The variable.
    */
   private static String toExpression(Operator op, Variable var) {
@@ -628,8 +623,8 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
   /**
    * Generate the expression corresponding to the specified operator, argument and variables.
    *
-   * @param op   The operator.
-   * @param arg  the argument.
+   * @param op The operator.
+   * @param arg the argument.
    * @param vars The variables.
    */
   private static String toExpression(Operator op, List<Variable> vars) {
@@ -647,5 +642,4 @@ public class TokenOperatorDX extends TokenBase implements TokenOperator, Matchab
     exp.append('}');
     return exp.toString();
   }
-
 }

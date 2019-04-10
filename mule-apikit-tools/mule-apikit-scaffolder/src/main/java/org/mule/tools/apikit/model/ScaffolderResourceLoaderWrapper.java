@@ -6,28 +6,29 @@
  */
 package org.mule.tools.apikit.model;
 
+import static org.mule.raml.interfaces.common.APISyncUtils.isExchangeModules;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
+
 import amf.client.remote.Content;
 import amf.client.resource.ResourceLoader;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-
-import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
-import static org.mule.raml.interfaces.common.APISyncUtils.isExchangeModules;
-import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.concurrent.CompletableFuture;
-
+import javax.annotation.Nullable;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 public class ScaffolderResourceLoaderWrapper
-    implements org.raml.v2.api.loader.ResourceLoader, org.raml.parser.loader.ResourceLoader, ResourceLoader {
+    implements org.raml.v2.api.loader.ResourceLoader,
+    org.raml.parser.loader.ResourceLoader,
+    ResourceLoader {
 
   private final String rootRamlResource;
   ScaffolderResourceLoader scaffolderResourceLoader;
 
-
-  public ScaffolderResourceLoaderWrapper(ScaffolderResourceLoader scaffolderResourceLoader, String rootRamlName) {
+  public ScaffolderResourceLoaderWrapper(
+                                         ScaffolderResourceLoader scaffolderResourceLoader, String rootRamlName) {
     this.scaffolderResourceLoader = scaffolderResourceLoader;
     this.rootRamlResource = getRootRamlResource(rootRamlName);
   }
@@ -35,7 +36,6 @@ public class ScaffolderResourceLoaderWrapper
   private String getRootRamlResource(String rootRamlResource) {
     return rootRamlResource.substring(0, rootRamlResource.lastIndexOf(":") + 1);
   }
-
 
   @Nullable
   @Override
@@ -58,8 +58,6 @@ public class ScaffolderResourceLoaderWrapper
     return scaffolderResourceLoader.getResourceAsStream(rootRamlResource + s);
   }
 
-
-
   public File getFile(String resource) throws MalformedURLException {
     return FileUtils.toFile(scaffolderResourceLoader.getResource(resource).toURL());
   }
@@ -71,7 +69,6 @@ public class ScaffolderResourceLoaderWrapper
     if (s.startsWith("/"))
       s = s.substring(1);
 
-
     if (!(isSyncProtocol(s) || isExchangeModules(s))) {
       s = rootRamlResource + s;
     }
@@ -82,21 +79,21 @@ public class ScaffolderResourceLoaderWrapper
 
     try {
       Content content =
-          new Content(IOUtils.toString(scaffolderResourceLoader.getResourceAsStream(s)),
+          new Content(
+                      IOUtils.toString(scaffolderResourceLoader.getResourceAsStream(s)),
                       scaffolderResourceLoader.getResource(s).toURL().toString());
       future.complete(content);
     } catch (Exception e) {
       e.printStackTrace();
     }
 
-
     return future;
-
   }
 
   private CompletableFuture<Content> fail() {
-    return CompletableFuture.supplyAsync(() -> {
-      throw new RuntimeException("Failed to apply.");
-    });
+    return CompletableFuture.supplyAsync(
+                                         () -> {
+                                           throw new RuntimeException("Failed to apply.");
+                                         });
   }
 }

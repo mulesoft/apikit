@@ -6,10 +6,10 @@
  */
 package org.mule.module.apikit;
 
-import org.junit.Test;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
 
 public class MultipleRouterTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -20,28 +20,48 @@ public class MultipleRouterTestCase extends AbstractMultiParserFunctionalTestCas
 
   @Test
   public void simpleRouting() throws Exception {
-    given().header("Accept", "*/*").body("{\"age\": \"1\"}").contentType("application/json")
+    given()
+        .header("Accept", "*/*")
+        .body("{\"age\": \"1\"}")
+        .contentType("application/json")
         .expect()
-        .response().body(is("typesDog"))
+        .response()
+        .body(is("typesDog"))
         .statusCode(200)
-        .when().post("/api1/typesDog");
+        .when()
+        .post("/api1/typesDog");
 
-    given().header("Accept", "*/*").body("{\"name\": \"a\"}").contentType("application/json")
+    given()
+        .header("Accept", "*/*")
+        .body("{\"name\": \"a\"}")
+        .contentType("application/json")
         .expect()
-        .response().body(is("typesPerson"))
+        .response()
+        .body(is("typesPerson"))
         .statusCode(200)
-        .when().post("/api2/typesPerson");
+        .when()
+        .post("/api2/typesPerson");
 
-    given().header("Accept", "*/*").body("hello").contentType("application/xml")
+    given()
+        .header("Accept", "*/*")
+        .body("hello")
+        .contentType("application/xml")
         .expect()
-        .response().body(is("{message: 'Unsupported media type'}"))
+        .response()
+        .body(is("{message: 'Unsupported media type'}"))
         .statusCode(415)
-        .when().post("/api1/typesDog");
+        .when()
+        .post("/api1/typesDog");
 
-    given().header("Accept", "*/*").body("hello").contentType("application/xml")
+    given()
+        .header("Accept", "*/*")
+        .body("hello")
+        .contentType("application/xml")
         .expect()
-        .response().body(is("{message: 'Unsupported media type'}"))
+        .response()
+        .body(is("{message: 'Unsupported media type'}"))
         .statusCode(415)
-        .when().post("/api2/typesPerson");
+        .when()
+        .post("/api2/typesPerson");
   }
 }

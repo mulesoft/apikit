@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.validation.body.schema;
 
-import org.junit.Test;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 public class Schema08TestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -21,45 +21,52 @@ public class Schema08TestCase extends AbstractMultiParserFunctionalTestCase {
 
   @Test
   public void putValidJson() throws Exception {
-    given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\",\"emailAddresses\":[\"gbs@ie\"]}")
+    given()
+        .body(
+              "{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\",\"emailAddresses\":[\"gbs@ie\"]}")
         .contentType("application/json")
         .expect()
         .statusCode(201)
         .body(is("hello"))
-        .when().put("/api/currentuser");
+        .when()
+        .put("/api/currentuser");
   }
 
   @Test
   public void putInvalidJson() throws Exception {
-    given().body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
+    given()
+        .body("{\"username\":\"gbs\",\"firstName\":\"george\",\"lastName\":\"bernard shaw\"}")
         .contentType("application/json")
         .expect()
-        .statusCode(400)//.body(is("bad request"))
-        .when().put("/api/currentuser");
+        .statusCode(400) // .body(is("bad request"))
+        .when()
+        .put("/api/currentuser");
   }
 
   @Test
   public void putValidXml() throws Exception {
     given()
-        .body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">"
-            +
-            "<email-addresses><email-address>gbs@ie</email-address></email-addresses></user>")
+        .body(
+              "<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">"
+                  + "<email-addresses><email-address>gbs@ie</email-address></email-addresses></user>")
         .contentType("text/xml")
         .expect()
         .statusCode(201)
         .body(is("hello"))
-        .when().put("/api/currentuser");
+        .when()
+        .put("/api/currentuser");
   }
 
   @Test
   public void putInvalidXml() throws Exception {
     given()
-        .body("<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">"
-            +
-            "<email-addresses></email-addresses></user>")
+        .body(
+              "<user xmlns=\"http://mulesoft.org/schemas/sample\" username=\"gbs\" firstName=\"george\" lastName=\"bernard shaw\">"
+                  + "<email-addresses></email-addresses></user>")
         .contentType("text/xml")
         .expect()
         .statusCode(400)
-        .when().put("/api/currentuser");
+        .when()
+        .put("/api/currentuser");
   }
 }

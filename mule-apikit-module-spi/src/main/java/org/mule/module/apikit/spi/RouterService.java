@@ -10,19 +10,17 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.reactivestreams.Publisher;
 
-/**
- * Extension (SPI) for the APIKit Module
- */
+/** Extension (SPI) for the APIKit Module */
 public interface RouterService {
 
   /**
    * Handles the request and returns a valid MuleEvent
    *
-   * @param event		the requester event
-   * @param router 		reference to the apikit router
-   * @param ramlPath 	path to the raml
-   * @return 			a competable future with the response event
+   * @param event the requester event
+   * @param router reference to the apikit router
+   * @param ramlPath path to the raml
+   * @return a competable future with the response event
    */
-  Publisher<CoreEvent> process(CoreEvent event, AbstractRouter router, String ramlPath) throws MuleException;
-
+  Publisher<CoreEvent> process(CoreEvent event, AbstractRouter router, String ramlPath)
+      throws MuleException;
 }

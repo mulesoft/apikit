@@ -6,16 +6,15 @@
  */
 package org.mule.raml.implv2.v10;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Optional.of;
+
+import java.util.Optional;
 import org.mule.metadata.api.builder.BaseTypeBuilder;
 import org.mule.metadata.api.model.MetadataFormat;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.json.api.JsonTypeLoader;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
-
-import java.util.Optional;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Optional.of;
 
 public class MetadataResolver {
 
@@ -37,6 +36,6 @@ public class MetadataResolver {
     return ANY_METADATA_TYPE;
   }
 
-  private static final MetadataType ANY_METADATA_TYPE = BaseTypeBuilder.create(MetadataFormat.JAVA).anyType().build();
-
+  private static final MetadataType ANY_METADATA_TYPE =
+      BaseTypeBuilder.create(MetadataFormat.JAVA).anyType().build();
 }

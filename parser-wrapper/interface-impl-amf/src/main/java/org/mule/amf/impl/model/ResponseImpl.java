@@ -6,14 +6,13 @@
  */
 package org.mule.amf.impl.model;
 
+import static java.util.stream.Collectors.toMap;
+
 import amf.client.model.domain.Response;
+import java.util.Map;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.parameter.IParameter;
-
-import java.util.Map;
-
-import static java.util.stream.Collectors.toMap;
 
 public class ResponseImpl implements IResponse {
 
@@ -32,7 +31,8 @@ public class ResponseImpl implements IResponse {
 
   @Override
   public boolean hasBody() {
-    return !response.payloads().isEmpty() && response.payloads().stream().anyMatch(p -> p.mediaType().nonNull());
+    return !response.payloads().isEmpty()
+        && response.payloads().stream().anyMatch(p -> p.mediaType().nonNull());
   }
 
   @Override
@@ -41,14 +41,10 @@ public class ResponseImpl implements IResponse {
   }
 
   @Override
-  public void setBody(Map<String, IMimeType> body) {
-
-  }
+  public void setBody(Map<String, IMimeType> body) {}
 
   @Override
-  public void setHeaders(Map<String, IParameter> headers) {
-
-  }
+  public void setHeaders(Map<String, IParameter> headers) {}
 
   @Override
   public Object getInstance() {
@@ -59,7 +55,9 @@ public class ResponseImpl implements IResponse {
   public Map<String, String> getExamples() {
     final Map<String, String> result = IResponse.super.getExamples();
 
-    response.examples().forEach(example -> result.put(example.mediaType().value(), example.value().value()));
+    response
+        .examples()
+        .forEach(example -> result.put(example.mediaType().value(), example.value().value()));
 
     return result;
   }

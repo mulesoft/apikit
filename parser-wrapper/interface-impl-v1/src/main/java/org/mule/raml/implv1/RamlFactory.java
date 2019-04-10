@@ -26,7 +26,8 @@ public class RamlFactory implements IRamlFactory {
     return new RamlDocumentBuilderImpl();
   }
 
-  public IRamlValidationService createRamlValidationService(IRamlDocumentBuilder ramlDocumentBuilder) {
+  public IRamlValidationService createRamlValidationService(
+                                                            IRamlDocumentBuilder ramlDocumentBuilder) {
     return new RamlValidationServiceImpl(ramlDocumentBuilder);
   }
 

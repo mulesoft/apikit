@@ -6,11 +6,11 @@
  */
 package org.mule.module.apikit.console;
 
-import org.junit.Test;
-import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
-
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.containsString;
+
+import org.junit.Test;
+import org.mule.module.apikit.AbstractMultiParserFunctionalTestCase;
 
 public class ConsoleWithKABUWithBaseUriTestCase extends AbstractMultiParserFunctionalTestCase {
 
@@ -22,7 +22,8 @@ public class ConsoleWithKABUWithBaseUriTestCase extends AbstractMultiParserFunct
   @Test
   public void getRootRamlConsoleWithoutRouter() {
     // dump() of wrapper
-    given().port(serverPort.getNumber())
+    given()
+        .port(serverPort.getNumber())
         .header("Accept", "application/raml+yaml")
         .expect()
         .header("Content-Type", "application/raml+yaml")
@@ -30,13 +31,15 @@ public class ConsoleWithKABUWithBaseUriTestCase extends AbstractMultiParserFunct
         .statusCode(200)
         .body(containsString("/types-test:"))
         .body(containsString("baseUri: http://www.google.com"))
-        .when().get("consoleWithoutRouter/org/mule/module/apikit/console/?raml");
+        .when()
+        .get("consoleWithoutRouter/org/mule/module/apikit/console/?raml");
   }
 
   @Test
   public void getRootRamlConsoleWithoutRouter2() {
     // dump() of wrapper
-    given().port(serverPort.getNumber())
+    given()
+        .port(serverPort.getNumber())
         .header("Accept", "application/raml+yaml")
         .expect()
         .header("Content-Type", "application/raml+yaml")
@@ -44,14 +47,16 @@ public class ConsoleWithKABUWithBaseUriTestCase extends AbstractMultiParserFunct
         .statusCode(200)
         .body(containsString("/types-test:"))
         .body(containsString("baseUri: http://www.google.com"))
-        .when().get("consoleWithoutRouter-2/org/mule/module/apikit/console/?raml");
+        .when()
+        .get("consoleWithoutRouter-2/org/mule/module/apikit/console/?raml");
   }
 
   @Test
   public void getRootRamlConsolelWithRouter() {
     // dump() of wrapper
     int portNumber = serverPort.getNumber();
-    given().port(portNumber)
+    given()
+        .port(portNumber)
         .header("Accept", "application/raml+yaml")
         .expect()
         .header("Content-Type", "application/raml+yaml")
@@ -59,14 +64,16 @@ public class ConsoleWithKABUWithBaseUriTestCase extends AbstractMultiParserFunct
         .statusCode(200)
         .body(containsString("/types-test:"))
         .body(containsString("baseUri: http://localhost:" + portNumber + "/api/"))
-        .when().get("consoleWithRouter/org/mule/module/apikit/console/?raml");
+        .when()
+        .get("consoleWithRouter/org/mule/module/apikit/console/?raml");
   }
 
   @Test
   public void getRootRamlConsolelWithRouter2() {
     // dump() of wrapper
     int portNumber = serverPort.getNumber();
-    given().port(portNumber)
+    given()
+        .port(portNumber)
         .header("Accept", "application/raml+yaml")
         .expect()
         .header("Content-Type", "application/raml+yaml")
@@ -74,6 +81,7 @@ public class ConsoleWithKABUWithBaseUriTestCase extends AbstractMultiParserFunct
         .statusCode(200)
         .body(containsString("/types-test:"))
         .body(containsString("baseUri: http://www.google.com"))
-        .when().get("consoleWithRouter-2/org/mule/module/apikit/console/?raml");
+        .when()
+        .get("consoleWithRouter-2/org/mule/module/apikit/console/?raml");
   }
 }

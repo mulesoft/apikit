@@ -7,18 +7,15 @@
 package org.mule.tools.apikit.misc;
 
 import org.jdom2.Namespace;
-
-import org.mule.tools.apikit.ExtensionManager;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.output.NamespaceWithLocation;
 
 public class APIKitTools {
 
-  public static final NamespaceWithLocation API_KIT_NAMESPACE = new NamespaceWithLocation(
-                                                                                          Namespace
-                                                                                              .getNamespace("apikit",
-                                                                                                            "http://www.mulesoft.org/schema/mule/mule-apikit"),
-                                                                                          "http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd");
+  public static final NamespaceWithLocation API_KIT_NAMESPACE =
+      new NamespaceWithLocation(
+                                Namespace.getNamespace("apikit", "http://www.mulesoft.org/schema/mule/mule-apikit"),
+                                "http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd");
 
   public static String getPathFromUri(String baseUri, boolean addAsterisk) {
     int start = baseUri.indexOf("//") + 2;
