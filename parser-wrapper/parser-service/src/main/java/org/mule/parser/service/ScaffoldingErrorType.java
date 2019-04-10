@@ -4,10 +4,10 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.raml.interfaces;
+package org.mule.parser.service;
 
-public enum ParserType {
+public enum ScaffoldingErrorType {
   AMF,
-  AUTO,
-  RAML
+  RAML,
+  GENERATION
 }

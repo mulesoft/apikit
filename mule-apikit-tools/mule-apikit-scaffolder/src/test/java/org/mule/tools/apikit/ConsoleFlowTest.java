@@ -105,6 +105,6 @@ public class ConsoleFlowTest {
   }
 
   private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
-    return fileListUtils.toStreamFromFiles(ramls);
+    return fileListUtils.toFiles(ramls, element -> element);
   }
 }

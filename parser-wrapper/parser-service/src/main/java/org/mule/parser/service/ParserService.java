@@ -11,9 +11,7 @@ import org.mule.amf.impl.exceptions.ParserException;
 import org.mule.parser.service.logger.Logger;
 import org.mule.parser.service.logger.LoggerFactory;
 import org.mule.raml.implv1.ParserWrapperV1;
-import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.raml.implv2.ParserWrapperV2;
-import org.mule.raml.implv2.loader.ExchangeDependencyResourceLoader;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.loader.ResourceLoader;
@@ -21,14 +19,13 @@ import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.parser.rule.IValidationReport;
 import org.mule.raml.interfaces.parser.rule.IValidationResult;
 import org.mule.raml.interfaces.parser.rule.Severity;
-import org.raml.v2.api.loader.CompositeResourceLoader;
-import org.raml.v2.api.loader.DefaultResourceLoader;
-import org.raml.v2.api.loader.FileResourceLoader;
-import org.raml.v2.api.loader.RootRamlFileResourceLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.String.*;
 import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
 import static org.mule.raml.interfaces.ParserType.AMF;
 import static org.mule.raml.interfaces.ParserType.AUTO;
 import static org.mule.raml.interfaces.ParserType.RAML;
@@ -41,14 +38,20 @@ public class ParserService {
 
   private static final Logger DEFAULT_LOGGER = LoggerFactory.getLogger(ParserService.class);
 
-  private Logger logger;
+  private final Logger LOGGER;
+
+  private final List<ComponentScaffoldingError> parsingErrors = new ArrayList<>();
 
   public ParserService() {
     this(DEFAULT_LOGGER);
   }
 
   public ParserService(Logger logger) {
-    this.logger = logger;
+    this.LOGGER = logger;
+  }
+
+  public List<ComponentScaffoldingError> getParsingErrors() {
+    return parsingErrors;
   }
 
   public ParserWrapper getParser(final ApiRef apiRef) {
@@ -58,46 +61,60 @@ public class ParserService {
 
   public ParserWrapper getParser(final ApiRef apiRef, ParserType parserType) {
     final ParserType overridden = getOverriddenParserType();
-    if (overridden != AUTO)
+    if (overridden != AUTO) {
       return getParserFor(apiRef, overridden);
-    else
+    } else {
       return getParserFor(apiRef, parserType);
+    }
   }
 
   private ParserType getOverriddenParserType() {
     final String parserValue = System.getProperty(MULE_APIKIT_PARSER);
-    if (AMF.name().equals(parserValue))
+    if (AMF.name().equals(parserValue)) {
       return AMF;
-    if (RAML.name().equals(parserValue))
+    }
+    if (RAML.name().equals(parserValue)) {
       return RAML;
+    }
     return AUTO;
   }
 
   private ParserWrapper getParserFor(final ApiRef apiRef, ParserType parserType) {
     ParserWrapper parserWrapper;
-
     try {
       if (parserType == RAML) {
         parserWrapper = createRamlParserWrapper(apiRef);
-      } else
+      } else {
         parserWrapper = ParserWrapperAmf.create(apiRef, false);
+      }
 
       final IValidationReport validationReport = parserWrapper.validationReport();
 
       if (validationReport.conforms()) {
-        if (parserType == AUTO)
-          parserType = AMF;
         return parserWrapper;
       } else {
+        ScaffoldingErrorType scaffoldingErrorType =
+            parserWrapper.getParserType().equals(RAML) ? ScaffoldingErrorType.RAML : ScaffoldingErrorType.AMF;
         final List<IValidationResult> errorsFound = validationReport.getResults();
+        CompositeScaffoldingError validationError =
+            new CompositeScaffoldingError(format("Validation failed using parser type : %s, in file : %s",
+                                                 parserWrapper.getParserType(), apiRef.getLocation()),
+                                          scaffoldingErrorType,
+                                          errorsFound.stream().map(e -> new SimpleScaffoldingError(e.getMessage()))
+                                              .collect(toList()));
+        parsingErrors.add(validationError);
         return applyFallback(apiRef, parserType, errorsFound);
       }
+    } catch (ParserServiceException | ParserException e) {
+      throw new ParserServiceException(e);
     } catch (Exception e) {
-      if (e instanceof ParserServiceException)
-        throw (ParserServiceException) e;
-      if (e instanceof ParserException)
-        throw new ParserServiceException(e);
       final List<IValidationResult> errors = singletonList(IValidationResult.fromException(e));
+      CompositeScaffoldingError exceptionError =
+          new CompositeScaffoldingError(format("Exception parsing errors in file : %s", apiRef.getLocation()),
+                                        parserType.equals(RAML) ? ScaffoldingErrorType.RAML : ScaffoldingErrorType.AMF,
+                                        errors.stream().map(er -> new SimpleScaffoldingError(er.getMessage()))
+                                            .collect(toList()));
+      parsingErrors.add(exceptionError);
       return applyFallback(apiRef, parserType, errors);
     }
   }
@@ -110,6 +127,13 @@ public class ParserService {
       if (fallbackParser.validationReport().conforms()) {
         logErrors(errorsFound, WARNING);
         return fallbackParser;
+      } else {
+        CompositeScaffoldingError fallbackError =
+            new CompositeScaffoldingError(format("Validation failed using fallback parser type : %s, in file : %s",
+                                                 fallbackParser.getParserType(), apiRef.getLocation()),
+                                          ScaffoldingErrorType.RAML, fallbackParser.validationReport().getResults().stream()
+                                              .map(e -> new SimpleScaffoldingError(e.getMessage())).collect(toList()));
+        parsingErrors.add(fallbackError);
       }
     }
     logErrors(errorsFound);
@@ -125,12 +149,13 @@ public class ParserService {
   }
 
   private void logError(IValidationResult error, Severity severity) {
-    if (severity == Severity.INFO)
-      logger.info(error.getMessage());
-    else if (severity == WARNING)
-      logger.warn(error.getMessage());
-    else
-      logger.error(error.getMessage());
+    if (severity == Severity.INFO) {
+      LOGGER.info(error.getMessage());
+    } else if (severity == WARNING) {
+      LOGGER.warn(error.getMessage());
+    } else {
+      LOGGER.error(error.getMessage());
+    }
   }
 
   private static String buildErrorMessage(List<IValidationResult> validationResults) {
