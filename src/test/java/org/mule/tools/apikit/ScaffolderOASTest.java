@@ -223,7 +223,7 @@ public class ScaffolderOASTest {
   }
 
   private Map<File, InputStream> toStreamMap(List<File> ramls) {
-    return fileListUtils.toStreamFromFiles(ramls);
+    return fileListUtils.toFiles(ramls, element -> element);
   }
 
   private Log getLogger() {

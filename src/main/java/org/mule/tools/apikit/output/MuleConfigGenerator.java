@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit.output;
 
+import java.util.LinkedList;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Content;
@@ -19,6 +20,9 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import org.mule.parser.service.ComponentScaffoldingError;
+import org.mule.parser.service.ScaffoldingErrorType;
+import org.mule.parser.service.SimpleScaffoldingError;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.RuntimeEdition;
@@ -73,9 +77,10 @@ public class MuleConfigGenerator {
   private final Set<File> ramlsWithExtensionEnabled;
   private final RuntimeEdition runtimeEdition;
   private final List<API> apis;
+  private final List<ComponentScaffoldingError> errors = new LinkedList<>();
 
   public MuleConfigGenerator(Log log, File muleConfigOutputDirectory, List<API> apis, List<GenerationModel> flowEntries,
-                             Set<File> ramlsWithExtensionEnabled, String minMuleVersion, RuntimeEdition runtimeEdition) {
+                             Set<File> ramlsWithExtensionEnabled, RuntimeEdition runtimeEdition) {
     this.log = log;
     this.flowEntries = flowEntries;
     this.rootDirectory = muleConfigOutputDirectory;
@@ -88,26 +93,58 @@ public class MuleConfigGenerator {
     this.apis = apis;
   }
 
-  public void generate() {
+  public List<ComponentScaffoldingError> getErrors() {
+    return errors;
+  }
+
+  public void generate(boolean updateConfigs) {
+
     Map<API, Document> docs = new HashMap<>();
+    if (flowEntries.isEmpty()) {
+      apis.forEach(api -> {
+        try {
+          Document doc = getDocument(api);
+          if (api.getConfig() == null || api.getHttpListenerConfig() == null) {
+            if (api.getConfig() == null) {
+              api.setDefaultAPIKitConfig();
+            }
+            if (ramlsWithExtensionEnabledContains(api.getApiFilePath())) {
+              api.getConfig().setExtensionEnabled(true);
+            }
+            generateAPIKitAndListenerConfig(api, doc);
+          }
+          docs.put(api, doc);
+        } catch (Exception e) {
+          log.error("Error generating xml for file: [" + api.getApiFilePath() + "]", e);
+          errors
+              .add(new SimpleScaffoldingError(String.format("Error generating xml for file: [ %s ] : %s", api.getApiFilePath(),
+                                                            e.getMessage()),
+                                              ScaffoldingErrorType.GENERATION));
+        }
+      });
+    } else {
+      for (GenerationModel flowEntry : flowEntries) {
+        Document doc;
 
-    for (GenerationModel flowEntry : flowEntries) {
-      Document doc;
-
-      API api = flowEntry.getApi();
-      try {
-        doc = getOrCreateDocument(docs, api);
-      } catch (Exception e) {
-        log.error("Error generating xml for file: [" + api.getApiFilePath() + "]", e);
-        continue;
+        API api = flowEntry.getApi();
+        try {
+          doc = getOrCreateDocument(docs, api);
+          int index = getLastFlowIndex(doc) + 1;
+          doc.getRootElement()
+              .addContent(index, new APIKitFlowScope(flowEntry, isMuleEE()).generate());
+        } catch (Exception e) {
+          log.error("Error generating xml for file: [" + api.getApiFilePath() + "]", e);
+          errors.add(new SimpleScaffoldingError(
+                                                String.format("Error generating xml for file: [ %s ] : %s",
+                                                              api.getApiFilePath(),
+                                                              e.getMessage()),
+                                                ScaffoldingErrorType.GENERATION));
+        }
       }
-
-      // Generate each of the APIKit flows and insert them after the last flow
-      int index = getLastFlowIndex(doc) + 1;
-      doc.getRootElement().addContent(index, new APIKitFlowScope(flowEntry, isMuleEE()).generate());
     }
-
-    updateApikitConfigs(docs);
+    if (updateConfigs) {
+      updateApikitConfigs(docs);
+    }
 
     // Write everything to files
     for (Map.Entry<API, Document> ramlFileDescriptorDocumentEntry : docs.entrySet()) {
@@ -125,6 +162,8 @@ public class MuleConfigGenerator {
         log.info("Updating file: [" + xmlFile + "]");
       } catch (IOException e) {
         log.error("Error writing to file: [" + xmlFile + "]", e);
+        errors.add(new SimpleScaffoldingError(String.format("Error writing to file: [ %s ] : %s", xmlFile, e.getMessage()),
+                                              ScaffoldingErrorType.GENERATION));
       }
     }
 
@@ -134,8 +173,9 @@ public class MuleConfigGenerator {
     for (API api : apis) {
       try {
         Document doc = docs.get(api);
-        if (doc == null)
+        if (doc == null) {
           doc = getDocument(api);
+        }
         XPathExpression muleExp = XPathFactory.instance().compile("//*[local-name()='mule']");
         List<Element> mules = muleExp.evaluate(doc);
         Element mule = mules.get(0);

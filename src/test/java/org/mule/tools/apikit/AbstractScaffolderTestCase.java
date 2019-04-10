@@ -80,7 +80,7 @@ public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTest
     if (ramls == null) {
       return EMPTY_MAP;
     }
-    return fileListUtils.toStreamFromFiles(ramls);
+    return fileListUtils.toFiles(ramls, element -> element);
   }
 
   protected File createTmpMuleXmlOutFolder() throws IOException {

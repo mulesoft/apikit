@@ -36,8 +36,9 @@ public class HttpListenerConfigMule4Scope implements Scope {
       connection.setAttribute("port", httpListenerConfig.getPort());
       this.httpListenerConfig.addContent(connection);
       httpListenerConfig.setPeristed(true);
-    } else
+    } else {
       this.httpListenerConfig = null;
+    }
   }
 
   @Override

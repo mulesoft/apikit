@@ -6,6 +6,8 @@
  */
 package org.mule.tools.apikit.output;
 
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.json.JSONException;
@@ -16,12 +18,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.mule.parser.service.ComponentScaffoldingError;
+import org.mule.parser.service.SimpleScaffoldingError;
 
 public class MuleArtifactJsonGenerator {
 
   private final File rootDirectory;
   private final String minMuleVersion;
   private final Log log;
+  private final List<ComponentScaffoldingError> errors = new LinkedList<>();
 
   private static final String MULE_ARTIFACT_FILENAME = "mule-artifact.json";
   private static final String MIN_MULE_VERSION = "minMuleVersion";
@@ -32,11 +37,18 @@ public class MuleArtifactJsonGenerator {
     this.minMuleVersion = minMuleVersion;
   }
 
+  public List<ComponentScaffoldingError> getErrors() {
+    return errors;
+  }
+
   public void generate() {
     try {
       save(generateArtifact());
     } catch (Exception e) {
       log.error("Error generating descriptor mule-artifact.json", e);
+      errors
+          .add(new SimpleScaffoldingError(String.format("Error generating descriptor mule-artifact.json : %s",
+                                                        e.getMessage())));
     }
   }
 

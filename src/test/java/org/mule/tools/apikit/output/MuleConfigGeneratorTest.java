@@ -81,8 +81,8 @@ public class MuleConfigGeneratorTest {
     Log mock = mock(Log.class);
     MuleConfigGenerator muleConfigGenerator =
         new MuleConfigGenerator(mock, new File(""), emptyList(), entries, null,
-                                DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
-    muleConfigGenerator.generate();
+                                DEFAULT_RUNTIME_EDITION);
+    muleConfigGenerator.generate(true);
 
     assertTrue(file.exists());
     assertTrue(file.isFile());
@@ -172,7 +172,7 @@ public class MuleConfigGeneratorTest {
 
     MuleConfigGenerator muleConfigGenerator =
         new MuleConfigGenerator(mock(Log.class), new File(""), emptyList(), new ArrayList<GenerationModel>(),
-                                null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+                                null, DEFAULT_RUNTIME_EDITION);
 
     Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 
@@ -222,7 +222,7 @@ public class MuleConfigGeneratorTest {
 
     MuleConfigGenerator muleConfigGenerator =
         new MuleConfigGenerator(mock(Log.class), new File(""), emptyList(), new ArrayList<GenerationModel>(),
-                                null, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+                                null, DEFAULT_RUNTIME_EDITION);
 
     Document document = muleConfigGenerator.getOrCreateDocument(new HashMap<API, Document>(), api);
 
