@@ -28,7 +28,7 @@
 
         <mule.service.weave.version>2.1.8</mule.service.weave.version>
         <mule.plugin.maven.plugin.version>1.1.6</mule.plugin.maven.plugin.version>
-        <mule.http.service.version>1.2.2</mule.http.service.version>
+        <mule.http.service.version>1.1.7</mule.http.service.version>
         <mule.service.scheduler.version>1.1.7</mule.service.scheduler.version>
         <project.reactor.version>3.2.0.M1</project.reactor.version>
 
