@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+  xmlns:http="http://www.mulesoft.org/schema/mule/http"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.mulesoft.org/schema/mule/core"
+  xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+    http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+    http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
+
+  <apikit:config name="api-routing-config" api="munit/api-routing.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/>
+
+  <flow name="api-routing-main">
+    <http:listener config-ref="http-listener-config-localhost-8081" path="/api/*">
+      <http:response statusCode="#[vars.httpStatus default 200]">
+      </http:response>
+      <http:error-response statusCode="#[vars.httpStatus default 500]">
+        <http:body>#[payload]</http:body>
+      </http:error-response>
+    </http:listener>
+    <apikit:router config-ref="api-routing-config"/>
+  </flow>
+
+  <flow name="put:\apply-with-charset:application\json:api-routing-config">
+    <logger level="INFO" message="put:\apply-with-charset:application\json:api-routing-config" />
+  </flow>
+
+</mule>

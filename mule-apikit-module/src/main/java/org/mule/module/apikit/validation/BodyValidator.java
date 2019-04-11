@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static java.lang.String.format;
+import static org.mule.module.apikit.helpers.AttributesHelper.getMediaType;
 import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsString;
 
 public class BodyValidator {
@@ -53,14 +54,14 @@ public class BodyValidator {
       return validBody;
     }
 
-    final String requestMimeTypeName = AttributesHelper.getMediaType(attributes);
+    final String requestMimeTypeName = getMediaType(attributes);
 
     final Entry<String, IMimeType> foundMimeType = action.getBody().entrySet().stream()
         .peek(entry -> {
           if (logger.isDebugEnabled())
             logger.debug(format("comparing request media type %s with expected %s\n", requestMimeTypeName, entry.getKey()));
         })
-        .filter(entry -> entry.getKey().equals(requestMimeTypeName))
+        .filter(entry -> getMediaType(entry.getKey()).equals(requestMimeTypeName))
         .findFirst()
         .orElseThrow(UnsupportedMediaTypeException::new);
 

@@ -10,9 +10,11 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
 import org.mule.apikit.common.FlowName;
+import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
+import org.mule.runtime.api.metadata.MediaType;
 import org.mule.tools.apikit.model.API;
 
 import javax.annotation.Nonnull;
@@ -25,6 +27,8 @@ import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
 import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
+import static org.mule.module.apikit.helpers.AttributesHelper.getMediaType;
+import static org.mule.runtime.api.metadata.MediaType.parse;
 
 public class GenerationModel implements Comparable<GenerationModel> {
 
@@ -79,19 +83,6 @@ public class GenerationModel implements Comparable<GenerationModel> {
         return action.getType().toString().toLowerCase();
     }
   }
-
-  //public String getExample() {
-  //   return this.getExampleWrapper();
-
-  //if (exampleWrapper != null) {
-  //    return exampleWrapper;
-  //}
-  //else
-  //{
-  //    return DEFAULT_TEXT_MULE_4;
-  //}
-
-  //}
 
   public String getExampleWrapper() {
     Map<String, IResponse> responses = action.getResponses();
@@ -186,10 +177,10 @@ public class GenerationModel implements Comparable<GenerationModel> {
     name.append(resourceName);
 
     if (this.mimeType != null) {
+      MediaType mediaType = parse(mimeType);
       StringBuffer buff = new StringBuffer();
-      for (String part : mimeType.split("/")) {
-        buff.append(StringUtils.capitalize(part));
-      }
+      buff.append(StringUtils.capitalize(mediaType.getPrimaryType()));
+      buff.append(StringUtils.capitalize(mediaType.getSubType()));
       name.append(buff.toString());
     }
 
@@ -227,7 +218,7 @@ public class GenerationModel implements Comparable<GenerationModel> {
 
     if (mimeType != null) {
       flowName.append(FLOW_NAME_SEPARATOR)
-          .append(mimeType);
+          .append(getMediaType(mimeType));
     }
 
 

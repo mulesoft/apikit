@@ -44,6 +44,7 @@ import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
 import static org.mule.module.apikit.api.FlowUtils.getSourceLocation;
+import static org.mule.module.apikit.helpers.AttributesHelper.getMediaType;
 import static org.mule.runtime.core.api.event.CoreEvent.builder;
 import static org.mule.runtime.core.privileged.processor.MessageProcessors.*;
 import static reactor.core.publisher.Flux.from;
@@ -142,7 +143,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
     IResource resource = config.getFlowFinder().getResource(uriPattern);
     eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
-    String contentType = AttributesHelper.getMediaType(attributes);
+    String contentType = getMediaType(attributes);
     Flow flow = config.getFlowFinder().getFlow(resource, attributes.getMethod().toLowerCase(), contentType);
 
     final Publisher<CoreEvent> flowResult =
