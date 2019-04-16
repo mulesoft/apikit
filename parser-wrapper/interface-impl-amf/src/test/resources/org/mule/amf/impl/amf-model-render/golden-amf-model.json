@@ -261,13 +261,17 @@
 {
 "@id": "amf://id#8",
 "@type": [
-"http://a.ml/vocabularies/data#Object"
+"http://a.ml/vocabularies/data#Object",
+"http://a.ml/vocabularies/data#Node",
+"http://a.ml/vocabularies/document#DomainElement"
 ],
 "http://a.ml/vocabularies/data#bar": [
 {
 "@id": "amf://id#9",
 "@type": [
-"http://a.ml/vocabularies/data#Scalar"
+"http://a.ml/vocabularies/data#Scalar",
+"http://a.ml/vocabularies/data#Node",
+"http://a.ml/vocabularies/document#DomainElement"
 ],
 "http://a.ml/vocabularies/data#value": [
 {
@@ -281,7 +285,9 @@
 {
 "@id": "amf://id#10",
 "@type": [
-"http://a.ml/vocabularies/data#Scalar"
+"http://a.ml/vocabularies/data#Scalar",
+"http://a.ml/vocabularies/data#Node",
+"http://a.ml/vocabularies/document#DomainElement"
 ],
 "http://a.ml/vocabularies/data#value": [
 {
@@ -295,7 +301,7 @@
 ],
 "http://www.w3.org/ns/shacl#raw": [
 {
-"@value": "      foo: \"hello\"\n      bar: 42\n\n"
+"@value": "\n      foo: \"hello\"\n      bar: 42\n\n"
 }
 ]
 }
@@ -455,13 +461,17 @@
 {
 "@id": "amf://id#17",
 "@type": [
-"http://a.ml/vocabularies/data#Object"
+"http://a.ml/vocabularies/data#Object",
+"http://a.ml/vocabularies/data#Node",
+"http://a.ml/vocabularies/document#DomainElement"
 ],
 "http://a.ml/vocabularies/data#bar": [
 {
 "@id": "amf://id#18",
 "@type": [
-"http://a.ml/vocabularies/data#Scalar"
+"http://a.ml/vocabularies/data#Scalar",
+"http://a.ml/vocabularies/data#Node",
+"http://a.ml/vocabularies/document#DomainElement"
 ],
 "http://a.ml/vocabularies/data#value": [
 {
@@ -475,7 +485,9 @@
 {
 "@id": "amf://id#19",
 "@type": [
-"http://a.ml/vocabularies/data#Scalar"
+"http://a.ml/vocabularies/data#Scalar",
+"http://a.ml/vocabularies/data#Node",
+"http://a.ml/vocabularies/document#DomainElement"
 ],
 "http://a.ml/vocabularies/data#value": [
 {
@@ -489,7 +501,7 @@
 ],
 "http://www.w3.org/ns/shacl#raw": [
 {
-"@value": "      foo: \"bye\"\n      bar: false\n"
+"@value": "\n      foo: \"bye\"\n      bar: false\n"
 }
 ]
 }
