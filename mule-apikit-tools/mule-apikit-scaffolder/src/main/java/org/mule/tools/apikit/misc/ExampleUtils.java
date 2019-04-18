@@ -6,14 +6,18 @@
  */
 package org.mule.tools.apikit.misc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+
+import org.apache.commons.io.IOUtils;
 import org.mule.weave.v2.runtime.DataWeaveResult;
 import org.mule.weave.v2.runtime.DataWeaveScriptingEngine;
 import org.mule.weave.v2.runtime.ScriptingBindings;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.IOException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ExampleUtils {
 
@@ -52,10 +56,29 @@ public class ExampleUtils {
   }
 
   private static String asDataWeave(String payload, String mimeType) {
+    Charset utf8 = Charset.forName("UTF-8");
+    boolean isCorrectEncoding = Charset.defaultCharset().equals(utf8);
+    if (!isCorrectEncoding) {
+      byte[] payloadAsByteArray = payload.getBytes();
+      payload = new String(payloadAsByteArray, utf8);
+    }
+
     String script = "output application/dw --- payload";
     ScriptingBindings bindings = new ScriptingBindings()
         .addBinding("payload", payload, mimeType);
     DataWeaveResult result = DataWeaveScriptingEngine.write(script, bindings);
+
+    if (!isCorrectEncoding) {
+      try {
+        InputStream content = (InputStream) result.getContent();
+        String contentAsString = IOUtils.toString(content, utf8);
+        IOUtils.closeQuietly(content);
+        return contentAsString;
+      } catch (IOException e) {
+        return result.getContentAsString();
+      }
+    }
+
     return result.getContentAsString();
   }
 
