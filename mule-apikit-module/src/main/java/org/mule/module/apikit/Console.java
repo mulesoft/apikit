@@ -6,6 +6,16 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.module.apikit.ApikitErrorTypes.errorRepositoryFrom;
+import static org.mule.module.apikit.api.FlowUtils.getSourceLocation;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.net.URI;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.console.ConsoleResources;
@@ -25,14 +35,6 @@ import org.mule.runtime.core.api.util.IOUtils;
 import org.mule.runtime.core.api.util.StringMessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.inject.Inject;
-import java.io.File;
-import java.io.FileWriter;
-import java.net.URI;
-import java.util.Optional;
-
-import static org.mule.module.apikit.api.FlowUtils.getSourceLocation;
 
 public class Console extends AbstractComponent implements Processor, Initialisable {
 
@@ -85,7 +87,8 @@ public class Console extends AbstractComponent implements Processor, Initialisab
 
     ConsoleResources consoleResources =
         new ConsoleResources(config, listenerPath,
-                             requestPath, queryString, method, acceptHeader);
+                             requestPath, queryString, method, acceptHeader,
+                             errorRepositoryFrom(muleContext));
 
     // Listener path MUST end with /*
     consoleResources.isValidPath(attributes.getListenerPath());

@@ -6,31 +6,32 @@
  */
 package org.mule.module.apikit.api.validation;
 
+import static org.mule.apikit.common.CommonUtils.cast;
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
+import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsByteArray;
+import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
+
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.CharsetUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.module.apikit.api.exception.MethodNotAllowedException;
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
-import org.mule.module.apikit.api.exception.MethodNotAllowedException;
 import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.module.apikit.validation.AttributesValidator;
 import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.exception.ErrorTypeRepository;
 import org.mule.runtime.api.exception.MuleRuntimeException;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.mule.runtime.api.util.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.mule.apikit.common.CommonUtils.cast;
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsByteArray;
-import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
 
 public class RequestValidator {
 
@@ -40,12 +41,28 @@ public class RequestValidator {
                                       ResolvedVariables resolvedVariables, Object payload)
       throws MuleRestException {
 
-    return validate(config, resource, attributes, resolvedVariables, payload, null);
+    return validate(config, resource, attributes, resolvedVariables, payload, null, null);
+
+  }
+
+  public static ValidRequest validate(ValidationConfig config, IResource resource, HttpRequestAttributes attributes,
+                                      ResolvedVariables resolvedVariables, Object payload,
+                                      ErrorTypeRepository errorTypeRepository)
+      throws MuleRestException {
+
+    return validate(config, resource, attributes, resolvedVariables, payload, null, errorTypeRepository);
 
   }
 
   public static ValidRequest validate(ValidationConfig config, IResource resource, HttpRequestAttributes attributes,
                                       ResolvedVariables resolvedVariables, Object payload, String charset)
+      throws MuleRestException {
+    return validate(config, resource, attributes, resolvedVariables, payload, charset, null);
+  }
+
+  public static ValidRequest validate(ValidationConfig config, IResource resource, HttpRequestAttributes attributes,
+                                      ResolvedVariables resolvedVariables, Object payload, String charset,
+                                      ErrorTypeRepository errorTypeRepository)
       throws MuleRestException {
 
     final HttpRequestAttributes httpRequestAttributes;
@@ -75,7 +92,7 @@ public class RequestValidator {
       }
 
       httpRequestAttributes = AttributesValidator.validateAndAddDefaults(attributes, resource, resolvedVariables, config);
-      validBody = BodyValidator.validate(resource.getAction(method), attributes, payload, config, charset);
+      validBody = BodyValidator.validate(resource.getAction(method), attributes, payload, config, charset, errorTypeRepository);
     }
 
     return ValidRequest.builder()

@@ -6,10 +6,16 @@
  */
 package org.mule.module.apikit;
 
-import com.github.fge.jsonschema.main.JsonSchema;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import static org.mule.module.apikit.ApikitErrorTypes.errorRepositoryFrom;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.ServiceLoader;
+import java.util.concurrent.ExecutionException;
+
+import javax.inject.Inject;
+import javax.xml.validation.Schema;
+
 import org.apache.commons.lang.StringUtils;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.config.ConsoleConfig;
@@ -23,7 +29,6 @@ import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoa
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
-import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
@@ -31,14 +36,12 @@ import org.mule.runtime.core.api.el.ExpressionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.xml.validation.Schema;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.ServiceLoader;
-import java.util.concurrent.ExecutionException;
+import com.github.fge.jsonschema.main.JsonSchema;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
-public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig, Disposable {
+public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
 
   private boolean disableValidations;
   private ParserType parserType;
@@ -73,7 +76,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private RamlHandler ramlHandler;
   private FlowFinder flowFinder;
 
-  @Inject //TODO delete this after getting resources from resource folder and the flows
+  @Inject // TODO delete this after getting resources from resource folder and the flows
   private MuleContext muleContext;
 
   @Inject
@@ -89,7 +92,8 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   public void initialise() throws InitialisationException {
     isExtensionEnabled = hasExtension();
     try {
-      ramlHandler = new RamlHandler(getApi(), isKeepApiBaseUri(), muleContext, getParser());
+      ramlHandler = new RamlHandler(getApi(), isKeepApiBaseUri(),
+                                    errorRepositoryFrom(muleContext), getParser());
 
       // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
       // we will keep the value defined during raml handler instantiation
@@ -97,18 +101,18 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     } catch (final Exception e) {
       throw new InitialisationException(e.fillInStackTrace(), this);
     }
-    flowFinder = new FlowFinder(ramlHandler, getName(), locator, flowMappings.getFlowMappings());
+    flowFinder = new FlowFinder(ramlHandler, getName(), locator, flowMappings.getFlowMappings(),
+                                errorRepositoryFrom(muleContext));
     buildResourcePatternCaches();
     registry.registerConfiguration(this);
-    ApikitErrorTypes.setMuleContext(muleContext);
   }
 
-  @Deprecated //TODO USE NEW API
+  @Deprecated // TODO USE NEW API
   public String getApiServer() {
     return "http://localhost:8081";
   }
 
-  //config properties
+  // config properties
   public String getName() {
     return name;
   }
@@ -252,7 +256,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   }
 
 
-  //uri caches
+  // uri caches
   public LoadingCache<String, URIPattern> getUriPatternCache() {
     return uriPatternCache;
   }
@@ -261,7 +265,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     return uriResolverCache;
   }
 
-  //schema caches
+  // schema caches
   public LoadingCache<String, JsonSchema> getJsonSchemaCache() {
     if (jsonSchemaCache == null) {
       jsonSchemaCache = CacheBuilder.newBuilder()
@@ -283,7 +287,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   }
 
   public void setRamlHandler(RamlHandler ramlHandler) {
-    this.ramlHandler = ramlHandler; //TODO REPLACE WITH REFLECTION
+    this.ramlHandler = ramlHandler; // TODO REPLACE WITH REFLECTION
   }
 
   @Override
@@ -347,10 +351,5 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   public boolean isExtensionEnabled() {
     return isExtensionEnabled;
-  }
-
-  @Override
-  public void dispose() {
-    ApikitErrorTypes.setMuleContext(null);
   }
 }
