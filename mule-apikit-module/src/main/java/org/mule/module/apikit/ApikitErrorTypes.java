@@ -22,7 +22,7 @@ public class ApikitErrorTypes {
 
   private static MuleContext muleContext;
 
-  public static void initialise(MuleContext muleContext) {
+  public static void setMuleContext(MuleContext muleContext) {
     ApikitErrorTypes.muleContext = muleContext;
   }
 

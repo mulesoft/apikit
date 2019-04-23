@@ -23,6 +23,7 @@ import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoa
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
+import org.mule.runtime.api.lifecycle.Disposable;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
@@ -37,7 +38,7 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 
-public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
+public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig, Disposable {
 
   private boolean disableValidations;
   private ParserType parserType;
@@ -99,7 +100,7 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     flowFinder = new FlowFinder(ramlHandler, getName(), locator, flowMappings.getFlowMappings());
     buildResourcePatternCaches();
     registry.registerConfiguration(this);
-    ApikitErrorTypes.initialise(muleContext);
+    ApikitErrorTypes.setMuleContext(muleContext);
   }
 
   @Deprecated //TODO USE NEW API
@@ -346,5 +347,10 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   public boolean isExtensionEnabled() {
     return isExtensionEnabled;
+  }
+
+  @Override
+  public void dispose() {
+    ApikitErrorTypes.setMuleContext(null);
   }
 }
