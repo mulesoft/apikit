@@ -6,6 +6,7 @@
  */
 package org.mule.tools.apikit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
 import org.junit.Rule;
@@ -30,6 +31,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+import static org.mule.tools.apikit.model.ScaffolderReport.SUCCESS;
 
 public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
@@ -58,6 +60,18 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     final String ramlFolder = "src/test/resources/scaffolder/";
 
     testSimple(ramlFolder, rootRaml);
+  }
+
+  @Test
+  public void testRAMLWithCharset() throws Exception {
+    File api = generateApi("src/test/resources/api-sync/api-raml-with-charset",
+                           "api", SUCCESS.toString());
+
+    assertTrue(api.exists());
+    assertEquals("Files are different", FileUtils
+        .readFileToString(new File(getClass().getClassLoader()
+            .getResource("api-sync/api-raml-with-charset/expected-result.xml").getFile()))
+        .replaceAll("\\s+", ""), FileUtils.readFileToString(api).replaceAll("\\s+", ""));
   }
 
   @Test
@@ -137,7 +151,7 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
     final String rootRamlResourceURL = ROOT_RAML_RESOURCE_URL + rootRaml + ".raml";
 
     if (expectedStatus == null)
-      expectedStatus = ScaffolderReport.SUCCESS;
+      expectedStatus = SUCCESS;
 
     mockScaffolderResourceLoader(exchangeJsonResourceURL, ramlFolder, rootRaml + ".json");
     mockScaffolderResourceLoader(rootRamlResourceURL, ramlFolder, rootRaml + ".raml");
@@ -239,7 +253,7 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
       throws Exception {
 
     if (expectedStatus == null)
-      expectedStatus = ScaffolderReport.SUCCESS;
+      expectedStatus = SUCCESS;
 
     File muleXmlOut = folder.newFolder("mule-xml-out");
 

@@ -1,0 +1,25 @@
+#%RAML 1.0
+---
+title: API for test routing!
+
+types:
+  ApplyCreditMemoType:
+    type: object
+    properties:
+      effectiveDate:
+        description: |
+          The date when the credit memo is applied.
+        type: date-only
+        required: false
+
+/apply-with-charset:
+  put:
+    responses:
+      200:
+        body:
+            application/json:
+              type: ApplyCreditMemoType
+    body:
+      application/json; charset=utf-8:
+        type: ApplyCreditMemoType
+

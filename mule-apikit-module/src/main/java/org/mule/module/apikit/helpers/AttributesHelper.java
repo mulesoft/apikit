@@ -10,6 +10,7 @@ import com.google.common.base.Strings;
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.extension.http.api.HttpRequestAttributesBuilder;
 import org.mule.module.apikit.HeaderName;
+import org.mule.runtime.api.metadata.MediaType;
 import org.mule.runtime.api.util.MultiMap;
 
 import java.io.UnsupportedEncodingException;
@@ -20,6 +21,7 @@ import java.util.Map;
 
 import static java.util.Collections.emptyList;
 import static org.mule.module.apikit.HeaderName.CONTENT_TYPE;
+import static org.mule.runtime.api.metadata.MediaType.parse;
 
 public class AttributesHelper {
 
@@ -94,7 +96,15 @@ public class AttributesHelper {
 
   public static String getMediaType(HttpRequestAttributes attributes) {
     final String contentType = getHeaderIgnoreCase(attributes, CONTENT_TYPE);
-    return contentType != null ? contentType.split(";")[0] : null;
+    if (contentType != null) {
+      return getMediaType(contentType);
+    }
+    return null;
+  }
+
+  public static String getMediaType(String mediaType) {
+    MediaType mType = parse(mediaType);
+    return String.format("%s/%s", mType.getPrimaryType(), mType.getSubType());
   }
 
   public static String getAcceptedResponseMediaTypes(MultiMap<String, String> headers) {

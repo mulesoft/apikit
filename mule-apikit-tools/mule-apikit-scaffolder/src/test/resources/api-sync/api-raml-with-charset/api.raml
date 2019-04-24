@@ -1,0 +1,220 @@
+#%RAML 1.0
+---
+title: API for test scaffolder!
+traits:
+  GLOBAL_HEADER_XXX_Entity_Ids_Single:
+    headers:
+      XXX-Entity-Ids:
+        description: |
+          An entity ID
+        required: false
+        type: string
+types:
+  GETCreditMemoType:
+    type: object
+    properties:
+      accountId:
+        description: |
+          The ID of the customer account associated with the credit memo.
+        type: string
+        required: false
+      amount:
+        description: |
+          The total amount of the credit memo.
+        type: number
+        format: double
+        required: false
+      appliedAmount:
+        description: |
+          The applied amount of the credit memo.
+        type: number
+        format: double
+        required: false
+      autoApplyUponPosting:
+        description: |
+          Whether the credit memo automatically applies to the invoice upon posting.
+        type: boolean
+        required: false
+      cancelledById:
+        description: |
+          The ID of the XXX user who cancelled the credit memo.
+        type: string
+        required: false
+      cancelledOn:
+        description: |
+          The date and time when the credit memo was cancelled, in `yyyy-mm-dd hh:mm:ss` format.
+        type: datetime
+        required: false
+      comment:
+        description: |
+          Comments about the credit memo.
+        type: string
+        required: false
+      createdById:
+        description: |
+          The ID of the XXX user who created the credit memo.
+        type: string
+        required: false
+      createdDate:
+        description: |
+          The date and time when the credit memo was created, in `yyyy-mm-dd hh:mm:ss` format. For example, 2017-03-01 15:31:10.
+        type: datetime
+        required: false
+      creditMemoDate:
+        description: |
+          The date when the credit memo takes effect, in `yyyy-mm-dd` format. For example, 2017-05-20.
+        type: date-only
+        required: false
+      currency:
+        description: |
+          A currency defined in the web-based UI administrative settings.
+        type: string
+        required: false
+      customField__c:
+        description: |
+          Any custom fields defined for this object. The custom field
+          name is case-sensitive.
+        type: string
+        required: false
+      excludeFromAutoApplyRules:
+        description: |
+          Whether the credit memo is excluded from the rule of automatically applying credit memos to invoices.
+        type: boolean
+        required: false
+      id:
+        description: |
+          The unique ID of the credit memo.
+        type: string
+        required: false
+      latestPDFFileId:
+        description: |
+          The ID of the latest PDF file generated for the credit memo.
+        type: string
+        required: false
+      number:
+        description: |
+          The unique identification number of the credit memo.
+        type: string
+        required: false
+      postedById:
+        description: |
+          The ID of the XXX user who posted the credit memo.
+        type: string
+        required: false
+      postedOn:
+        description: |
+          The date and time when the credit memo was posted, in `yyyy-mm-dd hh:mm:ss` format.
+        type: datetime
+        required: false
+      reasonCode:
+        description: |
+          A code identifying the reason for the transaction. The value must be an existing reason code or empty.
+        type: string
+        required: false
+      referredInvoiceId:
+        description: |
+          The ID of a referred invoice.
+        type: string
+        required: false
+      refundAmount:
+        description: |
+          The amount of the refund on the credit memo.
+        type: number
+        format: double
+        required: false
+      source:
+        description: |
+          The source of the credit memo.
+        type: string
+        enum:
+          - API
+          - BillRun
+          - AdhocFromPrpc
+          - AdhocFromInvoice
+        required: false
+      sourceId:
+        description: |
+          The ID of the credit memo source.
+        type: string
+        required: false
+      status:
+        description: |
+          The status of the credit memo.
+        type: string
+        enum:
+          - Draft
+          - Posted
+          - Canceled
+          - Error
+          - PendingForTax
+          - Generating
+          - CancelInProgress
+        required: false
+      success:
+        description: Returns `true` if the request was processed successfully.
+        type: boolean
+        required: false
+      targetDate:
+        description: |
+          The target date for the credit memo, in `yyyy-mm-dd` format. For example, 2017-07-20.
+        type: date-only
+        required: false
+      taxAmount:
+        description: |
+          The amount of taxation.
+        type: number
+        format: double
+        required: false
+      totalTaxExemptAmount:
+        description: |
+          The total amount of taxes or VAT for which the customer has an exemption.
+        type: number
+        format: double
+        required: false
+      transferredToAccounting:
+        description: |
+          Whether the credit memo was transferred to an external accounting system.
+        type: string
+        enum:
+          - Processing
+          - 'Yes'
+          - Error
+          - Ignore
+        required: false
+      unappliedAmount:
+        description: |
+          The unapplied amount of the credit memo.
+        type: number
+        format: double
+        required: false
+      updatedById:
+        description: |
+          The ID of the XXX user who last updated the credit memo.
+        type: string
+        required: false
+      updatedDate:
+        description: |
+          The date and time when the credit memo was last updated, in `yyyy-mm-dd hh:mm:ss` format. For example, 2017-03-01 15:36:10.
+        type: datetime
+        required: false
+
+  ApplyCreditMemoType:
+    type: object
+    properties:
+      effectiveDate:
+        description: |
+          The date when the credit memo is applied.
+        type: date-only
+        required: false
+
+/apply:
+  put:
+    responses:
+      200:
+        body:
+            application/json:
+              type: GETCreditMemoType
+    body:
+      application/json; charset=utf-8:
+        type: ApplyCreditMemoType
+

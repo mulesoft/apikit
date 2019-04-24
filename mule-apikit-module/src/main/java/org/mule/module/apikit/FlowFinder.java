@@ -10,6 +10,7 @@ import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
 import static org.mule.apikit.common.FlowName.URL_RESOURCE_SEPARATOR;
 import static org.mule.module.apikit.ApikitErrorTypes.throwErrorType;
 import static org.mule.module.apikit.api.FlowUtils.getFlowsList;
+import static org.mule.module.apikit.helpers.AttributesHelper.getMediaType;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import org.mule.runtime.api.exception.ErrorTypeRepository;
 import org.mule.runtime.core.api.construct.Flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 public class FlowFinder {
 
@@ -172,8 +174,9 @@ public class FlowFinder {
       if (action != null) {
         if (type == null)
           return key;
-        if (!action.hasBody() || action.getBody().get(type) != null)
+        if (!action.hasBody() || action.getBody().entrySet().stream().anyMatch(v -> v.getKey().contains(type))) {
           return key;
+        }
       }
     }
 
@@ -192,9 +195,9 @@ public class FlowFinder {
         }
         if (action.hasBody()) {
           for (String contentType : action.getBody().keySet()) {
-            if (restFlowMap.get(key + ":" + contentType) == null) {
+            if (restFlowMap.get(key + ":" + getMediaType(contentType)) == null) {
               logger.warn(String.format("Action-Resource-ContentType triplet has no implementation -> %s:%s:%s ",
-                                        method, fullResource, contentType));
+                                        method, fullResource, getMediaType(contentType)));
             }
           }
         } else {
