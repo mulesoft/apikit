@@ -82,7 +82,7 @@ public class RamlHandlerTestCase {
 
   @Test
   public void getRamlV2KeepRamlBaseUriFalse() throws IOException {
-    String ramlLocation = "org/mule/module/apikit/raml-handler/simple10-with-example.raml";//this.getClass().getResource("../../../../org/mule/module/apikit/simple-raml/simple10-with-example.raml").toString();
+    String ramlLocation = "org/mule/module/apikit/raml-handler/simple10-with-example.raml";// this.getClass().getResource("../../../../org/mule/module/apikit/simple-raml/simple10-with-example.raml").toString();
     String apiServer = "http://pepe.com";
     RamlHandler handler = createRamlHandler(ramlLocation, false);
     handler.setApiServer(apiServer);
@@ -172,7 +172,7 @@ public class RamlHandlerTestCase {
 
   private RamlHandler createRamlHandler(String ramlPath, boolean keepRamlBaseUri, ParserType parser) {
     try {
-      return new RamlHandler(ramlPath, keepRamlBaseUri, muleContext, parser);
+      return new RamlHandler(ramlPath, keepRamlBaseUri, muleContext.getErrorTypeRepository(), parser);
     } catch (IOException e) {
       throw new RuntimeException("Error creating RamlHandler", e);
     }

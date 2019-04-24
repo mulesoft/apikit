@@ -6,6 +6,12 @@
  */
 package org.mule.module.apikit.validation;
 
+import static java.lang.String.format;
+import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsString;
+
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.BadRequestException;
@@ -13,11 +19,10 @@ import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 import org.mule.module.apikit.api.validation.ValidBody;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.helpers.AttributesHelper;
-import org.mule.module.apikit.input.stream.RewindableInputStream;
 import org.mule.module.apikit.validation.body.form.FormParametersValidator;
 import org.mule.module.apikit.validation.body.form.MultipartFormValidator;
-import org.mule.module.apikit.validation.body.form.UrlencodedFormV2Validator;
 import org.mule.module.apikit.validation.body.form.UrlencodedFormV1Validator;
+import org.mule.module.apikit.validation.body.form.UrlencodedFormV2Validator;
 import org.mule.module.apikit.validation.body.schema.IRestSchemaValidatorStrategy;
 import org.mule.module.apikit.validation.body.schema.v1.RestJsonSchemaValidator;
 import org.mule.module.apikit.validation.body.schema.v1.RestXmlSchemaValidator;
@@ -25,25 +30,23 @@ import org.mule.module.apikit.validation.body.schema.v1.cache.SchemaCacheUtils;
 import org.mule.module.apikit.validation.body.schema.v2.RestSchemaV2Validator;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.runtime.api.exception.ErrorTypeRepository;
 import org.mule.runtime.api.metadata.TypedValue;
-
-import java.io.InputStream;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static java.lang.String.format;
-import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsString;
 
 public class BodyValidator {
 
   protected final static Logger logger = LoggerFactory.getLogger(BodyValidator.class);
 
-
   public static ValidBody validate(IAction action, HttpRequestAttributes attributes, Object payload,
                                    ValidationConfig config, String charset)
+      throws BadRequestException, UnsupportedMediaTypeException {
+    return validate(action, attributes, payload, config, charset, null);
+  }
+
+  public static ValidBody validate(IAction action, HttpRequestAttributes attributes, Object payload,
+                                   ValidationConfig config, String charset, ErrorTypeRepository errorTypeRepository)
       throws BadRequestException, UnsupportedMediaTypeException {
 
     ValidBody validBody = new ValidBody(payload);
@@ -69,7 +72,7 @@ public class BodyValidator {
 
     if (requestMimeTypeName.contains("json") || requestMimeTypeName.contains("xml")) {
 
-      validBody = validateAsString(config, mimeType, action, requestMimeTypeName, payload, charset);
+      validBody = validateAsString(config, mimeType, action, requestMimeTypeName, payload, charset, errorTypeRepository);
 
     } else if ((requestMimeTypeName.contains("multipart/form-data")
         || requestMimeTypeName.contains("application/x-www-form-urlencoded"))) {
@@ -85,6 +88,13 @@ public class BodyValidator {
                                             String requestMimeTypeName,
                                             Object payload, String charset)
       throws BadRequestException {
+    return validateAsString(config, mimeType, action, requestMimeTypeName, payload, charset, null);
+  }
+
+  private static ValidBody validateAsString(ValidationConfig config, IMimeType mimeType, IAction action,
+                                            String requestMimeTypeName,
+                                            Object payload, String charset, ErrorTypeRepository errorTypeRepository)
+      throws BadRequestException {
 
     IRestSchemaValidatorStrategy validator = null;
     if (config.isParserV2()) {
@@ -97,7 +107,7 @@ public class BodyValidator {
           ApiKitJsonSchema schema = config.getJsonSchema(schemaPath);
           validator = new RestJsonSchemaValidator(schema != null ? schema.getSchema() : null);
         } else if (requestMimeTypeName.contains("xml")) {
-          validator = new RestXmlSchemaValidator(config.getXmlSchema(schemaPath));
+          validator = new RestXmlSchemaValidator(config.getXmlSchema(schemaPath), errorTypeRepository);
         }
       } catch (ExecutionException e) {
         throw new BadRequestException(e);
