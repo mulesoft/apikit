@@ -18,7 +18,6 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
-import org.mule.tools.apikit.model.Status;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -262,9 +261,11 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
   @Test
   public void testRaml08Fallback() throws Exception {
-    File api = generateApi("src/test/resources/api-sync/fallback-raml-08", "api", null);
-
-    assertTrue(api.exists());
+    if (isAmf()) {
+      generateApi("src/test/resources/api-sync/fallback-raml-08", "api", FAILED.toString());
+    } else {
+      assertTrue(generateApi("src/test/resources/api-sync/fallback-raml-08", "api", SUCCESS.toString()).exists());
+    }
   }
 
   private File generateApi(String ramlFolder, String rootRaml, String expectedStatus)

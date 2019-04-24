@@ -7,9 +7,6 @@ package org.mule.tools.apikit;
  * LICENSE.txt file.
  */
 
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
@@ -457,8 +454,8 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     File muleXmlSimple = simpleGeneration("parser/failing-api.raml", null, DEFAULT_MULE_VERSION, EE);
     assertFalse(muleXmlSimple.exists());
 
-    assertEquals(3, errors.size());
-    assertTrue(errors.stream().anyMatch(e -> e.contains("Unresolved reference 'SomeTypo' from root context")));
+    assertEquals(2, errors.size());
+    assertTrue(errors.stream().anyMatch(e -> e.contains("reference 'SomeTypo'")));
   }
 
   @Test
