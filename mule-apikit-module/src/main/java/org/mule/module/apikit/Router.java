@@ -6,7 +6,23 @@
  */
 package org.mule.module.apikit;
 
-import com.google.common.cache.LoadingCache;
+import static java.util.Optional.ofNullable;
+import static org.mule.module.apikit.ApikitErrorTypes.errorRepositoryFrom;
+import static org.mule.module.apikit.ApikitErrorTypes.throwErrorType;
+import static org.mule.module.apikit.api.FlowUtils.getSourceLocation;
+import static org.mule.runtime.core.api.event.CoreEvent.builder;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
+import static org.mule.runtime.core.privileged.processor.MessageProcessors.processWithChildContext;
+import static reactor.core.publisher.Flux.from;
+import static reactor.core.publisher.Mono.error;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
 import org.mule.extension.http.api.HttpRequestAttributes;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.UrlUtils;
@@ -29,6 +45,7 @@ import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.api.metadata.TypedValue;
+import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.construct.Flow;
 import org.mule.runtime.core.api.event.CoreEvent;
 import org.mule.runtime.core.api.processor.Processor;
@@ -37,17 +54,7 @@ import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Optional;
-
-import static java.util.Optional.ofNullable;
-import static org.mule.module.apikit.api.FlowUtils.getSourceLocation;
-import static org.mule.runtime.core.api.event.CoreEvent.builder;
-import static org.mule.runtime.core.privileged.processor.MessageProcessors.*;
-import static reactor.core.publisher.Flux.from;
-import static reactor.core.publisher.Mono.error;
+import com.google.common.cache.LoadingCache;
 
 public class Router extends AbstractComponent implements Processor, Initialisable, AbstractRouter
 
@@ -60,6 +67,9 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
   private Configuration configuration;
 
   private String name;
+
+  @Inject
+  private MuleContext muleContext;
 
   private static final Logger LOGGER = LoggerFactory.getLogger(Router.class);
 
@@ -113,7 +123,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
       else
         return processEvent(event);
     } catch (MuleRestException e) {
-      return error(ApikitErrorTypes.throwErrorType(e));
+      return error(throwErrorType(e, errorRepositoryFrom(muleContext)));
     } catch (MuleException e) {
       return error(e);
     }
@@ -135,7 +145,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     String path = UrlUtils.getRelativePath(attributes.getListenerPath(), attributes.getRawRequestPath());
     path = path.isEmpty() ? "/" : path;
 
-    //Get uriPattern, uriResolver, and the resolvedVariables
+    // Get uriPattern, uriResolver, and the resolvedVariables
     URIPattern uriPattern = findInCache(path, config.getUriPatternCache());
     URIResolver uriResolver = findInCache(path, config.getUriResolverCache());
     ResolvedVariables resolvedVariables = uriResolver.resolve(uriPattern);
@@ -164,7 +174,8 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     try {
       return cache.get(key);
     } catch (Exception e) {
-      throw ApikitErrorTypes.throwErrorType(new NotFoundException(key));
+      throw throwErrorType(new NotFoundException(key),
+                           errorRepositoryFrom(muleContext));
     }
   }
 
@@ -192,7 +203,8 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
     TypedValue payload = event.getMessage().getPayload();
 
     final ValidRequest validRequest =
-        RequestValidator.validate(config, resource, attributes, resolvedVariables, payload);
+        RequestValidator.validate(config, resource, attributes, resolvedVariables, payload,
+                                  errorRepositoryFrom(muleContext));
 
     return EventHelper.regenerateEvent(event.getMessage(), eventBuilder, validRequest);
   }

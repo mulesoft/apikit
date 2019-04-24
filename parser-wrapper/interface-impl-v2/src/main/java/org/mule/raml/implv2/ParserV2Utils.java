@@ -91,28 +91,32 @@ public class ParserV2Utils {
     return simpleType != null ? String.valueOf(simpleType.value()) : null;
   }
 
-  public static List<String> findIncludeNodes(URI ramlUri, ResourceLoader resourceLoader) throws IOException {
-    final InputStream is = resourceLoader.fetchResource(ramlUri.toString());
-
-    if (is == null)
-      return emptyList();
-
-    final String content = IOUtils.toString(is);
-    final Node raml = new RamlBuilder().build(content);
-    return findIncludeNodes(raml, ramlUri, resourceLoader);
+  public static List<String> findIncludeNodes(URI ramlURI, ResourceLoader resourceLoader) throws IOException {
+    String rootPath = getParent(ramlURI);
+    return findIncludeNodes(rootPath, ramlURI, resourceLoader);
   }
 
-  public static List<String> findIncludeNodes(final Node raml, URI ramlUri, ResourceLoader resourceLoader)
+  public static List<String> findIncludeNodes(String rootPath, URI ramlURI, ResourceLoader resourceLoader) throws IOException {
+    final InputStream is = resourceLoader.fetchResource(ramlURI.toString());
+
+    if (is == null) {
+      return emptyList();
+    }
+
+    final Node raml = new RamlBuilder().build(IOUtils.toString(is));
+    return findIncludeNodes(rootPath, raml, resourceLoader);
+  }
+
+  public static List<String> findIncludeNodes(String rootPath, final Node raml, ResourceLoader resourceLoader)
       throws IOException {
     final Set<String> includePaths = new HashSet<>();
-    findIncludeNodes("", includePaths, singletonList(raml), ramlUri, resourceLoader);
+    findIncludeNodes(rootPath, "", includePaths, singletonList(raml), resourceLoader);
     return new ArrayList<>(includePaths);
   }
 
-  private static void findIncludeNodes(final String pathRelativeToRoot, final Set<String> includePaths,
-                                       final List<Node> currents, URI ramlURI, ResourceLoader resourceLoader)
+  private static void findIncludeNodes(String rootPath, final String pathRelativeToRoot, final Set<String> includePaths,
+                                       final List<Node> currents, ResourceLoader resourceLoader)
       throws IOException {
-    final String rootPath = getParent(ramlURI);
 
     for (final Node current : currents) {
       // search for include in sources of the current node
@@ -130,7 +134,7 @@ public class ParserV2Utils {
           final String absolutIncludePath = computeIncludePath(rootPath, pathRelativeToRoot, includePath);
           final URI includedFileAsUri = URI.create(absolutIncludePath).normalize();
           includePaths.add(includedFileAsUri.toString());
-          includePaths.addAll(findIncludeNodes(includedFileAsUri, resourceLoader));
+          includePaths.addAll(findIncludeNodes(rootPath, includedFileAsUri, resourceLoader));
           pathRelativeToRootCurrent = calculateNextRootRelative(pathRelativeToRootCurrent,
                                                                 includePath);
         }
@@ -138,7 +142,7 @@ public class ParserV2Utils {
         possibleInclude = possibleInclude.getSource();
       }
 
-      findIncludeNodes(pathRelativeToRootCurrent, includePaths, getChildren(current), ramlURI, resourceLoader);
+      findIncludeNodes(rootPath, pathRelativeToRootCurrent, includePaths, getChildren(current), resourceLoader);
     }
   }
 

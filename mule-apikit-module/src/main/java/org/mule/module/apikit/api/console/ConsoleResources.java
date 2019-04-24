@@ -6,19 +6,20 @@
  */
 package org.mule.module.apikit.api.console;
 
-import org.apache.commons.io.IOUtils;
-import org.mule.module.apikit.ApikitErrorTypes;
-import org.mule.module.apikit.api.config.ConsoleConfig;
-import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.raml.interfaces.model.ApiVendor;
+import static org.mule.module.apikit.ApikitErrorTypes.throwErrorType;
+import static org.mule.module.apikit.api.UrlUtils.getCompletePathFromBasePathAndPath;
+import static org.mule.raml.interfaces.ParserType.AMF;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.mule.module.apikit.api.UrlUtils.getCompletePathFromBasePathAndPath;
-import static org.mule.raml.interfaces.ParserType.AMF;
+import org.apache.commons.io.IOUtils;
+import org.mule.module.apikit.api.config.ConsoleConfig;
+import org.mule.module.apikit.exception.NotFoundException;
+import org.mule.raml.interfaces.model.ApiVendor;
+import org.mule.runtime.api.exception.ErrorTypeRepository;
 
 public class ConsoleResources {
 
@@ -35,9 +36,15 @@ public class ConsoleResources {
   private String queryString;
   private String method;
   private String aceptHeader;
+  private ErrorTypeRepository errorTypeRepository;
 
   public ConsoleResources(ConsoleConfig config, String listenerPath, String requestPath, String queryString, String method,
                           String aceptHeader) {
+    this(config, listenerPath, requestPath, queryString, method, aceptHeader, null);
+  }
+
+  public ConsoleResources(ConsoleConfig config, String listenerPath, String requestPath, String queryString, String method,
+                          String aceptHeader, ErrorTypeRepository errorTypeRepository) {
     CONSOLE_RESOURCES_BASE = AMF == config.getParser() ? "/console-resources-amf" : "/console-resources";
 
     this.config = config;
@@ -46,6 +53,7 @@ public class ConsoleResources {
     this.queryString = queryString;
     this.method = method;
     this.aceptHeader = aceptHeader;
+    this.errorTypeRepository = errorTypeRepository;
   }
 
   public Resource getConsoleResource(String resourceRelativePath) {
@@ -72,7 +80,7 @@ public class ConsoleResources {
       if (inputStream == null) {
         raml = config.getRamlHandler().getRamlV2(resourceRelativePath);
         if (raml == null) {
-          throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
+          throw throwErrorType(new NotFoundException(resourceRelativePath), errorTypeRepository);
         }
 
         return new RamlResource(raml);
@@ -88,7 +96,7 @@ public class ConsoleResources {
       return new ConsoleResource(byteArrayOutputStream.toByteArray(), consoleResourcePath);
 
     } catch (IOException e) {
-      throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
+      throw throwErrorType(new NotFoundException(resourceRelativePath), errorTypeRepository);
     } finally {
       IOUtils.closeQuietly(inputStream);
       IOUtils.closeQuietly(byteArrayOutputStream);

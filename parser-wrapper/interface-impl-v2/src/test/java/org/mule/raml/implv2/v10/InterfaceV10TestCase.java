@@ -94,6 +94,30 @@ public class InterfaceV10TestCase {
                is(true));
   }
 
+  @Test
+  public void absoluteIncludes() {
+    String pathAsUri =
+        requireNonNull(getClass().getClassLoader().getResource("org/mule/raml/implv2/v10/library-references-absolute/input.raml"))
+            .toString();
+    IRaml raml = ParserV2Utils.build(DEFAULT_RESOURCE_LOADER, pathAsUri);
+
+    List<String> references = raml.getAllReferences();
+
+    assertThat(references.stream()
+        .anyMatch(ref -> ref.endsWith("org/mule/raml/implv2/v10/library-references-absolute/libraries/resourceTypeLibrary.raml")),
+               is(true));
+    assertThat(references.stream()
+        .anyMatch(ref -> ref.endsWith("org/mule/raml/implv2/v10/library-references-absolute/libraries/typeLibrary.raml")),
+               is(true));
+    assertThat(references.stream()
+        .anyMatch(ref -> ref.endsWith("org/mule/raml/implv2/v10/library-references-absolute/libraries/traitsLibrary.raml")),
+               is(true));
+    assertThat(references.stream()
+        .anyMatch(ref -> ref.endsWith("org/mule/raml/implv2/v10/library-references-absolute/traits/trait.raml")), is(true));
+    assertThat(raml.getAllReferences().size(), is(4));
+
+  }
+
   private boolean endWithAndExists(String reference, String goldenFile, ResourceLoader resourceLoader) {
     return reference.endsWith(goldenFile) && resourceLoader.fetchResource(reference) != null;
   }
