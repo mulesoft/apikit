@@ -18,7 +18,6 @@ import org.mule.module.apikit.api.exception.BadRequestException;
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
 import org.mule.module.apikit.api.validation.ValidBody;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
-import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.validation.body.form.FormParametersValidator;
 import org.mule.module.apikit.validation.body.form.MultipartFormValidator;
 import org.mule.module.apikit.validation.body.form.UrlencodedFormV1Validator;
@@ -34,6 +33,8 @@ import org.mule.runtime.api.exception.ErrorTypeRepository;
 import org.mule.runtime.api.metadata.TypedValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.mule.module.apikit.helpers.AttributesHelper.getMediaType;
 
 public class BodyValidator {
 
@@ -56,14 +57,14 @@ public class BodyValidator {
       return validBody;
     }
 
-    final String requestMimeTypeName = AttributesHelper.getMediaType(attributes);
+    final String requestMimeTypeName = getMediaType(attributes);
 
     final Entry<String, IMimeType> foundMimeType = action.getBody().entrySet().stream()
         .peek(entry -> {
           if (logger.isDebugEnabled())
             logger.debug(format("comparing request media type %s with expected %s\n", requestMimeTypeName, entry.getKey()));
         })
-        .filter(entry -> entry.getKey().equals(requestMimeTypeName))
+        .filter(entry -> getMediaType(entry.getKey()).equals(requestMimeTypeName))
         .findFirst()
         .orElseThrow(UnsupportedMediaTypeException::new);
 
