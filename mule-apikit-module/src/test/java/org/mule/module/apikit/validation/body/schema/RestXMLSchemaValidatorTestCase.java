@@ -7,15 +7,6 @@
 package org.mule.module.apikit.validation.body.schema;
 
 import static org.mockito.Mockito.when;
-import org.mule.module.apikit.Configuration;
-import org.mule.module.apikit.api.RamlHandler;
-import org.mule.module.apikit.api.exception.BadRequestException;
-import org.mule.module.apikit.validation.body.schema.v1.RestXmlSchemaValidator;
-import org.mule.raml.interfaces.model.IAction;
-import org.mule.raml.interfaces.model.IMimeType;
-import org.mule.raml.interfaces.model.IRaml;
-import org.mule.raml.interfaces.model.IResource;
-import org.mule.runtime.api.exception.TypedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +17,17 @@ import javax.xml.validation.Schema;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mule.module.apikit.Configuration;
+import org.mule.module.apikit.api.RamlHandler;
+import org.mule.module.apikit.api.exception.BadRequestException;
+import org.mule.module.apikit.validation.body.schema.v1.RestXmlSchemaValidator;
+import org.mule.raml.interfaces.model.IAction;
+import org.mule.raml.interfaces.model.IMimeType;
+import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.IResource;
+import org.mule.runtime.api.exception.ErrorTypeRepository;
+import org.mule.runtime.api.exception.TypedException;
+import org.mule.runtime.core.api.MuleContext;
 
 public class RestXMLSchemaValidatorTestCase {
 
@@ -76,10 +78,11 @@ public class RestXMLSchemaValidatorTestCase {
 
     Configuration config = new Configuration();
     RamlHandler ramlHandler = Mockito.mock(RamlHandler.class);
+    ErrorTypeRepository errorTypeRepository = Mockito.mock(ErrorTypeRepository.class);
     when(ramlHandler.getApi()).thenReturn(api);
     config.setRamlHandler(ramlHandler);
 
-    RestXmlSchemaValidator xmlValidator = new RestXmlSchemaValidator(config.getXmlSchema(schemaPath));
+    RestXmlSchemaValidator xmlValidator = new RestXmlSchemaValidator(config.getXmlSchema(schemaPath), errorTypeRepository);
 
     xmlValidator.validate(payload);
   }

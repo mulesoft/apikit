@@ -8,34 +8,34 @@ package org.mule.module.apikit;
 
 import static org.mule.runtime.core.api.exception.Errors.CORE_NAMESPACE_NAME;
 import static org.mule.runtime.core.api.exception.Errors.Identifiers.ANY_IDENTIFIER;
+
+import java.util.Optional;
+
 import org.mule.module.apikit.api.exception.MuleRestException;
 import org.mule.runtime.api.component.ComponentIdentifier;
+import org.mule.runtime.api.exception.ErrorTypeRepository;
 import org.mule.runtime.api.exception.TypedException;
 import org.mule.runtime.api.message.ErrorType;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.internal.message.ErrorTypeBuilder;
 
-import java.util.Optional;
-
 
 public class ApikitErrorTypes {
 
-  private static MuleContext muleContext;
-
-  public static void initialise(MuleContext muleContext) {
-    ApikitErrorTypes.muleContext = muleContext;
-  }
-
-  public static TypedException throwErrorType(MuleRestException exception) {
+  public static TypedException throwErrorType(MuleRestException exception, ErrorTypeRepository errorTypeRepository) {
     ComponentIdentifier componentIdentifier =
         ComponentIdentifier.buildFromStringRepresentation(exception.getStringRepresentation());
-    if (muleContext != null) {
-      Optional<ErrorType> errorType = muleContext.getErrorTypeRepository().getErrorType(componentIdentifier);
+    if (errorTypeRepository != null) {
+      Optional<ErrorType> errorType = errorTypeRepository.getErrorType(componentIdentifier);
       if (errorType.isPresent()) {
         return new TypedException(exception, errorType.get());
       }
     }
     return new TypedException(exception,
                               ErrorTypeBuilder.builder().namespace(CORE_NAMESPACE_NAME).identifier(ANY_IDENTIFIER).build());
+  }
+
+  public static ErrorTypeRepository errorRepositoryFrom(MuleContext muleContext) {
+    return muleContext != null ? muleContext.getErrorTypeRepository() : null;
   }
 }

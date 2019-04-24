@@ -6,6 +6,16 @@
  */
 package org.mule.module.apikit;
 
+import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
+import static org.mule.apikit.common.FlowName.URL_RESOURCE_SEPARATOR;
+import static org.mule.module.apikit.ApikitErrorTypes.throwErrorType;
+import static org.mule.module.apikit.api.FlowUtils.getFlowsList;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.mule.apikit.common.FlowName;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.RoutingTable;
@@ -17,18 +27,10 @@ import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
+import org.mule.runtime.api.exception.ErrorTypeRepository;
 import org.mule.runtime.core.api.construct.Flow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
-import static org.mule.apikit.common.FlowName.URL_RESOURCE_SEPARATOR;
-import static org.mule.module.apikit.api.FlowUtils.getFlowsList;
 
 public class FlowFinder {
 
@@ -44,13 +46,20 @@ public class FlowFinder {
   private String configName;
   private List<FlowMapping> flowMappings;
   private ConfigurationComponentLocator locator;
+  private ErrorTypeRepository errorTypeRepository;
 
   public FlowFinder(RamlHandler ramlHandler, String configName, ConfigurationComponentLocator locator,
                     List<FlowMapping> flowMappings) {
+    this(ramlHandler, configName, locator, flowMappings, null);
+  }
+
+  public FlowFinder(RamlHandler ramlHandler, String configName, ConfigurationComponentLocator locator,
+                    List<FlowMapping> flowMappings, ErrorTypeRepository errorTypeRepository) {
     this.ramlHandler = ramlHandler;
     this.configName = configName;
     this.flowMappings = flowMappings;
     this.locator = locator;
+    this.errorTypeRepository = errorTypeRepository;
     initializeRestFlowMap();
     loadRoutingTable();
   }
@@ -64,7 +73,7 @@ public class FlowFinder {
 
       List<Flow> flows = getFlows();
 
-      //init flows by convention
+      // init flows by convention
       for (Flow flow : flows) {
         String key = getRestFlowKey(flow.getName());
         if (key != null) {
@@ -72,7 +81,7 @@ public class FlowFinder {
         }
       }
 
-      ////init flow mappings
+      //// init flow mappings
       for (FlowMapping mapping : flowMappings) {
         for (Flow flow : flows) {
           if (flow.getName().equals(mapping.getFlowRef())) {
@@ -107,7 +116,7 @@ public class FlowFinder {
 
   /**
    * validates if name is a valid router flow name according to the following pattern:
-   *  method:\resource[:content-type][:config-name]
+   * method:\resource[:content-type][:config-name]
    *
    * @param name to be validated
    * @return the name with the config-name stripped or null if it is not a router flow
@@ -219,9 +228,9 @@ public class FlowFinder {
       flow = rawRestFlowMap.get(baseKey);
       if (flow == null) {
         if (isFlowDeclaredWithDifferentMediaType(rawRestFlowMap, baseKey)) {
-          throw ApikitErrorTypes.throwErrorType(new UnsupportedMediaTypeException());
+          throw throwErrorType(new UnsupportedMediaTypeException(), errorTypeRepository);
         } else {
-          throw ApikitErrorTypes.throwErrorType(new NotImplementedException());
+          throw throwErrorType(new NotImplementedException(), errorTypeRepository);
         }
       }
     }
