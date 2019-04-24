@@ -10,6 +10,7 @@ import static java.util.Optional.ofNullable;
 import static org.mule.module.apikit.ApikitErrorTypes.errorRepositoryFrom;
 import static org.mule.module.apikit.ApikitErrorTypes.throwErrorType;
 import static org.mule.module.apikit.api.FlowUtils.getSourceLocation;
+import static org.mule.module.apikit.helpers.AttributesHelper.getMediaType;
 import static org.mule.runtime.core.api.event.CoreEvent.builder;
 import static org.mule.runtime.core.privileged.processor.MessageProcessors.flatMap;
 import static org.mule.runtime.core.privileged.processor.MessageProcessors.processToApply;
@@ -34,7 +35,6 @@ import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.RequestValidator;
 import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.module.apikit.exception.NotFoundException;
-import org.mule.module.apikit.helpers.AttributesHelper;
 import org.mule.module.apikit.helpers.EventHelper;
 import org.mule.module.apikit.spi.AbstractRouter;
 import org.mule.raml.interfaces.model.IRaml;
@@ -53,8 +53,8 @@ import org.mule.runtime.core.api.util.StringMessageUtils;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.google.common.cache.LoadingCache;
+
 
 public class Router extends AbstractComponent implements Processor, Initialisable, AbstractRouter
 
@@ -152,7 +152,7 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
     IResource resource = config.getFlowFinder().getResource(uriPattern);
     eventBuilder = validateRequest(event, eventBuilder, config, resource, attributes, resolvedVariables);
-    String contentType = AttributesHelper.getMediaType(attributes);
+    String contentType = getMediaType(attributes);
     Flow flow = config.getFlowFinder().getFlow(resource, attributes.getMethod().toLowerCase(), contentType);
 
     final Publisher<CoreEvent> flowResult =

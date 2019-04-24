@@ -33,10 +33,75 @@
         <mule.tests.component.plugin.version>${mule.version}</mule.tests.component.plugin.version>
 
         <sonar.jacoco.reportPaths>../target/jacoco.exec</sonar.jacoco.reportPaths>
+
+        <munit.input.directory>src/test/munit</munit.input.directory>
+        <munit.output.directory>${basedir}/target/test-mule/munit</munit.output.directory>
+        <munit.extensions.maven.plugin.version>1.0.0-SNAPSHOT</munit.extensions.maven.plugin.version>
+        <munit.version>2.2.0-SNAPSHOT</munit.version>
+        <mavenResourcesVersion>3.0.2</mavenResourcesVersion>
+
     </properties>
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${mavenResourcesVersion}</version>
+                <executions>
+                    <execution>
+                        <id>copy-munit-resources</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${munit.output.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${munit.input.directory}</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mulesoft.munit</groupId>
+                <artifactId>munit-extensions-maven-plugin</artifactId>
+                <version>${munit.extensions.maven.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <phase>integration-test</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <runtimeConfiguration>
+                        <discoverRuntimes>
+                            <product>EE</product>
+                            <includeSnapshots>true</includeSnapshots>
+                        </discoverRuntimes>
+                    </runtimeConfiguration>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>munit-runner</artifactId>
+                        <version>${munit.version}</version>
+                        <classifier>mule-plugin</classifier>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.mulesoft.munit</groupId>
+                        <artifactId>munit-tools</artifactId>
+                        <version>${munit.version}</version>
+                        <classifier>mule-plugin</classifier>
+                    </dependency>
+                </dependencies>
+            </plugin>
             <plugin>
                 <groupId>org.mule.runtime.plugins</groupId>
                 <artifactId>mule-plugin-maven-plugin</artifactId>
@@ -288,13 +353,6 @@
             <artifactId>mule-tests-component-plugin</artifactId>
             <version>${mule.tests.component.plugin.version}</version>
             <classifier>mule-plugin</classifier>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mule.distributions</groupId>
-            <artifactId>mule-distro-tests</artifactId>
-            <version>${mule.mule.distro.tests.version}</version>
-            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>

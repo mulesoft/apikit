@@ -6,6 +6,9 @@
  */
 package org.mule.tools.apikit;
 
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
@@ -65,13 +68,28 @@ public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 
   @Test
   public void testRAMLWithoutResources() throws Exception {
-    File api = generateApi("src/test/resources/api-sync/empty-api", "without-resources", SUCCESS.toString());
+    File api = generateApi("src/test/resources/api-sync/empty-api", "without-resources",
+                           SUCCESS.toString());
 
     assertTrue(api.exists());
     assertEquals("Files are different", FileUtils
-        .readFileToString(new File(getClass().getClassLoader().getResource("api-sync/empty-api/expected-result.xml").getFile()))
+        .readFileToString(new File(
+                                   getClass().getClassLoader().getResource("api-sync/empty-api/expected-result.xml")
+                                       .getFile()))
         .replaceAll("\\s+", ""),
                  FileUtils.readFileToString(api).replaceAll("\\s+", ""));
+  }
+
+  @Test
+  public void testRAMLWithCharset() throws Exception {
+    File api = generateApi("src/test/resources/api-sync/api-raml-with-charset",
+                           "api", SUCCESS.toString());
+
+    assertTrue(api.exists());
+    assertEquals("Files are different", FileUtils
+        .readFileToString(new File(getClass().getClassLoader()
+            .getResource("api-sync/api-raml-with-charset/expected-result.xml").getFile()))
+        .replaceAll("\\s+", ""), FileUtils.readFileToString(api).replaceAll("\\s+", ""));
   }
 
   @Test
