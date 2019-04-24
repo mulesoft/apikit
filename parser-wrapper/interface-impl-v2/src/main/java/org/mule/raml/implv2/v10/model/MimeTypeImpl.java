@@ -15,7 +15,9 @@ import org.raml.v2.api.model.v10.datamodel.ObjectTypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
 import org.raml.v2.api.model.v10.datamodel.UnionTypeDeclaration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -113,8 +115,18 @@ public class MimeTypeImpl implements IMimeType
     @Override
     public Map<String, List<IParameter>> getFormParameters()
     {
-        // no longer supported in RAML 1.0
-        return new HashMap<>();
+        Map<String, List<IParameter>> result = new LinkedHashMap<>();
+
+        if (typeDeclaration instanceof ObjectTypeDeclaration) {
+            List<TypeDeclaration> parameters = ((ObjectTypeDeclaration) typeDeclaration).properties();
+            for (TypeDeclaration parameter : parameters) {
+                List<IParameter> list = new ArrayList<>();
+                list.add(new ParameterImpl(parameter));
+                result.put(parameter.name(), list);
+            }
+        }
+
+        return result;
     }
 
     public List<ValidationResult> validate(String payload)

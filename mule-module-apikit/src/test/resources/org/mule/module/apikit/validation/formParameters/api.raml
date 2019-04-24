@@ -1,0 +1,24 @@
+#%RAML 1.0
+title: multipart
+version: 1.0
+mediaType: [ multipart/form-data ]
+/upload:
+  post:
+    body:
+      properties:
+        filedata:
+          type: file
+          fileTypes: ['image/jpeg']
+          required: true
+        metadata:
+          type: string
+          minLength: 1
+          required: true
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              {
+                "Message": "File upload successfully"
+              }
