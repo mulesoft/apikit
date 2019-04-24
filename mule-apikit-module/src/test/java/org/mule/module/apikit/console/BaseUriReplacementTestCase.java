@@ -31,7 +31,8 @@ public class BaseUriReplacementTestCase {
 
   @Test
   public void baseUriReplacementTest() throws Exception {
-    RamlHandler ramlHandler = new RamlHandler("org/mule/module/apikit/console/simple-with-baseuri10.raml", false, muleContext);
+    RamlHandler ramlHandler =
+        new RamlHandler("org/mule/module/apikit/console/simple-with-baseuri10.raml", false, muleContext.getErrorTypeRepository());
     assertEquals("http://localhost:8081/api", ramlHandler.getBaseUriReplacement("http://localhost:8081/api"));
     assertEquals("http://localhost:8081/api", ramlHandler.getBaseUriReplacement("http://0.0.0.0:8081/api"));
 

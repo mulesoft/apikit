@@ -9,6 +9,8 @@ package org.mule.raml.interfaces.loader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * Represents a way of getting resources from the application
@@ -27,7 +29,10 @@ public interface ResourceLoader {
   default InputStream getResourceAsStream(String relativePath) {
     URI uri = getResource(relativePath);
     try {
-      return uri != null ? uri.toURL().openStream() : null;
+      URL url = uri.toURL();
+      URLConnection urlConnection = url.openConnection();
+      urlConnection.setUseCaches(false);
+      return urlConnection.getInputStream();
     } catch (IOException e) {
       return null;
     }

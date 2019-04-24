@@ -11,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.mule.raml.interfaces.loader.ResourceLoader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.concurrent.CompletableFuture;
 
@@ -33,9 +34,9 @@ public class ProvidedResourceLoader implements amf.client.resource.ResourceLoade
     final URI resource = resourceLoader.getResource(resourceName);
 
     if (resource != null) {
-      final String resourceAsString;
+      final InputStream stream = resourceLoader.getResourceAsStream(resourceName);
       try {
-        resourceAsString = IOUtils.toString(resource.toURL().openStream());
+        final String resourceAsString = IOUtils.toString(stream);
         final Content content = new Content(resourceAsString, resource.toString());
         future.complete(content);
       } catch (IOException e) {

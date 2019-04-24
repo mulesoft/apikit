@@ -130,10 +130,10 @@ public class ScaffolderAPI {
       String dependencyResourceFormat = format(RESOURCE_FORMAT, dependency.getGroupId(), dependency.getArtifactId(),
                                                dependency.getVersion(), dependency.getClassifier(), dependency.getType(), "%s");
       InputStream exchangeJson =
-          scaffolderResourceLoader.getResource(format(dependencyResourceFormat, EXCHANGE_JSON)).toURL().openStream();
+          scaffolderResourceLoader.getResourceAsStream(format(dependencyResourceFormat, EXCHANGE_JSON));
       String rootApiFileName = APISyncUtils.getMainApi(IOUtils.toString(exchangeJson));
       String rootApiResource = format(dependencyResourceFormat, rootApiFileName);
-      InputStream rootApi = scaffolderResourceLoader.getResource(rootApiResource).toURL().openStream();
+      InputStream rootApi = scaffolderResourceLoader.getResourceAsStream(rootApiResource);
       apiSpecs.put(rootApiResource, rootApi);
     }
 

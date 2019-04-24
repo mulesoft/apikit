@@ -6,14 +6,22 @@
  */
 package org.mule.module.apikit.api;
 
+import static org.mule.apikit.common.CommonUtils.cast;
+import static org.mule.module.apikit.ApikitErrorTypes.throwErrorType;
+import static org.mule.raml.interfaces.ParserType.AMF;
+import static org.mule.raml.interfaces.ParserType.RAML;
+import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
+import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.apache.commons.io.IOUtils;
 import org.mule.amf.impl.ParserWrapperAmf;
-import org.mule.module.apikit.ApikitErrorTypes;
 import org.mule.module.apikit.StreamUtils;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.parser.service.ParserService;
@@ -21,23 +29,15 @@ import org.mule.raml.interfaces.ParserType;
 import org.mule.raml.interfaces.ParserWrapper;
 import org.mule.raml.interfaces.loader.ApiSyncResourceLoader;
 import org.mule.raml.interfaces.loader.ClassPathResourceLoader;
-import org.mule.raml.interfaces.model.api.ApiRef;
 import org.mule.raml.interfaces.model.ApiVendor;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
+import org.mule.raml.interfaces.model.api.ApiRef;
+import org.mule.runtime.api.exception.ErrorTypeRepository;
 import org.mule.runtime.api.exception.TypedException;
-import org.mule.runtime.core.api.MuleContext;
 import org.raml.model.ActionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.mule.apikit.common.CommonUtils.cast;
-import static org.mule.raml.interfaces.common.APISyncUtils.isSyncProtocol;
-import static org.mule.raml.interfaces.ParserType.AMF;
-import static org.mule.raml.interfaces.ParserType.AUTO;
-import static org.mule.raml.interfaces.ParserType.RAML;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_08;
-import static org.mule.raml.interfaces.model.ApiVendor.RAML_10;
 
 public class RamlHandler {
 
@@ -57,14 +57,23 @@ public class RamlHandler {
 
   public static final String MULE_APIKIT_PARSER_AMF = "mule.apikit.parser";
 
-  private MuleContext muleContext;
+  private ErrorTypeRepository errorTypeRepository;
 
-  //ramlLocation should be the root raml location, relative of the resources folder
-  public RamlHandler(String ramlLocation, boolean keepApiBaseUri, MuleContext muleContext) throws IOException {
-    this(ramlLocation, keepApiBaseUri, muleContext, null);
+  public RamlHandler(String ramlLocation, boolean keepApiBaseUri) throws IOException {
+    this(ramlLocation, keepApiBaseUri, null, null);
   }
 
-  public RamlHandler(String ramlLocation, boolean keepApiBaseUri, MuleContext muleContext, ParserType parserType)
+  // ramlLocation should be the root raml location, relative of the resources folder
+  public RamlHandler(String ramlLocation, boolean keepApiBaseUri, ErrorTypeRepository errorTypeRepository) throws IOException {
+    this(ramlLocation, keepApiBaseUri, errorTypeRepository, null);
+  }
+
+  public RamlHandler(String ramlLocation, boolean keepApiBaseUri, ParserType parserType)
+      throws IOException {
+    this(ramlLocation, keepApiBaseUri, null, parserType);
+  }
+
+  public RamlHandler(String ramlLocation, boolean keepApiBaseUri, ErrorTypeRepository errorTypeRepository, ParserType parserType)
       throws IOException {
     this.keepApiBaseUri = keepApiBaseUri;
 
@@ -85,7 +94,7 @@ public class RamlHandler {
       this.apiResourcesRelativePath = rootRamlLocation;
     }
 
-    this.muleContext = muleContext;
+    this.errorTypeRepository = errorTypeRepository;
   }
 
   public ParserType getParserType() {
@@ -126,14 +135,15 @@ public class RamlHandler {
     }
   }
 
-  //resourcesRelativePath should not contain the console path
+  // resourcesRelativePath should not contain the console path
   public String getRamlV2(String resourceRelativePath) throws TypedException {
     resourceRelativePath = sanitarizeResourceRelativePath(resourceRelativePath);
     if (resourceRelativePath.contains("..")) {
-      throw ApikitErrorTypes.throwErrorType(new NotFoundException("\"..\" is not allowed"));
+      throw throwErrorType(new NotFoundException("\"..\" is not allowed"),
+                           errorTypeRepository);
     }
     if (apiResourcesRelativePath.equals(resourceRelativePath)) {
-      //root raml
+      // root raml
       String rootRaml = dumpRaml();
       if (keepApiBaseUri) {
         return rootRaml;
@@ -141,11 +151,12 @@ public class RamlHandler {
       String baseUriReplacement = getBaseUriReplacement(apiServer);
       return UrlUtils.replaceBaseUri(rootRaml, baseUriReplacement);
     } else {
-      //the resource should be in a subfolder, otherwise it could be requesting the properties file
+      // the resource should be in a subfolder, otherwise it could be requesting the properties file
       if (!resourceRelativePath.contains("/")) {
-        throw ApikitErrorTypes.throwErrorType(new NotFoundException("Requested resources should be in a subfolder"));
+        throw throwErrorType(new NotFoundException("Requested resources should be in a subfolder"),
+                             errorTypeRepository);
       }
-      //resource
+      // resource
       InputStream apiResource = null;
       ByteArrayOutputStream baos = null;
       try {
@@ -157,14 +168,16 @@ public class RamlHandler {
         }
 
         if (apiResource == null) {
-          throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
+          throw throwErrorType(new NotFoundException(resourceRelativePath),
+                               errorTypeRepository);
         }
 
         baos = new ByteArrayOutputStream();
         StreamUtils.copyLarge(apiResource, baos);
       } catch (IOException e) {
         logger.debug(e.getMessage());
-        throw ApikitErrorTypes.throwErrorType(new NotFoundException(resourceRelativePath));
+        throw throwErrorType(new NotFoundException(resourceRelativePath),
+                             errorTypeRepository);
       } finally {
         IOUtils.closeQuietly(apiResource);
         IOUtils.closeQuietly(baos);
@@ -222,15 +235,15 @@ public class RamlHandler {
   }
 
   private String sanitarizeResourceRelativePath(String resourceRelativePath) {
-    //delete first slash
+    // delete first slash
     if (resourceRelativePath.startsWith("/") && resourceRelativePath.length() > 1) {
       resourceRelativePath = resourceRelativePath.substring(1, resourceRelativePath.length());
     }
-    //delete querystring
+    // delete querystring
     if (resourceRelativePath.contains("?raml")) {
       resourceRelativePath = resourceRelativePath.substring(0, resourceRelativePath.indexOf('?'));
     }
-    //delete last slash
+    // delete last slash
     if (resourceRelativePath.endsWith("/") && resourceRelativePath.length() > 1) {
       resourceRelativePath = resourceRelativePath.substring(0, resourceRelativePath.length() - 1);
     }
@@ -272,7 +285,7 @@ public class RamlHandler {
         return status;
       }
     }
-    //default success status
+    // default success status
     return "200";
   }
 
