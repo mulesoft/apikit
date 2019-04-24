@@ -44,10 +44,6 @@ public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTest
   private FileListUtils fileListUtils = new FileListUtils();
   protected Log logger;
 
-  @Before
-  public void beforeTest() {
-    logger = null;
-  }
 
   @After
   public void after() {
