@@ -6,7 +6,6 @@
  */
 package org.mule.amf.impl;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.mule.raml.interfaces.model.api.ApiRef;
 
@@ -15,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 
 import static java.nio.file.Files.readAllBytes;
+import static org.junit.Assert.assertEquals;
 
 public class AmfModelRenderTestCase {
 
@@ -28,6 +28,6 @@ public class AmfModelRenderTestCase {
     ApiRef apiRef = ApiRef.create(apiLocation);
     String amfModel = ParserWrapperAmf.create(apiRef, true).getAmfModel();
 
-    Assert.assertEquals(goldenAmfModel, amfModel);
+    assertEquals(goldenAmfModel, amfModel);
   }
 }

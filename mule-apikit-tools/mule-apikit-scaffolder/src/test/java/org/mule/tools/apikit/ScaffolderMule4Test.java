@@ -6,7 +6,6 @@ package org.mule.tools.apikit;
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
@@ -453,8 +452,8 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     File muleXmlSimple = simpleGeneration("parser/failing-api.raml", null, DEFAULT_MULE_VERSION, EE);
     assertFalse(muleXmlSimple.exists());
 
-    assertEquals(3, errors.size());
-    assertTrue(errors.stream().anyMatch(e -> e.contains("Unresolved reference 'SomeTypo' from root context")));
+    assertEquals(2, errors.size());
+    assertTrue(errors.stream().anyMatch(e -> e.contains("reference 'SomeTypo'")));
   }
 
   @Test
