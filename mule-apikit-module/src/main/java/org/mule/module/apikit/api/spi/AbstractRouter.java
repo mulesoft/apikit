@@ -4,11 +4,12 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.spi;
+package org.mule.module.apikit.api.spi;
 
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.event.CoreEvent;
+
 import org.reactivestreams.Publisher;
 
 public interface AbstractRouter {

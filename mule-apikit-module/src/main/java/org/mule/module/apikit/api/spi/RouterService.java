@@ -4,10 +4,11 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.module.apikit.spi;
+package org.mule.module.apikit.api.spi;
 
 import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.core.api.event.CoreEvent;
+
 import org.reactivestreams.Publisher;
 
 /**
@@ -16,13 +17,19 @@ import org.reactivestreams.Publisher;
 public interface RouterService {
 
   /**
+   * Initialise the extension
+   *
+   * @param ramlPath 	path to the raml.
+   * @return 			    a initialized with the given raml RouterService
+   */
+  RouterService initialise(String ramlPath) throws MuleException;
+
+  /**
    * Handles the request and returns a valid MuleEvent
    *
    * @param event		the requester event
    * @param router 		reference to the apikit router
-   * @param ramlPath 	path to the raml
    * @return 			a competable future with the response event
    */
-  Publisher<CoreEvent> process(CoreEvent event, AbstractRouter router, String ramlPath) throws MuleException;
-
+  Publisher<CoreEvent> process(CoreEvent event, AbstractRouter router) throws MuleException;
 }

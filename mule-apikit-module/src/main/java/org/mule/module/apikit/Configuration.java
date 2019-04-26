@@ -10,6 +10,7 @@ import static org.mule.module.apikit.ApikitErrorTypes.errorRepositoryFrom;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 
@@ -17,22 +18,25 @@ import javax.inject.Inject;
 import javax.xml.validation.Schema;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.config.ConsoleConfig;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.ApikitRuntimeException;
+import org.mule.module.apikit.api.spi.RouterService;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.api.validation.ApiKitJsonSchema;
-import org.mule.module.apikit.spi.RouterService;
 import org.mule.module.apikit.validation.body.schema.v1.cache.JsonSchemaCacheLoader;
 import org.mule.module.apikit.validation.body.schema.v1.cache.XmlSchemaCacheLoader;
 import org.mule.raml.interfaces.ParserType;
 import org.mule.runtime.api.component.location.ConfigurationComponentLocator;
+import org.mule.runtime.api.exception.MuleException;
 import org.mule.runtime.api.lifecycle.Initialisable;
 import org.mule.runtime.api.lifecycle.InitialisationException;
 import org.mule.runtime.core.api.MuleContext;
 import org.mule.runtime.core.api.el.ExpressionManager;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +46,14 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 public class Configuration implements Initialisable, ValidationConfig, ConsoleConfig {
+
+  private static final String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeaders";
+  private static final String DEFAULT_HTTP_STATUS_VAR_NAME = "httpStatus";
+  private static final int URI_CACHE_SIZE = 1000;
+
+  protected static final Logger logger = LoggerFactory.getLogger(Configuration.class);
+  protected LoadingCache<String, URIResolver> uriResolverCache;
+  protected LoadingCache<String, URIPattern> uriPatternCache;
 
   private boolean disableValidations;
   private ParserType parserType;
@@ -56,25 +68,15 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
   private String httpStatusVarName;
   private FlowMappings flowMappings = new FlowMappings();
 
-  private boolean isExtensionEnabled = false;
-
-
-  private final static String DEFAULT_OUTBOUND_HEADERS_MAP_NAME = "outboundHeaders";
-  private final static String DEFAULT_HTTP_STATUS_VAR_NAME = "httpStatus";
-
-  protected LoadingCache<String, URIResolver> uriResolverCache;
-  protected LoadingCache<String, URIPattern> uriPatternCache;
-
   private LoadingCache<String, JsonSchema> jsonSchemaCache;
   private LoadingCache<String, Schema> xmlSchemaCache;
 
-  private static final int URI_CACHE_SIZE = 1000;
-
-
-  protected static final Logger logger = LoggerFactory.getLogger(Configuration.class);
-
   private RamlHandler ramlHandler;
   private FlowFinder flowFinder;
+  private Optional<RouterService> routerService;
+
+  // DO NOT USE: does nothing just keeping it for Backwards compatibility, the routerService optional does the jobs for this.
+  private boolean extensionEnabled;
 
   @Inject // TODO delete this after getting resources from resource folder and the flows
   private MuleContext muleContext;
@@ -90,10 +92,18 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
 
   @Override
   public void initialise() throws InitialisationException {
-    isExtensionEnabled = hasExtension();
+    this.routerService = findExtension();
     try {
       ramlHandler = new RamlHandler(getApi(), isKeepApiBaseUri(),
                                     errorRepositoryFrom(muleContext), getParser());
+
+      this.routerService.ifPresent(rs -> {
+        try {
+          rs.initialise(ramlHandler.getApi().getUri());
+        } catch (MuleException e) {
+          throw new ApikitRuntimeException("Couldn't load enabled extension", e);
+        }
+      });
 
       // In case parser was originally set in AUTO, raml handler will decide if using AMF or RAML. In that case,
       // we will keep the value defined during raml handler instantiation
@@ -323,33 +333,15 @@ public class Configuration implements Initialisable, ValidationConfig, ConsoleCo
     return expressionManager;
   }
 
-  private boolean hasExtension() {
-    final Iterator<RouterService> iterator = getRouterServiceIterator();
-    if (iterator.hasNext())
-      return true;
-
-    return false;
+  private Optional<RouterService> findExtension() {
+    ClassLoader executionClassLoader = muleContext.getExecutionClassLoader();
+    ServiceLoader<RouterService> routerServices = ServiceLoader.load(RouterService.class, executionClassLoader);
+    Iterator<RouterService> iterator = routerServices.iterator();
+    return iterator.hasNext() ? Optional.of(iterator.next()) : Optional.empty();
   }
 
-  public RouterService getExtension() {
-    final Iterator<RouterService> iterator = getRouterServiceIterator();
-    if (iterator.hasNext())
-      return iterator.next();
-
-    throw new ApikitRuntimeException("Couldn't load extension");
+  public Optional<RouterService> getExtension() {
+    return this.routerService;
   }
 
-  private Iterator<RouterService> getRouterServiceIterator() {
-    final ClassLoader executionClassLoader = muleContext.getExecutionClassLoader();
-
-    final ServiceLoader<RouterService> routerServices =
-        ServiceLoader.load(RouterService.class, executionClassLoader);
-
-    return routerServices.iterator();
-  }
-
-
-  public boolean isExtensionEnabled() {
-    return isExtensionEnabled;
-  }
 }
