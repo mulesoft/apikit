@@ -29,6 +29,8 @@ import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.UrlUtils;
 import org.mule.module.apikit.api.config.ValidationConfig;
 import org.mule.module.apikit.api.exception.MuleRestException;
+import org.mule.module.apikit.api.spi.AbstractRouter;
+import org.mule.module.apikit.api.spi.RouterService;
 import org.mule.module.apikit.api.uri.ResolvedVariables;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
@@ -36,7 +38,6 @@ import org.mule.module.apikit.api.validation.RequestValidator;
 import org.mule.module.apikit.api.validation.ValidRequest;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.helpers.EventHelper;
-import org.mule.module.apikit.spi.AbstractRouter;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.runtime.api.component.AbstractComponent;
@@ -118,10 +119,12 @@ public class Router extends AbstractComponent implements Processor, Initialisabl
 
   private Publisher<CoreEvent> processWithExtension(CoreEvent event) {
     try {
-      if (configuration.isExtensionEnabled())
-        return configuration.getExtension().process(event, this, this.configuration.getApi());
-      else
+      Optional<RouterService> extension = configuration.getExtension();
+      if (extension.isPresent()) {
+        return extension.get().process(event, this);
+      } else {
         return processEvent(event);
+      }
     } catch (MuleRestException e) {
       return error(throwErrorType(e, errorRepositoryFrom(muleContext)));
     } catch (MuleException e) {

@@ -18,6 +18,7 @@
     "attributes":{
       "exportedPackages":[
         "org.mule.module.apikit.api",
+        "org.mule.module.apikit.api.spi",
         "org.mule.module.apikit.api.config",
         "org.mule.module.apikit.api.exception",
         "org.mule.module.apikit.api.uri",
