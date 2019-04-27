@@ -6,24 +6,24 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
-import static org.mule.apikit.common.FlowName.URL_RESOURCE_SEPARATOR;
 import static org.mule.module.apikit.ApikitErrorTypes.throwErrorType;
 import static org.mule.module.apikit.api.FlowUtils.getFlowsList;
 import static org.mule.module.apikit.helpers.AttributesHelper.getMediaType;
+import static org.mule.module.apikit.helpers.FlowName.FLOW_NAME_SEPARATOR;
+import static org.mule.module.apikit.helpers.FlowName.URL_RESOURCE_SEPARATOR;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mule.apikit.common.FlowName;
 import org.mule.module.apikit.api.RamlHandler;
 import org.mule.module.apikit.api.RoutingTable;
 import org.mule.module.apikit.api.uri.URIPattern;
 import org.mule.module.apikit.api.uri.URIResolver;
 import org.mule.module.apikit.exception.NotImplementedException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
+import org.mule.module.apikit.helpers.FlowName;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;

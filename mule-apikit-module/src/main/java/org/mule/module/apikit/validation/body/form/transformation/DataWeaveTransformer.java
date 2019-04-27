@@ -20,7 +20,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.runtime.api.metadata.MediaType.create;
 
 public class DataWeaveTransformer {
@@ -87,7 +86,8 @@ public class DataWeaveTransformer {
       script = "output application/java --- payload";
     }
 
-    final MultiMap<String, String> result = cast(runDataWeaveScript(script, multiMapDataType, payload).getValue());
+    MultiMap<String, String> result =
+        ((MultiMap<String, String>) runDataWeaveScript(script, multiMapDataType, payload).getValue());
 
     // Rewind input stream, if possible.
     // This rewind is needed to be able to consume the stream several times
@@ -107,6 +107,6 @@ public class DataWeaveTransformer {
 
   public List<String> getKeysFromPayload(TypedValue payload) throws InvalidFormParameterException {
     String script = "output application/java --- payload.parts pluck $$ as String";
-    return cast(runDataWeaveScript(script, null, payload).getValue());
+    return ((List<String>) runDataWeaveScript(script, null, payload).getValue());
   }
 }

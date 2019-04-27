@@ -181,12 +181,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.mule.tools</groupId>
-            <artifactId>mule-apikit-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
         <groupId>org.mule.runtime</groupId>
             <artifactId>mule-core</artifactId>
             <version>${mule.core.version}</version>

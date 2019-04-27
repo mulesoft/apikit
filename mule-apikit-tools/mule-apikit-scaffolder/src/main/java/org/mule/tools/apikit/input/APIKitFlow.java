@@ -9,7 +9,7 @@ package org.mule.tools.apikit.input;
 import java.util.Collection;
 import java.util.regex.Matcher;
 
-import org.mule.apikit.common.FlowName;
+import org.mule.module.apikit.helpers.FlowName;
 import org.mule.raml.interfaces.common.RamlUtils;
 
 public class APIKitFlow {

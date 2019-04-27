@@ -60,7 +60,6 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.mule.amf.impl.DocumentParser.getParserForApi;
-import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.raml.interfaces.common.RamlUtils.replaceBaseUri;
 
 public class ParserWrapperAmf implements ParserWrapper {
@@ -313,7 +312,7 @@ public class ParserWrapperAmf implements ParserWrapper {
   private Document getConsoleModel() {
     if (consoleModel == null) {
       Document document = buildDocument(false);
-      consoleModel = cast(new Raml10Resolver().resolve(document, "editing"));
+      consoleModel = (Document) new Raml10Resolver().resolve(document, "editing");
     }
 
     return consoleModel;

@@ -17,16 +17,17 @@ import java.util.List;
 import java.util.Optional;
 
 import static java.util.Optional.ofNullable;
-import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.module.apikit.MessageSourceUtils.getUriFromFlow;
+import static org.mule.runtime.api.component.ComponentIdentifier.builder;
 
 public class FlowUtils {
 
   private static final String FLOW_TAG_NAME = "flow";
   private static final String MULE_NAMESPACE = "mule";
+  private static final ComponentIdentifier FLOW_IDENTIFIER = builder().name(FLOW_TAG_NAME).namespace(MULE_NAMESPACE).build();
 
   public static List<Flow> getFlowsList(ConfigurationComponentLocator locator) {
-    return cast(locator.find(ComponentIdentifier.builder().name(FLOW_TAG_NAME).namespace(MULE_NAMESPACE).build()));
+    return ((List) locator.find(FLOW_IDENTIFIER));
   }
 
   public static Optional<Component> getSource(ConfigurationComponentLocator locator, String flowName) {
