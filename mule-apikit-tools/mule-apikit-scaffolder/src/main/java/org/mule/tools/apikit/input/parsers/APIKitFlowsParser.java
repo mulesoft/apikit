@@ -8,10 +8,10 @@ package org.mule.tools.apikit.input.parsers;
 
 import static org.mule.tools.apikit.output.MuleConfigGenerator.XMLNS_NAMESPACE;
 
+import org.mule.module.apikit.helpers.FlowName;
 import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
 import org.mule.tools.apikit.model.API;
-import org.mule.apikit.common.FlowName;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
 import java.util.HashSet;

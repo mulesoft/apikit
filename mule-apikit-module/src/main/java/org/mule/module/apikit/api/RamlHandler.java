@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.api;
 
-import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.module.apikit.ApikitErrorTypes.throwErrorType;
 import static org.mule.raml.interfaces.ParserType.AMF;
 import static org.mule.raml.interfaces.ParserType.RAML;
@@ -191,7 +190,7 @@ public class RamlHandler {
 
   public String getAMFModel() {
     if (parserWrapper instanceof ParserWrapperAmf) {
-      ParserWrapperAmf parserWrapperAmf = cast(parserWrapper);
+      ParserWrapperAmf parserWrapperAmf = ((ParserWrapperAmf) parserWrapper);
       if (!keepApiBaseUri) {
         String baseUriReplacement = getBaseUriReplacement(apiServer);
         parserWrapperAmf.updateBaseUri(api, baseUriReplacement);
@@ -237,7 +236,7 @@ public class RamlHandler {
   private String sanitarizeResourceRelativePath(String resourceRelativePath) {
     // delete first slash
     if (resourceRelativePath.startsWith("/") && resourceRelativePath.length() > 1) {
-      resourceRelativePath = resourceRelativePath.substring(1, resourceRelativePath.length());
+      resourceRelativePath = resourceRelativePath.substring(1);
     }
     // delete querystring
     if (resourceRelativePath.contains("?raml")) {

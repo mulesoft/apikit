@@ -6,7 +6,6 @@
  */
 package org.mule.module.apikit.api.validation;
 
-import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
 import static org.mule.module.apikit.helpers.PayloadHelper.getPayloadAsByteArray;
 import static org.mule.runtime.api.i18n.I18nMessageFactory.createStaticMessage;
@@ -87,7 +86,7 @@ public class RequestValidator {
 
       final String method = attributes.getMethod().toLowerCase();
       if (resource.getAction(method) == null) {
-        final String version = cast(resolvedVariables.get("version"));
+        final String version = resolvedVariables.get("version").toString();
         throw new MethodNotAllowedException(resource.getResolvedUri(version) + " : " + method);
       }
 

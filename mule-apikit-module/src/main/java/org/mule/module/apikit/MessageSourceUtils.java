@@ -17,8 +17,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import static com.sun.jmx.mbeanserver.Util.cast;
 import static org.apache.commons.lang3.StringUtils.prependIfMissing;
-import static org.mule.apikit.common.CommonUtils.cast;
 import static org.mule.runtime.api.component.ComponentIdentifier.buildFromStringRepresentation;
 
 public class MessageSourceUtils {
@@ -64,10 +64,9 @@ public class MessageSourceUtils {
     return identifier.equals(buildFromStringRepresentation("http:listener"));
   }
 
-  private static URI buildListenerUri(Map<String, Object> connectionParams, String path)
-      throws URISyntaxException {
-    String host = cast(connectionParams.get("host"));
-    Integer port = cast(connectionParams.get("port"));
+  private static URI buildListenerUri(Map<String, Object> connectionParams, String path) throws URISyntaxException {
+    String host = ((String) connectionParams.get("host"));
+    Integer port = ((Integer) connectionParams.get("port"));
     String scheme = connectionParams.get("protocol").toString().toLowerCase();
     return new URI(scheme, null, host, port, path, null, null);
   }

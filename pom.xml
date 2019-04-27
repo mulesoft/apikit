@@ -8,11 +8,10 @@
     <name>APIKit Parent POM</name>
 
     <modules>
-        <module>mule-apikit-common</module>
         <module>parser-wrapper</module>
-        <module>mule-apikit-module-spi</module>
         <module>mule-apikit-tools</module>
         <module>mule-apikit-module</module>
+        <module>mule-apikit-examples</module>
     </modules>
 
     <properties>

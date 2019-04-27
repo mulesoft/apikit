@@ -9,8 +9,8 @@ package org.mule.tools.apikit.output;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
-import org.mule.apikit.common.FlowName;
-import org.mule.module.apikit.helpers.AttributesHelper;
+
+import org.mule.module.apikit.helpers.FlowName;
 import org.mule.raml.interfaces.model.IAction;
 import org.mule.raml.interfaces.model.IResource;
 import org.mule.raml.interfaces.model.IResponse;
@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.stream.Collectors.toMap;
-import static org.mule.apikit.common.FlowName.FLOW_NAME_SEPARATOR;
 import static org.mule.module.apikit.helpers.AttributesHelper.getMediaType;
+import static org.mule.module.apikit.helpers.FlowName.FLOW_NAME_SEPARATOR;
 import static org.mule.runtime.api.metadata.MediaType.parse;
 
 public class GenerationModel implements Comparable<GenerationModel> {

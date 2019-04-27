@@ -4,7 +4,9 @@
  * license, a copy of which has been included with this distribution in the
  * LICENSE.txt file.
  */
-package org.mule.apikit.common;
+package org.mule.module.apikit.helpers;
+
+import static org.apache.commons.lang.StringUtils.isEmpty;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang.StringUtils;
@@ -33,16 +35,13 @@ public class FlowName {
   private static final Pattern PATTERN = Pattern.compile(APIKIT_FLOW_NAME_FORMAT);
 
   public static Matcher getMatcher(String flowName) {
-    if (StringUtils.isEmpty(flowName)) {
+    if (isEmpty(flowName)) {
       throw new IllegalArgumentException("Flow name cannot be null or empty");
     }
-
-    final Matcher flowNameMatcher = PATTERN.matcher(flowName);
-
+    Matcher flowNameMatcher = PATTERN.matcher(flowName);
     if (!flowNameMatcher.find()) {
       throw new IllegalArgumentException("Invalid apikit flow name, expected format is: action:resource[:config]");
     }
-
     return flowNameMatcher;
   }
 
@@ -78,10 +77,6 @@ public class FlowName {
     return flowNameMatcher.group(2);
   }
 
-  public static Optional<String> getMimeType(String flowName, Collection<String> existingConfigs) {
-    return getMimeType(getMatcher(flowName), existingConfigs);
-  }
-
   public static Optional<String> getMimeType(Matcher flowNameMatcher, Collection<String> existingConfigs) {
     if (flowNameMatcher.group(4) != null) {
       if (flowNameMatcher.group(6) == null) {
@@ -94,10 +89,6 @@ public class FlowName {
     }
 
     return Optional.empty();
-  }
-
-  public static Optional<String> getConfig(String flowName, Collection<String> existingConfigs) {
-    return getConfig(getMatcher(flowName), existingConfigs);
   }
 
   public static Optional<String> getConfig(Matcher flowNameMatcher, Collection<String> existingConfigs) {
