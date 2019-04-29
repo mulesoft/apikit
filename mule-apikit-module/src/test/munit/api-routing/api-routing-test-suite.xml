@@ -20,7 +20,7 @@
     <munit:execution>
       <http:request method="PUT" config-ref="http-request-config-localhost-8081" path="/api/apply-with-charset">
         <http:body >#[output application/json ---{"effectiveDate": "2006-03-03"}]</http:body>
-        <http:headers >#[output application/java --- { "Content-Type" : "application/json; charset=utf-8"}]</http:headers>
+        <http:headers>#[output application/java --- { "Content-Type" : "application/json; charset=utf-8", "accept" : "application/json; charset=utf-8" }]</http:headers>
       </http:request>
     </munit:execution>
     <munit:validation>

@@ -144,13 +144,6 @@ public class HeadersValidator {
       throw new NotAcceptableException();
     }
     logger.debug("=== negotiated response content-type: " + bestMatch.toString());
-    for (String representation : mimeTypes) {
-      if (representation.equals(bestMatch.withoutParameters().toString())) {
-        //there is a valid representation
-        return;
-      }
-    }
-    throw new NotAcceptableException();
   }
 
   private List<String> getResponseMimeTypes(IAction action) {
