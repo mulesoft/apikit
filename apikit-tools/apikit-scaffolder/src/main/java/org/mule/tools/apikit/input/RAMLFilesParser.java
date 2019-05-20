@@ -142,7 +142,7 @@ public class RAMLFilesParser
         return new CompositeResourceLoader(new RootRamlFileResourceLoader(new File(filePath)), new ExchangeDependencyResourceLoader(filePath), new DefaultResourceLoader());
     }
 
-    void collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version)
+    void  collectResources(File filename, Map<String, IResource> resourceMap, String baseUri, String version)
     {
         for (IResource resource : resourceMap.values())
         {
