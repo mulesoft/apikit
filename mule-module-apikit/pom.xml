@@ -15,7 +15,7 @@
     <properties>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
         <rest.assured.version>1.7.2</rest.assured.version>
-        <guava.version>18.0</guava.version>
+        <guava.version>26.0-android</guava.version>
         <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
 
         <sonar.jacoco.reportPaths>../target/jacoco.exec</sonar.jacoco.reportPaths>
