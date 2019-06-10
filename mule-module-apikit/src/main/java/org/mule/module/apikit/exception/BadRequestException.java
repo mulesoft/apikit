@@ -11,7 +11,7 @@ public class BadRequestException extends MuleRestException
 
     public BadRequestException(String message)
     {
-        super(message);
+        super(message.replaceAll("\"(.*?)\"", "[$1]"));
     }
 
     public BadRequestException(Throwable e)
