@@ -55,6 +55,7 @@ public class ConsoleHandler implements MessageProcessor
     private static final String CONSOLE_ATTRIBUTES_PLACEHOLDER = "console-attributes-placeholder";
     private static final String DEFAULT_API_RESOURCES_PATH = "api/";
     private static final String RAML_QUERY_STRING = "raml";
+    private static final String EXCHANGE_MODULES = "exchange_modules";
 
     private String cachedIndexHtml;
     private String embeddedConsolePath;
@@ -211,7 +212,11 @@ public class ConsoleHandler implements MessageProcessor
                     }
                     else
                     {
-                        final String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
+                        String trimResourcesPath = path.substring(apiResourcesFullPath.length());
+                        String resultRelativePath = trimResourcesPath.contains(EXCHANGE_MODULES) ?
+                          trimResourcesPath.substring(trimResourcesPath.lastIndexOf(EXCHANGE_MODULES)) :
+                          trimResourcesPath;
+                        final String resourcePath = "/" + apiResourcesRelativePath + resultRelativePath;
                         File apiResource = new File(configuration.getAppHome(), resourcePath);
 
                         if (apiResource.exists()) {
