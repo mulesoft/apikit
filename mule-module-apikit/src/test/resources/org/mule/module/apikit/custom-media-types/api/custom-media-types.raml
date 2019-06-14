@@ -1,0 +1,18 @@
+#%RAML 1.0
+title: custom-media-types
+
+/customers:
+
+  post:    
+    description: >
+      This endpoint is used to register a new companion customer to the obi shop.
+    body:
+      'application/custom-type+json;version=1':
+        type: !include types/request-customer.raml
+      'application/custom-type+json;version=2':
+        type: !include types/request-customer.raml
+
+    responses:
+      202:
+        description: Accepted
+        

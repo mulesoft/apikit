@@ -1,0 +1,20 @@
+#%RAML 1.0 DataType
+description: default customer object containing all nessecary information for the obi.de platform
+properties:
+  email:
+    type: string
+    maxLength: 320 
+  password:
+    type: string
+    minLength: 8
+  firstName:
+    type: string
+    maxLength: 50
+  lastName:
+    type: string
+    maxLength: 50
+  gender:
+    type: string
+    enum:
+      - male
+      - female 
