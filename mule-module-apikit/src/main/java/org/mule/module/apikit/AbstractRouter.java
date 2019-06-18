@@ -26,6 +26,7 @@ import org.mule.module.apikit.exception.ApikitRuntimeException;
 import org.mule.module.apikit.exception.InvalidUriParameterException;
 import org.mule.module.apikit.exception.MethodNotAllowedException;
 import org.mule.module.apikit.exception.MuleRestException;
+import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.ResolvedVariables;
 import org.mule.module.apikit.uri.URIPattern;
@@ -294,7 +295,7 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
         }
     }
 
-    protected abstract Flow getFlow(IResource resource, HttpRestRequest request, String version) throws UnsupportedMediaTypeException;
+    protected abstract Flow getFlow(IResource resource, HttpRestRequest request, String version) throws UnsupportedMediaTypeException, NotFoundException;
 
     private static class RouterRequest
     {

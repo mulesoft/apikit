@@ -108,6 +108,10 @@ public class HttpRestRequest
         return adapter.getRequestMediaType();
     }
 
+    public String getContentTypeWithAttributes()
+    {
+        return adapter.getRequestMediaTypeWithAttributes();
+    }
     /**
      * Validates the request against the RAML and negotiates the response representation.
      * The resulting event is only updated when default values are applied.
@@ -433,7 +437,7 @@ public class HttpRestRequest
         boolean found = false;
         if (adapter.getRequestMediaType() != null)
         {
-            requestMimeTypeName = adapter.getRequestMediaType();
+            requestMimeTypeName = adapter.getRequestMediaTypeWithAttributes();
         }
         for (String mimeTypeName : action.getBody().keySet())
         {
@@ -442,7 +446,7 @@ public class HttpRestRequest
                 logger.debug(String.format("comparing request media type %s with expected %s\n",
                                            requestMimeTypeName, mimeTypeName));
             }
-            if (mimeTypeName.equalsIgnoreCase(requestMimeTypeName))
+            if (requestMimeTypeName.contains(mimeTypeName))
             {
                 found = true;
                 if (!config.isDisableValidations())

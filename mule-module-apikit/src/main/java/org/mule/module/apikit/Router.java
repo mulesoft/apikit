@@ -12,13 +12,16 @@ import org.mule.api.lifecycle.StartException;
 import org.mule.api.registry.RegistrationException;
 import org.mule.config.i18n.MessageFactory;
 import org.mule.construct.Flow;
+import org.mule.module.apikit.config.ApikitResourcePathHandler;
+import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.raml.interfaces.model.IResource;
-
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Router extends AbstractRouter
 {
@@ -77,33 +80,41 @@ public class Router extends AbstractRouter
      * if there is no match it retries using method and resource only.
      */
     @Override
-    protected Flow getFlow(IResource resource, HttpRestRequest request, String version) throws UnsupportedMediaTypeException
+    protected Flow getFlow(IResource resource, HttpRestRequest request, String version) throws UnsupportedMediaTypeException, NotFoundException
     {
         String baseKey = request.getMethod() + ":" + resource.getResolvedUri(version);
-        String contentType = request.getContentType();
+        String contentType = request.getContentTypeWithAttributes();
         Map<String, Flow> rawRestFlowMap = ((Configuration) config).getRawRestFlowMap();
-        Flow flow = rawRestFlowMap.get(baseKey + ":" + contentType);
-        if (flow == null)
-        {
-            flow = rawRestFlowMap.get(baseKey);
-            if (flow == null && isFlowDeclaredWithDifferentMediaType(rawRestFlowMap, baseKey))
-            {
-                throw new UnsupportedMediaTypeException();
-            }
-        }
+        Flow flow = findFlow(rawRestFlowMap,baseKey , contentType);
         return flow;
     }
 
-    protected boolean isFlowDeclaredWithDifferentMediaType(Map<String, Flow> map, String baseKey)
-    {
-        for (String flowName : map.keySet())
-        {
-            String [] split = flowName.split(":");
-            String methodAndResoruce = split[0] + ":" + split[1];
-            if (methodAndResoruce.equals(baseKey))
-                return true;
+    private static Flow findFlow( Map<String, Flow> flowMap, String baseKey, String contentType) throws NotFoundException, UnsupportedMediaTypeException {
+        Set<String> flows = flowMap.keySet();
+        Set<ApikitResourcePathHandler> paths = flows.stream().map(ApikitResourcePathHandler::parse).collect(Collectors.toSet());
+        ApikitResourcePathHandler requestPath = getRequestPath(baseKey,contentType);
+
+        for(ApikitResourcePathHandler path : paths){
+            if(path.equals(requestPath)){
+                return flowMap.get(path.getCompletePath());
+            }
         }
-        return false;
+
+        paths = paths.stream().filter((path)-> path.getPathToResource().equals(baseKey)).collect(Collectors.toSet());
+        switch (paths.size()){
+            case 0 : throw new NotFoundException(baseKey);
+            case 1 : return flowMap.get(paths.iterator().next().getCompletePath());
+            default: throw new UnsupportedMediaTypeException();
+        }
+    }
+
+    private static ApikitResourcePathHandler getRequestPath(String baseKey, String contentType) {
+        if(contentType != null){
+            String contentTypeWithoutCharset = contentType.replaceAll("(;\\s*charset\\s*=.[^\\;]+)","");
+            return new ApikitResourcePathHandler(baseKey,contentTypeWithoutCharset);
+        }
+
+        return new ApikitResourcePathHandler(baseKey);
     }
 
     @Override
