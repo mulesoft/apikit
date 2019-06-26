@@ -22,8 +22,8 @@
         <cors.module.version>2.1.4</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <raml.parser.v1.version>0.8.29</raml.parser.v1.version>
-        <raml.parser.v2.version>1.0.35</raml.parser.v2.version>
+        <raml.parser.v1.version>0.8.31</raml.parser.v1.version>
+        <raml.parser.v2.version>1.0.38</raml.parser.v2.version>
     </properties>
 
     <dependencyManagement>
