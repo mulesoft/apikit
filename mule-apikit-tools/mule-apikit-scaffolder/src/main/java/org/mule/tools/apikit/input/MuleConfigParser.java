@@ -6,6 +6,16 @@
  */
 package org.mule.tools.apikit.input;
 
+import java.io.File;
+import java.io.InputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
 import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
@@ -17,18 +27,7 @@ import org.mule.tools.apikit.input.parsers.HttpListener4xConfigParser;
 import org.mule.tools.apikit.model.API;
 import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
-import org.mule.tools.apikit.model.HttpListener4xConfig;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.Map.Entry;
 
 public class MuleConfigParser {
 
@@ -43,13 +42,13 @@ public class MuleConfigParser {
     this.log = log;
   }
 
-  public MuleConfigParser parse(Set<String> apiFilePaths, Map<File, InputStream> streams) {
+  public MuleConfigParser parse(List<String> apiFilePaths, Map<File, InputStream> streams) {
     Map<File, Document> configurations = createDocuments(streams);
 
     for (Entry<File, Document> fileStreamEntry : configurations.entrySet()) {
       Document document = fileStreamEntry.getValue();
       File file = fileStreamEntry.getKey();
-      parseConfigs(file, document, apiFilePaths);
+      parseConfigs(file, document);
     }
 
     for (Entry<File, Document> fileStreamEntry : configurations.entrySet()) {
@@ -67,10 +66,8 @@ public class MuleConfigParser {
 
     SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
     for (Entry<File, InputStream> fileStreamEntry : streams.entrySet()) {
-      InputStream stream = fileStreamEntry.getValue();
-      try {
+      try (InputStream stream = fileStreamEntry.getValue()) {
         Document document = saxBuilder.build(stream);
-        stream.close();
         result.put(fileStreamEntry.getKey(), document);
       } catch (Exception e) {
         log.error("Error parsing Mule xml config file: [" + fileStreamEntry.getKey() + "]. Reason: " + e.getMessage());
@@ -80,12 +77,12 @@ public class MuleConfigParser {
     return result;
   }
 
-  protected void parseConfigs(File file, Document document, Set<String> apiFilePaths) {
+  protected void parseConfigs(File file, Document document) {
     apikitConfigs.putAll(new APIKitConfigParser().parse(document));
     apiFactory.getHttpListenerConfigs().putAll(new HttpListener4xConfigParser().parse(document));
   }
 
-  protected void parseApis(File file, Document document, Set<String> apiFilePaths) {
+  protected void parseApis(File file, Document document, List<String> apiFilePaths) {
     includedApis
         .putAll(new APIKitRoutersParser(apikitConfigs, apiFactory.getHttpListenerConfigs(), apiFilePaths, file, apiFactory)
             .parse(document));

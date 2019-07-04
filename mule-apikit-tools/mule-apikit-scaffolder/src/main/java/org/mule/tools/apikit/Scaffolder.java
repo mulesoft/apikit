@@ -6,8 +6,26 @@
  */
 package org.mule.tools.apikit;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static java.util.Collections.emptyList;
+import static org.mule.tools.apikit.model.RuntimeEdition.CE;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.mule.tools.apikit.input.MuleConfigParser;
 import org.mule.tools.apikit.input.MuleDomainParser;
 import org.mule.tools.apikit.input.RAMLFilesParser;
@@ -21,24 +39,9 @@ import org.mule.tools.apikit.output.GenerationStrategy;
 import org.mule.tools.apikit.output.MuleArtifactJsonGenerator;
 import org.mule.tools.apikit.output.MuleConfigGenerator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
-import static com.google.common.collect.Lists.newArrayList;
-import static java.util.Collections.emptyList;
-import static org.mule.tools.apikit.model.RuntimeEdition.CE;
-
 public class Scaffolder {
 
+  public static final String MULE_DOMAIN_CONFIG_FILE_NAME = "mule-domain-config.xml";
   public final static String DEFAULT_MULE_VERSION = "4.0.0";
   public final static RuntimeEdition DEFAULT_RUNTIME_EDITION = CE;
 
@@ -76,7 +79,6 @@ public class Scaffolder {
                                             RuntimeEdition runtimeEdition, List<String> ramlsWithExtensionEnabledPaths)
       throws IOException {
     FileListUtils fileUtils = new FileListUtils(log);
-    Map<File, InputStream> apiStreams = fileUtils.toStreamsOrFail(specPaths);
     Map<File, InputStream> muleStreams = fileUtils.toStreamsOrFail(muleXmlPaths);
     Set<File> ramlWithExtensionEnabled = new TreeSet<>();
 
@@ -84,16 +86,16 @@ public class Scaffolder {
       log.warn("ExtensionEnabled is deprecated in mule 4");
 
     InputStream domainStream = getDomainStream(log, domainPath);
-    return new Scaffolder(log, muleXmlOutputDirectory, apiStreams, muleStreams, domainStream, ramlWithExtensionEnabled,
+    return new Scaffolder(log, muleXmlOutputDirectory, specPaths, muleStreams, domainStream, ramlWithExtensionEnabled,
                           minMuleVersion, runtimeEdition);
   }
 
-  public Scaffolder(Log log, File muleXmlOutputDirectory, Map<File, InputStream> apis, Map<File, InputStream> xmls,
+  public Scaffolder(Log log, File muleXmlOutputDirectory, List<String> apis, Map<File, InputStream> xmls,
                     InputStream domainStream, Set<File> ramlsWithExtensionEnabled, String minMuleVersion,
                     RuntimeEdition runtimeEdition) {
     MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
     APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
-    MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(getFilePathSet(apis.keySet()), xmls);
+    MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(apis, xmls);
     RAMLFilesParser filesParser = RAMLFilesParser.create(log, apis, apiFactory);
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(filesParser, muleConfigParser);
 
@@ -120,22 +122,12 @@ public class Scaffolder {
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
   }
 
-  private Set<String> getFilePathSet(Set<File> fileSet) {
-    Set<String> fileNamesSet = new HashSet<>();
-
-    for (File file : fileSet) {
-      fileNamesSet.add(file.getAbsolutePath());
-    }
-
-    return fileNamesSet;
-  }
-
-  public Scaffolder(Log log, File muleXmlOutputDirectory, Map<String, InputStream> apis,
+  public Scaffolder(Log log, File muleXmlOutputDirectory, List<String> apis,
                     ScaffolderResourceLoader scaffolderResourceLoader, Map<File, InputStream> xmls, InputStream domainStream,
                     String minMuleVersion, RuntimeEdition runtimeEdition) {
     MuleDomainParser muleDomainParser = new MuleDomainParser(log, domainStream);
     APIFactory apiFactory = new APIFactory(muleDomainParser.getHttpListenerConfigs());
-    MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(apis.keySet(), xmls);
+    MuleConfigParser muleConfigParser = new MuleConfigParser(log, apiFactory).parse(apis, xmls);
     RAMLFilesParser filesParser = RAMLFilesParser.create(log, apis, apiFactory, scaffolderResourceLoader);
     List<GenerationModel> generationModels = new GenerationStrategy(log).generate(filesParser, muleConfigParser);
 
@@ -160,13 +152,22 @@ public class Scaffolder {
         new MuleArtifactJsonGenerator(log, getProjectBaseDirectory(muleXmlOutputDirectory), minMuleVersion);
   }
 
-  private static InputStream getDomainStream(Log log, String domainPath) {
+  private static InputStream getDomainStream(Log log, String domainFile) {
     InputStream domainStream = null;
-    if (domainPath != null) {
+    if (domainFile != null) {
       File domain = null;
+      domain = new File(domainFile);
       try {
-        domain = new File(domainPath);
-        domainStream = new FileInputStream(domain);
+        if (isArtifactDomainFile(domainFile)) {
+          try (URLClassLoader cl = new URLClassLoader(new URL[] {domain.toURI().toURL()},
+                                                      Scaffolder.class.getClassLoader())) {
+            domainStream = cloneInputStream(cl.getResourceAsStream(MULE_DOMAIN_CONFIG_FILE_NAME));
+          } catch (IOException e) {
+            log.error("There was an error reading the external domain configuration file.", new RuntimeException(e));
+          }
+        } else {
+          domainStream = new FileInputStream(domain);
+        }
       } catch (FileNotFoundException e) {
         if (log != null) {
           log.error("Error opening file [" + domain + "] file", e);
@@ -178,7 +179,21 @@ public class Scaffolder {
     return domainStream;
   }
 
-  public static Scaffolder createScaffolder(SystemStreamLog log, File appDir, Map<String, InputStream> apiSpecs,
+  private static InputStream cloneInputStream(InputStream toClone) throws IOException {
+    ByteArrayOutputStream middleMan = new ByteArrayOutputStream();
+    byte[] buffer = new byte[1024];
+    int len;
+    while ((len = toClone.read(buffer)) > -1) {
+      middleMan.write(buffer, 0, len);
+    }
+    return new ByteArrayInputStream(middleMan.toByteArray());
+  }
+
+  private static boolean isArtifactDomainFile(String domainFile) {
+    return domainFile.endsWith(".jar");
+  }
+
+  public static Scaffolder createScaffolder(Log log, File appDir, List<String> apiSpecs,
                                             ScaffolderResourceLoader scaffolderResourceLoader, List<String> muleXmlFiles,
                                             String domain, String minMuleVersion, RuntimeEdition runtimeEdition)
       throws IOException {
@@ -195,7 +210,7 @@ public class Scaffolder {
     return scaffolderReport;
   }
 
-  //TODO This is only a hack to get project base directory. Project Base Dir should be informed by api parameter
+  // TODO This is only a hack to get project base directory. Project Base Dir should be informed by api parameter
   private File getProjectBaseDirectory(File muleXmlOutputDirectory) {
     final Path outputDirectory = muleXmlOutputDirectory.toPath();
 

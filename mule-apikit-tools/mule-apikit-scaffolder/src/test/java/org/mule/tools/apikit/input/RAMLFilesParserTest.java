@@ -6,6 +6,18 @@
  */
 package org.mule.tools.apikit.input;
 
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.maven.plugin.logging.Log;
@@ -17,20 +29,6 @@ import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.output.GenerationModel;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-
 public class RAMLFilesParserTest {
 
   @Test
@@ -41,9 +39,9 @@ public class RAMLFilesParserTest {
 
     assertNotNull(resourceUrl);
 
-    final Map<File, InputStream> streams = urlToMapStream(resourceUrl);
+    final List<String> list = urlToList(resourceUrl);
 
-    RAMLFilesParser ramlFilesParser = RAMLFilesParser.create(mockLog(), streams, new APIFactory());
+    RAMLFilesParser ramlFilesParser = RAMLFilesParser.create(mockLog(), list, new APIFactory());
 
     Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
     assertNotNull(entries);
@@ -86,17 +84,9 @@ public class RAMLFilesParserTest {
 
     assertNotNull(resourceUrl);
 
-    InputStream resourceAsStream;
-    try {
-      resourceAsStream = resourceUrl.openStream();
-    } catch (IOException e) {
-      resourceAsStream = null;
-    }
+    final List<String> list = urlToList(resourceUrl);
 
-    final HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
-    streams.put(new File(resourceUrl.getFile()), resourceAsStream);
-
-    RAMLFilesParser ramlFilesParser = RAMLFilesParser.create(mockLog(), streams, new APIFactory());
+    RAMLFilesParser ramlFilesParser = RAMLFilesParser.create(mockLog(), list, new APIFactory());
 
     Map<ResourceActionMimeTypeTriplet, GenerationModel> entries = ramlFilesParser.getEntries();
     assertNotNull(entries);
@@ -113,7 +103,7 @@ public class RAMLFilesParserTest {
 
     System.out.println("RAMLFilesParserTest.oasCreation " + url);
 
-    final Map<File, InputStream> streams = urlToMapStream(url);
+    final List<String> streams = urlToList(url);
 
     RAMLFilesParser ramlFilesParser = RAMLFilesParser.create(mockLog(), streams, new APIFactory());
 
@@ -153,18 +143,10 @@ public class RAMLFilesParserTest {
   }
 
 
-  private static Map<File, InputStream> urlToMapStream(final URL url) {
-    InputStream resourceAsStream;
-    try {
-      resourceAsStream = url.openStream();
-    } catch (IOException e) {
-      resourceAsStream = null;
-    }
-
-    final Map<File, InputStream> map = new HashMap<File, InputStream>();
-    map.put(new File(url.getFile()), resourceAsStream);
-
-    return map;
+  private static List<String> urlToList(final URL url) {
+    final List<String> list = new ArrayList<>();
+    list.add(url.getFile());
+    return list;
   }
 
 

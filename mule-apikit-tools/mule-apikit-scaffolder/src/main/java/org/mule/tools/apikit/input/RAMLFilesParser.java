@@ -6,6 +6,14 @@
  */
 package org.mule.tools.apikit.input;
 
+import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.plugin.logging.Log;
 import org.mule.parser.service.ParserService;
 import org.mule.parser.service.logger.Logger;
@@ -22,16 +30,6 @@ import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 import org.mule.tools.apikit.output.GenerationModel;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static java.lang.String.format;
-import static java.util.stream.Collectors.toList;
 
 public class RAMLFilesParser {
 
@@ -96,18 +94,18 @@ public class RAMLFilesParser {
     }
   }
 
-  public static RAMLFilesParser create(Log log, Map<File, InputStream> fileStreams, APIFactory apiFactory) {
-    final List<ApiRef> specs = fileStreams.entrySet().stream()
-        .map(e -> ApiRef.create(e.getKey().getAbsolutePath()))
+  public static RAMLFilesParser create(Log log, List<String> apis, APIFactory apiFactory) {
+    final List<ApiRef> specs = apis.stream()
+        .map(e -> ApiRef.create(e))
         .collect(toList());
 
     return new RAMLFilesParser(log, specs, apiFactory, null);
   }
 
-  public static RAMLFilesParser create(Log log, Map<String, InputStream> apis, APIFactory apiFactory,
+  public static RAMLFilesParser create(Log log, List<String> apis, APIFactory apiFactory,
                                        ScaffolderResourceLoader scaffolderResourceLoader) {
-    final List<ApiRef> specs = apis.entrySet().stream()
-        .map(e -> ApiRef.create(e.getKey()))
+    final List<ApiRef> specs = apis.stream()
+        .map(e -> ApiRef.create(e))
         .collect(toList());
 
     return new RAMLFilesParser(log, specs, apiFactory, scaffolderResourceLoader);

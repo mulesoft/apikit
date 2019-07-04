@@ -6,6 +6,13 @@
  */
 package org.mule.tools.apikit;
 
+import static java.util.Collections.EMPTY_MAP;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,28 +21,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.stubbing.Stubber;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.RuntimeEdition;
-
-import static java.util.Collections.EMPTY_MAP;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
 public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTestCase {
 
@@ -71,12 +72,19 @@ public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTest
     return tmpFile;
   }
 
+  protected List<String> getRamlList(List<File> ramls) {
+    List<String> ramlList = new ArrayList<>();
+    for (File raml : ramls) {
+      ramlList.add(raml.getAbsolutePath());
+    }
+    return ramlList;
+  }
 
-  protected final Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {
-    if (ramls == null) {
+  protected final Map<File, InputStream> getFileInputStreamMap(List<File> files) {
+    if (files == null) {
       return EMPTY_MAP;
     }
-    return fileListUtils.toStreamFromFiles(ramls);
+    return fileListUtils.toStreamFromFiles(files);
   }
 
   protected File createTmpMuleXmlOutFolder() throws IOException {
@@ -112,20 +120,20 @@ public abstract class AbstractScaffolderTestCase extends AbstractMultiParserTest
                                         Set<File> ramlsWithExtensionEnabled, String muleVersion, RuntimeEdition runtimeEdition)
       throws FileNotFoundException {
 
-    Map<File, InputStream> ramlMap = null;
+    List<String> ramlList = null;
     if (ramls != null) {
-      ramlMap = getFileInputStreamMap(ramls);
+      ramlList = getRamlList(ramls);
     }
     Map<File, InputStream> xmlMap = getFileInputStreamMap(xmls);
     InputStream domainStream = null;
     if (domainFile != null) {
       domainStream = new FileInputStream(domainFile);
     }
-    return new Scaffolder(getLogger(), muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion,
+    return new Scaffolder(getLogger(), muleXmlOut, ramlList, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion,
                           runtimeEdition);
   }
 
-  private Log getLogger() {
+  protected Log getLogger() {
     if (logger == null) {
       logger = mock(Log.class);
       getStubber("[INFO] ").when(logger).info(anyString());

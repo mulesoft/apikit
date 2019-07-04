@@ -37,9 +37,11 @@ public class MuleDomainParser {
   }
 
   private void parseMuleDomainFile(InputStream stream) throws JDOMException, IOException {
-    SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
-    Document document = saxBuilder.build(stream);
-    httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
+    try (InputStream domainStream = stream) {
+      SAXBuilder saxBuilder = new SAXBuilder(XMLReaders.NONVALIDATING);
+      Document document = saxBuilder.build(domainStream);
+      httpListenerConfigs.putAll(new HttpListener4xConfigParser().parse(document));
+    }
   }
 
   public Map<String, HttpListener4xConfig> getHttpListenerConfigs() {

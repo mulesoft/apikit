@@ -6,30 +6,27 @@
  */
 package org.mule.tools.apikit;
 
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.mule.tools.apikit.model.RuntimeEdition;
-import org.mule.tools.apikit.model.ScaffolderReport;
+import static java.lang.String.format;
+import static org.mule.raml.interfaces.common.APISyncUtils.EXCHANGE_JSON;
+import static org.mule.raml.interfaces.common.APISyncUtils.RESOURCE_FORMAT;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.mule.raml.interfaces.common.APISyncUtils;
+import org.mule.tools.apikit.model.RuntimeEdition;
+import org.mule.tools.apikit.model.ScaffolderReport;
 import org.mule.tools.apikit.model.ScaffolderResourceLoader;
-
-import static java.lang.String.format;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
-
-import static org.mule.raml.interfaces.common.APISyncUtils.EXCHANGE_JSON;
-import static org.mule.raml.interfaces.common.APISyncUtils.RESOURCE_FORMAT;
 
 public class ScaffolderAPI {
 
@@ -41,8 +38,8 @@ public class ScaffolderAPI {
   }
 
   /**
-   * Modifies or creates the Mule config files which are contained in the appDir directory
-   * by running the scaffolder on the ramlFiles passed as parameter.
+   * Modifies or creates the Mule config files which are contained in the appDir directory by running the scaffolder on the
+   * ramlFiles passed as parameter.
    *
    * @param ramlFiles the ramlFiles to which the scaffolder will be run on
    * @param appDir the directory which contained the generated Mule config files
@@ -53,16 +50,15 @@ public class ScaffolderAPI {
   }
 
   /**
-   * Modifies or creates the Mule config files which are contained in the appDir directory
-   * by running the scaffolder on the ramlFiles passed as parameter.
-   * Looks for an extension point and executes it, relying on the execute method otherwise.
+   * Modifies or creates the Mule config files which are contained in the appDir directory by running the scaffolder on the
+   * ramlFiles passed as parameter. Looks for an extension point and executes it, relying on the execute method otherwise.
    *
    * @param ramlFiles the ramlFiles to which the scaffolder will be run on
    * @param appDir the directory which contained the generated Mule config files
-   * @param domainDir the directory which contained the domain used by the mule config files
+   * @param domain the directory which contained the domain used by the mule config files or the artifact file that holds it
    */
-  public ScaffolderReport run(List<File> ramlFiles, File appDir, File domainDir) {
-    return run(ramlFiles, appDir, domainDir, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
+  public ScaffolderReport run(List<File> ramlFiles, File appDir, File domain) {
+    return run(ramlFiles, appDir, domain, DEFAULT_MULE_VERSION, DEFAULT_RUNTIME_EDITION);
   }
 
   /**
@@ -70,18 +66,18 @@ public class ScaffolderAPI {
    *
    * @param ramlFiles the ramlFiles to which the scaffolder will be run on
    * @param appDir the directory which contained the generated Mule config files
-   * @param domainDir the directory which contained the domain used by the mule config files
+   * @param domain the directory which contained the domain used by the mule config files or the artifact file that holds it
    * @param minMuleVersion currently unused, will be useful in future improvements
    * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
    */
-  public ScaffolderReport run(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion,
+  public ScaffolderReport run(List<File> ramlFiles, File appDir, File domain, String minMuleVersion,
                               RuntimeEdition runtimeEdition) {
-    return execute(ramlFiles, appDir, domainDir, minMuleVersion, runtimeEdition);
+    return execute(ramlFiles, appDir, domain, minMuleVersion, runtimeEdition);
   }
 
   /**
-   * Modifies or creates the Mule config files which are contained in the appDir directory
-   * by running the scaffolder on the ramlFiles contained at gavs passed as parameter.
+   * Modifies or creates the Mule config files which are contained in the appDir directory by running the scaffolder on the
+   * ramlFiles contained at gavs passed as parameter.
    *
    * @param dependencyList the dependencies that contains the raml files to which the scaffolder will be run on
    * @param scaffolderResourceLoader a resource to load the raml files from the gav list
@@ -89,29 +85,20 @@ public class ScaffolderAPI {
    * @param runtimeEdition the Mule Runtime Edition, this will be used to decide if generate CE or EE code
    */
   public ScaffolderReport run(List<Dependency> dependencyList, ScaffolderResourceLoader scaffolderResourceLoader, File appDir,
-                              File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
-    return execute(dependencyList, scaffolderResourceLoader, appDir, domainDir, minMuleVersion, runtimeEdition);
+                              File domain, String minMuleVersion, RuntimeEdition runtimeEdition) {
+    return execute(dependencyList, scaffolderResourceLoader, appDir, domain, minMuleVersion, runtimeEdition);
   }
 
   private ScaffolderReport execute(List<Dependency> dependencyList, ScaffolderResourceLoader scaffolderResourceLoader,
                                    File appDir,
-                                   File domainDir, String minMuleVersion, RuntimeEdition runtimeEdition) {
+                                   File domain, String minMuleVersion, RuntimeEdition runtimeEdition) {
     Scaffolder scaffolder;
     try {
-      Map<String, InputStream> apiSpecs = getApiSpecs(dependencyList, scaffolderResourceLoader);
+      List<String> apiSpecs = getApiSpecs(dependencyList, scaffolderResourceLoader);
       List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
       SystemStreamLog log = new SystemStreamLog();
-      String domain = null;
-      if (domainDir != null) {
-        List<String> domainFiles = retrieveFilePaths(domainDir, appExtensions);
-        if (domainFiles.size() > 0) {
-          domain = domainFiles.get(0);
-          if (domainFiles.size() > 1) {
-            log.info("There is more than one domain file inside of the domain folder. The domain: " + domain + " will be used.");
-          }
-        }
-      }
-      scaffolder = Scaffolder.createScaffolder(log, appDir, apiSpecs, scaffolderResourceLoader, muleXmlFiles, domain,
+      String domainAsString = getDomainAsString(domain, log);
+      scaffolder = Scaffolder.createScaffolder(log, appDir, apiSpecs, scaffolderResourceLoader, muleXmlFiles, domainAsString,
                                                minMuleVersion, runtimeEdition);
     } catch (Exception e) {
       throw new RuntimeException("Error executing scaffolder", e);
@@ -121,49 +108,59 @@ public class ScaffolderAPI {
   }
 
 
-  private Map<String, InputStream> getApiSpecs(List<Dependency> dependencyList,
-                                               ScaffolderResourceLoader scaffolderResourceLoader)
+  private List<String> getApiSpecs(List<Dependency> dependencyList,
+                                   ScaffolderResourceLoader scaffolderResourceLoader)
       throws IOException {
-    Map<String, InputStream> apiSpecs = new HashMap<>();
+    List<String> apiSpecs = new ArrayList<>();
 
     for (Dependency dependency : dependencyList) {
       String dependencyResourceFormat = format(RESOURCE_FORMAT, dependency.getGroupId(), dependency.getArtifactId(),
                                                dependency.getVersion(), dependency.getClassifier(), dependency.getType(), "%s");
-      InputStream exchangeJson =
-          scaffolderResourceLoader.getResource(format(dependencyResourceFormat, EXCHANGE_JSON)).toURL().openStream();
-      String rootApiFileName = APISyncUtils.getMainApi(IOUtils.toString(exchangeJson));
-      String rootApiResource = format(dependencyResourceFormat, rootApiFileName);
-      InputStream rootApi = scaffolderResourceLoader.getResource(rootApiResource).toURL().openStream();
-      apiSpecs.put(rootApiResource, rootApi);
+      try (InputStream exchangeJson =
+          scaffolderResourceLoader.getResource(format(dependencyResourceFormat, EXCHANGE_JSON)).toURL().openStream()) {
+        String rootApiFileName = APISyncUtils.getMainApi(IOUtils.toString(exchangeJson));
+        String rootApiResource = format(dependencyResourceFormat, rootApiFileName);
+        apiSpecs.add(rootApiResource);
+      }
     }
 
     return apiSpecs;
   }
 
-  private ScaffolderReport execute(List<File> ramlFiles, File appDir, File domainDir, String minMuleVersion,
+  private ScaffolderReport execute(List<File> ramlFiles, File appDir, File domain, String minMuleVersion,
                                    RuntimeEdition runtimeEdition) {
     List<String> ramlFilePaths = retrieveFilePaths(ramlFiles, apiExtensions);
     List<String> muleXmlFiles = retrieveFilePaths(appDir, appExtensions);
     SystemStreamLog log = new SystemStreamLog();
-    String domain = null;
-    if (domainDir != null) {
-      List<String> domainFiles = retrieveFilePaths(domainDir, appExtensions);
-      if (domainFiles.size() > 0) {
-        domain = domainFiles.get(0);
-        if (domainFiles.size() > 1) {
-          log.info("There is more than one domain file inside of the domain folder. The domain: " + domain + " will be used.");
-        }
-      }
-    }
+    String domainAsString = getDomainAsString(domain, log);
     Scaffolder scaffolder;
     try {
-      scaffolder = Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domain, minMuleVersion, runtimeEdition);
+      scaffolder =
+          Scaffolder.createScaffolder(log, appDir, ramlFilePaths, muleXmlFiles, domainAsString, minMuleVersion, runtimeEdition);
 
     } catch (Exception e) {
       throw new RuntimeException("Error executing scaffolder", e);
     }
     scaffolder.run();
     return scaffolder.getScaffolderReport();
+  }
+
+  private String getDomainAsString(File domain, Log log) {
+    String domainAsString = null;
+    if (domain != null) {
+      if (domain.isFile()) {
+        return domain.getAbsolutePath();
+      } else {
+        List<String> domainFiles = retrieveFilePaths(domain, appExtensions);
+        if (domainFiles.size() > 0) {
+          domainAsString = domainFiles.get(0);
+          if (domainFiles.size() > 1) {
+            log.info("There is more than one domain file inside of the domain folder. The domain: " + domain + " will be used.");
+          }
+        }
+      }
+    }
+    return domainAsString;
   }
 
   private List<String> retrieveFilePaths(File dir, final List<String> extensions) {

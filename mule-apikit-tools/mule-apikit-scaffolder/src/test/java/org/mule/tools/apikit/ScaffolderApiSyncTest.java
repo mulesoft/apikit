@@ -6,15 +6,13 @@
  */
 package org.mule.tools.apikit;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.model.Dependency;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.mockito.Mockito;
-import org.mule.tools.apikit.model.ScaffolderReport;
-import org.mule.tools.apikit.model.ScaffolderResourceLoader;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mule.tools.apikit.Helper.countOccurences;
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+import static org.mule.tools.apikit.model.ScaffolderReport.FAILED;
+import static org.mule.tools.apikit.model.ScaffolderReport.SUCCESS;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,12 +24,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mule.tools.apikit.Helper.countOccurences;
-import static org.mule.tools.apikit.model.RuntimeEdition.EE;
-import static org.mule.tools.apikit.model.ScaffolderReport.SUCCESS;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.model.Dependency;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.mockito.Mockito;
+import org.mule.tools.apikit.model.ScaffolderReport;
+import org.mule.tools.apikit.model.ScaffolderResourceLoader;
 
 public class ScaffolderApiSyncTest extends AbstractScaffolderTestCase {
 

@@ -6,6 +6,22 @@
  */
 package org.mule.tools.apikit.input;
 
+import static junit.framework.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.plugin.logging.Log;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -17,21 +33,6 @@ import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
 import org.mule.tools.apikit.model.ResourceActionMimeTypeTriplet;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-
-import static junit.framework.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
 public class MuleConfigParserTest {
 
   @Test
@@ -41,7 +42,7 @@ public class MuleConfigParserTest {
                                                                     "testGetEntries/leagues-flow-config.xml");
     Log log = mock(Log.class);
 
-    HashSet<String> ramlFileNames = new HashSet<>();
+    List<String> ramlFileNames = new ArrayList<>();
     ramlFileNames.add("leagues.raml");
 
     HashMap<File, InputStream> streams = new HashMap<File, InputStream>();
@@ -84,15 +85,15 @@ public class MuleConfigParserTest {
 
     Log log = mock(Log.class);
 
-    HashSet<String> ramlNames = new HashSet<>();
+    List<String> ramlNames = new ArrayList<>();
     ramlNames.add("leagues.raml");
     ramlNames.add("api.raml");
 
     MuleConfigParser muleConfigParser = new MuleConfigParser(log, new APIFactory());
-    muleConfigParser.parseConfigs(fileWithFlows, documentWithFlows, ramlNames);
+    muleConfigParser.parseConfigs(fileWithFlows, documentWithFlows);
     muleConfigParser.parseApis(fileWithFlows, documentWithFlows, ramlNames);
     muleConfigParser.parseFlows(Collections.singleton(documentWithFlows));
-    muleConfigParser.parseConfigs(fileWithoutFlows, documentWithoutFlows, ramlNames);
+    muleConfigParser.parseConfigs(fileWithoutFlows, documentWithoutFlows);
     muleConfigParser.parseApis(fileWithoutFlows, documentWithoutFlows, ramlNames);
     muleConfigParser.parseFlows(Collections.singleton(documentWithoutFlows));
 
@@ -354,7 +355,7 @@ public class MuleConfigParserTest {
 
     Log log = mock(Log.class);
 
-    HashSet<String> ramlPaths = new HashSet<>();
+    List<String> ramlPaths = new ArrayList<>();
     ramlPaths.add("separate-config/simple.raml");
 
     MuleConfigParser muleConfigParser = new MuleConfigParser(log, new APIFactory());

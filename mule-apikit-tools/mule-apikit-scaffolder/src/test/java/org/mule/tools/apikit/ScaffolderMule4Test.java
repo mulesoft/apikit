@@ -1,27 +1,5 @@
 package org.mule.tools.apikit;
 
-/*
- * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
- * The software in this package is published under the terms of the CPAL v1.0
- * license, a copy of which has been included with this distribution in the
- * LICENSE.txt file.
- */
-import org.apache.commons.io.IOUtils;
-import org.apache.maven.plugin.logging.Log;
-import org.junit.Test;
-import org.mockito.stubbing.Stubber;
-import org.mule.raml.implv2.ParserV2Utils;
-import org.mule.tools.apikit.model.RuntimeEdition;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
@@ -37,6 +15,28 @@ import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
+
+/*
+ * Copyright (c) MuleSoft, Inc.  All rights reserved.  http://www.mulesoft.com
+ * The software in this package is published under the terms of the CPAL v1.0
+ * license, a copy of which has been included with this distribution in the
+ * LICENSE.txt file.
+ */
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.Test;
+import org.mockito.stubbing.Stubber;
+import org.mule.raml.implv2.ParserV2Utils;
+import org.mule.tools.apikit.model.RuntimeEdition;
 
 public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
@@ -186,6 +186,17 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
   public void testSimpleGenerateWithCustomDomainAndExtensionWithNewParser() throws Exception {
     System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
     simpleGenerateWithCustomDomainAndExtension();
+  }
+
+  @Test
+  public void testSimpleGenerateWithCustomExternalDomainWithOldParser() throws Exception {
+    simpleGenerateWithCustomExternalDomain();
+  }
+
+  @Test
+  public void testSimpleGenerateWithCustomExternalDomainWithNewParser() throws Exception {
+    System.setProperty(ParserV2Utils.PARSER_V2_PROPERTY, "true");
+    simpleGenerateWithCustomExternalDomain();
   }
 
   @Test
@@ -701,6 +712,32 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
     assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
   }
 
+  private void simpleGenerateWithCustomExternalDomain() throws Exception {
+    File muleXmlSimple = simpleGeneration("scaffolder/simple.raml", "custom-domain-4/external-domain.jar");
+    assertTrue(muleXmlSimple.exists());
+    String s = IOUtils.toString(new FileInputStream(muleXmlSimple));
+    assertEquals(0, countOccurences(s, "<http:listener-config"));
+    assertEquals(2, countOccurences(s, "<http:listener "));
+    assertEquals(0, countOccurences(s, "interpretRequestErrors=\"true\""));
+    assertEquals(2, countOccurences(s, "<http:response statusCode=\"#[vars.httpStatus default 200]\""));
+    assertEquals(2, countOccurences(s, "http:error-response statusCode=\"#[vars.httpStatus default 500]\""));
+    assertEquals(4, countOccurences(s, "<http:headers>#[vars.outboundHeaders default {}]</http:headers>"));
+    assertEquals(7, countOccurences(s, "<on-error-propagate"));
+    assertEquals(4, countOccurences(s, "http:body"));
+    assertEquals(2, countOccurences(s, "#[payload]"));
+    assertEquals(7, countOccurences(s, "<ee:message>"));
+    assertEquals(9, countOccurences(s, "<ee:variables>"));
+    assertEquals(10, countOccurences(s, "<ee:set-variable"));
+    assertEquals(7, countOccurences(s, "<ee:set-payload>"));
+    assertEquals(2, countOccurences(s, "config-ref=\"http-lc-0.0.0.0-8081\""));
+    assertEquals(2, countOccurences(s, "get:\\:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet:simple-config"));
+    assertEquals(2, countOccurences(s, "get:\\pet\\v1:simple-config"));
+    assertEquals(1, countOccurences(s, "<apikit:console"));
+    assertEquals(0, countOccurences(s, "consoleEnabled=\"false\""));
+    assertEquals(5, countOccurences(s, "<logger level=\"INFO\" message="));
+  }
+
   private void simpleGenerateWithCustomDomainAndExtension() throws Exception {
     File muleXmlFolderOut = simpleGenerationWithExtensionEnabled("scaffolder/simple.raml", "scaffolder/simple.raml",
                                                                  "custom-domain-4/mule-domain-config.xml");
@@ -907,7 +944,17 @@ public class ScaffolderMule4Test extends AbstractScaffolderTestCase {
 
     File muleXmlOut = createTmpMuleXmlOutFolder();
 
-    createScaffolder(ramls, emptyList(), muleXmlOut, domainFile, null, muleVersion, runtimeEdition).run();
+    if (domainFile != null && domainFile.getName().endsWith(".jar")) {
+      List<String> ramlList = null;
+      if (ramls != null) {
+        ramlList = getRamlList(ramls);
+      }
+      Scaffolder.createScaffolder(getLogger(), muleXmlOut, ramlList, null, emptyList(), domainFile.getAbsolutePath(), muleVersion,
+                                  runtimeEdition)
+          .run();
+    } else {
+      createScaffolder(ramls, emptyList(), muleXmlOut, domainFile, null, muleVersion, runtimeEdition).run();
+    }
 
     return new File(muleXmlOut, fileNameWhithOutExtension(apiPath) + ".xml");
   }

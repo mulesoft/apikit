@@ -14,13 +14,12 @@ import static org.mule.tools.apikit.Helper.countOccurences;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
 import static org.mule.tools.apikit.Scaffolder.DEFAULT_RUNTIME_EDITION;
 
-import org.mule.tools.apikit.misc.FileListUtils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +31,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.mule.tools.apikit.misc.FileListUtils;
 
 public class ConsoleFlowTest {
 
@@ -85,9 +85,9 @@ public class ConsoleFlowTest {
                                       boolean compatibilityMode, Set<File> ramlsWithExtensionEnabled)
       throws FileNotFoundException {
     Log log = mock(Log.class);
-    Map<File, InputStream> ramlMap = null;
+    List<String> ramlList = null;
     if (ramls != null) {
-      ramlMap = getFileInputStreamMap(ramls);
+      ramlList = getRamlList(ramls);
     }
     Map<File, InputStream> xmlMap = getFileInputStreamMap(xmls);
     InputStream domainStream = null;
@@ -95,13 +95,21 @@ public class ConsoleFlowTest {
       domainStream = new FileInputStream(domainFile);
     }
 
-    return new Scaffolder(log, muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION,
+    return new Scaffolder(log, muleXmlOut, ramlList, xmlMap, domainStream, ramlsWithExtensionEnabled, DEFAULT_MULE_VERSION,
                           DEFAULT_RUNTIME_EDITION);
   }
 
   private Scaffolder createScaffolder(List<File> ramls, List<File> xmls, File muleXmlOut)
       throws FileNotFoundException {
     return createScaffolder(ramls, xmls, muleXmlOut, null, false, null);
+  }
+
+  protected final List<String> getRamlList(List<File> ramls) {
+    List<String> ramlList = new ArrayList<>();
+    for (File raml : ramls) {
+      ramlList.add(raml.getAbsolutePath());
+    }
+    return ramlList;
   }
 
   private Map<File, InputStream> getFileInputStreamMap(List<File> ramls) {

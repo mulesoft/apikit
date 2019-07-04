@@ -6,6 +6,17 @@
  */
 package org.mule.tools.apikit.input.parsers;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.filter.Filters;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.mule.raml.interfaces.common.APISyncUtils;
 import org.mule.tools.apikit.input.APIKitFlow;
 import org.mule.tools.apikit.misc.APIKitTools;
@@ -14,30 +25,17 @@ import org.mule.tools.apikit.model.APIFactory;
 import org.mule.tools.apikit.model.APIKitConfig;
 import org.mule.tools.apikit.model.HttpListener4xConfig;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.jdom2.Attribute;
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.filter.Filters;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
-
 public class APIKitRoutersParser implements MuleConfigFileParser {
 
   private final Map<String, APIKitConfig> apikitConfigs;
   private final Map<String, HttpListener4xConfig> httpListenerConfigs;
-  private final Set<String> apiFilePaths;
+  private final List<String> apiFilePaths;
   private final File file;
   private final APIFactory apiFactory;
 
   public APIKitRoutersParser(final Map<String, APIKitConfig> apikitConfigs,
                              final Map<String, HttpListener4xConfig> httpListenerConfigs,
-                             final Set<String> apiFilePaths,
+                             final List<String> apiFilePaths,
                              final File file,
                              final APIFactory apiFactory) {
     this.apikitConfigs = apikitConfigs;

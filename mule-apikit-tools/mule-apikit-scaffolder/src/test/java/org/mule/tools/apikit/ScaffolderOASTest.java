@@ -6,6 +6,19 @@
  */
 package org.mule.tools.apikit;
 
+import static java.lang.String.format;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toList;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_JSON;
+import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_YAML;
+import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
+import static org.mule.tools.apikit.model.RuntimeEdition.EE;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,6 +36,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,19 +50,6 @@ import org.mockito.stubbing.Stubber;
 import org.mule.amf.impl.DocumentParser;
 import org.mule.tools.apikit.misc.FileListUtils;
 import org.mule.tools.apikit.model.RuntimeEdition;
-
-import static java.lang.String.format;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toList;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.mock;
-import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_JSON;
-import static org.mule.amf.impl.DocumentParser.VendorEx.OAS20_YAML;
-import static org.mule.tools.apikit.Scaffolder.DEFAULT_MULE_VERSION;
-import static org.mule.tools.apikit.model.RuntimeEdition.EE;
 
 @RunWith(Parameterized.class)
 public class ScaffolderOASTest {
@@ -209,17 +210,25 @@ public class ScaffolderOASTest {
                                       Set<File> ramlsWithExtensionEnabled, String muleVersion, RuntimeEdition runtimeEdition)
       throws FileNotFoundException {
 
-    Map<File, InputStream> ramlMap = null;
+    List<String> ramlList = null;
     if (ramls != null) {
-      ramlMap = toStreamMap(ramls);
+      ramlList = getRamlList(ramls);
     }
     Map<File, InputStream> xmlMap = toStreamMap(xmls);
     InputStream domainStream = null;
     if (domainFile != null) {
       domainStream = new FileInputStream(domainFile);
     }
-    return new Scaffolder(getLogger(), muleXmlOut, ramlMap, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion,
+    return new Scaffolder(getLogger(), muleXmlOut, ramlList, xmlMap, domainStream, ramlsWithExtensionEnabled, muleVersion,
                           runtimeEdition);
+  }
+
+  protected final List<String> getRamlList(List<File> ramls) {
+    List<String> ramlList = new ArrayList<>();
+    for (File raml : ramls) {
+      ramlList.add(raml.getAbsolutePath());
+    }
+    return ramlList;
   }
 
   private Map<File, InputStream> toStreamMap(List<File> ramls) {
