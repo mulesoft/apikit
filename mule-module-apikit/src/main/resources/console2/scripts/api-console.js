@@ -3380,6 +3380,15 @@
         return object ? object[typeName] : object;
       }
 
+      function merge() {
+        for (var i = 1; i < arguments.length; i++) {
+          for (var prop in arguments[i]) {
+            arguments[0][prop] = arguments[i][prop];
+          }
+        }
+        return arguments[0];
+      }
+
       function replaceTypeIfExists(raml, type, value) {
         var valueHasExamples = value.example || value.examples;
         var expandedType = retrieveType(raml, type);
@@ -3388,7 +3397,7 @@
             if (expandedType.hasOwnProperty(key)) {
               if ((key === 'example' || key === 'examples') && valueHasExamples) { continue; }
               if (key === 'properties') { // can have extra properties
-                value[key] = Object.assign(value.properties || {}, expandedType[key]);
+                value[key] = merge(value.properties || {}, expandedType[key]);
               } else {
                 value[key] = expandedType[key];
               }
@@ -5324,6 +5333,20 @@ RAML.Inspector = (function() {
   }
 })();
 
+(function () {
+  /* jshint -W034 */
+  'use strict';
+
+  if (!String.prototype.startsWith) {
+    Object.defineProperty(String.prototype, 'startsWith', {
+      value: function(search, pos) {
+        pos = !pos || pos < 0 ? 0 : +pos;
+        return this.substring(pos, pos + search.length) === search;
+      }
+    });
+  }
+})();
+
 (function() {
   'use strict';
 
@@ -5345,6 +5368,16 @@ RAML.Inspector = (function() {
     this.selected = this.contentTypes[0];
 
     var definitions = this.definitions = {};
+
+    function merge() {
+      for (var i = 1; i < arguments.length; i++) {
+        for (var prop in arguments[i]) {
+          arguments[0][prop] = arguments[i][prop];
+        }
+      }
+      return arguments[0];
+    }
+
     this.contentTypes.forEach(function(contentType) {
       var definition = contentTypes[contentType] || {};
 
@@ -5375,7 +5408,7 @@ RAML.Inspector = (function() {
               rootProperties = rootType && rootType.properties ? toObjectArray(rootType.properties) : undefined;
             }
 
-            var properties = Object.assign({}, inlineProperties, rootProperties);
+            var properties = merge({}, inlineProperties, rootProperties);
             definitions[contentType] = new RAML.Services.TryIt.NamedParameters(properties);
           }
           break;
