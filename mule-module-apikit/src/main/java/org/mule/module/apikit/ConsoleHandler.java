@@ -9,9 +9,14 @@ package org.mule.module.apikit;
 
 import org.mule.DefaultMuleEvent;
 import org.mule.DefaultMuleMessage;
+import org.mule.amf.impl.AMFParser;
+import org.mule.amf.impl.model.AMFImpl;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
 import org.mule.api.processor.MessageProcessor;
+import org.mule.apikit.model.api.ApiReference;
+import org.mule.config.i18n.MessageFactory;
+import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotFoundException;
 import org.mule.transformer.types.MimeTypes;
 import org.mule.transport.http.HttpConnector;
@@ -20,6 +25,8 @@ import org.mule.transport.http.components.ResourceNotFoundException;
 import org.mule.transport.http.i18n.HttpMessages;
 import org.mule.util.FilenameUtils;
 import org.mule.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,16 +34,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.mule.util.StringUtils.isNotEmpty;
+import java.lang.reflect.Constructor;
 
 import static org.mule.module.apikit.UrlUtils.getBasePath;
 import static org.mule.module.apikit.UrlUtils.getQueryString;
 import static org.mule.module.apikit.UrlUtils.getResourceRelativePath;
 import static org.mule.module.apikit.uri.URICoder.decode;
+import static org.mule.util.StringUtils.isNotEmpty;
 
 public class ConsoleHandler implements MessageProcessor
 {
@@ -47,7 +51,10 @@ public class ConsoleHandler implements MessageProcessor
     public static final String MIME_TYPE_GIF = "image/gif";
     public static final String MIME_TYPE_SVG = "image/svg+xml";
     public static final String MIME_TYPE_CSS = "text/css";
-    private static final String RESOURCE_BASE = System.getProperty("apikit.console.old") != null ? "/console" : "/console2";
+    public static final String AMF_CONSOLE_SYSTEM_VARIABLE = "apikit.amf.console";
+    public static final String API_REFERENCE_FULLY_QUALIFIED_NAME = "org.mule.apikit.model.api.DefaultApiRef";
+    private static Boolean isAmfConsole = toBoolean(System.getProperty(AMF_CONSOLE_SYSTEM_VARIABLE),false);
+    private static final String RESOURCE_BASE = getConsoleResourcesBase();
     private static final String CONSOLE_ELEMENT = "<raml-console-loader";
     private static final String CONSOLE_ELEMENT_OLD = "<raml-console";
     private static final String CONSOLE_ATTRIBUTES = "options=\"{disableRamlClientGenerator: true, disableThemeSwitcher: true}\"";
@@ -56,13 +63,12 @@ public class ConsoleHandler implements MessageProcessor
     private static final String DEFAULT_API_RESOURCES_PATH = "api/";
     private static final String RAML_QUERY_STRING = "raml";
     private static final String EXCHANGE_MODULES = "exchange_modules";
-
+    private AMFImpl cachedAmfModel;
     private String cachedIndexHtml;
     private String embeddedConsolePath;
     private String apiResourcesRelativePath = DEFAULT_API_RESOURCES_PATH;
     private boolean standalone;
     private AbstractConfiguration configuration;
-
     protected final Logger logger = LoggerFactory.getLogger(getClass());
     private String consoleBaseUri;
 
@@ -79,27 +85,28 @@ public class ConsoleHandler implements MessageProcessor
         this.consoleBaseUri = consoleBaseUri;
     }
 
-    public void updateRamlUri()
-    {
+    public void updateRamlUri() throws MuleException {
         String relativeRamlUri = getRelativeRamlUri();
-        if (relativeRamlUri != null)
-        {
-            String consoleElement = CONSOLE_ELEMENT;
-            String consoleAttributes = CONSOLE_ATTRIBUTES;
-            if (isOldConsole())
-            {
-                consoleElement = CONSOLE_ELEMENT_OLD;
-                consoleAttributes = CONSOLE_ATTRIBUTES_OLD;
-            }
+        if (relativeRamlUri != null){
             InputStream indexInputStream = getClass().getResourceAsStream(RESOURCE_BASE + "/index.html");
             String indexHtml = IOUtils.toString(indexInputStream);
             IOUtils.closeQuietly(indexInputStream);
+            if(isAmfConsole){
+                cachedIndexHtml = indexHtml;
+                cachedAmfModel = getAmfModel();
+                return;
+            }
+            String consoleElement = CONSOLE_ELEMENT;
+            String consoleAttributes = CONSOLE_ATTRIBUTES;
+            if (isOldConsole()){
+                consoleElement = CONSOLE_ELEMENT_OLD;
+                consoleAttributes = CONSOLE_ATTRIBUTES_OLD;
+            }
             indexHtml = indexHtml.replaceFirst(consoleElement + " src=\"[^\"]+\"",
                                                consoleElement + " src=\"" + relativeRamlUri + "\"");
             cachedIndexHtml = indexHtml.replaceFirst(CONSOLE_ATTRIBUTES_PLACEHOLDER, consoleAttributes);
         }
-        else
-        {
+        else{
             cachedIndexHtml = "RAML Console is DISABLED.";
         }
     }
@@ -107,6 +114,29 @@ public class ConsoleHandler implements MessageProcessor
     private boolean isOldConsole()
     {
         return RESOURCE_BASE.equals("/console");
+    }
+
+    private static Boolean toBoolean(String string,Boolean defaultValue){
+        if(string==null){
+            return defaultValue;
+        }
+        if(string.equals("true")){
+            return true;
+        }
+        if(string.equals("false")){
+            return false;
+        }
+
+        return defaultValue;
+    }
+
+    private static String getConsoleResourcesBase() {
+        if( toBoolean(System.getProperty("apikit.console.old"),false)) {
+            return "/console";
+        }else if (!isAmfConsole){
+            return "/console2";
+        }
+        return "/console-resources-amf";
     }
 
     private String getRelativeRamlUri()
@@ -167,7 +197,6 @@ public class ConsoleHandler implements MessageProcessor
         String path = decode(getResourceRelativePath(event.getMessage()));
         String contextPath = getBasePath(event.getMessage());
         String queryString = getQueryString(event.getMessage());
-
         if (logger.isDebugEnabled())
         {
             logger.debug("Console request: " + path);
@@ -240,8 +269,10 @@ public class ConsoleHandler implements MessageProcessor
                     {
                         in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                     }
-                }
-                else if (path.startsWith(embeddedConsolePath))
+                }else if(isAmfConsole && queryString.equals("amf"))
+                {
+                    in = getAmfModel(event);
+                }else if (path.startsWith(embeddedConsolePath))
                 {
                     in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                 }
@@ -287,6 +318,56 @@ public class ConsoleHandler implements MessageProcessor
         }
 
         return resultEvent;
+    }
+
+    /**
+     * This method generates an AMF model based on the raml specification, and it is only invoked when
+     * AMF_CONSOLE_SYSTEM_VARIABLE is set to true and this should only happen when a patch
+     * including the AMF parser implementation and it dependencies is included at runtime
+     *
+     * @return AMF parser implementation to be consume by the AMF console
+     * @throws MuleException explaining the user that the patch should be included
+     */
+    private AMFImpl getAmfModel() throws MuleException {
+        try {
+            ApiReference apiReference = (ApiReference) getApiReferenceConstructor().newInstance(configuration.getRaml());
+            AMFParser amfParser = new AMFParser(apiReference,false);
+            return (AMFImpl) amfParser.parse();
+        } catch (Exception e){
+            final String message = "Cannot generate AMF Model \n Please check that AMF patch is included or set " +
+                    AMF_CONSOLE_SYSTEM_VARIABLE + " to false in order to use the default console ";
+            throw new MuleRestException(MessageFactory.createStaticMessage(message), e);
+        }
+    }
+
+    /**
+     * We use reflection to get API reference implementation to avoid ClassNotFoundException when the AMF libraries
+     * and it dependencies aren't included at runtime and AMF_CONSOLE_SYSTEM_VARIABLE is set to false
+     *
+     * @return Api Reference implementation constructor
+     * @throws ClassNotFoundException when the AMF parser implementation is not included at runtime
+     * @throws MuleRestException when class is found but constructor is missing (this should never occur)
+     */
+    private Constructor getApiReferenceConstructor() throws ClassNotFoundException, MuleRestException {
+        Constructor[] constructors = Class.forName(API_REFERENCE_FULLY_QUALIFIED_NAME).getDeclaredConstructors();
+        for(Constructor constructor: constructors){
+            if(constructor.getParameterCount() == 1){
+                constructor.setAccessible(true);
+                return constructor;
+            }
+        }
+        throw new MuleRestException("ApiReference constructor not found");
+    }
+
+    /**
+     * This method returns the previously cached amf model and with the base scheme host and port
+     * based on the incoming event to the amf console
+     */
+    private InputStream getAmfModel(MuleEvent event) {
+        String address = configuration.getAddress();
+        address = address.replace(UrlUtils.getBaseSchemeHostPort(address),UrlUtils.getBaseSchemeHostPort(event));
+        cachedAmfModel.updateBaseUri(address);
+        return new ByteArrayInputStream(cachedAmfModel.dumpAmf().getBytes());
     }
 
     private String getMimeType(String path)
