@@ -53,7 +53,7 @@ public class ConsoleHandler implements MessageProcessor
     public static final String MIME_TYPE_CSS = "text/css";
     public static final String AMF_CONSOLE_SYSTEM_VARIABLE = "apikit.amf.console";
     public static final String API_REFERENCE_FULLY_QUALIFIED_NAME = "org.mule.apikit.model.api.DefaultApiRef";
-    private static Boolean isAmfConsole = toBoolean(System.getProperty(AMF_CONSOLE_SYSTEM_VARIABLE),false);
+    private static Boolean isAmfConsole = Boolean.valueOf(System.getProperty(AMF_CONSOLE_SYSTEM_VARIABLE));
     private static final String RESOURCE_BASE = getConsoleResourcesBase();
     private static final String CONSOLE_ELEMENT = "<raml-console-loader";
     private static final String CONSOLE_ELEMENT_OLD = "<raml-console";
@@ -116,22 +116,8 @@ public class ConsoleHandler implements MessageProcessor
         return RESOURCE_BASE.equals("/console");
     }
 
-    private static Boolean toBoolean(String string,Boolean defaultValue){
-        if(string==null){
-            return defaultValue;
-        }
-        if(string.equals("true")){
-            return true;
-        }
-        if(string.equals("false")){
-            return false;
-        }
-
-        return defaultValue;
-    }
-
     private static String getConsoleResourcesBase() {
-        if( toBoolean(System.getProperty("apikit.console.old"),false)) {
+        if(Boolean.valueOf(System.getProperty("apikit.console.old"))) {
             return "/console";
         }else if (!isAmfConsole){
             return "/console2";
@@ -322,9 +308,11 @@ public class ConsoleHandler implements MessageProcessor
 
     /**
      * This method generates an AMF model based on the raml specification, and it is only invoked when
-     * AMF_CONSOLE_SYSTEM_VARIABLE is set to true and this should only happen when a patch
-     * including the AMF parser implementation and it dependencies is included at runtime
+     * AMF_CONSOLE_SYSTEM_VARIABLE is set to true and this should only happen when a patch including
+     * the AMF parser implementation and it dependencies is included at runtime (the patch is included
+     * at the issue APIKIT-1932)
      *
+     * @see <a href="https://www.mulesoft.org/jira/browse/APIKIT-1932">APIKIT-1932</a>
      * @return AMF parser implementation to be consume by the AMF console
      * @throws MuleException explaining the user that the patch should be included
      */
