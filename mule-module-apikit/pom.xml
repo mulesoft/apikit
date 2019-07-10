@@ -16,6 +16,7 @@
         <rest.assured.version>1.7.2</rest.assured.version>
         <guava.version>18.0</guava.version>
         <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
+        <amf.raml.parser.version>2.0.0-SNAPSHOT</amf.raml.parser.version>
     </properties>
 
     <build>
@@ -36,8 +37,17 @@
     </build>
 
     <dependencies>
-
-        <dependency>
+      <dependency>
+        <groupId>org.mule.apikit</groupId>
+        <artifactId>raml-parser-interface-impl-amf</artifactId>
+        <version>${amf.raml.parser.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mule.apikit</groupId>
+        <artifactId>raml-parser-interface</artifactId>
+        <version>${amf.raml.parser.version}</version>
+      </dependency>
+      <dependency>
             <groupId>org.mule.raml</groupId>
             <artifactId>parser-interface-impl-v1</artifactId>
             <version>${project.version}</version>

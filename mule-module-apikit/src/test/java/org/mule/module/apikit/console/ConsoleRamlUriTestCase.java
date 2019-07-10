@@ -12,6 +12,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.mule.api.MuleException;
 import org.mule.module.apikit.Configuration;
 import org.mule.module.apikit.ConsoleHandler;
 
@@ -45,8 +46,7 @@ public class ConsoleRamlUriTestCase
         assertThat(getApiResourcesRelativePath(getConsoleHandler()), is("api/subdir/"));
     }
 
-    private ConsoleHandler getConsoleHandler()
-    {
+    private ConsoleHandler getConsoleHandler() throws MuleException {
         ConsoleHandler consoleHandler = new ConsoleHandler(consoleBaseUri, configuration);
         consoleHandler.updateRamlUri();
         return consoleHandler;

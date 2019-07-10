@@ -59,7 +59,7 @@ public abstract class AbstractRouter extends AbstractInterceptingMessageProcesso
         config.publishConsoleUrls(muleContext.getConfiguration().getWorkingDirectory());
     }
 
-    protected abstract void startConfiguration() throws StartException;
+    protected abstract void startConfiguration() throws MuleException;
 
     @Override
     public void setFlowConstruct(FlowConstruct flowConstruct)
