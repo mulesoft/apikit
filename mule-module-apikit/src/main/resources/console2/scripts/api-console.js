@@ -2920,7 +2920,7 @@
               authStrategy.authenticate().then(function(token) {
                 token.sign(request);
                 $scope.requestOptions = request.toOptions();
-                jQuery.ajax(Object.assign(request.toOptions(),{timeout:10000})).then(
+                jQuery.ajax(request.toOptions()).then(
                   function(data, textStatus, jqXhr) { handleResponse(jqXhr); },
                   function(jqXhr) { handleResponse(jqXhr); }
                 );
@@ -3380,6 +3380,15 @@
         return object ? object[typeName] : object;
       }
 
+      function merge() {
+        for (var i = 1; i < arguments.length; i++) {
+          for (var prop in arguments[i]) {
+            arguments[0][prop] = arguments[i][prop];
+          }
+        }
+        return arguments[0];
+      }
+
       function replaceTypeIfExists(raml, type, value) {
         var valueHasExamples = value.example || value.examples;
         var expandedType = retrieveType(raml, type);
@@ -3388,7 +3397,7 @@
             if (expandedType.hasOwnProperty(key)) {
               if ((key === 'example' || key === 'examples') && valueHasExamples) { continue; }
               if (key === 'properties') { // can have extra properties
-                value[key] = Object.assign(value.properties || {}, expandedType[key]);
+                value[key] = merge(value.properties || {}, expandedType[key]);
               } else {
                 value[key] = expandedType[key];
               }
@@ -5264,6 +5273,80 @@ RAML.Inspector = (function() {
   };
 })();
 
+(function () {
+  /* jshint -W034 */
+  'use strict';
+
+  if (!Array.prototype.find) {
+    Array.prototype.find = function (predicate) {
+      for (var i = 0, len = this.length; i < len; i++) {
+        var item = this[i];
+        if (predicate(item)) {
+          return item;
+        }
+      }
+      return undefined;
+    };
+  }
+
+  if (!Array.prototype.includes) {
+    Array.prototype.includes = function (value) {
+      for (var i = 0, len = this.length; i < len; i++) {
+        var item = this[i];
+        if (item === value) {
+          return true;
+        }
+      }
+      return false;
+    };
+  }
+})();
+
+(function () {
+  /* jshint -W034 */
+  'use strict';
+
+  if (typeof Object.assign !== 'function') {
+    Object.defineProperty(Object, 'assign', {
+      value: function assign(target, varArgs) {
+        'use strict';
+        if (target == null) { throw new TypeError('Cannot convert undefined or null to object'); }
+
+        var to = Object(target);
+
+        for (var index = 1; index < varArgs.length; index++) {
+          var nextSource = varArgs[index];
+
+          if (nextSource != null) {
+            for (var nextKey in nextSource) {
+              if (Object.prototype.hasOwnProperty.call(nextSource, nextKey)) {
+                to[nextKey] = nextSource[nextKey];
+              }
+            }
+          }
+        }
+        return to;
+      },
+      writable: true,
+      configurable: true
+    });
+  }
+})();
+
+(function () {
+  /* jshint -W034 */
+  'use strict';
+
+  if (!String.prototype.startsWith) {
+    Object.defineProperty(String.prototype, 'startsWith', {
+      value: function(search, pos) {
+        pos = !pos || pos < 0 ? 0 : +pos;
+        return this.substring(pos, pos + search.length) === search;
+      }
+    });
+  }
+})();
+
 (function() {
   'use strict';
 
@@ -5285,6 +5368,16 @@ RAML.Inspector = (function() {
     this.selected = this.contentTypes[0];
 
     var definitions = this.definitions = {};
+
+    function merge() {
+      for (var i = 1; i < arguments.length; i++) {
+        for (var prop in arguments[i]) {
+          arguments[0][prop] = arguments[i][prop];
+        }
+      }
+      return arguments[0];
+    }
+
     this.contentTypes.forEach(function(contentType) {
       var definition = contentTypes[contentType] || {};
 
@@ -5315,7 +5408,7 @@ RAML.Inspector = (function() {
               rootProperties = rootType && rootType.properties ? toObjectArray(rootType.properties) : undefined;
             }
 
-            var properties = Object.assign({}, inlineProperties, rootProperties);
+            var properties = merge({}, inlineProperties, rootProperties);
             definitions[contentType] = new RAML.Services.TryIt.NamedParameters(properties);
           }
           break;
@@ -7171,7 +7264,7 @@ RAML.Inspector = (function() {
       var checkInValue = values.find(function (value) {
         return value.toLowerCase() === check
       });
-      return checkInValue ? true : false;
+      return !!checkInValue;
     }
   };
 
