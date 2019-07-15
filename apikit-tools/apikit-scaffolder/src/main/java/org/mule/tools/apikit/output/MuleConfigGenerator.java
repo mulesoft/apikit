@@ -173,8 +173,9 @@ public class MuleConfigGenerator {
             doc = new Document();
             doc.setRootElement(new MuleScope().generate());
         } else {
-            InputStream xmlInputStream = new FileInputStream(xmlFile);
-            doc = saxBuilder.build(xmlInputStream);
+            try (InputStream xmlInputStream = new FileInputStream(xmlFile)) {
+              doc = saxBuilder.build(xmlInputStream);
+            }
         }
         return doc;
     }
