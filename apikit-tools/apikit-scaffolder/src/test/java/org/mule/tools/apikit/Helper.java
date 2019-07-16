@@ -6,11 +6,17 @@
  */
 package org.mule.tools.apikit;
 
+import org.apache.commons.io.IOUtils;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
@@ -40,7 +46,18 @@ public class Helper {
 
         assertEquals(1, apis.size());
     }
-
+    
+    public static String readContents(File fileToRead) throws IOException, FileNotFoundException {
+        return readContents(new FileInputStream(fileToRead));
+    }
+    
+    public static String readContents(InputStream streamToRead) throws IOException {
+        try {
+            return IOUtils.toString(streamToRead);
+        } finally {
+            IOUtils.closeQuietly(streamToRead);
+        }
+    }
 
     public static String nonSpaceOutput(Element element) {
         XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
