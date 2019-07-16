@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.maven.plugin.logging.Log;
+import org.apache.commons.io.IOUtils;
 
 public class Scaffolder
 {
@@ -60,7 +61,17 @@ public class Scaffolder
             }
         }
         InputStream domainStream = getDomainStream(log, domainPath);
-        return new Scaffolder(log, muleXmlOutputDirectory, ramlStreams, muleStreams, domainStream, muleVersion, ramlWithExtensionEnabled);
+        try {
+            return new Scaffolder(log, muleXmlOutputDirectory, ramlStreams, muleStreams, domainStream, muleVersion, ramlWithExtensionEnabled);
+        } finally {
+            IOUtils.closeQuietly(domainStream);
+            for (InputStream stream : ramlStreams.values()) {
+                IOUtils.closeQuietly(stream);
+            }
+            for (InputStream stream : muleStreams.values()) {
+                IOUtils.closeQuietly(stream);
+            }
+        }
     }
 
     public Scaffolder(Log log, File muleXmlOutputDirectory,  Map<File, InputStream> ramls, Map<File, InputStream> xmls, InputStream domainStream, String muleVersion, Set<File> ramlsWithExtensionEnabled)
