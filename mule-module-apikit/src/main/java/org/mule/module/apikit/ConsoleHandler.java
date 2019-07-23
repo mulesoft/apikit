@@ -27,6 +27,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,8 @@ import static org.mule.module.apikit.uri.URICoder.decode;
 
 public class ConsoleHandler implements MessageProcessor
 {
+
+    private Pattern CONSOLE_RESOURCE_PATTERN = Pattern.compile(".*console.*(html|json|js)");
 
     public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
     public static final String MIME_TYPE_JAVASCRIPT = "application/x-javascript";
@@ -212,19 +217,18 @@ public class ConsoleHandler implements MessageProcessor
                     }
                     else
                     {
-                        String trimResourcesPath = path.substring(apiResourcesFullPath.length());
-                        String resultRelativePath = trimResourcesPath.contains(EXCHANGE_MODULES) ?
-                          trimResourcesPath.substring(trimResourcesPath.lastIndexOf(EXCHANGE_MODULES)) :
-                          trimResourcesPath;
-                        final String resourcePath = "/" + apiResourcesRelativePath + resultRelativePath;
-                        File apiResource = new File(configuration.getAppHome(), resourcePath);
-
-                        if (apiResource.exists()) {
-                            in = new FileInputStream(apiResource);
-                        } else if (isNotEmpty(apiResourcesRelativePath) && !"/".equals(apiResourcesRelativePath)){
-                            // check if exists in /classes/${apiResourcesRelativePath} dir
-                            apiResource = new File(configuration.getAppHome(), "classes/" + resourcePath);
-                            in = new FileInputStream(apiResource);
+                        String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
+                        String normalized = Paths.get(resourcePath).normalize().toString();
+                        if (CONSOLE_RESOURCE_PATTERN.matcher(normalized).find()) {
+                            InputStream apiResource = getClasspathResource(normalized.trim());
+                            if (apiResource == null && isNotEmpty(apiResourcesRelativePath) && !"/".equals(apiResourcesRelativePath)) {
+                                // check if exists in /classes/${apiResourcesRelativePath} dir
+                                if (!resourcePath.contains("../")) {
+                                    in = new FileInputStream(new File(configuration.getAppHome(), "classes/" + resourcePath));
+                                }
+                            } else {
+                                in = apiResource;
+                            }
                         }
                     }
                 }
@@ -327,6 +331,11 @@ public class ConsoleHandler implements MessageProcessor
     {
         String url = consoleBaseUri.endsWith("/") ? consoleBaseUri.substring(0, consoleBaseUri.length() - 1) : consoleBaseUri;
         return url + embeddedConsolePath;
+    }
+
+    private InputStream getClasspathResource(String path) {
+        String name = path.startsWith("/") ? path.replaceFirst("/", "") : path;
+        return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
     }
 
 }
