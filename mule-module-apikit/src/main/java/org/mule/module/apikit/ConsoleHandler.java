@@ -44,7 +44,7 @@ import static org.mule.module.apikit.uri.URICoder.decode;
 public class ConsoleHandler implements MessageProcessor
 {
 
-    private Pattern CONSOLE_RESOURCE_PATTERN = Pattern.compile(".*console.*(html|json|js)");
+    private Pattern CONSOLE_RESOURCE_PATTERN = Pattern.compile(".*(json|xsd|raml)$");
 
     public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
     public static final String MIME_TYPE_JAVASCRIPT = "application/x-javascript";
@@ -233,6 +233,10 @@ public class ConsoleHandler implements MessageProcessor
                 }
                 else if (path.startsWith(embeddedConsolePath + "/scripts"))
                 {
+                    String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
+                    if(!normalized.startsWith(RESOURCE_BASE)){
+                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                    }
                     String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
                     if (acceptEncoding != null && acceptEncoding.contains("gzip"))
                     {
@@ -246,6 +250,10 @@ public class ConsoleHandler implements MessageProcessor
                 }
                 else if (path.startsWith(embeddedConsolePath))
                 {
+                    String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
+                    if(!normalized.startsWith(RESOURCE_BASE)){
+                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                    }
                     in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                 }
             }
