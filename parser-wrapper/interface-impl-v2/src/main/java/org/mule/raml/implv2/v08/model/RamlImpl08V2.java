@@ -14,6 +14,7 @@ import org.mule.raml.interfaces.model.ITemplate;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,5 +140,10 @@ public class RamlImpl08V2 implements IRaml
     public void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme)
     {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<String> getAllReferences() {
+        return Collections.emptyList();
     }
 }

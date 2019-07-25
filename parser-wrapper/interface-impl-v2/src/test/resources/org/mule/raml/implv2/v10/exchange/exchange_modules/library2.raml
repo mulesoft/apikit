@@ -1,0 +1,12 @@
+#%RAML 1.0 Library
+
+usage: Library 2 components
+
+uses:
+  library2: exchange_modules/library3.raml
+
+types:
+  ComplexType:
+    properties:
+      id: string
+      field1: library2.BaseType

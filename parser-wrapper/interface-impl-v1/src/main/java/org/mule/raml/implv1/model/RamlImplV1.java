@@ -6,12 +6,15 @@
  */
 package org.mule.raml.implv1.model;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mule.raml.implv1.ParserV1Utils;
 import org.mule.raml.implv1.model.parameter.ParameterImpl;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.raml.interfaces.model.IResource;
@@ -23,14 +26,30 @@ import org.raml.model.Template;
 import org.raml.model.parameter.UriParameter;
 import org.raml.model.Raml;
 import org.raml.model.Resource;
+import org.raml.parser.loader.ResourceLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static java.util.Collections.emptyList;
 
 public class RamlImplV1 implements IRaml
 {
+    private final Logger logger;
     private Raml raml;
+    private String ramlPath;
+    private ResourceLoader resourceLoader;
 
-    public RamlImplV1(Raml raml)
+    public RamlImplV1(Raml raml){
+        this.raml = raml;
+        this.logger = LoggerFactory.getLogger(RamlImplV1.class);
+    }
+
+    public RamlImplV1(Raml raml, String ramlPath, ResourceLoader resourceLoader)
     {
         this.raml = raml;
+        this.ramlPath = ramlPath;
+        this.resourceLoader = resourceLoader;
+        this.logger = LoggerFactory.getLogger(RamlImplV1.class);
     }
 
     public Raml getRaml()
@@ -187,5 +206,23 @@ public class RamlImplV1 implements IRaml
             map.put(entry.getKey(), (SecurityScheme)entry.getValue().getInstance());
         }
         raml.getSecuritySchemes().add(map);
+    }
+
+    @Override
+    public List<String> getAllReferences() {
+        try {
+            return ParserV1Utils.detectIncludes(ramlPath.replace("/", File.separator), resourceLoader);
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+        return emptyList();
+    }
+
+    public String getRamlPath() {
+        return ramlPath;
+    }
+
+    public ResourceLoader getResourceLoader() {
+        return resourceLoader;
     }
 }
