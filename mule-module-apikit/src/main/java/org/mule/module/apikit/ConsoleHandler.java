@@ -218,12 +218,15 @@ public class ConsoleHandler implements MessageProcessor
                     {
                         String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
                         String normalized = Paths.get(resourcePath).normalize().toString();
+                        // if normalized does not start with ("/" + apiResourcesRelativePath), path contains ../
+                        if (!normalized.startsWith("/" + apiResourcesRelativePath)) {
+                            throw new NotFoundException("../ is not allowed");
+                        }
                         if (CONSOLE_RESOURCE_PATTERN.matcher(normalized).find()) {
                             InputStream apiResource = getClasspathResource(normalized.trim());
                             if (apiResource == null && isNotEmpty(apiResourcesRelativePath) && !"/".equals(apiResourcesRelativePath)) {
-                                // check if exists in /classes/${apiResourcesRelativePath} dir
                                 if (!resourcePath.contains("../")) {
-                                    in = new FileInputStream(new File(configuration.getAppHome(), "classes/" + resourcePath));
+                                    in = new FileInputStream(new File(configuration.getAppHome(), resourcePath));
                                 }
                             } else {
                                 in = apiResource;
