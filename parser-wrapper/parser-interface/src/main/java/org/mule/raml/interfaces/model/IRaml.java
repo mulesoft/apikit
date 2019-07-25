@@ -31,4 +31,5 @@ public interface IRaml extends Serializable
     void cleanBaseUriParameters();
     void injectTrait(String name);
     void injectSecurityScheme(Map<String, ISecurityScheme> securityScheme);
+    List<String> getAllReferences();
 }
