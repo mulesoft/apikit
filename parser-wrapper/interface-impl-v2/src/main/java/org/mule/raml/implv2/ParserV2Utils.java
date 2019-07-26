@@ -26,16 +26,16 @@ public class ParserV2Utils
     public static IRaml build(ResourceLoader resourceLoader, String ramlPath)
     {
         RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(ramlPath);
-        return wrapApiModel(ramlModelResult);
+        return wrapApiModel(ramlModelResult, resourceLoader,  ramlPath);
     }
 
     public static IRaml build(ResourceLoader resourceLoader, String ramlPath, String content)
     {
         RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(content, ramlPath);
-        return wrapApiModel(ramlModelResult);
+        return wrapApiModel(ramlModelResult, resourceLoader,  ramlPath);
     }
 
-    private static IRaml wrapApiModel(RamlModelResult ramlModelResult)
+    private static IRaml wrapApiModel(RamlModelResult ramlModelResult,ResourceLoader resourceLoader, String ramlPath)
     {
         if (ramlModelResult.hasErrors())
         {
@@ -45,7 +45,7 @@ public class ParserV2Utils
         {
             return new RamlImpl08V2(ramlModelResult.getApiV08());
         }
-        return new RamlImpl10V2(ramlModelResult.getApiV10());
+        return new RamlImpl10V2(ramlModelResult.getApiV10(), resourceLoader,  ramlPath);
     }
 
     public static List<String> validate(ResourceLoader resourceLoader, String ramlPath, String content)
