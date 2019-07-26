@@ -22,6 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -205,7 +208,7 @@ public class RamlImpl10V2 implements IRaml
     }
 
     public static List<String> findIncludeNodes(String rootPath, URI ramlURI, ResourceLoader resourceLoader) throws IOException {
-        final InputStream is = resourceLoader.fetchResource(ramlURI.toString());
+        final InputStream is = resourceLoader.fetchResource(URLDecoder.decode(ramlURI.toString()));
 
         if (is == null) {
             return emptyList();
@@ -240,8 +243,8 @@ public class RamlImpl10V2 implements IRaml
 
                 if (includePath != null) {
                     final String absolutIncludePath = computeIncludePath(rootPath, pathRelativeToRoot, includePath);
-                    final URI includedFileAsUri = URI.create(absolutIncludePath).normalize();
-                    includePaths.add(includedFileAsUri.toString());
+                    final URI includedFileAsUri = URI.create(URLEncoder.encode(absolutIncludePath)).normalize();
+                    includePaths.add(URLDecoder.decode(includedFileAsUri.toString()));
                     includePaths.addAll(findIncludeNodes(rootPath, includedFileAsUri, resourceLoader));
                     pathRelativeToRootCurrent = calculateNextRootRelative(pathRelativeToRootCurrent,
                             includePath);
@@ -279,8 +282,8 @@ public class RamlImpl10V2 implements IRaml
     }
 
     private static String calculateNextRootRelative(String pathRelativeToRootCurrent, String includePath) {
-        String newRelativeSubPath = getParent(URI.create(includePath));
-        newRelativeSubPath = newRelativeSubPath == null ? "" : newRelativeSubPath;
+        String newRelativeSubPath = getParent(URI.create(URLEncoder.encode(includePath)));
+        newRelativeSubPath = newRelativeSubPath == null ? "" : URLDecoder.decode(newRelativeSubPath);
         return pathRelativeToRootCurrent + newRelativeSubPath;
     }
 
@@ -318,7 +321,7 @@ public class RamlImpl10V2 implements IRaml
             else {
                 final String rootPath = path.substring(0, path.indexOf(matching));
                 final String exchangeModulePath = path.substring(dependencyIndex);
-                return rootPath + "/" + exchangeModulePath;
+                return Paths.get(rootPath + "/" + exchangeModulePath).normalize().toString();
             }
         } else {
             return path;

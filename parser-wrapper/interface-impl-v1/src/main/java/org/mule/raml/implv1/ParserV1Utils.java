@@ -61,8 +61,12 @@ public class ParserV1Utils
 
     public static List<String> detectIncludes(String ramlPath, ResourceLoader resourceLoader) throws IOException {
         try {
+            //We only need to check includes on raml files
+            if(!(ramlPath.endsWith(".raml") || ramlPath.endsWith(".yaml"))){
+                return Collections.emptyList();
+            }
             final String content = IOUtils.toString(resourceLoader.fetchResource(ramlPath));
-            final String rootFilePath = ramlPath.substring(0, ramlPath.lastIndexOf("/"));
+            final String rootFilePath = ramlPath.contains("/")?ramlPath.substring(0, ramlPath.lastIndexOf("/")):ramlPath;
 
             final Node rootNode = YAML_PARSER.compose(new StringReader(content));
             if (rootNode == null) {
