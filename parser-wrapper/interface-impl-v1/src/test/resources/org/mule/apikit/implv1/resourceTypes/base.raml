@@ -1,0 +1,36 @@
+get?:
+  responses: 
+    200: 
+      body: 
+        application/atom+xml:
+          schema: atom 
+post?:
+  responses: 
+    200?: 
+      body: 
+        application/atom+xml:
+          schema: atom
+    201?: 
+      body: 
+        application/atom+xml:
+          schema: atom
+put?: 
+  responses: 
+    200: 
+      body: 
+        application/atom+xml:
+          schema: atom
+    412:
+      body:
+        application/atom+xml:
+          example: !include ../examples/generic_error.xml
+delete?: 
+  responses: 
+    412:
+      body:
+        application/atom+xml:
+          example: !include ../examples/generic_error.xml
+
+usage: |
+  All resources are versioned
+is: [ versioned ]

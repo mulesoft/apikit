@@ -1,0 +1,15 @@
+#%RAML 0.8
+title: Test
+
+securitySchemes:
+  - oauth_2_0: !include securitySchemes/oauth_2_0.raml
+  - oauth_1_0: !include securitySchemes/oauth_1_0.raml
+schemas:
+  - atom: !include schemas/atom.xsd
+resourceTypes:
+  - base: !include resourceTypes/base.raml
+  - emailed: !include resourceTypes/emailed.raml
+traits:
+  - override-checked: !include traits/override-checked.raml
+  - collection: !include traits/collection.raml
+  - versioned: !include traits/versioned.raml

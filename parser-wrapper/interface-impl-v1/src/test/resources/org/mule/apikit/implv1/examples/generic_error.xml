@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<error>
+    <code>Error Code</code>
+    <level>Error Level</level>
+    <message>Error Message</message>
+</error>
