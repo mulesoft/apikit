@@ -17,18 +17,22 @@ import org.mule.module.apikit.ConsoleHandler;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Collections;
 
 import org.junit.Test;
+import org.mule.raml.interfaces.model.IRaml;
 
 public class ConsoleRamlUriTestCase
 {
 
     private String consoleBaseUri = "http://localhost:8081/console";
     private Configuration configuration = mock(Configuration.class);
-
+    private IRaml api = mock(IRaml.class);
     {
         when(configuration.isParserV2()).thenReturn(true);
         when(configuration.getAppHome()).thenReturn(new File("src/test/resources").getAbsolutePath());
+        when(configuration.getApi()).thenReturn(api);
+        when(api.getAllReferences()).thenReturn(Collections.<String>emptyList());
     }
 
     @Test

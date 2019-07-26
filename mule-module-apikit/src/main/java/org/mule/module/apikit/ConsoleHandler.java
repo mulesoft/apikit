@@ -20,26 +20,26 @@ import org.mule.transport.http.components.ResourceNotFoundException;
 import org.mule.transport.http.i18n.HttpMessages;
 import org.mule.util.FilenameUtils;
 import org.mule.util.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.mule.util.StringUtils.isNotEmpty;
 
 import static org.mule.module.apikit.UrlUtils.getBasePath;
 import static org.mule.module.apikit.UrlUtils.getQueryString;
 import static org.mule.module.apikit.UrlUtils.getResourceRelativePath;
 import static org.mule.module.apikit.uri.URICoder.decode;
+import static org.mule.util.StringUtils.isNotEmpty;
 
 public class ConsoleHandler implements MessageProcessor
 {
@@ -60,6 +60,7 @@ public class ConsoleHandler implements MessageProcessor
     private static final String CONSOLE_ATTRIBUTES_PLACEHOLDER = "console-attributes-placeholder";
     private static final String DEFAULT_API_RESOURCES_PATH = "api/";
     private static final String RAML_QUERY_STRING = "raml";
+    private List<String> acceptedClasspathResources;
 
     private String cachedIndexHtml;
     private String embeddedConsolePath;
@@ -101,11 +102,22 @@ public class ConsoleHandler implements MessageProcessor
             indexHtml = indexHtml.replaceFirst(consoleElement + " src=\"[^\"]+\"",
                                                consoleElement + " src=\"" + relativeRamlUri + "\"");
             cachedIndexHtml = indexHtml.replaceFirst(CONSOLE_ATTRIBUTES_PLACEHOLDER, consoleAttributes);
+            this.acceptedClasspathResources = getAcceptedClasspathResources();
         }
         else
         {
             cachedIndexHtml = "RAML Console is DISABLED.";
         }
+    }
+
+    private List<String> getAcceptedClasspathResources() {
+        List<String> acceptedClasspathResources = new ArrayList<>();
+        List<String> references = configuration.getApi().getAllReferences();
+        for(String ref: references){
+            acceptedClasspathResources.add(Paths.get(ref).normalize().toString());
+        }
+
+        return acceptedClasspathResources;
     }
 
     private boolean isOldConsole()
@@ -218,19 +230,14 @@ public class ConsoleHandler implements MessageProcessor
                     {
                         String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
                         String normalized = Paths.get(resourcePath).normalize().toString();
+                        // this normalized path should be controlled carefully since can scan all the classpath.
+                        URL classpathResouce = getClasspathResource(normalized);
                         // if normalized does not start with ("/" + apiResourcesRelativePath), path contains ../
                         if (!normalized.startsWith("/" + apiResourcesRelativePath)) {
                             throw new NotFoundException("../ is not allowed");
                         }
-                        if (CONSOLE_RESOURCE_PATTERN.matcher(normalized).find()) {
-                            InputStream apiResource = getClasspathResource(normalized.trim());
-                            if (apiResource == null && isNotEmpty(apiResourcesRelativePath) && !"/".equals(apiResourcesRelativePath)) {
-                                if (!resourcePath.contains("../")) {
-                                    in = new FileInputStream(new File(configuration.getAppHome(), resourcePath));
-                                }
-                            } else {
-                                in = apiResource;
-                            }
+                        if (classpathResouce != null && pathIsInAcceptedClasspath(classpathResouce.getPath())) {
+                                in= classpathResouce.openStream();
                         }
                     }
                 }
@@ -303,6 +310,16 @@ public class ConsoleHandler implements MessageProcessor
         return resultEvent;
     }
 
+    private boolean pathIsInAcceptedClasspath(String path) {
+        for(String ref: this.acceptedClasspathResources){
+            if(URLDecoder.decode(path).endsWith(ref)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private String getMimeType(String path)
     {
         String mimeType = DEFAULT_MIME_TYPE;
@@ -343,9 +360,9 @@ public class ConsoleHandler implements MessageProcessor
         return url + embeddedConsolePath;
     }
 
-    private InputStream getClasspathResource(String path) {
+    private URL getClasspathResource(String path) {
         String name = path.startsWith("/") ? path.replaceFirst("/", "") : path;
-        return Thread.currentThread().getContextClassLoader().getResourceAsStream(name);
+        return Thread.currentThread().getContextClassLoader().getResource(name);
     }
 
 }
