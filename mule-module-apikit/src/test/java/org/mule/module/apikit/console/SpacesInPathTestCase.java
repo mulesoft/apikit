@@ -8,6 +8,7 @@
 package org.mule.module.apikit.console;
 
 import com.jayway.restassured.RestAssured;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.api.config.MuleProperties;
@@ -54,10 +55,14 @@ public class SpacesInPathTestCase extends FunctionalTestCase
     @Test
     public void successWhenRamlResourcePathContainsSpaces()
     {
+        //Need to repeat api resource base since in runtime files are found in base of classpath, but at functional
+        // tests they are contain in its folder
+        String consoleResourcePath=
+                "console/org/mule/module/apikit/console/org/mule/module/apikit/console/this is a test.json";
+
         given()
             .expect()
                 .statusCode(200)
-                .when().get("console/org/mule/module/apikit/console/this is a test.json");
+                .when().get(consoleResourcePath);
     }
-
 }
