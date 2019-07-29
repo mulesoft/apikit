@@ -40,11 +40,10 @@ import static org.mule.module.apikit.UrlUtils.getQueryString;
 import static org.mule.module.apikit.UrlUtils.getResourceRelativePath;
 import static org.mule.module.apikit.uri.URICoder.decode;
 import static org.mule.util.StringUtils.isNotEmpty;
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 public class ConsoleHandler implements MessageProcessor
 {
-
-    private Pattern CONSOLE_RESOURCE_PATTERN = Pattern.compile(".*(json|xsd|raml)$");
 
     public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
     public static final String MIME_TYPE_JAVASCRIPT = "application/x-javascript";
@@ -245,7 +244,7 @@ public class ConsoleHandler implements MessageProcessor
                 {
                     String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                        throw new IllegalStateException("Only console resources are allowed " + escapeHtml(normalized));
                     }
                     String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
                     if (acceptEncoding != null && acceptEncoding.contains("gzip"))
@@ -262,14 +261,14 @@ public class ConsoleHandler implements MessageProcessor
                 {
                     String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                        throw new IllegalStateException("Only console resources are allowed " + escapeHtml(normalized));
                     }
                     in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                 }
             }
             if (in == null)
             {
-                throw new NotFoundException(path);
+                throw new NotFoundException(escapeHtml(path));
             }
 
             baos = new ByteArrayOutputStream();
@@ -299,7 +298,7 @@ public class ConsoleHandler implements MessageProcessor
         }
         catch (IOException e)
         {
-            throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path), event, this);
+            throw new ResourceNotFoundException(HttpMessages.fileNotFound(escapeHtml(RESOURCE_BASE + path)), event, this);
         }
         finally
         {
