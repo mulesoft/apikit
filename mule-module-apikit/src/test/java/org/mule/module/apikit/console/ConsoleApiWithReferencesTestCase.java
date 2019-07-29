@@ -80,5 +80,12 @@ public class ConsoleApiWithReferencesTestCase extends FunctionalTestCase
         }
     }
 
-
+    @Test
+    public void consoleEscapeNotFoundResponses()
+    {
+        given().header("Accept", "text/html")
+                .expect()
+                .response().body(containsString("/&lt;script&gt;alert('hello')%3B&lt;/script&gt;.html"))
+                .when().get("console/<script>alert('hello')%3B</script>.html");
+    }
 }
