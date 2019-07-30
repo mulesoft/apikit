@@ -229,9 +229,9 @@ public class ConsoleHandler implements MessageProcessor
                     else
                     {
                         String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
-                        String normalized = Paths.get(resourcePath).normalize().toString();
+                        Path normalized = Paths.get(resourcePath).normalize();
                         // this normalized path should be controlled carefully since can scan all the classpath.
-                        URL classpathResouce = getClasspathResource(normalized);
+                        URL classpathResouce = getClasspathResource(normalized.toString());
                         // if normalized does not start with ("/" + apiResourcesRelativePath), path contains ../
                         if (!normalized.startsWith("/" + apiResourcesRelativePath)) {
                             throw new NotFoundException("../ is not allowed");
@@ -243,9 +243,9 @@ public class ConsoleHandler implements MessageProcessor
                 }
                 else if (path.startsWith(embeddedConsolePath + "/scripts"))
                 {
-                    String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
+                    Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                        throw new IllegalStateException("Only console resources are allowed " + normalized.toString());
                     }
                     String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
                     if (acceptEncoding != null && acceptEncoding.contains("gzip"))
@@ -260,9 +260,9 @@ public class ConsoleHandler implements MessageProcessor
                 }
                 else if (path.startsWith(embeddedConsolePath))
                 {
-                    String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
+                    Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                        throw new IllegalStateException("Only console resources are allowed " + normalized.toString());
                     }
                     in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                 }
