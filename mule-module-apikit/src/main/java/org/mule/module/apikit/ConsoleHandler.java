@@ -110,16 +110,6 @@ public class ConsoleHandler implements MessageProcessor
         }
     }
 
-    private List<String> getAcceptedClasspathResources() {
-        List<String> acceptedClasspathResources = new ArrayList<>();
-        List<String> references = configuration.getApi().getAllReferences();
-        for(String ref: references){
-            acceptedClasspathResources.add(Paths.get(ref).normalize().toString());
-        }
-
-        return acceptedClasspathResources;
-    }
-
     private boolean isOldConsole()
     {
         return RESOURCE_BASE.equals("/console");
@@ -229,7 +219,7 @@ public class ConsoleHandler implements MessageProcessor
                     else
                     {
                         // this normalized path should be controlled carefully since can scan all the classpath.
-                        String normalized = Paths.get(path).normalize().toString();
+                        Path normalized = Paths.get(path).normalize();
                         // if normalized does not start with ("/" + apiResourcesRelativePath), path contains ../
                         if (!normalized.startsWith("/" + apiResourcesRelativePath)) {
                             throw new NotFoundException("../ is not allowed");
@@ -243,9 +233,9 @@ public class ConsoleHandler implements MessageProcessor
                 }
                 else if (path.startsWith(embeddedConsolePath + "/scripts"))
                 {
-                    String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
+                    Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                        throw new IllegalStateException("Only console resources are allowed " + normalized.toString());
                     }
                     String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
                     if (acceptEncoding != null && acceptEncoding.contains("gzip"))
@@ -260,9 +250,9 @@ public class ConsoleHandler implements MessageProcessor
                 }
                 else if (path.startsWith(embeddedConsolePath))
                 {
-                    String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
+                    Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                        throw new IllegalStateException("Only console resources are allowed " + normalized.toString());
                     }
                     in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                 }
