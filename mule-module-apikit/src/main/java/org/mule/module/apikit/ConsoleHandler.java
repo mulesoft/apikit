@@ -236,7 +236,7 @@ public class ConsoleHandler implements MessageProcessor
                         }
                         String resourcePath = normalized.replaceFirst(apiResourcesRelativePath,"");
                         URL classpathResouce = getClasspathResource(resourcePath);
-                        if (classpathResouce != null && pathIsInAcceptedClasspath(classpathResouce.getPath())) {
+                        if (classpathResouce != null) {
                                 in= classpathResouce.openStream();
                         }
                     }
@@ -310,16 +310,6 @@ public class ConsoleHandler implements MessageProcessor
         return resultEvent;
     }
 
-    private boolean pathIsInAcceptedClasspath(String path) {
-        for(String ref: this.acceptedClasspathResources){
-            if(URLDecoder.decode(path).endsWith(ref)){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private String getMimeType(String path)
     {
         String mimeType = DEFAULT_MIME_TYPE;
@@ -361,8 +351,21 @@ public class ConsoleHandler implements MessageProcessor
     }
 
     private URL getClasspathResource(String path) {
-        String name = path.startsWith("/") ? path.replaceFirst("/", "") : path;
+        String ref = getAcceptedClasspathRef(path);
+        if(ref == null){
+            return null;
+        }
+        String name = ref.startsWith("/") ? ref.replaceFirst("/", "") : ref;
         return Thread.currentThread().getContextClassLoader().getResource(name);
+    }
+
+    private String getAcceptedClasspathRef(String path) {
+        for(String ref: this.acceptedClasspathResources){
+            if(URLDecoder.decode(path).endsWith(ref)){
+                return ref;
+            }
+        }
+        return null;
     }
 
 }
