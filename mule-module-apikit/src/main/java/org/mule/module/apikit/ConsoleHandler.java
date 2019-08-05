@@ -30,10 +30,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static org.mule.module.apikit.UrlUtils.getBasePath;
 import static org.mule.module.apikit.UrlUtils.getQueryString;
@@ -43,9 +43,6 @@ import static org.mule.util.StringUtils.isNotEmpty;
 
 public class ConsoleHandler implements MessageProcessor
 {
-
-    private Pattern CONSOLE_RESOURCE_PATTERN = Pattern.compile(".*(json|xsd|raml)$");
-
     public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
     public static final String MIME_TYPE_JAVASCRIPT = "application/x-javascript";
     public static final String MIME_TYPE_PNG = "image/png";
@@ -108,6 +105,16 @@ public class ConsoleHandler implements MessageProcessor
         {
             cachedIndexHtml = "RAML Console is DISABLED.";
         }
+    }
+
+    private List<String> getAcceptedClasspathResources() {
+        List<String> acceptedClasspathResources = new ArrayList<>();
+        List<String> references = configuration.getApi().getAllReferences();
+        for(String ref: references){
+            acceptedClasspathResources.add(Paths.get(ref).normalize().toString());
+        }
+
+        return acceptedClasspathResources;
     }
 
     private boolean isOldConsole()
@@ -224,8 +231,7 @@ public class ConsoleHandler implements MessageProcessor
                         if (!normalized.startsWith("/" + apiResourcesRelativePath)) {
                             throw new NotFoundException("../ is not allowed");
                         }
-                        String resourcePath = normalized.replaceFirst(apiResourcesRelativePath,"");
-                        URL classpathResouce = getClasspathResource(resourcePath);
+                        URL classpathResouce = getClasspathResource(normalized.toString());
                         if (classpathResouce != null) {
                                 in= classpathResouce.openStream();
                         }
