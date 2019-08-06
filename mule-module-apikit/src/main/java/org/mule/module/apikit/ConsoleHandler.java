@@ -347,21 +347,25 @@ public class ConsoleHandler implements MessageProcessor
     }
 
     private URL getClasspathResource(String path) {
-        String ref = getAcceptedClasspathRef(path);
-        if(ref == null){
-            return null;
-        }
-        String name = ref.startsWith("/") ? ref.replaceFirst("/", "") : ref;
-        return Thread.currentThread().getContextClassLoader().getResource(name);
-    }
-
-    private String getAcceptedClasspathRef(String path) {
         for(String ref: this.acceptedClasspathResources){
             if(URLDecoder.decode(path).endsWith(ref)){
-                return ref;
+                URL resource = readFromRamlRef(ref);
+                if (resource != null) {
+                    return resource;
+                }
+                return readFromPath(path);
             }
         }
         return null;
+    }
+
+    private URL readFromRamlRef(String ref) {
+        return Thread.currentThread().getContextClassLoader().getResource(ref.startsWith("/") ? ref.replaceFirst("/", "") : ref);
+    }
+
+    private URL readFromPath(String path) {
+        String resourcePath = path.startsWith("/") ? path.replaceFirst("/", "") : path;
+        return Thread.currentThread().getContextClassLoader().getResource(resourcePath.startsWith(apiResourcesRelativePath) ? resourcePath.replaceFirst(apiResourcesRelativePath, "") : resourcePath);
     }
 
 }
