@@ -246,7 +246,7 @@ public class Configuration extends AbstractConfiguration
         String key = String.format("%s:%s", method, resource);
         if (type != null)
         {
-            key = key + ":" + type;
+            key = key + ":" + type.toLowerCase();
         }
         IResource apiResource = flatResourceTree.get(resource);
         if (apiResource != null)
