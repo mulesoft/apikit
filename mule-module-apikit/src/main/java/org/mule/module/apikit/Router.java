@@ -80,7 +80,7 @@ public class Router extends AbstractRouter
     protected Flow getFlow(IResource resource, HttpRestRequest request) throws UnsupportedMediaTypeException
     {
         String baseKey = request.getMethod() + ":" + resource.getUri();
-        String contentType = request.getContentType();
+        String contentType = request.getContentType() != null ? request.getContentType().toLowerCase() : "";
         Map<String, Flow> rawRestFlowMap = ((Configuration) config).getRawRestFlowMap();
         Flow flow = rawRestFlowMap.get(baseKey + ":" + contentType);
         if (flow == null)

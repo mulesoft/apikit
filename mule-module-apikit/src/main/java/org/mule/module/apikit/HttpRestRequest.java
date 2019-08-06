@@ -345,7 +345,7 @@ public class HttpRestRequest
                 logger.debug(String.format("comparing request media type %s with expected %s\n",
                                            requestMimeTypeName, mimeTypeName));
             }
-            if (mimeTypeName.equals(requestMimeTypeName))
+            if (mimeTypeName.equalsIgnoreCase(requestMimeTypeName))
             {
                 found = true;
                 if (!config.isDisableValidations())
@@ -369,8 +369,9 @@ public class HttpRestRequest
     private void validateBody(String mimeTypeName) throws MuleRestException
     {
         IMimeType actionMimeType = action.getBody().get(mimeTypeName);
-        boolean isJson = mimeTypeName.contains("json");
-        boolean isXml = mimeTypeName.contains("xml");
+        String lowerCaseMimeType = mimeTypeName.toLowerCase();
+        boolean isJson = lowerCaseMimeType.contains("json");
+        boolean isXml = lowerCaseMimeType.contains("xml");
         if (actionMimeType.getSchema() != null && (isXml || isJson))
         {
             if (config.isParserV2())
@@ -380,16 +381,16 @@ public class HttpRestRequest
             }
             else
             {
-                validateSchema(mimeTypeName);
+                validateSchema(lowerCaseMimeType);
             }
         }
         else if (actionMimeType.getFormParameters() != null &&
-                 mimeTypeName.contains("multipart/form-data"))
+          lowerCaseMimeType.contains("multipart/form-data"))
         {
             validateMultipartForm(actionMimeType.getFormParameters());
         }
         else if (actionMimeType.getFormParameters() != null &&
-                 mimeTypeName.contains("application/x-www-form-urlencoded"))
+          lowerCaseMimeType.contains("application/x-www-form-urlencoded"))
         {
             if (config.isParserV2())
             {

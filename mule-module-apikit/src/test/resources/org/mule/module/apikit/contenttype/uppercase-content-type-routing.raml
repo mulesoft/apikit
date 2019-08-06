@@ -1,0 +1,26 @@
+#%RAML 1.0
+---
+title: ContentType with Upper Cases
+version: v1
+
+types:
+  User-base:
+      properties:
+        firstname:
+          required: true
+        lastname:
+          required: true
+
+/upper:
+  post:
+    body:
+      Application/JSON: User-base
+/lower:
+  post:
+    body:
+      application/json: User-base
+/flowDifferentContentTypeCase:
+  post:
+    body:
+      APPLICATION/JSON: User-base
+

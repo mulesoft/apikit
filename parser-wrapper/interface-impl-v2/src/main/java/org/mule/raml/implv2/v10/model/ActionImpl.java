@@ -14,6 +14,11 @@ import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
+import org.apache.commons.collections.map.CaseInsensitiveMap;
+import org.raml.v2.api.model.v10.bodies.Response;
+import org.raml.v2.api.model.v10.datamodel.TypeDeclaration;
+import org.raml.v2.api.model.v10.methods.Method;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,7 +53,7 @@ public class ActionImpl implements IAction
     @Override
     public Map<String, IResponse> getResponses()
     {
-        Map<String, IResponse> result = new LinkedHashMap<>();
+        Map<String, IResponse> result = new CaseInsensitiveMap();
         for (Response response : method.responses())
         {
             result.put(response.code().value(), new ResponseImpl(response));
@@ -65,7 +70,7 @@ public class ActionImpl implements IAction
     @Override
     public Map<String, IMimeType> getBody()
     {
-        Map<String, IMimeType> result = new LinkedHashMap<>();
+        Map<String, IMimeType> result = new CaseInsensitiveMap();
         for (TypeDeclaration typeDeclaration : method.body())
         {
             result.put(typeDeclaration.name(),  new MimeTypeImpl(typeDeclaration));

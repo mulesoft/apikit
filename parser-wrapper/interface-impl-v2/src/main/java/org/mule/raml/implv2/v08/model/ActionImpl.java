@@ -14,16 +14,16 @@ import org.mule.raml.interfaces.model.IResponse;
 import org.mule.raml.interfaces.model.ISecurityReference;
 import org.mule.raml.interfaces.model.parameter.IParameter;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.raml.v2.api.model.v08.bodies.BodyLike;
 import org.raml.v2.api.model.v08.bodies.Response;
 import org.raml.v2.api.model.v08.methods.Method;
 import org.raml.v2.api.model.v08.parameters.Parameter;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 public class ActionImpl implements IAction
 {
 
@@ -60,7 +60,7 @@ public class ActionImpl implements IAction
     @Override
     public Map<String, IMimeType> getBody()
     {
-        Map<String, IMimeType> result = new LinkedHashMap<>();
+        Map<String, IMimeType> result = new CaseInsensitiveMap();
         for (BodyLike bodyLike : method.body())
         {
             result.put(bodyLike.name(),  new MimeTypeImpl(bodyLike));
