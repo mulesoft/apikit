@@ -30,10 +30,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import static org.mule.module.apikit.UrlUtils.getBasePath;
 import static org.mule.module.apikit.UrlUtils.getQueryString;
@@ -43,9 +43,6 @@ import static org.mule.util.StringUtils.isNotEmpty;
 
 public class ConsoleHandler implements MessageProcessor
 {
-
-    private Pattern CONSOLE_RESOURCE_PATTERN = Pattern.compile(".*(json|xsd|raml)$");
-
     public static final String DEFAULT_MIME_TYPE = "application/octet-stream";
     public static final String MIME_TYPE_JAVASCRIPT = "application/x-javascript";
     public static final String MIME_TYPE_PNG = "image/png";
@@ -228,24 +225,23 @@ public class ConsoleHandler implements MessageProcessor
                     }
                     else
                     {
-                        String resourcePath = "/" + apiResourcesRelativePath + path.substring(apiResourcesFullPath.length());
-                        String normalized = Paths.get(resourcePath).normalize().toString();
                         // this normalized path should be controlled carefully since can scan all the classpath.
-                        URL classpathResouce = getClasspathResource(normalized);
+                        Path normalized = Paths.get(path).normalize();
                         // if normalized does not start with ("/" + apiResourcesRelativePath), path contains ../
                         if (!normalized.startsWith("/" + apiResourcesRelativePath)) {
                             throw new NotFoundException("../ is not allowed");
                         }
-                        if (classpathResouce != null && pathIsInAcceptedClasspath(classpathResouce.getPath())) {
+                        URL classpathResouce = getClasspathResource(normalized.toString());
+                        if (classpathResouce != null) {
                                 in= classpathResouce.openStream();
                         }
                     }
                 }
                 else if (path.startsWith(embeddedConsolePath + "/scripts"))
                 {
-                    String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
+                    Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                        throw new IllegalStateException("Only console resources are allowed " + normalized.toString());
                     }
                     String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
                     if (acceptEncoding != null && acceptEncoding.contains("gzip"))
@@ -260,9 +256,9 @@ public class ConsoleHandler implements MessageProcessor
                 }
                 else if (path.startsWith(embeddedConsolePath))
                 {
-                    String normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize().toString();
+                    Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized);
+                        throw new IllegalStateException("Only console resources are allowed " + normalized.toString());
                     }
                     in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                 }
@@ -310,16 +306,6 @@ public class ConsoleHandler implements MessageProcessor
         return resultEvent;
     }
 
-    private boolean pathIsInAcceptedClasspath(String path) {
-        for(String ref: this.acceptedClasspathResources){
-            if(URLDecoder.decode(path).endsWith(ref)){
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private String getMimeType(String path)
     {
         String mimeType = DEFAULT_MIME_TYPE;
@@ -361,8 +347,25 @@ public class ConsoleHandler implements MessageProcessor
     }
 
     private URL getClasspathResource(String path) {
-        String name = path.startsWith("/") ? path.replaceFirst("/", "") : path;
-        return Thread.currentThread().getContextClassLoader().getResource(name);
+        for(String ref: this.acceptedClasspathResources){
+            if(URLDecoder.decode(path).endsWith(ref)){
+                URL resource = readFromRamlRef(ref);
+                if (resource != null) {
+                    return resource;
+                }
+                return readFromPath(path);
+            }
+        }
+        return null;
+    }
+
+    private URL readFromRamlRef(String ref) {
+        return Thread.currentThread().getContextClassLoader().getResource(ref.startsWith("/") ? ref.replaceFirst("/", "") : ref);
+    }
+
+    private URL readFromPath(String path) {
+        String resourcePath = path.startsWith("/") ? path.replaceFirst("/", "") : path;
+        return Thread.currentThread().getContextClassLoader().getResource(resourcePath.startsWith(apiResourcesRelativePath) ? resourcePath.replaceFirst(apiResourcesRelativePath, "") : resourcePath);
     }
 
 }
