@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+
+    <apikit:config name="cases-config" raml="org/mule/module/apikit/contenttype/uppercase-content-type-routing.raml"
+                   consoleEnabled="false"/>
+
+
+    <flow name="main">
+        <http:inbound-endpoint port="${serverPort}" host="localhost" path="api"/>
+        <apikit:router/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
+    <flow name="post:/upper:Application/JSON:cases-config">
+        <set-property propertyName="incoming-content-type" value="#[message.inboundProperties['content-type']]"/>
+    </flow>
+
+    <!-- the raml defines a content type with different case than the one in the flow name -->
+    <flow name="post:/flowDifferentContentTypeCase:Application/JSON:cases-config">
+        <set-property propertyName="incoming-content-type" value="#[message.inboundProperties['content-type']]"/>
+    </flow>
+
+    <flow name="post:/lower:application/json:cases-config">
+        <set-property propertyName="incoming-content-type" value="#[message.inboundProperties['content-type']]"/>
+    </flow>
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-payload value="resource not found"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="405">
+            <apikit:exception value="org.mule.module.apikit.exception.MethodNotAllowedException"/>
+            <set-payload value="method not allowed"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="415">
+            <apikit:exception value="org.mule.module.apikit.exception.UnsupportedMediaTypeException"/>
+            <set-payload value="unsupported media type"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="406">
+            <apikit:exception value="org.mule.module.apikit.exception.NotAcceptableException"/>
+            <set-payload value="not acceptable"/>
+        </apikit:mapping>
+        <apikit:mapping statusCode="400">
+            <apikit:exception value="org.mule.module.apikit.exception.BadRequestException"/>
+            <set-payload value="bad request"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+</mule>
