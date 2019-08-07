@@ -8,7 +8,6 @@
 package org.mule.module.apikit.console;
 
 import com.jayway.restassured.RestAssured;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mule.api.config.MuleProperties;
