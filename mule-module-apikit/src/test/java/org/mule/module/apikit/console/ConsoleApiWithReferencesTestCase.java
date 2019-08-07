@@ -77,8 +77,17 @@ public class ConsoleApiWithReferencesTestCase extends FunctionalTestCase
             given().header("Accept", "*/*")
                     .expect().response().statusCode(200)
                     .when().get("console/references/references/" + resource);
+            //Need to repeat api resource base (references) since in runtime files are found in base of classpath, but at functional
+            //tests they are contain in its folder
         }
     }
 
-
+    @Test
+    public void consoleEscapeNotFoundResponses()
+    {
+        given().header("Accept", "text/html")
+                .expect()
+                .response().body(containsString("/&lt;script&gt;alert('hello')%3B&lt;/script&gt;.html"))
+                .when().get("console/<script>alert('hello')%3B</script>.html");
+    }
 }
