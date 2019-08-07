@@ -55,14 +55,10 @@ public class SpacesInPathTestCase extends FunctionalTestCase
     @Test
     public void successWhenRamlResourcePathContainsSpaces()
     {
-        //Need to repeat api resource base since in runtime files are found in base of classpath, but at functional
-        // tests they are contain in its folder
-        String consoleResourcePath=
-                "console/org/mule/module/apikit/console/org/mule/module/apikit/console/this is a test.json";
-
         given()
             .expect()
                 .statusCode(200)
-                .when().get(consoleResourcePath);
+                .when().get("console/org/mule/module/apikit/console/this is a test.json");
     }
+
 }
