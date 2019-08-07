@@ -35,6 +35,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 import static org.mule.module.apikit.UrlUtils.getBasePath;
 import static org.mule.module.apikit.UrlUtils.getQueryString;
 import static org.mule.module.apikit.UrlUtils.getResourceRelativePath;
@@ -241,7 +242,7 @@ public class ConsoleHandler implements MessageProcessor
                 {
                     Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized.toString());
+                        throw new IllegalStateException("Only console resources are allowed " + escapeHtml(normalized.toString()));
                     }
                     String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
                     if (acceptEncoding != null && acceptEncoding.contains("gzip"))
@@ -258,14 +259,14 @@ public class ConsoleHandler implements MessageProcessor
                 {
                     Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + normalized.toString());
+                        throw new IllegalStateException("Only console resources are allowed " + escapeHtml(normalized.toString()));
                     }
                     in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                 }
             }
             if (in == null)
             {
-                throw new NotFoundException(path);
+                throw new NotFoundException(escapeHtml(path));
             }
 
             baos = new ByteArrayOutputStream();
@@ -295,7 +296,7 @@ public class ConsoleHandler implements MessageProcessor
         }
         catch (IOException e)
         {
-            throw new ResourceNotFoundException(HttpMessages.fileNotFound(RESOURCE_BASE + path), event, this);
+            throw new ResourceNotFoundException(HttpMessages.fileNotFound(escapeHtml(RESOURCE_BASE + path)), event, this);
         }
         finally
         {
