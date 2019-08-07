@@ -1,0 +1,11 @@
+#%RAML 1.0 DataType
+
+properties:
+  referenceId:
+    type: string
+    minLength: 1
+    maxLength: 30
+    example: "1906706349"
+
+  package-properties:
+    type: !include properties.raml
