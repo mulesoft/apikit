@@ -29,7 +29,7 @@ public class Console implements MessageProcessor, Initialisable, Startable, Mule
     private ConsoleHandler consoleHandler;
     private FlowConstruct flowConstruct;
     protected RamlDescriptorHandler ramlHandler;
-    private static final String CONSOLE_DISABLED = "apikit.console.enabled";
+    private static final String CONSOLE_DISABLED = "apikit.console.disabled";
     private boolean consoleDisabled;
 
     @Override
