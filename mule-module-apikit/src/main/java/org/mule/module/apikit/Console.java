@@ -19,6 +19,7 @@ import org.mule.api.processor.MessageProcessor;
 import org.mule.config.i18n.MessageFactory;
 
 import java.util.Collection;
+import org.mule.module.apikit.exception.NotFoundException;
 
 public class Console implements MessageProcessor, Initialisable, Startable, MuleContextAware, FlowConstructAware
 {
@@ -28,6 +29,8 @@ public class Console implements MessageProcessor, Initialisable, Startable, Mule
     private ConsoleHandler consoleHandler;
     private FlowConstruct flowConstruct;
     protected RamlDescriptorHandler ramlHandler;
+    private static final String CONSOLE_DISABLED = "apikit.console.enabled";
+    private boolean consoleDisabled;
 
     @Override
     public void setMuleContext(MuleContext context)
@@ -54,6 +57,7 @@ public class Console implements MessageProcessor, Initialisable, Startable, Mule
     @Override
     public void initialise() throws InitialisationException
     {
+        consoleDisabled = Boolean.valueOf(System.getProperty(CONSOLE_DISABLED, "false"));
         //avoid spring initialization
         if (flowConstruct == null)
         {
@@ -82,6 +86,9 @@ public class Console implements MessageProcessor, Initialisable, Startable, Mule
     @Override
     public MuleEvent process(MuleEvent event) throws MuleException
     {
+        if (consoleDisabled) {
+            throw new NotFoundException("Not Found");
+        }
         HttpRestRequest request = new HttpRestRequest(event, getConfig());
 
         //check for raml descriptor request
