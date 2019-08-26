@@ -366,7 +366,7 @@ public class ConsoleHandler implements MessageProcessor
 
     private URL readFromPath(String path) {
         String resourcePath = path.startsWith("/") ? path.replaceFirst("/", "") : path;
-        return Thread.currentThread().getContextClassLoader().getResource(resourcePath.startsWith(apiResourcesRelativePath) ? resourcePath.replaceFirst(apiResourcesRelativePath, "") : resourcePath);
+        return Thread.currentThread().getContextClassLoader().getResource(resourcePath.startsWith(DEFAULT_API_RESOURCES_PATH) ? resourcePath.replaceFirst(DEFAULT_API_RESOURCES_PATH, "") : resourcePath);
     }
 
 }
