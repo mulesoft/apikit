@@ -56,7 +56,11 @@ public class ConsoleHandler implements MessageProcessor
     private static final String CONSOLE_ATTRIBUTES = "options=\"{disableRamlClientGenerator: true, disableThemeSwitcher: true}\"";
     private static final String CONSOLE_ATTRIBUTES_OLD = "disable-raml-client-generator=\"\" disable-theme-switcher=\"\"";
     private static final String CONSOLE_ATTRIBUTES_PLACEHOLDER = "console-attributes-placeholder";
-    private static final String DEFAULT_API_RESOURCES_PATH = "api/";
+    private static final String DEFAULT_API_FOLDER= "api";
+    private static final String DEFAULT_API_RESOURCES_PATH = DEFAULT_API_FOLDER + "/";
+    private static final String DEFAULT_API_RESOURCES_FILE_SYSTEM_PATH = DEFAULT_API_FOLDER + File.separator;
+    private static final String FILE_SEPARATOR_REGEX = File.separator.equals("\\") ?  "\\\\" : "/";
+    private static final String DEFAULT_API_RESOURCES_PATH_REGEX = DEFAULT_API_FOLDER + FILE_SEPARATOR_REGEX;
     private static final String RAML_QUERY_STRING = "raml";
     private List<String> acceptedClasspathResources;
 
@@ -361,12 +365,16 @@ public class ConsoleHandler implements MessageProcessor
     }
 
     private URL readFromRamlRef(String ref) {
-        return Thread.currentThread().getContextClassLoader().getResource(ref.startsWith("/") ? ref.replaceFirst("/", "") : ref);
+        return Thread.currentThread().getContextClassLoader().getResource(getRelativePath(ref));
     }
 
     private URL readFromPath(String path) {
-        String resourcePath = path.startsWith("/") ? path.replaceFirst("/", "") : path;
-        return Thread.currentThread().getContextClassLoader().getResource(resourcePath.startsWith(apiResourcesRelativePath) ? resourcePath.replaceFirst(apiResourcesRelativePath, "") : resourcePath);
+        String resourcePath = getRelativePath(path);
+        resourcePath = resourcePath.startsWith(DEFAULT_API_RESOURCES_FILE_SYSTEM_PATH) ? resourcePath.replaceFirst(DEFAULT_API_RESOURCES_PATH_REGEX, "") : resourcePath;
+        return Thread.currentThread().getContextClassLoader().getResource(resourcePath);
     }
 
+    private static String getRelativePath(String path) {
+        return path.startsWith(File.separator) ? path.replaceFirst(FILE_SEPARATOR_REGEX, "") : path;
+    }
 }
