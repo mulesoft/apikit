@@ -232,8 +232,8 @@ public class ConsoleHandler implements MessageProcessor
                     {
                         // this normalized path should be controlled carefully since can scan all the classpath.
                         Path normalized = Paths.get(path).normalize();
-                        // if normalized does not start with ("/" + apiResourcesRelativePath), path contains ../
-                        if (!normalized.startsWith("/" + apiResourcesRelativePath)) {
+                        // if normalized does not start with ("/" + apiResourcesFullPath), path contains ../
+                        if (!normalized.startsWith(apiResourcesFullPath)) {
                             throw new NotFoundException("../ is not allowed");
                         }
                         URL classpathResouce = getClasspathResource(normalized.toString());
@@ -369,8 +369,10 @@ public class ConsoleHandler implements MessageProcessor
     }
 
     private URL readFromPath(String path) {
-        String resourcePath = getRelativePath(path);
-        resourcePath = resourcePath.startsWith(DEFAULT_API_RESOURCES_FILE_SYSTEM_PATH) ? resourcePath.replaceFirst(DEFAULT_API_RESOURCES_PATH_REGEX, "") : resourcePath;
+        String prefix = embeddedConsolePath + File.separator + DEFAULT_API_RESOURCES_FILE_SYSTEM_PATH;
+        String regex = embeddedConsolePath + FILE_SEPARATOR_REGEX + DEFAULT_API_RESOURCES_PATH_REGEX;
+        String resourcePath = path.startsWith(prefix) ? path.replaceFirst(regex, "") : path;
+        resourcePath = getRelativePath(resourcePath);
         return Thread.currentThread().getContextClassLoader().getResource(resourcePath);
     }
 
