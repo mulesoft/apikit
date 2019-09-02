@@ -27,6 +27,7 @@ import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.URICoder;
+import org.mule.module.apikit.validation.BodyValidator;
 import org.mule.module.apikit.validation.RestSchemaValidator;
 import org.mule.module.apikit.validation.RestSchemaValidatorFactory;
 import org.mule.module.apikit.validation.SchemaType;
@@ -453,8 +454,8 @@ public class HttpRestRequest
         {
             if (config.isParserV2())
             {
-                // json requires trimming the BOM if present
-                validateSchemaV2(actionMimeType, isJson);
+                BodyValidator bodyValidator = new BodyValidator(actionMimeType);
+                bodyValidator.validateSchemaV2(isJson, getPayloadAsString(requestEvent.getMessage(), isJson));
             }
             else
             {
@@ -592,29 +593,6 @@ public class HttpRestRequest
                     logger.warn("Cannot set default part " + expectedKey, e);
                 }
             }
-        }
-    }
-
-    private void validateSchemaV2(IMimeType mimeType, boolean trimBom) throws BadRequestException
-    {
-        String payload = getPayloadAsString(requestEvent.getMessage(), trimBom);
-        List<ValidationResult> validationResults;
-        if (mimeType instanceof org.mule.raml.implv2.v10.model.MimeTypeImpl)
-        {
-            validationResults = ((org.mule.raml.implv2.v10.model.MimeTypeImpl) mimeType).validate(payload);
-        }
-        else
-        {
-            // TODO implement for 08
-            // List<ValidationResult> validationResults = ((org.mule.raml.implv2.v08.model.MimeTypeImpl) mimeType).validate(payload);
-            throw new RuntimeException("not supported");
-
-        }
-        if (!validationResults.isEmpty())
-        {
-            String message = validationResults.get(0).getMessage();
-            logger.info("Schema validation failed: " + message);
-            throw new BadRequestException(message);
         }
     }
 
