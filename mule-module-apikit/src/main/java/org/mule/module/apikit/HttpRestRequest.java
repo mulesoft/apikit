@@ -23,7 +23,6 @@ import org.mule.module.apikit.exception.InvalidHeaderException;
 import org.mule.module.apikit.exception.InvalidQueryParameterException;
 import org.mule.module.apikit.exception.InvalidQueryStringException;
 import org.mule.module.apikit.exception.MuleRestException;
-import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.module.apikit.exception.UnsupportedMediaTypeException;
 import org.mule.module.apikit.uri.URICoder;
 import org.mule.module.apikit.validation.BodyValidator;
@@ -88,7 +87,7 @@ public class HttpRestRequest
         this.requestEvent = event;
         this.config = config;
         this.adapter = new HttpProtocolAdapter(event);
-        this.outputRepresentationHandler = new OutputRepresentationHandler(adapter);
+        this.outputRepresentationHandler = new OutputRepresentationHandler(adapter, throwNotAcceptable());
     }
 
     public HttpProtocolAdapter getAdapter()
@@ -113,6 +112,10 @@ public class HttpRestRequest
     public String getContentType()
     {
         return adapter.getRequestMediaType();
+    }
+
+    protected boolean throwNotAcceptable() {
+        return true;
     }
 
     /**
@@ -673,11 +676,6 @@ public class HttpRestRequest
         SchemaType schemaType = mimeTypeName.contains("json") ? SchemaType.JSONSchema : SchemaType.XMLSchema;
         RestSchemaValidator validator = RestSchemaValidatorFactory.getInstance().createValidator(schemaType, requestEvent.getMuleContext());
         validator.validate(config.getName(), SchemaCacheUtils.getSchemaCacheKey(action, mimeTypeName), requestEvent, config.getApi());
-    }
-
-    protected String handleNotAcceptable() throws NotAcceptableException
-    {
-        throw new NotAcceptableException();
     }
 
     private List<String> getResponseMimeTypes()
