@@ -8,7 +8,6 @@ package org.mule.module.apikit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.net.MediaType;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -81,12 +80,14 @@ public class HttpRestRequest
     protected AbstractConfiguration config;
     protected IAction action;
     protected HttpProtocolAdapter adapter;
+    private final OutputRepresentationHandler outputRepresentationHandler;
 
     public HttpRestRequest(MuleEvent event, AbstractConfiguration config)
     {
-        requestEvent = event;
+        this.requestEvent = event;
         this.config = config;
-        adapter = new HttpProtocolAdapter(event);
+        this.adapter = new HttpProtocolAdapter(event);
+        this.outputRepresentationHandler = new OutputRepresentationHandler(adapter, throwNotAcceptable());
     }
 
     public HttpProtocolAdapter getAdapter()
@@ -113,6 +114,10 @@ public class HttpRestRequest
         return adapter.getRequestMediaType();
     }
 
+    protected boolean throwNotAcceptable() {
+        return true;
+    }
+
     /**
      * Validates the request against the RAML and negotiates the response representation.
      * The resulting event is only updated when default values are applied.
@@ -133,7 +138,7 @@ public class HttpRestRequest
         }
         negotiateInputRepresentation();
         List<String> responseMimeTypes = getResponseMimeTypes();
-        String responseRepresentation = negotiateOutputRepresentation(responseMimeTypes);
+        String responseRepresentation = outputRepresentationHandler.negotiateOutputRepresentation(action, responseMimeTypes);
 
         if (responseMimeTypes != null)
         {
@@ -714,34 +719,6 @@ public class HttpRestRequest
         SchemaType schemaType = mimeTypeName.contains("json") ? SchemaType.JSONSchema : SchemaType.XMLSchema;
         RestSchemaValidator validator = RestSchemaValidatorFactory.getInstance().createValidator(schemaType, requestEvent.getMuleContext());
         validator.validate(config.getName(), SchemaCacheUtils.getSchemaCacheKey(action, mimeTypeName), requestEvent, config.getApi());
-    }
-
-    private String negotiateOutputRepresentation(List<String> mimeTypes) throws MuleRestException
-    {
-        if (action == null || action.getResponses() == null || mimeTypes.isEmpty())
-        {
-            //no response media-types defined, return no body
-            return null;
-        }
-        MediaType bestMatch = RestContentTypeParser.bestMatch(mimeTypes, adapter.getAcceptableResponseMediaTypes());
-        if (bestMatch == null)
-        {
-            return handleNotAcceptable();
-        }
-        logger.debug("=== negotiated response content-type: " + bestMatch.toString());
-        for (String representation : mimeTypes)
-        {
-            if (representation.equals(bestMatch.withoutParameters().toString()))
-            {
-                return representation;
-            }
-        }
-        return handleNotAcceptable();
-    }
-
-    protected String handleNotAcceptable() throws NotAcceptableException
-    {
-        throw new NotAcceptableException();
     }
 
     private List<String> getResponseMimeTypes()
