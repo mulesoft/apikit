@@ -16,9 +16,11 @@ import org.mule.raml.interfaces.model.IAction;
 
 public class OutputRepresentationHandler {
   private final HttpProtocolAdapter adapter;
+  private final boolean throwNotAcceptable;
 
-  public OutputRepresentationHandler(HttpProtocolAdapter adapter) {
+  public OutputRepresentationHandler(HttpProtocolAdapter adapter, boolean throwNotAcceptable) {
     this.adapter = adapter;
+    this.throwNotAcceptable = throwNotAcceptable;
   }
 
   public String negotiateOutputRepresentation(IAction action, List<String> mimeTypes) throws MuleRestException {
@@ -28,14 +30,21 @@ public class OutputRepresentationHandler {
     }
     MediaType bestMatch = bestMatch(mimeTypes, adapter.getAcceptableResponseMediaTypes());
     if (bestMatch == null) {
-      throw new NotAcceptableException();
+      return handleNotAcceptable();
     }
     for (String representation : mimeTypes) {
       if (representation.equalsIgnoreCase(bestMatch.withoutParameters().toString())) {
         return representation;
       }
     }
-    throw new NotAcceptableException();
+    return handleNotAcceptable();
+  }
+
+  private String handleNotAcceptable() throws NotAcceptableException {
+    if (throwNotAcceptable) {
+      throw new NotAcceptableException();
+    }
+    return null;
   }
 
 }

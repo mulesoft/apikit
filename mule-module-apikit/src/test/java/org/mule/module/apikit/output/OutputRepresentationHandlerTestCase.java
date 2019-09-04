@@ -44,7 +44,7 @@ public class OutputRepresentationHandlerTestCase {
     HttpProtocolAdapter protocolAdapter = mock(HttpProtocolAdapter.class);
     when(protocolAdapter.getAcceptableResponseMediaTypes()).thenReturn("*/*");
 
-    OutputRepresentationHandler handler = new OutputRepresentationHandler(protocolAdapter);
+    OutputRepresentationHandler handler = new OutputRepresentationHandler(protocolAdapter,true);
     String mimeType = handler.negotiateOutputRepresentation(action, Arrays.asList("APPLICATION/JSON"));
     assertEquals(mimeType, "APPLICATION/JSON");
   }
@@ -52,7 +52,7 @@ public class OutputRepresentationHandlerTestCase {
   @Test
   public void actionIsNull() throws Exception {
     HttpProtocolAdapter protocolAdapter = mock(HttpProtocolAdapter.class);
-    OutputRepresentationHandler handler = new OutputRepresentationHandler(protocolAdapter);
+    OutputRepresentationHandler handler = new OutputRepresentationHandler(protocolAdapter, true);
     assertNull(handler.negotiateOutputRepresentation(null, Arrays.asList("APPLICATION/JSON")));
   }
 
@@ -62,7 +62,7 @@ public class OutputRepresentationHandlerTestCase {
     when(action.getResponses()).thenReturn(null);
 
     HttpProtocolAdapter protocolAdapter = mock(HttpProtocolAdapter.class);
-    OutputRepresentationHandler handler = new OutputRepresentationHandler(protocolAdapter);
+    OutputRepresentationHandler handler = new OutputRepresentationHandler(protocolAdapter, true);
 
     assertNull(handler.negotiateOutputRepresentation(action, Arrays.asList("APPLICATION/JSON")));
   }
@@ -79,6 +79,20 @@ public class OutputRepresentationHandlerTestCase {
     PowerMockito.mockStatic(RestContentTypeParser.class);
     when(RestContentTypeParser.bestMatch(anyList(), any(String.class))).thenReturn(null);
 
-    new OutputRepresentationHandler(protocolAdapter).negotiateOutputRepresentation(action, Arrays.asList("APPLICATION/JSON"));
+    new OutputRepresentationHandler(protocolAdapter, true).negotiateOutputRepresentation(action, Arrays.asList("APPLICATION/JSON"));
+  }
+
+  @Test
+  public void bestMatchIsNullNotThrowExpection() throws Exception {
+    IAction action = mock(IAction.class);
+    when(action.getResponses()).thenReturn(new HashMap<String, IResponse>());
+
+    HttpProtocolAdapter protocolAdapter = mock(HttpProtocolAdapter.class);
+    when(protocolAdapter.getAcceptableResponseMediaTypes()).thenReturn("*/*");
+
+    PowerMockito.mockStatic(RestContentTypeParser.class);
+    when(RestContentTypeParser.bestMatch(anyList(), any(String.class))).thenReturn(null);
+
+    assertNull(new OutputRepresentationHandler(protocolAdapter, false).negotiateOutputRepresentation(action, Arrays.asList("APPLICATION/JSON")));
   }
 }

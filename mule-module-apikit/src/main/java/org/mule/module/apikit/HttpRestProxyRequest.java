@@ -29,12 +29,10 @@ public class HttpRestProxyRequest extends HttpRestRequest
     }
 
     @Override
-    protected String handleNotAcceptable() throws NotAcceptableException
-    {
-        if (config.isDisableValidations())
-        {
-            return null;
+    protected boolean throwNotAcceptable() {
+        if (config.isDisableValidations()) {
+            return false;
         }
-        return super.handleNotAcceptable();
+        return super.throwNotAcceptable();
     }
 }
