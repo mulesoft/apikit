@@ -23,14 +23,14 @@
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <raml.parser.v1.version>0.8.29</raml.parser.v1.version>
-        <raml.parser.v2.version>1.0.35</raml.parser.v2.version>
-
         <!--sonar-->
         <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
         <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
         <sonar.jacoco.reportPaths>target/jacoco.exec</sonar.jacoco.reportPaths>
         <sonar.language>java</sonar.language>
+        
+        <raml.parser.v1.version>0.8.34</raml.parser.v1.version>
+        <raml.parser.v2.version>1.0.40</raml.parser.v2.version>
     </properties>
 
     <dependencyManagement>
