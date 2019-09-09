@@ -213,8 +213,12 @@ public class RamlImpl10V2 implements IRaml
         if (is == null) {
             return emptyList();
         }
-
-        final Node raml = new RamlBuilder().build(IOUtils.toString(is));
+        Node raml;
+        try {
+            raml = new RamlBuilder().build(IOUtils.toString(is));
+        } catch (Exception e) {
+            return emptyList();
+        }
         return findIncludeNodes(rootPath, raml, resourceLoader);
     }
 

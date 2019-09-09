@@ -1,0 +1,10 @@
+#%RAML 1.0
+title: Test get all references with Array Named Example
+
+/array-example:
+  get:
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/getAllOrderResponse.raml

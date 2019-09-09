@@ -91,6 +91,15 @@ public class InterfaceV10TestCase
     }
 
     @Test
+    public void getAllRefsIncludeArrayExample() {
+        String ramlPath = "org/mule/raml/implv2/v10/get-all-refs/array-example.raml";
+        ResourceLoader resourceLoader = new DefaultResourceLoader();
+        RamlModelResult ramlModelResult = new RamlModelBuilder(resourceLoader).buildApi(ramlPath);
+        RamlImpl10V2 raml = new RamlImpl10V2(ramlModelResult.getApiV10(), resourceLoader, ramlPath);
+        assertThat(raml.getAllReferences().size(), is(1));
+    }
+
+    @Test
     public void absoluteIncludes() {
         URL resource = getClass().getClassLoader().getResource("org/mule/raml/implv2/v10/library-references-absolute/input.raml");
         RamlModelResult ramlModelResult = new RamlModelBuilder(DEFAULT_RESOURCE_LOADER).buildApi(resource.toString());
