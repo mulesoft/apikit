@@ -168,6 +168,10 @@ public class ApikitResponseTransformer extends AbstractMessageTransformer
      */
     private String acceptedContentType(String msgMimeType, String encoding, String msgContentType, Collection<String> conjunctionTypes)
     {
+        if(conjunctionTypes.contains(msgMimeType))
+        {
+            return appendEncoding(encoding, msgMimeType);
+        }
         for (String acceptedMediaType : conjunctionTypes)
         {
             if (areCompatibleTypes(msgMimeType, acceptedMediaType))
