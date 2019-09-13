@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -281,6 +282,22 @@ public class ApikitResponseTransformerTestCase
         assertEquals("{application/xml;charset=UTF-8}", responsePayload);
         Mockito.verifyZeroInteractions(transformerCache);
         Mockito.verifyZeroInteractions(transformer);
+    }
+
+    @Test
+    public void preserveDataType() throws TransformerException
+    {
+        String payload = "{text/xml;charset=UTF-8}";
+        when(message.getPayload()).thenReturn(payload);
+        when(message.getDataType()).thenReturn(new SimpleDataType(String.class, "text/xml"));
+        when(message.getEncoding()).thenReturn("UTF-8");
+        List<String> responseMimeTypes = new ArrayList<>();
+        responseMimeTypes.add("application/xml");
+        responseMimeTypes.add("application/json");
+        responseMimeTypes.add("text/xml");
+        responseTransformer.transformToExpectedContentType(message, "application/xml", responseMimeTypes, "*/*");
+
+        verify(message).setOutboundProperty("Content-Type", "text/xml;charset=UTF-8");
     }
 
     @Test
