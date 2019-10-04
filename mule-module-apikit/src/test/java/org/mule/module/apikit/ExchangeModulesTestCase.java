@@ -81,4 +81,16 @@ public class ExchangeModulesTestCase extends FunctionalTestCase {
                 .when().get("/api/resource3");
     }
 
+    @Test
+    public void apiResources()
+    {
+        String[] apiResources = new String[]{"exchange_modules/library1.raml","exchange_modules/library2.raml","/exchange_modules/library3.raml"};
+
+        for (String resource: apiResources){
+            given().header("Accept", "*/*")
+                    .expect().response().statusCode(200)
+                    .when().get("console/org/mule/module/apikit/exchange/" + resource);
+        }
+    }
+
 }

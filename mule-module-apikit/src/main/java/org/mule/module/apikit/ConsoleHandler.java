@@ -63,7 +63,6 @@ public class ConsoleHandler implements MessageProcessor
     private static final String DEFAULT_API_RESOURCES_PATH_REGEX = DEFAULT_API_FOLDER + FILE_SEPARATOR_REGEX;
     private static final String RAML_QUERY_STRING = "raml";
     private List<String> acceptedClasspathResources;
-
     private String cachedIndexHtml;
     private String embeddedConsolePath;
     private String apiResourcesRelativePath = DEFAULT_API_RESOURCES_PATH;
@@ -115,8 +114,13 @@ public class ConsoleHandler implements MessageProcessor
     private List<String> getAcceptedClasspathResources() {
         List<String> acceptedClasspathResources = new ArrayList<>();
         List<String> references = configuration.getApi().getAllReferences();
+        final String ramlLocationFolder = getRamlLocationFolder();
         for(String ref: references){
-            acceptedClasspathResources.add(Paths.get(ref).normalize().toString());
+            String reference = Paths.get(ref).normalize().toString();
+            if( ramlLocationFolder != null  && reference.startsWith(ramlLocationFolder.replace("/",FILE_SEPARATOR_REGEX))){
+                reference = reference.replaceFirst(ramlLocationFolder.replace(File.separator ,FILE_SEPARATOR_REGEX), "");
+            }
+            acceptedClasspathResources.add(reference);
         }
 
         return acceptedClasspathResources;
@@ -125,6 +129,16 @@ public class ConsoleHandler implements MessageProcessor
     private boolean isOldConsole()
     {
         return RESOURCE_BASE.equals("/console");
+    }
+
+    public String getRamlLocationFolder() {
+        String ramlLocation = configuration.getRaml();
+        if(ramlLocation.contains("/")){
+            ramlLocation =  ramlLocation.substring(0, ramlLocation.lastIndexOf("/") + 1);
+            return Paths.get(ramlLocation).toString();
+        }
+
+        return null;
     }
 
     private String getRelativeRamlUri()
@@ -353,7 +367,8 @@ public class ConsoleHandler implements MessageProcessor
 
     private URL getClasspathResource(String path) {
         for(String ref: this.acceptedClasspathResources){
-            if(URLDecoder.decode(path).endsWith(ref)){
+            path = URLDecoder.decode(path);
+            if(path.endsWith(ref)){
                 URL resource = readFromRamlRef(ref);
                 if (resource != null) {
                     return resource;
