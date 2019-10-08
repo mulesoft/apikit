@@ -368,8 +368,8 @@ public class ConsoleHandler implements MessageProcessor
     }
 
     private URL getClasspathResource(String path) {
+        path = URLDecoder.decode(path);
         for(String ref: this.acceptedClasspathResources){
-            path = URLDecoder.decode(path);
             if(path.endsWith(ref)){
                 URL resource = readFromRamlRef(ref);
                 if (resource != null) {
