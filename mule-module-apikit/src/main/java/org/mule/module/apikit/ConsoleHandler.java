@@ -117,11 +117,10 @@ public class ConsoleHandler implements MessageProcessor
         final String ramlLocationFolder = getRamlLocationFolder();
         final String ramlLocationFolderRegex = ramlLocationFolder == null ? null : ramlLocationFolder.replace(File.separator, FILE_SEPARATOR_REGEX);
         for(String ref: references){
-            String reference = ref;
-            if( ramlLocationFolder != null  && ref.startsWith(ramlLocationFolder)){
+            String reference = Paths.get(ref).normalize().toString();
+            if( ramlLocationFolder != null  && reference.startsWith(ramlLocationFolder)){
                 reference = reference.replaceFirst( ramlLocationFolderRegex , "");
             }
-            reference = Paths.get(reference).normalize().toString();
             acceptedClasspathResources.add(reference);
         }
 
