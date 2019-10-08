@@ -133,14 +133,8 @@ public class ConsoleHandler implements MessageProcessor
         return RESOURCE_BASE.equals("/console");
     }
 
-    public String getRamlLocationFolder() {
-        String ramlLocation = configuration.getRaml();
-        if(ramlLocation.contains("/")){
-            ramlLocation =  ramlLocation.substring(0, ramlLocation.lastIndexOf("/") + 1);
-            return Paths.get(ramlLocation).toString();
-        }
-
-        return null;
+    private String getRamlLocationFolder() {
+        return Paths.get(configuration.getRaml()).getParent().toString();
     }
 
     private String getRelativeRamlUri()
