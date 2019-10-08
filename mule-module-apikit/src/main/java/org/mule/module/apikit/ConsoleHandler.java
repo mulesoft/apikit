@@ -115,10 +115,11 @@ public class ConsoleHandler implements MessageProcessor
         List<String> acceptedClasspathResources = new ArrayList<>();
         List<String> references = configuration.getApi().getAllReferences();
         final String ramlLocationFolder = getRamlLocationFolder();
+        final String ramlLocationFolderRegex = ramlLocationFolder == null ? null : ramlLocationFolder.replace(File.separator, FILE_SEPARATOR_REGEX);
         for(String ref: references){
             String reference = ref;
             if( ramlLocationFolder != null  && ref.startsWith(ramlLocationFolder)){
-                reference = reference.replaceFirst(ramlLocationFolder, "");
+                reference = reference.replaceFirst( ramlLocationFolderRegex , "");
             }
             reference = Paths.get(reference).normalize().toString();
             acceptedClasspathResources.add(reference);
