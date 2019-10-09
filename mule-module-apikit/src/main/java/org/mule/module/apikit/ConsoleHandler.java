@@ -114,14 +114,13 @@ public class ConsoleHandler implements MessageProcessor
     private List<String> getAcceptedClasspathResources() {
         List<String> acceptedClasspathResources = new ArrayList<>();
         List<String> references = configuration.getApi().getAllReferences();
-        final String ramlLocationFolder = getRamlLocationFolder();
-        final String ramlLocationFolderRegex = ramlLocationFolder == null ? null : ramlLocationFolder.replace(File.separator, FILE_SEPARATOR_REGEX);
+        final Path ramlLocationFolder = getRamlLocationFolder();
         for(String ref: references){
-            String reference = Paths.get(ref).normalize().toString();
+            Path reference = Paths.get(ref).normalize();
             if( ramlLocationFolder != null  && reference.startsWith(ramlLocationFolder)){
-                reference = reference.replaceFirst( ramlLocationFolderRegex , "");
+                reference = ramlLocationFolder.relativize(reference);
             }
-            acceptedClasspathResources.add(reference);
+            acceptedClasspathResources.add(reference.toString());
         }
 
         return acceptedClasspathResources;
@@ -132,8 +131,8 @@ public class ConsoleHandler implements MessageProcessor
         return RESOURCE_BASE.equals("/console");
     }
 
-    private String getRamlLocationFolder() {
-        return Paths.get(configuration.getRaml()).getParent().toString();
+    private Path getRamlLocationFolder() {
+        return Paths.get(configuration.getRaml()).getParent();
     }
 
     private String getRelativeRamlUri()
