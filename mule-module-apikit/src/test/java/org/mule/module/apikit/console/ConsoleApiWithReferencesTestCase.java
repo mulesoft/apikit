@@ -76,9 +76,7 @@ public class ConsoleApiWithReferencesTestCase extends FunctionalTestCase
         for (String resource: apiResources){
             given().header("Accept", "*/*")
                     .expect().response().statusCode(200)
-                    .when().get("console/references/references/" + resource);
-            //Need to repeat api resource base (references) since in runtime files are found in base of classpath, but at functional
-            //tests they are contain in its folder
+                    .when().get("console/references/" + resource);
         }
     }
 
