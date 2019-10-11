@@ -63,7 +63,6 @@ public class ConsoleHandler implements MessageProcessor
     private static final String DEFAULT_API_RESOURCES_PATH_REGEX = DEFAULT_API_FOLDER + FILE_SEPARATOR_REGEX;
     private static final String RAML_QUERY_STRING = "raml";
     private List<String> acceptedClasspathResources;
-
     private String cachedIndexHtml;
     private String embeddedConsolePath;
     private String apiResourcesRelativePath = DEFAULT_API_RESOURCES_PATH;
@@ -115,8 +114,13 @@ public class ConsoleHandler implements MessageProcessor
     private List<String> getAcceptedClasspathResources() {
         List<String> acceptedClasspathResources = new ArrayList<>();
         List<String> references = configuration.getApi().getAllReferences();
+        final Path ramlLocationFolder = getRamlLocationFolder();
         for(String ref: references){
-            acceptedClasspathResources.add(Paths.get(ref).normalize().toString());
+            Path reference = Paths.get(ref).normalize();
+            if( ramlLocationFolder != null  && reference.startsWith(ramlLocationFolder)){
+                reference = ramlLocationFolder.relativize(reference);
+            }
+            acceptedClasspathResources.add(reference.toString());
         }
 
         return acceptedClasspathResources;
@@ -125,6 +129,10 @@ public class ConsoleHandler implements MessageProcessor
     private boolean isOldConsole()
     {
         return RESOURCE_BASE.equals("/console");
+    }
+
+    private Path getRamlLocationFolder() {
+        return Paths.get(configuration.getRaml()).getParent();
     }
 
     private String getRelativeRamlUri()
@@ -352,8 +360,9 @@ public class ConsoleHandler implements MessageProcessor
     }
 
     private URL getClasspathResource(String path) {
+        path = URLDecoder.decode(path);
         for(String ref: this.acceptedClasspathResources){
-            if(URLDecoder.decode(path).endsWith(ref)){
+            if(path.endsWith(ref)){
                 URL resource = readFromRamlRef(ref);
                 if (resource != null) {
                     return resource;
