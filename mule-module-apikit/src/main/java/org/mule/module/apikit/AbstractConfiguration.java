@@ -95,6 +95,10 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
     public static final String MULE_EXTERNAL_ENTITIES_PROPERTY = "mule.xml.expandExternalEntities";
     public static final String MULE_EXPAND_ENTITIES_PROPERTY = "mule.xml.expandInternalEntities";
 
+    // raml-parser system properties
+    public static final String STRICT_DATES_RFC3339 = "org.raml.dates_rfc3339_validation";
+    private static final String STRICT_DATES_RFC2616 = "org.raml.dates_rfc2616_validation";
+
     @Override
     public void initialise() throws InitialisationException
     {
@@ -107,6 +111,12 @@ public abstract class AbstractConfiguration implements Initialisable, MuleContex
 
         String expandEntitiesValue = System.getProperty(MULE_EXPAND_ENTITIES_PROPERTY, "false");
         System.setProperty(RAML_EXPAND_ENTITIES_PROPERTY, expandEntitiesValue);
+
+        String strictDatesRFC3339 = System.getProperty("apikit.rfc3339.validation", "false");
+        System.setProperty(STRICT_DATES_RFC3339, strictDatesRFC3339);
+
+        String strictDatesRFC2616 = System.getProperty("apikit.rfc2616.validation", "false");
+        System.setProperty(STRICT_DATES_RFC2616, strictDatesRFC2616);
 
         parserService = new ParserService(raml, getAppHome());
         parserService.validateRaml();
