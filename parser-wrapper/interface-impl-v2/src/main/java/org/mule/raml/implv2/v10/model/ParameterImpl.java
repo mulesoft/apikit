@@ -66,10 +66,9 @@ public class ParameterImpl implements IParameter
         return results.isEmpty();
     }
 
-    private boolean validate(TypeDeclaration type, String value)
+    private List<ValidationResult> validate(TypeDeclaration type, String value)
     {
-        List<ValidationResult> results = type.validate(value);
-        return results.isEmpty();
+        return type.validate(value);
     }
 
     @Override
@@ -97,9 +96,10 @@ public class ParameterImpl implements IParameter
             }
 
             String paramValue = String.valueOf(paramValues.iterator().next());
-            if (!validate(type, paramValue)) {
+            List<ValidationResult> validationResults = validate(type, paramValue);
+            if (!validationResults.isEmpty()) {
 
-                String msg = String.format("Invalid value '%s' for %s %s. %s", paramValues, parameterType, paramKey, message(type, paramValue));
+                String msg = String.format("Invalid value '%s' for %s %s. %s", paramValues, parameterType, paramKey, validationResults.get(0).getMessage());
                 throw new Exception(msg);
             }
         }
