@@ -58,9 +58,7 @@ public class ConsoleHandler implements MessageProcessor
     private static final String CONSOLE_ATTRIBUTES_PLACEHOLDER = "console-attributes-placeholder";
     private static final String DEFAULT_API_FOLDER= "api";
     private static final String DEFAULT_API_RESOURCES_PATH = DEFAULT_API_FOLDER + "/";
-    private static final String DEFAULT_API_RESOURCES_FILE_SYSTEM_PATH = DEFAULT_API_FOLDER + File.separator;
     private static final String FILE_SEPARATOR_REGEX = File.separator.equals("\\") ?  "\\\\" : "/";
-    private static final String DEFAULT_API_RESOURCES_PATH_REGEX = DEFAULT_API_FOLDER + FILE_SEPARATOR_REGEX;
     private static final String RAML_QUERY_STRING = "raml";
     private List<String> acceptedClasspathResources;
     private String cachedIndexHtml;
@@ -377,12 +375,13 @@ public class ConsoleHandler implements MessageProcessor
         return Thread.currentThread().getContextClassLoader().getResource(getRelativePath(ref));
     }
 
-    private URL readFromPath(String path) {
-        String prefix = embeddedConsolePath + File.separator + DEFAULT_API_RESOURCES_FILE_SYSTEM_PATH;
-        String regex = embeddedConsolePath + FILE_SEPARATOR_REGEX + DEFAULT_API_RESOURCES_PATH_REGEX;
-        String resourcePath = path.startsWith(prefix) ? path.replaceFirst(regex, "") : path;
-        resourcePath = getRelativePath(resourcePath);
-        return Thread.currentThread().getContextClassLoader().getResource(resourcePath);
+    private URL readFromPath(String resourcePath) {
+        Path root = Paths.get("/");
+        Path relativePath = Paths.get(embeddedConsolePath, "/" + DEFAULT_API_FOLDER);
+        Path path = Paths.get(resourcePath);
+        path = path.startsWith(relativePath) ? relativePath.relativize(path) : path;
+        path = path.startsWith(root) ? root.relativize(path) : path;
+        return Thread.currentThread().getContextClassLoader().getResource(path.toString());
     }
 
     private static String getRelativePath(String path) {
