@@ -9,6 +9,8 @@ package org.mule.module.apikit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.mule.DefaultMuleMessage;
 import org.mule.api.MuleEvent;
 import org.mule.api.MuleException;
@@ -59,6 +61,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import static java.util.Collections.singletonList;
 import static org.mule.module.apikit.CharsetUtils.getEncoding;
@@ -235,12 +238,30 @@ public class HttpRestRequest
             else
             {
                 try {
+                    if(expected.isArray() && actual.size() == 1){
+                        actual = getArrayOfValues(actual);
+                    }
                     expected.validate(expectedKey ,actual, QUERY_PARAMETER);
                 } catch (Exception e) {
                     throw new InvalidQueryParameterException(e.getMessage());
                 }
             }
         }
+    }
+
+    private Collection<?> getArrayOfValues(Collection<?> actual) {
+        String value = actual.iterator().next().toString();
+        List<String> list = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(value);
+            for (int i=0; i<jsonArray.length(); i++) {
+                list.add(jsonArray.getString(i));
+            }
+            return list;
+        } catch (JSONException e) {
+            //If there is some issue parsing the value as array continue with the actual value
+        }
+        return actual;
     }
 
     private Collection<?> getActualQueryParam(String expectedKey)
