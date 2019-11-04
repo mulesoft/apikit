@@ -1,0 +1,57 @@
+#%RAML 1.0
+title: Query params tests
+
+types:
+  Person:
+    properties:
+      name:
+        required: true
+        type: string
+      surname:
+        required: true
+        type: string
+
+/integer-array:
+   get:
+     queryParameters:
+       param: 
+         type: array
+         items: integer
+         required: true
+
+/string-array:
+   get:
+     queryParameters:
+       param: 
+         type: array
+         items: string
+         required: true
+
+/object-array:
+   get:
+     queryParameters:
+       param:
+         type: array
+         items: Person
+         required: true
+
+/integer:
+   get:
+     queryParameters:
+       param:
+         type: integer
+         required: true
+
+/string:
+   get:
+     queryParameters:
+       param:
+         type: string
+         required: true
+
+/object:
+   get:
+     queryParameters:
+       param:
+         type: Person
+         required: true
