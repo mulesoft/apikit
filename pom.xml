@@ -29,8 +29,8 @@
         <sonar.jacoco.reportPaths>target/jacoco.exec</sonar.jacoco.reportPaths>
         <sonar.language>java</sonar.language>
         
-        <raml.parser.v1.version>0.8.34</raml.parser.v1.version>
-        <raml.parser.v2.version>1.0.40</raml.parser.v2.version>
+        <raml.parser.v1.version>0.8.36</raml.parser.v1.version>
+        <raml.parser.v2.version>1.0.44</raml.parser.v2.version>
     </properties>
 
     <dependencyManagement>
