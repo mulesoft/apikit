@@ -74,4 +74,13 @@ public class InvalidConsolePath extends FunctionalTestCase
                 .when().get("/console");
     }
 
+    @Test
+    public void invalidResources()
+    {
+        RestAssured.port = listenerConsole.getNumber();
+        given().header("Accept", "text/html")
+                .expect()
+                .response().statusCode(404)
+                .when().get("console/log4j2.xml");
+    }
 }

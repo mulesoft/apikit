@@ -252,7 +252,7 @@ public class ConsoleHandler implements MessageProcessor
                 {
                     Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + escapeHtml(normalized.toString()));
+                        throw new NotFoundException("Only console resources are allowed " + escapeHtml(normalized.toString()));
                     }
                     String acceptEncoding = event.getMessage().getInboundProperty("accept-encoding");
                     if (acceptEncoding != null && acceptEncoding.contains("gzip"))
@@ -269,7 +269,7 @@ public class ConsoleHandler implements MessageProcessor
                 {
                     Path normalized = Paths.get(RESOURCE_BASE + path.substring(embeddedConsolePath.length())).normalize();
                     if(!normalized.startsWith(RESOURCE_BASE)){
-                        throw new IllegalStateException("Only console resources are allowed " + escapeHtml(normalized.toString()));
+                        throw new NotFoundException("Only console resources are allowed " + escapeHtml(normalized.toString()));
                     }
                     in = getClass().getResourceAsStream(RESOURCE_BASE + path.substring(embeddedConsolePath.length()));
                 }
