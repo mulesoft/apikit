@@ -19,5 +19,4 @@
         <apikit:console config-ref="api-with-references-config" />
     </flow>
 
-
 </mule>

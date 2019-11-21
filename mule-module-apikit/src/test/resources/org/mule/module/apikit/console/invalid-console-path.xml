@@ -31,6 +31,12 @@
         <apikit:console config-ref="apiConfig" />
     </flow>
 
+    <flow name="listener-console">
+        <http:listener config-ref="httpListenerConfig" path="/console/*"/>
+        <apikit:console config-ref="apiConfig" />
+        <exception-strategy ref="apiKitGlobalExceptionMapping" />
+    </flow>
+
     <flow name="get:/user">
         <set-property propertyName="Content-Type" value="application/json"/>
         <set-payload value="{ &quot;name&quot;: &quot;Lisa&quot; }"/>
