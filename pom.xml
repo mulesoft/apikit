@@ -61,6 +61,11 @@
                 <version>2.9.8</version>
             </dependency>
             <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.23-MULE-001-SNAPSHOT</version>
+            </dependency>
+            <dependency>
                 <groupId>org.raml</groupId>
                 <artifactId>raml-parser-2</artifactId>
                 <version>${raml.parser.v2.version}</version>
