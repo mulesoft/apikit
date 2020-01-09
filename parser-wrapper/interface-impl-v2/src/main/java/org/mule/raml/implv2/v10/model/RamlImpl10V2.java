@@ -215,7 +215,7 @@ public class RamlImpl10V2 implements IRaml
         }
         Node raml;
         try {
-            raml = new RamlBuilder().build(IOUtils.toString(is));
+            raml = new RamlBuilder().build(IOUtils.toString(is), resourceLoader, rootPath);
         } catch (Exception e) {
             return emptyList();
         }
