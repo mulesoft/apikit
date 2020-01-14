@@ -6,6 +6,7 @@
  */
 package org.mule.module.apikit;
 
+import static org.apache.commons.lang.StringUtils.join;
 import static org.mule.transport.http.HttpConnector.HTTP_METHOD_PROPERTY;
 import static org.mule.transport.http.HttpConnector.HTTP_QUERY_PARAMS;
 import static org.mule.transport.http.HttpConnector.HTTP_REQUEST_PATH_PROPERTY;
@@ -16,11 +17,15 @@ import org.mule.util.StringUtils;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.Map;
 
 public class HttpProtocolAdapter
 {
 
+    private static final char COMMA = ',';
+    private static final String CONTENT_TYPE = "content-type";
+    private static final String ACCEPT = "accept";
     private String basePath;
     private URI resourceURI;
     private String method;
@@ -56,19 +61,23 @@ public class HttpProtocolAdapter
 
         method = message.getInboundProperty(HTTP_METHOD_PROPERTY);
 
-        if (!StringUtils.isBlank((String) message.getInboundProperty("accept")))
+        String acceptHeaderValue = getAsCommaSeparatedValue(message.getInboundProperty(ACCEPT));
+
+        if (!StringUtils.isBlank(acceptHeaderValue))
         {
-            this.acceptableResponseMediaTypes = message.getInboundProperty("accept");
+            this.acceptableResponseMediaTypes = acceptHeaderValue;
         }
 
-        if (!StringUtils.isBlank((String) message.getInboundProperty("content-type")))
+        String contentTypeHeaderValue = getAsCommaSeparatedValue(message.getInboundProperty(CONTENT_TYPE));
+
+        if (!StringUtils.isBlank(contentTypeHeaderValue))
         {
-            this.requestMediaType = message.getInboundProperty("content-type");
+            this.requestMediaType = contentTypeHeaderValue;
         }
         if (this.requestMediaType == null
-            && !StringUtils.isBlank((String) message.getOutboundProperty("content-type")))
+            && !StringUtils.isBlank((String) message.getOutboundProperty(CONTENT_TYPE)))
         {
-            this.requestMediaType = message.getOutboundProperty("content-type");
+            this.requestMediaType = message.getOutboundProperty(CONTENT_TYPE);
         }
 
         this.queryParams = message.getInboundProperty(HTTP_QUERY_PARAMS);
@@ -106,5 +115,15 @@ public class HttpProtocolAdapter
     public Map<String, Object> getQueryParams()
     {
         return queryParams;
+    }
+
+    private String getAsCommaSeparatedValue(Object value) {
+        if (value == null) {
+            return null;
+        }
+        if (value instanceof Collection) {
+            return join((Collection) value,COMMA);
+        }
+        return (String) value;
     }
 }
