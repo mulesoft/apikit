@@ -166,4 +166,27 @@ public class ContentTypeTestCase extends FunctionalTestCase
                 .statusCode(200)
                 .when().get("/api/encoding");
     }
+
+    @Test
+    public void getOnUsingMultipleAcceptHeaderValues() throws Exception {
+        given()
+                .header("Accept","application/json")
+                .header("Accept","application/xml")
+                .expect()
+                .response()
+                .statusCode(200)
+                .when().get("/api/multitype");
+    }
+
+    @Test
+    public void getOnUsingMultipleContentTypeHeaderValues() throws Exception {
+        given()
+                .header("Content-type","application/json")
+                .header("Content-type","application/xml")
+                .expect()
+                .response()
+                .statusCode(415)
+                .body(is("unsupported media type"))
+                .when().post("/api/multicontenttype");
+    }
 }

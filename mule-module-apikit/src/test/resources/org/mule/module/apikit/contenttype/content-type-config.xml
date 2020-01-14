@@ -86,4 +86,8 @@
         <set-payload value="never mind" mimeType="application/json" encoding="UTF-8"/>
     </flow>
 
+    <flow name="post:/multicontenttype">
+        <set-payload value="never mind"/>
+    </flow>
+
 </mule>

@@ -34,3 +34,12 @@ title: Parameters API
             body:
                 application/json: ~
                 application/vnd.api+json: ~
+
+/multicontenttype:
+  post:
+    body:
+      application/json: ~
+    responses:
+      200:
+        body:
+          application/json: ~
