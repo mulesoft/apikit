@@ -60,6 +60,7 @@ public class ConsoleHandler implements MessageProcessor
     private static final String DEFAULT_API_RESOURCES_PATH = DEFAULT_API_FOLDER + "/";
     private static final String FILE_SEPARATOR_REGEX = File.separator.equals("\\") ?  "\\\\" : "/";
     private static final String RAML_QUERY_STRING = "raml";
+    private static final String EXCHANGE_MODULES = "exchange_modules";
     private List<String> acceptedClasspathResources;
     private String cachedIndexHtml;
     private String embeddedConsolePath;
@@ -376,6 +377,10 @@ public class ConsoleHandler implements MessageProcessor
     }
 
     private URL readFromPath(String resourcePath) {
+        int lastIndexOfExchangeModules = resourcePath.lastIndexOf(EXCHANGE_MODULES);
+        if (lastIndexOfExchangeModules > 0) {
+            return Thread.currentThread().getContextClassLoader().getResource(resourcePath.substring(lastIndexOfExchangeModules));
+        }
         Path root = Paths.get("/");
         Path relativePath = Paths.get(embeddedConsolePath, "/" + DEFAULT_API_FOLDER);
         Path path = Paths.get(resourcePath);
