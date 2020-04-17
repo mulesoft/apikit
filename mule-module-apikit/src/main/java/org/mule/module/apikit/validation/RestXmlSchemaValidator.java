@@ -149,13 +149,7 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
     {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         setFeatures(factory);
-        factory.setNamespaceAware(true);
-        factory.setXIncludeAware(false);
-        factory.setExpandEntityReferences(false);        
-        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-        factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); 
+        factory.setNamespaceAware(true); 
         try
         {
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -184,8 +178,8 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
         {
 
             // This is the PRIMARY defense. If DTDs (doctypes) are disallowed, almost all XML entity attacks are prevented
-            //feature  = "http://apache.org/xml/features/disallow-doctype-decl";
-            //dbf.setFeature(feature, true);
+            // feature  = "http://apache.org/xml/features/disallow-doctype-decl";
+            // dbf.setFeature(feature, true);
 
             // If you can't completely disable DTDs, then at least do the following:
             feature = "http://xml.org/sax/features/external-general-entities";
@@ -194,13 +188,15 @@ public class RestXmlSchemaValidator extends AbstractRestSchemaValidator
             feature = "http://xml.org/sax/features/external-parameter-entities";
             dbf.setFeature(feature, externalEntities);
 
+            feature = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
+            dbf.setFeature(feature, externalEntities);
+
             feature = "http://apache.org/xml/features/disallow-doctype-decl";
             dbf.setFeature(feature, !expandEntities);
 
             // and these as well, per Timothy Morgan's 2014 paper: "XML Schema, DTD, and Entity Attacks" (see reference below)
             dbf.setXIncludeAware(expandEntities);
             dbf.setExpandEntityReferences(expandEntities);
-
         }
         catch (ParserConfigurationException e)
         {
