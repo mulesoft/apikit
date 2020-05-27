@@ -1,7 +1,8 @@
 Map pipelineParams = [ 
                        enableAllureTestReportStage : false,
-                       devBranchesRegex : "master|(apikit-)?\\d+(\\.\\d+)?\\.x",
+                       devBranchesRegex : "support/3.9.3",
                        mavenSettingsXmlId : "ab7820eb-e393-4e88-9962-92104044ed75",
+                       projectType : "Runtime"
                      ]
 
-runtimeProjectsBuild(pipelineParams)
+runtimeBuild(pipelineParams)
