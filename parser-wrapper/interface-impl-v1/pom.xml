@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.mule.raml</groupId>
         <artifactId>parser-interface-parent</artifactId>
-        <version>3.9.1</version>
+        <version>3.9.1-HF-SNAPSHOT</version>
     </parent>
 
     <artifactId>parser-interface-impl-v1</artifactId>
