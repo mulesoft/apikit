@@ -30,6 +30,8 @@ import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
+import static java.lang.Boolean.valueOf;
+import static java.lang.System.getProperty;
 import static java.util.Collections.singletonList;
 import static org.raml.v2.internal.impl.v10.type.TypeId.ARRAY;
 import static org.raml.v2.internal.impl.v10.type.TypeId.OBJECT;
@@ -41,6 +43,7 @@ public class ParameterImpl implements IParameter
     private Collection<String> scalarTypes;
     private Boolean required;
     private Optional<String> defaultValue;
+    private final boolean validateNullInStringType;
 
     public ParameterImpl(TypeDeclaration typeDeclaration)
     {
@@ -57,6 +60,7 @@ public class ParameterImpl implements IParameter
                 return input.getType();
             }
         });
+        validateNullInStringType = valueOf(getProperty("apikit.validate.null.string.param", "false"));
     }
 
     @Override
@@ -94,11 +98,10 @@ public class ParameterImpl implements IParameter
 
                 throw new Exception("Parameter " + paramKey + " is not an array");
             }
-
-            String paramValue = String.valueOf(paramValues.iterator().next());
+            Object value = paramValues.iterator().next();
+            String paramValue = (value == null && validateNullInStringType && type instanceof StringTypeDeclaration) ? null : String.valueOf(value);
             List<ValidationResult> validationResults = validate(type, paramValue);
             if (!validationResults.isEmpty()) {
-
                 String msg = String.format("Invalid value '%s' for %s %s. %s", paramValues, parameterType, paramKey, validationResults.get(0).getMessage());
                 throw new Exception(msg);
             }
