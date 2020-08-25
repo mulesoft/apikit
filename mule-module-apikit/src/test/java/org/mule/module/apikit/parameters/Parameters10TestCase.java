@@ -147,6 +147,23 @@ public class Parameters10TestCase extends FunctionalTestCase
     }
 
     @Test
+    public void nilStringTypeNullValid()
+    {
+        given().queryParam("union-string", (String) null)
+            .expect().response().statusCode(200)
+            .when().get("/api/repeat");
+    }
+
+    @Test
+    public void stringTypeNullValid()
+    {
+        given().queryParam("string-type", (String) null)
+            .expect().response().statusCode(200)
+            .when().get("/api/repeat");
+    }
+
+
+    @Test
     public void parameterMapAfterDefaultAdded() {
         given().queryParam("status", "a", "b")
                 .expect().response().statusCode(200)
