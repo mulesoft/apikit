@@ -334,7 +334,7 @@ public class Configuration extends AbstractConfiguration
 
         private Flow wrapFlow()
         {
-            String flowName = targetFlow.getName() + WRAPPER_FLOW_SUFFIX;
+            String flowName = key + ":" + targetFlow.getName() + WRAPPER_FLOW_SUFFIX;
             MuleContext muleContext = targetFlow.getMuleContext();
             Flow wrapper = new Flow(flowName, muleContext);
             wrapper.setMessageProcessors(Collections.<MessageProcessor>singletonList(new MessageProcessor()
