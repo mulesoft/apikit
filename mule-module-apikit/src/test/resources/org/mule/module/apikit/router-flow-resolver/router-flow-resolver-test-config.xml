@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:apikit="http://www.mulesoft.org/schema/mule/apikit"
+      xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/apikit http://www.mulesoft.org/schema/mule/apikit/current/mule-apikit.xsd">
+
+    <apikit:config name="mapped-flows" raml="org/mule/module/apikit/router-flow-resolver/config.yaml">
+        <apikit:flow-mapping resource="/foo" action="get" flow-ref="retrieve"/>
+        <apikit:flow-mapping resource="/bar" action="get" flow-ref="retrieve"/>
+    </apikit:config>
+
+    <flow name="mappingEntry">
+        <http:inbound-endpoint port="${serverPortMapping}" host="localhost" path="mapping"/>
+        <apikit:router config-ref="mapped-flows"/>
+        <exception-strategy ref="Global_Mapping_Exception_Strategy"/>
+    </flow>
+
+    <flow name="retrieve">
+        <set-payload value="explicitely mapped flow"/>
+    </flow>
+
+    <apikit:mapping-exception-strategy name="Global_Mapping_Exception_Strategy">
+        <apikit:mapping statusCode="404">
+            <apikit:exception value="org.mule.module.apikit.exception.NotFoundException"/>
+            <set-property propertyName="Content-Type" value="text/plain"/>
+            <set-payload value="resource not found"/>
+        </apikit:mapping>
+    </apikit:mapping-exception-strategy>
+
+</mule>
