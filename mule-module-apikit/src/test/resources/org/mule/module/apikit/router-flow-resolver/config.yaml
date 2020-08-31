@@ -1,0 +1,16 @@
+#%RAML 0.8
+---
+title: Test API
+baseUri: http://localhost/{path}
+/foo:
+    get:
+        responses:
+            200:
+                body:
+                    text/plain: !!null
+/bar:
+    get:
+        responses:
+            200:
+                body:
+                    text/plain: !!null
