@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mule.tools.apikit.Helper.countOccurences;
 
+import com.google.common.io.PatternFilenameFilter;
 import org.mule.raml.implv2.ParserV2Utils;
 import org.mule.tools.apikit.misc.FileListUtils;
 
@@ -22,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -70,6 +72,20 @@ public class ScaffolderTest {
         folder.newFolder("custom-domain-multiple-lc");
     }
 
+    private File createFolder(String name) {
+        try {
+            return folder.newFolder(name);
+        } catch(IOException e) {
+            File[] files = folder.getRoot().listFiles();
+            for (File file : files) {
+                if (file.isDirectory() && file.getName().equals(name)) {
+                    return file;
+                }
+            }
+        }
+        return null;
+    }
+
     @Test
     public void testSimpleGenerateV08() throws Exception
     {
@@ -107,7 +123,7 @@ public class ScaffolderTest {
         File file = new File(filepath);
         List<File> ramls = Arrays.asList(file);
         List<File> xmls = Arrays.asList();
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, "3.7.0", null);
         scaffolder.run();
         File xmlOut = new File (muleXmlOut, "api.xml");
@@ -124,7 +140,7 @@ public class ScaffolderTest {
         File file = new File(filepath);
         List<File> ramls = Arrays.asList(file);
         List<File> xmls = Arrays.asList();
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, "3.7.0", null);
         scaffolder.run();
         File xmlOut = new File (muleXmlOut, "api.xml");
@@ -240,8 +256,9 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(ramlFile);
         File xmlFile = getFile("raml-inside-folder/api.xml");
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("raml-inside-folder");
+        File muleXmlOut = null;
 
+            muleXmlOut = createFolder("raml-inside-folder");
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
         scaffolder.run();
 
@@ -491,7 +508,7 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-extension/simple.raml"));
         File xmlFile = getFile("scaffolder-existing-extension/simple-extension-disabled.xml");
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Set<File> ramlwithEE = new TreeSet<>();
         ramlwithEE.add(getFile("scaffolder-existing-extension/simple.raml"));
@@ -527,7 +544,7 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-extension/simple.raml"));
         File xmlFile = getFile("scaffolder-existing-extension/simple-extension-enabled.xml");
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Set<File> ramlwithEE = new TreeSet<>();
         ramlwithEE.add(getFile("scaffolder-existing-extension/simple.raml"));
@@ -562,7 +579,7 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-extension/simple.raml"));
         File xmlFile = getFile("scaffolder-existing-extension/simple-extension-not-present.xml");
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Set<File> ramlwithEE = new TreeSet<>();
         ramlwithEE.add(getFile("scaffolder-existing-extension/simple.raml"));
@@ -596,7 +613,7 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing/simple.raml"));
         File xmlFile = getFile("scaffolder-existing/simple.xml");
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
         scaffolder.run();
@@ -631,7 +648,7 @@ public class ScaffolderTest {
         File domainFile = getFile("custom-domain/mule-domain-config.xml");
 
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut,domainFile);
         scaffolder.run();
 
@@ -662,7 +679,7 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.raml"));
         File xmlFile = getFile("scaffolder-existing-custom-and-normal-lc/leagues-custom-normal-lc.xml");
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
         File domainFile = getFile("custom-domain/mule-domain-config.xml");
 
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, domainFile);
@@ -696,7 +713,7 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-old/simple.raml"));
         File xmlFile = getFile("scaffolder-existing-old/simple.xml");
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
         scaffolder.run();
@@ -728,7 +745,7 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing/simple.raml"));
         File xmlFile = getFile("scaffolder-existing/mule-config-no-api-flows.xml");
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
         scaffolder.run();
@@ -765,7 +782,7 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(getFile("scaffolder-existing-old-address/complex.raml"));
         File xmlFile = getFile("scaffolder-existing-old-address/complex.xml");
         List<File> xmls = Arrays.asList(xmlFile);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
         scaffolder.run();
@@ -814,7 +831,7 @@ public class ScaffolderTest {
 
     public void testMultipleMimeTypesWithoutNamedConfig() throws Exception {
         List<File> ramls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.raml"));
-        File muleXmlOut = folder.newFolder("scaffolder");
+        File muleXmlOut = createFolder("scaffolder");
         List<File> xmls = Arrays.asList(getFile("scaffolder/multipleMimeTypes.xml"));
 
         createScaffolder(ramls, xmls, muleXmlOut, null).run();
@@ -851,7 +868,7 @@ public class ScaffolderTest {
 
     private void testMultipleMimeTypes(String name) throws Exception {
         List<File> ramls = Arrays.asList(getFile("scaffolder/" + name + ".raml"));
-        File muleXmlOut = folder.newFolder("scaffolder");
+        File muleXmlOut = createFolder("scaffolder");
 
         createScaffolder(ramls, new ArrayList<File>(), muleXmlOut).run();
 
@@ -906,7 +923,7 @@ public class ScaffolderTest {
     public void generateWithExamples() throws Exception {
         String filepath = ScaffolderTest.class.getClassLoader().getResource("scaffolder-with-examples/api.raml").getFile();
         File file = new File(filepath);
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
         final List<File> ramls = singletonList(file);
         final List<File> xmls = emptyList();
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut);
@@ -925,7 +942,7 @@ public class ScaffolderTest {
         List<File> ramls = Arrays.asList(getFile("double-root-raml/simple.raml"), getFile("double-root-raml/two.raml"));
 
         List<File> xmls = Arrays.asList();
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, null, "3.7.3", null);
         scaffolder.run();
@@ -987,12 +1004,33 @@ public class ScaffolderTest {
         else return createFile(s);
     }
 
+    private File lookForExistingFile(File parentFolder, String fileRelPath) {
+        File[] files = parentFolder.listFiles(new PatternFilenameFilter(fileRelPath));
+        if (files.length == 1) {
+            return files[0];
+        }
+        String[] pathSegments = fileRelPath.split("/");
+        for (File file : parentFolder.listFiles()) {
+            if (file.isDirectory() && file.getName().equals(pathSegments[0])) {
+                return lookForExistingFile(file, fileRelPath.substring(fileRelPath.indexOf("/") + 1));
+            }
+        }
+        return null;
+    }
+
     private File createFile(String s) throws IOException {
-        File file = folder.newFile(s);
-        file.createNewFile();
-        InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
-        IOUtils.copy(resourceAsStream,
-                     new FileOutputStream(file));
+        File file;
+        try {
+            file = folder.newFile(s);
+            file.createNewFile();
+        } catch (IOException e) {
+            file = lookForExistingFile(folder.getRoot(),s);
+        }
+        if (file != null) {
+            InputStream resourceAsStream = ScaffolderTest.class.getClassLoader().getResourceAsStream(s);
+            IOUtils.copy(resourceAsStream,
+                    new FileOutputStream(file));
+        }
         return file;
     }
 
@@ -1006,7 +1044,7 @@ public class ScaffolderTest {
         File domainFile = getFile(domainPath);
 
         List<File> xmls = Arrays.asList();
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Scaffolder scaffolder = createScaffolder(ramls, xmls, muleXmlOut, domainFile, muleVersion, null);
         scaffolder.run();
@@ -1026,7 +1064,7 @@ public class ScaffolderTest {
         File domainFile = getFile(domainPath);
 
         List<File> xmls = Arrays.asList();
-        File muleXmlOut = folder.newFolder("mule-xml-out");
+        File muleXmlOut = createFolder("mule-xml-out");
 
         Scaffolder scaffolder = createScaffolder(ramlList, xmls, muleXmlOut, domainFile, muleVersion, ramlWithExtensionEnabled);
         scaffolder.run();
