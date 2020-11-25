@@ -7,6 +7,7 @@
 package org.mule.module.apikit.validation.io;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.jsonschema.JsonSchema;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -44,7 +45,7 @@ public class JsonSchemaResource extends AbstractFileResolvingResource
                             {
                                 if (objectMapper == null)
                                 {
-                                    objectMapper = new ObjectMapper().disableDefaultTyping();
+                                    objectMapper = JsonMapper.builder().deactivateDefaultTyping().build();
                                 }
 
                                 JsonSchema jsonSchema = this.objectMapper.generateJsonSchema(clazz);
