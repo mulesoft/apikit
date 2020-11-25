@@ -6,6 +6,7 @@
  */
 package org.mule.examples.leagues.response;
 
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.mule.api.annotations.Transformer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,8 +35,7 @@ public class Positions {
     @Transformer(resultMimeType = "application/json")
     public String toJson(Positions positions) throws IOException
     {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.disableDefaultTyping();
+        ObjectMapper mapper = JsonMapper.builder().deactivateDefaultTyping().build();
         return mapper.writeValueAsString(positions);
     }
 
