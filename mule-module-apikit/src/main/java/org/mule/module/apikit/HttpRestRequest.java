@@ -7,6 +7,7 @@
 package org.mule.module.apikit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import org.json.JSONArray;
@@ -569,7 +570,7 @@ public class HttpRestRequest
         try
         {
             Map<String, String> payload = requestEvent.getMessage().getPayload() instanceof NullPayload ? Collections.<String, String>emptyMap() : (Map<String, String>) requestEvent.getMessage().getPayload();
-            jsonText = new ObjectMapper().disableDefaultTyping().writeValueAsString(payload);
+            jsonText = JsonMapper.builder().deactivateDefaultTyping().build().writeValueAsString(payload);
         }
         catch (Exception e)
         {
