@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.mule.tools</groupId>
         <artifactId>apikit-tools</artifactId>
-        <version>3.9.5-rc1</version>
+        <version>3.9.5</version>
     </parent>
     <artifactId>apikit-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
