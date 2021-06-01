@@ -1,0 +1,14 @@
+#%RAML 1.0 Trait
+
+usage: Trait 400 error
+
+uses:
+  SharedTypes: exchange_modules/shared-types/library-shared.raml
+
+responses:
+  400:
+    description: Bad Request
+    body:
+      application/json:
+        type: !include exchange_modules/standard-datatype/datatype-standard-error-message.raml
+        example: !include examples/error/error-400-example.json

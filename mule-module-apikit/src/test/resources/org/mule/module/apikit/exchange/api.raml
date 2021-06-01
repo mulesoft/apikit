@@ -5,6 +5,10 @@ uses:
   library1: exchange_modules/library1.raml
   library2: exchange_modules/library2.raml
   library3: /exchange_modules/library3.raml
+  standardLibrary: exchange_modules/standard-types/library-standard.raml
+
+traits:
+  has400: !include exchange_modules/traits/trait-has400.raml
 
 /resource1:
   get:
