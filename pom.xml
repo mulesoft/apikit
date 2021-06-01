@@ -30,7 +30,7 @@
         <allure.maven.plugin.version>2.10.0</allure.maven.plugin.version>
         
         <raml.parser.v1.version>0.8.33</raml.parser.v1.version>
-        <raml.parser.v2.version>1.0.44</raml.parser.v2.version>
+        <raml.parser.v2.version>1.0.44-1</raml.parser.v2.version>
         <jackson.version>2.11.3</jackson.version>
     </properties>
 
