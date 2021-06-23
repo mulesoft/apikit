@@ -18,7 +18,7 @@
 
     <properties>
         <!--mule community version-->
-        <mule.version>3.9.5</mule.version>
+        <mule.version>3.9.5-20210622</mule.version>
         <cors.module.version>2.1.4</cors.module.version>
         <licensePath>LICENSE_HEADER.txt</licensePath>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
