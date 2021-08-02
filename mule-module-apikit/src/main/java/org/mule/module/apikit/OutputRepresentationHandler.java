@@ -32,8 +32,8 @@ public class OutputRepresentationHandler {
     if (bestMatch == null) {
       return handleNotAcceptable();
     }
-    for (String representation : mimeTypes) {
-      if (representation.equalsIgnoreCase(bestMatch.withoutParameters().toString())) {
+    for (String representation : mimeTypes){
+      if (MediaType.parse(representation).equals(bestMatch)) {
         return representation;
       }
     }
