@@ -50,6 +50,19 @@ public class OutputRepresentationHandlerTestCase {
   }
 
   @Test
+  public void mimeTypeWithAttributes() throws Exception {
+    IAction action = mock(IAction.class);
+    when(action.getResponses()).thenReturn(new HashMap<String, IResponse>());
+
+    HttpProtocolAdapter protocolAdapter = mock(HttpProtocolAdapter.class);
+    when(protocolAdapter.getAcceptableResponseMediaTypes()).thenReturn("*/*");
+
+    OutputRepresentationHandler handler = new OutputRepresentationHandler(protocolAdapter,true);
+    String mimeType = handler.negotiateOutputRepresentation(action, Arrays.asList("application/custom+json;version=1"));
+    assertEquals(mimeType, "application/custom+json;version=1");
+  }
+
+  @Test
   public void actionIsNull() throws Exception {
     HttpProtocolAdapter protocolAdapter = mock(HttpProtocolAdapter.class);
     OutputRepresentationHandler handler = new OutputRepresentationHandler(protocolAdapter, true);
