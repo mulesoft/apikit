@@ -6,12 +6,13 @@
  */
 package org.mule.module.apikit;
 
-import org.mule.module.apikit.uri.Variable;
-import org.mule.module.apikit.uri.Variable.Reserved;
-import org.mule.raml.interfaces.model.IMimeType;
-
 import com.google.common.collect.Lists;
 import com.google.common.net.MediaType;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+import org.mule.raml.interfaces.model.IMimeType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -19,13 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.mule.module.apikit.uri.Variable.Reserved.*;
 
 /**
  * MIME-Type Parser
@@ -287,9 +281,14 @@ public final class RestContentTypeParser
      * @return
      */
     public static MediaType bestMatch(List<String> supportedRepresentations, String header) {
+        String bestMatch = bestMatchAsString(supportedRepresentations,header);
+        return bestMatch != null ?  MediaType.parse(bestMatch) : null;
+    }
+
+    public static String bestMatchAsString(List<String> supportedRepresentations, String header){
         List<ParseResults> parseResults = new LinkedList<ParseResults>();
         for (String r : StringUtils.split(header, ','))
-                    parseResults.add(parseMediaRange(r));
+            parseResults.add(parseMediaRange(r));
 
         List<FitnessAndQuality> weightedMatches = new LinkedList<FitnessAndQuality>();
         String quality = "1"; //first representation defined
@@ -302,7 +301,7 @@ public final class RestContentTypeParser
         Collections.sort(weightedMatches);
 
         FitnessAndQuality lastOne = weightedMatches.get(weightedMatches.size() - 1);
-        return NumberUtils.compare(lastOne.quality, 0) != 0 ?  MediaType.parse(lastOne.mimeType) : null;
+        return NumberUtils.compare(lastOne.quality, 0) != 0 ?  lastOne.mimeType : null;
     }
 
     @Deprecated
