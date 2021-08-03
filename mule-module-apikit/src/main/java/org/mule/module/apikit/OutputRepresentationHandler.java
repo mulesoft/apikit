@@ -6,13 +6,13 @@
  */
 package org.mule.module.apikit;
 
-import static org.mule.module.apikit.RestContentTypeParser.bestMatch;
-
-import com.google.common.net.MediaType;
-import java.util.List;
 import org.mule.module.apikit.exception.MuleRestException;
 import org.mule.module.apikit.exception.NotAcceptableException;
 import org.mule.raml.interfaces.model.IAction;
+
+import java.util.List;
+
+import static org.mule.module.apikit.RestContentTypeParser.bestMatchAsString;
 
 public class OutputRepresentationHandler {
   private final HttpProtocolAdapter adapter;
@@ -28,12 +28,12 @@ public class OutputRepresentationHandler {
       //no response media-types defined, return no body
       return null;
     }
-    MediaType bestMatch = bestMatch(mimeTypes, adapter.getAcceptableResponseMediaTypes());
+    String bestMatch = bestMatchAsString(mimeTypes, adapter.getAcceptableResponseMediaTypes());
     if (bestMatch == null) {
       return handleNotAcceptable();
     }
     for (String representation : mimeTypes){
-      if (MediaType.parse(representation).equals(bestMatch)) {
+      if (representation.equals(bestMatch)) {
         return representation;
       }
     }
