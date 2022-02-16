@@ -6,11 +6,14 @@
  */
 package org.mule.module.apikit.validation;
 
-import java.util.List;
 import org.mule.module.apikit.exception.BadRequestException;
 import org.mule.raml.implv2.v10.model.MimeTypeImpl;
 import org.mule.raml.interfaces.model.IMimeType;
 import org.raml.v2.api.model.common.ValidationResult;
+
+import java.util.List;
+
+import static org.mule.module.apikit.validation.RestJsonSchemaValidator.replaceQuotesForSquaredBrackets;
 
 public class BodyValidator {
 
@@ -38,7 +41,7 @@ public class BodyValidator {
     }
     if (!validationResults.isEmpty()) {
       String message = validationResults.get(0).getMessage();
-      throw new BadRequestException(message);
+      throw new BadRequestException(replaceQuotesForSquaredBrackets(message));
     }
   }
 

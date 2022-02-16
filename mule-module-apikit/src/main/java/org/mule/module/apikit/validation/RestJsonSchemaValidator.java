@@ -6,10 +6,12 @@
  */
 package org.mule.module.apikit.validation;
 
-import static org.mule.module.apikit.CharsetUtils.getEncoding;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.LogLevel;
 import com.github.fge.jsonschema.core.report.ProcessingMessage;
+import com.github.fge.jsonschema.core.report.ProcessingReport;
+import com.github.fge.jsonschema.main.JsonSchema;
 import org.mule.api.MuleContext;
 import org.mule.api.MuleEvent;
 import org.mule.api.registry.RegistrationException;
@@ -20,11 +22,9 @@ import org.mule.module.apikit.validation.io.JsonUtils;
 import org.mule.raml.interfaces.model.IRaml;
 import org.mule.transformer.types.DataTypeFactory;
 import org.mule.util.IOUtils;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.github.fge.jsonschema.core.exceptions.ProcessingException;
-import com.github.fge.jsonschema.core.report.ProcessingReport;
-import com.github.fge.jsonschema.main.JsonSchema;
+import org.raml.v2.internal.utils.StreamUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,12 +35,9 @@ import java.io.StringReader;
 import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 
-import org.raml.v2.internal.utils.StreamUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static com.github.fge.jsonschema.core.report.LogLevel.ERROR;
 import static com.github.fge.jsonschema.core.report.LogLevel.WARNING;
+import static org.mule.module.apikit.CharsetUtils.getEncoding;
 
 
 public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
@@ -118,34 +115,35 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
                 boolean failOnWarning = Boolean.valueOf(
                         System.getProperty(JSON_SCHEMA_FAIL_ON_WARNING_KEY, "false"));
 
-                if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning))
-                {
+                if (logLevel.equals(ERROR) || (logLevel.equals(WARNING) && failOnWarning)) {
                     messageBuilder.append(message).append("\n");
                 }
             }
 
-            if (messageBuilder.length() > 0)
-            {
+            if (messageBuilder.length() > 0) {
                 String message = messageBuilder.toString();
                 logger.info("Schema validation failed: " + message);
-                throw new BadRequestException(message);
+                throw new BadRequestException(replaceQuotesForSquaredBrackets(message));
             }
-        }
-        catch (ExecutionException e)
-        {
+        } catch (ExecutionException e) {
+            throw new BadRequestException(e);
+        } catch (RegistrationException e) {
+            throw new BadRequestException(e);
+        } catch (IOException e) {
+            throw new BadRequestException(e);
+        } catch (ProcessingException e) {
             throw new BadRequestException(e);
         }
-        catch (RegistrationException e)
-        {
-            throw new BadRequestException(e);
-        }
-        catch (IOException e)
-        {
-            throw new BadRequestException(e);
-        }
-        catch (ProcessingException e)
-        {
-            throw new BadRequestException(e);
-        }
+    }
+
+    /**
+     * Replaces all the quotes surrounding strings by squared brackets.
+     * Example: "field" gets replaced by [field].
+     *
+     * @param original string
+     * @return resulting string after replacing quotes by square brackets
+     */
+    public static String replaceQuotesForSquaredBrackets(String original) {
+        return original.replaceAll("\"(.*?)\"", "[$1]");
     }
 }
