@@ -10,6 +10,7 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
 import org.mule.transport.http.HttpConstants;
 
+import java.nio.charset.Charset;
 import org.raml.parser.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -154,7 +155,7 @@ public class CharsetUtils
 
     private static String detectEncodingOrDefault(byte[] bytes)
     {
-        String defaultEncoding = System.getProperty("apikit.defaultEncoding", "guess");
-        return defaultEncoding.equals("guess") ? StreamUtils.detectEncoding(bytes) : defaultEncoding;
+        boolean shouldGuessEncoding = !Boolean.parseBoolean(System.getProperty("apikit.disableEncodingGuessing"));
+        return shouldGuessEncoding ? StreamUtils.detectEncoding(bytes) : Charset.defaultCharset().toString();
     }
 }
