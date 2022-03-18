@@ -36,7 +36,7 @@ public class CharsetUtils
         String encoding = getHeaderCharset(message, logger);
         if (encoding == null)
         {
-            encoding = StreamUtils.detectEncoding(bytes);
+            encoding = detectEncodingOrDefault(bytes);
             logger.debug("Detected payload encoding: " + logEncoding(encoding));
             if (encoding == null)
             {
@@ -69,7 +69,7 @@ public class CharsetUtils
         logger.debug("Xml declaration encoding: " + logEncoding(encoding));
         if (encoding == null)
         {
-            encoding = StreamUtils.detectEncoding(payload);
+            encoding = detectEncodingOrDefault(payload);
             logger.debug("Detected payload encoding: " + logEncoding(encoding));
         }
         if (encoding == null)
@@ -152,4 +152,9 @@ public class CharsetUtils
         return encoding != null ? encoding : "not specified";
     }
 
+    private static String detectEncodingOrDefault(byte[] bytes)
+    {
+        String defaultEncoding = System.getProperty("apikit.defaultEncoding", "guess");
+        return defaultEncoding.equals("guess") ? StreamUtils.detectEncoding(bytes) : defaultEncoding;
+    }
 }
