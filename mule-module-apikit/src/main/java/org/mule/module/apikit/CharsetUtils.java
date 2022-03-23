@@ -153,7 +153,17 @@ public class CharsetUtils
         return encoding != null ? encoding : "not specified";
     }
 
-    private static String detectEncodingOrDefault(byte[] bytes)
+    /**
+     * <p>Given an array of bytes tries to detect the text encoding of them
+     * unless <i>apikit.disableEncodingGuessing</i> is set to true.</p>
+     *
+     * <p>If <i>apikit.disableEncodingGuessing</i> is set to true then the
+     * encoding name of {@link Charset#defaultCharset()} is returned.
+     *
+     * @param bytes The array of bytes to examine
+     * @return The name of the detected encoding
+     */
+    public static String detectEncodingOrDefault(byte[] bytes)
     {
         boolean shouldGuessEncoding = !Boolean.parseBoolean(System.getProperty("apikit.disableEncodingGuessing"));
         return shouldGuessEncoding ? StreamUtils.detectEncoding(bytes) : Charset.defaultCharset().toString();
