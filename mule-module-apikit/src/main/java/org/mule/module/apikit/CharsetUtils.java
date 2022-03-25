@@ -10,6 +10,7 @@ import org.mule.api.MuleEvent;
 import org.mule.api.MuleMessage;
 import org.mule.transport.http.HttpConstants;
 
+import java.nio.charset.Charset;
 import org.raml.parser.utils.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class CharsetUtils
         String encoding = getHeaderCharset(message, logger);
         if (encoding == null)
         {
-            encoding = StreamUtils.detectEncoding(bytes);
+            encoding = detectEncodingOrDefault(bytes);
             logger.debug("Detected payload encoding: " + logEncoding(encoding));
             if (encoding == null)
             {
@@ -69,7 +70,7 @@ public class CharsetUtils
         logger.debug("Xml declaration encoding: " + logEncoding(encoding));
         if (encoding == null)
         {
-            encoding = StreamUtils.detectEncoding(payload);
+            encoding = detectEncodingOrDefault(payload);
             logger.debug("Detected payload encoding: " + logEncoding(encoding));
         }
         if (encoding == null)
@@ -152,4 +153,19 @@ public class CharsetUtils
         return encoding != null ? encoding : "not specified";
     }
 
+    /**
+     * <p>Given an array of bytes tries to detect the text encoding of them
+     * unless <i>apikit.disableEncodingGuessing</i> is set to true.</p>
+     *
+     * <p>If <i>apikit.disableEncodingGuessing</i> is set to true then the
+     * encoding name of {@link Charset#defaultCharset()} is returned.
+     *
+     * @param bytes The array of bytes to examine
+     * @return The name of the detected encoding
+     */
+    public static String detectEncodingOrDefault(byte[] bytes)
+    {
+        boolean shouldGuessEncoding = !Boolean.parseBoolean(System.getProperty("apikit.disableEncodingGuessing"));
+        return shouldGuessEncoding ? StreamUtils.detectEncoding(bytes) : Charset.defaultCharset().toString();
+    }
 }
