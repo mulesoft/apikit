@@ -63,23 +63,23 @@ public class ExceptionMessageFormattingTestCase extends FunctionalTestCase {
     }
 
     @Test
-    public void testBodyValidatorExceptionMessageGetQuotesReplacedForSquaredBrackets() {
+    public void testBodyValidatorExceptionMessageDoesNotEscapeMultipleTimes() {
         given().body("{ \"non-existing\": \"test\" }")
                 .contentType("application/json")
                 .expect().statusCode(400)
                 .response()
-                .body(containsString("{\"error\":\"Error validating JSON. Error: - Missing required field [idNumber]\\n- Missing required field [firstName]\"}"))
+                .body(containsString("{\"error\":\"Error validating JSON. Error: - Missing required field \\\"idNumber\\\"\\n- Missing required field \\\"firstName\\\"\"}"))
                 .header("Content-Type", is("application/json"))
                 .when().post("/api/bodyJson");
     }
 
     @Test
-    public void testJsonSchemaValidatorExceptionMessageGetQuotesReplacedForSquaredBrackets() {
+    public void testJsonSchemaValidatorExceptionMessageDoesNotEscapeMultipleTimes() {
         given().body("{ \"numberOfPeople\": 90, \"startDate\": \"2016-08-23T18:25:43-05:00\" }")
                 .contentType("application/json")
                 .expect().statusCode(400)
                 .response()
-                .body(containsString("format attribute [date] not supported"))
+                .body(containsString("format attribute \\\"date\\\" not supported"))
                 .header("Content-Type", is("application/json"))
                 .when().post("/api/schemaJson");
     }
