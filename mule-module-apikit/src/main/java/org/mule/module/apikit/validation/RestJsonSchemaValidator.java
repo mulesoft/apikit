@@ -123,7 +123,7 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
             if (messageBuilder.length() > 0) {
                 String message = messageBuilder.toString();
                 logger.info("Schema validation failed: " + message);
-                throw new BadRequestException(replaceQuotesForSquaredBrackets(message));
+                throw new BadRequestException(message);
             }
         } catch (ExecutionException e) {
             throw new BadRequestException(e);
@@ -134,16 +134,5 @@ public class RestJsonSchemaValidator extends AbstractRestSchemaValidator
         } catch (ProcessingException e) {
             throw new BadRequestException(e);
         }
-    }
-
-    /**
-     * Replaces all the quotes surrounding strings by squared brackets.
-     * Example: "field" gets replaced by [field].
-     *
-     * @param original string
-     * @return resulting string after replacing quotes by square brackets
-     */
-    public static String replaceQuotesForSquaredBrackets(String original) {
-        return original.replaceAll("\"(.*?)\"", "[$1]");
     }
 }
