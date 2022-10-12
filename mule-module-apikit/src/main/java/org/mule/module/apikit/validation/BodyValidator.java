@@ -13,8 +13,6 @@ import org.raml.v2.api.model.common.ValidationResult;
 
 import java.util.List;
 
-import static org.mule.module.apikit.validation.RestJsonSchemaValidator.replaceQuotesForSquaredBrackets;
-
 public class BodyValidator {
 
   private final IMimeType mimeType;
@@ -41,7 +39,7 @@ public class BodyValidator {
     }
     if (!validationResults.isEmpty()) {
       String message = validationResults.get(0).getMessage();
-      throw new BadRequestException(replaceQuotesForSquaredBrackets(message));
+      throw new BadRequestException(message);
     }
   }
 
