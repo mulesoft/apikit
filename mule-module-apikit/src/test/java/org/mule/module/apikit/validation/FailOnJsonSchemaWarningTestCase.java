@@ -63,7 +63,7 @@ public class FailOnJsonSchemaWarningTestCase extends FunctionalTestCase
                 .contentType("application/json")
                 .expect().statusCode(400)
                 .response()
-                .body(containsString("format attribute [date] not supported"))
+                .body(containsString("format attribute \\\"date\\\" not supported"))
                 .header("Content-Type", is("application/json"))
                 .when().post("/api/subscription");
     }
