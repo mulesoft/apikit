@@ -31,7 +31,7 @@
         
         <raml.parser.v1.version>0.8.47</raml.parser.v1.version>
         <raml.parser.v2.version>1.0.44-6</raml.parser.v2.version>
-        <jackson.version>2.14.0-rc1</jackson.version>
+        <jackson.version>2.14.0</jackson.version>
     </properties>
 
     <dependencyManagement>
