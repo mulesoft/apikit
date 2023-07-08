@@ -84,7 +84,9 @@ public class ExchangeModulesTestCase extends FunctionalTestCase {
     @Test
     public void apiResources()
     {
-        String[] apiResources = new String[]{"exchange_modules/library1.raml","exchange_modules/library2.raml","/exchange_modules/library3.raml"};
+        String[] apiResources = new String[]{"exchange_modules/library1.raml","exchange_modules/library2.raml","/exchange_modules/library3.raml",
+                "/exchange_modules/standard-types/exchange_modules/shared-types/library-shared.raml",
+                "/exchange_modules/standard-types/exchange_modules/shared-types/exchange_modules/traits/examples/error/error-400-example.json"};
 
         for (String resource: apiResources){
             given().header("Accept", "*/*")
