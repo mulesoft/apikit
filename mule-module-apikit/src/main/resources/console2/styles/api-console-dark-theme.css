@@ -2,7 +2,7 @@
 
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
-  font-family: monospace;
+  font-family: var(--lume-g-font-family-code);
   /*height: 300px;*/
   height: inherit;
 }
@@ -335,7 +335,7 @@ span.CodeMirror-selectedtext { background: none; }
   background: transparent;
   width: 20em;
   color: inherit;
-  font-family: monospace;
+  font-family: var(--lume-g-font-family-code);
 }
 
 .CodeMirror-dialog button {
@@ -352,7 +352,7 @@ span.CodeMirror-selectedtext { background: none; }
   border: 1px solid black;
   border-radius: 4px 4px 4px 4px;
   color: infotext;
-  font-family: monospace;
+  font-family: var(--lume-g-font-family-code);
   font-size: 10pt;
   overflow: hidden;
   padding: 2px 5px;
@@ -418,7 +418,7 @@ span.CodeMirror-selectedtext { background: none; }
 
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 100;
   src: local('Lato Hairline'), local('Lato-Hairline'), url(../fonts/Lato-Hairline.woff2) format('woff2');
@@ -426,7 +426,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 100;
   src: local('Lato Hairline'), local('Lato-Hairline'), url(../fonts/Lato-Hairline2.woff2) format('woff2');
@@ -434,7 +434,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 300;
   src: local('Lato Light'), local('Lato-Light'), url(../fonts/Lato-Light.woff2) format('woff2');
@@ -442,7 +442,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 300;
   src: local('Lato Light'), local('Lato-Light'), url(../fonts/Lato-Light2.woff2) format('woff2');
@@ -450,7 +450,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 400;
   src: local('Lato Regular'), local('Lato-Regular'), url(../fonts/Lato-Regular.woff2) format('woff2');
@@ -458,7 +458,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 400;
   src: local('Lato Regular'), local('Lato-Regular'), url(../fonts/Lato-Regular2.woff2) format('woff2');
@@ -466,7 +466,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 700;
   src: local('Lato Bold'), local('Lato-Bold'), url(../fonts/Lato-Bold.woff2) format('woff2');
@@ -474,7 +474,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 700;
   src: local('Lato Bold'), local('Lato-Bold'), url(../fonts/Lato-Bold2.woff2) format('woff2');
@@ -482,7 +482,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 900;
   src: local('Lato Black'), local('Lato-Black'), url(../fonts/Lato-Black.woff2) format('woff2');
@@ -490,7 +490,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: normal;
   font-weight: 900;
   src: local('Lato Black'), local('Lato-Black'), url(../fonts/Lato-Black2.woff2) format('woff2');
@@ -498,7 +498,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 100;
   src: local('Lato Hairline Italic'), local('Lato-HairlineItalic'), url(../fonts/Lato-HairlineItalic.woff2) format('woff2');
@@ -506,7 +506,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 100;
   src: local('Lato Hairline Italic'), local('Lato-HairlineItalic'), url(../fonts/Lato-HairlineItalic2.woff2) format('woff2');
@@ -514,7 +514,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 300;
   src: local('Lato Light Italic'), local('Lato-LightItalic'), url(../fonts/Lato-LightItalic.woff2) format('woff2');
@@ -522,7 +522,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 300;
   src: local('Lato Light Italic'), local('Lato-LightItalic'), url(../fonts/Lato-LightItalic2.woff2) format('woff2');
@@ -530,7 +530,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 400;
   src: local('Lato Italic'), local('Lato-Italic'), url(../fonts/Lato-Italic.woff2) format('woff2');
@@ -538,7 +538,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 400;
   src: local('Lato Italic'), local('Lato-Italic'), url(../fonts/Lato-Italic2.woff2) format('woff2');
@@ -546,7 +546,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 700;
   src: local('Lato Bold Italic'), local('Lato-BoldItalic'), url(../fonts/Lato-BoldItalic.woff2) format('woff2');
@@ -554,7 +554,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 700;
   src: local('Lato Bold Italic'), local('Lato-BoldItalic'), url(../fonts/Lato-BoldItalic2.woff2) format('woff2');
@@ -562,7 +562,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 900;
   src: local('Lato Black Italic'), local('Lato-BlackItalic'), url(../fonts/Lato-BlackItalic.woff2) format('woff2');
@@ -570,7 +570,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Lato';
+  font-family: var(--lume-g-font-family);
   font-style: italic;
   font-weight: 900;
   src: local('Lato Black Italic'), local('Lato-BlackItalic'), url(../fonts/Lato-BlackItalic2.woff2) format('woff2');
@@ -578,7 +578,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin-ext */
 @font-face {
-  font-family: 'Source Code Pro';
+  font-family: var(--lume-g-font-family-code);
   font-style: normal;
   font-weight: 400;
   src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(../fonts/Source-Code-Pro.woff2) format('woff2');
@@ -586,7 +586,7 @@ span.CodeMirror-selectedtext { background: none; }
 }
 /* latin */
 @font-face {
-  font-family: 'Source Code Pro';
+  font-family: var(--lume-g-font-family-code);
   font-style: normal;
   font-weight: 400;
   src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(../fonts/Source-Code-Pro-2.woff2) format('woff2');
@@ -793,7 +793,7 @@ input.ng-dirty.ng-invalid-repeat + span.raml-console-field-validation-error::aft
  */
 
 html {
-  font-family: sans-serif;
+  font-family: var(--lume-g-font-family);
   /* 1 */
   -ms-text-size-adjust: 100%;
   /* 2 */
@@ -1019,7 +1019,7 @@ code,
 kbd,
 pre,
 samp {
-  font-family: monospace, monospace;
+  font-family: var(--lume-g-font-family-code);
   font-size: 1em;
 }
 
@@ -1251,7 +1251,7 @@ th {
 .raml-console-body {
   background: #141519;
   color: #ccc;
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 18px;
   line-height: 1.4;
   text-rendering: optimizeLegibility;
@@ -1298,7 +1298,7 @@ th {
 .raml-console-embedded {
   background: #141519 !important;
   color: #ccc;
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 18px;
   line-height: 1.4;
   text-rendering: optimizeLegibility;
@@ -1421,7 +1421,7 @@ th {
   background-color: #0f1217;
   color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 16px;
   font-weight: 700;
   transition: 0.2s ease color, 0.2s ease border-color;
@@ -1483,7 +1483,7 @@ th {
   background-color: rgba(0, 0, 0, 0.25);
   color: rgba(255, 255, 255, 0.3);
   cursor: pointer;
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 16px;
   font-weight: 700;
   text-align: center;
@@ -2323,7 +2323,7 @@ a.raml-console-resource-path-active {
 .raml-console-resource-no-baseuri {
   background-color: red;
   margin-top: -1px;
-  font-family: Lato;
+  font-family: var(--lume-g-font-family);
   font-size: 13px;
   padding: 3px;
   color: white;
@@ -2441,7 +2441,7 @@ root
 }
 
 .raml-console-resource-panel-primary p {
-  font-family: Constantia, "Lucida Bright", Lucidabright, "Lucida Serif", Lucida, "DejaVu Serif", "Bitstream Vera Serif', 'Liberation Serif", Georgia, serif;
+  font-family: var(--lume-g-font-family);
 }
 
 .raml-console-resource-panel-primary a {
@@ -2522,7 +2522,7 @@ root
 
 .raml-console-resource-panel-description .raml-console-description {
   margin-bottom: 0;
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 14px;
 }
 
@@ -2654,7 +2654,7 @@ root
 }
 
 .raml-console-resource-param-example {
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   word-break: break-all;
 }
 
@@ -2682,7 +2682,7 @@ root
   background-color: #0f1217;
   color: #217ec5;
   cursor: pointer;
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 16px;
   font-weight: 700;
   transition: 0.2s ease color, 0.2s ease border-color;
@@ -2708,7 +2708,7 @@ root
   border: 1px solid #141519;
   border-radius: 3px;
   background: #141519;
-  font-family: Source Code Pro;
+  font-family: var(--lume-g-font-family-code);
   font-size: 14px;
   overflow: auto;
 }
@@ -3083,7 +3083,7 @@ root
 .raml-console-sidebar-row .raml-console-codemirror-body-editor {
   width: 100%;
   resize: none;
-  font-family: Source Code Pro;
+  font-family: var(--lume-g-font-family-code);
   font-size: 14px;
   border: 1px solid #141519;
 }
@@ -3236,7 +3236,7 @@ root
   border-radius: 3px;
   color: #fff;
   cursor: pointer;
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-weight: 900;
   transition: 0.2s ease background-color;
   -webkit-font-smoothing: antialiased;
@@ -3370,7 +3370,7 @@ root
   border-radius: 4px;
   background-color: #0f1217;
   cursor: pointer;
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 13px;
   font-weight: 700;
   transition: 0.2s ease color, 0.2s ease border-color;
@@ -3486,7 +3486,7 @@ root
   top: 1px;
   left: 1px;
   right: 0;
-  font-family: "Courier New", monospace;
+  font-family: var(--lume-g-font-family-code);
   font-size: 13px;
   font-weight: 700;
 }
@@ -3694,7 +3694,7 @@ root
   border: 1px solid #141519;
   border-radius: 3px;
   background: #141519;
-  font-family: Source Code Pro;
+  font-family: var(--lume-g-font-family-code);
   font-size: 14px;
 }
 
@@ -3987,7 +3987,7 @@ root
   border-top: 0;
   border-bottom: 0;
   background: rgba(255, 255, 255, 0.75);
-  font-family: Source Code Pro;
+  font-family: var(--lume-g-font-family-code);
   font-size: 14px;
 }
 
@@ -4267,7 +4267,7 @@ span.raml-console-side-bar-required-field {
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.1));
   color: #fff;
   cursor: pointer;
-  font-family: Lato, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--lume-g-font-family);
   font-size: 18px;
   font-weight: 900;
   transition: 0.2s ease background-color;
