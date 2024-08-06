@@ -15,7 +15,7 @@
     <properties>
         <licensePath>../LICENSE_HEADER.txt</licensePath>
         <rest.assured.version>1.7.2</rest.assured.version>
-        <guava.version>26.0-android</guava.version>
+        <guava.version>32.0.0-android</guava.version>
         <powermock.version>1.6.1</powermock.version>
         <muleTestsInfrastructure.version>${mule.version}</muleTestsInfrastructure.version>
 
