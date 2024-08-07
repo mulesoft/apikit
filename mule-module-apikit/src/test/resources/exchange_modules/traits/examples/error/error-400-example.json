@@ -1,0 +1,7 @@
+{
+  "code" : 123,
+  "name" : "APIKIT_ERROR",
+  "reason" : "None",
+  "message" : "Bad Request",
+  "trace_id" : "548512ABC"
+}

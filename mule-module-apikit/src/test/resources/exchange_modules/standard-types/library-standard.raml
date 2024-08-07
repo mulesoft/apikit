@@ -1,0 +1,17 @@
+#%RAML 1.0 Library
+
+usage: Standard Library 1
+
+uses:
+  SharedTypes: exchange_modules/shared-types/library-shared.raml
+
+annotationTypes:
+  deprecated:
+    allowedTargets: [API, Resource, Method]
+    properties:
+      description:
+        type: string
+        required: false
+      endOfService:
+        type: SharedTypes.Standard-datetime
+        required: true
