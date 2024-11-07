@@ -24,7 +24,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!--jacoco report-->
-        <jacoco.version>0.8.5</jacoco.version>
+        <jacoco.version>0.8.12</jacoco.version>
         <allureJunitVersion>2.13.5</allureJunitVersion>
         <allureReportVersion>2.3.4</allureReportVersion>
         <allure.maven.plugin.version>2.10.0</allure.maven.plugin.version>
