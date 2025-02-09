@@ -167,7 +167,7 @@
         <dependency>
             <groupId>org.mule.glassfish.jaxb</groupId>
             <artifactId>jaxb-xjc</artifactId>
-            <version>2.3.0-MULE-001</version>
+            <version>2.3.1-MULE-001</version>
         </dependency>
         <!--test deps -->
         <dependency>
