@@ -23,7 +23,7 @@
         <vmtype>org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType</vmtype>
         <jdkName>JavaSE-1.6</jdkName>
         <jdk.version>1.6</jdk.version>
-        <junit.version>4.13.1</junit.version>
+        <junit.version>4.13.2</junit.version>
         <rest.assured.version>2.9.0</rest.assured.version>
 
         <sonar.skip>true</sonar.skip>
